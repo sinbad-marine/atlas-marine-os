@@ -12,16 +12,16 @@
 <body>
 <header class="topbar">
   <div class="brand"><div class="logo">⚓</div><div><h1>ATLAS MARINE OS</h1><small>Özgür Maceraperest Dostlar • Navigate Smarter. Command Better.</small></div></div>
-  <div class="version">● v6.0</div>
+  <div class="version">● v6.1</div>
 </header>
 
 <main>
 <section class="hero">
   <div><h2>Atlas Cloud Control Center</h2><p>Marine operations, cloud documents, private storage and Captain Sinbad in one command workspace.</p></div>
   <div class="hero-actions">
-    <button class="btn primary" data-open="documents">Upload Files</button>
-    <button class="btn" data-open="publications">Nautical Publications</button>
-    <button class="btn" data-open="charts">Nautical Charts</button>
+    <button class="btn primary" data-open="cloud-control">Open Cloud Control Center</button>
+    <button class="btn" data-open="cloud-documents">Cloud Documents</button>
+    <button class="btn" data-open="sinbad">Captain Sinbad</button>
   </div>
 </section>
 
@@ -37,8 +37,8 @@
   <article class="module-card" data-open="publications"><div>📚</div><h3>Nautical Publications</h3><p>SOLAS, MARPOL, sailing directions, lights and tide tables.</p><a>New in v4.0 →</a></article>
   <article class="module-card" data-open="charts"><div>🗺️</div><h3>Nautical Charts</h3><p>Separate chart archive by country, region and chart number.</p><a>New in v4.0 →</a></article>
   <article class="module-card" data-open="knowledge"><div>🤖</div><h3>Atlas Knowledge Search</h3><p>Search uploaded filenames, folders, tags and extracted text notes.</p><a>Open →</a></article><article class="module-card" data-open="sinbad"><div>🧞‍♂️</div><h3>Captain Sinbad</h3><p>Atlas AI marine intelligence guide and conversation workspace.</p><a>New in v4.1 →</a></article>
-  <article class="module-card" data-open="cloud-control"><div>☁️</div><h3>Atlas Cloud Control Center</h3><p>Connect Supabase, manage workspaces, users, storage and AI status.</p><a>New in v6.0 →</a></article>
-  <article class="module-card" data-open="cloud-documents"><div>🗄️</div><h3>Cloud Document Center</h3><p>Upload and browse private documents, publications and charts.</p><a>New in v6.0 →</a></article>
+  <article class="module-card" data-open="cloud-control"><div>☁️</div><h3>Atlas Cloud Control Center</h3><p>Connect Supabase, manage workspaces, users, storage and AI status.</p><a>Open cloud module →</a></article>
+  <article class="module-card" data-open="cloud-documents"><div>🗄️</div><h3>Cloud Document Center</h3><p>Upload and browse private documents, publications and charts.</p><a>Open cloud module →</a></article>
   <article class="module-card" data-open="fleet"><div>🚢</div><h3>Fleet Manager</h3><p>Vessel particulars and machinery.</p><a>Open →</a></article>
   <article class="module-card" data-open="pilot"><div>📍</div><h3>Pilot Library</h3><p>Marinas, anchorages and captain notes.</p><a>Open →</a></article>
   <article class="module-card" data-open="routes"><div>🧭</div><h3>Route Library</h3><p>Approved passages and route workspaces.</p><a>Open →</a></article>
@@ -202,8 +202,11 @@
 
     <article class="control-panel">
       <h3>Users & Roles</h3>
-      <button class="btn" id="refreshMembers">Refresh members</button>
+      <div class="action-row">
+        <button class="btn" id="refreshMembers">Refresh members</button>
+      </div>
       <div id="memberList" class="cloud-list">No members loaded.</div>
+      <div class="notice">Owner role changes are enforced by Supabase RLS.</div>
     </article>
 
     <article class="control-panel">
@@ -246,6 +249,7 @@
     <input id="cloudFileInput" type="file" multiple>
     <button class="btn primary" id="uploadCloudFiles">Upload</button>
     <button class="btn" id="refreshCloudFiles">Refresh</button>
+    <button class="btn" id="openLocalDocuments">Open Local Document Center</button>
   </div>
 
   <div class="notice">Files are uploaded under <code>workspace-uuid/folder/file</code>. The Supabase Free plan may limit each file to 50 MB.</div>
@@ -304,7 +308,7 @@
   <span>Ask Sinbad</span>
 </button>
 
-<footer>Atlas Marine OS v6.0 • Atlas Cloud Control Center • Hybrid Cloud PWA</footer>
+<footer>Atlas Marine OS v6.1 • Atlas Cloud Control Center • Hybrid Cloud PWA</footer>
 
 <script src="./pilot-data.js"></script>
 <script src="./route-data.js"></script>

@@ -67,3 +67,8 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
 .cloud-file-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
 @media(max-width:900px){.cloud-status-grid{grid-template-columns:repeat(2,1fr)}.cloud-two-column,.cloud-admin-grid{grid-template-columns:1fr}.cloud-file-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.cloud-status-grid,.cloud-file-grid{grid-template-columns:1fr}.cloud-toolbar{display:grid}}
+
+.member-role-row{display:flex;gap:8px;align-items:center;margin:8px 0}
+.member-role-row select{flex:1;background:#071b2a;color:#fff;border:1px solid var(--line);border-radius:10px;padding:8px}
+.attention-pulse{animation:atlasPulse 1.4s ease-in-out 3}
+@keyframes atlasPulse{0%,100%{box-shadow:0 0 0 rgba(226,191,114,0)}50%{box-shadow:0 0 0 5px rgba(226,191,114,.28)}}

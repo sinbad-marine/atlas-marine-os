@@ -272,7 +272,18 @@ async function loadWorkspaces(){
 async function loadMembers(){
   if(!selectedWorkspaceId || !cloudClient)return;
   const {data,error}=await cloudClient.from('workspace_members').select('user_id,role,is_active,joined_at').eq('workspace_id',selectedWorkspaceId).order('joined_at');
-  $('memberList').innerHTML=error ? cloudEsc(error.message) : (data?.length ? data.map(m=>`<div class="cloud-list-item"><strong>${cloudEsc(m.role)}</strong><br><small>${cloudEsc(m.user_id)} • ${m.is_active?'Active':'Inactive'}</small></div>`).join('') : 'No members found.');
+  $('memberList').innerHTML=error ? cloudEsc(error.message) : (data?.length ? data.map(m=>`
+    <div class="cloud-list-item">
+      <strong>${cloudEsc(m.user_id)}</strong>
+      <div class="member-role-row">
+        <select class="member-role-select" data-user="${cloudEsc(m.user_id)}">
+          ${['owner','administrator','captain','chief_officer','chief_engineer','dpa','crew','viewer','auditor']
+            .map(r=>`<option value="${r}" ${m.role===r?'selected':''}>${r}</option>`).join('')}
+        </select>
+        <button class="btn save-member-role" data-user="${cloudEsc(m.user_id)}">Save role</button>
+      </div>
+      <small>${m.is_active?'Active':'Inactive'} • Joined ${cloudEsc(m.joined_at||'')}</small>
+    </div>`).join('') : 'No members found.');
 }
 async function loadAiJobs(){
   if(!selectedWorkspaceId || !cloudClient)return;
@@ -320,7 +331,11 @@ async function loadCloudFiles(){
       <small>${cloudEsc(d.bucket_id)} • ${Math.round((d.file_size_bytes||0)/1024)} KB<br>${cloudEsc(d.status)} • ${cloudEsc(d.classification)}</small>
       <div class="cloud-file-actions">
         <button class="btn cloud-open-file" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}">Open</button>
+        <button class="btn cloud-download-file" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}" data-name="${cloudEsc(d.original_filename)}">Download</button>
+        <button class="btn cloud-share-file" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}" data-name="${cloudEsc(d.original_filename)}">Share</button>
+        <button class="btn cloud-rename-file" data-id="${cloudEsc(d.id)}" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}" data-name="${cloudEsc(d.original_filename)}">Rename</button>
         <button class="btn cloud-index-file" data-id="${cloudEsc(d.id)}">Index AI</button>
+        <button class="btn danger cloud-delete-file" data-id="${cloudEsc(d.id)}" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}">Delete</button>
       </div>
     </article>`).join('') : 'No cloud files in this category.';
 }
@@ -332,6 +347,63 @@ async function indexCloudDocument(documentId){
   if(!cloudClient)return;
   const {data,error}=await cloudClient.functions.invoke('index-document',{body:{documentId}});
   alert(error ? error.message : `Index request completed: ${JSON.stringify(data)}`); await loadAiJobs();
+}
+
+
+async function saveMemberRole(userId){
+  if(!cloudClient || !selectedWorkspaceId)return;
+  const select=document.querySelector(`.member-role-select[data-user="${CSS.escape(userId)}"]`);
+  if(!select)return;
+  const {error}=await cloudClient.from('workspace_members')
+    .update({role:select.value})
+    .eq('workspace_id',selectedWorkspaceId)
+    .eq('user_id',userId);
+  alert(error ? error.message : 'Role updated.');
+  if(!error)await loadMembers();
+}
+
+async function downloadCloudFile(bucket,path,filename='atlas-file'){
+  const {data,error}=await cloudClient.storage.from(bucket).download(path);
+  if(error){alert(error.message);return;}
+  const url=URL.createObjectURL(data);
+  const a=document.createElement('a');
+  a.href=url;a.download=filename;a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+async function shareCloudFile(bucket,path,filename='atlas-file'){
+  const {data,error}=await cloudClient.storage.from(bucket).createSignedUrl(path,600);
+  if(error){alert(error.message);return;}
+  if(navigator.share){
+    await navigator.share({title:filename,url:data.signedUrl});
+  }else{
+    await navigator.clipboard.writeText(data.signedUrl);
+    alert('10-minute secure link copied.');
+  }
+}
+
+async function renameCloudFile(documentId,bucket,oldPath,oldName){
+  const newName=prompt('New file name:',oldName);
+  if(!newName || newName===oldName)return;
+  const safeName=newName.replace(/[^a-zA-Z0-9._-]+/g,'-');
+  const parts=oldPath.split('/');parts[parts.length-1]=`${Date.now()}-${safeName}`;
+  const newPath=parts.join('/');
+  const {error:moveError}=await cloudClient.storage.from(bucket).move(oldPath,newPath);
+  if(moveError){alert(moveError.message);return;}
+  const {error:metaError}=await cloudClient.from('documents')
+    .update({original_filename:newName,title:newName,object_path:newPath})
+    .eq('id',documentId);
+  alert(metaError ? `File moved but metadata failed: ${metaError.message}` : 'File renamed.');
+  await loadCloudFiles();
+}
+
+async function deleteCloudFile(documentId,bucket,path){
+  if(!confirm('Delete this cloud file?'))return;
+  const {error:fileError}=await cloudClient.storage.from(bucket).remove([path]);
+  if(fileError){alert(fileError.message);return;}
+  const {error:metaError}=await cloudClient.from('documents').delete().eq('id',documentId);
+  alert(metaError ? `File deleted but metadata failed: ${metaError.message}` : 'File deleted.');
+  await loadCloudFiles();
 }
 
 $('saveCloudConfig').addEventListener('click',saveCloudConfig);
@@ -347,7 +419,33 @@ $('runSecurityCheck').addEventListener('click',runSecurityCheck);
 $('uploadCloudFiles').addEventListener('click',uploadCloudFiles);
 $('refreshCloudFiles').addEventListener('click',loadCloudFiles);
 $('cloudBucketSelect').addEventListener('change',loadCloudFiles);
-$('cloudFileList').addEventListener('click',e=>{const o=e.target.closest('.cloud-open-file'),i=e.target.closest('.cloud-index-file');if(o)openCloudFile(o.dataset.bucket,o.dataset.path);if(i)indexCloudDocument(i.dataset.id);});
+$('cloudFileList').addEventListener('click',e=>{
+  const o=e.target.closest('.cloud-open-file');
+  const d=e.target.closest('.cloud-download-file');
+  const s=e.target.closest('.cloud-share-file');
+  const r=e.target.closest('.cloud-rename-file');
+  const i=e.target.closest('.cloud-index-file');
+  const x=e.target.closest('.cloud-delete-file');
+  if(o)openCloudFile(o.dataset.bucket,o.dataset.path);
+  if(d)downloadCloudFile(d.dataset.bucket,d.dataset.path,d.dataset.name);
+  if(s)shareCloudFile(s.dataset.bucket,s.dataset.path,s.dataset.name);
+  if(r)renameCloudFile(r.dataset.id,r.dataset.bucket,r.dataset.path,r.dataset.name);
+  if(i)indexCloudDocument(i.dataset.id);
+  if(x)deleteCloudFile(x.dataset.id,x.dataset.bucket,x.dataset.path);
+});
+$('memberList').addEventListener('click',e=>{
+  const b=e.target.closest('.save-member-role');
+  if(b)saveMemberRole(b.dataset.user);
+});
+$('openLocalDocuments').addEventListener('click',()=>openWorkspace('documents'));
 
 initCloudClient();
 restoreCloudSession();
+
+setTimeout(()=>{
+  if(!localStorage.getItem('atlas_v61_seen')){
+    localStorage.setItem('atlas_v61_seen','1');
+    const card=document.querySelector('[data-open="cloud-control"]');
+    if(card) card.classList.add('attention-pulse');
+  }
+},800);
