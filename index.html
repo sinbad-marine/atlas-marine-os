@@ -1,168 +1,127 @@
 <!doctype html>
 <html lang="tr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#071827">
-  <title>Atlas Marine OS</title>
-  <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="apple-touch-icon" href="./icon-192.png">
-  <link rel="stylesheet" href="./styles.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#071827">
+<title>Atlas Marine OS</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="stylesheet" href="./styles.css">
 </head>
 <body>
 <header class="topbar">
-  <div class="brand">
-    <div class="logo">⚓</div>
-    <div>
-      <h1>ATLAS MARINE OS</h1>
-      <small>Özgür Maceraperest Dostlar</small>
-    </div>
-  </div>
-  <div class="version">● v3.0</div>
+  <div class="brand"><div class="logo">⚓</div><div><h1>ATLAS MARINE OS</h1><small>Özgür Maceraperest Dostlar</small></div></div>
+  <div class="version">● v4.0</div>
 </header>
 
 <main>
-  <section class="hero">
-    <div>
-      <h2>Captain Dashboard</h2>
-      <p>Fleet, routes, pilot intelligence, crew, documents and operational alerts.</p>
-    </div>
-    <div class="hero-actions">
-      <button class="btn primary" data-open="fleet">Add Vessel</button>
-      <button class="btn" data-open="passage">New Passage</button>
-      <button class="btn" data-open="alerts">View Alerts</button>
-    </div>
-  </section>
+<section class="hero">
+  <div><h2>Marine Knowledge Center</h2><p>Document Center, Nautical Publications, Nautical Charts and local knowledge search.</p></div>
+  <div class="hero-actions">
+    <button class="btn primary" data-open="documents">Upload Files</button>
+    <button class="btn" data-open="publications">Nautical Publications</button>
+    <button class="btn" data-open="charts">Nautical Charts</button>
+  </div>
+</section>
 
-  <section class="summary-grid">
-    <article class="summary-card"><span>Fleet</span><b id="sumFleet">0</b></article>
-    <article class="summary-card"><span>Crew</span><b id="sumCrew">0</b></article>
-    <article class="summary-card"><span>Documents</span><b id="sumDocs">0</b></article>
-    <article class="summary-card"><span>Active Alerts</span><b id="sumAlerts">0</b></article>
-  </section>
+<section class="summary-grid">
+  <article class="summary-card"><span>Stored Files</span><b id="sumFiles">0</b></article>
+  <article class="summary-card"><span>Publications</span><b id="sumPubs">0</b></article>
+  <article class="summary-card"><span>Charts</span><b id="sumCharts">0</b></article>
+  <article class="summary-card"><span>Storage Used</span><b id="sumStorage">0 MB</b></article>
+</section>
 
-  <section class="module-grid">
-    <article class="module-card" data-open="fleet"><div>🚢</div><h3>Fleet Manager</h3><p>Vessel particulars, machinery and capacities.</p><a>New in v3.0 →</a></article>
-    <article class="module-card" data-open="alerts"><div>🔔</div><h3>Notification Center</h3><p>Document and crew expiry warnings.</p><a>New in v3.0 →</a></article>
-    <article class="module-card" data-open="pilot"><div>📚</div><h3>Pilot Library</h3><p>Marinas, anchorages and captain notes.</p><a>Open →</a></article>
-    <article class="module-card" data-open="routes"><div>🧭</div><h3>Route Library</h3><p>Approved passages and route workspaces.</p><a>Open →</a></article>
-    <article class="module-card" data-open="passage"><div>🗺️</div><h3>Passage Planner</h3><p>Distance, ETA, fuel and reserve.</p><a>Open →</a></article>
-    <article class="module-card" data-open="log"><div>📘</div><h3>Captain's Log</h3><p>Daily operational records.</p><a>Open →</a></article>
-    <article class="module-card" data-open="crew"><div>👥</div><h3>Crew Manager</h3><p>Crew records and certificate expiry.</p><a>Open →</a></article>
-    <article class="module-card" data-open="docs"><div>📁</div><h3>Documents Vault</h3><p>Certificates, manuals and brochures.</p><a>Open →</a></article>
-  </section>
+<section class="module-grid">
+  <article class="module-card" data-open="documents"><div>🗂️</div><h3>Document Center</h3><p>Folders, upload, preview, print, share, rename and download.</p><a>New in v4.0 →</a></article>
+  <article class="module-card" data-open="publications"><div>📚</div><h3>Nautical Publications</h3><p>SOLAS, MARPOL, sailing directions, lights and tide tables.</p><a>New in v4.0 →</a></article>
+  <article class="module-card" data-open="charts"><div>🗺️</div><h3>Nautical Charts</h3><p>Separate chart archive by country, region and chart number.</p><a>New in v4.0 →</a></article>
+  <article class="module-card" data-open="knowledge"><div>🤖</div><h3>Atlas Knowledge Search</h3><p>Search uploaded filenames, folders, tags and extracted text notes.</p><a>New in v4.0 →</a></article>
+  <article class="module-card" data-open="fleet"><div>🚢</div><h3>Fleet Manager</h3><p>Vessel particulars and machinery.</p><a>Open →</a></article>
+  <article class="module-card" data-open="pilot"><div>📍</div><h3>Pilot Library</h3><p>Marinas, anchorages and captain notes.</p><a>Open →</a></article>
+  <article class="module-card" data-open="routes"><div>🧭</div><h3>Route Library</h3><p>Approved passages and route workspaces.</p><a>Open →</a></article>
+  <article class="module-card" data-open="crew"><div>👥</div><h3>Crew Manager</h3><p>Crew records and expiry tracking.</p><a>Open →</a></article>
+</section>
 
-  <section id="fleet" class="workspace">
-    <div class="workspace-head"><div><h2>Fleet Manager</h2><p>Vessel particulars are stored locally on this device.</p></div><button class="btn close">Close</button></div>
-    <div class="form-grid">
-      <label>Vessel name<input id="vName"></label>
-      <label>Type<input id="vType" placeholder="Motor yacht, sailing yacht..."></label>
-      <label>Flag<input id="vFlag"></label>
-      <label>LOA (m)<input id="vLoa" type="number" step="0.1"></label>
-      <label>Beam (m)<input id="vBeam" type="number" step="0.1"></label>
-      <label>Draft (m)<input id="vDraft" type="number" step="0.1"></label>
-      <label>Cruising speed (kn)<input id="vCruise" type="number" step="0.1"></label>
-      <label>Max speed (kn)<input id="vMax" type="number" step="0.1"></label>
-      <label>Fuel capacity (L)<input id="vFuel" type="number"></label>
-      <label>Fresh water (L)<input id="vWater" type="number"></label>
-      <label>Call sign<input id="vCall"></label>
-      <label>MMSI<input id="vMmsi"></label>
-      <label class="wide">Machinery / Notes<textarea id="vNotes"></textarea></label>
-    </div>
-    <div class="actions"><button class="btn primary" id="saveVessel">Save Vessel</button><button class="btn" id="exportFleet">Export Fleet</button></div>
-    <div id="fleetList"></div>
-  </section>
+<section id="documents" class="workspace">
+  <div class="workspace-head"><div><h2>Document Center</h2><p>Files are stored locally in this browser using IndexedDB.</p></div><button class="btn close">Close</button></div>
+  <div class="toolbar">
+    <select id="docFolder">
+      <option>Company Documents</option><option>ISM</option><option>ISPS</option><option>SMS</option>
+      <option>Certificates</option><option>Manuals</option><option>Technical Drawings</option>
+      <option>Crew Documents</option><option>Brochures</option><option>Passage Library</option>
+      <option>Nautical Publications</option><option>Nautical Charts</option><option>Weather Files</option>
+      <option>Photos</option><option>Videos</option><option>Archive</option>
+    </select>
+    <input id="docTags" placeholder="Tags: SOLAS, engine, Greece">
+    <label class="upload-btn">Choose Files<input id="docFiles" type="file" multiple hidden></label>
+    <button class="btn primary" id="uploadDocs">Upload</button>
+  </div>
+  <div class="filter-grid">
+    <input id="docSearch" placeholder="Search files, folders or tags">
+    <select id="docFolderFilter"><option value="">All folders</option></select>
+    <select id="docTypeFilter"><option value="">All file types</option></select>
+  </div>
+  <div id="uploadStatus" class="muted"></div>
+  <div id="documentList"></div>
+</section>
 
-  <section id="alerts" class="workspace">
-    <div class="workspace-head"><div><h2>Notification Center</h2><p>Automatic local alerts from Crew Manager and Documents Vault.</p></div><button class="btn close">Close</button></div>
-    <div class="alert-filters">
-      <button class="btn" data-alert-filter="all">All</button>
-      <button class="btn" data-alert-filter="expired">Expired</button>
-      <button class="btn" data-alert-filter="30">30 Days</button>
-      <button class="btn" data-alert-filter="90">90 Days</button>
-    </div>
-    <div id="alertList"></div>
-  </section>
+<section id="publications" class="workspace">
+  <div class="workspace-head"><div><h2>Nautical Publications</h2><p>Dedicated view for maritime publications.</p></div><button class="btn close">Close</button></div>
+  <div class="actions"><button class="btn primary" onclick="openFolderUpload('Nautical Publications')">Upload Publication</button></div>
+  <div id="publicationList"></div>
+</section>
 
-  <section id="pilot" class="workspace">
-    <div class="workspace-head"><div><h2>Pilot Library</h2><p>Always verify official charts, notices and local authorities.</p></div><button class="btn close">Close</button></div>
-    <div class="filter-grid">
-      <input id="pilotSearch" placeholder="Search location or note">
-      <select id="countryFilter"><option value="">All countries</option></select>
-      <select id="typeFilter"><option value="">All types</option></select>
-    </div>
-    <div id="pilotGrid" class="content-grid"></div>
-  </section>
+<section id="charts" class="workspace">
+  <div class="workspace-head"><div><h2>Nautical Charts</h2><p>Dedicated chart archive. Add chart number, region and edition in tags.</p></div><button class="btn close">Close</button></div>
+  <div class="actions"><button class="btn primary" onclick="openFolderUpload('Nautical Charts')">Upload Chart</button></div>
+  <div id="chartList"></div>
+</section>
 
-  <section id="routes" class="workspace">
-    <div class="workspace-head"><div><h2>Route Library</h2><p>Approved sequences and private route notes.</p></div><button class="btn close">Close</button></div>
-    <div class="filter-grid">
-      <input id="routeSearch" placeholder="Search route or stop">
-      <select id="routeType"><option value="">All route types</option></select>
-      <select id="routeStatus"><option value="">All statuses</option></select>
-    </div>
-    <div id="routeGrid" class="content-grid"></div>
-  </section>
+<section id="knowledge" class="workspace">
+  <div class="workspace-head"><div><h2>Atlas Knowledge Search</h2><p>Local search across stored metadata and text-note content.</p></div><button class="btn close">Close</button></div>
+  <div class="filter-grid single"><input id="knowledgeQuery" placeholder="Search: SOLAS Chapter V, Gouvia, engine manual..."></div>
+  <button class="btn primary" id="knowledgeSearchBtn">Search Knowledge</button>
+  <div class="notice">This v4.0 search reads filenames, folders, tags and text-based uploads. Full AI reading of scanned PDFs and charts requires the later cloud AI backend.</div>
+  <div id="knowledgeResults"></div>
+</section>
 
-  <section id="passage" class="workspace">
-    <div class="workspace-head"><div><h2>Passage Planner</h2><p>Distance, time, ETA and fuel calculation.</p></div><button class="btn close">Close</button></div>
-    <div class="form-grid">
-      <label>Departure<input id="dep"></label><label>Arrival<input id="arr"></label>
-      <label>Distance (NM)<input id="distance" type="number" step="0.1" value="50"></label>
-      <label>Speed (kn)<input id="speed" type="number" step="0.1" value="10"></label>
-      <label>Departure date & time<input id="departTime" type="datetime-local"></label>
-      <label>Fuel consumption (L/h)<input id="fuelRate" type="number" step="0.1" value="0"></label>
-      <label>Reserve (%)<input id="reserve" type="number" value="15"></label>
-      <label>Operational note<input id="passageNote"></label>
-    </div>
-    <div class="actions"><button class="btn primary" id="calcPassage">Calculate</button><button class="btn" id="savePassage">Save Passage</button></div>
-    <div class="metrics">
-      <article><b id="rTime">—</b><span>Passage time</span></article>
-      <article><b id="rEta">—</b><span>ETA</span></article>
-      <article><b id="rFuel">—</b><span>Fuel + reserve</span></article>
-      <article><b id="rAvg">—</b><span>Average speed</span></article>
-    </div>
-    <div id="passages"></div>
-  </section>
+<section id="fleet" class="workspace">
+  <div class="workspace-head"><div><h2>Fleet Manager</h2><p>Vessel particulars stored locally.</p></div><button class="btn close">Close</button></div>
+  <div class="form-grid">
+    <label>Vessel name<input id="vName"></label><label>Type<input id="vType"></label><label>Flag<input id="vFlag"></label>
+    <label>LOA (m)<input id="vLoa" type="number" step="0.1"></label><label>Beam (m)<input id="vBeam" type="number" step="0.1"></label><label>Draft (m)<input id="vDraft" type="number" step="0.1"></label>
+    <label>Cruising speed (kn)<input id="vCruise" type="number" step="0.1"></label><label>Fuel capacity (L)<input id="vFuel" type="number"></label><label>Fresh water (L)<input id="vWater" type="number"></label>
+    <label class="wide">Machinery / Notes<textarea id="vNotes"></textarea></label>
+  </div>
+  <button class="btn primary" id="saveVessel">Save Vessel</button><div id="fleetList"></div>
+</section>
 
-  <section id="log" class="workspace">
-    <div class="workspace-head"><div><h2>Captain's Log</h2><p>Daily records stored locally.</p></div><button class="btn close">Close</button></div>
-    <div class="form-grid">
-      <label>Date<input id="logDate" type="date"></label>
-      <label>Position / Port<input id="logPosition"></label>
-      <label>Weather<input id="logWeather"></label>
-      <label class="wide">Captain's entry<textarea id="logText"></textarea></label>
-    </div>
-    <button class="btn primary" id="saveLog">Save Log Entry</button>
-    <div id="logs"></div>
-  </section>
+<section id="pilot" class="workspace">
+  <div class="workspace-head"><div><h2>Pilot Library</h2><p>Always verify official sources.</p></div><button class="btn close">Close</button></div>
+  <div class="filter-grid"><input id="pilotSearch" placeholder="Search"><select id="countryFilter"><option value="">All countries</option></select><select id="typeFilter"><option value="">All types</option></select></div>
+  <div id="pilotGrid" class="content-grid"></div>
+</section>
 
-  <section id="crew" class="workspace">
-    <div class="workspace-head"><div><h2>Crew Manager</h2><p>Personnel and expiry tracking.</p></div><button class="btn close">Close</button></div>
-    <div class="form-grid">
-      <label>Full name<input id="crewName"></label><label>Rank / Position<input id="crewRank"></label>
-      <label>Nationality<input id="crewNationality"></label><label>Passport expiry<input id="crewPassport" type="date"></label>
-      <label>ENG1 / Medical expiry<input id="crewMedical" type="date"></label><label>STCW expiry<input id="crewStcw" type="date"></label>
-      <label>Visa expiry<input id="crewVisa" type="date"></label><label>Contract end<input id="crewContract" type="date"></label>
-      <label>Phone / Email<input id="crewContact"></label><label class="wide">Notes<textarea id="crewNotes"></textarea></label>
-    </div>
-    <div class="actions"><button class="btn primary" id="saveCrew">Save Crew Member</button><button class="btn" id="exportCrew">Export Crew</button></div>
-    <div id="crewList"></div>
-  </section>
+<section id="routes" class="workspace">
+  <div class="workspace-head"><div><h2>Route Library</h2><p>Approved route sequences.</p></div><button class="btn close">Close</button></div>
+  <div class="filter-grid"><input id="routeSearch" placeholder="Search"><select id="routeType"><option value="">All route types</option></select><select id="routeStatus"><option value="">All statuses</option></select></div>
+  <div id="routeGrid" class="content-grid"></div>
+</section>
 
-  <section id="docs" class="workspace">
-    <div class="workspace-head"><div><h2>Documents Vault</h2><p>Document register and expiry tracking.</p></div><button class="btn close">Close</button></div>
-    <div class="form-grid">
-      <label>Document name<input id="docName"></label>
-      <label>Category<select id="docCat"><option>Certificate</option><option>Manual</option><option>Brochure</option><option>Route</option><option>Other</option></select></label>
-      <label>Expiry<input id="docExp" type="date"></label>
-    </div>
-    <button class="btn primary" id="saveDoc">Save Document</button>
-    <div id="docList"></div>
-  </section>
+<section id="crew" class="workspace">
+  <div class="workspace-head"><div><h2>Crew Manager</h2><p>Personnel and expiry tracking.</p></div><button class="btn close">Close</button></div>
+  <div class="form-grid">
+    <label>Full name<input id="crewName"></label><label>Rank<input id="crewRank"></label><label>Nationality<input id="crewNationality"></label>
+    <label>Passport expiry<input id="crewPassport" type="date"></label><label>ENG1 / Medical<input id="crewMedical" type="date"></label><label>STCW<input id="crewStcw" type="date"></label>
+    <label>Visa expiry<input id="crewVisa" type="date"></label><label>Contract end<input id="crewContract" type="date"></label><label>Phone / Email<input id="crewContact"></label>
+    <label class="wide">Notes<textarea id="crewNotes"></textarea></label>
+  </div>
+  <button class="btn primary" id="saveCrew">Save Crew Member</button><div id="crewList"></div>
+</section>
 </main>
 
-<footer>Atlas Marine OS v3.0 • Modular Core • Offline-ready PWA</footer>
+<footer>Atlas Marine OS v4.0 • Marine Knowledge Center • Offline-ready PWA</footer>
 
 <script src="./pilot-data.js"></script>
 <script src="./route-data.js"></script>
