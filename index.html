@@ -23,14 +23,14 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
 </style>
 </head>
 <body>
-<header><div class="brand"><div class="logo">⚓</div><div><h1>ATLAS MARINE OS</h1><small>Özgür Maceraperest Dostlar</small></div></div><div style="color:var(--green)">● v2.0</div></header>
+<header><div class="brand"><div class="logo">⚓</div><div><h1>ATLAS MARINE OS</h1><small>Özgür Maceraperest Dostlar</small></div></div><div style="color:var(--green)">● v2.1</div></header>
 <main>
-<div class="hero"><h2>Bridge Dashboard</h2><p class="muted">Passage planning, Captain’s Log and the new Pilot Library.</p><div class="actions"><button class="btn primary" onclick="openModule('pilot')">Open Pilot Library</button><button class="btn" onclick="openModule('passage')">New Passage</button></div></div>
+<div class="hero"><h2>Bridge Dashboard</h2><p class="muted">Passage planning, Pilot Library, Route Library and Captain’s Log.</p><div class="actions"><button class="btn primary" onclick="openModule('pilot')">Open Pilot Library</button><button class="btn" onclick="openModule('passage')">New Passage</button></div></div>
 <div class="grid">
 <div class="card" onclick="openModule('pilot')"><div class="ico">📚</div><h3>Pilot Library</h3><p>Search countries, regions, marinas and anchorages. Add your own captain notes.</p><a>New in v2.0 →</a></div>
 <div class="card" onclick="openModule('passage')"><div class="ico">🗺️</div><h3>Passage Planner</h3><p>Distance, speed, ETA, fuel and reserve.</p><a>Open →</a></div>
 <div class="card" onclick="openModule('log')"><div class="ico">📘</div><h3>Captain's Log</h3><p>Store operational notes on this device.</p><a>Open →</a></div>
-<div class="card"><div class="ico">🧭</div><h3>Route Library</h3><p>TimeZero route archive will follow in the next development stage.</p><a>Planned →</a></div>
+<div class="card" onclick="openModule('routes')"><div class="ico">🧭</div><h3>Route Library</h3><p>Approved passages, charter routes and operational route notes.</p><a>New in v2.1 →</a></div>
 <div class="card"><div class="ico">⚙️</div><h3>Yacht Operations</h3><p>ISM, ISPS, checklists and defects.</p><a>Planned →</a></div>
 <div class="card"><div class="ico">🌦️</div><h3>Weather</h3><p>Marine weather integration point.</p><a>Planned →</a></div>
 <div class="card"><div class="ico">📁</div><h3>Documents</h3><p>Certificates, manuals and brochures.</p><a>Planned →</a></div>
@@ -45,6 +45,18 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
 <div class="field"><label>Type</label><select id="typeFilter" onchange="renderPilot()"><option value="">All types</option></select></div>
 </div>
 <div id="pilotCount" class="muted"></div><div id="pilotGrid" class="pilot-grid"></div>
+</section>
+
+
+<section id="routes" class="module">
+<div class="module-head"><div><h2>Route Library</h2><div class="muted">Approved route sequences and operational notes.</div></div><button class="btn" onclick="closeModules()">Close</button></div>
+<div class="filters">
+<div class="field"><label>Search route or stop</label><input id="routeSearch" placeholder="Dubrovnik, Gyali, tennis..." oninput="renderRoutes()"></div>
+<div class="field"><label>Route type</label><select id="routeType" onchange="renderRoutes()"><option value="">All route types</option></select></div>
+<div class="field"><label>Status</label><select id="routeStatus" onchange="renderRoutes()"><option value="">All statuses</option></select></div>
+</div>
+<div id="routeCount" class="muted"></div>
+<div id="routeGrid" class="pilot-grid"></div>
 </section>
 
 <section id="passage" class="module">
@@ -69,14 +81,50 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
 <button class="btn primary" onclick="saveLog()">Save Log Entry</button><div id="logs"></div>
 </section>
 </main>
-<footer>Atlas Marine OS v2.0 • Pilot Library • Offline-ready PWA</footer>
+<footer>Atlas Marine OS v2.1 • Pilot Library + Route Library • Offline-ready PWA</footer>
 
 <script src="./pilot-data.js"></script>
+<script src="./route-data.js"></script>
 <script>
 let currentCalc=null; const $=id=>document.getElementById(id);
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function openModule(id){document.querySelectorAll('.module').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');$(id).scrollIntoView({behavior:'smooth'});renderAll()}
 function closeModules(){document.querySelectorAll('.module').forEach(x=>x.classList.remove('active'));scrollTo({top:0,behavior:'smooth'})}
+
+function setupRouteFilters(){
+ [...new Set(ROUTE_DATA.map(x=>x.type))].sort().forEach(x=>$('routeType').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`));
+ [...new Set(ROUTE_DATA.map(x=>x.status))].sort().forEach(x=>$('routeStatus').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`));
+}
+function renderRoutes(){
+ const q=($('routeSearch')?.value||'').toLowerCase(), t=$('routeType')?.value||'', s=$('routeStatus')?.value||'';
+ const rows=ROUTE_DATA.filter(x=>(!t||x.type===t)&&(!s||x.status===s)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));
+ if(!$('routeGrid')) return;
+ $('routeCount').textContent=`${rows.length} route record(s)`;
+ $('routeGrid').innerHTML=rows.map((x,i)=>{
+   const key='route:'+x.title;
+   const own=localStorage.getItem(key)||'';
+   return `<article class="pilot-card">
+   <h3>${esc(x.title)}</h3>
+   <div class="muted">${esc(x.type)} • ${esc(x.status)}</div>
+   <span class="badge">${esc(x.vessel)}</span>
+   <p><b>Route:</b> ${x.stops.map(esc).join(' → ')}</p>
+   <p class="warning"><b>Operational note:</b> ${esc(x.note)}</p>
+   <button class="btn" onclick="toggleDetail('r${i}')">Captain workspace</button>
+   <div id="r${i}" class="detail">
+      <div class="note-box"><label class="muted">My route note</label>
+      <textarea id="rn${i}">${esc(own)}</textarea>
+      <div class="actions"><button class="btn primary" onclick="saveRouteNote('${encodeURIComponent(key)}','rn${i}')">Save note</button>
+      <button class="btn" onclick="copyRoute(${i})">Copy route</button></div></div>
+   </div></article>`;
+ }).join('')||'<div class="empty">No matching routes.</div>';
+}
+function saveRouteNote(key,id){localStorage.setItem(decodeURIComponent(key),$(id).value);alert('Route note saved on this device.')}
+function copyRoute(i){
+ const x=ROUTE_DATA[i];
+ const text=`${x.title}\n${x.stops.join(' → ')}\n${x.note}`;
+ navigator.clipboard?.writeText(text).then(()=>alert('Route copied.')).catch(()=>alert(text));
+}
+
 function setupFilters(){[...new Set(PILOT_DATA.map(x=>x.country))].sort().forEach(x=>$('countryFilter').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`));[...new Set(PILOT_DATA.map(x=>x.type))].sort().forEach(x=>$('typeFilter').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`))}
 function renderPilot(){const q=$('pilotSearch').value.toLowerCase(),c=$('countryFilter').value,t=$('typeFilter').value;const rows=PILOT_DATA.filter(x=>(!c||x.country===c)&&(!t||x.type===t)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));$('pilotCount').textContent=`${rows.length} pilot record(s)`;$('pilotGrid').innerHTML=rows.map((x,i)=>{const key=`${x.country}|${x.name}`;const own=localStorage.getItem('pilotnote:'+key)||'';return `<article class="pilot-card"><h3>${esc(x.name)}</h3><div class="muted">${esc(x.country)} • ${esc(x.region)}</div><span class="badge">${esc(x.type)}</span><span class="badge">VHF: ${esc(x.vhf)}</span><p>${esc(x.approach)}</p><button class="btn" onclick="toggleDetail('d${i}')">Details</button><div id="d${i}" class="detail"><p><b>Depth:</b> ${esc(x.depth)}</p><p><b>Max draft:</b> ${esc(x.maxDraft)}</p><p><b>Services:</b> ${esc(x.services.join(', '))}</p><p class="warning"><b>Captain note:</b> ${esc(x.captainNote)}</p><div class="note-box"><label class="muted">My private captain note</label><textarea id="n${i}">${esc(own)}</textarea><button class="btn primary" onclick="savePilotNote('${encodeURIComponent(key)}','n${i}')">Save note</button></div></div></article>`}).join('')||'<div class="empty">No matching pilot records.</div>'}
 function toggleDetail(id){$(id).classList.toggle('open')}
@@ -89,8 +137,8 @@ function saveLog(){const text=$('logText').value.trim();if(!text){alert('Enter a
 function renderLogs(){const a=JSON.parse(localStorage.getItem('atlas_logs')||'[]');$('logs').innerHTML=!a.length?'<div class="empty">No log entries.</div>':'<table><tr><th>Date</th><th>Position</th><th>Weather</th><th>Entry</th><th></th></tr>'+a.map((x,i)=>`<tr><td>${esc(x.date)}</td><td>${esc(x.position||'—')}</td><td>${esc(x.weather||'—')}</td><td>${esc(x.text)}</td><td><button class="btn danger" onclick="deleteLog(${i})">Delete</button></td></tr>`).join('')+'</table>'}
 function deleteLog(i){const a=JSON.parse(localStorage.getItem('atlas_logs')||'[]');a.splice(i,1);localStorage.setItem('atlas_logs',JSON.stringify(a));renderLogs()}
 function formatHours(h){const w=Math.floor(h),m=Math.round((h-w)*60);return `${w}h ${m}m`}
-function renderAll(){renderPilot();renderPassages();renderLogs()}
-document.addEventListener('DOMContentLoaded',()=>{setupFilters();$('logDate').value=new Date().toISOString().slice(0,10);renderAll()});
+function renderAll(){renderPilot();renderRoutes();renderPassages();renderLogs()}
+document.addEventListener('DOMContentLoaded',()=>{setupFilters();setupRouteFilters();$('logDate').value=new Date().toISOString().slice(0,10);renderAll()});
 if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));
 </script>
 </body></html>
