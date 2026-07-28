@@ -6,7 +6,7 @@
   "display": "standalone",
   "background_color": "#061827",
   "theme_color": "#071827",
-  "description": "Atlas Marine OS professional captain workspace",
+  "description": "Professional captain workspace",
   "icons": [
     {
       "src": "./icon-192.png",
