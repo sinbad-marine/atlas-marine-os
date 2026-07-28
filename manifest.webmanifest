@@ -1,12 +1,12 @@
 {
-  "name": "Atlas Marine OS",
+  "name": "Atlas Marine OS v6.0 — Atlas Cloud Control Center",
   "short_name": "Atlas Marine",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#061827",
   "theme_color": "#071827",
-  "description": "Atlas Marine OS Marine Knowledge Center",
+  "description": "Atlas Cloud Control Center, marine operations and Captain Sinbad AI.",
   "icons": [
     {
       "src": "./icon-192.png",

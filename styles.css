@@ -50,3 +50,20 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
 .sinbad-float:hover{transform:translateY(-2px)}
 @media(max-width:800px){.sinbad-layout{grid-template-columns:1fr}.sinbad-profile{display:grid;grid-template-columns:110px 1fr;align-items:center;text-align:left}.sinbad-avatar.large{width:105px;height:105px}.sinbad-capabilities{grid-column:1/-1}.chat-bubble{max-width:92%}}
 @media(max-width:600px){.sinbad-profile{grid-template-columns:1fr;text-align:center}.chat-input-row{grid-template-columns:1fr}.sinbad-float span{display:none}.sinbad-float{padding:7px;right:14px;bottom:14px}}
+
+.cloud-status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.status-card,.control-panel{background:#091d2d;border:1px solid var(--line);border-radius:16px;padding:16px}
+.status-card span{display:block;color:var(--muted);font-size:13px}.status-card strong{display:block;margin-top:8px;color:var(--gold);font-size:18px}
+.cloud-two-column{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.cloud-admin-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.control-panel label{display:block;color:var(--muted);font-size:13px;margin:10px 0 5px}
+.control-panel input,.control-panel textarea,.control-panel select,.cloud-toolbar input,.cloud-toolbar select{width:100%;box-sizing:border-box;background:#071b2a;color:#fff;border:1px solid var(--line);border-radius:10px;padding:10px}
+.action-row,.cloud-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.cloud-list{display:grid;gap:8px;margin-top:12px}.cloud-list-item{padding:10px;border:1px solid var(--line);border-radius:10px;background:#071b2a}
+.security-checks{display:grid;gap:8px;color:var(--muted);margin:12px 0}
+.cloud-file-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.cloud-file-card{border:1px solid var(--line);background:#091d2d;border-radius:14px;padding:14px}
+.cloud-file-card h4{margin:0 0 8px;word-break:break-word}.cloud-file-card small{color:var(--muted)}
+.cloud-file-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+@media(max-width:900px){.cloud-status-grid{grid-template-columns:repeat(2,1fr)}.cloud-two-column,.cloud-admin-grid{grid-template-columns:1fr}.cloud-file-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.cloud-status-grid,.cloud-file-grid{grid-template-columns:1fr}.cloud-toolbar{display:grid}}

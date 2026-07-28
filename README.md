@@ -1,26 +1,26 @@
-# Atlas Marine OS v4.1 — Captain Sinbad
+# Atlas Marine OS v6.0 — Atlas Cloud Control Center
 
-Upload all files to the root of the GitHub repository and replace existing files.
+Upload all 10 files to the root of the GitHub repository and replace existing files.
 
-## New in v4.1
-- Captain Sinbad floating assistant bubble
-- Cartoon sailor avatar built as inline SVG
-- Full conversation workspace
-- Animated thinking bubble
-- Quick prompt buttons
-- Local conversation history
-- Local intelligence across:
-  - Document Center metadata and text
-  - Nautical Publications
-  - Nautical Charts
-  - Pilot Library
-  - Route Library
-  - Fleet Manager
-  - Crew expiry records
-- Atlas Cloud branding
-- Official slogan: Navigate Smarter. Command Better.
-- Knowledge motto: Every Voyage Adds Knowledge.
+## New in v6.0
+- Supabase Project URL + publishable-key connection
+- Secure sign-in and sign-out
+- Workspace selection
+- Users and roles viewer
+- Cloud Storage upload
+- Documents, Nautical Publications and Nautical Charts
+- Private signed-file opening
+- AI indexing requests through `index-document`
+- AI job monitor
+- Security configuration check
+- Existing offline Atlas Marine OS modules
+- Captain Sinbad local interface
 
-## Important
-This version uses local keyword intelligence only.
-Secure cloud AI, full PDF understanding and multi-device memory require the upcoming Supabase/OpenAI backend.
+## Security
+Enter only the Supabase Project URL and publishable key.
+Never enter a secret key, service-role key, database password or OpenAI key.
+
+## Current limitation
+Live AI indexing requires the `index-document` Edge Function.
+Live Captain Sinbad cloud chat requires the `captain-sinbad` Edge Function.
+Until then, local Captain Sinbad mode remains available.

@@ -184,3 +184,170 @@ renderAll = async function(){
   await originalRenderAll();
   renderSinbadMessages();
 };
+
+
+// ============================================================
+// ATLAS CLOUD CONTROL CENTER v6.0
+// ============================================================
+let cloudClient = null;
+let cloudSession = null;
+let selectedWorkspaceId = localStorage.getItem('atlas_selected_workspace') || '';
+
+function cloudEsc(value=''){
+  return String(value).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+}
+function getCloudConfig(){
+  return {
+    url: localStorage.getItem('atlas_supabase_url') || '',
+    key: localStorage.getItem('atlas_supabase_publishable_key') || ''
+  };
+}
+function initCloudClient(){
+  const {url,key}=getCloudConfig();
+  if(!url || !key || !window.supabase){
+    cloudClient=null; updateCloudStatus(); return null;
+  }
+  try{
+    cloudClient=window.supabase.createClient(url,key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+    updateCloudStatus(); return cloudClient;
+  }catch(error){
+    cloudClient=null; updateCloudStatus(error.message); return null;
+  }
+}
+function updateCloudStatus(error=''){
+  const cfg=getCloudConfig();
+  $('cloudConnectionStatus').textContent=error ? 'Configuration error' : (cloudClient?'Configured':'Not configured');
+  $('cloudAuthStatus').textContent=cloudSession?.user ? cloudSession.user.email : 'Signed out';
+  $('cloudWorkspaceStatus').textContent=selectedWorkspaceId ? 'Selected' : 'Not selected';
+  $('cloudAiStatus').textContent=cloudClient && cloudSession?.user ? 'Cloud ready' : 'Local mode';
+  $('supabaseUrlInput').value=cfg.url;
+  $('supabaseKeyInput').value=cfg.key;
+  $('cloudUserInfo').textContent=cloudSession?.user ? `Signed in as ${cloudSession.user.email} • User ID: ${cloudSession.user.id}` : 'No active cloud session.';
+}
+async function restoreCloudSession(){
+  if(!cloudClient)return;
+  const {data}=await cloudClient.auth.getSession();
+  cloudSession=data.session; updateCloudStatus();
+  if(cloudSession?.user) await loadWorkspaces();
+}
+async function saveCloudConfig(){
+  const url=$('supabaseUrlInput').value.trim().replace(/\/$/,'');
+  const key=$('supabaseKeyInput').value.trim();
+  if(!/^https:\/\/.+\.supabase\.co$/.test(url)){alert('Enter a valid Supabase Project URL.');return;}
+  if(!key){alert('Enter the publishable key.');return;}
+  if(/secret|service_role/i.test(key)){alert('Never enter a secret or service-role key in Atlas Marine OS.');return;}
+  localStorage.setItem('atlas_supabase_url',url);
+  localStorage.setItem('atlas_supabase_publishable_key',key);
+  initCloudClient(); await restoreCloudSession(); alert('Atlas Cloud connection saved.');
+}
+async function testCloudConnection(){
+  if(!cloudClient){alert('Save the connection first.');return;}
+  const {error}=await cloudClient.from('workspaces').select('id').limit(1);
+  $('cloudConnectionStatus').textContent=error ? 'Connected • login required' : 'Connected';
+  alert(error ? `Supabase reached. ${error.message}` : 'Atlas Cloud connection successful.');
+}
+async function cloudSignIn(){
+  if(!cloudClient){alert('Configure Atlas Cloud first.');return;}
+  const {data,error}=await cloudClient.auth.signInWithPassword({email:$('cloudEmail').value.trim(),password:$('cloudPassword').value});
+  if(error){alert(error.message);return;}
+  cloudSession=data.session; updateCloudStatus(); await loadWorkspaces(); alert('Welcome aboard.');
+}
+async function cloudSignOut(){
+  if(cloudClient)await cloudClient.auth.signOut();
+  cloudSession=null; selectedWorkspaceId=''; localStorage.removeItem('atlas_selected_workspace');
+  updateCloudStatus(); $('workspaceSelect').innerHTML='<option value="">Select workspace</option>';
+}
+async function loadWorkspaces(){
+  if(!cloudClient || !cloudSession?.user)return;
+  const {data,error}=await cloudClient.from('workspaces').select('id,name,slug,created_at').order('name');
+  if(error){$('workspaceDetails').textContent=error.message;return;}
+  $('workspaceSelect').innerHTML='<option value="">Select workspace</option>'+(data||[]).map(w=>`<option value="${cloudEsc(w.id)}">${cloudEsc(w.name)}</option>`).join('');
+  if(selectedWorkspaceId && (data||[]).some(w=>w.id===selectedWorkspaceId)) $('workspaceSelect').value=selectedWorkspaceId;
+  else if(data?.length){selectedWorkspaceId=data[0].id;$('workspaceSelect').value=selectedWorkspaceId;}
+  localStorage.setItem('atlas_selected_workspace',selectedWorkspaceId);
+  const selected=(data||[]).find(w=>w.id===selectedWorkspaceId);
+  $('workspaceDetails').textContent=selected ? `${selected.name} • ${selected.id}` : 'No workspace selected.';
+  updateCloudStatus();
+}
+async function loadMembers(){
+  if(!selectedWorkspaceId || !cloudClient)return;
+  const {data,error}=await cloudClient.from('workspace_members').select('user_id,role,is_active,joined_at').eq('workspace_id',selectedWorkspaceId).order('joined_at');
+  $('memberList').innerHTML=error ? cloudEsc(error.message) : (data?.length ? data.map(m=>`<div class="cloud-list-item"><strong>${cloudEsc(m.role)}</strong><br><small>${cloudEsc(m.user_id)} • ${m.is_active?'Active':'Inactive'}</small></div>`).join('') : 'No members found.');
+}
+async function loadAiJobs(){
+  if(!selectedWorkspaceId || !cloudClient)return;
+  const {data,error}=await cloudClient.from('ai_index_jobs').select('id,status,document_id,requested_at,error_message').eq('workspace_id',selectedWorkspaceId).order('requested_at',{ascending:false}).limit(30);
+  $('aiJobList').innerHTML=error ? cloudEsc(error.message) : (data?.length ? data.map(j=>`<div class="cloud-list-item"><strong>${cloudEsc(j.status)}</strong><br><small>Document ${cloudEsc(j.document_id)}<br>${cloudEsc(j.requested_at)}${j.error_message?'<br>'+cloudEsc(j.error_message):''}</small></div>`).join('') : 'No indexing jobs.');
+}
+async function runSecurityCheck(){
+  const cfg=getCloudConfig(), checks=[];
+  checks.push(cfg.url&&cfg.key?'✓ Cloud configuration present':'✗ Cloud configuration missing');
+  checks.push(cloudSession?.user?'✓ Authenticated session':'✗ Not signed in');
+  checks.push(selectedWorkspaceId?'✓ Workspace selected':'✗ Workspace not selected');
+  checks.push(!/secret|service_role/i.test(cfg.key)?'✓ No obvious server secret stored':'✗ Dangerous key detected');
+  $('securityCheckResult').textContent=checks.join(' • ');
+}
+async function uploadCloudFiles(){
+  if(!cloudClient || !cloudSession?.user || !selectedWorkspaceId){alert('Connect, sign in and select a workspace first.');return;}
+  const files=[...$('cloudFileInput').files]; if(!files.length){alert('Select one or more files.');return;}
+  const bucket=$('cloudBucketSelect').value;
+  const folder=($('cloudFolderPath').value.trim()||'general').replace(/^\/+|\/+$/g,'').replace(/[^a-zA-Z0-9._/-]+/g,'-');
+  let completed=0;
+  for(const file of files){
+    $('cloudUploadProgress').textContent=`Uploading ${completed+1}/${files.length}: ${file.name}`;
+    const safeName=file.name.replace(/[^a-zA-Z0-9._-]+/g,'-');
+    const path=`${selectedWorkspaceId}/${folder}/${Date.now()}-${safeName}`;
+    const {error:uploadError}=await cloudClient.storage.from(bucket).upload(path,file,{upsert:false});
+    if(uploadError){$('cloudUploadProgress').textContent=`Upload failed: ${uploadError.message}`;continue;}
+    const {error:metaError}=await cloudClient.from('documents').insert({
+      workspace_id:selectedWorkspaceId,bucket_id:bucket,object_path:path,original_filename:file.name,title:file.name,
+      mime_type:file.type||null,file_size_bytes:file.size,status:'active',
+      classification:bucket==='crew-confidential'?'confidential':'standard',created_by:cloudSession.user.id
+    });
+    if(metaError)$('cloudUploadProgress').textContent=`File uploaded but metadata failed: ${metaError.message}`;
+    completed++;
+  }
+  $('cloudUploadProgress').textContent=`Completed ${completed}/${files.length}.`; await loadCloudFiles();
+}
+async function loadCloudFiles(){
+  if(!cloudClient || !selectedWorkspaceId)return;
+  const bucket=$('cloudBucketSelect').value;
+  const {data,error}=await cloudClient.from('documents').select('id,title,original_filename,bucket_id,object_path,file_size_bytes,status,classification,created_at').eq('workspace_id',selectedWorkspaceId).eq('bucket_id',bucket).order('created_at',{ascending:false}).limit(100);
+  if(error){$('cloudFileList').textContent=error.message;return;}
+  $('cloudFileList').innerHTML=data?.length ? data.map(d=>`
+    <article class="cloud-file-card">
+      <h4>${cloudEsc(d.title||d.original_filename)}</h4>
+      <small>${cloudEsc(d.bucket_id)} • ${Math.round((d.file_size_bytes||0)/1024)} KB<br>${cloudEsc(d.status)} • ${cloudEsc(d.classification)}</small>
+      <div class="cloud-file-actions">
+        <button class="btn cloud-open-file" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}">Open</button>
+        <button class="btn cloud-index-file" data-id="${cloudEsc(d.id)}">Index AI</button>
+      </div>
+    </article>`).join('') : 'No cloud files in this category.';
+}
+async function openCloudFile(bucket,path){
+  const {data,error}=await cloudClient.storage.from(bucket).createSignedUrl(path,300);
+  if(error){alert(error.message);return;} window.open(data.signedUrl,'_blank','noopener');
+}
+async function indexCloudDocument(documentId){
+  if(!cloudClient)return;
+  const {data,error}=await cloudClient.functions.invoke('index-document',{body:{documentId}});
+  alert(error ? error.message : `Index request completed: ${JSON.stringify(data)}`); await loadAiJobs();
+}
+
+$('saveCloudConfig').addEventListener('click',saveCloudConfig);
+$('clearCloudConfig').addEventListener('click',()=>{localStorage.removeItem('atlas_supabase_url');localStorage.removeItem('atlas_supabase_publishable_key');cloudClient=null;cloudSession=null;updateCloudStatus();});
+$('testCloudConnection').addEventListener('click',testCloudConnection);
+$('cloudSignIn').addEventListener('click',cloudSignIn);
+$('cloudSignOut').addEventListener('click',cloudSignOut);
+$('refreshWorkspaces').addEventListener('click',loadWorkspaces);
+$('workspaceSelect').addEventListener('change',async e=>{selectedWorkspaceId=e.target.value;localStorage.setItem('atlas_selected_workspace',selectedWorkspaceId);updateCloudStatus();await loadMembers();await loadCloudFiles();});
+$('refreshMembers').addEventListener('click',loadMembers);
+$('refreshAiJobs').addEventListener('click',loadAiJobs);
+$('runSecurityCheck').addEventListener('click',runSecurityCheck);
+$('uploadCloudFiles').addEventListener('click',uploadCloudFiles);
+$('refreshCloudFiles').addEventListener('click',loadCloudFiles);
+$('cloudBucketSelect').addEventListener('change',loadCloudFiles);
+$('cloudFileList').addEventListener('click',e=>{const o=e.target.closest('.cloud-open-file'),i=e.target.closest('.cloud-index-file');if(o)openCloudFile(o.dataset.bucket,o.dataset.path);if(i)indexCloudDocument(i.dataset.id);});
+
+initCloudClient();
+restoreCloudSession();

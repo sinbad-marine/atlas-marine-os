@@ -12,12 +12,12 @@
 <body>
 <header class="topbar">
   <div class="brand"><div class="logo">⚓</div><div><h1>ATLAS MARINE OS</h1><small>Özgür Maceraperest Dostlar • Navigate Smarter. Command Better.</small></div></div>
-  <div class="version">● v4.1</div>
+  <div class="version">● v6.0</div>
 </header>
 
 <main>
 <section class="hero">
-  <div><h2>Marine Knowledge Center</h2><p>Document Center, Nautical Publications, Nautical Charts and local knowledge search.</p></div>
+  <div><h2>Atlas Cloud Control Center</h2><p>Marine operations, cloud documents, private storage and Captain Sinbad in one command workspace.</p></div>
   <div class="hero-actions">
     <button class="btn primary" data-open="documents">Upload Files</button>
     <button class="btn" data-open="publications">Nautical Publications</button>
@@ -37,6 +37,8 @@
   <article class="module-card" data-open="publications"><div>📚</div><h3>Nautical Publications</h3><p>SOLAS, MARPOL, sailing directions, lights and tide tables.</p><a>New in v4.0 →</a></article>
   <article class="module-card" data-open="charts"><div>🗺️</div><h3>Nautical Charts</h3><p>Separate chart archive by country, region and chart number.</p><a>New in v4.0 →</a></article>
   <article class="module-card" data-open="knowledge"><div>🤖</div><h3>Atlas Knowledge Search</h3><p>Search uploaded filenames, folders, tags and extracted text notes.</p><a>Open →</a></article><article class="module-card" data-open="sinbad"><div>🧞‍♂️</div><h3>Captain Sinbad</h3><p>Atlas AI marine intelligence guide and conversation workspace.</p><a>New in v4.1 →</a></article>
+  <article class="module-card" data-open="cloud-control"><div>☁️</div><h3>Atlas Cloud Control Center</h3><p>Connect Supabase, manage workspaces, users, storage and AI status.</p><a>New in v6.0 →</a></article>
+  <article class="module-card" data-open="cloud-documents"><div>🗄️</div><h3>Cloud Document Center</h3><p>Upload and browse private documents, publications and charts.</p><a>New in v6.0 →</a></article>
   <article class="module-card" data-open="fleet"><div>🚢</div><h3>Fleet Manager</h3><p>Vessel particulars and machinery.</p><a>Open →</a></article>
   <article class="module-card" data-open="pilot"><div>📍</div><h3>Pilot Library</h3><p>Marinas, anchorages and captain notes.</p><a>Open →</a></article>
   <article class="module-card" data-open="routes"><div>🧭</div><h3>Route Library</h3><p>Approved passages and route workspaces.</p><a>Open →</a></article>
@@ -147,6 +149,110 @@
   </div>
 </section>
 
+
+<section id="cloud-control" class="workspace">
+  <div class="workspace-head">
+    <div><h2>Atlas Cloud Control Center</h2><p>Secure administration cockpit for Atlas Cloud.</p></div>
+    <button class="btn close">Close</button>
+  </div>
+
+  <div class="cloud-status-grid">
+    <article class="status-card"><span>Cloud connection</span><strong id="cloudConnectionStatus">Not configured</strong></article>
+    <article class="status-card"><span>Authentication</span><strong id="cloudAuthStatus">Signed out</strong></article>
+    <article class="status-card"><span>Workspace</span><strong id="cloudWorkspaceStatus">Not selected</strong></article>
+    <article class="status-card"><span>Captain Sinbad</span><strong id="cloudAiStatus">Local mode</strong></article>
+  </div>
+
+  <div class="cloud-two-column">
+    <article class="control-panel">
+      <h3>Cloud Connection</h3>
+      <p class="muted">Use only the Supabase Project URL and publishable key. Never enter a secret/service-role key.</p>
+      <label>Supabase Project URL</label>
+      <input id="supabaseUrlInput" placeholder="https://your-project.supabase.co">
+      <label>Publishable key</label>
+      <textarea id="supabaseKeyInput" placeholder="sb_publishable_... or anon key"></textarea>
+      <div class="action-row">
+        <button class="btn primary" id="saveCloudConfig">Save & Connect</button>
+        <button class="btn" id="clearCloudConfig">Clear</button>
+        <button class="btn" id="testCloudConnection">Test</button>
+      </div>
+    </article>
+
+    <article class="control-panel">
+      <h3>Sign In</h3>
+      <label>Email</label>
+      <input id="cloudEmail" type="email" autocomplete="email">
+      <label>Password</label>
+      <input id="cloudPassword" type="password" autocomplete="current-password">
+      <div class="action-row">
+        <button class="btn primary" id="cloudSignIn">Sign In</button>
+        <button class="btn" id="cloudSignOut">Sign Out</button>
+      </div>
+      <div id="cloudUserInfo" class="notice">No active cloud session.</div>
+    </article>
+  </div>
+
+  <div class="cloud-admin-grid">
+    <article class="control-panel">
+      <h3>Workspace</h3>
+      <button class="btn" id="refreshWorkspaces">Refresh</button>
+      <select id="workspaceSelect"><option value="">Select workspace</option></select>
+      <div id="workspaceDetails" class="notice">Workspace information will appear here.</div>
+    </article>
+
+    <article class="control-panel">
+      <h3>Users & Roles</h3>
+      <button class="btn" id="refreshMembers">Refresh members</button>
+      <div id="memberList" class="cloud-list">No members loaded.</div>
+    </article>
+
+    <article class="control-panel">
+      <h3>AI Knowledge Index</h3>
+      <button class="btn" id="refreshAiJobs">Refresh jobs</button>
+      <div id="aiJobList" class="cloud-list">No indexing jobs loaded.</div>
+    </article>
+
+    <article class="control-panel">
+      <h3>Security Center</h3>
+      <div class="security-checks">
+        <span>🔒 Private buckets required</span>
+        <span>🛡️ RLS enforced by Supabase</span>
+        <span>🔑 Secret keys never stored here</span>
+        <span>📋 Admin actions remain server-controlled</span>
+      </div>
+      <button class="btn" id="runSecurityCheck">Run configuration check</button>
+      <div id="securityCheckResult" class="notice">Not checked.</div>
+    </article>
+  </div>
+</section>
+
+<section id="cloud-documents" class="workspace">
+  <div class="workspace-head">
+    <div><h2>Cloud Document Center</h2><p>Private Atlas Cloud storage and metadata.</p></div>
+    <button class="btn close">Close</button>
+  </div>
+
+  <div class="cloud-toolbar">
+    <select id="cloudBucketSelect">
+      <option value="atlas-documents">Documents</option>
+      <option value="nautical-publications">Nautical Publications</option>
+      <option value="nautical-charts">Nautical Charts</option>
+      <option value="crew-confidential">Crew Confidential</option>
+      <option value="vessel-technical">Vessel Technical</option>
+      <option value="passage-media">Passage Media</option>
+      <option value="exports">Exports</option>
+    </select>
+    <input id="cloudFolderPath" value="general" placeholder="Folder path">
+    <input id="cloudFileInput" type="file" multiple>
+    <button class="btn primary" id="uploadCloudFiles">Upload</button>
+    <button class="btn" id="refreshCloudFiles">Refresh</button>
+  </div>
+
+  <div class="notice">Files are uploaded under <code>workspace-uuid/folder/file</code>. The Supabase Free plan may limit each file to 50 MB.</div>
+  <div id="cloudUploadProgress" class="notice">Ready.</div>
+  <div id="cloudFileList" class="cloud-file-grid">No cloud files loaded.</div>
+</section>
+
 <section id="fleet" class="workspace">
   <div class="workspace-head"><div><h2>Fleet Manager</h2><p>Vessel particulars stored locally.</p></div><button class="btn close">Close</button></div>
   <div class="form-grid">
@@ -198,10 +304,11 @@
   <span>Ask Sinbad</span>
 </button>
 
-<footer>Atlas Marine OS v4.1 • Captain Sinbad AI Interface • Offline-ready PWA</footer>
+<footer>Atlas Marine OS v6.0 • Atlas Cloud Control Center • Hybrid Cloud PWA</footer>
 
 <script src="./pilot-data.js"></script>
 <script src="./route-data.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./app.js"></script>
 </body>
 </html>
