@@ -1,12 +1,12 @@
 {
-  "name": "Atlas Marine OS v6.1 — Atlas Cloud Control Center",
+  "name": "Atlas Marine OS v6.2 — Reliable Upload Edition",
   "short_name": "Atlas Marine",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#061827",
   "theme_color": "#071827",
-  "description": "Visible Atlas Cloud administration, private document actions and Captain Sinbad.",
+  "description": "Reliable local and cloud uploads with a refined luxury marine interface.",
   "icons": [
     {
       "src": "./icon-192.png",

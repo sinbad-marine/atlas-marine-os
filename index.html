@@ -12,7 +12,7 @@
 <body>
 <header class="topbar">
   <div class="brand"><div class="logo">⚓</div><div><h1>ATLAS MARINE OS</h1><small>Özgür Maceraperest Dostlar • Navigate Smarter. Command Better.</small></div></div>
-  <div class="version">● v6.1</div>
+  <div class="version">● v6.2</div>
 </header>
 
 <main>
@@ -46,7 +46,7 @@
 </section>
 
 <section id="documents" class="workspace">
-  <div class="workspace-head"><div><h2>Document Center</h2><p>Files are stored locally in this browser using IndexedDB.</p></div><button class="btn close">Close</button></div>
+  <div class="workspace-head"><div><h2>Document Center</h2><p>Local encrypted-style browser vault. For permanent multi-device access, use Cloud Document Center.</p><div class="storage-mode-banner">💾 Local Vault <span>Works best in normal Safari—not Private Browsing.</span></div></div><button class="btn close">Close</button></div>
   <div class="toolbar">
     <select id="docFolder">
       <option>Company Documents</option><option>ISM</option><option>ISPS</option><option>SMS</option>
@@ -57,7 +57,7 @@
     </select>
     <input id="docTags" placeholder="Tags: SOLAS, engine, Greece">
     <label class="upload-btn">Choose Files<input id="docFiles" type="file" multiple hidden></label>
-    <button class="btn primary" id="uploadDocs">Upload</button>
+    <button class="btn primary upload-glow" id="uploadDocs">Upload Locally</button>
   </div>
   <div class="filter-grid">
     <input id="docSearch" placeholder="Search files, folders or tags">
@@ -308,7 +308,7 @@
   <span>Ask Sinbad</span>
 </button>
 
-<footer>Atlas Marine OS v6.1 • Atlas Cloud Control Center • Hybrid Cloud PWA</footer>
+<footer>Atlas Marine OS v6.2 • Atlas Cloud Control Center • Reliable Upload Edition</footer>
 
 <script src="./pilot-data.js"></script>
 <script src="./route-data.js"></script>

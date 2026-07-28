@@ -10,26 +10,48 @@ function openWorkspace(id){document.querySelectorAll('.workspace').forEach(x=>x.
 function closeWorkspaces(){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));scrollTo({top:0,behavior:'smooth'})}
 
 let db;
+function withTimeout(promise,ms=30000,label='Operation'){
+ return Promise.race([
+  promise,
+  new Promise((_,reject)=>setTimeout(()=>reject(new Error(`${label} timed out after ${ms/1000}s`)),ms))
+ ]);
+}
 function openDB(){
  return new Promise((resolve,reject)=>{
-  const req=indexedDB.open('AtlasMarineFiles',1);
+  if(!('indexedDB' in window)){reject(new Error('IndexedDB is not available in this browser mode.'));return;}
+  const req=indexedDB.open('AtlasMarineFiles',2);
   req.onupgradeneeded=e=>{
    const d=e.target.result;
+   let s;
    if(!d.objectStoreNames.contains('files')){
-    const s=d.createObjectStore('files',{keyPath:'id',autoIncrement:true});
-    s.createIndex('folder','folder',{unique:false});
-    s.createIndex('name','name',{unique:false});
+    s=d.createObjectStore('files',{keyPath:'id',autoIncrement:true});
+   }else{
+    s=e.target.transaction.objectStore('files');
    }
+   if(!s.indexNames.contains('folder'))s.createIndex('folder','folder',{unique:false});
+   if(!s.indexNames.contains('name'))s.createIndex('name','name',{unique:false});
   };
-  req.onsuccess=e=>{db=e.target.result;resolve(db)};
-  req.onerror=e=>reject(e.target.error);
+  req.onsuccess=e=>{
+   db=e.target.result;
+   db.onversionchange=()=>db.close();
+   resolve(db);
+  };
+  req.onerror=e=>reject(e.target.error||new Error('IndexedDB could not be opened.'));
+  req.onblocked=()=>reject(new Error('IndexedDB upgrade is blocked. Close other Atlas Marine OS tabs and reload.'));
  });
 }
-function txStore(mode='readonly'){return db.transaction('files',mode).objectStore('files')}
-function dbAll(){return new Promise((res,rej)=>{const r=txStore().getAll();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
-function dbAdd(obj){return new Promise((res,rej)=>{const r=txStore('readwrite').add(obj);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
-function dbDelete(id){return new Promise((res,rej)=>{const r=txStore('readwrite').delete(id);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)})}
-function dbPut(obj){return new Promise((res,rej)=>{const r=txStore('readwrite').put(obj);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)})}
+function ensureDB(){
+ if(db)return Promise.resolve(db);
+ return openDB();
+}
+function txStore(mode='readonly'){
+ if(!db)throw new Error('Local database is not ready.');
+ return db.transaction('files',mode).objectStore('files');
+}
+function dbAll(){return new Promise((res,rej)=>{try{const r=txStore().getAll();r.onsuccess=()=>res(r.result||[]);r.onerror=()=>rej(r.error)}catch(e){rej(e)}})}
+function dbAdd(obj){return new Promise((res,rej)=>{try{const r=txStore('readwrite').add(obj);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}catch(e){rej(e)}})}
+function dbDelete(id){return new Promise((res,rej)=>{try{const r=txStore('readwrite').delete(id);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)}catch(e){rej(e)}})}
+function dbPut(obj){return new Promise((res,rej)=>{try{const r=txStore('readwrite').put(obj);r.onsuccess=()=>res();r.onerror=()=>rej(r.error)}catch(e){rej(e)}})}
 
 async function fileToText(file){
  const textTypes=['text/','application/json','application/xml','text/csv'];
@@ -37,12 +59,47 @@ async function fileToText(file){
  return '';
 }
 $('uploadDocs').onclick=async()=>{
- const files=[...$('docFiles').files];if(!files.length){alert('Choose one or more files.');return}
- $('uploadStatus').textContent='Uploading...';
- for(const f of files){
-  await dbAdd({name:f.name,type:f.type||'application/octet-stream',size:f.size,folder:$('docFolder').value,tags:$('docTags').value.trim(),created:new Date().toISOString(),blob:f,text:await fileToText(f)});
+ const input=$('docFiles');
+ const files=[...(input.files||[])];
+ if(!files.length){alert('Choose one or more files first.');return;}
+ const status=$('uploadStatus');
+ $('uploadDocs').disabled=true;
+ status.textContent=`Preparing ${files.length} file(s)...`;
+ try{
+  await ensureDB();
+  let done=0;
+  for(const f of files){
+   status.textContent=`Saving ${done+1}/${files.length}: ${f.name}`;
+   const buffer=await withTimeout(f.arrayBuffer(),30000,'Reading file');
+   const blob=new Blob([buffer],{type:f.type||'application/octet-stream'});
+   const record={
+    name:f.name,
+    type:f.type||'application/octet-stream',
+    size:f.size,
+    folder:$('docFolder').value,
+    tags:$('docTags').value.trim(),
+    created:new Date().toISOString(),
+    blob,
+    text:await fileToText(f)
+   };
+   await withTimeout(dbAdd(record),30000,'Saving file');
+   done++;
+  }
+  input.value='';
+  status.textContent=`✓ ${done} file(s) saved locally.`;
+  await renderDocuments();
+  await renderSummary();
+ }catch(error){
+  console.error('Atlas local upload failed',error);
+  status.textContent=`Upload failed: ${error.message||error}`;
+  alert(`Local upload failed.
+
+${error.message||error}
+
+Safari Private Browsing may restrict persistent storage. Open the normal Safari tab or use Cloud Document Center.`);
+ }finally{
+  $('uploadDocs').disabled=false;
  }
- $('docFiles').value='';$('uploadStatus').textContent=`${files.length} file(s) uploaded locally.`;await renderDocuments();await renderSummary()
 }
 function openFolderUpload(folder){openWorkspace('documents');$('docFolder').value=folder;$('docFiles').click()}
 
@@ -86,7 +143,18 @@ async function renderAll(){renderFleet();renderCrew();renderPilot();renderRoutes
 ['pilotSearch','countryFilter','typeFilter'].forEach(id=>$(id).addEventListener(id==='pilotSearch'?'input':'change',renderPilot));
 ['routeSearch','routeType','routeStatus'].forEach(id=>$(id).addEventListener(id==='routeSearch'?'input':'change',renderRoutes));
 
-document.addEventListener('DOMContentLoaded',async()=>{await openDB();setupDocumentFilters();setupPilot();setupRoutes();await renderAll()});
+document.addEventListener('DOMContentLoaded',async()=>{
+ setupDocumentFilters();setupPilot();setupRoutes();
+ try{
+  await ensureDB();
+  await renderAll();
+  const s=$('uploadStatus'); if(s && !s.textContent.trim())s.textContent='Local storage ready.';
+ }catch(error){
+  console.error(error);
+  const s=$('uploadStatus');
+  if(s)s.textContent=`Local storage unavailable: ${error.message}`;
+ }
+});
 if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));
 
 
@@ -299,7 +367,7 @@ async function runSecurityCheck(){
   $('securityCheckResult').textContent=checks.join(' • ');
 }
 async function uploadCloudFiles(){
-  if(!cloudClient || !cloudSession?.user || !selectedWorkspaceId){alert('Connect, sign in and select a workspace first.');return;}
+  if(!cloudClient || !cloudSession?.user || !selectedWorkspaceId){$('cloudUploadProgress').textContent='Connect to Atlas Cloud, sign in and select a workspace first.';alert('Connect, sign in and select a workspace first.');return;}
   const files=[...$('cloudFileInput').files]; if(!files.length){alert('Select one or more files.');return;}
   const bucket=$('cloudBucketSelect').value;
   const folder=($('cloudFolderPath').value.trim()||'general').replace(/^\/+|\/+$/g,'').replace(/[^a-zA-Z0-9._/-]+/g,'-');
