@@ -23,7 +23,7 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
 </style>
 </head>
 <body>
-<header><div class="brand"><div class="logo">⚓</div><div><h1>ATLAS MARINE OS</h1><small>Özgür Maceraperest Dostlar</small></div></div><div style="color:var(--green)">● v2.1</div></header>
+<header><div class="brand"><div class="logo">⚓</div><div><h1>ATLAS MARINE OS</h1><small>Özgür Maceraperest Dostlar</small></div></div><div style="color:var(--green)">● v2.3</div></header>
 <main>
 <div class="hero"><h2>Bridge Dashboard</h2><p class="muted">Passage planning, Pilot Library, Route Library and Captain’s Log.</p><div class="actions"><button class="btn primary" onclick="openModule('pilot')">Open Pilot Library</button><button class="btn" onclick="openModule('passage')">New Passage</button></div></div>
 <div class="grid">
@@ -33,7 +33,7 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
 <div class="card" onclick="openModule('routes')"><div class="ico">🧭</div><h3>Route Library</h3><p>Approved passages, charter routes and operational route notes.</p><a>New in v2.1 →</a></div>
 <div class="card"><div class="ico">⚙️</div><h3>Yacht Operations</h3><p>ISM, ISPS, checklists and defects.</p><a>Planned →</a></div>
 <div class="card"><div class="ico">🌦️</div><h3>Weather</h3><p>Marine weather integration point.</p><a>Planned →</a></div>
-<div class="card"><div class="ico">📁</div><h3>Documents</h3><p>Certificates, manuals and brochures.</p><a>Planned →</a></div>
+<div class="card" onclick="openModule('docs')"><div class="ico">📁</div><h3>Documents Vault</h3><p>Track certificates, manuals and brochure projects.</p><a>Open →</a></div><div class="card" onclick="openModule('crew')"><div class="ico">👥</div><h3>Crew Manager</h3><p>Crew list, roles, passports and certificate expiry tracking.</p><a>New in v2.3 →</a></div>
 <div class="card"><div class="ico">🤖</div><h3>Atlas AI</h3><p>Marine intelligence assistant.</p><a>Planned →</a></div>
 </div>
 
@@ -48,6 +48,55 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
 </section>
 
 
+
+
+<section id="crew" class="module">
+<div class="module-head">
+  <div>
+    <h2>Crew Manager</h2>
+    <div class="muted">Crew records and expiry tracking stored locally on this device.</div>
+  </div>
+  <button class="btn" onclick="closeModules()">Close</button>
+</div>
+
+<div class="form-grid">
+  <div class="field"><label>Full name</label><input id="crewName" placeholder="Crew member name"></div>
+  <div class="field"><label>Rank / Position</label><input id="crewRank" placeholder="Chief Officer, Engineer..."></div>
+  <div class="field"><label>Nationality</label><input id="crewNationality" placeholder="Nationality"></div>
+  <div class="field"><label>Passport expiry</label><input id="crewPassport" type="date"></div>
+  <div class="field"><label>ENG1 / Medical expiry</label><input id="crewMedical" type="date"></div>
+  <div class="field"><label>STCW expiry</label><input id="crewStcw" type="date"></div>
+  <div class="field"><label>Visa expiry</label><input id="crewVisa" type="date"></div>
+  <div class="field"><label>Contract end</label><input id="crewContract" type="date"></div>
+  <div class="field"><label>Phone / Email</label><input id="crewContact" placeholder="Optional"></div>
+  <div class="field" style="grid-column:1/-1"><label>Notes</label><textarea id="crewNotes" placeholder="Rotation, travel, certificates, performance notes..."></textarea></div>
+</div>
+
+<div class="actions" style="margin-top:14px">
+  <button class="btn primary" onclick="saveCrew()">Save Crew Member</button>
+  <button class="btn" onclick="exportCrew()">Export JSON</button>
+</div>
+
+<div id="crewSummary" class="result" style="margin-top:18px">
+  <div class="metric"><b id="crewTotal">0</b><span>Total crew</span></div>
+  <div class="metric"><b id="crewExpired">0</b><span>Expired items</span></div>
+  <div class="metric"><b id="crew30">0</b><span>Due in 30 days</span></div>
+  <div class="metric"><b id="crew90">0</b><span>Due in 90 days</span></div>
+</div>
+
+<div id="crewList"></div>
+</section>
+
+<section id="docs" class="module">
+<div class="module-head"><div><h2>Documents Vault</h2><div class="muted">Track important yacht documents.</div></div><button class="btn" onclick="closeModules()">Close</button></div>
+<div class="form-grid">
+<div class="field"><label>Document name</label><input id="docName"></div>
+<div class="field"><label>Category</label><select id="docCat"><option>Certificate</option><option>Manual</option><option>Brochure</option><option>Route</option><option>Other</option></select></div>
+<div class="field"><label>Expiry (optional)</label><input id="docExp" type="date"></div>
+</div>
+<div class="actions" style="margin-top:14px"><button class="btn primary" onclick="saveDoc()">Save</button></div>
+<div id="docList"></div>
+</section>
 <section id="routes" class="module">
 <div class="module-head"><div><h2>Route Library</h2><div class="muted">Approved route sequences and operational notes.</div></div><button class="btn" onclick="closeModules()">Close</button></div>
 <div class="filters">
@@ -81,7 +130,7 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
 <button class="btn primary" onclick="saveLog()">Save Log Entry</button><div id="logs"></div>
 </section>
 </main>
-<footer>Atlas Marine OS v2.1 • Pilot Library + Route Library • Offline-ready PWA</footer>
+<footer>Atlas Marine OS v2.3 • Crew Manager</footer>
 
 <script src="./pilot-data.js"></script>
 <script src="./route-data.js"></script>
@@ -133,11 +182,108 @@ function calculatePassage(){const d=parseFloat($('distance').value),s=parseFloat
 function savePassage(){if(!currentCalc)calculatePassage();if(!currentCalc)return;const a=JSON.parse(localStorage.getItem('atlas_passages')||'[]');a.unshift(currentCalc);localStorage.setItem('atlas_passages',JSON.stringify(a));renderPassages();alert('Passage saved.')}
 function renderPassages(){const a=JSON.parse(localStorage.getItem('atlas_passages')||'[]');$('passages').innerHTML=!a.length?'<div class="empty">No saved passages.</div>':'<table><tr><th>Route</th><th>Distance</th><th>Speed</th><th>Time</th><th></th></tr>'+a.map((x,i)=>`<tr><td>${esc(x.departure||'—')} → ${esc(x.arrival||'—')}</td><td>${x.distance} NM</td><td>${x.speed} kn</td><td>${formatHours(x.hours)}</td><td><button class="btn danger" onclick="deletePassage(${i})">Delete</button></td></tr>`).join('')+'</table>'}
 function deletePassage(i){const a=JSON.parse(localStorage.getItem('atlas_passages')||'[]');a.splice(i,1);localStorage.setItem('atlas_passages',JSON.stringify(a));renderPassages()}
-function saveLog(){const text=$('logText').value.trim();if(!text){alert('Enter a log note.');return}const a=JSON.parse(localStorage.getItem('atlas_logs')||'[]');a.unshift({date:$('logDate').value||new Date().toISOString().slice(0,10),position:$('logPosition').value.trim(),weather:$('logWeather').value.trim(),text});localStorage.setItem('atlas_logs',JSON.stringify(a));$('logText').value='';renderLogs()}
+function saveLog(){const text=$('logText').value.trim();if(!text){alert('Enter a log note.');return}const a=JSON.parse(localStorage.getItem('atlas_logs')||'[]');a.unshift({date:$('logDate').value||new Date().toISOString().slice(0,10),position:$('logPosition').value.trim(),weather:$('logWeather').value.trim(),text});localStorage.setItem('atlas_logs',JSON.stringify(a));$('logText').value='';renderLogs();renderDocs()}
 function renderLogs(){const a=JSON.parse(localStorage.getItem('atlas_logs')||'[]');$('logs').innerHTML=!a.length?'<div class="empty">No log entries.</div>':'<table><tr><th>Date</th><th>Position</th><th>Weather</th><th>Entry</th><th></th></tr>'+a.map((x,i)=>`<tr><td>${esc(x.date)}</td><td>${esc(x.position||'—')}</td><td>${esc(x.weather||'—')}</td><td>${esc(x.text)}</td><td><button class="btn danger" onclick="deleteLog(${i})">Delete</button></td></tr>`).join('')+'</table>'}
-function deleteLog(i){const a=JSON.parse(localStorage.getItem('atlas_logs')||'[]');a.splice(i,1);localStorage.setItem('atlas_logs',JSON.stringify(a));renderLogs()}
+function deleteLog(i){const a=JSON.parse(localStorage.getItem('atlas_logs')||'[]');a.splice(i,1);localStorage.setItem('atlas_logs',JSON.stringify(a));renderLogs();renderDocs()}
 function formatHours(h){const w=Math.floor(h),m=Math.round((h-w)*60);return `${w}h ${m}m`}
-function renderAll(){renderPilot();renderRoutes();renderPassages();renderLogs()}
+
+
+function daysUntil(dateStr){
+  if(!dateStr) return null;
+  const today=new Date(); today.setHours(0,0,0,0);
+  const d=new Date(dateStr+'T00:00:00');
+  return Math.ceil((d-today)/86400000);
+}
+function expiryBadge(dateStr){
+  if(!dateStr) return '<span class="badge">Not entered</span>';
+  const days=daysUntil(dateStr);
+  if(days<0) return `<span class="badge" style="color:#ff8d8d;border-color:#6b3b45">Expired ${Math.abs(days)}d</span>`;
+  if(days<=30) return `<span class="badge" style="color:#ffd27d;border-color:#7a6232">${days}d left</span>`;
+  if(days<=90) return `<span class="badge" style="color:#e2bf72">${days}d left</span>`;
+  return `<span class="badge" style="color:#55d6ad">${days}d left</span>`;
+}
+function saveCrew(){
+  const name=$('crewName').value.trim();
+  if(!name){alert('Enter crew member name.');return}
+  const crew=JSON.parse(localStorage.getItem('atlas_crew')||'[]');
+  crew.unshift({
+    name,
+    rank:$('crewRank').value.trim(),
+    nationality:$('crewNationality').value.trim(),
+    passport:$('crewPassport').value,
+    medical:$('crewMedical').value,
+    stcw:$('crewStcw').value,
+    visa:$('crewVisa').value,
+    contract:$('crewContract').value,
+    contact:$('crewContact').value.trim(),
+    notes:$('crewNotes').value.trim(),
+    created:new Date().toISOString()
+  });
+  localStorage.setItem('atlas_crew',JSON.stringify(crew));
+  ['crewName','crewRank','crewNationality','crewPassport','crewMedical','crewStcw','crewVisa','crewContract','crewContact','crewNotes'].forEach(id=>$(id).value='');
+  renderCrew();
+  alert('Crew member saved.');
+}
+function deleteCrew(i){
+  const crew=JSON.parse(localStorage.getItem('atlas_crew')||'[]');
+  crew.splice(i,1);
+  localStorage.setItem('atlas_crew',JSON.stringify(crew));
+  renderCrew();
+}
+function renderCrew(){
+  const el=$('crewList'); if(!el) return;
+  const crew=JSON.parse(localStorage.getItem('atlas_crew')||'[]');
+  let expired=0,d30=0,d90=0;
+  crew.forEach(c=>{
+    [c.passport,c.medical,c.stcw,c.visa,c.contract].forEach(d=>{
+      const n=daysUntil(d); if(n===null)return;
+      if(n<0) expired++; else if(n<=30) d30++; else if(n<=90) d90++;
+    });
+  });
+  $('crewTotal').textContent=crew.length;
+  $('crewExpired').textContent=expired;
+  $('crew30').textContent=d30;
+  $('crew90').textContent=d90;
+
+  if(!crew.length){el.innerHTML='<div class="empty">No crew records yet.</div>';return}
+  el.innerHTML=crew.map((c,i)=>`
+    <article class="pilot-card" style="margin-top:14px">
+      <h3>${esc(c.name)}</h3>
+      <div class="muted">${esc(c.rank||'Rank not entered')} • ${esc(c.nationality||'Nationality not entered')}</div>
+      <p><b>Contact:</b> ${esc(c.contact||'—')}</p>
+      <div>
+        <span class="badge">Passport ${expiryBadge(c.passport)}</span>
+        <span class="badge">Medical ${expiryBadge(c.medical)}</span>
+        <span class="badge">STCW ${expiryBadge(c.stcw)}</span>
+        <span class="badge">Visa ${expiryBadge(c.visa)}</span>
+        <span class="badge">Contract ${expiryBadge(c.contract)}</span>
+      </div>
+      <p class="warning"><b>Notes:</b> ${esc(c.notes||'—')}</p>
+      <button class="btn danger" onclick="deleteCrew(${i})">Delete</button>
+    </article>`).join('');
+}
+function exportCrew(){
+  const data=localStorage.getItem('atlas_crew')||'[]';
+  const blob=new Blob([data],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='atlas-marine-crew-backup.json';a.click();
+  URL.revokeObjectURL(url);
+}
+
+function saveDoc(){
+ const a=JSON.parse(localStorage.getItem('atlas_docs')||'[]');
+ a.unshift({name:$('docName').value,cat:$('docCat').value,exp:$('docExp').value});
+ localStorage.setItem('atlas_docs',JSON.stringify(a));renderDocs();
+}
+function renderDocs(){
+ const a=JSON.parse(localStorage.getItem('atlas_docs')||'[]');
+ const el=$('docList'); if(!el) return;
+ if(!a.length){el.innerHTML='<div class="empty">No documents.</div>';return;}
+ el.innerHTML='<table><tr><th>Name</th><th>Category</th><th>Expiry</th></tr>'+a.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.cat)}</td><td>${esc(x.exp||'—')}</td></tr>`).join('')+'</table>';
+}
+
+function renderAll(){renderPilot();renderRoutes();renderPassages();renderLogs();renderDocs();renderCrew()}
 document.addEventListener('DOMContentLoaded',()=>{setupFilters();setupRouteFilters();$('logDate').value=new Date().toISOString().slice(0,10);renderAll()});
 if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));
 </script>

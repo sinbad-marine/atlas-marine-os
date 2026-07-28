@@ -1,18 +1,23 @@
-# Atlas Marine OS v2.1
+# Atlas Marine OS v2.3 — Crew Manager
 
-Upload every file in this package to the root of the GitHub repository and replace existing files.
+Upload all files to the root of the GitHub repository and replace existing files.
 
-## New in v2.1
-- Working Route Library
-- Route search
-- Route type and status filters
-- Three initial approved route records
-- Expandable Captain workspace
-- Private route notes saved locally
-- Copy route function
+## New in v2.3
+- Crew Manager
+- Rank and nationality records
+- Passport expiry
+- ENG1 / Medical expiry
+- STCW expiry
+- Visa expiry
+- Contract end tracking
+- Expired / 30-day / 90-day dashboard
+- Local crew notes
+- JSON crew backup export
 
 ## Preserved
 - Pilot Library
+- Route Library
 - Passage Planner
 - Captain's Log
+- Documents Vault
 - Offline PWA support
