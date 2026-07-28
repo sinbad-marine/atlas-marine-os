@@ -1,12 +1,12 @@
 {
-  "name": "Atlas Marine OS v6.2 — Reliable Upload Edition",
+  "name": "Atlas Marine OS v7.0 — Atlas Cloud First",
   "short_name": "Atlas Marine",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#061827",
   "theme_color": "#071827",
-  "description": "Reliable local and cloud uploads with a refined luxury marine interface.",
+  "description": "Cloud-first marine operations, private document vault and Captain Sinbad.",
   "icons": [
     {
       "src": "./icon-192.png",

@@ -12,33 +12,48 @@
 <body>
 <header class="topbar">
   <div class="brand"><div class="logo">⚓</div><div><h1>ATLAS MARINE OS</h1><small>Özgür Maceraperest Dostlar • Navigate Smarter. Command Better.</small></div></div>
-  <div class="version">● v6.2</div>
+  <div class="version">● v7.0</div>
 </header>
 
 <main>
 <section class="hero">
-  <div><h2>Atlas Cloud Control Center</h2><p>Marine operations, cloud documents, private storage and Captain Sinbad in one command workspace.</p></div>
+  <div>
+      <div class="eyebrow">ATLAS CLOUD • CLOUD-FIRST COMMAND PLATFORM</div>
+      <h2>One Bridge. Every Operation.</h2>
+      <p>Private cloud documents, nautical publications, charts, crew records and Captain Sinbad—available from every authorized device.</p>
+    </div>
   <div class="hero-actions">
-    <button class="btn primary" data-open="cloud-control">Open Cloud Control Center</button>
-    <button class="btn" data-open="cloud-documents">Cloud Documents</button>
-    <button class="btn" data-open="sinbad">Captain Sinbad</button>
+    <button class="btn primary" data-open="cloud-documents">Upload to Atlas Cloud</button>
+    <button class="btn" data-open="cloud-control">Cloud Setup & Security</button>
+    <button class="btn" data-open="sinbad">Ask Captain Sinbad</button>
   </div>
 </section>
 
+<section class="connection-strip" id="connectionStrip">
+  <div class="connection-main">
+    <span class="live-dot" id="liveCloudDot"></span>
+    <div>
+      <strong id="liveCloudTitle">Atlas Cloud is not connected</strong>
+      <small id="liveCloudSubtitle">Open Cloud Setup & Security to connect this device.</small>
+    </div>
+  </div>
+  <button class="btn compact" data-open="cloud-control">Configure</button>
+</section>
+
 <section class="summary-grid">
-  <article class="summary-card"><span>Stored Files</span><b id="sumFiles">0</b></article>
-  <article class="summary-card"><span>Publications</span><b id="sumPubs">0</b></article>
-  <article class="summary-card"><span>Charts</span><b id="sumCharts">0</b></article>
-  <article class="summary-card"><span>Storage Used</span><b id="sumStorage">0 MB</b></article>
+  <article class="summary-card"><span>Cloud Files</span><b id="sumFiles">—</b></article>
+  <article class="summary-card"><span>Publications</span><b id="sumPubs">—</b></article>
+  <article class="summary-card"><span>Charts</span><b id="sumCharts">—</b></article>
+  <article class="summary-card"><span>Cloud Storage</span><b id="sumStorage">—</b></article>
 </section>
 
 <section class="module-grid">
-  <article class="module-card" data-open="documents"><div>🗂️</div><h3>Document Center</h3><p>Folders, upload, preview, print, share, rename and download.</p><a>New in v4.0 →</a></article>
-  <article class="module-card" data-open="publications"><div>📚</div><h3>Nautical Publications</h3><p>SOLAS, MARPOL, sailing directions, lights and tide tables.</p><a>New in v4.0 →</a></article>
-  <article class="module-card" data-open="charts"><div>🗺️</div><h3>Nautical Charts</h3><p>Separate chart archive by country, region and chart number.</p><a>New in v4.0 →</a></article>
-  <article class="module-card" data-open="knowledge"><div>🤖</div><h3>Atlas Knowledge Search</h3><p>Search uploaded filenames, folders, tags and extracted text notes.</p><a>Open →</a></article><article class="module-card" data-open="sinbad"><div>🧞‍♂️</div><h3>Captain Sinbad</h3><p>Atlas AI marine intelligence guide and conversation workspace.</p><a>New in v4.1 →</a></article>
-  <article class="module-card" data-open="cloud-control"><div>☁️</div><h3>Atlas Cloud Control Center</h3><p>Connect Supabase, manage workspaces, users, storage and AI status.</p><a>Open cloud module →</a></article>
-  <article class="module-card" data-open="cloud-documents"><div>🗄️</div><h3>Cloud Document Center</h3><p>Upload and browse private documents, publications and charts.</p><a>Open cloud module →</a></article>
+  <article class="module-card featured-card" data-open="cloud-documents"><div>☁️</div><h3>Cloud Document Center</h3><p>Upload, open, download, share, rename and manage private files across devices.</p><a>Open cloud vault →</a></article>
+  <article class="module-card" data-cloud-bucket="nautical-publications"><div>📚</div><h3>Nautical Publications</h3><p>SOLAS, MARPOL, sailing directions, lights and tide tables in Atlas Cloud.</p><a>Open cloud library →</a></article>
+  <article class="module-card" data-cloud-bucket="nautical-charts"><div>🗺️</div><h3>Nautical Charts</h3><p>Private chart archive organized by country, region and chart number.</p><a>Open cloud charts →</a></article>
+  <article class="module-card" data-open="knowledge"><div>🤖</div><h3>Atlas Knowledge Search</h3><p>Search uploaded filenames, folders, tags and extracted text notes.</p><a>Open →</a></article><article class="module-card" data-open="sinbad"><div>🧞‍♂️</div><h3>Captain Sinbad</h3><p>Atlas AI marine intelligence guide and conversation workspace.</p><a>Open Sinbad →</a></article>
+  <article class="module-card" data-open="cloud-control"><div>☁️</div><h3>Atlas Cloud Control Center</h3><p>Connect Supabase, manage workspaces, users, storage and AI status.</p><a>Open →</a></article>
+  <article class="module-card" data-open="cloud-documents"><div>🗄️</div><h3>Cloud Document Center</h3><p>Upload and browse private documents, publications and charts.</p><a>Open →</a></article>
   <article class="module-card" data-open="fleet"><div>🚢</div><h3>Fleet Manager</h3><p>Vessel particulars and machinery.</p><a>Open →</a></article>
   <article class="module-card" data-open="pilot"><div>📍</div><h3>Pilot Library</h3><p>Marinas, anchorages and captain notes.</p><a>Open →</a></article>
   <article class="module-card" data-open="routes"><div>🧭</div><h3>Route Library</h3><p>Approved passages and route workspaces.</p><a>Open →</a></article>
@@ -46,26 +61,19 @@
 </section>
 
 <section id="documents" class="workspace">
-  <div class="workspace-head"><div><h2>Document Center</h2><p>Local encrypted-style browser vault. For permanent multi-device access, use Cloud Document Center.</p><div class="storage-mode-banner">💾 Local Vault <span>Works best in normal Safari—not Private Browsing.</span></div></div><button class="btn close">Close</button></div>
-  <div class="toolbar">
-    <select id="docFolder">
-      <option>Company Documents</option><option>ISM</option><option>ISPS</option><option>SMS</option>
-      <option>Certificates</option><option>Manuals</option><option>Technical Drawings</option>
-      <option>Crew Documents</option><option>Brochures</option><option>Passage Library</option>
-      <option>Nautical Publications</option><option>Nautical Charts</option><option>Weather Files</option>
-      <option>Photos</option><option>Videos</option><option>Archive</option>
-    </select>
-    <input id="docTags" placeholder="Tags: SOLAS, engine, Greece">
-    <label class="upload-btn">Choose Files<input id="docFiles" type="file" multiple hidden></label>
-    <button class="btn primary upload-glow" id="uploadDocs">Upload Locally</button>
+  <div class="workspace-head">
+    <div><h2>Document Center</h2><p>Atlas Marine OS v7.0 uses Atlas Cloud as the primary document vault.</p></div>
+    <button class="btn close">Close</button>
   </div>
-  <div class="filter-grid">
-    <input id="docSearch" placeholder="Search files, folders or tags">
-    <select id="docFolderFilter"><option value="">All folders</option></select>
-    <select id="docTypeFilter"><option value="">All file types</option></select>
+  <div class="cloud-first-message">
+    <div class="cloud-first-icon">☁️</div>
+    <h3>Your files belong in Atlas Cloud</h3>
+    <p>Local browser storage is no longer the primary vault. Upload once, then securely access the same files from your authorized iPad, iPhone, Mac or Windows device.</p>
+    <div class="action-row center-actions">
+      <button class="btn primary" data-open="cloud-documents">Open Cloud Document Center</button>
+      <button class="btn" data-open="cloud-control">Connect Atlas Cloud</button>
+    </div>
   </div>
-  <div id="uploadStatus" class="muted"></div>
-  <div id="documentList"></div>
 </section>
 
 <section id="publications" class="workspace">
@@ -152,8 +160,15 @@
 
 <section id="cloud-control" class="workspace">
   <div class="workspace-head">
-    <div><h2>Atlas Cloud Control Center</h2><p>Secure administration cockpit for Atlas Cloud.</p></div>
+    <div><div class="eyebrow">SECURE CLOUD ADMINISTRATION</div><h2>Atlas Cloud Control Center</h2><p>Connect this device, sign in, select your workspace and manage authorized cloud operations.</p></div>
     <button class="btn close">Close</button>
+  </div>
+
+  <div class="setup-steps">
+    <div class="setup-step" id="setupStep1"><b>1</b><span>Connect project</span></div>
+    <div class="setup-step" id="setupStep2"><b>2</b><span>Sign in</span></div>
+    <div class="setup-step" id="setupStep3"><b>3</b><span>Select workspace</span></div>
+    <div class="setup-step" id="setupStep4"><b>4</b><span>Cloud ready</span></div>
   </div>
 
   <div class="cloud-status-grid">
@@ -231,9 +246,11 @@
 
 <section id="cloud-documents" class="workspace">
   <div class="workspace-head">
-    <div><h2>Cloud Document Center</h2><p>Private Atlas Cloud storage and metadata.</p></div>
+    <div><div class="eyebrow">PRIMARY DOCUMENT VAULT</div><h2>Cloud Document Center</h2><p>Upload once. Access securely from every authorized device.</p></div>
     <button class="btn close">Close</button>
   </div>
+
+  <div id="cloudDocumentGuard" class="cloud-guard">Connect and sign in to Atlas Cloud before uploading files.</div>
 
   <div class="cloud-toolbar">
     <select id="cloudBucketSelect">
@@ -247,7 +264,7 @@
     </select>
     <input id="cloudFolderPath" value="general" placeholder="Folder path">
     <input id="cloudFileInput" type="file" multiple>
-    <button class="btn primary" id="uploadCloudFiles">Upload</button>
+    <button class="btn primary upload-glow" id="uploadCloudFiles">Upload to Atlas Cloud</button>
     <button class="btn" id="refreshCloudFiles">Refresh</button>
     <button class="btn" id="openLocalDocuments">Open Local Document Center</button>
   </div>
@@ -308,7 +325,7 @@
   <span>Ask Sinbad</span>
 </button>
 
-<footer>Atlas Marine OS v6.2 • Atlas Cloud Control Center • Reliable Upload Edition</footer>
+<footer>Atlas Marine OS v7.0 • Atlas Cloud First • One Bridge. Every Operation.</footer>
 
 <script src="./pilot-data.js"></script>
 <script src="./route-data.js"></script>

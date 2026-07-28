@@ -58,7 +58,7 @@ async function fileToText(file){
  if(textTypes.some(t=>file.type.startsWith(t))) return (await file.text()).slice(0,200000);
  return '';
 }
-$('uploadDocs').onclick=async()=>{
+if($('uploadDocs')) $('uploadDocs').onclick=async()=>{
  const input=$('docFiles');
  const files=[...(input.files||[])];
  if(!files.length){alert('Choose one or more files first.');return;}
@@ -254,6 +254,62 @@ renderAll = async function(){
 };
 
 
+
+// ============================================================
+// ATLAS MARINE OS v7.0 — CLOUD-FIRST EXPERIENCE
+// ============================================================
+function formatBytes(bytes=0){
+  if(!bytes)return '0 MB';
+  const mb=bytes/1024/1024;
+  return mb<1024 ? `${mb.toFixed(mb<10?1:0)} MB` : `${(mb/1024).toFixed(1)} GB`;
+}
+function setSetupProgress(){
+  const connected=Boolean(cloudClient);
+  const signedIn=Boolean(cloudSession?.user);
+  const workspace=Boolean(selectedWorkspaceId);
+  const ready=connected&&signedIn&&workspace;
+  [['setupStep1',connected],['setupStep2',signedIn],['setupStep3',workspace],['setupStep4',ready]]
+    .forEach(([id,ok])=>{const el=$(id);if(el)el.classList.toggle('complete',ok)});
+  const dot=$('liveCloudDot'),title=$('liveCloudTitle'),sub=$('liveCloudSubtitle'),guard=$('cloudDocumentGuard');
+  if(dot)dot.classList.toggle('online',ready);
+  if(title)title.textContent=ready?'Atlas Cloud connected':'Atlas Cloud is not connected';
+  if(sub)sub.textContent=ready
+    ? `${cloudSession.user.email} • Workspace ready`
+    : connected
+      ? (signedIn?'Select your Atlas workspace.':'Sign in to continue.')
+      : 'Open Cloud Setup & Security to connect this device.';
+  if(guard){
+    guard.textContent=ready?'✓ Atlas Cloud ready. Files will be stored privately in your selected workspace.':'Connect, sign in and select a workspace before uploading files.';
+    guard.classList.toggle('ready',ready);
+  }
+}
+async function refreshCloudSummary(){
+  if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId){
+    ['sumFiles','sumPubs','sumCharts','sumStorage'].forEach(id=>{if($(id))$(id).textContent='—'});
+    return;
+  }
+  const {data,error}=await cloudClient.from('documents')
+    .select('bucket_id,file_size_bytes')
+    .eq('workspace_id',selectedWorkspaceId)
+    .is('deleted_at',null);
+  if(error)return;
+  const files=data||[];
+  $('sumFiles').textContent=files.length;
+  $('sumPubs').textContent=files.filter(f=>f.bucket_id==='nautical-publications').length;
+  $('sumCharts').textContent=files.filter(f=>f.bucket_id==='nautical-charts').length;
+  $('sumStorage').textContent=formatBytes(files.reduce((n,f)=>n+(Number(f.file_size_bytes)||0),0));
+}
+function openCloudBucket(bucket){
+  openWorkspace('cloud-documents');
+  setTimeout(()=>{
+    const select=$('cloudBucketSelect');
+    if(select){select.value=bucket;loadCloudFiles();}
+  },60);
+}
+document.querySelectorAll('[data-cloud-bucket]').forEach(card=>{
+  card.addEventListener('click',()=>openCloudBucket(card.dataset.cloudBucket));
+});
+
 // ============================================================
 // ATLAS CLOUD CONTROL CENTER v6.0
 // ============================================================
@@ -291,6 +347,7 @@ function updateCloudStatus(error=''){
   $('supabaseUrlInput').value=cfg.url;
   $('supabaseKeyInput').value=cfg.key;
   $('cloudUserInfo').textContent=cloudSession?.user ? `Signed in as ${cloudSession.user.email} • User ID: ${cloudSession.user.id}` : 'No active cloud session.';
+  setSetupProgress();
 }
 async function restoreCloudSession(){
   if(!cloudClient)return;
@@ -336,6 +393,7 @@ async function loadWorkspaces(){
   const selected=(data||[]).find(w=>w.id===selectedWorkspaceId);
   $('workspaceDetails').textContent=selected ? `${selected.name} • ${selected.id}` : 'No workspace selected.';
   updateCloudStatus();
+  await refreshCloudSummary();
 }
 async function loadMembers(){
   if(!selectedWorkspaceId || !cloudClient)return;
@@ -386,7 +444,7 @@ async function uploadCloudFiles(){
     if(metaError)$('cloudUploadProgress').textContent=`File uploaded but metadata failed: ${metaError.message}`;
     completed++;
   }
-  $('cloudUploadProgress').textContent=`Completed ${completed}/${files.length}.`; await loadCloudFiles();
+  $('cloudUploadProgress').textContent=`✓ ${completed}/${files.length} file(s) uploaded to Atlas Cloud.`; await loadCloudFiles(); await refreshCloudSummary();
 }
 async function loadCloudFiles(){
   if(!cloudClient || !selectedWorkspaceId)return;
@@ -471,7 +529,7 @@ async function deleteCloudFile(documentId,bucket,path){
   if(fileError){alert(fileError.message);return;}
   const {error:metaError}=await cloudClient.from('documents').delete().eq('id',documentId);
   alert(metaError ? `File deleted but metadata failed: ${metaError.message}` : 'File deleted.');
-  await loadCloudFiles();
+  await loadCloudFiles(); await refreshCloudSummary();
 }
 
 $('saveCloudConfig').addEventListener('click',saveCloudConfig);
@@ -480,7 +538,7 @@ $('testCloudConnection').addEventListener('click',testCloudConnection);
 $('cloudSignIn').addEventListener('click',cloudSignIn);
 $('cloudSignOut').addEventListener('click',cloudSignOut);
 $('refreshWorkspaces').addEventListener('click',loadWorkspaces);
-$('workspaceSelect').addEventListener('change',async e=>{selectedWorkspaceId=e.target.value;localStorage.setItem('atlas_selected_workspace',selectedWorkspaceId);updateCloudStatus();await loadMembers();await loadCloudFiles();});
+$('workspaceSelect').addEventListener('change',async e=>{selectedWorkspaceId=e.target.value;localStorage.setItem('atlas_selected_workspace',selectedWorkspaceId);updateCloudStatus();await loadMembers();await loadCloudFiles();await refreshCloudSummary();});
 $('refreshMembers').addEventListener('click',loadMembers);
 $('refreshAiJobs').addEventListener('click',loadAiJobs);
 $('runSecurityCheck').addEventListener('click',runSecurityCheck);
@@ -517,3 +575,5 @@ setTimeout(()=>{
     if(card) card.classList.add('attention-pulse');
   }
 },800);
+
+setSetupProgress();
