@@ -1,12 +1,11 @@
 {
-  "name": "Atlas Marine OS v7.0 — Atlas Cloud First",
-  "short_name": "Atlas Marine",
+  "name": "Atlas Marine OS v8.0 — Professional Rebuild",
+  "short_name": "Atlas Marine OS",
+  "description": "Professional cloud-first marine operations platform.",
   "start_url": "./",
-  "scope": "./",
   "display": "standalone",
-  "background_color": "#061827",
-  "theme_color": "#071827",
-  "description": "Cloud-first marine operations, private document vault and Captain Sinbad.",
+  "background_color": "#05131e",
+  "theme_color": "#061621",
   "icons": [
     {
       "src": "./icon-192.png",

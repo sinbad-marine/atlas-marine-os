@@ -1,26 +1,57 @@
-# Atlas Marine OS v7.0 — Atlas Cloud First
+# Atlas Marine OS v8.0 — Professional Rebuild
 
-## What changed
-- Atlas Cloud is now the primary document vault.
-- Local IndexedDB is no longer presented as the main storage system.
-- A visible four-step setup wizard guides connection, sign-in and workspace selection.
-- Cloud connection status appears directly below the hero.
-- Dashboard counters now read from the Supabase `documents` table.
-- Nautical Publications and Nautical Charts cards open their matching cloud bucket.
-- Cloud uploads refresh the live file and storage counters.
-- Existing local operational modules remain available.
+This is a clean Sprint 1 rebuild. It is not a patch over the previous application.
 
-## First use
-1. Open **Cloud Setup & Security**.
-2. Enter the Supabase Project URL and publishable key.
-3. Sign in with the Supabase Auth user.
-4. Select the Atlas Marine Technologies workspace.
-5. Open **Upload to Atlas Cloud**.
+## Verified Sprint 1 scope
+
+- Professional responsive dashboard
+- Supabase Project URL + publishable key connection
+- Supabase Authentication sign-in/sign-out
+- Authorized workspace selection
+- Private cloud file upload
+- Documents metadata insertion
+- Cloud file listing
+- Private signed-file opening
+- File download
+- File rename
+- File deletion
+- Cloud document counters
+- Nautical Publications bucket shortcut
+- Nautical Charts bucket shortcut
+- Route library preservation
+
+## Intentionally not active yet
+
+- Captain Sinbad live AI
+- Crew cloud synchronization
+- AI document indexing
+- Admin user invitation
+- Automated security scanning
+
+These are deferred until Sprint 1 passes live testing.
+
+## Installation
+
+Upload all files from the ZIP to the root of the GitHub repository and replace the current files.
+
+After GitHub Pages deploys:
+
+1. Close all old Atlas Marine OS tabs.
+2. Open the site again.
+3. Confirm `v8.0` in the top-right corner.
+4. Open **Atlas Cloud**.
+5. Enter the Supabase Project URL and publishable key.
+6. Sign in.
+7. Select the workspace.
+8. Test with one small PDF first.
 
 ## Security
-Only enter the public/publishable Supabase key.
-Never enter an OpenAI key, secret key, service-role key or database password.
 
-## GitHub update
-Upload all package files to the root of the repository and replace existing files.
-After deployment, close the old tab and reopen the website. Confirm `v7.0` at top right.
+Never enter:
+
+- Supabase secret key
+- service-role key
+- database password
+- OpenAI API key
+
+The browser app uses only the publishable key. Supabase RLS enforces access.
