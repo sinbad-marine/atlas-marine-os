@@ -11,8 +11,8 @@
 </head>
 <body>
 <header class="topbar">
-  <div class="brand"><div class="logo">⚓</div><div><h1>ATLAS MARINE OS</h1><small>Özgür Maceraperest Dostlar</small></div></div>
-  <div class="version">● v4.0</div>
+  <div class="brand"><div class="logo">⚓</div><div><h1>ATLAS MARINE OS</h1><small>Özgür Maceraperest Dostlar • Navigate Smarter. Command Better.</small></div></div>
+  <div class="version">● v4.1</div>
 </header>
 
 <main>
@@ -36,7 +36,7 @@
   <article class="module-card" data-open="documents"><div>🗂️</div><h3>Document Center</h3><p>Folders, upload, preview, print, share, rename and download.</p><a>New in v4.0 →</a></article>
   <article class="module-card" data-open="publications"><div>📚</div><h3>Nautical Publications</h3><p>SOLAS, MARPOL, sailing directions, lights and tide tables.</p><a>New in v4.0 →</a></article>
   <article class="module-card" data-open="charts"><div>🗺️</div><h3>Nautical Charts</h3><p>Separate chart archive by country, region and chart number.</p><a>New in v4.0 →</a></article>
-  <article class="module-card" data-open="knowledge"><div>🤖</div><h3>Atlas Knowledge Search</h3><p>Search uploaded filenames, folders, tags and extracted text notes.</p><a>New in v4.0 →</a></article>
+  <article class="module-card" data-open="knowledge"><div>🤖</div><h3>Atlas Knowledge Search</h3><p>Search uploaded filenames, folders, tags and extracted text notes.</p><a>Open →</a></article><article class="module-card" data-open="sinbad"><div>🧞‍♂️</div><h3>Captain Sinbad</h3><p>Atlas AI marine intelligence guide and conversation workspace.</p><a>New in v4.1 →</a></article>
   <article class="module-card" data-open="fleet"><div>🚢</div><h3>Fleet Manager</h3><p>Vessel particulars and machinery.</p><a>Open →</a></article>
   <article class="module-card" data-open="pilot"><div>📍</div><h3>Pilot Library</h3><p>Marinas, anchorages and captain notes.</p><a>Open →</a></article>
   <article class="module-card" data-open="routes"><div>🧭</div><h3>Route Library</h3><p>Approved passages and route workspaces.</p><a>Open →</a></article>
@@ -86,6 +86,67 @@
   <div id="knowledgeResults"></div>
 </section>
 
+
+<section id="sinbad" class="workspace">
+  <div class="workspace-head">
+    <div>
+      <h2>Captain Sinbad</h2>
+      <p>Atlas AI Marine Intelligence Guide</p>
+    </div>
+    <button class="btn close">Close</button>
+  </div>
+
+  <div class="sinbad-layout">
+    <aside class="sinbad-profile">
+      <div class="sinbad-avatar large" aria-label="Captain Sinbad cartoon avatar">
+        <svg viewBox="0 0 160 160" role="img" aria-label="Friendly sailor Captain Sinbad">
+          <circle cx="80" cy="80" r="74" fill="#102b40" stroke="#e2bf72" stroke-width="5"/>
+          <path d="M40 56 Q80 18 120 56 L113 72 H47 Z" fill="#f4f7fa"/>
+          <rect x="47" y="51" width="66" height="13" rx="6" fill="#e2bf72"/>
+          <circle cx="80" cy="90" r="35" fill="#d69c6b"/>
+          <path d="M52 85 Q80 58 108 85 Q104 122 80 128 Q56 122 52 85" fill="#7a4f2f"/>
+          <path d="M60 91 Q68 84 74 91" stroke="#18212a" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <path d="M86 91 Q94 84 101 91" stroke="#18212a" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <path d="M66 106 Q80 116 94 106" stroke="#f4f7fa" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <path d="M54 122 L42 149 H118 L106 122 Q80 138 54 122" fill="#0a3d62"/>
+          <path d="M80 124 L72 145 H88 Z" fill="#e2bf72"/>
+        </svg>
+      </div>
+      <h3>Captain Sinbad</h3>
+      <span class="badge">Atlas AI</span>
+      <p class="muted">“Every Voyage Adds Knowledge.”</p>
+      <div class="sinbad-capabilities">
+        <span>⚓ Passage support</span>
+        <span>📚 Publications search</span>
+        <span>🗺️ Route intelligence</span>
+        <span>📄 Document assistance</span>
+        <span>👥 Crew and expiry checks</span>
+      </div>
+    </aside>
+
+    <div class="chat-panel">
+      <div id="sinbadMessages" class="chat-messages" aria-live="polite"></div>
+      <div id="sinbadThinking" class="thinking-bubble hidden" aria-live="polite">
+        <span></span><span></span><span></span>
+        <em>Sinbad is thinking…</em>
+      </div>
+      <div class="quick-prompts">
+        <button type="button" class="btn sinbad-prompt">Search SOLAS</button>
+        <button type="button" class="btn sinbad-prompt">Show my charts</button>
+        <button type="button" class="btn sinbad-prompt">Review crew expiries</button>
+        <button type="button" class="btn sinbad-prompt">Create passage checklist</button>
+      </div>
+      <div class="chat-input-row">
+        <textarea id="sinbadInput" placeholder="Ask Captain Sinbad..." aria-label="Message Captain Sinbad"></textarea>
+        <button type="button" class="btn primary" id="sendSinbad">Send</button>
+      </div>
+      <div class="notice">
+        v4.1 uses local Atlas Marine OS data and keyword intelligence. Secure cloud AI, full PDF indexing and cross-device memory will activate after the Supabase/OpenAI backend is connected.
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="fleet" class="workspace">
   <div class="workspace-head"><div><h2>Fleet Manager</h2><p>Vessel particulars stored locally.</p></div><button class="btn close">Close</button></div>
   <div class="form-grid">
@@ -121,7 +182,23 @@
 </section>
 </main>
 
-<footer>Atlas Marine OS v4.0 • Marine Knowledge Center • Offline-ready PWA</footer>
+<button id="sinbadFloat" class="sinbad-float" type="button" aria-label="Open Captain Sinbad">
+  <div class="sinbad-avatar small">
+    <svg viewBox="0 0 160 160" aria-hidden="true">
+      <circle cx="80" cy="80" r="74" fill="#102b40" stroke="#e2bf72" stroke-width="5"/>
+      <path d="M40 56 Q80 18 120 56 L113 72 H47 Z" fill="#f4f7fa"/>
+      <rect x="47" y="51" width="66" height="13" rx="6" fill="#e2bf72"/>
+      <circle cx="80" cy="90" r="35" fill="#d69c6b"/>
+      <path d="M52 85 Q80 58 108 85 Q104 122 80 128 Q56 122 52 85" fill="#7a4f2f"/>
+      <path d="M60 91 Q68 84 74 91" stroke="#18212a" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M86 91 Q94 84 101 91" stroke="#18212a" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M66 106 Q80 116 94 106" stroke="#f4f7fa" stroke-width="4" fill="none" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <span>Ask Sinbad</span>
+</button>
+
+<footer>Atlas Marine OS v4.1 • Captain Sinbad AI Interface • Offline-ready PWA</footer>
 
 <script src="./pilot-data.js"></script>
 <script src="./route-data.js"></script>

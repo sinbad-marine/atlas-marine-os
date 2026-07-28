@@ -88,3 +88,99 @@ async function renderAll(){renderFleet();renderCrew();renderPilot();renderRoutes
 
 document.addEventListener('DOMContentLoaded',async()=>{await openDB();setupDocumentFilters();setupPilot();setupRoutes();await renderAll()});
 if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));
+
+
+const sinbadState = {
+  messages: JSON.parse(localStorage.getItem('atlas_sinbad_messages') || '[]')
+};
+
+function saveSinbadMessages(){
+  localStorage.setItem('atlas_sinbad_messages', JSON.stringify(sinbadState.messages.slice(-80)));
+}
+function renderSinbadMessages(){
+  const box=$('sinbadMessages'); if(!box) return;
+  if(!sinbadState.messages.length){
+    sinbadState.messages.push({
+      role:'sinbad',
+      text:'Welcome aboard, Captain. I am Captain Sinbad, your Atlas AI Marine Intelligence Guide.\n\nAsk me about routes, documents, charts, crew records or your Atlas Marine knowledge library.'
+    });
+    saveSinbadMessages();
+  }
+  box.innerHTML=sinbadState.messages.map(m=>`
+    <div class="chat-bubble ${m.role==='user'?'user':'sinbad'}">
+      <span class="speaker">${m.role==='user'?'Captain':'Captain Sinbad'}</span>
+      ${esc(m.text)}
+    </div>`).join('');
+  box.scrollTop=box.scrollHeight;
+}
+function addSinbadMessage(role,text){
+  sinbadState.messages.push({role,text,at:new Date().toISOString()});
+  saveSinbadMessages();renderSinbadMessages();
+}
+async function sinbadLocalAnswer(query){
+  const q=query.toLowerCase();
+  const files=await dbAll();
+  const crew=get('atlas_crew');
+  const fleet=get('atlas_fleet');
+  const fileMatches=files.filter(x=>`${x.name} ${x.folder} ${x.tags} ${x.text}`.toLowerCase().includes(q)).slice(0,6);
+  const pilotMatches=PILOT_DATA.filter(x=>JSON.stringify(x).toLowerCase().includes(q)).slice(0,4);
+  const routeMatches=ROUTE_DATA.filter(x=>JSON.stringify(x).toLowerCase().includes(q)).slice(0,4);
+
+  if(q.includes('crew') || q.includes('expiry') || q.includes('certificate')){
+    const alerts=[];
+    crew.forEach(c=>[['Passport',c.passport],['Medical',c.medical],['STCW',c.stcw],['Visa',c.visa],['Contract',c.contract]].forEach(([type,date])=>{
+      if(!date)return; const days=Math.ceil((new Date(date+'T00:00:00')-new Date())/86400000);
+      if(days<=90) alerts.push(`${c.name || 'Crew member'} — ${type}: ${days<0?'expired '+Math.abs(days)+' days ago':days+' days remaining'}`);
+    }));
+    return alerts.length ? `I found these crew alerts:\n\n${alerts.join('\n')}` : 'I found no crew items expiring within 90 days.';
+  }
+
+  if(q.includes('chart')){
+    const charts=files.filter(x=>x.folder==='Nautical Charts');
+    return charts.length ? `You currently have ${charts.length} nautical chart file(s):\n\n${charts.slice(0,10).map(x=>'• '+x.name).join('\n')}` : 'No nautical charts are stored on this device yet.';
+  }
+
+  if(q.includes('publication') || q.includes('solas') || q.includes('marpol')){
+    const pubs=files.filter(x=>x.folder==='Nautical Publications' || `${x.name} ${x.tags}`.toLowerCase().includes(q));
+    return pubs.length ? `I found ${pubs.length} relevant publication file(s):\n\n${pubs.slice(0,10).map(x=>'• '+x.name).join('\n')}` : 'I could not find a matching nautical publication in the local library. Upload it to Nautical Publications and add descriptive tags.';
+  }
+
+  if(q.includes('fleet') || q.includes('vessel')){
+    return fleet.length ? `Fleet records:\n\n${fleet.map(v=>`• ${v.name || 'Unnamed vessel'} — ${v.type || 'type not entered'}, draft ${v.draft || '—'} m`).join('\n')}` : 'No vessel has been added to Fleet Manager yet.';
+  }
+
+  if(fileMatches.length || pilotMatches.length || routeMatches.length){
+    const parts=[];
+    if(fileMatches.length)parts.push('Files:\n'+fileMatches.map(x=>'• '+x.name+' ['+x.folder+']').join('\n'));
+    if(pilotMatches.length)parts.push('Pilot Library:\n'+pilotMatches.map(x=>'• '+x.name+' — '+x.country).join('\n'));
+    if(routeMatches.length)parts.push('Routes:\n'+routeMatches.map(x=>'• '+x.title).join('\n'));
+    return `I found the following Atlas Marine records:\n\n${parts.join('\n\n')}`;
+  }
+
+  if(q.includes('passage') || q.includes('checklist')){
+    return 'Passage planning checklist:\n\n• Confirm vessel particulars and draft\n• Review official charts and notices\n• Verify weather and sea state\n• Calculate distance, ETA and fuel reserve\n• Confirm ports of refuge and alternates\n• Check customs, immigration and pilotage\n• Complete bridge team briefing\n• Save the approved passage in Route Library';
+  }
+
+  return 'I searched the local Atlas Marine OS data but did not find a strong match. After the secure cloud AI backend is connected, I will also read indexed PDFs, publications, charts and cross-device records.';
+}
+async function sendToSinbad(text){
+  const q=(text||'').trim(); if(!q)return;
+  addSinbadMessage('user',q);
+  $('sinbadInput').value='';
+  $('sinbadThinking').classList.remove('hidden');
+  setTimeout(async()=>{
+    const answer=await sinbadLocalAnswer(q);
+    $('sinbadThinking').classList.add('hidden');
+    addSinbadMessage('sinbad',answer);
+  },650);
+}
+$('sendSinbad').addEventListener('click',()=>sendToSinbad($('sinbadInput').value));
+$('sinbadInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendToSinbad($('sinbadInput').value)}});
+document.querySelectorAll('.sinbad-prompt').forEach(b=>b.addEventListener('click',()=>sendToSinbad(b.textContent)));
+$('sinbadFloat').addEventListener('click',()=>openWorkspace('sinbad'));
+
+const originalRenderAll = renderAll;
+renderAll = async function(){
+  await originalRenderAll();
+  renderSinbadMessages();
+};
