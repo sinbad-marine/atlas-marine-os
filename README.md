@@ -1,14 +1,12 @@
-# Atlas Marine OS v1.1
+# Atlas Marine OS v2.0
+Upload every file to the root of your GitHub repository and replace existing files.
 
-GitHub Pages deployment package.
+New module:
+- Pilot Library
+- Country/type filters
+- Full-text pilot search
+- Expandable operational details
+- Private Captain Notes stored locally
+- 10 initial pilot records
 
-## Update
-Upload all files in this package to the root of the `atlas-marine-os` repository and replace the existing files.
-
-## Included
-- Working Passage Planner
-- Passage time and ETA calculation
-- Fuel and reserve calculation
-- Saved passages using local device storage
-- Captain's Log using local device storage
-- Offline-ready PWA service worker
+Existing v1.1 Passage Planner and Captain's Log are preserved.

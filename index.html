@@ -1,140 +1,96 @@
 <!doctype html>
 <html lang="tr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#071827" />
-  <title>Atlas Marine OS</title>
-  <link rel="manifest" href="./manifest.webmanifest" />
-  <link rel="apple-touch-icon" href="./icon-192.png" />
-  <style>
-    :root{--bg:#061827;--panel:#0b2234;--panel2:#102b40;--line:#244054;--text:#f4f7fa;--muted:#9db0bd;--gold:#e2bf72;--green:#55d6ad;--danger:#ff8d8d}
-    *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:linear-gradient(135deg,#051421,#0a2638);color:var(--text);min-height:100vh}
-    header{display:flex;justify-content:space-between;align-items:center;padding:22px 28px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(5,20,33,.92);backdrop-filter:blur(10px);z-index:10}
-    .brand{display:flex;gap:14px;align-items:center}.logo{width:48px;height:48px;border:2px solid var(--gold);border-radius:50%;display:grid;place-items:center;font-size:26px}
-    .brand h1{font-size:20px;letter-spacing:1.5px;margin:0}.brand small{color:var(--muted)}
-    .status{border:1px solid #1d5d57;color:var(--green);padding:8px 14px;border-radius:20px;font-size:13px}
-    main{max-width:1180px;margin:auto;padding:28px}
-    .hero{background:linear-gradient(135deg,rgba(226,191,114,.09),rgba(16,43,64,.9));border:1px solid var(--line);padding:30px;border-radius:22px;margin-bottom:28px}
-    h2{margin:0 0 8px;font-size:34px}.sub{color:var(--muted);margin-bottom:24px}
-    .tabs,.actions{display:flex;gap:10px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#203747;color:white;padding:13px 20px;border-radius:12px;font-weight:700;cursor:pointer}
-    .btn.primary{background:var(--gold);color:#18212a;border-color:var(--gold)}.btn.danger{background:transparent;color:var(--danger);border-color:#6b3b45}
-    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.card{background:linear-gradient(145deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:20px;min-height:155px;cursor:pointer}
-    .card:hover{transform:translateY(-2px)}.card .ico{font-size:28px}.card h3{margin:14px 0 6px}.card p{color:var(--muted);font-size:14px;line-height:1.4}.card a{color:var(--gold);font-size:14px}
-    section.module{display:none;background:rgba(9,32,49,.95);border:1px solid var(--line);border-radius:20px;padding:24px;margin-top:20px}
-    section.module.active{display:block}.module-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:20px}
-    .form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.field label{display:block;color:var(--muted);font-size:13px;margin-bottom:7px}.field input,.field textarea,.field select{width:100%;background:#071b2a;border:1px solid var(--line);border-radius:10px;color:white;padding:12px;font-size:16px}.field textarea{min-height:105px}
-    .result{margin-top:18px;padding:18px;border-radius:14px;background:#071b2a;border:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.metric b{display:block;font-size:23px;color:var(--gold)}.metric span{color:var(--muted);font-size:12px}
-    table{width:100%;border-collapse:collapse;margin-top:18px}th,td{text-align:left;padding:12px;border-bottom:1px solid var(--line);font-size:14px}th{color:var(--muted)}
-    .empty{color:var(--muted);padding:18px 0}.notice{color:var(--muted);font-size:13px;margin-top:12px}
-    footer{text-align:center;color:var(--muted);padding:30px;font-size:13px}
-    @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:1fr 1fr}.result{grid-template-columns:1fr 1fr}}
-    @media(max-width:600px){header{padding:14px}.brand h1{font-size:16px}main{padding:14px}.grid,.form-grid,.result{grid-template-columns:1fr}h2{font-size:28px}.hero{padding:20px}.status{display:none}}
-  </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#071827"><title>Atlas Marine OS</title>
+<link rel="manifest" href="./manifest.webmanifest"><link rel="apple-touch-icon" href="./icon-192.png">
+<style>
+:root{--bg:#061827;--panel:#0b2234;--panel2:#102b40;--line:#244054;--text:#f4f7fa;--muted:#9db0bd;--gold:#e2bf72;--green:#55d6ad;--danger:#ff8d8d}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:linear-gradient(135deg,#051421,#0a2638);color:var(--text);min-height:100vh}
+header{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(5,20,33,.94);backdrop-filter:blur(10px);z-index:20}
+.brand{display:flex;gap:12px;align-items:center}.logo{width:46px;height:46px;border:2px solid var(--gold);border-radius:50%;display:grid;place-items:center;font-size:25px}.brand h1{font-size:19px;letter-spacing:1.4px;margin:0}.brand small,.muted{color:var(--muted)}
+main{max-width:1200px;margin:auto;padding:24px}.hero{border:1px solid var(--line);border-radius:22px;padding:28px;background:linear-gradient(135deg,rgba(226,191,114,.10),rgba(16,43,64,.92));margin-bottom:22px}
+h2{font-size:32px;margin:0 0 8px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.card{background:linear-gradient(145deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:18px;padding:19px;min-height:145px;cursor:pointer}.card:hover{transform:translateY(-2px)}.card .ico{font-size:28px}.card h3{margin:12px 0 5px}.card p{font-size:14px;color:var(--muted);line-height:1.45}.card a{color:var(--gold);font-size:14px}
+.btn{border:1px solid var(--line);background:#203747;color:white;padding:11px 16px;border-radius:11px;font-weight:700;cursor:pointer}.primary{background:var(--gold);color:#18212a;border-color:var(--gold)}.danger{color:var(--danger);background:transparent;border-color:#6b3b45}.actions{display:flex;gap:10px;flex-wrap:wrap}
+.module{display:none;border:1px solid var(--line);border-radius:20px;padding:22px;background:rgba(9,32,49,.96);margin-top:20px}.module.active{display:block}.module-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+.form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.field label{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}.field input,.field textarea,.field select{width:100%;background:#071b2a;border:1px solid var(--line);border-radius:10px;color:white;padding:11px;font-size:16px}.field textarea{min-height:95px}
+.result{margin-top:16px;padding:16px;border-radius:14px;background:#071b2a;border:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.metric b{display:block;font-size:22px;color:var(--gold)}.metric span{font-size:12px;color:var(--muted)}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;margin-bottom:18px}.pilot-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.pilot-card{border:1px solid var(--line);background:#091d2d;border-radius:16px;padding:17px}.pilot-card h3{margin:0 0 5px}.badge{display:inline-block;border:1px solid #406073;color:var(--gold);font-size:12px;padding:4px 8px;border-radius:20px;margin:5px 5px 8px 0}.detail{display:none;margin-top:13px;border-top:1px solid var(--line);padding-top:13px}.detail.open{display:block}.detail p{font-size:14px;line-height:1.45;margin:7px 0}.warning{border-left:3px solid var(--gold);padding-left:12px;color:#d8e1e7}.note-box{margin-top:12px}.note-box textarea{width:100%;min-height:75px;background:#071b2a;color:white;border:1px solid var(--line);border-radius:10px;padding:10px}
+table{width:100%;border-collapse:collapse;margin-top:15px}th,td{text-align:left;padding:11px;border-bottom:1px solid var(--line);font-size:14px}th{color:var(--muted)}.empty{color:var(--muted);padding:15px 0}
+footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.form-grid,.filters{grid-template-columns:1fr 1fr}.pilot-grid{grid-template-columns:1fr}.result{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){main{padding:13px}header{padding:13px}.brand h1{font-size:16px}.grid,.form-grid,.filters,.result{grid-template-columns:1fr}.hero{padding:20px}h2{font-size:27px}}
+</style>
 </head>
 <body>
-<header>
-  <div class="brand"><div class="logo">⚓</div><div><h1>ATLAS MARINE OS</h1><small>Captain Varol Çolak</small></div></div>
-  <div class="status">● Online</div>
-</header>
-
+<header><div class="brand"><div class="logo">⚓</div><div><h1>ATLAS MARINE OS</h1><small>Özgür Maceraperest Dostlar</small></div></div><div style="color:var(--green)">● v2.0</div></header>
 <main>
-  <div class="hero">
-    <h2>Bridge Dashboard</h2>
-    <div class="sub">Navigation, passage planning, yacht operations and captain’s records in one secure workspace.</div>
-    <div class="actions">
-      <button class="btn primary" onclick="openModule('passage')">New Passage</button>
-      <button class="btn" onclick="openModule('log')">Log Entry</button>
-      <button class="btn" onclick="openModule('documents')">Documents</button>
-    </div>
-  </div>
+<div class="hero"><h2>Bridge Dashboard</h2><p class="muted">Passage planning, Captain’s Log and the new Pilot Library.</p><div class="actions"><button class="btn primary" onclick="openModule('pilot')">Open Pilot Library</button><button class="btn" onclick="openModule('passage')">New Passage</button></div></div>
+<div class="grid">
+<div class="card" onclick="openModule('pilot')"><div class="ico">📚</div><h3>Pilot Library</h3><p>Search countries, regions, marinas and anchorages. Add your own captain notes.</p><a>New in v2.0 →</a></div>
+<div class="card" onclick="openModule('passage')"><div class="ico">🗺️</div><h3>Passage Planner</h3><p>Distance, speed, ETA, fuel and reserve.</p><a>Open →</a></div>
+<div class="card" onclick="openModule('log')"><div class="ico">📘</div><h3>Captain's Log</h3><p>Store operational notes on this device.</p><a>Open →</a></div>
+<div class="card"><div class="ico">🧭</div><h3>Route Library</h3><p>TimeZero route archive will follow in the next development stage.</p><a>Planned →</a></div>
+<div class="card"><div class="ico">⚙️</div><h3>Yacht Operations</h3><p>ISM, ISPS, checklists and defects.</p><a>Planned →</a></div>
+<div class="card"><div class="ico">🌦️</div><h3>Weather</h3><p>Marine weather integration point.</p><a>Planned →</a></div>
+<div class="card"><div class="ico">📁</div><h3>Documents</h3><p>Certificates, manuals and brochures.</p><a>Planned →</a></div>
+<div class="card"><div class="ico">🤖</div><h3>Atlas AI</h3><p>Marine intelligence assistant.</p><a>Planned →</a></div>
+</div>
 
-  <div class="grid">
-    <div class="card" onclick="openModule('navigation')"><div class="ico">🧭</div><h3>Navigation</h3><p>Position, route tools and navigation links.</p><a>Open module →</a></div>
-    <div class="card" onclick="openModule('passage')"><div class="ico">🗺️</div><h3>Passage Planner</h3><p>Distance, speed, passage time, ETA and fuel calculations.</p><a>Open module →</a></div>
-    <div class="card" onclick="openModule('log')"><div class="ico">📘</div><h3>Captain's Log</h3><p>Store daily notes locally on this device.</p><a>Open module →</a></div>
-    <div class="card" onclick="openModule('operations')"><div class="ico">⚙️</div><h3>Yacht Operations</h3><p>ISM, ISPS, checklists and defect reporting.</p><a>Open module →</a></div>
-    <div class="card"><div class="ico">🌦️</div><h3>Weather</h3><p>Reserved for live marine weather integration.</p><a>Planned →</a></div>
-    <div class="card" onclick="openModule('documents')"><div class="ico">📁</div><h3>Documents</h3><p>Certificates, manuals, routes and brochures.</p><a>Open module →</a></div>
-    <div class="card" onclick="openModule('crew')"><div class="ico">👥</div><h3>Crew</h3><p>Crew list, certificates and familiarisation.</p><a>Open module →</a></div>
-    <div class="card"><div class="ico">🤖</div><h3>Atlas AI</h3><p>Marine intelligence assistant integration point.</p><a>Planned →</a></div>
-  </div>
+<section id="pilot" class="module">
+<div class="module-head"><div><h2>Pilot Library</h2><div class="muted">Operational reference database — always verify official charts, notices and local authorities.</div></div><button class="btn" onclick="closeModules()">Close</button></div>
+<div class="filters">
+<div class="field"><label>Search location or note</label><input id="pilotSearch" placeholder="Gouvia, Gyali, customs..." oninput="renderPilot()"></div>
+<div class="field"><label>Country</label><select id="countryFilter" onchange="renderPilot()"><option value="">All countries</option></select></div>
+<div class="field"><label>Type</label><select id="typeFilter" onchange="renderPilot()"><option value="">All types</option></select></div>
+</div>
+<div id="pilotCount" class="muted"></div><div id="pilotGrid" class="pilot-grid"></div>
+</section>
 
-  <section id="passage" class="module">
-    <div class="module-head"><div><h2>Passage Planner</h2><div class="sub">v1.1 — çalışan ilk operasyon modülü</div></div><button class="btn" onclick="closeModules()">Close</button></div>
-    <div class="form-grid">
-      <div class="field"><label>Departure</label><input id="dep" placeholder="Marmaris"></div>
-      <div class="field"><label>Arrival</label><input id="arr" placeholder="Nisyros"></div>
-      <div class="field"><label>Distance (NM)</label><input id="distance" type="number" step="0.1" value="50"></div>
-      <div class="field"><label>Speed (kn)</label><input id="speed" type="number" step="0.1" value="10"></div>
-      <div class="field"><label>Departure date & time</label><input id="departTime" type="datetime-local"></div>
-      <div class="field"><label>Fuel consumption (L/h)</label><input id="fuelRate" type="number" step="0.1" value="0"></div>
-      <div class="field"><label>Reserve (%)</label><input id="reserve" type="number" value="15"></div>
-      <div class="field"><label>Weather / operational note</label><input id="passageNote" placeholder="Optional"></div>
-    </div>
-    <div class="actions" style="margin-top:16px"><button class="btn primary" onclick="calculatePassage()">Calculate</button><button class="btn" onclick="savePassage()">Save Passage</button></div>
-    <div id="result" class="result">
-      <div class="metric"><b id="rTime">—</b><span>Passage time</span></div>
-      <div class="metric"><b id="rEta">—</b><span>ETA</span></div>
-      <div class="metric"><b id="rFuel">—</b><span>Fuel + reserve</span></div>
-      <div class="metric"><b id="rAvg">—</b><span>Average speed</span></div>
-    </div>
-    <h3>Saved Passages</h3><div id="passages"></div>
-  </section>
+<section id="passage" class="module">
+<div class="module-head"><div><h2>Passage Planner</h2><div class="muted">Saved passages remain stored locally.</div></div><button class="btn" onclick="closeModules()">Close</button></div>
+<div class="form-grid">
+<div class="field"><label>Departure</label><input id="dep"></div><div class="field"><label>Arrival</label><input id="arr"></div>
+<div class="field"><label>Distance (NM)</label><input id="distance" type="number" step="0.1" value="50"></div>
+<div class="field"><label>Speed (kn)</label><input id="speed" type="number" step="0.1" value="10"></div>
+<div class="field"><label>Departure date & time</label><input id="departTime" type="datetime-local"></div>
+<div class="field"><label>Fuel consumption (L/h)</label><input id="fuelRate" type="number" step="0.1" value="0"></div>
+<div class="field"><label>Reserve (%)</label><input id="reserve" type="number" value="15"></div>
+<div class="field"><label>Operational note</label><input id="passageNote"></div>
+</div>
+<div class="actions" style="margin-top:15px"><button class="btn primary" onclick="calculatePassage()">Calculate</button><button class="btn" onclick="savePassage()">Save Passage</button></div>
+<div class="result"><div class="metric"><b id="rTime">—</b><span>Passage time</span></div><div class="metric"><b id="rEta">—</b><span>ETA</span></div><div class="metric"><b id="rFuel">—</b><span>Fuel + reserve</span></div><div class="metric"><b id="rAvg">—</b><span>Average speed</span></div></div>
+<h3>Saved Passages</h3><div id="passages"></div>
+</section>
 
-  <section id="log" class="module">
-    <div class="module-head"><div><h2>Captain's Log</h2><div class="sub">Kayıtlar bu cihazda saklanır.</div></div><button class="btn" onclick="closeModules()">Close</button></div>
-    <div class="form-grid">
-      <div class="field"><label>Date</label><input id="logDate" type="date"></div>
-      <div class="field"><label>Position / Port</label><input id="logPosition" placeholder="Position or port"></div>
-      <div class="field"><label>Weather</label><input id="logWeather" placeholder="Wind, sea, visibility"></div>
-      <div class="field" style="grid-column:1/-1"><label>Captain's entry</label><textarea id="logText" placeholder="Daily operational entry..."></textarea></div>
-    </div>
-    <button class="btn primary" onclick="saveLog()">Save Log Entry</button>
-    <div id="logs"></div>
-  </section>
-
-  <section id="navigation" class="module">
-    <div class="module-head"><h2>Navigation</h2><button class="btn" onclick="closeModules()">Close</button></div>
-    <p class="empty">TimeZero route library and coordinate tools will be added in v1.2.</p>
-  </section>
-  <section id="operations" class="module"><div class="module-head"><h2>Yacht Operations</h2><button class="btn" onclick="closeModules()">Close</button></div><p class="empty">ISM, ISPS, checklists and defect reports will be built after Passage Planner.</p></section>
-  <section id="documents" class="module"><div class="module-head"><h2>Documents</h2><button class="btn" onclick="closeModules()">Close</button></div><p class="empty">The document library interface is reserved for the next release.</p></section>
-  <section id="crew" class="module"><div class="module-head"><h2>Crew</h2><button class="btn" onclick="closeModules()">Close</button></div><p class="empty">Crew records and certificate expiry tracking will be added later.</p></section>
+<section id="log" class="module">
+<div class="module-head"><div><h2>Captain's Log</h2><div class="muted">Entries are saved locally on this device.</div></div><button class="btn" onclick="closeModules()">Close</button></div>
+<div class="form-grid"><div class="field"><label>Date</label><input id="logDate" type="date"></div><div class="field"><label>Position / Port</label><input id="logPosition"></div><div class="field"><label>Weather</label><input id="logWeather"></div><div class="field" style="grid-column:1/-1"><label>Captain's entry</label><textarea id="logText"></textarea></div></div>
+<button class="btn primary" onclick="saveLog()">Save Log Entry</button><div id="logs"></div>
+</section>
 </main>
-<footer>Atlas Marine OS v1.1 • Offline-ready PWA • Local device storage</footer>
+<footer>Atlas Marine OS v2.0 • Pilot Library • Offline-ready PWA</footer>
 
+<script src="./pilot-data.js"></script>
 <script>
-let currentCalc=null;
-const $=id=>document.getElementById(id);
+let currentCalc=null; const $=id=>document.getElementById(id);
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function openModule(id){document.querySelectorAll('.module').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');$(id).scrollIntoView({behavior:'smooth'});renderAll()}
-function closeModules(){document.querySelectorAll('.module').forEach(x=>x.classList.remove('active'));window.scrollTo({top:0,behavior:'smooth'})}
-function calculatePassage(){
- const d=parseFloat($('distance').value), s=parseFloat($('speed').value), rate=parseFloat($('fuelRate').value)||0, reserve=parseFloat($('reserve').value)||0;
- if(!(d>0&&s>0)){alert('Distance and speed must be greater than zero.');return}
- const hours=d/s, whole=Math.floor(hours), mins=Math.round((hours-whole)*60);
- const dt=$('departTime').value?new Date($('departTime').value):new Date();
- const eta=new Date(dt.getTime()+hours*3600000);
- const fuel=rate*hours*(1+reserve/100);
- currentCalc={departure:$('dep').value.trim(),arrival:$('arr').value.trim(),distance:d,speed:s,hours,eta:eta.toISOString(),fuel,note:$('passageNote').value.trim(),created:new Date().toISOString()};
- $('rTime').textContent=`${whole}h ${mins}m`;
- $('rEta').textContent=eta.toLocaleString();
- $('rFuel').textContent=rate?`${fuel.toFixed(1)} L`:'—';
- $('rAvg').textContent=`${s.toFixed(1)} kn`;
-}
-function savePassage(){if(!currentCalc)calculatePassage();if(!currentCalc)return;const a=JSON.parse(localStorage.getItem('atlas_passages')||'[]');a.unshift(currentCalc);localStorage.setItem('atlas_passages',JSON.stringify(a));renderPassages();alert('Passage saved on this device.')}
-function renderPassages(){const a=JSON.parse(localStorage.getItem('atlas_passages')||'[]');if(!a.length){$('passages').innerHTML='<div class="empty">No saved passages yet.</div>';return}
- $('passages').innerHTML='<table><tr><th>Route</th><th>Distance</th><th>Speed</th><th>Time</th><th></th></tr>'+a.map((x,i)=>`<tr><td>${esc(x.departure||'—')} → ${esc(x.arrival||'—')}</td><td>${x.distance} NM</td><td>${x.speed} kn</td><td>${formatHours(x.hours)}</td><td><button class="btn danger" onclick="deletePassage(${i})">Delete</button></td></tr>`).join('')+'</table>'}
+function closeModules(){document.querySelectorAll('.module').forEach(x=>x.classList.remove('active'));scrollTo({top:0,behavior:'smooth'})}
+function setupFilters(){[...new Set(PILOT_DATA.map(x=>x.country))].sort().forEach(x=>$('countryFilter').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`));[...new Set(PILOT_DATA.map(x=>x.type))].sort().forEach(x=>$('typeFilter').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`))}
+function renderPilot(){const q=$('pilotSearch').value.toLowerCase(),c=$('countryFilter').value,t=$('typeFilter').value;const rows=PILOT_DATA.filter(x=>(!c||x.country===c)&&(!t||x.type===t)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));$('pilotCount').textContent=`${rows.length} pilot record(s)`;$('pilotGrid').innerHTML=rows.map((x,i)=>{const key=`${x.country}|${x.name}`;const own=localStorage.getItem('pilotnote:'+key)||'';return `<article class="pilot-card"><h3>${esc(x.name)}</h3><div class="muted">${esc(x.country)} • ${esc(x.region)}</div><span class="badge">${esc(x.type)}</span><span class="badge">VHF: ${esc(x.vhf)}</span><p>${esc(x.approach)}</p><button class="btn" onclick="toggleDetail('d${i}')">Details</button><div id="d${i}" class="detail"><p><b>Depth:</b> ${esc(x.depth)}</p><p><b>Max draft:</b> ${esc(x.maxDraft)}</p><p><b>Services:</b> ${esc(x.services.join(', '))}</p><p class="warning"><b>Captain note:</b> ${esc(x.captainNote)}</p><div class="note-box"><label class="muted">My private captain note</label><textarea id="n${i}">${esc(own)}</textarea><button class="btn primary" onclick="savePilotNote('${encodeURIComponent(key)}','n${i}')">Save note</button></div></div></article>`}).join('')||'<div class="empty">No matching pilot records.</div>'}
+function toggleDetail(id){$(id).classList.toggle('open')}
+function savePilotNote(key,id){localStorage.setItem('pilotnote:'+decodeURIComponent(key),$(id).value);alert('Captain note saved on this device.')}
+function calculatePassage(){const d=parseFloat($('distance').value),s=parseFloat($('speed').value),rate=parseFloat($('fuelRate').value)||0,res=parseFloat($('reserve').value)||0;if(!(d>0&&s>0)){alert('Distance and speed must be greater than zero.');return}const h=d/s,dt=$('departTime').value?new Date($('departTime').value):new Date(),eta=new Date(dt.getTime()+h*3600000),fuel=rate*h*(1+res/100);currentCalc={departure:$('dep').value.trim(),arrival:$('arr').value.trim(),distance:d,speed:s,hours:h,eta:eta.toISOString(),fuel,note:$('passageNote').value.trim(),created:new Date().toISOString()};$('rTime').textContent=formatHours(h);$('rEta').textContent=eta.toLocaleString();$('rFuel').textContent=rate?fuel.toFixed(1)+' L':'—';$('rAvg').textContent=s.toFixed(1)+' kn'}
+function savePassage(){if(!currentCalc)calculatePassage();if(!currentCalc)return;const a=JSON.parse(localStorage.getItem('atlas_passages')||'[]');a.unshift(currentCalc);localStorage.setItem('atlas_passages',JSON.stringify(a));renderPassages();alert('Passage saved.')}
+function renderPassages(){const a=JSON.parse(localStorage.getItem('atlas_passages')||'[]');$('passages').innerHTML=!a.length?'<div class="empty">No saved passages.</div>':'<table><tr><th>Route</th><th>Distance</th><th>Speed</th><th>Time</th><th></th></tr>'+a.map((x,i)=>`<tr><td>${esc(x.departure||'—')} → ${esc(x.arrival||'—')}</td><td>${x.distance} NM</td><td>${x.speed} kn</td><td>${formatHours(x.hours)}</td><td><button class="btn danger" onclick="deletePassage(${i})">Delete</button></td></tr>`).join('')+'</table>'}
 function deletePassage(i){const a=JSON.parse(localStorage.getItem('atlas_passages')||'[]');a.splice(i,1);localStorage.setItem('atlas_passages',JSON.stringify(a));renderPassages()}
-function saveLog(){const text=$('logText').value.trim();if(!text){alert('Please enter a log note.');return}const a=JSON.parse(localStorage.getItem('atlas_logs')||'[]');a.unshift({date:$('logDate').value||new Date().toISOString().slice(0,10),position:$('logPosition').value.trim(),weather:$('logWeather').value.trim(),text,created:new Date().toISOString()});localStorage.setItem('atlas_logs',JSON.stringify(a));$('logText').value='';renderLogs()}
-function renderLogs(){const a=JSON.parse(localStorage.getItem('atlas_logs')||'[]');if(!a.length){$('logs').innerHTML='<div class="empty">No log entries yet.</div>';return}
- $('logs').innerHTML='<table><tr><th>Date</th><th>Position</th><th>Weather</th><th>Entry</th><th></th></tr>'+a.map((x,i)=>`<tr><td>${esc(x.date)}</td><td>${esc(x.position||'—')}</td><td>${esc(x.weather||'—')}</td><td>${esc(x.text)}</td><td><button class="btn danger" onclick="deleteLog(${i})">Delete</button></td></tr>`).join('')+'</table>'}
+function saveLog(){const text=$('logText').value.trim();if(!text){alert('Enter a log note.');return}const a=JSON.parse(localStorage.getItem('atlas_logs')||'[]');a.unshift({date:$('logDate').value||new Date().toISOString().slice(0,10),position:$('logPosition').value.trim(),weather:$('logWeather').value.trim(),text});localStorage.setItem('atlas_logs',JSON.stringify(a));$('logText').value='';renderLogs()}
+function renderLogs(){const a=JSON.parse(localStorage.getItem('atlas_logs')||'[]');$('logs').innerHTML=!a.length?'<div class="empty">No log entries.</div>':'<table><tr><th>Date</th><th>Position</th><th>Weather</th><th>Entry</th><th></th></tr>'+a.map((x,i)=>`<tr><td>${esc(x.date)}</td><td>${esc(x.position||'—')}</td><td>${esc(x.weather||'—')}</td><td>${esc(x.text)}</td><td><button class="btn danger" onclick="deleteLog(${i})">Delete</button></td></tr>`).join('')+'</table>'}
 function deleteLog(i){const a=JSON.parse(localStorage.getItem('atlas_logs')||'[]');a.splice(i,1);localStorage.setItem('atlas_logs',JSON.stringify(a));renderLogs()}
 function formatHours(h){const w=Math.floor(h),m=Math.round((h-w)*60);return `${w}h ${m}m`}
-function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-function renderAll(){renderPassages();renderLogs()}
-document.addEventListener('DOMContentLoaded',()=>{$('logDate').value=new Date().toISOString().slice(0,10);renderAll()});
-if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'))}
+function renderAll(){renderPilot();renderPassages();renderLogs()}
+document.addEventListener('DOMContentLoaded',()=>{setupFilters();$('logDate').value=new Date().toISOString().slice(0,10);renderAll()});
+if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));
 </script>
-</body>
-</html>
+</body></html>
