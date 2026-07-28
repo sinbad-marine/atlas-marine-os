@@ -1,0 +1,14 @@
+{
+  "name": "Atlas Marine OS",
+  "short_name": "Atlas Marine",
+  "description": "Professional Navigation & Yacht Management System",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#071521",
+  "theme_color": "#071521",
+  "orientation": "any",
+  "icons": [
+    {"src":"icons/icon-192.png","sizes":"192x192","type":"image/png"},
+    {"src":"icons/icon-512.png","sizes":"512x512","type":"image/png"}
+  ]
+}
