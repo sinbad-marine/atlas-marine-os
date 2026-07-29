@@ -30,7 +30,7 @@
     forgotPasswordBtn: $("forgotPasswordBtn"), recoveryDialog: $("recoveryDialog"), recoveryForm: $("recoveryForm"),
     recoveryRequest: $("recoveryRequest"), recoveryUpdate: $("recoveryUpdate"), recoveryEmail: $("recoveryEmail"),
     newPassword: $("newPassword"), confirmPassword: $("confirmPassword"), recoverySubmitBtn: $("recoverySubmitBtn"),
-    recoveryCancelBtn: $("recoveryCancelBtn"), closeRecoveryBtn: $("closeRecoveryBtn"),
+    recoveryCancelBtn: $("recoveryCancelBtn"), closeRecoveryBtn: $("closeRecoveryBtn"), recoveryStatus: $("recoveryStatus"),
     steps: [$("stepConnect"), $("stepAuth"), $("stepWorkspace"), $("stepFiles")]
   };
 
@@ -38,7 +38,7 @@
     els.notice.textContent = message;
     els.notice.className = `notice${type === "error" ? " error" : ""}`;
     window.clearTimeout(showNotice.timer);
-    showNotice.timer = window.setTimeout(() => els.notice.classList.add("hidden"), 6000);
+    if (type !== "error") showNotice.timer = window.setTimeout(() => els.notice.classList.add("hidden"), 6000);
   }
 
   function errorMessage(error) {
@@ -46,6 +46,8 @@
     if (/Invalid API key/i.test(raw)) return "Publishable key geçersiz görünüyor.";
     if (/Failed to fetch|NetworkError/i.test(raw)) return "Atlas Cloud’a ulaşılamadı. Project URL ve internet bağlantısını kontrol edin.";
     if (/Invalid login credentials/i.test(raw)) return "E-posta veya şifre hatalı.";
+    if (/rate limit|too many requests|429/i.test(raw)) return "Supabase saatlik e-posta gönderme sınırına ulaştı. Şimdi tekrar denemeyin; en az bir saat bekleyip yalnızca bir kez deneyin.";
+    if (/email address not authorized/i.test(raw)) return "Bu e-posta Supabase’in varsayılan posta servisi için yetkili değil. Custom SMTP kurulması gerekiyor.";
     if (/row-level security/i.test(raw)) return "Bu işlem için workspace yetkiniz yok veya dosya yolu güvenlik kuralına uymuyor.";
     if (/duplicate key/i.test(raw)) return "Aynı isimli bir dosya zaten mevcut.";
     return raw;
@@ -96,12 +98,19 @@
     els.recoveryRequest.classList.toggle("hidden", updatePassword);
     els.recoveryUpdate.classList.toggle("hidden", !updatePassword);
     els.recoverySubmitBtn.textContent = updatePassword ? "Yeni şifreyi kaydet" : "Kurtarma e-postası gönder";
+    els.recoverySubmitBtn.disabled = false;
     els.recoveryEmail.required = !updatePassword;
     els.newPassword.required = updatePassword;
     els.confirmPassword.required = updatePassword;
+    setRecoveryStatus("");
     if (!updatePassword) els.recoveryEmail.value = els.email.value.trim();
     if (!els.recoveryDialog.open) els.recoveryDialog.showModal();
     setTimeout(() => (updatePassword ? els.newPassword : els.recoveryEmail).focus(), 50);
+  }
+
+  function setRecoveryStatus(message, type = "error") {
+    els.recoveryStatus.textContent = message;
+    els.recoveryStatus.className = message ? `inline-status${type === "success" ? " success" : ""}` : "inline-status hidden";
   }
 
   function setStep(index) {
@@ -359,6 +368,7 @@
   els.recoveryForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     els.recoverySubmitBtn.disabled = true;
+    setRecoveryStatus("");
     try {
       if (!client) throw new Error("Önce Atlas Cloud bağlantısını kaydedin.");
       if (!recoveryMode) {
@@ -369,8 +379,9 @@
           localStorage.removeItem(RECOVERY_PENDING_KEY);
           throw error;
         }
-        els.recoveryDialog.close();
-        showNotice("Kurtarma e-postası gönderildi. Gelen kutunuzu ve Spam klasörünü kontrol edin.");
+        setRecoveryStatus("Kurtarma isteği Supabase tarafından kabul edildi. En yeni e-postayı, Spam ve Tanıtımlar klasörlerini kontrol edin.", "success");
+        els.recoverySubmitBtn.textContent = "E-posta istendi";
+        els.recoverySubmitBtn.disabled = true;
       } else {
         if (els.newPassword.value.length < 10) throw new Error("Yeni şifre en az 10 karakter olmalıdır.");
         if (els.newPassword.value !== els.confirmPassword.value) throw new Error("Yeni şifreler birbiriyle eşleşmiyor.");
@@ -392,9 +403,11 @@
         }
       }
     } catch (error) {
-      showNotice(errorMessage(error), "error");
+      const message = errorMessage(error);
+      setRecoveryStatus(message, "error");
+      showNotice(message, "error");
     } finally {
-      els.recoverySubmitBtn.disabled = false;
+      if (!els.recoveryStatus.classList.contains("success")) els.recoverySubmitBtn.disabled = false;
     }
   });
 

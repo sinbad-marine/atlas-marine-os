@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.4 Test — Sprint 1
+
+- Şifre kurtarma sonuçları modalın içinde kalıcı olarak gösteriliyor.
+- Hata mesajları artık otomatik kaybolmuyor.
+- Supabase 429/e-posta limiti Türkçe ve uygulanabilir açıklamayla gösteriliyor.
+- Yetkisiz e-posta ve ağ hataları anlaşılır mesajlara dönüştürüldü.
+- Başarılı istekten sonra ikinci kez yanlışlıkla gönderim engelleniyor.
+
 ## v8.3 Test — Sprint 1
 
 - Kurtarma isteği cihazda iki saat süreyle güvenli bir durum işareti olarak tutuluyor.
