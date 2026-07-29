@@ -1,5 +1,11 @@
 # Changelog
 
+## v8.6 Test — Sprint 1
+
+- Şifre kurtarma ekranı Supabase’in gönderdiği 8 haneli OTP koduna uyarlandı.
+- Kod alanı ve doğrulama kontrolü 8 haneyi kabul ediyor.
+- Eski önbelleğin yeni sürümü engellememesi için PWA önbelleği yenilendi.
+
 ## v8.5 Test — Sprint 1
 
 - Gmail ve güvenlik tarayıcılarının tek kullanımlık bağlantıyı tüketmesi sorunu giderildi.

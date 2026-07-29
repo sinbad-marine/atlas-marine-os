@@ -1,10 +1,10 @@
-# Atlas Marine OS v8.5 — Canlı Test Kontrol Listesi
+# Atlas Marine OS v8.6 — Canlı Test Kontrol Listesi
 
 Testi normal Safari sekmesinde yapın. Her adım başarılı olmadan sonraki adıma geçmeyin.
 
 ## A. Sürüm ve bağlantı
 
-- [ ] Sağ üstte `v8.5 TEST` görünüyor.
+- [ ] Sağ üstte `v8.6 TEST` görünüyor.
 - [ ] Supabase Project URL girildi.
 - [ ] Publishable/anon key girildi.
 - [ ] “Bağlantıyı kaydet” sonrasında başarı mesajı göründü.
@@ -20,7 +20,7 @@ Testi normal Safari sekmesinde yapın. Her adım başarılı olmadan sonraki ad�
 
 - [ ] “Şifremi unuttum” ekranı açıldı.
 - [ ] Kayıtlı e-posta için kurtarma mesajı gönderildi.
-- [ ] E-postadaki 6 haneli kod Atlas Marine OS’ye girildi.
+- [ ] E-postadaki 8 haneli kod Atlas Marine OS’ye girildi.
 - [ ] Kod doğrulandıktan sonra “Yeni şifre” ekranı açıldı.
 - [ ] En az 10 karakterli yeni şifre kaydedildi.
 - [ ] Yeni şifreyle normal giriş yapılabildi.

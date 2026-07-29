@@ -416,7 +416,7 @@
         openOtpDialog();
       } else if (recoveryOtpMode) {
         const token = els.recoveryCode.value.replace(/\D/g, "");
-        if (token.length !== 6) throw new Error("E-postadaki 6 haneli doğrulama kodunu girin.");
+        if (token.length < 6 || token.length > 8) throw new Error("E-postadaki 8 haneli doğrulama kodunu eksiksiz girin.");
         const { data, error } = await client.auth.verifyOtp({
           email: els.recoveryEmail.value.trim(),
           token,

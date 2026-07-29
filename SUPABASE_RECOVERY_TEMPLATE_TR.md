@@ -1,6 +1,6 @@
 # Supabase Reset Password e-posta şablonu
 
-Atlas Marine OS v8.5, posta güvenlik tarayıcılarının tek kullanımlık bağlantıyı tüketmesini önlemek için 6 haneli OTP kodu kullanır.
+Atlas Marine OS v8.6, posta güvenlik tarayıcılarının tek kullanımlık bağlantıyı tüketmesini önlemek için 8 haneli OTP kodu kullanır.
 
 Supabase Dashboard:
 
@@ -17,7 +17,7 @@ Supabase Dashboard:
 <p>Atlas Cloud hesabınız için şifre yenileme talebi aldık.</p>
 <p>Doğrulama kodunuz:</p>
 <h1 style="font-size:32px;letter-spacing:8px;">{{ .Token }}</h1>
-<p>Bu 6 haneli kodu Atlas Marine OS içindeki şifre kurtarma penceresine yazın.</p>
+<p>Bu 8 haneli kodu Atlas Marine OS içindeki şifre kurtarma penceresine yazın.</p>
 <p>Bu talebi siz yapmadıysanız e-postayı görmezden gelebilirsiniz.</p>
 ```
 
