@@ -1,569 +1,352 @@
 (() => {
   "use strict";
 
+  const CONFIG_KEY = "atlas-v81-supabase-config";
+  const WORKSPACE_KEY = "atlas-v81-workspace";
+  const MAX_PDF_BYTES = 10 * 1024 * 1024;
+  const BUCKET = "atlas-documents";
+  let client = null;
+  let session = null;
+  let workspace = null;
+  let documents = [];
+
   const $ = (id) => document.getElementById(id);
-  const state = {
-    client: null,
-    session: null,
-    workspaceId: localStorage.getItem("atlas.workspace") || "",
-    files: []
+  const els = {
+    cloudBadge: $("cloudBadge"), routeSummary: $("routeSummary"), notice: $("notice"),
+    connectionPanel: $("connectionPanel"), authPanel: $("authPanel"), workspacePanel: $("workspacePanel"), filesPanel: $("filesPanel"),
+    connectionForm: $("connectionForm"), projectUrl: $("projectUrl"), publishableKey: $("publishableKey"),
+    loginForm: $("loginForm"), email: $("email"), password: $("password"), signOutBtn: $("signOutBtn"),
+    sessionCard: $("sessionCard"), sessionEmail: $("sessionEmail"), workspaceSelect: $("workspaceSelect"), workspaceInfo: $("workspaceInfo"),
+    fileInput: $("fileInput"), chooseFileBtn: $("chooseFileBtn"), uploadProgress: $("uploadProgress"),
+    refreshBtn: $("refreshBtn"), fileCount: $("fileCount"), filesSubtitle: $("filesSubtitle"), fileList: $("fileList"),
+    renameDialog: $("renameDialog"), renameForm: $("renameForm"), renameInput: $("renameInput"), renameDocumentId: $("renameDocumentId"),
+    steps: [$("stepConnect"), $("stepAuth"), $("stepWorkspace"), $("stepFiles")]
   };
 
-  const CONFIG_URL = "atlas.supabase.url";
-  const CONFIG_KEY = "atlas.supabase.publishable";
-
-  function escapeHtml(value = "") {
-    return String(value).replace(/[&<>"']/g, (char) => ({
-      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
-    }[char]));
+  function showNotice(message, type = "ok") {
+    els.notice.textContent = message;
+    els.notice.className = `notice${type === "error" ? " error" : ""}`;
+    window.clearTimeout(showNotice.timer);
+    showNotice.timer = window.setTimeout(() => els.notice.classList.add("hidden"), 6000);
   }
 
-  function showToast(message) {
-    const toast = $("toast");
-    toast.textContent = message;
-    toast.classList.add("show");
-    clearTimeout(showToast.timer);
-    showToast.timer = setTimeout(() => toast.classList.remove("show"), 2800);
+  function errorMessage(error) {
+    const raw = error?.message || String(error || "Bilinmeyen hata");
+    if (/Invalid API key/i.test(raw)) return "Publishable key geçersiz görünüyor.";
+    if (/Failed to fetch|NetworkError/i.test(raw)) return "Atlas Cloud’a ulaşılamadı. Project URL ve internet bağlantısını kontrol edin.";
+    if (/Invalid login credentials/i.test(raw)) return "E-posta veya şifre hatalı.";
+    if (/row-level security/i.test(raw)) return "Bu işlem için workspace yetkiniz yok veya dosya yolu güvenlik kuralına uymuyor.";
+    if (/duplicate key/i.test(raw)) return "Aynı isimli bir dosya zaten mevcut.";
+    return raw;
   }
 
-  function setMessage(id, message, type = "") {
-    const element = $(id);
-    element.textContent = message;
-    element.className = `inline-message ${type}`.trim();
+  function config() {
+    try { return JSON.parse(localStorage.getItem(CONFIG_KEY) || "null"); } catch { return null; }
   }
 
-  function formatBytes(bytes = 0) {
-    const value = Number(bytes) || 0;
-    if (value < 1024) return `${value} B`;
-    if (value < 1024 * 1024) return `${(value / 1024).toFixed(1)} KB`;
-    if (value < 1024 * 1024 * 1024) return `${(value / 1024 / 1024).toFixed(1)} MB`;
-    return `${(value / 1024 / 1024 / 1024).toFixed(1)} GB`;
+  function normalizeUrl(value) {
+    return value.trim().replace(/\/+$/, "");
   }
 
-  function sanitizePart(value, fallback = "general") {
-    const safe = String(value || fallback)
-      .trim()
-      .replace(/^\/+|\/+$/g, "")
-      .replace(/[^a-zA-Z0-9._/-]+/g, "-")
-      .replace(/-+/g, "-");
-    return safe || fallback;
-  }
-
-  function navigate(viewName) {
-    document.querySelectorAll(".view").forEach((view) => {
-      view.classList.toggle("active", view.id === `view-${viewName}`);
+  function makeClient(saved) {
+    if (!window.supabase?.createClient) throw new Error("Supabase bağlantı kütüphanesi yüklenemedi.");
+    client = window.supabase.createClient(saved.url, saved.key, {
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
     });
-    document.querySelectorAll(".nav-item").forEach((item) => {
-      item.classList.toggle("active", item.dataset.view === viewName);
+  }
+
+  function setStep(index) {
+    els.steps.forEach((step, i) => {
+      step.classList.toggle("done", i < index);
+      step.classList.toggle("active", i === index);
     });
-    $("sidebar").classList.remove("open");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    if (viewName === "documents") loadFiles();
-  }
-
-  function readConfig() {
-    return {
-      url: localStorage.getItem(CONFIG_URL) || "",
-      key: localStorage.getItem(CONFIG_KEY) || ""
-    };
-  }
-
-  function initializeClient() {
-    const { url, key } = readConfig();
-    if (!url || !key || !window.supabase) {
-      state.client = null;
-      updateStatus();
-      return;
-    }
-    try {
-      state.client = window.supabase.createClient(url, key, {
-        auth: {
-          persistSession: true,
-          autoRefreshToken: true,
-          detectSessionInUrl: true
-        }
-      });
-    } catch (error) {
-      state.client = null;
-      setMessage("connectionMessage", error.message, "error");
-    }
-    updateStatus();
-  }
-
-  async function restoreSession() {
-    if (!state.client) return;
-    const { data, error } = await state.client.auth.getSession();
-    if (error) {
-      setMessage("authMessage", error.message, "error");
-      return;
-    }
-    state.session = data.session;
-    updateStatus();
-    if (state.session) await loadWorkspaces();
+    els.authPanel.classList.toggle("disabled", index < 1);
+    els.workspacePanel.classList.toggle("disabled", index < 2);
+    els.filesPanel.classList.toggle("disabled", index < 3);
   }
 
   function updateStatus() {
-    const connected = Boolean(state.client);
-    const signedIn = Boolean(state.session?.user);
-    const workspaceReady = Boolean(state.workspaceId);
-    const ready = connected && signedIn && workspaceReady;
-
-    $("connectionPill").classList.toggle("online", ready);
-    $("connectionPill").querySelector("b").textContent = ready ? "Atlas Cloud Ready" : "Cloud Offline";
-    $("stepConnect").classList.toggle("done", connected);
-    $("stepLogin").classList.toggle("done", signedIn);
-    $("stepWorkspace").classList.toggle("done", workspaceReady);
-    $("stepReady").classList.toggle("done", ready);
-
-    $("documentGuard").classList.toggle("ready", ready);
-    $("documentGuard").textContent = ready
-      ? "✓ Atlas Cloud is ready. Uploads will be stored privately in the selected workspace."
-      : "Connect, sign in and select a workspace to continue.";
-
-    if (!ready) {
-      ["metricFiles", "metricPublications", "metricCharts", "metricStorage"].forEach((id) => {
-        $(id).textContent = "—";
-      });
-    }
+    const ready = Boolean(client && session && workspace);
+    els.cloudBadge.classList.toggle("online", ready);
+    els.cloudBadge.querySelector("span").textContent = ready ? "Atlas Cloud ready" : client ? (session ? "Workspace required" : "Sign in required") : "Cloud not configured";
+    els.routeSummary.textContent = ready ? `${workspace.name} workspace’i güvenli bulut kasasına bağlı.` : client ? (session ? "Yetkili workspace’inizi seçin." : "Atlas Cloud hesabınızla oturum açın.") : "Bağlantı bilgilerini girerek başlayın.";
+    els.signOutBtn.classList.toggle("hidden", !session);
+    setStep(!client ? 0 : !session ? 1 : !workspace ? 2 : 3);
   }
 
-  async function saveConnection() {
-    const url = $("projectUrl").value.trim().replace(/\/$/, "");
-    const key = $("publishableKey").value.trim();
-
-    if (!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(url)) {
-      setMessage("connectionMessage", "Enter a valid Supabase Project URL.", "error");
-      return;
+  async function initialize() {
+    const saved = config();
+    if (!saved) return updateStatus();
+    els.projectUrl.value = saved.url;
+    els.publishableKey.value = saved.key;
+    try {
+      makeClient(saved);
+      const { data, error } = await client.auth.getSession();
+      if (error) throw error;
+      session = data.session;
+      if (session) await onSignedIn();
+    } catch (error) {
+      client = null;
+      showNotice(errorMessage(error), "error");
     }
-    if (!key) {
-      setMessage("connectionMessage", "Enter the publishable key.", "error");
-      return;
-    }
-    if (/service_role|secret/i.test(key)) {
-      setMessage("connectionMessage", "Do not enter a secret or service-role key.", "error");
-      return;
-    }
-
-    localStorage.setItem(CONFIG_URL, url);
-    localStorage.setItem(CONFIG_KEY, key);
-    initializeClient();
-
-    if (!state.client) {
-      setMessage("connectionMessage", "The Supabase client could not be initialized.", "error");
-      return;
-    }
-
-    const { error } = await state.client.auth.getSession();
-    if (error) {
-      setMessage("connectionMessage", error.message, "error");
-      return;
-    }
-    setMessage("connectionMessage", "Project connection saved and Supabase reached.", "success");
-    showToast("Atlas Cloud connection saved");
-    await restoreSession();
-  }
-
-  function clearConnection() {
-    localStorage.removeItem(CONFIG_URL);
-    localStorage.removeItem(CONFIG_KEY);
-    localStorage.removeItem("atlas.workspace");
-    state.client = null;
-    state.session = null;
-    state.workspaceId = "";
-    $("projectUrl").value = "";
-    $("publishableKey").value = "";
-    $("workspaceSelect").innerHTML = '<option value="">No workspace selected</option>';
-    setMessage("connectionMessage", "No cloud configuration saved.");
-    setMessage("authMessage", "Signed out.");
-    setMessage("workspaceMessage", "Connect and sign in first.");
     updateStatus();
   }
 
-  async function signIn() {
-    if (!state.client) {
-      setMessage("authMessage", "Connect the project first.", "error");
-      return;
-    }
-    const email = $("loginEmail").value.trim();
-    const password = $("loginPassword").value;
-    if (!email || !password) {
-      setMessage("authMessage", "Enter email and password.", "error");
-      return;
-    }
-    setMessage("authMessage", "Signing in…");
-    const { data, error } = await state.client.auth.signInWithPassword({ email, password });
-    if (error) {
-      setMessage("authMessage", error.message, "error");
-      return;
-    }
-    state.session = data.session;
-    setMessage("authMessage", `Signed in as ${data.user.email}.`, "success");
-    updateStatus();
+  async function onSignedIn() {
+    els.loginForm.classList.add("hidden");
+    els.sessionCard.classList.remove("hidden");
+    els.sessionEmail.textContent = session.user.email || "Atlas Cloud user";
     await loadWorkspaces();
-    showToast("Welcome aboard");
-  }
-
-  async function signOut() {
-    if (state.client) await state.client.auth.signOut();
-    state.session = null;
-    state.workspaceId = "";
-    localStorage.removeItem("atlas.workspace");
-    $("workspaceSelect").innerHTML = '<option value="">No workspace selected</option>';
-    setMessage("authMessage", "Signed out.");
-    setMessage("workspaceMessage", "Sign in to load workspaces.");
-    updateStatus();
   }
 
   async function loadWorkspaces() {
-    if (!state.client || !state.session?.user) {
-      setMessage("workspaceMessage", "Connect and sign in first.", "error");
-      return;
+    const { data, error } = await client
+      .from("workspace_members")
+      .select("workspace_id, role, is_active, workspaces(id,name,slug)")
+      .eq("user_id", session.user.id)
+      .eq("is_active", true);
+    if (error) throw error;
+    const memberships = (data || []).filter((item) => item.workspaces);
+    els.workspaceSelect.innerHTML = `<option value="">Workspace seçin</option>${memberships.map((m) => `<option value="${escapeHtml(m.workspace_id)}" data-role="${escapeHtml(m.role)}">${escapeHtml(m.workspaces.name)}</option>`).join("")}`;
+    const remembered = localStorage.getItem(WORKSPACE_KEY);
+    const selected = memberships.find((m) => m.workspace_id === remembered) || (memberships.length === 1 ? memberships[0] : null);
+    if (selected) {
+      els.workspaceSelect.value = selected.workspace_id;
+      await selectWorkspace(selected.workspace_id, memberships);
+    } else if (!memberships.length) {
+      showNotice("Bu kullanıcı için aktif workspace üyeliği bulunamadı.", "error");
     }
-    setMessage("workspaceMessage", "Loading authorized workspaces…");
-    const { data, error } = await state.client
-      .from("workspaces")
-      .select("id,name,slug,created_at")
-      .order("name");
-
-    if (error) {
-      setMessage("workspaceMessage", error.message, "error");
-      return;
-    }
-
-    const select = $("workspaceSelect");
-    select.innerHTML = '<option value="">Select workspace</option>' +
-      (data || []).map((workspace) =>
-        `<option value="${escapeHtml(workspace.id)}">${escapeHtml(workspace.name)}</option>`
-      ).join("");
-
-    if (state.workspaceId && (data || []).some((item) => item.id === state.workspaceId)) {
-      select.value = state.workspaceId;
-    } else if (data?.length === 1) {
-      state.workspaceId = data[0].id;
-      select.value = state.workspaceId;
-      localStorage.setItem("atlas.workspace", state.workspaceId);
-    }
-
-    const selected = (data || []).find((item) => item.id === state.workspaceId);
-    setMessage(
-      "workspaceMessage",
-      selected ? `${selected.name} • ${selected.id}` : `${data?.length || 0} authorized workspace(s) found.`,
-      selected ? "success" : ""
-    );
-    updateStatus();
-    if (state.workspaceId) await refreshMetrics();
   }
 
-  async function selectWorkspace() {
-    state.workspaceId = $("workspaceSelect").value;
-    if (state.workspaceId) {
-      localStorage.setItem("atlas.workspace", state.workspaceId);
-      const name = $("workspaceSelect").selectedOptions[0]?.textContent || "Workspace";
-      setMessage("workspaceMessage", `${name} selected.`, "success");
-      await refreshMetrics();
+  async function selectWorkspace(id, memberships = null) {
+    if (!id) {
+      workspace = null;
+      localStorage.removeItem(WORKSPACE_KEY);
+      els.workspaceInfo.innerHTML = "<span>Rol</span><strong>—</strong>";
+      renderDocuments([]);
+      return updateStatus();
+    }
+    if (!memberships) {
+      const option = els.workspaceSelect.selectedOptions[0];
+      workspace = { id, name: option.textContent, role: option.dataset.role };
     } else {
-      localStorage.removeItem("atlas.workspace");
-      setMessage("workspaceMessage", "No workspace selected.");
+      const item = memberships.find((m) => m.workspace_id === id);
+      workspace = { id, name: item.workspaces.name, role: item.role };
     }
+    localStorage.setItem(WORKSPACE_KEY, id);
+    els.workspaceInfo.innerHTML = `<span>Rol</span><strong>${escapeHtml(workspace.role)}</strong>`;
     updateStatus();
+    await loadDocuments();
   }
 
-  function isCloudReady() {
-    return Boolean(state.client && state.session?.user && state.workspaceId);
-  }
-
-  async function refreshMetrics() {
-    if (!isCloudReady()) {
-      updateStatus();
-      return;
-    }
-    const { data, error } = await state.client
+  async function loadDocuments() {
+    if (!workspace) return;
+    els.refreshBtn.disabled = true;
+    const { data, error } = await client
       .from("documents")
-      .select("bucket_id,file_size_bytes")
-      .eq("workspace_id", state.workspaceId)
-      .is("deleted_at", null);
-
-    if (error) {
-      showToast(`Metrics: ${error.message}`);
-      return;
-    }
-    const rows = data || [];
-    $("metricFiles").textContent = rows.length;
-    $("metricPublications").textContent = rows.filter((row) => row.bucket_id === "nautical-publications").length;
-    $("metricCharts").textContent = rows.filter((row) => row.bucket_id === "nautical-charts").length;
-    $("metricStorage").textContent = formatBytes(rows.reduce((sum, row) => sum + (Number(row.file_size_bytes) || 0), 0));
-  }
-
-  async function uploadFiles() {
-    if (!isCloudReady()) {
-      setMessage("uploadMessage", "Connect, sign in and select a workspace first.", "error");
-      return;
-    }
-
-    const files = Array.from($("cloudFiles").files || []);
-    if (!files.length) {
-      setMessage("uploadMessage", "Choose one or more files first.", "error");
-      return;
-    }
-
-    const bucket = $("bucketSelect").value;
-    const folder = sanitizePart($("folderPath").value);
-    const button = $("uploadFilesButton");
-    button.disabled = true;
-
-    let uploaded = 0;
-    try {
-      for (let index = 0; index < files.length; index += 1) {
-        const file = files[index];
-        const safeName = sanitizePart(file.name, "file");
-        const objectPath = `${state.workspaceId}/${folder}/${crypto.randomUUID()}-${safeName}`;
-
-        setMessage("uploadMessage", `Uploading ${index + 1}/${files.length}: ${file.name}`);
-
-        const { error: storageError } = await state.client.storage
-          .from(bucket)
-          .upload(objectPath, file, {
-            cacheControl: "3600",
-            contentType: file.type || "application/octet-stream",
-            upsert: false
-          });
-
-        if (storageError) throw new Error(`Storage: ${storageError.message}`);
-
-        const { error: metadataError } = await state.client
-          .from("documents")
-          .insert({
-            workspace_id: state.workspaceId,
-            bucket_id: bucket,
-            object_path: objectPath,
-            original_filename: file.name,
-            title: file.name,
-            mime_type: file.type || null,
-            file_size_bytes: file.size,
-            status: "active",
-            classification: bucket === "crew-confidential" ? "confidential" : "standard",
-            created_by: state.session.user.id
-          });
-
-        if (metadataError) {
-          await state.client.storage.from(bucket).remove([objectPath]);
-          throw new Error(`Metadata: ${metadataError.message}`);
-        }
-        uploaded += 1;
-      }
-
-      $("cloudFiles").value = "";
-      setMessage("uploadMessage", `✓ ${uploaded} file(s) uploaded successfully.`, "success");
-      showToast("Cloud upload completed");
-      await Promise.all([loadFiles(), refreshMetrics()]);
-    } catch (error) {
-      setMessage("uploadMessage", error.message, "error");
-    } finally {
-      button.disabled = false;
-    }
-  }
-
-  async function loadFiles() {
-    if (!isCloudReady()) {
-      $("fileGrid").innerHTML = '<div class="empty-state">Connect Atlas Cloud to load files.</div>';
-      updateStatus();
-      return;
-    }
-
-    const bucket = $("bucketSelect").value;
-    $("fileGrid").innerHTML = '<div class="empty-state">Loading files…</div>';
-
-    const { data, error } = await state.client
-      .from("documents")
-      .select("id,title,original_filename,bucket_id,object_path,mime_type,file_size_bytes,status,classification,created_at")
-      .eq("workspace_id", state.workspaceId)
-      .eq("bucket_id", bucket)
+      .select("id,original_filename,title,bucket_id,object_path,mime_type,file_size_bytes,created_at")
+      .eq("workspace_id", workspace.id)
       .is("deleted_at", null)
-      .order("created_at", { ascending: false })
-      .limit(200);
+      .order("created_at", { ascending: false });
+    els.refreshBtn.disabled = false;
+    if (error) throw error;
+    documents = data || [];
+    renderDocuments(documents);
+  }
 
-    if (error) {
-      $("fileGrid").innerHTML = `<div class="empty-state">${escapeHtml(error.message)}</div>`;
+  function renderDocuments(items) {
+    els.fileCount.textContent = String(items.length);
+    els.filesSubtitle.textContent = workspace ? `${workspace.name} · private storage` : "Workspace seçildiğinde listelenecek.";
+    if (!items.length) {
+      els.fileList.innerHTML = `<div class="empty"><span>□</span><strong>Henüz dosya yok</strong><p>İlk PDF’inizi Atlas Cloud’a yükleyin.</p></div>`;
       return;
     }
-
-    state.files = data || [];
-    if (!state.files.length) {
-      $("fileGrid").innerHTML = '<div class="empty-state">No files in this cloud category.</div>';
-      return;
-    }
-
-    $("fileGrid").innerHTML = state.files.map((file) => `
-      <article class="file-card">
-        <h3>${escapeHtml(file.title || file.original_filename)}</h3>
-        <p>${escapeHtml(file.bucket_id)}<br>${formatBytes(file.file_size_bytes)} • ${escapeHtml(file.classification)}<br>${new Date(file.created_at).toLocaleString("tr-TR")}</p>
+    els.fileList.innerHTML = items.map((doc) => `
+      <article class="file-row" data-id="${escapeHtml(doc.id)}">
+        <div class="file-main"><span class="pdf-icon">PDF</span><div class="file-meta"><strong>${escapeHtml(doc.original_filename)}</strong><small>${formatBytes(doc.file_size_bytes)} · ${formatDate(doc.created_at)}</small></div></div>
         <div class="file-actions">
-          <button class="button ghost" data-action="open" data-id="${file.id}">Open</button>
-          <button class="button ghost" data-action="download" data-id="${file.id}">Download</button>
-          <button class="button ghost" data-action="rename" data-id="${file.id}">Rename</button>
-          <button class="button danger" data-action="delete" data-id="${file.id}">Delete</button>
+          <button class="button ghost" data-action="open">Aç</button>
+          <button class="button ghost" data-action="download">İndir</button>
+          <button class="button ghost" data-action="rename">Adlandır</button>
+          <button class="button ghost danger" data-action="delete">Sil</button>
         </div>
-      </article>
-    `).join("");
+      </article>`).join("");
   }
 
-  function getFileRecord(id) {
-    return state.files.find((file) => file.id === id);
-  }
-
-  async function openFile(file) {
-    const { data, error } = await state.client.storage
-      .from(file.bucket_id)
-      .createSignedUrl(file.object_path, 300);
-    if (error) {
-      showToast(error.message);
-      return;
-    }
-    window.open(data.signedUrl, "_blank", "noopener");
-  }
-
-  async function downloadFile(file) {
-    const { data, error } = await state.client.storage
-      .from(file.bucket_id)
-      .download(file.object_path);
-    if (error) {
-      showToast(error.message);
-      return;
-    }
-    const url = URL.createObjectURL(data);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = file.original_filename || "atlas-file";
-    anchor.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1500);
-  }
-
-  async function renameFile(file) {
-    const newName = prompt("New file name:", file.original_filename);
-    if (!newName || newName === file.original_filename) return;
-
-    const parts = file.object_path.split("/");
-    parts[parts.length - 1] = `${crypto.randomUUID()}-${sanitizePart(newName, "file")}`;
-    const newPath = parts.join("/");
-
-    const { error: moveError } = await state.client.storage
-      .from(file.bucket_id)
-      .move(file.object_path, newPath);
-
-    if (moveError) {
-      showToast(moveError.message);
-      return;
-    }
-
-    const { error: metadataError } = await state.client
-      .from("documents")
-      .update({
-        original_filename: newName,
-        title: newName,
-        object_path: newPath
-      })
-      .eq("id", file.id);
-
-    if (metadataError) {
-      showToast(`Metadata: ${metadataError.message}`);
-      return;
-    }
-    showToast("File renamed");
-    await loadFiles();
-  }
-
-  async function deleteFile(file) {
-    if (!confirm(`Delete "${file.original_filename}" from Atlas Cloud?`)) return;
-
-    const { error: storageError } = await state.client.storage
-      .from(file.bucket_id)
-      .remove([file.object_path]);
-
-    if (storageError) {
-      showToast(storageError.message);
-      return;
-    }
-
-    const { error: metadataError } = await state.client
-      .from("documents")
-      .delete()
-      .eq("id", file.id);
-
-    if (metadataError) {
-      showToast(`Metadata: ${metadataError.message}`);
-      return;
-    }
-
-    showToast("File deleted");
-    await Promise.all([loadFiles(), refreshMetrics()]);
-  }
-
-  function renderRoutes() {
-    const routes = window.ATLAS_ROUTES || [];
-    $("routeCards").innerHTML = routes.map((route) => `
-      <article class="route-card">
-        <h3>${escapeHtml(route.title)}</h3>
-        <p>${escapeHtml(route.type)} • ${escapeHtml(route.status)}</p>
-        <p>${route.stops.map(escapeHtml).join(" → ")}</p>
-      </article>
-    `).join("");
-  }
-
-  function bindEvents() {
-    document.querySelectorAll("[data-view]").forEach((button) => {
-      button.addEventListener("click", () => navigate(button.dataset.view));
-    });
-    document.querySelectorAll("[data-go]").forEach((button) => {
-      button.addEventListener("click", () => navigate(button.dataset.go));
-    });
-    document.querySelectorAll(".open-bucket").forEach((button) => {
-      button.addEventListener("click", () => {
-        $("bucketSelect").value = button.dataset.bucket;
-        navigate("documents");
+  async function uploadPdf(file) {
+    if (!workspace || !session) throw new Error("Önce oturum açın ve workspace seçin.");
+    if (!file || (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf"))) throw new Error("Yalnızca PDF dosyası yükleyebilirsiniz.");
+    if (file.size > MAX_PDF_BYTES) throw new Error("Test sürümünde PDF boyutu en fazla 10 MB olabilir.");
+    const safeName = sanitizeFilename(file.name);
+    const objectPath = `${workspace.id}/documents/${crypto.randomUUID()}/${safeName}`;
+    els.uploadProgress.classList.remove("hidden");
+    els.fileInput.disabled = true;
+    try {
+      const { error: uploadError } = await client.storage.from(BUCKET).upload(objectPath, file, { contentType: "application/pdf", upsert: false, cacheControl: "3600" });
+      if (uploadError) throw uploadError;
+      const { error: metaError } = await client.from("documents").insert({
+        workspace_id: workspace.id, bucket_id: BUCKET, object_path: objectPath,
+        original_filename: safeName, title: stripPdf(safeName), document_type: "pdf",
+        mime_type: "application/pdf", file_size_bytes: file.size, status: "active",
+        classification: "standard", created_by: session.user.id
       });
-    });
-
-    $("menuButton").addEventListener("click", () => $("sidebar").classList.toggle("open"));
-    $("saveConnection").addEventListener("click", saveConnection);
-    $("clearConnection").addEventListener("click", clearConnection);
-    $("signInButton").addEventListener("click", signIn);
-    $("signOutButton").addEventListener("click", signOut);
-    $("refreshWorkspaces").addEventListener("click", loadWorkspaces);
-    $("workspaceSelect").addEventListener("change", selectWorkspace);
-    $("uploadFilesButton").addEventListener("click", uploadFiles);
-    $("refreshFilesButton").addEventListener("click", loadFiles);
-    $("bucketSelect").addEventListener("change", loadFiles);
-
-    $("fileGrid").addEventListener("click", async (event) => {
-      const button = event.target.closest("[data-action]");
-      if (!button) return;
-      const file = getFileRecord(button.dataset.id);
-      if (!file) return;
-      if (button.dataset.action === "open") await openFile(file);
-      if (button.dataset.action === "download") await downloadFile(file);
-      if (button.dataset.action === "rename") await renameFile(file);
-      if (button.dataset.action === "delete") await deleteFile(file);
-    });
+      if (metaError) {
+        await client.storage.from(BUCKET).remove([objectPath]);
+        throw metaError;
+      }
+      showNotice(`${safeName} Atlas Cloud’a yüklendi.`);
+      await loadDocuments();
+    } finally {
+      els.uploadProgress.classList.add("hidden");
+      els.fileInput.disabled = false;
+      els.fileInput.value = "";
+    }
   }
 
-  async function boot() {
-    bindEvents();
-    renderRoutes();
+  async function signedUrl(doc, download = false) {
+    const options = download ? { download: doc.original_filename } : undefined;
+    const { data, error } = await client.storage.from(doc.bucket_id).createSignedUrl(doc.object_path, 60, options);
+    if (error) throw error;
+    return data.signedUrl;
+  }
 
-    const config = readConfig();
-    $("projectUrl").value = config.url;
-    $("publishableKey").value = config.key;
+  async function openDocument(doc, download = false) {
+    const url = await signedUrl(doc, download);
+    const link = document.createElement("a");
+    link.href = url;
+    link.target = download ? "_self" : "_blank";
+    link.rel = "noopener";
+    if (download) link.download = doc.original_filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }
 
-    initializeClient();
-    await restoreSession();
+  async function renameDocument(doc, newName) {
+    const safeName = sanitizeFilename(newName.toLowerCase().endsWith(".pdf") ? newName : `${newName}.pdf`);
+    const prefix = doc.object_path.substring(0, doc.object_path.lastIndexOf("/") + 1);
+    const newPath = `${prefix}${safeName}`;
+    if (newPath !== doc.object_path) {
+      const { error: moveError } = await client.storage.from(doc.bucket_id).move(doc.object_path, newPath);
+      if (moveError) throw moveError;
+    }
+    const { error } = await client.from("documents").update({ original_filename: safeName, title: stripPdf(safeName), object_path: newPath }).eq("id", doc.id).eq("workspace_id", workspace.id);
+    if (error) {
+      if (newPath !== doc.object_path) await client.storage.from(doc.bucket_id).move(newPath, doc.object_path);
+      throw error;
+    }
+    showNotice("Dosya yeniden adlandırıldı.");
+    await loadDocuments();
+  }
+
+  async function deleteDocument(doc) {
+    if (!window.confirm(`“${doc.original_filename}” kalıcı olarak silinsin mi?`)) return;
+    const { error: storageError } = await client.storage.from(doc.bucket_id).remove([doc.object_path]);
+    if (storageError) throw storageError;
+    const { error } = await client.from("documents").delete().eq("id", doc.id).eq("workspace_id", workspace.id);
+    if (error) throw error;
+    showNotice("Dosya silindi.");
+    await loadDocuments();
+  }
+
+  function sanitizeFilename(name) {
+    const cleaned = name.normalize("NFKD").replace(/[^\w.\- ]+/g, "").replace(/\s+/g, "-").replace(/-+/g, "-").replace(/^[-.]+/, "").slice(0, 140);
+    return cleaned || `atlas-document-${Date.now()}.pdf`;
+  }
+  function stripPdf(name) { return name.replace(/\.pdf$/i, ""); }
+  function formatBytes(bytes) { if (!Number.isFinite(Number(bytes))) return "—"; return bytes < 1024 * 1024 ? `${(bytes / 1024).toFixed(0)} KB` : `${(bytes / 1024 / 1024).toFixed(1)} MB`; }
+  function formatDate(value) { return new Intl.DateTimeFormat("tr-TR", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value)); }
+  function escapeHtml(value) { return String(value ?? "").replace(/[&<>"']/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]); }
+
+  els.connectionForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const saved = { url: normalizeUrl(els.projectUrl.value), key: els.publishableKey.value.trim() };
+    const submit = event.submitter;
+    submit.disabled = true;
+    try {
+      makeClient(saved);
+      const { error } = await client.auth.getSession();
+      if (error) throw error;
+      localStorage.setItem(CONFIG_KEY, JSON.stringify(saved));
+      session = null; workspace = null;
+      showNotice("Atlas Cloud bağlantısı kaydedildi.");
+      updateStatus();
+    } catch (error) {
+      client = null;
+      showNotice(errorMessage(error), "error");
+      updateStatus();
+    } finally { submit.disabled = false; }
+  });
+
+  els.loginForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const submit = event.submitter;
+    submit.disabled = true;
+    try {
+      const { data, error } = await client.auth.signInWithPassword({ email: els.email.value.trim(), password: els.password.value });
+      if (error) throw error;
+      session = data.session;
+      await onSignedIn();
+      showNotice("Atlas Cloud oturumu açıldı.");
+    } catch (error) { showNotice(errorMessage(error), "error"); }
+    finally { submit.disabled = false; updateStatus(); }
+  });
+
+  els.signOutBtn.addEventListener("click", async () => {
+    if (client) await client.auth.signOut();
+    session = null; workspace = null; documents = [];
+    localStorage.removeItem(WORKSPACE_KEY);
+    els.loginForm.classList.remove("hidden"); els.sessionCard.classList.add("hidden");
+    els.workspaceSelect.innerHTML = `<option value="">Önce oturum açın</option>`;
+    renderDocuments([]);
+    showNotice("Oturum kapatıldı.");
     updateStatus();
+  });
 
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./sw.js").catch(() => {});
-      });
-    }
+  els.workspaceSelect.addEventListener("change", async () => {
+    try { await selectWorkspace(els.workspaceSelect.value); } catch (error) { showNotice(errorMessage(error), "error"); }
+  });
+  els.chooseFileBtn.addEventListener("click", () => els.fileInput.click());
+  els.fileInput.addEventListener("change", async () => {
+    try { await uploadPdf(els.fileInput.files[0]); } catch (error) { showNotice(errorMessage(error), "error"); els.uploadProgress.classList.add("hidden"); els.fileInput.disabled = false; }
+  });
+  els.refreshBtn.addEventListener("click", async () => {
+    try { await loadDocuments(); showNotice("Dosya listesi yenilendi."); } catch (error) { showNotice(errorMessage(error), "error"); }
+  });
+  els.fileList.addEventListener("click", async (event) => {
+    const button = event.target.closest("[data-action]");
+    if (!button) return;
+    const doc = documents.find((item) => item.id === button.closest(".file-row").dataset.id);
+    if (!doc) return;
+    button.disabled = true;
+    try {
+      if (button.dataset.action === "open") await openDocument(doc);
+      if (button.dataset.action === "download") await openDocument(doc, true);
+      if (button.dataset.action === "delete") await deleteDocument(doc);
+      if (button.dataset.action === "rename") {
+        els.renameDocumentId.value = doc.id;
+        els.renameInput.value = doc.original_filename;
+        els.renameDialog.showModal();
+        setTimeout(() => els.renameInput.select(), 50);
+      }
+    } catch (error) { showNotice(errorMessage(error), "error"); }
+    finally { button.disabled = false; }
+  });
+  els.renameForm.addEventListener("submit", async (event) => {
+    if (event.submitter?.value === "cancel") return;
+    event.preventDefault();
+    const doc = documents.find((item) => item.id === els.renameDocumentId.value);
+    if (!doc) return;
+    event.submitter.disabled = true;
+    try { await renameDocument(doc, els.renameInput.value.trim()); els.renameDialog.close(); }
+    catch (error) { showNotice(errorMessage(error), "error"); }
+    finally { event.submitter.disabled = false; }
+  });
+
+  window.addEventListener("online", () => showNotice("İnternet bağlantısı yeniden kuruldu."));
+  window.addEventListener("offline", () => showNotice("Çevrimdışısınız; bulut işlemleri geçici olarak kullanılamaz.", "error"));
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
   }
-
-  document.addEventListener("DOMContentLoaded", boot);
+  initialize();
 })();

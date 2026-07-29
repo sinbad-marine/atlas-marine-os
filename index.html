@@ -3,206 +3,108 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#061621">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>Atlas Marine OS</title>
-  <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="apple-touch-icon" href="./icon-192.png">
-  <link rel="stylesheet" href="./styles.css">
+  <meta name="theme-color" content="#071a24">
+  <title>Atlas Marine OS — Cloud Core</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="app-shell">
+  <div class="shell">
     <header class="topbar">
-      <button id="menuButton" class="icon-button mobile-only" aria-label="Menü">☰</button>
-      <div class="brand">
-        <div class="brand-mark">⚓</div>
-        <div>
-          <h1>ATLAS MARINE OS</h1>
-          <p>Özgür Maceraperest Dostlar</p>
-        </div>
-      </div>
-      <div class="topbar-right">
-        <div id="connectionPill" class="status-pill offline"><span></span><b>Cloud Offline</b></div>
-        <div class="version">v8.0</div>
+      <a class="brand" href="#" aria-label="Atlas Marine OS">
+        <span class="mark">A</span>
+        <span><strong>ATLAS MARINE OS</strong><small>Navigate Smarter. Command Better.</small></span>
+      </a>
+      <div class="top-actions">
+        <span id="cloudBadge" class="status"><i></i><span>Cloud not configured</span></span>
+        <button id="signOutBtn" class="button ghost hidden">Çıkış</button>
+        <span class="version">v8.1 TEST</span>
       </div>
     </header>
 
-    <aside id="sidebar" class="sidebar">
-      <div class="sidebar-label">COMMAND</div>
-      <button class="nav-item active" data-view="dashboard"><span>⌂</span> Dashboard</button>
-      <button class="nav-item" data-view="documents"><span>▣</span> Cloud Documents</button>
-      <button class="nav-item" data-view="publications"><span>▤</span> Publications</button>
-      <button class="nav-item" data-view="charts"><span>⌖</span> Nautical Charts</button>
-      <button class="nav-item" data-view="crew"><span>♟</span> Crew</button>
-      <button class="nav-item" data-view="routes"><span>➤</span> Routes</button>
-
-      <div class="sidebar-label">SYSTEM</div>
-      <button class="nav-item" data-view="cloud"><span>☁</span> Atlas Cloud</button>
-      <button class="nav-item" data-view="sinbad"><span>✦</span> Captain Sinbad</button>
-
-      <div class="sidebar-footer">
-        <span>Navigate Smarter.</span>
-        <strong>Command Better.</strong>
-      </div>
-    </aside>
-
-    <main class="content">
-      <section id="view-dashboard" class="view active">
-        <div class="hero">
-          <div>
-            <div class="eyebrow">PROFESSIONAL MARINE INTELLIGENCE PLATFORM</div>
-            <h2>One bridge.<br>Every operation.</h2>
-            <p>Private cloud documents, nautical libraries and operational records in one secure workspace.</p>
-            <div class="hero-actions">
-              <button class="button primary" data-go="documents">Upload to Atlas Cloud</button>
-              <button class="button secondary" data-go="cloud">Connect Cloud</button>
-            </div>
-          </div>
-          <div class="hero-orbit" aria-hidden="true">
-            <div class="orbit orbit-one"></div>
-            <div class="orbit orbit-two"></div>
-            <div class="orbit-core">⚓</div>
-          </div>
+    <main>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">SPRINT 1 · CLOUD FOUNDATION</p>
+          <h1>Atlas Cloud,<br><em>seyre hazır.</em></h1>
+          <p class="lead">Önce sağlam çekirdek: güvenli bağlantı, oturum, workspace ve özel PDF kasası.</p>
         </div>
-
-        <div class="metrics">
-          <article><span>Cloud files</span><strong id="metricFiles">—</strong><small>Authorized workspace</small></article>
-          <article><span>Publications</span><strong id="metricPublications">—</strong><small>SOLAS, MARPOL & more</small></article>
-          <article><span>Charts</span><strong id="metricCharts">—</strong><small>Private chart archive</small></article>
-          <article><span>Storage</span><strong id="metricStorage">—</strong><small>Document metadata total</small></article>
-        </div>
-
-        <div class="section-heading">
-          <div><span class="eyebrow">CORE WORKSPACES</span><h3>Operations at a glance</h3></div>
-        </div>
-        <div class="module-grid">
-          <button class="module featured" data-go="documents"><span class="module-icon">☁</span><b>Cloud Document Center</b><p>Upload, open, download, rename and delete private files.</p><em>Open vault →</em></button>
-          <button class="module" data-go="publications"><span class="module-icon">▤</span><b>Nautical Publications</b><p>Professional library for statutory and operational publications.</p><em>Open library →</em></button>
-          <button class="module" data-go="charts"><span class="module-icon">⌖</span><b>Nautical Charts</b><p>Organize chart files by region, number and edition.</p><em>Open archive →</em></button>
-          <button class="module" data-go="cloud"><span class="module-icon">◎</span><b>Cloud Control</b><p>Connection, authentication, workspace and security status.</p><em>Open control →</em></button>
-          <button class="module" data-go="crew"><span class="module-icon">♟</span><b>Crew Manager</b><p>Crew profile and certificate tracking foundation.</p><em>Open crew →</em></button>
-          <button class="module" data-go="routes"><span class="module-icon">➤</span><b>Route Library</b><p>Approved route sequences and passage knowledge.</p><em>Open routes →</em></button>
+        <div class="route-card" aria-label="Sprint ilerlemesi">
+          <div class="route-line"><span class="route-dot active"></span><span></span><span class="route-dot"></span></div>
+          <div class="route-labels"><span>iPad</span><span>Atlas Cloud</span></div>
+          <p id="routeSummary">Bağlantı bilgilerini girerek başlayın.</p>
         </div>
       </section>
 
-      <section id="view-cloud" class="view">
-        <div class="page-head">
-          <div><span class="eyebrow">SECURE CONNECTION</span><h2>Atlas Cloud</h2><p>Connect this device to your existing Supabase project.</p></div>
-        </div>
+      <section class="steps" aria-label="Kurulum adımları">
+        <article id="stepConnect" class="step active"><b>01</b><span><strong>Bağlantı</strong><small>Project URL + publishable key</small></span></article>
+        <article id="stepAuth" class="step"><b>02</b><span><strong>Oturum</strong><small>Atlas Cloud hesabı</small></span></article>
+        <article id="stepWorkspace" class="step"><b>03</b><span><strong>Workspace</strong><small>Yetkili çalışma alanı</small></span></article>
+        <article id="stepFiles" class="step"><b>04</b><span><strong>Dosyalar</strong><small>Private PDF kasası</small></span></article>
+      </section>
 
-        <div class="setup-flow">
-          <div id="stepConnect" class="setup-step"><b>1</b><span>Project</span></div>
-          <div id="stepLogin" class="setup-step"><b>2</b><span>Authentication</span></div>
-          <div id="stepWorkspace" class="setup-step"><b>3</b><span>Workspace</span></div>
-          <div id="stepReady" class="setup-step"><b>4</b><span>Ready</span></div>
-        </div>
+      <div id="notice" class="notice hidden" role="status" aria-live="polite"></div>
 
-        <div class="two-column">
-          <article class="panel">
-            <div class="panel-head"><div><h3>Project connection</h3><p>Use the Project URL and publishable key only.</p></div><span class="panel-badge">Device</span></div>
-            <label>Supabase Project URL</label>
-            <input id="projectUrl" autocomplete="off" placeholder="https://your-project.supabase.co">
-            <label>Publishable key</label>
-            <textarea id="publishableKey" autocomplete="off" placeholder="sb_publishable_..."></textarea>
-            <div class="button-row">
-              <button id="saveConnection" class="button primary">Save & test</button>
-              <button id="clearConnection" class="button ghost">Clear</button>
-            </div>
-            <div id="connectionMessage" class="inline-message">No cloud configuration saved.</div>
-          </article>
-
-          <article class="panel">
-            <div class="panel-head"><div><h3>Captain sign-in</h3><p>Use your Supabase Authentication account.</p></div><span class="panel-badge">RLS</span></div>
-            <label>Email</label>
-            <input id="loginEmail" type="email" autocomplete="email">
-            <label>Password</label>
-            <input id="loginPassword" type="password" autocomplete="current-password">
-            <div class="button-row">
-              <button id="signInButton" class="button primary">Sign in</button>
-              <button id="signOutButton" class="button ghost">Sign out</button>
-            </div>
-            <div id="authMessage" class="inline-message">Signed out.</div>
-          </article>
-        </div>
-
-        <article class="panel workspace-panel">
-          <div class="panel-head"><div><h3>Workspace</h3><p>Select the workspace you are authorized to operate.</p></div><button id="refreshWorkspaces" class="button ghost compact">Refresh</button></div>
-          <select id="workspaceSelect"><option value="">No workspace selected</option></select>
-          <div id="workspaceMessage" class="inline-message">Connect and sign in first.</div>
+      <section class="panel-grid">
+        <article id="connectionPanel" class="panel">
+          <div class="panel-head"><div><p class="eyebrow">ATLAS CLOUD</p><h2>Güvenli bağlantı</h2></div><span class="panel-icon">⌁</span></div>
+          <form id="connectionForm">
+            <label>Supabase Project URL<input id="projectUrl" type="url" inputmode="url" autocomplete="url" placeholder="https://xxxx.supabase.co" required></label>
+            <label>Publishable / anon key<textarea id="publishableKey" rows="3" autocomplete="off" spellcheck="false" placeholder="sb_publishable_... veya eyJ..." required></textarea></label>
+            <p class="hint">Yalnızca tarayıcı için olan publishable/anon anahtarı. Secret veya service_role anahtarı kullanmayın.</p>
+            <button class="button primary" type="submit">Bağlantıyı kaydet</button>
+          </form>
         </article>
 
-        <article class="security-panel">
-          <div><span>🔒</span><b>Client-safe architecture</b><p>Secret keys and OpenAI keys are never stored in this browser application.</p></div>
-          <div><span>🛡</span><b>Row Level Security</b><p>Supabase RLS determines every authorized row and storage operation.</p></div>
-          <div><span>⏱</span><b>Signed access</b><p>Private files open through short-lived signed URLs.</p></div>
+        <article id="authPanel" class="panel disabled">
+          <div class="panel-head"><div><p class="eyebrow">SECURE SIGN IN</p><h2>Oturum aç</h2></div><span class="panel-icon">◎</span></div>
+          <form id="loginForm">
+            <label>E-posta<input id="email" type="email" autocomplete="email" required></label>
+            <label>Şifre<input id="password" type="password" autocomplete="current-password" minlength="6" required></label>
+            <button class="button primary" type="submit">Atlas Cloud’a giriş</button>
+          </form>
+          <div id="sessionCard" class="session-card hidden"><span class="avatar">VC</span><div><strong id="sessionEmail"></strong><small>Güvenli oturum açık</small></div></div>
         </article>
-      </section>
 
-      <section id="view-documents" class="view" data-bucket="atlas-documents">
-        <div class="page-head">
-          <div><span class="eyebrow">PRIMARY CLOUD VAULT</span><h2>Cloud Document Center</h2><p>Upload and manage private documents in the selected workspace.</p></div>
-          <button class="button secondary" data-go="cloud">Cloud settings</button>
-        </div>
-        <div class="cloud-guard" id="documentGuard">Connect, sign in and select a workspace to continue.</div>
-        <div class="file-toolbar">
-          <select id="bucketSelect">
-            <option value="atlas-documents">Documents</option>
-            <option value="nautical-publications">Nautical Publications</option>
-            <option value="nautical-charts">Nautical Charts</option>
-            <option value="crew-confidential">Crew Confidential</option>
-            <option value="vessel-technical">Vessel Technical</option>
-            <option value="passage-media">Passage Media</option>
-            <option value="exports">Exports</option>
-          </select>
-          <input id="folderPath" value="general" placeholder="Folder path">
-          <label class="file-picker">
-            <input id="cloudFiles" type="file" multiple>
-            <span>Choose files</span>
-          </label>
-          <button id="uploadFilesButton" class="button primary">Upload</button>
-          <button id="refreshFilesButton" class="button ghost">Refresh</button>
-        </div>
-        <div id="uploadMessage" class="inline-message">Ready.</div>
-        <div id="fileGrid" class="file-grid"><div class="empty-state">No files loaded.</div></div>
-      </section>
+        <article id="workspacePanel" class="panel disabled">
+          <div class="panel-head"><div><p class="eyebrow">WORKSPACE</p><h2>Çalışma alanı</h2></div><span class="panel-icon">◇</span></div>
+          <label>Workspace seçin<select id="workspaceSelect"><option value="">Önce oturum açın</option></select></label>
+          <div id="workspaceInfo" class="workspace-info"><span>Rol</span><strong>—</strong></div>
+        </article>
 
-      <section id="view-publications" class="view">
-        <div class="page-head"><div><span class="eyebrow">STATUTORY & OPERATIONAL</span><h2>Nautical Publications</h2><p>Private cloud library for maritime publications.</p></div><button class="button primary open-bucket" data-bucket="nautical-publications">Open cloud library</button></div>
-        <div class="library-intro"><span>▤</span><div><h3>One controlled publication library</h3><p>Store SOLAS, MARPOL, sailing directions, light lists, tide tables and vessel manuals with workspace-level access control.</p></div></div>
-      </section>
-
-      <section id="view-charts" class="view">
-        <div class="page-head"><div><span class="eyebrow">PRIVATE CHART ARCHIVE</span><h2>Nautical Charts</h2><p>Cloud storage for chart files and related notes.</p></div><button class="button primary open-bucket" data-bucket="nautical-charts">Open chart archive</button></div>
-        <div class="library-intro"><span>⌖</span><div><h3>Chart files under operational control</h3><p>Organize chart files by country, region, chart number and edition. Official navigation requirements remain outside this document archive.</p></div></div>
-      </section>
-
-      <section id="view-crew" class="view">
-        <div class="page-head"><div><span class="eyebrow">OPERATIONS MODULE</span><h2>Crew Manager</h2><p>Professional crew cloud synchronization will be delivered in Sprint 2.</p></div></div>
-        <div class="coming-panel"><span>♟</span><h3>Foundation preserved</h3><p>We are rebuilding one verified module at a time. Cloud login and documents are Sprint 1; crew synchronization follows after upload and download pass testing.</p></div>
-      </section>
-
-      <section id="view-routes" class="view">
-        <div class="page-head"><div><span class="eyebrow">PASSAGE KNOWLEDGE</span><h2>Route Library</h2><p>Approved route sequences preserved for the professional rebuild.</p></div></div>
-        <div id="routeCards" class="route-grid"></div>
-      </section>
-
-      <section id="view-sinbad" class="view">
-        <div class="page-head"><div><span class="eyebrow">MARINE INTELLIGENCE</span><h2>Captain Sinbad</h2><p>The secure cloud AI engine will be activated only after the core cloud workflow passes testing.</p></div></div>
-        <div class="sinbad-stage">
-          <div class="sinbad-avatar">🧔‍♂️</div>
-          <h3>Captain Sinbad is standing by.</h3>
-          <p>First we complete a reliable login, upload, list, open and download workflow. Then Sinbad will receive server-side intelligence without exposing any API key.</p>
-          <div class="status-ribbon">Sprint 2 • Secure Edge Function</div>
-        </div>
+        <article id="filesPanel" class="panel files-panel disabled">
+          <div class="panel-head">
+            <div><p class="eyebrow">PRIVATE DOCUMENT VAULT</p><h2>Cloud Documents</h2></div>
+            <div class="metric"><strong id="fileCount">0</strong><small>PDF</small></div>
+          </div>
+          <div class="upload-zone">
+            <input id="fileInput" type="file" accept="application/pdf,.pdf">
+            <div><span class="upload-icon">↑</span><strong>Küçük bir PDF seçin</strong><small>Test sürümü sınırı: 10 MB</small></div>
+            <button id="chooseFileBtn" class="button primary" type="button">PDF seç</button>
+          </div>
+          <div id="uploadProgress" class="progress hidden"><span></span><p>Atlas Cloud’a yükleniyor…</p></div>
+          <div class="files-toolbar">
+            <div><h3>Dosyalar</h3><p id="filesSubtitle">Workspace seçildiğinde listelenecek.</p></div>
+            <button id="refreshBtn" class="button ghost" type="button">Yenile</button>
+          </div>
+          <div id="fileList" class="file-list"><div class="empty"><span>□</span><strong>Henüz dosya yok</strong><p>İlk PDF’inizi Atlas Cloud’a yükleyin.</p></div></div>
+        </article>
       </section>
     </main>
+
+    <footer><span>Atlas Marine Technologies</span><span>Every Voyage Adds Knowledge.</span></footer>
   </div>
 
-  <div id="toast" class="toast"></div>
+  <dialog id="renameDialog">
+    <form id="renameForm" method="dialog">
+      <div class="dialog-head"><div><p class="eyebrow">DOCUMENT</p><h2>Yeniden adlandır</h2></div><button class="icon-button" value="cancel" aria-label="Kapat">×</button></div>
+      <label>Yeni dosya adı<input id="renameInput" required></label>
+      <input id="renameDocumentId" type="hidden">
+      <div class="dialog-actions"><button class="button ghost" value="cancel">Vazgeç</button><button id="renameSubmit" class="button primary" value="default">Kaydet</button></div>
+    </form>
+  </dialog>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./route-data.js"></script>
-  <script src="./app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.8/dist/umd/supabase.min.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

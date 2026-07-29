@@ -1,21 +1,9 @@
 {
-  "name": "Atlas Marine OS v8.0 — Professional Rebuild",
-  "short_name": "Atlas Marine OS",
-  "description": "Professional cloud-first marine operations platform.",
+  "name": "Atlas Marine OS",
+  "short_name": "Atlas Marine",
+  "description": "Professional Marine Intelligence Platform",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#05131e",
-  "theme_color": "#061621",
-  "icons": [
-    {
-      "src": "./icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "./icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
+  "background_color": "#edf5f3",
+  "theme_color": "#071a24"
 }
