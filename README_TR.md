@@ -1,4 +1,4 @@
-# Atlas Marine OS v8.6 — Sprint 1 Test
+# Atlas Marine OS v8.7 — Private Development Gateway
 
 Bu sürüm yalnızca çalışan Atlas Cloud çekirdeğine odaklanır:
 
@@ -21,7 +21,7 @@ Eski sürüm görünürse:
 
 1. Atlas Marine OS’nin açık Safari sekmelerini kapatın.
 2. Siteyi yeniden açın.
-3. Sağ üstte `v8.6 TEST` yazdığını kontrol edin.
+3. Sağ üstte `v8.7 TEST` yazdığını kontrol edin.
 
 ## İlk bağlantı
 

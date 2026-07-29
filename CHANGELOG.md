@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.7 Test — Private Development Gateway
+
+- Oturum açmamış ziyaretçilere profesyonel İngilizce “under development” ekranı eklendi.
+- Atlas Cloud bağlantısı, workspace ve dosya alanları ziyaretçilerden gizlendi.
+- `Captain Sign In` düğmesi yetkili giriş akışını açıyor.
+- Oturum açan kullanıcı doğrudan korunan uygulama yüzeyine geçiyor.
+- Çıkış yapıldığında ziyaretçi kapısı yeniden gösteriliyor.
+
 ## v8.6 Test — Sprint 1
 
 - Şifre kurtarma ekranı Supabase’in gönderdiği 8 haneli OTP koduna uyarlandı.

@@ -1,10 +1,12 @@
-# Atlas Marine OS v8.6 — Canlı Test Kontrol Listesi
+# Atlas Marine OS v8.7 — Canlı Test Kontrol Listesi
 
 Testi normal Safari sekmesinde yapın. Her adım başarılı olmadan sonraki adıma geçmeyin.
 
 ## A. Sürüm ve bağlantı
 
-- [ ] Sağ üstte `v8.6 TEST` görünüyor.
+- [ ] Sağ üstte `v8.7 TEST` görünüyor.
+- [ ] Oturum yokken yalnızca İngilizce “under development” ekranı görünüyor.
+- [ ] `Captain Sign In` düğmesi yetkili giriş ekranını açıyor.
 - [ ] Supabase Project URL girildi.
 - [ ] Publishable/anon key girildi.
 - [ ] “Bağlantıyı kaydet” sonrasında başarı mesajı göründü.

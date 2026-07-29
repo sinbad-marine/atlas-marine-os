@@ -14,6 +14,7 @@
   let authSubscription = null;
   let recoveryMode = false;
   let recoveryOtpMode = false;
+  let accessRequested = false;
   const initialUrl = window.location.href;
   const explicitRecoveryLink = /(?:[?#&])type=recovery(?:[&#]|$)/i.test(initialUrl);
   const authCallbackLink = /(?:[?#&])(?:code|access_token|token_hash)=/i.test(initialUrl);
@@ -21,6 +22,7 @@
   const $ = (id) => document.getElementById(id);
   const els = {
     cloudBadge: $("cloudBadge"), routeSummary: $("routeSummary"), notice: $("notice"),
+    publicGateway: $("publicGateway"), privateSurface: $("privateSurface"), captainSignInBtn: $("captainSignInBtn"),
     connectionPanel: $("connectionPanel"), authPanel: $("authPanel"), workspacePanel: $("workspacePanel"), filesPanel: $("filesPanel"),
     connectionForm: $("connectionForm"), projectUrl: $("projectUrl"), publishableKey: $("publishableKey"),
     loginForm: $("loginForm"), email: $("email"), password: $("password"), signOutBtn: $("signOutBtn"),
@@ -158,6 +160,10 @@
 
   function updateStatus() {
     const ready = Boolean(client && session && workspace);
+    const showPrivate = Boolean(session || accessRequested);
+    els.publicGateway.classList.toggle("hidden", showPrivate);
+    els.privateSurface.classList.toggle("hidden", !showPrivate);
+    els.cloudBadge.classList.toggle("hidden", !showPrivate);
     els.cloudBadge.classList.toggle("online", ready);
     els.cloudBadge.querySelector("span").textContent = ready ? "Atlas Cloud ready" : client ? (session ? "Workspace required" : "Sign in required") : "Cloud not configured";
     els.routeSummary.textContent = ready ? `${workspace.name} workspace’i güvenli bulut kasasına bağlı.` : client ? (session ? "Yetkili workspace’inizi seçin." : "Atlas Cloud hesabınızla oturum açın.") : "Bağlantı bilgilerini girerek başlayın.";
@@ -187,6 +193,7 @@
   }
 
   async function onSignedIn() {
+    accessRequested = true;
     els.loginForm.classList.add("hidden");
     els.sessionCard.classList.remove("hidden");
     els.sessionEmail.textContent = session.user.email || "Atlas Cloud user";
@@ -456,13 +463,22 @@
 
   els.signOutBtn.addEventListener("click", async () => {
     if (client) await client.auth.signOut();
-    session = null; workspace = null; documents = [];
+    session = null; workspace = null; documents = []; accessRequested = false;
     localStorage.removeItem(WORKSPACE_KEY);
     els.loginForm.classList.remove("hidden"); els.sessionCard.classList.add("hidden");
     els.workspaceSelect.innerHTML = `<option value="">Önce oturum açın</option>`;
     renderDocuments([]);
     showNotice("Oturum kapatıldı.");
     updateStatus();
+  });
+
+  els.captainSignInBtn.addEventListener("click", () => {
+    accessRequested = true;
+    updateStatus();
+    window.setTimeout(() => {
+      (client ? els.email : els.projectUrl).focus();
+      els.privateSurface.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
   });
 
   els.workspaceSelect.addEventListener("change", async () => {
