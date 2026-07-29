@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.2 Test — Sprint 1
+
+- “Şifremi unuttum” bağlantısı eklendi.
+- Kurtarma e-postası Atlas Marine OS’nin mevcut yayın adresine yönlendiriliyor.
+- Supabase `PASSWORD_RECOVERY` oturumu otomatik tanınıyor.
+- Yeni şifre belirleme ve doğrulama ekranı eklendi.
+- Şifre yenilendikten sonra oturum güvenli biçimde kapatılıp normal giriş isteniyor.
+
 ## v8.1 Test — Sprint 1
 
 - Cloud-first çekirdek temiz biçimde yeniden kuruldu.

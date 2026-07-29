@@ -1,9 +1,10 @@
-# Atlas Marine OS v8.1 — Sprint 1 Test
+# Atlas Marine OS v8.2 — Sprint 1 Test
 
 Bu sürüm yalnızca çalışan Atlas Cloud çekirdeğine odaklanır:
 
 - Supabase bağlantısını kaydetme
 - E-posta/şifre ile oturum açma ve çıkış
+- Şifremi unuttum ve güvenli şifre yenileme akışı
 - Yetkili workspace seçimi
 - `atlas-documents` private bucket’ına en fazla 10 MB PDF yükleme
 - `documents` tablosuna metadata kaydı
@@ -20,7 +21,7 @@ Eski sürüm görünürse:
 
 1. Atlas Marine OS’nin açık Safari sekmelerini kapatın.
 2. Siteyi yeniden açın.
-3. Sağ üstte `v8.1 TEST` yazdığını kontrol edin.
+3. Sağ üstte `v8.2 TEST` yazdığını kontrol edin.
 
 ## İlk bağlantı
 
@@ -30,6 +31,14 @@ Uygulamada yalnızca şu iki değer kullanılır:
 - Supabase publishable key veya eski anon key
 
 Database parolası, secret key, service-role key ve OpenAI anahtarı uygulamaya kesinlikle girilmez.
+
+## Şifre kurtarma
+
+Supabase `Authentication → URL Configuration` bölümünde hem Site URL hem de izin verilen Redirect URL olarak şu adres bulunmalıdır:
+
+`https://varolcolak2013-stack.github.io/atlas-marine-os/`
+
+Giriş kartındaki `Şifremi unuttum` bağlantısı kurtarma e-postası gönderir. E-postadaki bağlantı açıldığında v8.2 kurtarma oturumunu tanır ve doğrudan yeni şifre ekranını gösterir.
 
 ## Gereken mevcut altyapı
 

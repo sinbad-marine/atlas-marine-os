@@ -9,6 +9,9 @@
   let session = null;
   let workspace = null;
   let documents = [];
+  let authSubscription = null;
+  let recoveryMode = false;
+  const recoveryLinkDetected = /(?:[?#&])type=recovery(?:[&#]|$)/i.test(window.location.href);
 
   const $ = (id) => document.getElementById(id);
   const els = {
@@ -20,6 +23,10 @@
     fileInput: $("fileInput"), chooseFileBtn: $("chooseFileBtn"), uploadProgress: $("uploadProgress"),
     refreshBtn: $("refreshBtn"), fileCount: $("fileCount"), filesSubtitle: $("filesSubtitle"), fileList: $("fileList"),
     renameDialog: $("renameDialog"), renameForm: $("renameForm"), renameInput: $("renameInput"), renameDocumentId: $("renameDocumentId"),
+    forgotPasswordBtn: $("forgotPasswordBtn"), recoveryDialog: $("recoveryDialog"), recoveryForm: $("recoveryForm"),
+    recoveryRequest: $("recoveryRequest"), recoveryUpdate: $("recoveryUpdate"), recoveryEmail: $("recoveryEmail"),
+    newPassword: $("newPassword"), confirmPassword: $("confirmPassword"), recoverySubmitBtn: $("recoverySubmitBtn"),
+    recoveryCancelBtn: $("recoveryCancelBtn"), closeRecoveryBtn: $("closeRecoveryBtn"),
     steps: [$("stepConnect"), $("stepAuth"), $("stepWorkspace"), $("stepFiles")]
   };
 
@@ -50,9 +57,32 @@
 
   function makeClient(saved) {
     if (!window.supabase?.createClient) throw new Error("Supabase bağlantı kütüphanesi yüklenemedi.");
+    if (authSubscription) authSubscription.unsubscribe();
     client = window.supabase.createClient(saved.url, saved.key, {
       auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
     });
+    const { data } = client.auth.onAuthStateChange((event, nextSession) => {
+      session = nextSession;
+      if (event === "PASSWORD_RECOVERY") openRecoveryDialog(true);
+    });
+    authSubscription = data.subscription;
+  }
+
+  function recoveryRedirectUrl() {
+    return `${window.location.origin}${window.location.pathname}`;
+  }
+
+  function openRecoveryDialog(updatePassword = false) {
+    recoveryMode = updatePassword;
+    els.recoveryRequest.classList.toggle("hidden", updatePassword);
+    els.recoveryUpdate.classList.toggle("hidden", !updatePassword);
+    els.recoverySubmitBtn.textContent = updatePassword ? "Yeni şifreyi kaydet" : "Kurtarma e-postası gönder";
+    els.recoveryEmail.required = !updatePassword;
+    els.newPassword.required = updatePassword;
+    els.confirmPassword.required = updatePassword;
+    if (!updatePassword) els.recoveryEmail.value = els.email.value.trim();
+    if (!els.recoveryDialog.open) els.recoveryDialog.showModal();
+    setTimeout(() => (updatePassword ? els.newPassword : els.recoveryEmail).focus(), 50);
   }
 
   function setStep(index) {
@@ -84,7 +114,10 @@
       const { data, error } = await client.auth.getSession();
       if (error) throw error;
       session = data.session;
-      if (session) await onSignedIn();
+      if (session) {
+        await onSignedIn();
+        if (recoveryLinkDetected) openRecoveryDialog(true);
+      }
     } catch (error) {
       client = null;
       showNotice(errorMessage(error), "error");
@@ -290,6 +323,55 @@
       showNotice("Atlas Cloud oturumu açıldı.");
     } catch (error) { showNotice(errorMessage(error), "error"); }
     finally { submit.disabled = false; updateStatus(); }
+  });
+
+  els.forgotPasswordBtn.addEventListener("click", () => {
+    if (!client) return showNotice("Önce Atlas Cloud bağlantısını kaydedin.", "error");
+    openRecoveryDialog(false);
+  });
+
+  els.recoveryCancelBtn.addEventListener("click", () => {
+    if (!recoveryMode) els.recoveryDialog.close();
+  });
+  els.closeRecoveryBtn.addEventListener("click", () => {
+    if (!recoveryMode) els.recoveryDialog.close();
+  });
+
+  els.recoveryForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    els.recoverySubmitBtn.disabled = true;
+    try {
+      if (!client) throw new Error("Önce Atlas Cloud bağlantısını kaydedin.");
+      if (!recoveryMode) {
+        const email = els.recoveryEmail.value.trim();
+        const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo: recoveryRedirectUrl() });
+        if (error) throw error;
+        els.recoveryDialog.close();
+        showNotice("Kurtarma e-postası gönderildi. Gelen kutunuzu ve Spam klasörünü kontrol edin.");
+      } else {
+        if (els.newPassword.value.length < 10) throw new Error("Yeni şifre en az 10 karakter olmalıdır.");
+        if (els.newPassword.value !== els.confirmPassword.value) throw new Error("Yeni şifreler birbiriyle eşleşmiyor.");
+        const { error } = await client.auth.updateUser({ password: els.newPassword.value });
+        if (error) throw error;
+        await client.auth.signOut();
+        session = null;
+        workspace = null;
+        recoveryMode = false;
+        els.recoveryDialog.close();
+        els.recoveryForm.reset();
+        els.loginForm.classList.remove("hidden");
+        els.sessionCard.classList.add("hidden");
+        showNotice("Şifreniz yenilendi. Şimdi yeni şifrenizle oturum açın.");
+        updateStatus();
+        if (window.location.hash || window.location.search) {
+          history.replaceState({}, document.title, recoveryRedirectUrl());
+        }
+      }
+    } catch (error) {
+      showNotice(errorMessage(error), "error");
+    } finally {
+      els.recoverySubmitBtn.disabled = false;
+    }
   });
 
   els.signOutBtn.addEventListener("click", async () => {

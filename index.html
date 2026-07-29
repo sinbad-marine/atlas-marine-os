@@ -18,7 +18,7 @@
       <div class="top-actions">
         <span id="cloudBadge" class="status"><i></i><span>Cloud not configured</span></span>
         <button id="signOutBtn" class="button ghost hidden">Çıkış</button>
-        <span class="version">v8.1 TEST</span>
+        <span class="version">v8.2 TEST</span>
       </div>
     </header>
 
@@ -62,6 +62,7 @@
             <label>E-posta<input id="email" type="email" autocomplete="email" required></label>
             <label>Şifre<input id="password" type="password" autocomplete="current-password" minlength="6" required></label>
             <button class="button primary" type="submit">Atlas Cloud’a giriş</button>
+            <button id="forgotPasswordBtn" class="text-button" type="button">Şifremi unuttum</button>
           </form>
           <div id="sessionCard" class="session-card hidden"><span class="avatar">VC</span><div><strong id="sessionEmail"></strong><small>Güvenli oturum açık</small></div></div>
         </article>
@@ -101,6 +102,22 @@
       <label>Yeni dosya adı<input id="renameInput" required></label>
       <input id="renameDocumentId" type="hidden">
       <div class="dialog-actions"><button class="button ghost" value="cancel">Vazgeç</button><button id="renameSubmit" class="button primary" value="default">Kaydet</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="recoveryDialog">
+    <form id="recoveryForm">
+      <div class="dialog-head"><div><p class="eyebrow">ACCOUNT RECOVERY</p><h2>Şifre kurtarma</h2></div><button id="closeRecoveryBtn" class="icon-button" type="button" aria-label="Kapat">×</button></div>
+      <div id="recoveryRequest">
+        <p class="dialog-copy">Atlas Cloud hesabınıza güvenli bir şifre yenileme bağlantısı gönderelim.</p>
+        <label>E-posta<input id="recoveryEmail" type="email" autocomplete="email" required></label>
+      </div>
+      <div id="recoveryUpdate" class="hidden">
+        <p class="dialog-copy">Kurtarma bağlantısı doğrulandı. Yeni ve güçlü şifrenizi belirleyin.</p>
+        <label>Yeni şifre<input id="newPassword" type="password" autocomplete="new-password" minlength="10"></label>
+        <label>Yeni şifreyi doğrula<input id="confirmPassword" type="password" autocomplete="new-password" minlength="10"></label>
+      </div>
+      <div class="dialog-actions"><button id="recoveryCancelBtn" class="button ghost" type="button">Vazgeç</button><button id="recoverySubmitBtn" class="button primary" type="submit">Kurtarma e-postası gönder</button></div>
     </form>
   </dialog>
 
