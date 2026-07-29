@@ -1,260 +1,417 @@
-(() => {
-  "use strict";
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#071827">
+<title>Atlas Marine OS</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body class="auth-pending">
+<section id="cinematicIntro" class="cinematic-intro" aria-label="Atlas Marine OS cinematic introduction">
+  <canvas id="introCanvas"></canvas>
+  <div class="intro-brand" id="introBrand">
+    <div class="intro-kicker">ATLAS MARINE TECHNOLOGIES</div>
+    <h1>ATLAS MARINE OS</h1>
+    <p>Navigate Smarter. Command Better.</p>
+  </div>
+  <div class="intro-disclaimer">Visual introduction — not for navigation</div>
+  <button id="skipIntro" class="skip-intro" type="button">Skip Intro</button>
+</section>
 
-  const overlay = document.getElementById("cinematicIntro");
-  const canvas = document.getElementById("introCanvas");
-  const brand = document.getElementById("introBrand");
-  const skip = document.getElementById("skipIntro");
-  const replay = document.getElementById("replayIntro");
-  if (!overlay || !canvas) return;
+<section id="publicGateway" class="public-gateway" aria-live="polite">
+  <div class="gateway-orbit"></div>
+  <div class="gateway-card">
+    <div class="gateway-mark">⚓</div>
+    <div class="eyebrow">ATLAS MARINE TECHNOLOGIES</div>
+    <h1>Atlas Marine OS is currently under development.</h1>
+    <p>Our secure marine intelligence and yacht operations platform is being prepared for launch.</p>
+    <button class="btn primary gateway-signin" id="openCaptainSignIn">Captain Sign In</button>
+    <button class="text-button replay-intro" id="replayIntro" type="button">Replay cinematic intro</button>
+    <small>Navigate Smarter. Command Better.</small>
+  </div>
+</section>
 
-  const ctx = canvas.getContext("2d", { alpha: false });
-  const map = document.createElement("canvas");
-  map.width = 1600;
-  map.height = 800;
-  const m = map.getContext("2d");
-  const stars = [];
-  let width = 0;
-  let height = 0;
-  let dpr = 1;
-  let startTime = 0;
-  let frame = 0;
-  let running = false;
+<dialog id="authDialog" class="auth-dialog">
+  <form method="dialog" class="auth-card" id="authForm">
+    <button class="dialog-close" id="closeAuthDialog" type="button" aria-label="Close">×</button>
+    <div class="gateway-mark small">⚓</div>
+    <div class="eyebrow">SECURE CAPTAIN ACCESS</div>
+    <h2 id="authTitle">Captain Sign In</h2>
+    <p id="authHelp" class="muted">Sign in to open the complete Atlas Marine OS management bridge.</p>
+    <div id="signInPanel">
+      <label>Email<input id="gatewayEmail" type="email" autocomplete="email" value="varolcolak2013@gmail.com"></label>
+      <label>Password<input id="gatewayPassword" type="password" autocomplete="current-password"></label>
+      <button class="btn primary full" id="gatewaySignIn" type="button">Sign In</button>
+      <button class="text-button" id="showRecovery" type="button">I forgot my password</button>
+    </div>
+    <div id="recoveryPanel" hidden>
+      <label>Email<input id="recoveryEmail" type="email" autocomplete="email" value="varolcolak2013@gmail.com"></label>
+      <button class="btn primary full" id="requestRecoveryCode" type="button">Send recovery code</button>
+      <label>8-digit recovery code<input id="recoveryCode" inputmode="numeric" maxlength="8" autocomplete="one-time-code"></label>
+      <label>New password<input id="recoveryNewPassword" type="password" minlength="8" autocomplete="new-password"></label>
+      <button class="btn primary full" id="completeRecovery" type="button">Verify code & set password</button>
+      <button class="text-button" id="showSignIn" type="button">Back to sign in</button>
+    </div>
+    <div id="authMessage" class="auth-message" role="status"></div>
+  </form>
+</dialog>
+<header class="topbar">
+  <div class="brand"><div class="logo">⚓</div><div><h1>ATLAS MARINE OS</h1><small>Özgür Maceraperest Dostlar • Navigate Smarter. Command Better.</small></div></div>
+  <div class="version">● v8.10</div>
+</header>
 
-  const continents = [
-    [[.07,.25],[.11,.15],[.20,.11],[.27,.17],[.29,.27],[.25,.34],[.22,.43],[.16,.48],[.11,.42],[.08,.33]],
-    [[.21,.47],[.27,.50],[.30,.60],[.28,.72],[.25,.88],[.20,.80],[.18,.66]],
-    [[.38,.18],[.46,.12],[.58,.15],[.67,.23],[.76,.22],[.83,.29],[.79,.39],[.69,.39],[.62,.34],[.54,.38],[.49,.32],[.42,.30]],
-    [[.46,.37],[.55,.35],[.59,.46],[.57,.62],[.52,.78],[.47,.70],[.44,.55]],
-    [[.69,.39],[.77,.38],[.82,.46],[.79,.54],[.72,.51]],
-    [[.80,.67],[.88,.63],[.93,.72],[.89,.82],[.81,.80],[.77,.73]],
-    [[.31,.10],[.35,.07],[.37,.13],[.34,.17]],
-    [[.52,.28],[.55,.25],[.57,.31],[.54,.34]],
-    [[.59,.45],[.61,.42],[.63,.48],[.61,.52]],
-    [[.91,.49],[.94,.47],[.95,.54],[.92,.57]]
-  ];
 
-  function seededRandom(seed) {
-    let s = seed >>> 0;
-    return () => {
-      s = (s * 1664525 + 1013904223) >>> 0;
-      return s / 4294967296;
-    };
-  }
+<main>
+<section class="hero">
+  <div>
+      <div class="eyebrow">ATLAS CLOUD • CLOUD-FIRST COMMAND PLATFORM</div>
+      <h2>One Bridge. Every Operation.</h2>
+      <p>Private cloud documents, nautical publications, charts, crew records and Captain Sinbad—available from every authorized device.</p>
+    </div>
+  <div class="hero-actions">
+    <button class="btn primary" data-open="cloud-documents">Upload to Atlas Cloud</button>
+    <button class="btn" data-open="cloud-control">Cloud Setup & Security</button>
+    <button class="btn" data-open="sinbad">Ask Captain Sinbad</button>
+  </div>
+</section>
 
-  function buildMap() {
-    const ocean = m.createLinearGradient(0, 0, 0, map.height);
-    ocean.addColorStop(0, "#082b46");
-    ocean.addColorStop(.52, "#07506a");
-    ocean.addColorStop(1, "#041d34");
-    m.fillStyle = ocean;
-    m.fillRect(0, 0, map.width, map.height);
 
-    m.strokeStyle = "rgba(146,205,218,.18)";
-    m.lineWidth = 1;
-    for (let lon = 0; lon <= 24; lon++) {
-      const x = lon * map.width / 24;
-      m.beginPath(); m.moveTo(x, 0); m.lineTo(x, map.height); m.stroke();
-    }
-    for (let lat = 0; lat <= 12; lat++) {
-      const y = lat * map.height / 12;
-      m.beginPath(); m.moveTo(0, y); m.lineTo(map.width, y); m.stroke();
-    }
+<section class="connection-strip" id="connectionStrip">
+  <div class="connection-main">
+    <span class="live-dot" id="liveCloudDot"></span>
+    <div>
+      <strong id="liveCloudTitle">Atlas Cloud is not connected</strong>
+      <small id="liveCloudSubtitle">Open Cloud Setup & Security to connect this device.</small>
+    </div>
+  </div>
+  <button class="btn compact" data-open="cloud-control">Configure</button>
+</section>
 
-    continents.forEach((points, index) => {
-      m.beginPath();
-      points.forEach(([x, y], i) => i ? m.lineTo(x * map.width, y * map.height) : m.moveTo(x * map.width, y * map.height));
-      m.closePath();
-      const land = m.createLinearGradient(0, 0, 0, map.height);
-      land.addColorStop(0, index % 2 ? "#617665" : "#71806b");
-      land.addColorStop(1, "#243f3d");
-      m.fillStyle = land;
-      m.fill();
-      m.strokeStyle = "rgba(233,211,151,.74)";
-      m.lineWidth = 2.2;
-      m.stroke();
-    });
 
-    m.fillStyle = "rgba(235,219,168,.72)";
-    m.font = "22px Georgia";
-    m.textAlign = "center";
-    [["NORTH ATLANTIC",.28,.39],["SOUTH ATLANTIC",.34,.69],["INDIAN OCEAN",.66,.65],["PACIFIC OCEAN",.90,.44],["ARCTIC OCEAN",.50,.07]].forEach(([label,x,y]) => m.fillText(label,x*map.width,y*map.height));
-    m.font = "700 20px system-ui";
-    m.letterSpacing = "4px";
-    m.fillText("ATLAS MARITIME WORLD CHART", map.width / 2, map.height - 28);
+<section class="summary-grid">
+  <article class="summary-card"><span>Cloud Files</span><b id="sumFiles">—</b></article>
+  <article class="summary-card"><span>Publications</span><b id="sumPubs">—</b></article>
+  <article class="summary-card"><span>Charts</span><b id="sumCharts">—</b></article>
+  <article class="summary-card"><span>Cloud Storage</span><b id="sumStorage">—</b></article>
+</section>
 
-    m.strokeStyle = "rgba(239,199,106,.84)";
-    m.lineWidth = 3;
-    m.setLineDash([13, 10]);
-    m.beginPath();
-    m.moveTo(.42 * map.width, .39 * map.height);
-    m.bezierCurveTo(.50 * map.width,.30 * map.height,.62 * map.width,.41 * map.height,.71 * map.width,.46 * map.height);
-    m.bezierCurveTo(.79 * map.width,.50 * map.height,.84 * map.width,.58 * map.height,.87 * map.width,.68 * map.height);
-    m.stroke();
-    m.setLineDash([]);
-  }
 
-  function resize() {
-    width = innerWidth;
-    height = innerHeight;
-    dpr = Math.min(devicePixelRatio || 1, 1.6);
-    canvas.width = Math.round(width * dpr);
-    canvas.height = Math.round(height * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const rnd = seededRandom(1977);
-    stars.length = 0;
-    const count = Math.min(1800, Math.round(width * height / 780));
-    for (let i = 0; i < count; i++) {
-      stars.push({ x:rnd()*width, y:rnd()*height, r:.25+rnd()*1.55, a:.22+rnd()*.78, p:rnd()*6.28 });
-    }
-  }
+<section class="module-grid">
+  <article class="module-card featured-card" data-open="cloud-documents"><div>☁️</div><h3>Cloud Document Center</h3><p>Upload, open, download, share, rename and manage private files across devices.</p><a>Open cloud vault →</a></article>
+  <article class="module-card" data-cloud-bucket="nautical-publications"><div>📚</div><h3>Nautical Publications</h3><p>SOLAS, MARPOL, sailing directions, lights and tide tables in Atlas Cloud.</p><a>Open cloud library →</a></article>
+  <article class="module-card" data-cloud-bucket="nautical-charts"><div>🗺️</div><h3>Nautical Charts</h3><p>Private chart archive organized by country, region and chart number.</p><a>Open cloud charts →</a></article>
+  <article class="module-card" data-open="knowledge"><div>🤖</div><h3>Atlas Knowledge Search</h3><p>Search uploaded filenames, folders, tags and extracted text notes.</p><a>Open →</a></article><article class="module-card" data-open="sinbad"><div>🧞‍♂️</div><h3>Captain Sinbad</h3><p>Atlas AI marine intelligence guide and conversation workspace.</p><a>Open Sinbad →</a></article>
+  <article class="module-card" data-open="cloud-control"><div>☁️</div><h3>Atlas Cloud Control Center</h3><p>Connect Supabase, manage workspaces, users, storage and AI status.</p><a>Open →</a></article>
+  <article class="module-card" data-open="cloud-documents"><div>🗄️</div><h3>Cloud Document Center</h3><p>Upload and browse private documents, publications and charts.</p><a>Open →</a></article>
+  <article class="module-card" data-open="fleet"><div>🚢</div><h3>Fleet Manager</h3><p>Vessel particulars and machinery.</p><a>Open →</a></article>
+  <article class="module-card" data-open="pilot"><div>📍</div><h3>Pilot Library</h3><p>Marinas, anchorages and captain notes.</p><a>Open →</a></article>
+  <article class="module-card" data-open="routes"><div>🧭</div><h3>Route Library</h3><p>Approved passages and route workspaces.</p><a>Open →</a></article>
+  <article class="module-card" data-open="crew"><div>👥</div><h3>Crew Manager</h3><p>Crew records and expiry tracking.</p><a>Open →</a></article>
+</section>
 
-  const clamp = value => Math.max(0, Math.min(1, value));
-  const smooth = value => {
-    const x = clamp(value);
-    return x * x * (3 - 2 * x);
-  };
 
-  function drawSpace(time) {
-    ctx.fillStyle = "#01040a";
-    ctx.fillRect(0, 0, width, height);
+<section id="documents" class="workspace">
+  <div class="workspace-head">
+    <div><h2>Document Center</h2><p>Atlas Marine OS v8.8 uses Atlas Cloud as the primary document vault.</p></div>
+    <button class="btn close">Close</button>
+  </div>
+  <div class="cloud-first-message">
+    <div class="cloud-first-icon">☁️</div>
+    <h3>Your files belong in Atlas Cloud</h3>
+    <p>Local browser storage is no longer the primary vault. Upload once, then securely access the same files from your authorized iPad, iPhone, Mac or Windows device.</p>
+    <div class="action-row center-actions">
+      <button class="btn primary" data-open="cloud-documents">Open Cloud Document Center</button>
+      <button class="btn" data-open="cloud-control">Connect Atlas Cloud</button>
+    </div>
+  </div>
+</section>
 
-    ctx.save();
-    ctx.translate(width*.5,height*.46);
-    ctx.rotate(-.29);
-    const galaxy = ctx.createLinearGradient(0,-height*.24,0,height*.24);
-    galaxy.addColorStop(0,"rgba(20,41,69,0)");
-    galaxy.addColorStop(.5,"rgba(113,139,176,.12)");
-    galaxy.addColorStop(1,"rgba(20,41,69,0)");
-    ctx.fillStyle=galaxy;
-    ctx.fillRect(-width*.8,-height*.24,width*1.6,height*.48);
-    ctx.restore();
 
-    for (const star of stars) {
-      const twinkle = .7 + Math.sin(time*2.1+star.p)*.3;
-      ctx.globalAlpha = star.a * twinkle;
-      ctx.fillStyle = star.r > 1.25 ? "#dceeff" : "#fff";
-      ctx.beginPath();
-      ctx.arc(star.x,star.y,star.r,0,Math.PI*2);
-      ctx.fill();
-    }
-    ctx.globalAlpha = 1;
+<section id="publications" class="workspace">
+  <div class="workspace-head"><div><h2>Nautical Publications</h2><p>Dedicated view for maritime publications.</p></div><button class="btn close">Close</button></div>
+  <div class="actions"><button class="btn primary" onclick="openFolderUpload('Nautical Publications')">Upload Publication</button></div>
+  <div id="publicationList"></div>
+</section>
 
-    const sun = ctx.createRadialGradient(width*.1,height*.25,0,width*.1,height*.25,Math.min(width,height)*.28);
-    sun.addColorStop(0,"rgba(255,229,163,.18)");
-    sun.addColorStop(.2,"rgba(255,190,93,.07)");
-    sun.addColorStop(1,"rgba(255,160,50,0)");
-    ctx.fillStyle=sun;
-    ctx.fillRect(0,0,width*.48,height*.65);
-  }
 
-  function drawGlobe(cx, cy, radius, rotation) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-    ctx.clip();
-    const strips = Math.max(80, Math.round(radius * .75));
-    for (let i = 0; i < strips; i++) {
-      const nx = (i / (strips - 1)) * 2 - 1;
-      const theta = Math.asin(nx);
-      let u = (rotation + theta / (Math.PI * 2)) % 1;
-      if (u < 0) u += 1;
-      const sx = Math.floor(u * map.width);
-      const dx = cx + nx * radius;
-      const dw = radius * 2 / strips + 1.4;
-      ctx.drawImage(map, sx, 0, 2, map.height, dx, cy-radius, dw, radius*2);
-    }
-    const shade = ctx.createRadialGradient(cx-radius*.34,cy-radius*.38,radius*.06,cx,cy,radius*1.08);
-    shade.addColorStop(0,"rgba(255,241,194,.24)");
-    shade.addColorStop(.52,"rgba(3,22,34,.04)");
-    shade.addColorStop(.82,"rgba(0,5,12,.38)");
-    shade.addColorStop(1,"rgba(0,0,0,.88)");
-    ctx.fillStyle=shade;
-    ctx.fillRect(cx-radius,cy-radius,radius*2,radius*2);
-    ctx.restore();
-    ctx.strokeStyle="rgba(179,220,231,.62)";
-    ctx.lineWidth=1.5;
-    ctx.beginPath();ctx.arc(cx,cy,radius,0,Math.PI*2);ctx.stroke();
-    ctx.shadowColor="rgba(74,174,209,.46)";ctx.shadowBlur=28;
-    ctx.stroke();ctx.shadowBlur=0;
-  }
+<section id="charts" class="workspace">
+  <div class="workspace-head"><div><h2>Nautical Charts</h2><p>Dedicated chart archive. Add chart number, region and edition in tags.</p></div><button class="btn close">Close</button></div>
+  <div class="actions"><button class="btn primary" onclick="openFolderUpload('Nautical Charts')">Upload Chart</button></div>
+  <div id="chartList"></div>
+</section>
 
-  function drawUnfoldedMap(cx, cy, progress, time) {
-    const maxWidth=Math.min(width*.88,height*1.55);
-    const startSize=Math.min(width,height)*.43;
-    const mapWidth=startSize*2+(maxWidth-startSize*2)*progress;
-    const mapHeight=startSize*2+(maxWidth*.5-startSize*2)*progress;
-    const left=cx-mapWidth/2;
-    const top=cy-mapHeight/2;
-    ctx.save();
-    ctx.beginPath();
-    ctx.roundRect(left,top,mapWidth,mapHeight,Math.max(8,42*(1-progress)));
-    ctx.clip();
-    const rows=90;
-    for(let i=0;i<rows;i++){
-      const sy=i*map.height/rows;
-      const dy=top+i*mapHeight/rows;
-      const wave=Math.sin(i*.26+time*2.4)*(1-progress)*14+Math.sin(i*.12+time)*progress*3;
-      ctx.drawImage(map,0,sy,map.width,map.height/rows+1,left,dy+wave,mapWidth,mapHeight/rows+1.6);
-    }
-    const wash=ctx.createLinearGradient(left,top,left,top+mapHeight);
-    wash.addColorStop(0,"rgba(221,241,239,.08)");
-    wash.addColorStop(1,"rgba(0,12,24,.14)");
-    ctx.fillStyle=wash;ctx.fillRect(left,top,mapWidth,mapHeight);
-    ctx.restore();
-    ctx.strokeStyle=`rgba(232,204,132,${.45+.45*progress})`;
-    ctx.lineWidth=1.5;
-    ctx.strokeRect(left,top,mapWidth,mapHeight);
-  }
 
-  function finish(markSeen=true) {
-    running=false;
-    cancelAnimationFrame(frame);
-    brand.classList.remove("visible");
-    overlay.classList.add("finished");
-    if(markSeen)sessionStorage.setItem("atlas-v89-intro-seen","1");
-  }
+<section id="knowledge" class="workspace">
+  <div class="workspace-head"><div><h2>Atlas Knowledge Search</h2><p>Local search across stored metadata and text-note content.</p></div><button class="btn close">Close</button></div>
+  <div class="filter-grid single"><input id="knowledgeQuery" placeholder="Search: SOLAS Chapter V, Gouvia, engine manual..."></div>
+  <button class="btn primary" id="knowledgeSearchBtn">Search Knowledge</button>
+  <div class="notice">This v4.0 search reads filenames, folders, tags and text-based uploads. Full AI reading of scanned PDFs and charts requires the later cloud AI backend.</div>
+  <div id="knowledgeResults"></div>
+</section>
 
-  function animate(timestamp) {
-    if(!running)return;
-    if(!startTime)startTime=timestamp;
-    const seconds=(timestamp-startTime)/1000;
-    drawSpace(seconds);
-    const cx=width/2;
-    const cy=height/2;
 
-    if(seconds>1.5 && seconds<7.4){
-      const approach=smooth((seconds-1.5)/4.9);
-      const radius=18+approach*Math.min(width,height)*.42;
-      const drift=(1-approach)*width*.12;
-      drawGlobe(cx+drift,cy,radius,.62-seconds*.035);
-    }else if(seconds>=7.4){
-      const unfold=smooth((seconds-7.4)/3.1);
-      if(unfold<.06)drawGlobe(cx,cy,Math.min(width,height)*.43,.36);
-      drawUnfoldedMap(cx,cy,unfold,seconds);
-      if(seconds>9.5)brand.classList.add("visible");
-    }
 
-    if(seconds>=12.2){finish(true);return;}
-    frame=requestAnimationFrame(animate);
-  }
 
-  function play(force=false) {
-    if(matchMedia("(prefers-reduced-motion: reduce)").matches&&!force){finish(true);return;}
-    overlay.classList.remove("finished");
-    brand.classList.remove("visible");
-    startTime=0;
-    running=true;
-    frame=requestAnimationFrame(animate);
-  }
+<section id="sinbad" class="workspace">
+  <div class="workspace-head">
+    <div>
+      <h2>Captain Sinbad</h2>
+      <p>Atlas AI Marine Intelligence Guide</p>
+    </div>
+    <button class="btn close">Close</button>
+  </div>
 
-  buildMap();
-  resize();
-  addEventListener("resize",resize,{passive:true});
-  skip.addEventListener("click",()=>finish(true));
-  replay?.addEventListener("click",()=>play(true));
-  window.AtlasIntro={play:()=>play(true),skip:()=>finish(true)};
 
-  if(sessionStorage.getItem("atlas-v89-intro-seen")==="1")finish(false);
-  else play(false);
-})();
+  <div class="sinbad-layout">
+    <aside class="sinbad-profile">
+      <div class="sinbad-avatar large" aria-label="Captain Sinbad cartoon avatar">
+        <svg viewBox="0 0 160 160" role="img" aria-label="Friendly sailor Captain Sinbad">
+          <circle cx="80" cy="80" r="74" fill="#102b40" stroke="#e2bf72" stroke-width="5"/>
+          <path d="M40 56 Q80 18 120 56 L113 72 H47 Z" fill="#f4f7fa"/>
+          <rect x="47" y="51" width="66" height="13" rx="6" fill="#e2bf72"/>
+          <circle cx="80" cy="90" r="35" fill="#d69c6b"/>
+          <path d="M52 85 Q80 58 108 85 Q104 122 80 128 Q56 122 52 85" fill="#7a4f2f"/>
+          <path d="M60 91 Q68 84 74 91" stroke="#18212a" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <path d="M86 91 Q94 84 101 91" stroke="#18212a" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <path d="M66 106 Q80 116 94 106" stroke="#f4f7fa" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <path d="M54 122 L42 149 H118 L106 122 Q80 138 54 122" fill="#0a3d62"/>
+          <path d="M80 124 L72 145 H88 Z" fill="#e2bf72"/>
+        </svg>
+      </div>
+      <h3>Captain Sinbad</h3>
+      <span class="badge">Atlas AI</span>
+      <p class="muted">“Every Voyage Adds Knowledge.”</p>
+      <div class="sinbad-capabilities">
+        <span>⚓ Passage support</span>
+        <span>📚 Publications search</span>
+        <span>🗺️ Route intelligence</span>
+        <span>📄 Document assistance</span>
+        <span>👥 Crew and expiry checks</span>
+      </div>
+    </aside>
+
+
+    <div class="chat-panel">
+      <div id="sinbadMessages" class="chat-messages" aria-live="polite"></div>
+      <div id="sinbadThinking" class="thinking-bubble hidden" aria-live="polite">
+        <span></span><span></span><span></span>
+        <em>Sinbad is thinking…</em>
+      </div>
+      <div class="quick-prompts">
+        <button type="button" class="btn sinbad-prompt">Search SOLAS</button>
+        <button type="button" class="btn sinbad-prompt">Show my charts</button>
+        <button type="button" class="btn sinbad-prompt">Review crew expiries</button>
+        <button type="button" class="btn sinbad-prompt">Create passage checklist</button>
+      </div>
+      <div class="chat-input-row">
+        <textarea id="sinbadInput" placeholder="Ask Captain Sinbad..." aria-label="Message Captain Sinbad"></textarea>
+        <button type="button" class="btn primary" id="sendSinbad">Send</button>
+      </div>
+      <div class="notice">
+        v4.1 uses local Atlas Marine OS data and keyword intelligence. Secure cloud AI, full PDF indexing and cross-device memory will activate after the Supabase/OpenAI backend is connected.
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+<section id="cloud-control" class="workspace">
+  <div class="workspace-head">
+    <div><div class="eyebrow">SECURE CLOUD ADMINISTRATION</div><h2>Atlas Cloud Control Center</h2><p>Connect this device, sign in, select your workspace and manage authorized cloud operations.</p></div>
+    <button class="btn close">Close</button>
+  </div>
+
+
+  <div class="setup-steps">
+    <div class="setup-step" id="setupStep1"><b>1</b><span>Connect project</span></div>
+    <div class="setup-step" id="setupStep2"><b>2</b><span>Sign in</span></div>
+    <div class="setup-step" id="setupStep3"><b>3</b><span>Select workspace</span></div>
+    <div class="setup-step" id="setupStep4"><b>4</b><span>Cloud ready</span></div>
+  </div>
+
+
+  <div class="cloud-status-grid">
+    <article class="status-card"><span>Cloud connection</span><strong id="cloudConnectionStatus">Not configured</strong></article>
+    <article class="status-card"><span>Authentication</span><strong id="cloudAuthStatus">Signed out</strong></article>
+    <article class="status-card"><span>Workspace</span><strong id="cloudWorkspaceStatus">Not selected</strong></article>
+    <article class="status-card"><span>Captain Sinbad</span><strong id="cloudAiStatus">Local mode</strong></article>
+  </div>
+
+
+  <div class="cloud-two-column">
+    <article class="control-panel">
+      <h3>Cloud Connection</h3>
+      <p class="muted">Use only the Supabase Project URL and publishable key. Never enter a secret/service-role key.</p>
+      <label>Supabase Project URL</label>
+      <input id="supabaseUrlInput" placeholder="https://your-project.supabase.co">
+      <label>Publishable key</label>
+      <textarea id="supabaseKeyInput" placeholder="sb_publishable_... or anon key"></textarea>
+      <div class="action-row">
+        <button class="btn primary" id="saveCloudConfig">Save & Connect</button>
+        <button class="btn" id="clearCloudConfig">Clear</button>
+        <button class="btn" id="testCloudConnection">Test</button>
+      </div>
+    </article>
+
+
+    <article class="control-panel">
+      <h3>Sign In</h3>
+      <label>Email</label>
+      <input id="cloudEmail" type="email" autocomplete="email">
+      <label>Password</label>
+      <input id="cloudPassword" type="password" autocomplete="current-password">
+      <div class="action-row">
+        <button class="btn primary" id="cloudSignIn">Sign In</button>
+        <button class="btn" id="cloudSignOut">Sign Out</button>
+      </div>
+      <div id="cloudUserInfo" class="notice">No active cloud session.</div>
+    </article>
+  </div>
+
+
+  <div class="cloud-admin-grid">
+    <article class="control-panel">
+      <h3>Workspace</h3>
+      <button class="btn" id="refreshWorkspaces">Refresh</button>
+      <select id="workspaceSelect"><option value="">Select workspace</option></select>
+      <div id="workspaceDetails" class="notice">Workspace information will appear here.</div>
+    </article>
+
+
+    <article class="control-panel">
+      <h3>Users & Roles</h3>
+      <div class="action-row">
+        <button class="btn" id="refreshMembers">Refresh members</button>
+      </div>
+      <div id="memberList" class="cloud-list">No members loaded.</div>
+      <div class="notice">Owner role changes are enforced by Supabase RLS.</div>
+    </article>
+
+
+    <article class="control-panel">
+      <h3>AI Knowledge Index</h3>
+      <button class="btn" id="refreshAiJobs">Refresh jobs</button>
+      <div id="aiJobList" class="cloud-list">No indexing jobs loaded.</div>
+    </article>
+
+
+    <article class="control-panel">
+      <h3>Security Center</h3>
+      <div class="security-checks">
+        <span>🔒 Private buckets required</span>
+        <span>🛡️ RLS enforced by Supabase</span>
+        <span>🔑 Secret keys never stored here</span>
+        <span>📋 Admin actions remain server-controlled</span>
+      </div>
+      <button class="btn" id="runSecurityCheck">Run configuration check</button>
+      <div id="securityCheckResult" class="notice">Not checked.</div>
+    </article>
+  </div>
+</section>
+
+
+<section id="cloud-documents" class="workspace">
+  <div class="workspace-head">
+    <div><div class="eyebrow">PRIMARY DOCUMENT VAULT</div><h2>Cloud Document Center</h2><p>Upload once. Access securely from every authorized device.</p></div>
+    <button class="btn close">Close</button>
+  </div>
+
+
+  <div id="cloudDocumentGuard" class="cloud-guard">Connect and sign in to Atlas Cloud before uploading files.</div>
+
+
+  <div class="cloud-toolbar">
+    <select id="cloudBucketSelect">
+      <option value="atlas-documents">Documents</option>
+      <option value="nautical-publications">Nautical Publications</option>
+      <option value="nautical-charts">Nautical Charts</option>
+      <option value="crew-confidential">Crew Confidential</option>
+      <option value="vessel-technical">Vessel Technical</option>
+      <option value="passage-media">Passage Media</option>
+      <option value="exports">Exports</option>
+    </select>
+    <input id="cloudFolderPath" value="general" placeholder="Folder path">
+    <input id="cloudFileInput" type="file" multiple>
+    <button class="btn primary upload-glow" id="uploadCloudFiles">Upload to Atlas Cloud</button>
+    <button class="btn" id="refreshCloudFiles">Refresh</button>
+    <button class="btn" id="openLocalDocuments">Open Local Document Center</button>
+  </div>
+
+
+  <div class="notice">Files are uploaded under <code>workspace-uuid/folder/file</code>. The Supabase Free plan may limit each file to 50 MB.</div>
+  <div id="cloudUploadProgress" class="notice">Ready.</div>
+  <div id="cloudFileList" class="cloud-file-grid">No cloud files loaded.</div>
+</section>
+
+
+<section id="fleet" class="workspace">
+  <div class="workspace-head"><div><h2>Fleet Manager</h2><p>Vessel particulars stored locally.</p></div><button class="btn close">Close</button></div>
+  <div class="form-grid">
+    <label>Vessel name<input id="vName"></label><label>Type<input id="vType"></label><label>Flag<input id="vFlag"></label>
+    <label>LOA (m)<input id="vLoa" type="number" step="0.1"></label><label>Beam (m)<input id="vBeam" type="number" step="0.1"></label><label>Draft (m)<input id="vDraft" type="number" step="0.1"></label>
+    <label>Cruising speed (kn)<input id="vCruise" type="number" step="0.1"></label><label>Fuel capacity (L)<input id="vFuel" type="number"></label><label>Fresh water (L)<input id="vWater" type="number"></label>
+    <label class="wide">Machinery / Notes<textarea id="vNotes"></textarea></label>
+  </div>
+  <button class="btn primary" id="saveVessel">Save Vessel</button><div id="fleetList"></div>
+</section>
+
+
+<section id="pilot" class="workspace">
+  <div class="workspace-head"><div><h2>Pilot Library</h2><p>Always verify official sources.</p></div><button class="btn close">Close</button></div>
+  <div class="filter-grid"><input id="pilotSearch" placeholder="Search"><select id="countryFilter"><option value="">All countries</option></select><select id="typeFilter"><option value="">All types</option></select></div>
+  <div id="pilotGrid" class="content-grid"></div>
+</section>
+
+
+<section id="routes" class="workspace">
+  <div class="workspace-head"><div><h2>Route Library</h2><p>Approved route sequences.</p></div><button class="btn close">Close</button></div>
+  <div class="filter-grid"><input id="routeSearch" placeholder="Search"><select id="routeType"><option value="">All route types</option></select><select id="routeStatus"><option value="">All statuses</option></select></div>
+  <div id="routeGrid" class="content-grid"></div>
+</section>
+
+
+<section id="crew" class="workspace">
+  <div class="workspace-head"><div><h2>Crew Manager</h2><p>Personnel and expiry tracking.</p></div><button class="btn close">Close</button></div>
+  <div class="form-grid">
+    <label>Full name<input id="crewName"></label><label>Rank<input id="crewRank"></label><label>Nationality<input id="crewNationality"></label>
+    <label>Passport expiry<input id="crewPassport" type="date"></label><label>ENG1 / Medical<input id="crewMedical" type="date"></label><label>STCW<input id="crewStcw" type="date"></label>
+    <label>Visa expiry<input id="crewVisa" type="date"></label><label>Contract end<input id="crewContract" type="date"></label><label>Phone / Email<input id="crewContact"></label>
+    <label class="wide">Notes<textarea id="crewNotes"></textarea></label>
+  </div>
+  <button class="btn primary" id="saveCrew">Save Crew Member</button><div id="crewList"></div>
+</section>
+</main>
+
+
+<button id="sinbadFloat" class="sinbad-float" type="button" aria-label="Open Captain Sinbad">
+  <div class="sinbad-avatar small">
+    <svg viewBox="0 0 160 160" aria-hidden="true">
+      <circle cx="80" cy="80" r="74" fill="#102b40" stroke="#e2bf72" stroke-width="5"/>
+      <path d="M40 56 Q80 18 120 56 L113 72 H47 Z" fill="#f4f7fa"/>
+      <rect x="47" y="51" width="66" height="13" rx="6" fill="#e2bf72"/>
+      <circle cx="80" cy="90" r="35" fill="#d69c6b"/>
+      <path d="M52 85 Q80 58 108 85 Q104 122 80 128 Q56 122 52 85" fill="#7a4f2f"/>
+      <path d="M60 91 Q68 84 74 91" stroke="#18212a" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M86 91 Q94 84 101 91" stroke="#18212a" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M66 106 Q80 116 94 106" stroke="#f4f7fa" stroke-width="4" fill="none" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <span>Ask Sinbad</span>
+</button>
+
+
+<footer>Atlas Marine OS v8.10 • NASA Cinematic World Chart • One Bridge. Every Operation.</footer>
+
+
+<script src="./pilot-data.js"></script>
+<script src="./route-data.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./intro.js"></script>
+<script src="./app.js"></script>
+</body>
+</html>
