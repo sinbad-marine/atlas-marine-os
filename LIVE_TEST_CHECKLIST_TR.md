@@ -1,4 +1,15 @@
-# Atlas Marine OS v8.8 — Canlı Test Kontrol Listesi
+# Atlas Marine OS v8.9 — Canlı Test Kontrol Listesi
+
+## Açılış animasyonu
+
+- [ ] Yeni tarayıcı oturumunda yıldızlı uzay ekranı açılıyor.
+- [ ] Dünya yaklaşırken kendi ekseninde dönüyor.
+- [ ] Dünya dalgalanarak Maritime World Chart’a açılıyor.
+- [ ] Atlas Marine OS adı ve sloganı görünüyor.
+- [ ] Skip Intro animasyonu hemen kapatıyor.
+- [ ] Replay cinematic intro animasyonu yeniden oynatıyor.
+- [ ] Animasyon bittikten sonra Captain Sign In kullanılabiliyor.
+- [ ] Telefonda ekran dışına taşma veya donma yaşanmıyor.
 
 ## A. Ziyaretçi ekranı
 
@@ -41,4 +52,3 @@
 - [ ] Cloud Control Center açılıyor.
 
 Bir hata olursa ekran görüntüsüyle birlikte yapılan adımı ve görünen hata metnini kaydedin.
-

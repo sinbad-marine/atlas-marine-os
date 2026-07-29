@@ -1,5 +1,5 @@
-const CACHE='atlas-marine-os-v8.8-integrated';
-const ASSETS=['./','./index.html','./styles.css','./app.js','./pilot-data.js','./route-data.js','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
+const CACHE='atlas-marine-os-v8.9-cinematic-intro';
+const ASSETS=['./','./index.html','./styles.css','./intro.js','./app.js','./pilot-data.js','./route-data.js','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 self.addEventListener('install',event=>{
   self.skipWaiting();
   event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)));

@@ -10,6 +10,17 @@
 <link rel="stylesheet" href="./styles.css">
 </head>
 <body class="auth-pending">
+<section id="cinematicIntro" class="cinematic-intro" aria-label="Atlas Marine OS cinematic introduction">
+  <canvas id="introCanvas"></canvas>
+  <div class="intro-brand" id="introBrand">
+    <div class="intro-kicker">ATLAS MARINE TECHNOLOGIES</div>
+    <h1>ATLAS MARINE OS</h1>
+    <p>Navigate Smarter. Command Better.</p>
+  </div>
+  <div class="intro-disclaimer">Visual introduction — not for navigation</div>
+  <button id="skipIntro" class="skip-intro" type="button">Skip Intro</button>
+</section>
+
 <section id="publicGateway" class="public-gateway" aria-live="polite">
   <div class="gateway-orbit"></div>
   <div class="gateway-card">
@@ -18,6 +29,7 @@
     <h1>Atlas Marine OS is currently under development.</h1>
     <p>Our secure marine intelligence and yacht operations platform is being prepared for launch.</p>
     <button class="btn primary gateway-signin" id="openCaptainSignIn">Captain Sign In</button>
+    <button class="text-button replay-intro" id="replayIntro" type="button">Replay cinematic intro</button>
     <small>Navigate Smarter. Command Better.</small>
   </div>
 </section>
@@ -48,7 +60,7 @@
 </dialog>
 <header class="topbar">
   <div class="brand"><div class="logo">⚓</div><div><h1>ATLAS MARINE OS</h1><small>Özgür Maceraperest Dostlar • Navigate Smarter. Command Better.</small></div></div>
-  <div class="version">● v8.8</div>
+  <div class="version">● v8.9</div>
 </header>
 
 
@@ -393,12 +405,13 @@
 </button>
 
 
-<footer>Atlas Marine OS v8.8 • Integrated Management • One Bridge. Every Operation.</footer>
+<footer>Atlas Marine OS v8.9 • Cinematic World Chart • One Bridge. Every Operation.</footer>
 
 
 <script src="./pilot-data.js"></script>
 <script src="./route-data.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./intro.js"></script>
 <script src="./app.js"></script>
 </body>
 </html>
