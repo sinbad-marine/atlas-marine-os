@@ -1,5 +1,13 @@
 # Changelog
 
+## v8.3 Test — Sprint 1
+
+- Kurtarma isteği cihazda iki saat süreyle güvenli bir durum işareti olarak tutuluyor.
+- `PASSWORD_RECOVERY`, `SIGNED_IN`, authorization code ve access-token callback biçimleri destekleniyor.
+- Eski kurtarma e-postalarının karıştırılmaması için ek uyarı eklendi.
+- Başarısız e-posta gönderiminde geçici kurtarma işareti temizleniyor.
+- Şifre başarıyla yenilendiğinde recovery durumu ve URL bilgileri temizleniyor.
+
 ## v8.2 Test — Sprint 1
 
 - “Şifremi unuttum” bağlantısı eklendi.

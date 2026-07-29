@@ -3,6 +3,8 @@
 
   const CONFIG_KEY = "atlas-v81-supabase-config";
   const WORKSPACE_KEY = "atlas-v81-workspace";
+  const RECOVERY_PENDING_KEY = "atlas-v83-recovery-pending";
+  const RECOVERY_MAX_AGE_MS = 2 * 60 * 60 * 1000;
   const MAX_PDF_BYTES = 10 * 1024 * 1024;
   const BUCKET = "atlas-documents";
   let client = null;
@@ -11,7 +13,9 @@
   let documents = [];
   let authSubscription = null;
   let recoveryMode = false;
-  const recoveryLinkDetected = /(?:[?#&])type=recovery(?:[&#]|$)/i.test(window.location.href);
+  const initialUrl = window.location.href;
+  const explicitRecoveryLink = /(?:[?#&])type=recovery(?:[&#]|$)/i.test(initialUrl);
+  const authCallbackLink = /(?:[?#&])(?:code|access_token|token_hash)=/i.test(initialUrl);
 
   const $ = (id) => document.getElementById(id);
   const els = {
@@ -51,6 +55,19 @@
     try { return JSON.parse(localStorage.getItem(CONFIG_KEY) || "null"); } catch { return null; }
   }
 
+  function recoveryPending() {
+    const startedAt = Number(localStorage.getItem(RECOVERY_PENDING_KEY));
+    if (!startedAt || Date.now() - startedAt > RECOVERY_MAX_AGE_MS) {
+      localStorage.removeItem(RECOVERY_PENDING_KEY);
+      return false;
+    }
+    return true;
+  }
+
+  function isRecoveryReturn() {
+    return explicitRecoveryLink || (authCallbackLink && recoveryPending());
+  }
+
   function normalizeUrl(value) {
     return value.trim().replace(/\/+$/, "");
   }
@@ -63,7 +80,9 @@
     });
     const { data } = client.auth.onAuthStateChange((event, nextSession) => {
       session = nextSession;
-      if (event === "PASSWORD_RECOVERY") openRecoveryDialog(true);
+      if (event === "PASSWORD_RECOVERY" || (event === "SIGNED_IN" && nextSession && recoveryPending() && authCallbackLink)) {
+        openRecoveryDialog(true);
+      }
     });
     authSubscription = data.subscription;
   }
@@ -116,7 +135,7 @@
       session = data.session;
       if (session) {
         await onSignedIn();
-        if (recoveryLinkDetected) openRecoveryDialog(true);
+        if (isRecoveryReturn() || recoveryPending()) openRecoveryDialog(true);
       }
     } catch (error) {
       client = null;
@@ -344,8 +363,12 @@
       if (!client) throw new Error("Önce Atlas Cloud bağlantısını kaydedin.");
       if (!recoveryMode) {
         const email = els.recoveryEmail.value.trim();
+        localStorage.setItem(RECOVERY_PENDING_KEY, String(Date.now()));
         const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo: recoveryRedirectUrl() });
-        if (error) throw error;
+        if (error) {
+          localStorage.removeItem(RECOVERY_PENDING_KEY);
+          throw error;
+        }
         els.recoveryDialog.close();
         showNotice("Kurtarma e-postası gönderildi. Gelen kutunuzu ve Spam klasörünü kontrol edin.");
       } else {
@@ -357,6 +380,7 @@
         session = null;
         workspace = null;
         recoveryMode = false;
+        localStorage.removeItem(RECOVERY_PENDING_KEY);
         els.recoveryDialog.close();
         els.recoveryForm.reset();
         els.loginForm.classList.remove("hidden");

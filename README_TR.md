@@ -1,4 +1,4 @@
-# Atlas Marine OS v8.2 — Sprint 1 Test
+# Atlas Marine OS v8.3 — Sprint 1 Test
 
 Bu sürüm yalnızca çalışan Atlas Cloud çekirdeğine odaklanır:
 
@@ -21,7 +21,7 @@ Eski sürüm görünürse:
 
 1. Atlas Marine OS’nin açık Safari sekmelerini kapatın.
 2. Siteyi yeniden açın.
-3. Sağ üstte `v8.2 TEST` yazdığını kontrol edin.
+3. Sağ üstte `v8.3 TEST` yazdığını kontrol edin.
 
 ## İlk bağlantı
 
@@ -38,7 +38,7 @@ Supabase `Authentication → URL Configuration` bölümünde hem Site URL hem de
 
 `https://varolcolak2013-stack.github.io/atlas-marine-os/`
 
-Giriş kartındaki `Şifremi unuttum` bağlantısı kurtarma e-postası gönderir. E-postadaki bağlantı açıldığında v8.2 kurtarma oturumunu tanır ve doğrudan yeni şifre ekranını gösterir.
+Giriş kartındaki `Şifremi unuttum` bağlantısı kurtarma e-postası gönderir. v8.3 isteği cihazda iki saat süreyle işaretler; e-postadaki bağlantı farklı Supabase callback biçimlerinden biriyle dönerse kurtarma oturumunu tanır ve yeni şifre ekranını açar.
 
 ## Gereken mevcut altyapı
 
