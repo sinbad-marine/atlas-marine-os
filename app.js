@@ -13,6 +13,7 @@
   let documents = [];
   let authSubscription = null;
   let recoveryMode = false;
+  let recoveryOtpMode = false;
   const initialUrl = window.location.href;
   const explicitRecoveryLink = /(?:[?#&])type=recovery(?:[&#]|$)/i.test(initialUrl);
   const authCallbackLink = /(?:[?#&])(?:code|access_token|token_hash)=/i.test(initialUrl);
@@ -28,7 +29,8 @@
     refreshBtn: $("refreshBtn"), fileCount: $("fileCount"), filesSubtitle: $("filesSubtitle"), fileList: $("fileList"),
     renameDialog: $("renameDialog"), renameForm: $("renameForm"), renameInput: $("renameInput"), renameDocumentId: $("renameDocumentId"),
     forgotPasswordBtn: $("forgotPasswordBtn"), recoveryDialog: $("recoveryDialog"), recoveryForm: $("recoveryForm"),
-    recoveryRequest: $("recoveryRequest"), recoveryUpdate: $("recoveryUpdate"), recoveryEmail: $("recoveryEmail"),
+    recoveryRequest: $("recoveryRequest"), recoveryOtp: $("recoveryOtp"), recoveryCode: $("recoveryCode"),
+    recoveryUpdate: $("recoveryUpdate"), recoveryEmail: $("recoveryEmail"),
     newPassword: $("newPassword"), confirmPassword: $("confirmPassword"), recoverySubmitBtn: $("recoverySubmitBtn"),
     recoveryCancelBtn: $("recoveryCancelBtn"), closeRecoveryBtn: $("closeRecoveryBtn"), recoveryStatus: $("recoveryStatus"),
     steps: [$("stepConnect"), $("stepAuth"), $("stepWorkspace"), $("stepFiles")]
@@ -95,7 +97,9 @@
 
   function openRecoveryDialog(updatePassword = false) {
     recoveryMode = updatePassword;
+    recoveryOtpMode = false;
     els.recoveryRequest.classList.toggle("hidden", updatePassword);
+    els.recoveryOtp.classList.add("hidden");
     els.recoveryUpdate.classList.toggle("hidden", !updatePassword);
     els.recoverySubmitBtn.textContent = updatePassword ? "Yeni şifreyi kaydet" : "Kurtarma e-postası gönder";
     els.recoverySubmitBtn.disabled = false;
@@ -106,6 +110,35 @@
     if (!updatePassword) els.recoveryEmail.value = els.email.value.trim();
     if (!els.recoveryDialog.open) els.recoveryDialog.showModal();
     setTimeout(() => (updatePassword ? els.newPassword : els.recoveryEmail).focus(), 50);
+  }
+
+  function openOtpDialog() {
+    recoveryMode = false;
+    recoveryOtpMode = true;
+    els.recoveryRequest.classList.add("hidden");
+    els.recoveryOtp.classList.remove("hidden");
+    els.recoveryUpdate.classList.add("hidden");
+    els.recoveryEmail.required = false;
+    els.recoveryCode.required = true;
+    els.newPassword.required = false;
+    els.confirmPassword.required = false;
+    els.recoverySubmitBtn.textContent = "Kodu doğrula";
+    els.recoverySubmitBtn.disabled = false;
+    setTimeout(() => els.recoveryCode.focus(), 50);
+  }
+
+  function openNewPasswordFromOtp() {
+    recoveryMode = true;
+    recoveryOtpMode = false;
+    els.recoveryRequest.classList.add("hidden");
+    els.recoveryOtp.classList.add("hidden");
+    els.recoveryUpdate.classList.remove("hidden");
+    els.recoveryCode.required = false;
+    els.newPassword.required = true;
+    els.confirmPassword.required = true;
+    els.recoverySubmitBtn.textContent = "Yeni şifreyi kaydet";
+    setRecoveryStatus("Kod doğrulandı. Şimdi yeni şifrenizi belirleyin.", "success");
+    setTimeout(() => els.newPassword.focus(), 50);
   }
 
   function setRecoveryStatus(message, type = "error") {
@@ -371,7 +404,7 @@
     setRecoveryStatus("");
     try {
       if (!client) throw new Error("Önce Atlas Cloud bağlantısını kaydedin.");
-      if (!recoveryMode) {
+      if (!recoveryMode && !recoveryOtpMode) {
         const email = els.recoveryEmail.value.trim();
         localStorage.setItem(RECOVERY_PENDING_KEY, String(Date.now()));
         const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo: recoveryRedirectUrl() });
@@ -379,9 +412,19 @@
           localStorage.removeItem(RECOVERY_PENDING_KEY);
           throw error;
         }
-        setRecoveryStatus("Kurtarma isteği Supabase tarafından kabul edildi. En yeni e-postayı, Spam ve Tanıtımlar klasörlerini kontrol edin.", "success");
-        els.recoverySubmitBtn.textContent = "E-posta istendi";
-        els.recoverySubmitBtn.disabled = true;
+        setRecoveryStatus("Kurtarma kodu gönderildi. En yeni e-postayı, Spam ve Tanıtımlar klasörlerini kontrol edin.", "success");
+        openOtpDialog();
+      } else if (recoveryOtpMode) {
+        const token = els.recoveryCode.value.replace(/\D/g, "");
+        if (token.length !== 6) throw new Error("E-postadaki 6 haneli doğrulama kodunu girin.");
+        const { data, error } = await client.auth.verifyOtp({
+          email: els.recoveryEmail.value.trim(),
+          token,
+          type: "recovery"
+        });
+        if (error) throw error;
+        session = data.session;
+        openNewPasswordFromOtp();
       } else {
         if (els.newPassword.value.length < 10) throw new Error("Yeni şifre en az 10 karakter olmalıdır.");
         if (els.newPassword.value !== els.confirmPassword.value) throw new Error("Yeni şifreler birbiriyle eşleşmiyor.");
@@ -407,7 +450,7 @@
       setRecoveryStatus(message, "error");
       showNotice(message, "error");
     } finally {
-      if (!els.recoveryStatus.classList.contains("success")) els.recoverySubmitBtn.disabled = false;
+      els.recoverySubmitBtn.disabled = false;
     }
   });
 

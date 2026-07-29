@@ -1,5 +1,12 @@
 # Changelog
 
+## v8.5 Test — Sprint 1
+
+- Gmail ve güvenlik tarayıcılarının tek kullanımlık bağlantıyı tüketmesi sorunu giderildi.
+- Şifre kurtarma, bağlantı yerine 6 haneli e-posta OTP kodu kullanıyor.
+- OTP doğrulama ve yeni şifre belirleme adımları aynı pencerede tamamlanıyor.
+- Kod, şifre ve hata mesajları kalıcı ve Türkçe gösteriliyor.
+
 ## v8.4 Test — Sprint 1
 
 - Şifre kurtarma sonuçları modalın içinde kalıcı olarak gösteriliyor.

@@ -18,7 +18,7 @@
       <div class="top-actions">
         <span id="cloudBadge" class="status"><i></i><span>Cloud not configured</span></span>
         <button id="signOutBtn" class="button ghost hidden">Çıkış</button>
-        <span class="version">v8.4 TEST</span>
+        <span class="version">v8.5 TEST</span>
       </div>
     </header>
 
@@ -109,9 +109,13 @@
     <form id="recoveryForm">
       <div class="dialog-head"><div><p class="eyebrow">ACCOUNT RECOVERY</p><h2>Şifre kurtarma</h2></div><button id="closeRecoveryBtn" class="icon-button" type="button" aria-label="Kapat">×</button></div>
       <div id="recoveryRequest">
-        <p class="dialog-copy">Atlas Cloud hesabınıza güvenli bir şifre yenileme bağlantısı gönderelim.</p>
+        <p class="dialog-copy">Atlas Cloud hesabınıza güvenli bir şifre yenileme kodu gönderelim.</p>
         <label>E-posta<input id="recoveryEmail" type="email" autocomplete="email" required></label>
-        <p class="hint">Yalnızca en yeni e-postadaki bağlantıyı kullanın. Eski kurtarma e-postaları geçersiz olabilir.</p>
+        <p class="hint">Yalnızca en yeni e-postadaki 6 haneli kodu kullanın.</p>
+      </div>
+      <div id="recoveryOtp" class="hidden">
+        <p class="dialog-copy">E-postanıza gelen 6 haneli kodu aşağıya yazın. E-postadaki eski bağlantılara tıklamayın.</p>
+        <label>Doğrulama kodu<input id="recoveryCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="000000"></label>
       </div>
       <div id="recoveryUpdate" class="hidden">
         <p class="dialog-copy">Kurtarma bağlantısı doğrulandı. Yeni ve güçlü şifrenizi belirleyin.</p>

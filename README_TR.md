@@ -1,4 +1,4 @@
-# Atlas Marine OS v8.4 — Sprint 1 Test
+# Atlas Marine OS v8.5 — Sprint 1 Test
 
 Bu sürüm yalnızca çalışan Atlas Cloud çekirdeğine odaklanır:
 
@@ -21,7 +21,7 @@ Eski sürüm görünürse:
 
 1. Atlas Marine OS’nin açık Safari sekmelerini kapatın.
 2. Siteyi yeniden açın.
-3. Sağ üstte `v8.4 TEST` yazdığını kontrol edin.
+3. Sağ üstte `v8.5 TEST` yazdığını kontrol edin.
 
 ## İlk bağlantı
 
@@ -38,7 +38,9 @@ Supabase `Authentication → URL Configuration` bölümünde hem Site URL hem de
 
 `https://varolcolak2013-stack.github.io/atlas-marine-os/`
 
-Giriş kartındaki `Şifremi unuttum` bağlantısı kurtarma e-postası gönderir. v8.4 isteği cihazda iki saat süreyle işaretler; e-postadaki bağlantı farklı Supabase callback biçimlerinden biriyle dönerse kurtarma oturumunu tanır ve yeni şifre ekranını açar. Gönderim sonucu ve hatalar doğrudan kurtarma penceresinde kalıcı Türkçe mesaj olarak gösterilir.
+Giriş kartındaki `Şifremi unuttum` bağlantısı kurtarma e-postası gönderir. v8.5, posta servislerinin tek kullanımlık bağlantıları önceden tarayıp tüketmesine karşı e-postadaki 6 haneli OTP kodunu kullanır. Kod uygulamada doğrulandıktan sonra yeni şifre ekranı açılır.
+
+v8.5 kullanılmadan önce `SUPABASE_RECOVERY_TEMPLATE_TR.md` dosyasındaki Reset Password e-posta şablonu Supabase Dashboard’a kaydedilmelidir.
 
 ## Gereken mevcut altyapı
 
