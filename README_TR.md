@@ -1,67 +1,34 @@
-# Atlas Marine OS v8.7 — Private Development Gateway
+# Atlas Marine OS v8.8 — Integrated Management Test
 
-Bu sürüm yalnızca çalışan Atlas Cloud çekirdeğine odaklanır:
+Atlas Marine OS v8.8, güvenli Atlas Cloud giriş kapısını tam yönetim uygulamasıyla tek sürümde birleştirir.
 
-- Supabase bağlantısını kaydetme
-- E-posta/şifre ile oturum açma ve çıkış
-- Şifremi unuttum ve güvenli şifre yenileme akışı
-- Yetkili workspace seçimi
-- `atlas-documents` private bucket’ına en fazla 10 MB PDF yükleme
-- `documents` tablosuna metadata kaydı
-- Dosyaları listeleme
-- 60 saniyelik signed URL ile açma ve indirme
-- Storage nesnesiyle metadata kaydını birlikte yeniden adlandırma
-- Storage nesnesini ve metadata kaydını silme
+## Girişten sonra açılan modüller
 
-## GitHub Pages kurulumu
+- Dashboard
+- Cloud Document Center
+- Nautical Publications
+- Nautical Charts
+- Fleet Manager
+- Crew Manager
+- Pilot Library
+- Route Library
+- Knowledge Center
+- Captain Sinbad
+- Atlas Cloud Control Center
 
-Bu klasördeki dosyaların tamamını GitHub deposunun ana dizinine yükleyin. Aynı isimli eski dosyaların üzerine yazılmasına izin verip Commit changes yapın.
+## Güvenli erişim
 
-Eski sürüm görünürse:
+Oturum açmamış ziyaretçiler yalnızca İngilizce “under development” sayfasını görür. Mevcut geçerli Supabase oturumu olan kullanıcı doğrudan yönetim uygulamasına alınır.
 
-1. Atlas Marine OS’nin açık Safari sekmelerini kapatın.
-2. Siteyi yeniden açın.
-3. Sağ üstte `v8.7 TEST` yazdığını kontrol edin.
+Şifre kurtarma ekranı e-postayla gönderilen 8 haneli kodu kabul eder. Yeni şifre en az 8 karakter olmalıdır.
 
-## İlk bağlantı
+Supabase Project URL ve publishable key önceki v8.x sürümünden otomatik olarak okunur. Secret key veya service-role key tarayıcıya yazılmamalıdır.
 
-Uygulamada yalnızca şu iki değer kullanılır:
+## Kurulum
 
-- Supabase Project URL
-- Supabase publishable key veya eski anon key
+ZIP içindeki bütün dosyaları GitHub `atlas-marine-os` deposunun ana dizinine yükleyin ve mevcut dosyaların üzerine yazılmasına izin verin. Commit sonrasında eski site sekmesini kapatıp yeniden açın. Sağ üstte `v8.8` görünmelidir.
 
-Database parolası, secret key, service-role key ve OpenAI anahtarı uygulamaya kesinlikle girilmez.
+## Ürün yönetimi
 
-## Şifre kurtarma
+Bu sürüm [OWNER_GOVERNANCE.md](OWNER_GOVERNANCE.md) içindeki Owner Approval Rule’a tabidir. Kaptan Varol Çolak’ın açık onayı olmadan çalışan özellik kaldırılamaz ve yönetim uygulaması web girişinden ayrılamaz.
 
-Supabase `Authentication → URL Configuration` bölümünde hem Site URL hem de izin verilen Redirect URL olarak şu adres bulunmalıdır:
-
-`https://varolcolak2013-stack.github.io/atlas-marine-os/`
-
-Giriş kartındaki `Şifremi unuttum` bağlantısı kurtarma e-postası gönderir. v8.6, posta servislerinin tek kullanımlık bağlantıları önceden tarayıp tüketmesine karşı e-postadaki 8 haneli OTP kodunu kullanır. Kod uygulamada doğrulandıktan sonra yeni şifre ekranı açılır.
-
-v8.6 kullanılmadan önce `SUPABASE_RECOVERY_TEMPLATE_TR.md` dosyasındaki Reset Password e-posta şablonu Supabase Dashboard’a kaydedilmelidir.
-
-## Gereken mevcut altyapı
-
-Bu paket, daha önce kurduğunuz şu yapıyı bekler:
-
-- `workspaces`
-- `workspace_members`
-- `documents`
-- private `atlas-documents` bucket
-- ilgili Database ve Storage RLS policies
-- dosya yolunun ilk bölümünde workspace UUID kontrolü
-
-Yüklenen nesne yolu:
-
-`<workspace_uuid>/documents/<random_uuid>/<filename.pdf>`
-
-## Bilinen sınırlar
-
-- Bu bir Sprint 1 test sürümüdür; yalnızca PDF kabul eder.
-- Dosya başına uygulama sınırı 10 MB’dir.
-- Yeni kullanıcı oluşturma ve şifre sıfırlama bu sürümde yoktur.
-- Aynı anda çoklu dosya yükleme yoktur.
-- Captain Sinbad ve yeni modüller özellikle eklenmemiştir.
-- Supabase bağlantı değerleri cihazdaki tarayıcıda saklanır. Bunlar yalnızca publishable değerler olmalıdır.

@@ -1,73 +1,44 @@
-# Atlas Marine OS v8.7 — Canlı Test Kontrol Listesi
+# Atlas Marine OS v8.8 — Canlı Test Kontrol Listesi
 
-Testi normal Safari sekmesinde yapın. Her adım başarılı olmadan sonraki adıma geçmeyin.
+## A. Ziyaretçi ekranı
 
-## A. Sürüm ve bağlantı
-
-- [ ] Sağ üstte `v8.7 TEST` görünüyor.
-- [ ] Oturum yokken yalnızca İngilizce “under development” ekranı görünüyor.
-- [ ] `Captain Sign In` düğmesi yetkili giriş ekranını açıyor.
-- [ ] Supabase Project URL girildi.
-- [ ] Publishable/anon key girildi.
-- [ ] “Bağlantıyı kaydet” sonrasında başarı mesajı göründü.
-- [ ] Durum göstergesi “Sign in required” oldu.
+- [ ] Gizli/özel tarayıcı penceresinde siteyi aç.
+- [ ] Yalnızca “Atlas Marine OS is currently under development” ekranı görünüyor.
+- [ ] Yönetim kartları ve Captain Sinbad görünmüyor.
 
 ## B. Oturum
 
-- [ ] Kayıtlı kullanıcı e-postası ve şifresiyle giriş yapıldı.
-- [ ] Kullanıcı e-postası yeşil oturum kartında göründü.
-- [ ] Çıkış düğmesi göründü.
-
-## B2. Şifre kurtarma
-
-- [ ] “Şifremi unuttum” ekranı açıldı.
-- [ ] Kayıtlı e-posta için kurtarma mesajı gönderildi.
-- [ ] E-postadaki 8 haneli kod Atlas Marine OS’ye girildi.
-- [ ] Kod doğrulandıktan sonra “Yeni şifre” ekranı açıldı.
-- [ ] En az 10 karakterli yeni şifre kaydedildi.
-- [ ] Yeni şifreyle normal giriş yapılabildi.
+- [ ] Captain Sign In düğmesi giriş penceresini açıyor.
+- [ ] Doğru e-posta ve şifreyle giriş yapılıyor.
+- [ ] Girişten sonra tam Dashboard açılıyor.
+- [ ] Sayfa yenilendiğinde oturum korunuyor.
+- [ ] Sign Out sonrasında yeniden ziyaretçi ekranı geliyor.
 
 ## C. Workspace
 
-- [ ] `Atlas Marine Technologies` listede göründü.
-- [ ] Workspace seçildi.
-- [ ] Rol `owner` olarak göründü.
-- [ ] Üst durum “Atlas Cloud ready” oldu.
+- [ ] Atlas Marine Technologies workspace listede görünüyor.
+- [ ] Workspace seçilebiliyor.
+- [ ] Seçim sayfa yenilendiğinde korunuyor.
 
-## D. Küçük PDF yükleme
+## D. Küçük PDF testi
 
-- [ ] 10 MB’den küçük bir test PDF seçildi.
-- [ ] Yükleme göstergesi göründü ve sonra kapandı.
-- [ ] Başarı mesajı göründü.
-- [ ] Dosya listede adı, boyutu ve tarihiyle göründü.
-- [ ] Supabase Storage içindeki `atlas-documents` bucket’ında dosya oluştu.
-- [ ] Supabase `documents` tablosunda metadata satırı oluştu.
+- [ ] `atlas-documents` bucket seçiliyor.
+- [ ] 1 MB’den küçük bir PDF yükleniyor.
+- [ ] Dosya listede görünüyor.
+- [ ] Open dosyayı açıyor.
+- [ ] Download dosyayı indiriyor.
+- [ ] Rename dosya adını değiştiriyor.
+- [ ] Delete onay soruyor ve dosyayı siliyor.
 
-## E. Dosya işlemleri
+## E. Modül bütünlüğü
 
-- [ ] “Aç” PDF’i yeni sekmede açtı.
-- [ ] “İndir” PDF indirmesini başlattı.
-- [ ] “Adlandır” dosya adını değiştirdi.
-- [ ] Yenilemeden sonra yeni ad listede kaldı.
-- [ ] “Sil” onay istedi.
-- [ ] Onay sonrasında dosya listeden kayboldu.
-- [ ] Storage nesnesi ve `documents` kaydı silindi.
+- [ ] Fleet Manager açılıyor.
+- [ ] Crew Manager açılıyor.
+- [ ] Pilot Library açılıyor.
+- [ ] Route Library açılıyor.
+- [ ] Knowledge Center açılıyor.
+- [ ] Captain Sinbad açılıyor.
+- [ ] Cloud Control Center açılıyor.
 
-## F. Hata testleri
+Bir hata olursa ekran görüntüsüyle birlikte yapılan adımı ve görünen hata metnini kaydedin.
 
-- [ ] PDF olmayan dosya reddedildi.
-- [ ] 10 MB’den büyük PDF açık mesajla reddedildi.
-- [ ] Hatalı şifre anlaşılır mesaj gösterdi.
-- [ ] İnternet kapatılınca çevrimdışı uyarısı göründü.
-- [ ] Sayfa yenilendiğinde oturum ve bağlantı korundu.
-
-## Hata bildirimi
-
-Bir adım çalışmazsa şu bilgileri kaydedin:
-
-- Test maddesi:
-- Ekrandaki hata:
-- Dosya adı ve boyutu:
-- iPad/iOS sürümü:
-- Safari normal veya Private:
-- Ekran görüntüsü:
