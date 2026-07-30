@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#071827">
 <title>Sinbad Marine</title>
-<link rel="manifest" href="./manifest.webmanifest?v=8115">
-<link rel="apple-touch-icon" href="./icon-192.png?v=8115">
-<link rel="stylesheet" href="./styles.css?v=8115">
+<link rel="manifest" href="./manifest.webmanifest?v=8120">
+<link rel="apple-touch-icon" href="./icon-192.png?v=8120">
+<link rel="stylesheet" href="./styles.css?v=8120">
 </head>
 <body class="auth-pending">
 <section id="cinematicIntro" class="cinematic-intro" aria-label="Sinbad Marine cinematic introduction">
   <canvas id="introCanvas"></canvas>
   <div class="intro-brand" id="introBrand">
-    <img class="sinbad-hero" src="./sinbad-hero.png?v=8115" alt="" aria-hidden="true">
+    <img class="sinbad-hero" src="./sinbad-hero.png?v=8120" alt="" aria-hidden="true">
     <div class="intro-word" aria-label="SINBAD">
       <span class="intro-letter" style="--i:0">S</span>
       <span class="intro-letter" style="--i:1">I</span>
@@ -69,7 +69,7 @@
 </dialog>
 <header class="topbar">
 <div class="brand"><div class="logo">⚓</div><div><h1>SINBAD MARINE</h1><small>Özgür Maceraperest Dostlar • Navigate Smarter. Command Better.</small></div></div>
-  <div class="version">● v8.11.5</div>
+  <div class="version">● v8.12.0</div>
 </header>
 
 
@@ -84,6 +84,8 @@
     <button class="btn primary" data-open="cloud-documents">Upload to Atlas Cloud</button>
     <button class="btn" data-open="cloud-control">Cloud Setup & Security</button>
     <button class="btn" data-open="sinbad">Ask Captain Sinbad</button>
+    <button class="btn" data-open="location-intelligence">Use Location</button>
+    <button class="btn" data-open="camera-archive">Open Camera</button>
   </div>
 </section>
 
@@ -119,6 +121,66 @@
   <article class="module-card" data-open="pilot"><div>📍</div><h3>Pilot Library</h3><p>Marinas, anchorages and captain notes.</p><a>Open →</a></article>
   <article class="module-card" data-open="routes"><div>🧭</div><h3>Route Library</h3><p>Approved passages and route workspaces.</p><a>Open →</a></article>
   <article class="module-card" data-open="crew"><div>👥</div><h3>Crew Manager</h3><p>Crew records and expiry tracking.</p><a>Open →</a></article>
+  <article class="module-card featured-card" data-open="location-intelligence"><div>📍</div><h3>Location Intelligence</h3><p>Permission-based position service for nearby marine information.</p><a>Open location service →</a></article>
+  <article class="module-card featured-card" data-open="camera-archive"><div>📷</div><h3>Camera & Media Archive</h3><p>Capture private operational photos and videos for your workspace.</p><a>Open camera →</a></article>
+</section>
+
+
+<section id="location-intelligence" class="workspace">
+  <div class="workspace-head">
+    <div><div class="eyebrow">PERMISSION-BASED POSITION SERVICE</div><h2>Location Intelligence</h2><p>Your position is read only after you grant permission. It is not published automatically.</p></div>
+    <button class="btn close">Close</button>
+  </div>
+  <div class="permission-banner" id="locationPermissionBanner">Location access has not been requested.</div>
+  <div class="location-grid">
+    <article class="status-card"><span>Latitude</span><strong id="locationLatitude">—</strong></article>
+    <article class="status-card"><span>Longitude</span><strong id="locationLongitude">—</strong></article>
+    <article class="status-card"><span>Accuracy</span><strong id="locationAccuracy">—</strong></article>
+    <article class="status-card"><span>Last update</span><strong id="locationTimestamp">—</strong></article>
+  </div>
+  <div class="actions">
+    <button class="btn primary" id="getCurrentLocation" type="button">Use My Current Location</button>
+    <button class="btn" id="startLocationWatch" type="button">Start Position Watch</button>
+    <button class="btn" id="stopLocationWatch" type="button" disabled>Stop Watch</button>
+    <button class="btn" id="copyCurrentCoordinates" type="button" disabled>Copy Coordinates</button>
+  </div>
+  <div class="nearby-panel">
+    <h3>Nearby Marine Information</h3>
+    <p id="nearbyMarineInfo">Grant location permission to prepare nearby marinas, anchorages, pilot notes, charts and publications. Verified sources will be connected in the next stage.</p>
+  </div>
+</section>
+
+
+<section id="camera-archive" class="workspace">
+  <div class="workspace-head">
+    <div><div class="eyebrow">PRIVATE MEDIA CAPTURE</div><h2>Camera & Media Archive</h2><p>Media remains private to the authorized workspace unless it is separately submitted and approved for sharing.</p></div>
+    <button class="btn close">Close</button>
+  </div>
+  <div class="permission-banner" id="cameraPermissionBanner">Camera access has not been requested.</div>
+  <div class="camera-layout">
+    <div class="camera-stage">
+      <video id="cameraPreview" playsinline muted autoplay></video>
+      <div class="camera-placeholder" id="cameraPlaceholder">Camera preview will appear here.</div>
+    </div>
+    <div>
+      <div class="actions camera-actions">
+        <button class="btn primary" id="startCamera" type="button">Open Camera</button>
+        <button class="btn" id="switchCamera" type="button" disabled>Switch Camera</button>
+        <button class="btn" id="capturePhoto" type="button" disabled>Take Photo</button>
+        <button class="btn" id="startVideoRecording" type="button" disabled>Record Video</button>
+        <button class="btn danger" id="stopVideoRecording" type="button" disabled>Stop Recording</button>
+        <button class="btn" id="closeCamera" type="button" disabled>Close Camera</button>
+      </div>
+      <label class="mobile-capture-label">Or use the phone camera / gallery
+        <input id="mobileMediaCapture" type="file" accept="image/*,video/*" capture="environment" multiple>
+      </label>
+      <label>Archive note<input id="mediaArchiveNote" type="text" placeholder="Port, approach, defect, operation or captain note"></label>
+      <button class="btn primary full" id="uploadCapturedMedia" type="button" disabled>Upload to Private Media Archive</button>
+      <div id="mediaUploadStatus" class="notice">No media selected.</div>
+    </div>
+  </div>
+  <canvas id="photoCaptureCanvas" hidden></canvas>
+  <div id="capturedMediaGallery" class="captured-media-grid"></div>
 </section>
 
 
@@ -417,10 +479,10 @@ Captain Sinbad uses local Sinbad Marine data and keyword intelligence. Secure cl
 <footer>Sinbad Marine • Cinematic World Chart • One Bridge. Every Operation.</footer>
 
 
-<script src="./pilot-data.js?v=8115"></script>
-<script src="./route-data.js?v=8115"></script>
+<script src="./pilot-data.js?v=8120"></script>
+<script src="./route-data.js?v=8120"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="./intro.js?v=8115"></script>
-<script src="./app.js?v=8115"></script>
+<script src="./intro.js?v=8120"></script>
+<script src="./app.js?v=8120"></script>
 </body>
 </html>

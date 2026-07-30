@@ -664,6 +664,236 @@ async function deleteCloudFile(documentId,bucket,path){
   await loadCloudFiles(); await refreshCloudSummary();
 }
 
+// ============================================================
+// LOCATION INTELLIGENCE
+// ============================================================
+
+let currentGeoPosition=null;
+let locationWatchId=null;
+
+function setPermissionBanner(id,message,state=''){
+  const banner=$(id);
+  if(!banner)return;
+  banner.textContent=message;
+  banner.classList.remove('allowed','denied');
+  if(state)banner.classList.add(state);
+}
+
+function renderPosition(position){
+  currentGeoPosition=position;
+  const {latitude,longitude,accuracy}=position.coords;
+  $('locationLatitude').textContent=latitude.toFixed(6);
+  $('locationLongitude').textContent=longitude.toFixed(6);
+  $('locationAccuracy').textContent=`± ${Math.round(accuracy)} m`;
+  $('locationTimestamp').textContent=new Date(position.timestamp).toLocaleString();
+  $('copyCurrentCoordinates').disabled=false;
+  setPermissionBanner('locationPermissionBanner','Location permission granted. Position remains private unless you explicitly attach it to media.','allowed');
+  $('nearbyMarineInfo').textContent=`Position ready: ${latitude.toFixed(5)}, ${longitude.toFixed(5)}. The verified nearby marina, anchorage, chart and publication service will use this position when its approved data connector is enabled.`;
+}
+
+function handleLocationError(error){
+  const messages={
+    1:'Location permission was denied. You can enable it later in browser or device settings.',
+    2:'Your position is currently unavailable.',
+    3:'The location request timed out. Please try again.'
+  };
+  setPermissionBanner('locationPermissionBanner',messages[error.code]||error.message||'Location could not be read.','denied');
+}
+
+function locationOptions(){
+  return {enableHighAccuracy:true,timeout:15000,maximumAge:15000};
+}
+
+function getCurrentLocation(){
+  if(!navigator.geolocation){handleLocationError({message:'This browser does not support location services.'});return;}
+  setPermissionBanner('locationPermissionBanner','Waiting for location permission…');
+  navigator.geolocation.getCurrentPosition(renderPosition,handleLocationError,locationOptions());
+}
+
+function startLocationWatch(){
+  if(!navigator.geolocation){handleLocationError({message:'This browser does not support location services.'});return;}
+  if(locationWatchId!==null)return;
+  setPermissionBanner('locationPermissionBanner','Position watch is active. Your location is not being published.','allowed');
+  locationWatchId=navigator.geolocation.watchPosition(renderPosition,handleLocationError,locationOptions());
+  $('startLocationWatch').disabled=true;
+  $('stopLocationWatch').disabled=false;
+}
+
+function stopLocationWatch(){
+  if(locationWatchId!==null)navigator.geolocation.clearWatch(locationWatchId);
+  locationWatchId=null;
+  $('startLocationWatch').disabled=false;
+  $('stopLocationWatch').disabled=true;
+  setPermissionBanner('locationPermissionBanner','Position watch stopped. The last position remains visible.');
+}
+
+async function copyCurrentCoordinates(){
+  if(!currentGeoPosition)return;
+  const {latitude,longitude}=currentGeoPosition.coords;
+  await navigator.clipboard.writeText(`${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
+  setPermissionBanner('locationPermissionBanner','Coordinates copied.','allowed');
+}
+
+// ============================================================
+// CAMERA & PRIVATE MEDIA ARCHIVE
+// ============================================================
+
+let cameraStream=null;
+let cameraFacingMode='environment';
+let mediaRecorder=null;
+let recordedChunks=[];
+let pendingMedia=[];
+
+function cameraButtons(active){
+  $('startCamera').disabled=active;
+  $('switchCamera').disabled=!active;
+  $('capturePhoto').disabled=!active;
+  $('startVideoRecording').disabled=!active || Boolean(mediaRecorder);
+  $('closeCamera').disabled=!active;
+}
+
+async function openCamera(){
+  if(!navigator.mediaDevices?.getUserMedia){
+    setPermissionBanner('cameraPermissionBanner','This browser does not support live camera access. Use the phone camera / gallery selector below.','denied');
+    return;
+  }
+  closeCamera();
+  try{
+    cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:cameraFacingMode}},audio:false});
+    const video=$('cameraPreview');
+    video.srcObject=cameraStream;
+    await video.play();
+    video.classList.add('active');
+    $('cameraPlaceholder').hidden=true;
+    cameraButtons(true);
+    setPermissionBanner('cameraPermissionBanner','Camera permission granted. Nothing is uploaded until you press Upload.','allowed');
+  }catch(error){
+    cameraButtons(false);
+    setPermissionBanner('cameraPermissionBanner',`Camera could not be opened: ${error.message}`,'denied');
+  }
+}
+
+function closeCamera(){
+  if(mediaRecorder?.state==='recording')mediaRecorder.stop();
+  cameraStream?.getTracks().forEach(track=>track.stop());
+  cameraStream=null;
+  const video=$('cameraPreview');
+  if(video){video.srcObject=null;video.classList.remove('active');}
+  if($('cameraPlaceholder'))$('cameraPlaceholder').hidden=false;
+  cameraButtons(false);
+  $('stopVideoRecording').disabled=true;
+}
+
+async function switchCamera(){
+  cameraFacingMode=cameraFacingMode==='environment'?'user':'environment';
+  await openCamera();
+}
+
+function addPendingMedia(blob,name){
+  pendingMedia.push({blob,name,type:blob.type||'application/octet-stream',url:URL.createObjectURL(blob)});
+  renderPendingMedia();
+}
+
+function capturePhoto(){
+  const video=$('cameraPreview');
+  if(!cameraStream || !video.videoWidth)return;
+  const canvas=$('photoCaptureCanvas');
+  canvas.width=video.videoWidth;
+  canvas.height=video.videoHeight;
+  canvas.getContext('2d').drawImage(video,0,0,canvas.width,canvas.height);
+  canvas.toBlob(blob=>{
+    if(blob)addPendingMedia(blob,`sinbad-photo-${new Date().toISOString().replace(/[:.]/g,'-')}.jpg`);
+  },'image/jpeg',.9);
+}
+
+function startVideoRecording(){
+  if(!cameraStream || !window.MediaRecorder){
+    setPermissionBanner('cameraPermissionBanner','Live video recording is not supported here. Use the phone camera selector instead.','denied');
+    return;
+  }
+  recordedChunks=[];
+  mediaRecorder=new MediaRecorder(cameraStream);
+  mediaRecorder.ondataavailable=event=>{if(event.data.size)recordedChunks.push(event.data);};
+  mediaRecorder.onstop=()=>{
+    const type=mediaRecorder?.mimeType||'video/webm';
+    const blob=new Blob(recordedChunks,{type});
+    const extension=type.includes('mp4')?'mp4':'webm';
+    addPendingMedia(blob,`sinbad-video-${new Date().toISOString().replace(/[:.]/g,'-')}.${extension}`);
+    mediaRecorder=null;
+    $('startVideoRecording').disabled=!cameraStream;
+    $('stopVideoRecording').disabled=true;
+  };
+  mediaRecorder.start(1000);
+  $('startVideoRecording').disabled=true;
+  $('stopVideoRecording').disabled=false;
+  setPermissionBanner('cameraPermissionBanner','Recording video locally. Press Stop Recording when finished.','allowed');
+}
+
+function stopVideoRecording(){
+  if(mediaRecorder?.state==='recording')mediaRecorder.stop();
+}
+
+function addSelectedMedia(files){
+  [...files].forEach(file=>addPendingMedia(file,file.name));
+  $('mobileMediaCapture').value='';
+}
+
+function renderPendingMedia(){
+  const gallery=$('capturedMediaGallery');
+  gallery.innerHTML=pendingMedia.map((item,index)=>`
+    <article class="captured-media-card">
+      ${item.type.startsWith('video/')?`<video src="${item.url}" controls playsinline></video>`:`<img src="${item.url}" alt="Captured media preview">`}
+      <button class="captured-media-remove" type="button" data-media-index="${index}" aria-label="Remove">×</button>
+      <small>${cloudEsc(item.name)}<br>${Math.round(item.blob.size/1024)} KB</small>
+    </article>`).join('');
+  $('uploadCapturedMedia').disabled=!pendingMedia.length;
+  $('mediaUploadStatus').textContent=pendingMedia.length?`${pendingMedia.length} private media item(s) ready to upload.`:'No media selected.';
+}
+
+function removePendingMedia(index){
+  const [removed]=pendingMedia.splice(index,1);
+  if(removed)URL.revokeObjectURL(removed.url);
+  renderPendingMedia();
+}
+
+async function uploadCapturedMedia(){
+  if(!cloudClient || !cloudSession?.user || !selectedWorkspaceId){
+    $('mediaUploadStatus').textContent='Sign in and select your workspace before uploading.';
+    openWorkspace('cloud-control');
+    return;
+  }
+  if(!pendingMedia.length)return;
+  const note=$('mediaArchiveNote').value.trim();
+  const geo=currentGeoPosition?.coords;
+  const tags=['camera-media','private-archive'];
+  if(geo)tags.push(`geo:${geo.latitude.toFixed(5)},${geo.longitude.toFixed(5)}`);
+  let completed=0;
+  const items=[...pendingMedia];
+  for(const item of items){
+    $('mediaUploadStatus').textContent=`Uploading ${completed+1}/${items.length}: ${item.name}`;
+    const safeName=item.name.replace(/[^a-zA-Z0-9._-]+/g,'-');
+    const month=new Date().toISOString().slice(0,7);
+    const path=`${selectedWorkspaceId}/private-media/${month}/${Date.now()}-${safeName}`;
+    const {error:uploadError}=await cloudClient.storage.from('passage-media').upload(path,item.blob,{contentType:item.type,upsert:false});
+    if(uploadError){$('mediaUploadStatus').textContent=`Upload failed: ${uploadError.message}`;continue;}
+    const {error:metaError}=await cloudClient.from('documents').insert({
+      workspace_id:selectedWorkspaceId,bucket_id:'passage-media',object_path:path,original_filename:item.name,title:item.name,
+      description:note||null,mime_type:item.type,file_size_bytes:item.blob.size,tags,status:'active',
+      classification:'restricted',ai_index_allowed:false,created_by:cloudSession.user.id
+    });
+    if(metaError){$('mediaUploadStatus').textContent=`Media uploaded but its archive record failed: ${metaError.message}`;continue;}
+    completed++;
+  }
+  if(completed===items.length){
+    pendingMedia.forEach(item=>URL.revokeObjectURL(item.url));
+    pendingMedia=[];
+    $('mediaArchiveNote').value='';
+    renderPendingMedia();
+  }
+  $('mediaUploadStatus').textContent=`✓ ${completed}/${items.length} item(s) saved in the private passage-media archive.`;
+  await refreshCloudSummary();
+}
+
 
 $('saveCloudConfig').addEventListener('click',saveCloudConfig);
 $('clearCloudConfig').addEventListener('click',()=>{localStorage.removeItem('atlas_supabase_url');localStorage.removeItem('atlas_supabase_publishable_key');cloudClient=null;cloudSession=null;updateCloudStatus();});
@@ -709,6 +939,29 @@ $('showRecovery').addEventListener('click',()=>showRecoveryPanel(true));
 $('showSignIn').addEventListener('click',()=>showRecoveryPanel(false));
 $('requestRecoveryCode').addEventListener('click',requestRecoveryCode);
 $('completeRecovery').addEventListener('click',completeRecovery);
+$('getCurrentLocation')?.addEventListener('click',getCurrentLocation);
+$('startLocationWatch')?.addEventListener('click',startLocationWatch);
+$('stopLocationWatch')?.addEventListener('click',stopLocationWatch);
+$('copyCurrentCoordinates')?.addEventListener('click',copyCurrentCoordinates);
+$('startCamera')?.addEventListener('click',openCamera);
+$('switchCamera')?.addEventListener('click',switchCamera);
+$('capturePhoto')?.addEventListener('click',capturePhoto);
+$('startVideoRecording')?.addEventListener('click',startVideoRecording);
+$('stopVideoRecording')?.addEventListener('click',stopVideoRecording);
+$('closeCamera')?.addEventListener('click',closeCamera);
+$('mobileMediaCapture')?.addEventListener('change',event=>addSelectedMedia(event.target.files));
+$('uploadCapturedMedia')?.addEventListener('click',uploadCapturedMedia);
+$('capturedMediaGallery')?.addEventListener('click',event=>{
+  const button=event.target.closest('[data-media-index]');
+  if(button)removePendingMedia(Number(button.dataset.mediaIndex));
+});
+
+if(navigator.permissions?.query){
+  navigator.permissions.query({name:'geolocation'}).then(status=>{
+    if(status.state==='granted')setPermissionBanner('locationPermissionBanner','Location permission is available. Press a location button when you want to use it.','allowed');
+    if(status.state==='denied')setPermissionBanner('locationPermissionBanner','Location permission is blocked in browser or device settings.','denied');
+  }).catch(()=>{});
+}
 
 initCloudClient();
 restoreCloudSession();

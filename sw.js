@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.11.5-storybook-sinbad-sea-routes';
+const CACHE='sinbad-marine-v8.12.0-location-camera';
 const ASSETS=['./','./index.html','./styles.css','./intro.js','./app.js','./pilot-data.js','./route-data.js','./manifest.webmanifest','./icon-192.png','./icon-512.png','./nasa-blue-marble.png','./nasa-deep-star-map.jpg','./sinbad-hero.png'];
 self.addEventListener('install',event=>{
   self.skipWaiting();
