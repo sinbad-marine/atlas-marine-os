@@ -114,7 +114,7 @@ starImage.src = "./nasa-deep-star-map.jpg";
     chartCtx.font="700 18px system-ui";
     chartCtx.letterSpacing="4px";
     chartCtx.fillStyle="rgba(244,213,133,.9)";
-    chartCtx.fillText("ATLAS MARITIME WORLD CHART",chart.width/2,chart.height-26);
+    chartCtx.fillText("SINBAD MARINE • WORLD CHART",chart.width/2,chart.height-26);
   }
 
   function resize() {
@@ -438,7 +438,7 @@ starImage.src = "./nasa-deep-star-map.jpg";
       if(seconds>14.8)brand.classList.add("visible");
     }
 
-    if(seconds>=18.1){finish(true);return;}
+    if(seconds>=19){finish(true);return;}
     frame=requestAnimationFrame(animate);
   }
 
