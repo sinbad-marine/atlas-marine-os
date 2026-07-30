@@ -350,6 +350,7 @@ document.querySelectorAll('[data-cloud-bucket]').forEach(card=>{
 let cloudClient = null;
 let cloudSession = null;
 let selectedWorkspaceId = localStorage.getItem('atlas_selected_workspace') || localStorage.getItem('atlas-v81-workspace') || '';
+let currentWorkspaceRole = '';
 if(selectedWorkspaceId)localStorage.setItem('atlas_selected_workspace',selectedWorkspaceId);
 let authSubscription = null;
 
@@ -520,6 +521,45 @@ async function loadWorkspaces(){
   $('workspaceDetails').textContent=selected ? `${selected.name} • ${selected.id}` : 'No workspace selected.';
   updateCloudStatus();
   await refreshCloudSummary();
+  await loadCurrentWorkspaceRole();
+}
+
+async function loadCurrentWorkspaceRole(){
+  currentWorkspaceRole='';
+  if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId){applyRoleAccess();return;}
+  const {data,error}=await cloudClient.from('workspace_members').select('role,is_active')
+    .eq('workspace_id',selectedWorkspaceId).eq('user_id',cloudSession.user.id).maybeSingle();
+  if(!error&&data?.is_active)currentWorkspaceRole=data.role;
+  applyRoleAccess();
+  await loadSubmissions();
+}
+
+function roleCanManageLibrary(){
+  return ['owner','administrator','captain'].includes(currentWorkspaceRole);
+}
+
+function roleCanSubmit(){
+  return roleCanManageLibrary()||currentWorkspaceRole==='developer';
+}
+
+function applyRoleAccess(){
+  const role=currentWorkspaceRole||'no workspace role';
+  const banner=$('currentRoleBanner');
+  if(banner){
+    banner.textContent=role==='visitor'
+      ?'Visitor access: you may explore approved features, but cannot upload, change or delete documents.'
+      :role==='developer'
+        ?'Developer access: you may submit original sources to quarantine. You cannot approve or publish them.'
+        :roleCanManageLibrary()
+          ?`Reviewer access (${role}): you may review submissions. Publishing still requires a verified scan.`
+          :`Access role: ${role}`;
+    banner.classList.toggle('denied',!roleCanSubmit());
+  }
+  const developerPanel=$('developerSubmissionPanel');
+  if(developerPanel)developerPanel.dataset.roleHidden=String(!roleCanSubmit());
+  ['uploadCloudFiles','cloudFileInput','uploadCapturedMedia'].forEach(id=>{
+    const el=$(id);if(el)el.disabled=!roleCanManageLibrary();
+  });
 }
 async function loadMembers(){
   if(!selectedWorkspaceId || !cloudClient)return;
@@ -529,13 +569,75 @@ async function loadMembers(){
       <strong>${cloudEsc(m.user_id)}</strong>
       <div class="member-role-row">
         <select class="member-role-select" data-user="${cloudEsc(m.user_id)}">
-          ${['owner','administrator','captain','chief_officer','chief_engineer','dpa','crew','viewer','auditor']
+          ${['owner','administrator','captain','chief_officer','chief_engineer','dpa','developer','visitor','crew','viewer','auditor']
             .map(r=>`<option value="${r}" ${m.role===r?'selected':''}>${r}</option>`).join('')}
         </select>
         <button class="btn save-member-role" data-user="${cloudEsc(m.user_id)}">Save role</button>
       </div>
       <small>${m.is_active?'Active':'Inactive'} • Joined ${cloudEsc(m.joined_at||'')}</small>
     </div>`).join('') : 'No members found.');
+}
+
+async function submitLibraryFiles(){
+  if(!roleCanSubmit()){ $('submissionUploadStatus').textContent='Your role cannot submit documents.';return; }
+  const files=[...$('submissionFiles').files];
+  if(!files.length){$('submissionUploadStatus').textContent='Select one or more source files.';return;}
+  const description=$('submissionDescription').value.trim();
+  const library=$('submissionLibrary').value;
+  let completed=0;
+  for(const file of files){
+    $('submissionUploadStatus').textContent=`Submitting ${completed+1}/${files.length}: ${file.name}`;
+    const safe=file.name.replace(/[^a-zA-Z0-9._-]+/g,'-');
+    const path=`${selectedWorkspaceId}/${cloudSession.user.id}/${Date.now()}-${safe}`;
+    const {error:uploadError}=await cloudClient.storage.from('quarantine').upload(path,file,{contentType:file.type||'application/octet-stream',upsert:false});
+    if(uploadError){$('submissionUploadStatus').textContent=`Quarantine upload failed: ${uploadError.message}`;continue;}
+    const {error:rowError}=await cloudClient.from('document_submissions').insert({
+      workspace_id:selectedWorkspaceId,submitted_by:cloudSession.user.id,bucket_id:'quarantine',object_path:path,
+      original_filename:file.name,title:file.name,description:description||null,mime_type:file.type||null,
+      file_size_bytes:file.size,intended_library:library,status:'submitted'
+    });
+    if(rowError){$('submissionUploadStatus').textContent=`File quarantined but submission record failed: ${rowError.message}`;continue;}
+    completed++;
+  }
+  $('submissionFiles').value='';$('submissionDescription').value='';
+  $('submissionUploadStatus').textContent=`✓ ${completed}/${files.length} source file(s) submitted for Owner review and security scan.`;
+  await loadSubmissions();
+}
+
+async function loadSubmissions(){
+  const list=$('submissionList');if(!list)return;
+  if(!cloudClient||!selectedWorkspaceId||!cloudSession?.user){list.textContent='Sign in and select a workspace.';return;}
+  const {data,error}=await cloudClient.from('document_submissions')
+    .select('id,submitted_by,original_filename,title,description,mime_type,file_size_bytes,intended_library,status,review_note,object_path,created_at')
+    .eq('workspace_id',selectedWorkspaceId).order('created_at',{ascending:false}).limit(100);
+  if(error){list.textContent=error.message;return;}
+  list.innerHTML=data?.length?data.map(s=>`
+    <article class="submission-card">
+      <h4>${cloudEsc(s.title||s.original_filename)}</h4>
+      <p>${cloudEsc(s.intended_library)} • ${formatBytes(s.file_size_bytes||0)} • ${cloudEsc(s.status)}<br>${cloudEsc(s.description||'No description')}<br><small>${cloudEsc(s.created_at)}</small></p>
+      ${roleCanManageLibrary()?`<div class="submission-actions">
+        <button class="btn submission-open" data-path="${cloudEsc(s.object_path)}">Inspect original</button>
+        <button class="btn primary submission-approve" data-id="${s.id}">Approve pending scan</button>
+        <button class="btn danger submission-reject" data-id="${s.id}">Reject</button>
+      </div>`:''}
+    </article>`).join(''):'No submissions found.';
+}
+
+async function reviewSubmission(id,status){
+  if(!roleCanManageLibrary())return;
+  const note=prompt(status==='rejected'?'Reason for rejection:':'Owner review note:','')??'';
+  const {error}=await cloudClient.from('document_submissions').update({
+    status,review_note:note||null,reviewed_by:cloudSession.user.id,reviewed_at:new Date().toISOString()
+  }).eq('id',id).eq('workspace_id',selectedWorkspaceId);
+  alert(error?error.message:(status==='approved_pending_scan'?'Approved for security scanning. Not published yet.':'Submission rejected.'));
+  if(!error)await loadSubmissions();
+}
+
+async function openSubmissionOriginal(path){
+  if(!roleCanManageLibrary())return;
+  const {data,error}=await cloudClient.storage.from('quarantine').createSignedUrl(path,300);
+  if(error){alert(error.message);return;}
+  window.open(data.signedUrl,'_blank','noopener');
 }
 async function loadAiJobs(){
   if(!selectedWorkspaceId || !cloudClient)return;
@@ -552,6 +654,7 @@ async function runSecurityCheck(){
 }
 async function uploadCloudFiles(){
   if(!cloudClient || !cloudSession?.user || !selectedWorkspaceId){$('cloudUploadProgress').textContent='Connect to Atlas Cloud, sign in and select a workspace first.';alert('Connect, sign in and select a workspace first.');return;}
+  if(!roleCanManageLibrary()){$('cloudUploadProgress').textContent='Use Library Submissions. Your role cannot publish directly to Atlas Cloud.';return;}
   const files=[...$('cloudFileInput').files]; if(!files.length){alert('Select one or more files.');return;}
   const bucket=$('cloudBucketSelect').value;
   const folder=($('cloudFolderPath').value.trim()||'general').replace(/^\/+|\/+$/g,'').replace(/[^a-zA-Z0-9._/-]+/g,'-');
@@ -585,9 +688,9 @@ async function loadCloudFiles(){
         <button class="btn cloud-open-file" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}">Open</button>
         <button class="btn cloud-download-file" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}" data-name="${cloudEsc(d.original_filename)}">Download</button>
         <button class="btn cloud-share-file" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}" data-name="${cloudEsc(d.original_filename)}">Share</button>
-        <button class="btn cloud-rename-file" data-id="${cloudEsc(d.id)}" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}" data-name="${cloudEsc(d.original_filename)}">Rename</button>
+        ${roleCanManageLibrary()?`<button class="btn cloud-rename-file" data-id="${cloudEsc(d.id)}" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}" data-name="${cloudEsc(d.original_filename)}">Rename</button>
         <button class="btn cloud-index-file" data-id="${cloudEsc(d.id)}">Index AI</button>
-        <button class="btn danger cloud-delete-file" data-id="${cloudEsc(d.id)}" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}">Delete</button>
+        <button class="btn danger cloud-delete-file" data-id="${cloudEsc(d.id)}" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}">Delete</button>`:''}
       </div>
     </article>`).join('') : 'No cloud files in this category.';
 }
@@ -863,6 +966,7 @@ async function uploadCapturedMedia(){
     return;
   }
   if(!pendingMedia.length)return;
+  if(!roleCanManageLibrary()){$('mediaUploadStatus').textContent='Visitor and Developer media remains on the device in this release; cloud upload requires reviewer permission.';return;}
   const note=$('mediaArchiveNote').value.trim();
   const geo=currentGeoPosition?.coords;
   const tags=['camera-media','private-archive'];
@@ -1123,7 +1227,7 @@ $('testCloudConnection').addEventListener('click',testCloudConnection);
 $('cloudSignIn').addEventListener('click',cloudSignIn);
 $('cloudSignOut').addEventListener('click',cloudSignOut);
 $('refreshWorkspaces').addEventListener('click',loadWorkspaces);
-$('workspaceSelect').addEventListener('change',async e=>{selectedWorkspaceId=e.target.value;localStorage.setItem('atlas_selected_workspace',selectedWorkspaceId);updateCloudStatus();await loadMembers();await loadCloudFiles();await refreshCloudSummary();});
+$('workspaceSelect').addEventListener('change',async e=>{selectedWorkspaceId=e.target.value;localStorage.setItem('atlas_selected_workspace',selectedWorkspaceId);updateCloudStatus();await loadCurrentWorkspaceRole();await loadMembers();await loadCloudFiles();await refreshCloudSummary();});
 $('refreshMembers').addEventListener('click',loadMembers);
 $('refreshAiJobs').addEventListener('click',loadAiJobs);
 $('runSecurityCheck').addEventListener('click',runSecurityCheck);
@@ -1173,6 +1277,16 @@ $('stopVideoRecording')?.addEventListener('click',stopVideoRecording);
 $('closeCamera')?.addEventListener('click',closeCamera);
 $('mobileMediaCapture')?.addEventListener('change',event=>addSelectedMedia(event.target.files));
 $('uploadCapturedMedia')?.addEventListener('click',uploadCapturedMedia);
+$('submitLibraryFiles')?.addEventListener('click',submitLibraryFiles);
+$('refreshSubmissions')?.addEventListener('click',loadSubmissions);
+$('submissionList')?.addEventListener('click',event=>{
+  const open=event.target.closest('.submission-open');
+  const approve=event.target.closest('.submission-approve');
+  const reject=event.target.closest('.submission-reject');
+  if(open)openSubmissionOriginal(open.dataset.path);
+  if(approve)reviewSubmission(approve.dataset.id,'approved_pending_scan');
+  if(reject)reviewSubmission(reject.dataset.id,'rejected');
+});
 $('capturedMediaGallery')?.addEventListener('click',event=>{
   const button=event.target.closest('[data-media-index]');
   if(button)removePendingMedia(Number(button.dataset.mediaIndex));

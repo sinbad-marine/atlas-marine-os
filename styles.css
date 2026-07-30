@@ -241,3 +241,11 @@ input,textarea,select{box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}
 .emergency-record-panel{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-top:24px;padding:18px;border:1px solid rgba(201,108,108,.34);border-radius:16px;background:rgba(201,108,108,.08)}.emergency-record-panel h3,.emergency-record-panel p{margin:0}.emergency-record-panel p{margin-top:6px;color:var(--muted);line-height:1.5;max-width:760px}
 @media(max-width:800px){.log-compose-grid{grid-template-columns:1fr}.log-clock-card{grid-template-columns:auto 1fr}.log-archive-head,.log-entry{display:block}.log-entry-actions{justify-content:flex-start;margin-top:12px}}
 @media(max-width:520px){.log-compose-options{grid-template-columns:1fr}.voice-watch-panel .actions{display:grid}.log-archive-head .actions{display:grid;margin-top:12px}.emergency-record-panel{display:grid}}
+
+/* Role and submission workflow v8.14 */
+.role-access-banner{margin-bottom:16px;padding:13px 15px;border:1px solid rgba(99,215,202,.25);border-radius:13px;background:rgba(99,215,202,.08);color:#c9f5e9;font-weight:750}
+.role-access-banner.denied{border-color:rgba(201,108,108,.32);background:rgba(201,108,108,.08);color:#f0bcbc}
+.submission-grid{display:grid;grid-template-columns:minmax(300px,.8fr) minmax(420px,1.2fr);gap:18px}.submission-grid label{display:grid;gap:7px;margin:13px 0;color:#dce7ec;font-weight:700}.submission-grid input,.submission-grid textarea,.submission-grid select{width:100%;box-sizing:border-box;padding:11px;border:1px solid var(--line);border-radius:10px;background:#061927;color:#fff}
+.submission-head{display:flex;justify-content:space-between;align-items:center;gap:12px}.submission-card{margin:10px 0;padding:13px;border:1px solid var(--line);border-radius:13px;background:#061927}.submission-card h4,.submission-card p{margin:0}.submission-card p{margin-top:7px;color:var(--muted);line-height:1.45}.submission-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.submission-actions .btn{padding:7px 10px;font-size:12px}
+[data-role-hidden="true"]{display:none!important}
+@media(max-width:850px){.submission-grid{grid-template-columns:1fr}}
