@@ -1,48 +1,61 @@
-# Atlas Marine OS v8.10 — NASA Cinematic World Chart
-
-Bu sürüm v8.8 Integrated Management temelini korur ve güvenli giriş ekranından önce yaklaşık 18 saniyelik, NASA görsellerine dayanan sinematik bir açılış oynatır.
-
-## Sinematik açılış
-
-- NASA Deep Star Map tabanlı Samanyolu ve yıldız alanı
-- NASA Blue Marble tabanlı, atmosferli ve kendi ekseninde dönen Dünya
-- Dünya’nın dalgalanarak Maritime World Chart’a açılması
-- Gerçek kıta ve kıyı çizgileri üzerinde denizcilik ızgarası
-- Açılıştan sonra beliren hareketli altın dünya rotaları
-- Atlas Marine OS marka finali
-- Skip Intro ve tekrar oynatma
-- Cihazın “hareketi azalt” tercihine uyum
-
-NASA görselleri NASA/Goddard Space Flight Center Scientific Visualization Studio kaynaklıdır. Harita açılış görselidir; seyir veya navigasyon amacıyla kullanılamaz.
-
-Atlas Marine OS v8.10, güvenli Atlas Cloud giriş kapısını tam yönetim uygulamasıyla tek sürümde birleştirir.
-
-## Girişten sonra açılan modüller
-
-- Dashboard
-- Cloud Document Center
-- Nautical Publications
-- Nautical Charts
-- Fleet Manager
-- Crew Manager
-- Pilot Library
-- Route Library
-- Knowledge Center
-- Captain Sinbad
-- Atlas Cloud Control Center
-
-## Güvenli erişim
-
-Oturum açmamış ziyaretçiler yalnızca İngilizce “under development” sayfasını görür. Mevcut geçerli Supabase oturumu olan kullanıcı doğrudan yönetim uygulamasına alınır.
-
-Şifre kurtarma ekranı e-postayla gönderilen 8 haneli kodu kabul eder. Yeni şifre en az 8 karakter olmalıdır.
-
-Supabase Project URL ve publishable key önceki v8.x sürümünden otomatik olarak okunur. Secret key veya service-role key tarayıcıya yazılmamalıdır.
-
-## Kurulum
-
-ZIP içindeki bütün dosyaları GitHub `atlas-marine-os` deposunun ana dizinine yükleyin ve mevcut dosyaların üzerine yazılmasına izin verin. Commit sonrasında eski site sekmesini kapatıp yeniden açın. Sağ üstte `v8.8` görünmelidir.
-
-## Ürün yönetimi
-
-Bu sürüm [OWNER_GOVERNANCE.md](OWNER_GOVERNANCE.md) içindeki Owner Approval Rule’a tabidir. Kaptan Varol Çolak’ın açık onayı olmadan çalışan özellik kaldırılamaz ve yönetim uygulaması web girişinden ayrılamaz.
+const ROUTE_DATA = [
+  {
+    "title": "Marmaris → Dubrovnik Transfer Passage",
+    "type": "Transfer Passage",
+    "vessel": "Bali Catamaran / adaptable",
+    "status": "Approved route sequence",
+    "stops": [
+      "Marmaris",
+      "Nisyros",
+      "Astypalaia",
+      "Milos",
+      "Hydra",
+      "Galaxidi",
+      "Sami (Kefalonia)",
+      "Gaios (Paxos)",
+      "Gouvia (Corfu)",
+      "Orikum",
+      "Bar",
+      "Tivat",
+      "Dubrovnik Marina Frapa"
+    ],
+    "note": "Non-charter delivery passage. Stop durations may vary with weather, crew rest and operational requirements."
+  },
+  {
+    "title": "Rhodes → Dodecanese → Rhodes",
+    "type": "Charter Route",
+    "vessel": "MEIRA • 55 m • 4.5 m draft",
+    "status": "Final confirmed",
+    "stops": [
+      "Rhodes",
+      "Symi",
+      "Tilos",
+      "Kos",
+      "Leros",
+      "Patmos",
+      "Kalymnos (Emporios)",
+      "Gyali",
+      "Nisyros by tender",
+      "Chalki",
+      "Lindos",
+      "Rhodes"
+    ],
+    "note": "Cruising speed 11.5 kn. Avoid Pedi Bay overnight. Nisyros planned as tender visit from Gyali."
+  },
+  {
+    "title": "MEIRA Turkish Coasts Tennis Experience",
+    "type": "Charter Route",
+    "vessel": "MEIRA • 55 m",
+    "status": "Active brochure project",
+    "stops": [
+      "Bodrum",
+      "Kargacık / Sea Garden",
+      "Palamutbükü",
+      "D-Maris Bay",
+      "Ekincik",
+      "Further days pending",
+      "Bodrum"
+    ],
+    "note": "Cruising speed 10 kn. Use only Captain-provided TimeZero chart screenshots in brochure production."
+  }
+];
