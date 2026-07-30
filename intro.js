@@ -6,6 +6,7 @@
   const brand = document.getElementById("introBrand");
   const skip = document.getElementById("skipIntro");
   const replay = document.getElementById("replayIntro");
+  const soundButton = document.getElementById("introSound");
   if (!overlay || !canvas) return;
 
   const ctx = canvas.getContext("2d", { alpha: false });
@@ -26,7 +27,7 @@ starImage.src = "./nasa-deep-star-map.jpg";
     [[28.98,41],[26.2,40],[24,36],[29,32],[32.5,31.2],[33,27],[35,20],[43,12.5],[50,14],[55.27,25.2],[59,24],[64,22],[69,20],[72.9,19.1]],
     [[72.9,19.1],[78,15],[85,10],[92,6],[98,4],[103.8,1.3],[108,7],[114,12],[120,18],[126,25],[134,31],[139.7,35.7]],
     [[-5.35,36.1],[-10,30],[-20,20],[-35,10],[-50,5],[-65,8],[-79.5,9],[-83,8],[-90,11],[-100,17],[-110,25],[-118.2,33.7]],
-    [[103.8,1.3],[107,-5],[115,-11],[125,-17],[137,-24],[151.2,-33.8],[160,-35],[168,-36],[174.8,-36.8]]
+    [[103.8,1.3],[103,-4],[105.7,-6.2],[107,-9],[105,-18],[108,-30],[116,-38],[132,-42],[146,-39],[151.2,-33.8],[160,-35],[168,-36],[174.8,-36.8]]
   ];
   const ports = [
     ["NEW YORK",-74,40.7],["GIBRALTAR",-5.35,36.1],["ISTANBUL",28.98,41],
@@ -42,6 +43,8 @@ starImage.src = "./nasa-deep-star-map.jpg";
   let frame = 0;
   let running = false;
   let assetsReady = false;
+  let audioContext = null;
+  let soundEnabled = false;
   let stars = [];
   let dust = [];
 
@@ -253,10 +256,9 @@ starImage.src = "./nasa-deep-star-map.jpg";
   }
 
   function drawUnfoldedChart(cx,cy,progress,time) {
-    const maxWidth=Math.min(width*.92,height*1.72);
     const start=Math.min(width,height)*.445;
-    const mapWidth=start*2+(maxWidth-start*2)*progress;
-    const mapHeight=start*2+(maxWidth*.5-start*2)*progress;
+    const mapWidth=start*2+(width-start*2)*progress;
+    const mapHeight=start*2+(height-start*2)*progress;
     const left=cx-mapWidth/2;
     const top=cy-mapHeight/2;
     ctx.save();
@@ -278,9 +280,55 @@ starImage.src = "./nasa-deep-star-map.jpg";
     sheen.addColorStop(1,"rgba(255,220,148,.08)");
     ctx.fillStyle=sheen;ctx.fillRect(left,top,mapWidth,mapHeight);
     ctx.restore();
-    ctx.strokeStyle=`rgba(235,205,132,${.44+.4*progress})`;
+    ctx.strokeStyle=`rgba(235,205,132,${Math.max(0,.78-progress*.78)})`;
     ctx.lineWidth=1.4;ctx.strokeRect(left,top,mapWidth,mapHeight);
     return {left,top,mapWidth,mapHeight};
+  }
+
+  function ensureAudio(){
+    if(audioContext)return audioContext;
+    const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+    if(!AudioContextClass)return null;
+    audioContext=new AudioContextClass();
+    return audioContext;
+  }
+
+  function playThunder(){
+    if(!soundEnabled)return;
+    const audio=ensureAudio();
+    if(!audio)return;
+    if(audio.state==="suspended")audio.resume();
+    const duration=9.2;
+    const length=Math.floor(audio.sampleRate*duration);
+    const buffer=audio.createBuffer(1,length,audio.sampleRate);
+    const data=buffer.getChannelData(0);
+    let brown=0;
+    for(let i=0;i<length;i++){
+      const white=Math.random()*2-1;
+      brown=(brown*.985+white*.055)/1.04;
+      const envelope=Math.min(1,i/(audio.sampleRate*2.2))*Math.pow(1-i/length,.34);
+      const roll=.56+.44*Math.sin(i/audio.sampleRate*2.1+i*i*.000000012);
+      data[i]=brown*envelope*roll;
+    }
+    const source=audio.createBufferSource();
+    source.buffer=buffer;
+    const low=audio.createBiquadFilter();
+    low.type="lowpass";
+    low.frequency.setValueAtTime(85,audio.currentTime);
+    low.frequency.exponentialRampToValueAtTime(420,audio.currentTime+5.8);
+    low.Q.value=.7;
+    const body=audio.createBiquadFilter();
+    body.type="peaking";
+    body.frequency.value=58;
+    body.Q.value=.8;
+    body.gain.value=10;
+    const gain=audio.createGain();
+    gain.gain.setValueAtTime(.0001,audio.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.055,audio.currentTime+1.8);
+    gain.gain.exponentialRampToValueAtTime(.24,audio.currentTime+5.4);
+    gain.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+duration);
+    source.connect(low).connect(body).connect(gain).connect(audio.destination);
+    source.start();
   }
 
   function routePoint(bounds,lon,lat){
@@ -400,6 +448,7 @@ starImage.src = "./nasa-deep-star-map.jpg";
     brand.classList.remove("visible");
     startTime=0;
     running=true;
+    playThunder();
     frame=requestAnimationFrame(animate);
   }
 
@@ -417,7 +466,22 @@ starImage.src = "./nasa-deep-star-map.jpg";
 
   addEventListener("resize",resize,{passive:true});
   skip.addEventListener("click",()=>finish(true));
-  replay?.addEventListener("click",()=>assetsReady&&play(true));
+  soundButton?.addEventListener("click",()=>{
+    soundEnabled=true;
+    ensureAudio()?.resume();
+    soundButton.setAttribute("aria-pressed","true");
+    soundButton.textContent="Cinematic sound on";
+    if(assetsReady)play(true);
+  });
+  replay?.addEventListener("click",()=>{
+    soundEnabled=true;
+    ensureAudio()?.resume();
+    if(soundButton){
+      soundButton.setAttribute("aria-pressed","true");
+      soundButton.textContent="Cinematic sound on";
+    }
+    if(assetsReady)play(true);
+  });
   window.AtlasIntro={play:()=>assetsReady&&play(true),skip:()=>finish(true)};
   prepare();
 })();

@@ -1,4 +1,4 @@
-const CACHE='atlas-marine-os-v8.10.3-maritime-routes';
+const CACHE='atlas-marine-os-v8.10.4-full-chart-thunder';
 const ASSETS=['./','./index.html','./styles.css','./intro.js','./app.js','./pilot-data.js','./route-data.js','./manifest.webmanifest','./icon-192.png','./icon-512.png','./nasa-blue-marble.png','./nasa-deep-star-map.jpg'];
 self.addEventListener('install',event=>{
   self.skipWaiting();

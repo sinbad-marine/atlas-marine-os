@@ -101,6 +101,8 @@ body.authenticated .public-gateway{display:none}
 .intro-brand p{font-size:clamp(14px,2vw,21px);letter-spacing:.2em;text-transform:uppercase;color:#ecd18d}
 .intro-kicker{font-size:12px;letter-spacing:.4em;color:#b8d3df}
 .intro-disclaimer{position:absolute;left:24px;bottom:20px;color:rgba(210,226,234,.55);font-size:11px;letter-spacing:.08em}
+.intro-sound{position:absolute;left:22px;top:22px;padding:10px 16px;border:1px solid rgba(132,197,224,.32);border-radius:999px;background:rgba(4,17,28,.56);color:#cfe8f2;cursor:pointer;backdrop-filter:blur(8px);transition:border-color .2s,background .2s}
+.intro-sound:hover,.intro-sound[aria-pressed="true"]{border-color:rgba(226,191,114,.65);background:rgba(24,51,65,.72);color:#f1d99e}
 .skip-intro{position:absolute;right:22px;top:22px;padding:10px 16px;border:1px solid rgba(226,191,114,.38);border-radius:999px;background:rgba(4,17,28,.56);color:#e9d7a6;cursor:pointer;backdrop-filter:blur(8px)}
 .replay-intro{margin-top:12px}
 @keyframes introBrandReveal{0%{opacity:0;transform:translate(-50%,-36%) scale(.96);letter-spacing:.06em}100%{opacity:1;transform:translate(-50%,-44%) scale(1);letter-spacing:normal}}
