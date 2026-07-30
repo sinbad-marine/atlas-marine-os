@@ -355,6 +355,7 @@ if(selectedWorkspaceId)localStorage.setItem('atlas_selected_workspace',selectedW
 let authSubscription = null;
 let pendingInviteSetup =
   /(?:[?#&])type=invite(?:&|$)/i.test(location.href) ||
+  /(?:[?&])invite=(?:1|true)(?:&|$)/i.test(location.search) ||
   sessionStorage.getItem('sinbad_pending_invite_setup') === '1';
 if(pendingInviteSetup)sessionStorage.setItem('sinbad_pending_invite_setup','1');
 
@@ -406,7 +407,7 @@ function updateRegistrationPasswordState(){
 }
 function friendlyAuthError(error,fallback='The request could not be completed. Please try again.'){
   const message=String(error?.message||error||'');
-  if(/string did not match|expected pattern|pattern/i.test(message))return 'The password format was not accepted. Check every password requirement and try again.';
+  if(/string did not match|expected pattern|pattern/i.test(message))return 'The account request could not be prepared by this browser. Close the Outlook browser, open the site directly in Safari or Chrome, and try again.';
   if(/password/i.test(message))return passwordPolicyMessage();
   if(/already registered|already exists/i.test(message))return 'An account already exists for this email address. Sign in or use password recovery.';
   if(/invalid email/i.test(message))return 'Enter a valid email address.';
@@ -600,11 +601,12 @@ async function createAccount(){
   if(!passwordPolicyStatus(password).valid){setAuthMessage(passwordPolicyMessage(),'error');return;}
   if(password!==confirmPassword){setAuthMessage('Passwords do not match.','error');return;}
   setAuthMessage('Creating your account…');
-  const emailRedirectTo=`${location.origin}${location.pathname}`;
+  // Use the Site URL configured in Supabase. A per-request redirect URL can
+  // trigger a DOM pattern error in some Outlook/iOS embedded browsers.
   const {data,error}=await cloudClient.auth.signUp({
     email,
     password,
-    options:{emailRedirectTo,data:{display_name:name,sinbad_account_ready:true}}
+    options:{data:{display_name:name,sinbad_account_ready:true}}
   });
   if(error){setAuthMessage(friendlyAuthError(error),'error');return;}
   if(data.session){
@@ -1446,6 +1448,11 @@ $('openCaptainSignIn').addEventListener('click',()=>{
   openAuthDialog('signin');
 });
 $('openRegistration').addEventListener('click',()=>openAuthDialog('registration'));
+$('openAccountPassword')?.addEventListener('click',()=>{
+  pendingInviteSetup=true;
+  sessionStorage.setItem('sinbad_pending_invite_setup','1');
+  openAuthDialog('invite');
+});
 $('closeAuthDialog').addEventListener('click',()=>$('authDialog').close());
 $('gatewaySignIn').addEventListener('click',gatewaySignIn);
 $('gatewayPassword').addEventListener('keydown',e=>{if(e.key==='Enter')gatewaySignIn();});
