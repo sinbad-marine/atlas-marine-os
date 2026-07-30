@@ -114,16 +114,16 @@
     <div id="registrationPanel" hidden>
       <label>Full name<input id="registrationName" type="text" autocomplete="name" maxlength="120"></label>
       <label>Email<input id="registrationEmail" type="email" autocomplete="email"></label>
-      <label>Password<span class="password-field"><input id="registrationPassword" type="password" minlength="8" maxlength="128" autocomplete="new-password" aria-describedby="registrationPasswordRules"><button class="password-toggle" type="button" data-password-toggle="registrationPassword" aria-label="Show password" aria-pressed="false">Show</button></span></label>
+      <label>Password<span class="password-field"><input id="registrationPassword" type="password" minlength="12" maxlength="128" autocomplete="new-password" aria-describedby="registrationPasswordRules"><button class="password-toggle" type="button" data-password-toggle="registrationPassword" aria-label="Show password" aria-pressed="false">Show</button></span></label>
       <ul class="password-rules" id="registrationPasswordRules" data-password-rules="registrationPassword">
-        <li data-rule="length">At least 8 characters</li>
+        <li data-rule="length">At least 12 characters</li>
         <li data-rule="uppercase">At least 1 uppercase letter</li>
         <li data-rule="lowercase">At least 1 lowercase letter</li>
         <li data-rule="number">At least 1 number</li>
         <li data-rule="special">At least 1 special character: ! @ # $ % &amp; * ?</li>
         <li data-rule="spaces">No spaces</li>
       </ul>
-      <label>Confirm password<span class="password-field"><input id="registrationPasswordConfirm" type="password" minlength="8" maxlength="128" autocomplete="new-password"><button class="password-toggle" type="button" data-password-toggle="registrationPasswordConfirm" aria-label="Show password" aria-pressed="false">Show</button></span></label>
+      <label>Confirm password<span class="password-field"><input id="registrationPasswordConfirm" type="password" minlength="12" maxlength="128" autocomplete="new-password"><button class="password-toggle" type="button" data-password-toggle="registrationPasswordConfirm" aria-label="Show password" aria-pressed="false">Show</button></span></label>
       <p class="password-match" id="registrationPasswordMatch" aria-live="polite"></p>
       <button class="btn primary full" id="createAccount" type="button" disabled>Create Account</button>
       <p class="auth-note">A new account can sign in after email confirmation, but private workspaces require an invitation or approval from Captain Varol Çolak.</p>
@@ -132,16 +132,16 @@
     <div id="inviteSetupPanel" hidden>
       <p class="invite-welcome">Welcome aboard. Your invitation is verified. Choose a password to complete your Sinbad Marine account.</p>
       <label>Full name<input id="inviteDisplayName" type="text" autocomplete="name" maxlength="120"></label>
-      <label>New password<span class="password-field"><input id="invitePassword" type="password" minlength="8" maxlength="128" autocomplete="new-password" aria-describedby="invitePasswordRules"><button class="password-toggle" type="button" data-password-toggle="invitePassword" aria-label="Show password" aria-pressed="false">Show</button></span></label>
+      <label>New password<span class="password-field"><input id="invitePassword" type="password" minlength="12" maxlength="128" autocomplete="new-password" aria-describedby="invitePasswordRules"><button class="password-toggle" type="button" data-password-toggle="invitePassword" aria-label="Show password" aria-pressed="false">Show</button></span></label>
       <ul class="password-rules" id="invitePasswordRules" data-password-rules="invitePassword">
-        <li data-rule="length">At least 8 characters</li>
+        <li data-rule="length">At least 12 characters</li>
         <li data-rule="uppercase">At least 1 uppercase letter</li>
         <li data-rule="lowercase">At least 1 lowercase letter</li>
         <li data-rule="number">At least 1 number</li>
         <li data-rule="special">At least 1 special character: ! @ # $ % &amp; * ?</li>
         <li data-rule="spaces">No spaces</li>
       </ul>
-      <label>Confirm password<span class="password-field"><input id="invitePasswordConfirm" type="password" minlength="8" maxlength="128" autocomplete="new-password"><button class="password-toggle" type="button" data-password-toggle="invitePasswordConfirm" aria-label="Show password" aria-pressed="false">Show</button></span></label>
+      <label>Confirm password<span class="password-field"><input id="invitePasswordConfirm" type="password" minlength="12" maxlength="128" autocomplete="new-password"><button class="password-toggle" type="button" data-password-toggle="invitePasswordConfirm" aria-label="Show password" aria-pressed="false">Show</button></span></label>
       <p class="password-match" id="invitePasswordMatch" aria-live="polite"></p>
       <button class="btn primary full" id="completeInviteSetup" type="button">Complete Account & Enter</button>
     </div>
@@ -149,9 +149,9 @@
       <label>Email<input id="recoveryEmail" type="email" autocomplete="email"></label>
       <button class="btn primary full" id="requestRecoveryCode" type="button">Send recovery code</button>
       <label>8-digit recovery code<input id="recoveryCode" inputmode="numeric" maxlength="8" autocomplete="one-time-code"></label>
-      <label>New password<span class="password-field"><input id="recoveryNewPassword" type="password" minlength="8" maxlength="128" autocomplete="new-password" aria-describedby="recoveryPasswordRules"><button class="password-toggle" type="button" data-password-toggle="recoveryNewPassword" aria-label="Show password" aria-pressed="false">Show</button></span></label>
+      <label>New password<span class="password-field"><input id="recoveryNewPassword" type="password" minlength="12" maxlength="128" autocomplete="new-password" aria-describedby="recoveryPasswordRules"><button class="password-toggle" type="button" data-password-toggle="recoveryNewPassword" aria-label="Show password" aria-pressed="false">Show</button></span></label>
       <ul class="password-rules" id="recoveryPasswordRules" data-password-rules="recoveryNewPassword">
-        <li data-rule="length">At least 8 characters</li>
+        <li data-rule="length">At least 12 characters</li>
         <li data-rule="uppercase">At least 1 uppercase letter</li>
         <li data-rule="lowercase">At least 1 lowercase letter</li>
         <li data-rule="number">At least 1 number</li>
@@ -168,7 +168,7 @@
 <div class="brand"><div class="logo">⚓</div><div><h1>SINBAD MARINE</h1><small>Özgür Maceraperest Dostlar • Navigate Smarter. Command Better.</small></div></div>
   <div class="topbar-account-actions">
     <button class="account-password-button" id="openAccountPassword" type="button">Account &amp; Password</button>
-    <div class="version">● v8.15.2</div>
+    <div class="version">● v8.15.3</div>
   </div>
 </header>
 

@@ -366,7 +366,7 @@ function setAuthMessage(message='',type=''){
   el.className=`auth-message ${type}`.trim();
 }
 const passwordPolicy={
-  length:value=>value.length>=8,
+  length:value=>value.length>=12,
   uppercase:value=>/[A-Z]/.test(value),
   lowercase:value=>/[a-z]/.test(value),
   number:value=>/\d/.test(value),
@@ -379,7 +379,7 @@ function passwordPolicyStatus(value=''){
   return {password,checks,valid:Object.values(checks).every(Boolean)};
 }
 function passwordPolicyMessage(){
-  return 'Password must contain at least 8 characters, an uppercase letter, a lowercase letter, a number and one of ! @ # $ % & * ?, with no spaces.';
+  return 'Password must contain at least 12 characters, an uppercase letter, a lowercase letter, a number and one of ! @ # $ % & * ?, with no spaces.';
 }
 function updatePasswordRules(inputId){
   const input=$(inputId);
@@ -408,7 +408,14 @@ function updateRegistrationPasswordState(){
 function friendlyAuthError(error,fallback='The request could not be completed. Please try again.'){
   const message=String(error?.message||error||'');
   if(/string did not match|expected pattern|pattern/i.test(message))return 'The account request could not be prepared by this browser. Close the Outlook browser, open the site directly in Safari or Chrome, and try again.';
-  if(/password/i.test(message))return passwordPolicyMessage();
+  if(error?.code==='weak_password' || /weak password/i.test(message)){
+    const reasons=Array.isArray(error?.reasons)&&error.reasons.length
+      ? ` (${error.reasons.join(', ')})`
+      : '';
+    return `Supabase rejected this password as weak${reasons}. Use a new, unique password with at least 12 characters.`;
+  }
+  if(/same password|different from the old|new password should be different/i.test(message))return 'The new password must be different from the previous password.';
+  if(/session|jwt|token|expired/i.test(message))return 'Your invitation session has expired. Open the newest invitation email and try again.';
   if(/already registered|already exists/i.test(message))return 'An account already exists for this email address. Sign in or use password recovery.';
   if(/invalid email/i.test(message))return 'Enter a valid email address.';
   return message||fallback;
