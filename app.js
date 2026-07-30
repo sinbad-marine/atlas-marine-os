@@ -735,6 +735,10 @@ function roleCanManageLibrary(){
   return ['owner','administrator','captain'].includes(currentWorkspaceRole);
 }
 
+function roleCanManageMembers(){
+  return currentWorkspaceRole==='owner';
+}
+
 function roleCanSubmit(){
   return roleCanManageLibrary()||currentWorkspaceRole==='developer';
 }
@@ -761,15 +765,18 @@ function applyRoleAccess(){
 async function loadMembers(){
   if(!selectedWorkspaceId || !cloudClient)return;
   const {data,error}=await cloudClient.from('workspace_members').select('user_id,role,is_active,joined_at').eq('workspace_id',selectedWorkspaceId).order('joined_at');
+  const canManageMembers=roleCanManageMembers();
   $('memberList').innerHTML=error ? cloudEsc(error.message) : (data?.length ? data.map(m=>`
     <div class="cloud-list-item">
       <strong>${cloudEsc(m.user_id)}</strong>
       <div class="member-role-row">
-        <select class="member-role-select" data-user="${cloudEsc(m.user_id)}">
-          ${['owner','administrator','captain','chief_officer','chief_engineer','dpa','developer','visitor','crew','viewer','auditor']
-            .map(r=>`<option value="${r}" ${m.role===r?'selected':''}>${r}</option>`).join('')}
-        </select>
-        <button class="btn save-member-role" data-user="${cloudEsc(m.user_id)}">Save role</button>
+        ${canManageMembers?`
+          <select class="member-role-select" data-user="${cloudEsc(m.user_id)}" aria-label="Role for ${cloudEsc(m.user_id)}">
+            ${['owner','administrator','captain','chief_officer','chief_engineer','dpa','developer','visitor','crew','viewer','auditor']
+              .map(r=>`<option value="${r}" ${m.role===r?'selected':''}>${r}</option>`).join('')}
+          </select>
+          <button class="btn save-member-role" data-user="${cloudEsc(m.user_id)}">Save role</button>
+        `:`<span class="member-role-readonly" aria-label="Current role">${cloudEsc(m.role)}</span>`}
       </div>
       <small>${m.is_active?'Active':'Inactive'} • Joined ${cloudEsc(m.joined_at||'')}</small>
     </div>`).join('') : 'No members found.');
@@ -905,7 +912,10 @@ async function indexCloudDocument(documentId){
 
 
 async function saveMemberRole(userId){
-  if(!cloudClient || !selectedWorkspaceId)return;
+  if(!cloudClient || !selectedWorkspaceId || !roleCanManageMembers()){
+    alert('Only the workspace Owner can change member roles.');
+    return;
+  }
   const select=document.querySelector(`.member-role-select[data-user="${CSS.escape(userId)}"]`);
   if(!select)return;
   const {error}=await cloudClient.from('workspace_members')

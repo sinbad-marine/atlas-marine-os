@@ -170,6 +170,7 @@ linear-gradient(145deg,#03101b,#071d2d 55%,#04131f)}
 .account-password-button{min-height:38px;padding:8px 13px;border:1px solid rgba(226,191,114,.35);border-radius:10px;background:rgba(226,191,114,.08);color:#e2bf72;font:inherit;font-size:12px;font-weight:800;cursor:pointer}
 .account-password-button:hover{background:rgba(226,191,114,.16)}
 .account-password-button:focus-visible{outline:2px solid #e2bf72;outline-offset:2px}
+.member-role-readonly{display:inline-flex;align-items:center;min-height:36px;padding:7px 11px;border:1px solid rgba(226,191,114,.2);border-radius:9px;background:rgba(226,191,114,.06);color:#d9c58f;font-size:12px;font-weight:800;text-transform:capitalize}
 @media(max-width:600px){.account-password-button{font-size:11px;padding:7px 10px}.topbar-account-actions{gap:6px}}
 .dialog-close{position:absolute;right:16px;top:12px;border:0;background:none;color:#9fb1bb;font-size:30px;cursor:pointer}
 .btn.full{width:100%;margin-top:8px}.text-button{display:block;margin:15px auto 0;border:0;background:none;color:var(--gold);cursor:pointer}

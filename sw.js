@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.15.3-server-password-policy';
+const CACHE='sinbad-marine-v8.15.4-owner-role-ui';
 const ASSETS=['./','./index.html','./styles.css','./intro.js','./app.js','./pilot-data.js','./route-data.js','./manifest.webmanifest','./icon-192.png','./icon-512.png','./nasa-blue-marble.png','./nasa-deep-star-map.jpg','./maritime-world-chart.png'];
 self.addEventListener('install',event=>{
   self.skipWaiting();
