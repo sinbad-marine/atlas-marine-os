@@ -155,6 +155,17 @@ linear-gradient(145deg,#03101b,#071d2d 55%,#04131f)}
 .auth-card h2{text-align:center;font-size:30px;margin:12px 0 6px}.auth-card>p{text-align:center;margin-bottom:24px}
 .auth-card label{display:grid;gap:7px;margin:14px 0;color:#dce7ec;font-size:13px;font-weight:700}
 .auth-card input{width:100%;box-sizing:border-box;background:#03121e;color:#fff;border:1px solid var(--line);border-radius:12px;padding:13px}
+.password-field{position:relative;display:block}
+.password-field input{padding-right:72px}
+.password-toggle{position:absolute;right:6px;top:50%;transform:translateY(-50%);min-width:58px;min-height:36px;padding:6px 9px;border:1px solid rgba(226,191,114,.3);border-radius:9px;background:rgba(226,191,114,.08);color:#e2bf72;font:inherit;font-size:12px;font-weight:800;cursor:pointer}
+.password-toggle:focus-visible{outline:2px solid #e2bf72;outline-offset:2px}
+.password-rules{display:grid;gap:7px;margin:8px 0 16px;padding:13px 14px 13px 34px;border:1px solid rgba(226,191,114,.16);border-radius:12px;background:rgba(3,18,30,.55);color:#aebfc8;font-size:12px;line-height:1.35}
+.password-rules li::marker{content:"○  "}
+.password-rules li.valid{color:#9be7ca}
+.password-rules li.valid::marker{content:"✓  "}
+.password-match{min-height:18px;margin:-5px 0 12px;color:#aebfc8;font-size:12px}
+.password-match.valid{color:#9be7ca}.password-match.invalid{color:#f2bcbc}
+.auth-card .btn:disabled{cursor:not-allowed;opacity:.48;filter:saturate(.55)}
 .dialog-close{position:absolute;right:16px;top:12px;border:0;background:none;color:#9fb1bb;font-size:30px;cursor:pointer}
 .btn.full{width:100%;margin-top:8px}.text-button{display:block;margin:15px auto 0;border:0;background:none;color:var(--gold);cursor:pointer}
 .auth-message{min-height:24px;margin-top:16px;padding:10px 12px;border-radius:10px;color:#dce7ec;line-height:1.4}

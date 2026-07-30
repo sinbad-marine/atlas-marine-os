@@ -364,6 +364,73 @@ function setAuthMessage(message='',type=''){
   el.textContent=message;
   el.className=`auth-message ${type}`.trim();
 }
+const passwordPolicy={
+  length:value=>value.length>=8,
+  uppercase:value=>/[A-Z]/.test(value),
+  lowercase:value=>/[a-z]/.test(value),
+  number:value=>/\d/.test(value),
+  special:value=>/[!@#$%&*?]/.test(value),
+  spaces:value=>!/\s/.test(value)
+};
+function passwordPolicyStatus(value=''){
+  const password=String(value).normalize('NFKC');
+  const checks=Object.fromEntries(Object.entries(passwordPolicy).map(([name,test])=>[name,test(password)]));
+  return {password,checks,valid:Object.values(checks).every(Boolean)};
+}
+function passwordPolicyMessage(){
+  return 'Password must contain at least 8 characters, an uppercase letter, a lowercase letter, a number and one of ! @ # $ % & * ?, with no spaces.';
+}
+function updatePasswordRules(inputId){
+  const input=$(inputId);
+  const list=document.querySelector(`[data-password-rules="${inputId}"]`);
+  const status=passwordPolicyStatus(input?.value||'');
+  if(list)Object.entries(status.checks).forEach(([rule,valid])=>list.querySelector(`[data-rule="${rule}"]`)?.classList.toggle('valid',valid));
+  return status;
+}
+function updatePasswordMatch(passwordId,confirmId,messageId){
+  const password=$(passwordId)?.value||'';
+  const confirm=$(confirmId)?.value||'';
+  const message=$(messageId);
+  if(!message)return false;
+  message.className='password-match';
+  if(!confirm){message.textContent='';return false;}
+  const matches=password===confirm;
+  message.textContent=matches?'Passwords match.':'Passwords do not match.';
+  message.classList.add(matches?'valid':'invalid');
+  return matches;
+}
+function updateRegistrationPasswordState(){
+  const valid=updatePasswordRules('registrationPassword').valid;
+  const matches=updatePasswordMatch('registrationPassword','registrationPasswordConfirm','registrationPasswordMatch');
+  $('createAccount').disabled=!(valid&&matches);
+}
+function friendlyAuthError(error,fallback='The request could not be completed. Please try again.'){
+  const message=String(error?.message||error||'');
+  if(/string did not match|expected pattern|pattern/i.test(message))return 'The password format was not accepted. Check every password requirement and try again.';
+  if(/password/i.test(message))return passwordPolicyMessage();
+  if(/already registered|already exists/i.test(message))return 'An account already exists for this email address. Sign in or use password recovery.';
+  if(/invalid email/i.test(message))return 'Enter a valid email address.';
+  return message||fallback;
+}
+function setupPasswordControls(){
+  document.querySelectorAll('[data-password-toggle]').forEach(button=>button.addEventListener('click',()=>{
+    const input=$(button.dataset.passwordToggle);
+    if(!input)return;
+    const show=input.type==='password';
+    input.type=show?'text':'password';
+    button.textContent=show?'Hide':'Show';
+    button.setAttribute('aria-label',show?'Hide password':'Show password');
+    button.setAttribute('aria-pressed',String(show));
+    input.focus({preventScroll:true});
+  }));
+  ['registrationPassword','registrationPasswordConfirm'].forEach(id=>$(id)?.addEventListener('input',updateRegistrationPasswordState));
+  $('invitePassword')?.addEventListener('input',()=>{updatePasswordRules('invitePassword');updatePasswordMatch('invitePassword','invitePasswordConfirm','invitePasswordMatch');});
+  $('invitePasswordConfirm')?.addEventListener('input',()=>updatePasswordMatch('invitePassword','invitePasswordConfirm','invitePasswordMatch'));
+  $('recoveryNewPassword')?.addEventListener('input',()=>updatePasswordRules('recoveryNewPassword'));
+  updateRegistrationPasswordState();
+  updatePasswordRules('invitePassword');
+  updatePasswordRules('recoveryNewPassword');
+}
 function setAppAccess(){
   const signedIn=Boolean(cloudSession?.user) && !needsInviteSetup(cloudSession.user);
   document.body.classList.remove('auth-pending','signed-out','authenticated');
@@ -530,7 +597,7 @@ async function createAccount(){
   const confirmPassword=$('registrationPasswordConfirm').value;
   if(!name){setAuthMessage('Enter your full name.','error');return;}
   if(!email){setAuthMessage('Enter your email address.','error');return;}
-  if(password.length<8){setAuthMessage('Password must be at least 8 characters.','error');return;}
+  if(!passwordPolicyStatus(password).valid){setAuthMessage(passwordPolicyMessage(),'error');return;}
   if(password!==confirmPassword){setAuthMessage('Passwords do not match.','error');return;}
   setAuthMessage('Creating your account…');
   const emailRedirectTo=`${location.origin}${location.pathname}`;
@@ -539,7 +606,7 @@ async function createAccount(){
     password,
     options:{emailRedirectTo,data:{display_name:name,sinbad_account_ready:true}}
   });
-  if(error){setAuthMessage(error.message,'error');return;}
+  if(error){setAuthMessage(friendlyAuthError(error),'error');return;}
   if(data.session){
     cloudSession=data.session;
     setAppAccess();
@@ -561,7 +628,7 @@ async function completeInviteAccount(){
     const password=String($('invitePassword').value||'').normalize('NFKC');
     const confirmPassword=String($('invitePasswordConfirm').value||'').normalize('NFKC');
     if(!name){setAuthMessage('Enter your full name.','error');return;}
-    if(password.length<8){setAuthMessage('Password must be at least 8 characters.','error');return;}
+    if(!passwordPolicyStatus(password).valid){setAuthMessage(passwordPolicyMessage(),'error');return;}
     if(password!==confirmPassword){setAuthMessage('Passwords do not match.','error');return;}
 
     setAuthMessage('Checking your invitation session…');
@@ -599,7 +666,7 @@ async function completeInviteAccount(){
   }catch(error){
     console.error('Invitation setup failed',error);
     const message=error?.message||String(error||'Unknown invitation error');
-    setAuthMessage(`Account setup could not be completed: ${message}`,'error');
+    setAuthMessage(`Account setup could not be completed: ${friendlyAuthError(message)}`,'error');
   }
 }
 async function requestRecoveryCode(){
@@ -618,7 +685,7 @@ async function completeRecovery(){
   const token=$('recoveryCode').value.replace(/\D/g,'');
   const password=$('recoveryNewPassword').value;
   if(token.length<6||token.length>8){setAuthMessage('Enter the recovery code from the newest email.','error');return;}
-  if(password.length<8){setAuthMessage('New password must be at least 8 characters.','error');return;}
+  if(!passwordPolicyStatus(password).valid){setAuthMessage(passwordPolicyMessage(),'error');return;}
   setAuthMessage('Verifying code…');
   const {error:verifyError}=await cloudClient.auth.verifyOtp({email,token,type:'recovery'});
   if(verifyError){setAuthMessage(verifyError.message,'error');return;}
@@ -1390,6 +1457,7 @@ $('createAccount').addEventListener('click',createAccount);
 $('completeInviteSetup').addEventListener('click',completeInviteAccount);
 $('requestRecoveryCode').addEventListener('click',requestRecoveryCode);
 $('completeRecovery').addEventListener('click',completeRecovery);
+setupPasswordControls();
 $('getCurrentLocation')?.addEventListener('click',getCurrentLocation);
 $('startLocationWatch')?.addEventListener('click',startLocationWatch);
 $('stopLocationWatch')?.addEventListener('click',stopLocationWatch);
