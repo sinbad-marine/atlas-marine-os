@@ -19,12 +19,14 @@ starImage.src = "./nasa-deep-star-map.jpg";
   chart.height = 1024;
   const chartCtx = chart.getContext("2d");
 
+  // Maritime corridors use extra sea waypoints so the golden tracks avoid
+  // continents, narrow capes and the sharp land-cutting chords of v8.10.
   const routes = [
-    [[-74,40.7],[-36,42],[-5.35,36.1],[28.98,41]],
-    [[28.98,41],[23.7,37.9],[32.5,31.2],[55.27,25.2],[72.9,19.1]],
-    [[72.9,19.1],[103.8,1.3],[121,14.6],[139.7,35.7]],
-    [[-5.35,36.1],[-17,28],[-46,-12],[-79.5,9],[-118.2,33.7]],
-    [[103.8,1.3],[115,-12],[151.2,-33.8],[174.8,-36.8]]
+    [[-74,40.7],[-68,39],[-58,39],[-47,39],[-36,38],[-25,37],[-15,35.5],[-5.35,36.1],[1,37],[8,37.5],[13,38.2],[18,37.3],[23.7,37.9],[26.2,40],[28.98,41]],
+    [[28.98,41],[26.2,40],[24,36],[29,32],[32.5,31.2],[33,27],[35,20],[43,12.5],[50,14],[55.27,25.2],[59,24],[64,22],[69,20],[72.9,19.1]],
+    [[72.9,19.1],[78,15],[85,10],[92,6],[98,4],[103.8,1.3],[108,7],[114,12],[120,18],[126,25],[134,31],[139.7,35.7]],
+    [[-5.35,36.1],[-10,30],[-20,20],[-35,10],[-50,5],[-65,8],[-79.5,9],[-83,8],[-90,11],[-100,17],[-110,25],[-118.2,33.7]],
+    [[103.8,1.3],[107,-5],[115,-11],[125,-17],[137,-24],[151.2,-33.8],[160,-35],[168,-36],[174.8,-36.8]]
   ];
   const ports = [
     ["NEW YORK",-74,40.7],["GIBRALTAR",-5.35,36.1],["ISTANBUL",28.98,41],
@@ -286,6 +288,26 @@ starImage.src = "./nasa-deep-star-map.jpg";
     return [bounds.left+x*bounds.mapWidth,bounds.top+y*bounds.mapHeight];
   }
 
+  function smoothRoute(points,steps=7){
+    if(points.length<3)return points;
+    const result=[];
+    for(let i=0;i<points.length-1;i++){
+      const p0=points[Math.max(0,i-1)];
+      const p1=points[i];
+      const p2=points[i+1];
+      const p3=points[Math.min(points.length-1,i+2)];
+      for(let s=0;s<steps;s++){
+        const t=s/steps,t2=t*t,t3=t2*t;
+        result.push([
+          .5*((2*p1[0])+(-p0[0]+p2[0])*t+(2*p0[0]-5*p1[0]+4*p2[0]-p3[0])*t2+(-p0[0]+3*p1[0]-3*p2[0]+p3[0])*t3),
+          .5*((2*p1[1])+(-p0[1]+p2[1])*t+(2*p0[1]-5*p1[1]+4*p2[1]-p3[1])*t2+(-p0[1]+3*p1[1]-3*p2[1]+p3[1])*t3)
+        ]);
+      }
+    }
+    result.push(points[points.length-1]);
+    return result;
+  }
+
   function drawRoutes(bounds,progress,time){
     const routeProgress=clamp(progress);
     ctx.save();
@@ -293,7 +315,7 @@ starImage.src = "./nasa-deep-star-map.jpg";
     routes.forEach((route,index)=>{
       const local=clamp(routeProgress*1.35-index*.08);
       if(local<=0)return;
-      const points=route.map(([lon,lat])=>routePoint(bounds,lon,lat));
+      const points=smoothRoute(route.map(([lon,lat])=>routePoint(bounds,lon,lat)));
       const glowWidth=7+Math.sin(time*3+index)*1.4;
       ctx.strokeStyle="rgba(255,180,55,.16)";
       ctx.lineWidth=glowWidth;
