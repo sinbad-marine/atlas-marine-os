@@ -894,6 +894,228 @@ async function uploadCapturedMedia(){
   await refreshCloudSummary();
 }
 
+// ============================================================
+// CAPTAIN'S LOGBOOK + SINBAD VOICE WATCH
+// ============================================================
+
+const LOGBOOK_STORAGE_KEY='sinbad_captains_logbook_v1';
+let logDrafts=[];
+let voiceRecognition=null;
+let voiceWatchEnabled=false;
+let waitingForLogText=false;
+let logAudioStream=null;
+let logAudioRecorder=null;
+let logAudioChunks=[];
+let pendingLogAudio=null;
+
+function loadLogDrafts(){
+  try{logDrafts=JSON.parse(localStorage.getItem(LOGBOOK_STORAGE_KEY)||'[]');}
+  catch(_){logDrafts=[];}
+  if(!Array.isArray(logDrafts))logDrafts=[];
+  renderLogDrafts();
+}
+
+function persistLogDrafts(){
+  localStorage.setItem(LOGBOOK_STORAGE_KEY,JSON.stringify(logDrafts));
+  renderLogDrafts();
+}
+
+function logPosition(){
+  if(!$('attachLogPosition')?.checked || !currentGeoPosition)return null;
+  const c=currentGeoPosition.coords;
+  return {latitude:Number(c.latitude.toFixed(6)),longitude:Number(c.longitude.toFixed(6)),accuracy_m:Math.round(c.accuracy),captured_at:new Date(currentGeoPosition.timestamp).toISOString()};
+}
+
+function updateLogClock(){
+  const now=new Date();
+  if($('logLocalClock'))$('logLocalClock').textContent=now.toLocaleString('tr-TR',{dateStyle:'medium',timeStyle:'medium'});
+  if($('logUtcClock'))$('logUtcClock').textContent=now.toISOString().replace('T',' ').slice(0,19)+' UTC';
+  if($('logPositionPreview')){
+    const c=currentGeoPosition?.coords;
+    $('logPositionPreview').textContent=c?`${c.latitude.toFixed(6)}, ${c.longitude.toFixed(6)} (±${Math.round(c.accuracy)} m)`:'Position not available';
+  }
+}
+
+function saveLogDraft(text=$('logDraftText')?.value.trim(),source='typed'){
+  if(!text){$('logComposeStatus').textContent='Enter or dictate a log note first.';return;}
+  const now=new Date();
+  logDrafts.unshift({
+    id:crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random()}`,
+    text,category:$('logCategory')?.value||'General',source,status:'draft',
+    local_iso:new Date(now.getTime()-now.getTimezoneOffset()*60000).toISOString().slice(0,-1),
+    utc_iso:now.toISOString(),timezone:Intl.DateTimeFormat().resolvedOptions().timeZone||'local',
+    position:logPosition(),audio_name:pendingLogAudio?.name||null,created_by:cloudSession?.user?.email||'local-authorized-user'
+  });
+  persistLogDrafts();
+  $('logDraftText').value='';
+  $('logComposeStatus').textContent='✓ Draft log entry saved. Review it before transfer to the official logbook.';
+  pendingLogAudio=null;
+}
+
+function renderLogDrafts(){
+  const list=$('logDraftList'); if(!list)return;
+  $('logArchiveSummary').textContent=`${logDrafts.length} entries • ${logDrafts.filter(x=>x.status==='draft').length} awaiting review`;
+  if(!logDrafts.length){list.innerHTML='<div class="notice">No draft entries yet.</div>';return;}
+  list.innerHTML=logDrafts.map(item=>{
+    const pos=item.position?`${item.position.latitude}, ${item.position.longitude} ±${item.position.accuracy_m} m`:'No position';
+    return `<article class="log-entry ${cloudEsc(item.status)}">
+      <div><div class="log-entry-head"><time>${cloudEsc(new Date(item.utc_iso).toLocaleString())}</time><span class="log-badge">${cloudEsc(item.category)}</span><span class="log-badge">${cloudEsc(item.status)}</span><span class="log-badge">${cloudEsc(item.source)}</span></div>
+      <p>${cloudEsc(item.text)}</p><div class="log-entry-meta">UTC ${cloudEsc(item.utc_iso)} • ${cloudEsc(pos)}${item.audio_name?` • Audio: ${cloudEsc(item.audio_name)}`:''}</div></div>
+      <div class="log-entry-actions">
+        <button class="btn" data-log-action="edit" data-log-id="${item.id}">Edit</button>
+        <button class="btn" data-log-action="review" data-log-id="${item.id}">Review</button>
+        <button class="btn" data-log-action="transfer" data-log-id="${item.id}">Transferred</button>
+        <button class="btn danger" data-log-action="delete" data-log-id="${item.id}">Delete</button>
+      </div></article>`;
+  }).join('');
+}
+
+function handleLogAction(action,id){
+  const item=logDrafts.find(x=>x.id===id); if(!item)return;
+  if(action==='edit'){
+    const changed=prompt('Edit draft log entry:',item.text);
+    if(changed?.trim()){item.text=changed.trim();item.updated_at=new Date().toISOString();}
+  }
+  if(action==='review')item.status='reviewed';
+  if(action==='transfer'){
+    if(confirm('Mark this draft as transferred to the official vessel logbook?'))item.status='transferred';
+  }
+  if(action==='delete'){
+    if(!confirm('Delete this draft entry?'))return;
+    logDrafts=logDrafts.filter(x=>x.id!==id);
+  }
+  persistLogDrafts();
+}
+
+function downloadLogExport(type){
+  if(!logDrafts.length){alert('There are no log entries to export.');return;}
+  let data,mime,name;
+  if(type==='json'){
+    data=JSON.stringify({exported_at:new Date().toISOString(),entries:logDrafts},null,2);
+    mime='application/json';name=`sinbad-logbook-${new Date().toISOString().slice(0,10)}.json`;
+  }else{
+    const quote=value=>`"${String(value??'').replace(/"/g,'""')}"`;
+    data=['Local time,UTC,Category,Status,Source,Entry,Latitude,Longitude,Accuracy m',
+      ...logDrafts.map(x=>[x.local_iso,x.utc_iso,x.category,x.status,x.source,x.text,x.position?.latitude,x.position?.longitude,x.position?.accuracy_m].map(quote).join(','))].join('\r\n');
+    mime='text/csv;charset=utf-8';name=`sinbad-logbook-${new Date().toISOString().slice(0,10)}.csv`;
+  }
+  const url=URL.createObjectURL(new Blob([data],{type:mime}));
+  const link=document.createElement('a');link.href=url;link.download=name;link.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+function voiceStatus(title,help,state=''){
+  $('voiceWatchTitle').textContent=title;$('voiceWatchHelp').textContent=help;
+  $('voicePulse').classList.remove('listening','capturing');
+  if(state)$('voicePulse').classList.add(state);
+}
+
+function processVoicePhrase(phrase){
+  const clean=phrase.trim();
+  $('voiceTranscript').textContent=clean||'No speech detected.';
+  const normalized=clean.toLocaleLowerCase('tr-TR');
+  const command=normalized.match(/\b(?:sinbad|simbad)\s+(?:log|jurnal|günlük)\b[,:;\s-]*(.*)$/i);
+  if(command){
+    const entry=(command[1]||'').trim();
+    if(entry){$('logDraftText').value=entry;saveLogDraft(entry,'voice-command');waitingForLogText=false;voiceStatus('Draft saved','Say “Sinbad Log” for another entry.','listening');if(!voiceWatchEnabled)try{voiceRecognition?.stop();}catch(_){}}
+    else{waitingForLogText=true;voiceStatus('Sinbad is listening for the log entry','Speak the operational detail now.','capturing');}
+    return;
+  }
+  if(waitingForLogText && clean){
+    $('logDraftText').value=clean;saveLogDraft(clean,'voice-command');waitingForLogText=false;
+    voiceStatus('Draft saved','Say “Sinbad Log” for another entry.','listening');
+    if(!voiceWatchEnabled)try{voiceRecognition?.stop();}catch(_){}
+  }
+}
+
+function createVoiceRecognition(){
+  const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!Recognition)return null;
+  const recognition=new Recognition();
+  recognition.lang='tr-TR';recognition.continuous=true;recognition.interimResults=true;
+  recognition.onresult=event=>{
+    let interim='';
+    for(let i=event.resultIndex;i<event.results.length;i++){
+      const text=event.results[i][0].transcript;
+      if(event.results[i].isFinal)processVoicePhrase(text); else interim+=text;
+    }
+    if(interim)$('voiceTranscript').textContent=interim;
+  };
+  recognition.onerror=event=>{
+    $('voiceTranscript').textContent=`Voice recognition: ${event.error}`;
+    if(event.error==='not-allowed')stopVoiceWatch();
+  };
+  recognition.onend=()=>{
+    if(voiceWatchEnabled)setTimeout(()=>{try{recognition.start();}catch(_){}},350);
+  };
+  return recognition;
+}
+
+function startVoiceWatch(pushOnly=false){
+  if(!voiceRecognition)voiceRecognition=createVoiceRecognition();
+  if(!voiceRecognition){
+    voiceStatus('Voice recognition is unavailable','Use the typed entry box or audio recorder on this browser.');
+    return;
+  }
+  voiceWatchEnabled=!pushOnly;
+  waitingForLogText=pushOnly;
+  try{voiceRecognition.start();}catch(_){}
+  $('startVoiceWatch').disabled=!pushOnly;$('stopVoiceWatch').disabled=pushOnly;
+  voiceStatus(pushOnly?'Push to Talk is listening':'Sinbad Voice Watch is active',pushOnly?'Speak your log entry now.':'Say “Sinbad Log” followed by the entry.','listening');
+}
+
+function stopVoiceWatch(){
+  voiceWatchEnabled=false;waitingForLogText=false;
+  try{voiceRecognition?.stop();}catch(_){}
+  $('startVoiceWatch').disabled=false;$('stopVoiceWatch').disabled=true;
+  voiceStatus('Sinbad Voice Watch is off','Press Start Voice Watch when the app is open and visible.');
+}
+
+async function startLogAudio(){
+  if(!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder){$('logComposeStatus').textContent='Audio recording is not supported by this browser.';return;}
+  try{
+    logAudioStream=await navigator.mediaDevices.getUserMedia({audio:true});
+    logAudioChunks=[];logAudioRecorder=new MediaRecorder(logAudioStream);
+    logAudioRecorder.ondataavailable=e=>{if(e.data.size)logAudioChunks.push(e.data);};
+    logAudioRecorder.onstop=()=>{
+      const type=logAudioRecorder.mimeType||'audio/webm';
+      const blob=new Blob(logAudioChunks,{type});
+      const ext=type.includes('mp4')?'m4a':'webm';
+      const name=`sinbad-log-audio-${new Date().toISOString().replace(/[:.]/g,'-')}.${ext}`;
+      const url=URL.createObjectURL(blob);pendingLogAudio={blob,name,url};
+      const link=document.createElement('a');link.href=url;link.download=name;link.textContent='Download recorded audio';
+      $('logComposeStatus').innerHTML='✓ Audio note ready. Save the draft text, and keep this file: ';
+      $('logComposeStatus').append(link);
+      logAudioStream?.getTracks().forEach(t=>t.stop());logAudioStream=null;logAudioRecorder=null;
+    };
+    logAudioRecorder.start(1000);$('recordLogAudio').disabled=true;$('stopLogAudio').disabled=false;
+    $('logComposeStatus').textContent='● Recording audio locally. Press Stop Audio when finished.';
+  }catch(error){$('logComposeStatus').textContent=`Microphone could not be opened: ${error.message}`;}
+}
+
+function stopLogAudio(){
+  if(logAudioRecorder?.state==='recording')logAudioRecorder.stop();
+  $('recordLogAudio').disabled=false;$('stopLogAudio').disabled=true;
+}
+
+async function startEmergencyRecord(){
+  openWorkspace('camera-archive');
+  closeCamera();
+  if(!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder){
+    setPermissionBanner('cameraPermissionBanner','Emergency recording is not supported by this browser. Use the phone camera selector.','denied');return;
+  }
+  try{
+    cameraFacingMode='environment';
+    cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:true});
+    const video=$('cameraPreview');video.srcObject=cameraStream;await video.play();video.classList.add('active');
+    $('cameraPlaceholder').hidden=true;cameraButtons(true);
+    startVideoRecording();
+    setPermissionBanner('cameraPermissionBanner','● EMERGENCY EVIDENCE RECORDING — audio and video are being recorded visibly. Press Stop Recording to finish.','denied');
+  }catch(error){
+    setPermissionBanner('cameraPermissionBanner',`Emergency recording could not start: ${error.message}`,'denied');
+  }
+}
+
 
 $('saveCloudConfig').addEventListener('click',saveCloudConfig);
 $('clearCloudConfig').addEventListener('click',()=>{localStorage.removeItem('atlas_supabase_url');localStorage.removeItem('atlas_supabase_publishable_key');cloudClient=null;cloudSession=null;updateCloudStatus();});
@@ -955,6 +1177,23 @@ $('capturedMediaGallery')?.addEventListener('click',event=>{
   const button=event.target.closest('[data-media-index]');
   if(button)removePendingMedia(Number(button.dataset.mediaIndex));
 });
+$('saveLogDraft')?.addEventListener('click',()=>saveLogDraft());
+$('startVoiceWatch')?.addEventListener('click',()=>startVoiceWatch(false));
+$('stopVoiceWatch')?.addEventListener('click',stopVoiceWatch);
+$('pushToTalkLog')?.addEventListener('click',()=>startVoiceWatch(true));
+$('recordLogAudio')?.addEventListener('click',startLogAudio);
+$('stopLogAudio')?.addEventListener('click',stopLogAudio);
+$('startEmergencyRecord')?.addEventListener('click',startEmergencyRecord);
+$('exportLogsJson')?.addEventListener('click',()=>downloadLogExport('json'));
+$('exportLogsCsv')?.addEventListener('click',()=>downloadLogExport('csv'));
+$('clearReviewedLogs')?.addEventListener('click',()=>{
+  const count=logDrafts.filter(x=>x.status==='transferred').length;
+  if(count&&confirm(`Remove ${count} transferred entries from this device?`)){logDrafts=logDrafts.filter(x=>x.status!=='transferred');persistLogDrafts();}
+});
+$('logDraftList')?.addEventListener('click',event=>{
+  const button=event.target.closest('[data-log-action]');
+  if(button)handleLogAction(button.dataset.logAction,button.dataset.logId);
+});
 
 if(navigator.permissions?.query){
   navigator.permissions.query({name:'geolocation'}).then(status=>{
@@ -965,6 +1204,9 @@ if(navigator.permissions?.query){
 
 initCloudClient();
 restoreCloudSession();
+loadLogDrafts();
+updateLogClock();
+setInterval(updateLogClock,1000);
 
 
 setTimeout(()=>{

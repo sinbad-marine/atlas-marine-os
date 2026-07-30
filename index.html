@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#071827">
 <title>Sinbad Marine</title>
-<link rel="manifest" href="./manifest.webmanifest?v=8120">
-<link rel="apple-touch-icon" href="./icon-192.png?v=8120">
-<link rel="stylesheet" href="./styles.css?v=8120">
+<link rel="manifest" href="./manifest.webmanifest?v=8130">
+<link rel="apple-touch-icon" href="./icon-192.png?v=8130">
+<link rel="stylesheet" href="./styles.css?v=8130">
 </head>
 <body class="auth-pending">
 <section id="cinematicIntro" class="cinematic-intro" aria-label="Sinbad Marine cinematic introduction">
@@ -69,7 +69,7 @@
 </dialog>
 <header class="topbar">
 <div class="brand"><div class="logo">⚓</div><div><h1>SINBAD MARINE</h1><small>Özgür Maceraperest Dostlar • Navigate Smarter. Command Better.</small></div></div>
-  <div class="version">● v8.12.0</div>
+  <div class="version">● v8.13.0</div>
 </header>
 
 
@@ -86,6 +86,7 @@
     <button class="btn" data-open="sinbad">Ask Captain Sinbad</button>
     <button class="btn" data-open="location-intelligence">Use Location</button>
     <button class="btn" data-open="camera-archive">Open Camera</button>
+    <button class="btn primary" data-open="captains-logbook">Captain's Logbook</button>
   </div>
 </section>
 
@@ -123,6 +124,7 @@
   <article class="module-card" data-open="crew"><div>👥</div><h3>Crew Manager</h3><p>Crew records and expiry tracking.</p><a>Open →</a></article>
   <article class="module-card featured-card" data-open="location-intelligence"><div>📍</div><h3>Location Intelligence</h3><p>Permission-based position service for nearby marine information.</p><a>Open location service →</a></article>
   <article class="module-card featured-card" data-open="camera-archive"><div>📷</div><h3>Camera & Media Archive</h3><p>Capture private operational photos and videos for your workspace.</p><a>Open camera →</a></article>
+  <article class="module-card featured-card" data-open="captains-logbook"><div>🎙️</div><h3>Captain's Logbook</h3><p>Capture timestamped voice or typed draft journal entries while operations continue.</p><a>Open voice log →</a></article>
 </section>
 
 
@@ -183,6 +185,71 @@
   <div id="capturedMediaGallery" class="captured-media-grid"></div>
 </section>
 
+
+<section id="captains-logbook" class="workspace">
+  <div class="workspace-head">
+    <div>
+      <div class="eyebrow">VOICE-ASSISTED DRAFT JOURNAL</div>
+      <h2>Captain's Logbook</h2>
+      <p>Capture operational notes with local time, UTC and optional position. Drafts remain editable until reviewed.</p>
+    </div>
+    <button class="btn close">Close</button>
+  </div>
+  <div class="log-safety-note"><strong>Draft archive — not the statutory logbook.</strong> Review and transfer approved entries to the vessel's official logbook.</div>
+  <div class="voice-watch-panel">
+    <div class="voice-watch-state">
+      <span class="voice-pulse" id="voicePulse"></span>
+      <div><strong id="voiceWatchTitle">Sinbad Voice Watch is off</strong><small id="voiceWatchHelp">Press Start Voice Watch, then say “Sinbad Log” followed by your entry.</small></div>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="startVoiceWatch" type="button">Start Voice Watch</button>
+      <button class="btn danger" id="stopVoiceWatch" type="button" disabled>Stop Voice Watch</button>
+      <button class="btn" id="pushToTalkLog" type="button">Push to Talk</button>
+    </div>
+    <div class="voice-transcript" id="voiceTranscript" aria-live="polite">Waiting for your command.</div>
+  </div>
+  <div class="log-compose-grid">
+    <div>
+      <label>Draft log entry
+        <textarea id="logDraftText" rows="5" placeholder="Example: Anchored off Kumkapı, Istanbul. Anchor position checked and holding."></textarea>
+      </label>
+      <div class="log-compose-options">
+        <label>Category
+          <select id="logCategory">
+            <option>Navigation</option><option>Anchoring</option><option>Maneuvering</option>
+            <option>Weather</option><option>Safety</option><option>Engineering</option>
+            <option>Security</option><option>General</option>
+          </select>
+        </label>
+        <label class="log-check"><input id="attachLogPosition" type="checkbox" checked> Attach current position</label>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="saveLogDraft" type="button">Save Draft Entry</button>
+        <button class="btn" id="recordLogAudio" type="button">Record Audio Note</button>
+        <button class="btn danger" id="stopLogAudio" type="button" disabled>Stop Audio</button>
+      </div>
+      <div id="logComposeStatus" class="notice">No draft is being recorded.</div>
+    </div>
+    <div class="log-clock-card">
+      <span>Local time</span><strong id="logLocalClock">—</strong>
+      <span>UTC</span><strong id="logUtcClock">—</strong>
+      <span>Position</span><strong id="logPositionPreview">Not attached</strong>
+    </div>
+  </div>
+  <div class="log-archive-head">
+    <div><h3>Draft Log Archive</h3><p id="logArchiveSummary">0 entries</p></div>
+    <div class="actions">
+      <button class="btn" id="exportLogsJson" type="button">Export JSON</button>
+      <button class="btn" id="exportLogsCsv" type="button">Export CSV</button>
+      <button class="btn" id="clearReviewedLogs" type="button">Remove Transferred</button>
+    </div>
+  </div>
+  <div id="logDraftList" class="log-draft-list"></div>
+  <div class="emergency-record-panel">
+    <div><div class="eyebrow">VISIBLE, USER-ACTIVATED CAPTURE</div><h3>Emergency Evidence Record</h3><p>Starts a visible audio/video recording with the rear camera where available. It does not contact emergency services or send anything automatically.</p></div>
+    <button class="btn danger" id="startEmergencyRecord" type="button">Start Emergency Recording</button>
+  </div>
+</section>
 
 <section id="documents" class="workspace">
   <div class="workspace-head">
@@ -479,10 +546,10 @@ Captain Sinbad uses local Sinbad Marine data and keyword intelligence. Secure cl
 <footer>Sinbad Marine • Cinematic World Chart • One Bridge. Every Operation.</footer>
 
 
-<script src="./pilot-data.js?v=8120"></script>
-<script src="./route-data.js?v=8120"></script>
+<script src="./pilot-data.js?v=8130"></script>
+<script src="./route-data.js?v=8130"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="./intro.js?v=8120"></script>
-<script src="./app.js?v=8120"></script>
+<script src="./intro.js?v=8130"></script>
+<script src="./app.js?v=8130"></script>
 </body>
 </html>
