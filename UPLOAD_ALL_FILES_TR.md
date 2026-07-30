@@ -1,4 +1,4 @@
-# Sinbad Marine v8.11.3
+# Sinbad Marine v8.11.5
 
 Bu paket intro ile yönetim uygulamasını tekrar tek sürümde birleştirir.
 
@@ -7,7 +7,7 @@ mevcut dosyaların değiştirilmesine izin verin. Klasör oluşturmayın.
 
 Canlı kontrol:
 
-https://varolcolak2013-stack.github.io/atlas-marine-os/?bridge=8113
+https://varolcolak2013-stack.github.io/atlas-marine-os/?sinbad=8115
 
 Beklenen akış:
 
