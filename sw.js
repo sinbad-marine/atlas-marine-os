@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.15.6-cloud-login-fix';
+const CACHE='sinbad-marine-v8.15.7-correct-supabase-url';
 const ASSETS=[
   './',
   './index.html',

@@ -482,10 +482,16 @@ function cloudEsc(value=''){
 function getCloudConfig(){
   // These are browser-safe public project coordinates, never secret keys.
   // Defaults keep every authorized device connected to the same login system.
-  const defaultUrl='https://kcvyftrvtegmabvxfebu.supabase.co';
+  const defaultUrl='https://kcvyftrvteqmabvxfebu.supabase.co';
+  const obsoleteUrl='https://kcvyftrvtegmabvxfebu.supabase.co';
   const defaultKey='sb_publishable_ZBHFlbhQAnhUAOyVg20Szw_nW0QDj_l';
   let url=localStorage.getItem('atlas_supabase_url') || defaultUrl;
   let key=localStorage.getItem('atlas_supabase_publishable_key') || defaultKey;
+  // Correct the one-letter URL typo saved by earlier releases.
+  if(url===obsoleteUrl){
+    url=defaultUrl;
+    localStorage.setItem('atlas_supabase_url',defaultUrl);
+  }
   if(!url || !key){
     try{
       const current=JSON.parse(localStorage.getItem('atlas-v81-supabase-config')||'{}');
