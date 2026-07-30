@@ -92,7 +92,7 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
 body.auth-pending .topbar,body.auth-pending main,body.auth-pending .sinbad-float,body.auth-pending footer,
 body.signed-out .topbar,body.signed-out main,body.signed-out .sinbad-float,body.signed-out footer{display:none!important}
 body.authenticated .public-gateway{display:none}
-.cinematic-intro{position:fixed;inset:0;z-index:1000;background:#01040a;overflow:hidden;opacity:1;visibility:visible;transition:opacity 1.1s ease,visibility 1.1s}
+.cinematic-intro{position:fixed;inset:0;z-index:1000;background:#01040a;overflow:hidden;opacity:1;visibility:visible;transition:opacity 3s cubic-bezier(.4,0,.2,1),visibility 3s}
 .cinematic-intro.finished{opacity:0;visibility:hidden;pointer-events:none}
 #introCanvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .intro-brand{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);width:min(920px,92vw);text-align:center;opacity:0;color:#f7f0df;text-shadow:0 5px 26px rgba(0,0,0,.8);pointer-events:none}

@@ -438,7 +438,10 @@ starImage.src = "./nasa-deep-star-map.jpg";
       if(seconds>14.8)brand.classList.add("visible");
     }
 
-    if(seconds>=19){finish(true);return;}
+    // The complete Sinbad Marine signature remains fully readable for
+    // seven seconds, then dissolves into the application over three seconds.
+    if(seconds>=24.8)overlay.classList.add("finished");
+    if(seconds>=27.8){finish(true);return;}
     frame=requestAnimationFrame(animate);
   }
 
