@@ -5,82 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#071827">
 <title>Sinbad Marine</title>
-<link rel="manifest" href="./manifest.webmanifest?v=8150">
-<link rel="apple-touch-icon" href="./icon-192.png?v=8150">
-<link rel="stylesheet" href="./styles.css?v=8150">
+<link rel="manifest" href="./manifest.webmanifest?v=8155">
+<link rel="apple-touch-icon" href="./icon-192.png?v=8155">
+<link rel="stylesheet" href="./styles.css?v=8155">
 </head>
 <body class="auth-pending">
-<section id="cinematicIntro" class="cinematic-intro" aria-label="Sinbad Marine cinematic introduction">
-  <canvas id="introCanvas"></canvas>
-  <div class="intro-brand" id="introBrand">
-    <div class="intro-character-stage" aria-hidden="true">
-      <svg class="intro-sinbad" viewBox="0 0 360 520" role="img">
-        <defs>
-          <linearGradient id="vestRed" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d94b36"/><stop offset="1" stop-color="#8d1f22"/></linearGradient>
-          <linearGradient id="trouserGold" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#f4c94d"/><stop offset="1" stop-color="#c88b21"/></linearGradient>
-        </defs>
-        <g class="sinbad-body">
-          <path d="M125 292 Q180 258 235 292 L250 415 Q180 452 110 415Z" fill="url(#trouserGold)" stroke="#39241e" stroke-width="7"/>
-          <path d="M118 286 Q138 248 180 249 Q222 248 242 286 L224 367 Q180 383 136 367Z" fill="url(#vestRed)" stroke="#39241e" stroke-width="7"/>
-          <path d="M174 255 L155 358 L180 375 L205 358 L186 255Z" fill="#f2b649" stroke="#5d321d" stroke-width="5"/>
-          <path d="M135 365 Q180 390 225 365" fill="none" stroke="#762b25" stroke-width="16" stroke-linecap="round"/>
-          <path d="M142 414 Q130 470 105 500" fill="none" stroke="#d9a12e" stroke-width="42" stroke-linecap="round"/>
-          <path d="M218 414 Q230 470 255 500" fill="none" stroke="#d9a12e" stroke-width="42" stroke-linecap="round"/>
-          <path d="M75 505 Q112 480 137 500 Q122 518 80 516Z" fill="#2a2224" stroke="#39241e" stroke-width="6"/>
-          <path d="M285 505 Q248 480 223 500 Q238 518 280 516Z" fill="#2a2224" stroke="#39241e" stroke-width="6"/>
-        </g>
-        <g class="sinbad-arm sinbad-arm-left">
-          <path d="M132 278 Q86 294 48 335" fill="none" stroke="#9e5d45" stroke-width="31" stroke-linecap="round"/>
-          <path d="M61 321 L79 343" stroke="#e7b63f" stroke-width="18" stroke-linecap="round"/>
-          <circle cx="43" cy="340" r="18" fill="#9e5d45" stroke="#39241e" stroke-width="5"/>
-        </g>
-        <g class="sinbad-arm sinbad-arm-right">
-          <path d="M228 278 Q274 294 312 335" fill="none" stroke="#9e5d45" stroke-width="31" stroke-linecap="round"/>
-          <path d="M299 321 L281 343" stroke="#e7b63f" stroke-width="18" stroke-linecap="round"/>
-          <circle cx="317" cy="340" r="18" fill="#9e5d45" stroke="#39241e" stroke-width="5"/>
-        </g>
-        <g class="sinbad-head">
-          <ellipse cx="180" cy="164" rx="78" ry="88" fill="#9e5d45" stroke="#39241e" stroke-width="8"/>
-          <path d="M112 158 Q105 92 145 73 Q180 42 221 69 Q260 88 249 157 Q228 111 192 107 Q149 103 112 158Z" fill="#11151a"/>
-          <path d="M92 113 Q101 47 181 35 Q260 45 271 112 Q241 87 216 89 Q174 104 133 88 Q111 89 92 113Z" fill="#fbfbf7" stroke="#3a302f" stroke-width="8"/>
-          <path d="M112 91 Q180 61 251 91 M119 69 Q179 45 240 67" fill="none" stroke="#d9d8d0" stroke-width="5" stroke-linecap="round"/>
-          <g class="sinbad-eyes">
-            <ellipse cx="151" cy="167" rx="13" ry="18" fill="#fff"/><ellipse cx="209" cy="167" rx="13" ry="18" fill="#fff"/>
-            <circle cx="155" cy="170" r="7" fill="#1b1715"/><circle cx="205" cy="170" r="7" fill="#1b1715"/>
-            <circle cx="158" cy="166" r="2.5" fill="#fff"/><circle cx="208" cy="166" r="2.5" fill="#fff"/>
-          </g>
-          <path class="sinbad-brow" d="M132 144 Q151 134 168 145 M192 145 Q211 134 229 145" fill="none" stroke="#2d1c19" stroke-width="7" stroke-linecap="round"/>
-          <path class="sinbad-smile" d="M141 205 Q179 236 220 200 Q183 247 141 205Z" fill="#fff4df" stroke="#49231f" stroke-width="6" stroke-linejoin="round"/>
-        </g>
-      </svg>
-      <div class="raven-flight">
-        <svg viewBox="0 0 150 100">
-          <path class="raven-wing raven-wing-left" d="M68 47 Q29 8 8 24 Q31 58 66 65Z" fill="#121a22" stroke="#071018" stroke-width="4"/>
-          <path class="raven-wing raven-wing-right" d="M82 47 Q121 8 142 24 Q119 58 84 65Z" fill="#121a22" stroke="#071018" stroke-width="4"/>
-          <ellipse cx="75" cy="57" rx="29" ry="23" fill="#111820" stroke="#071018" stroke-width="4"/>
-          <circle cx="94" cy="43" r="17" fill="#17212b"/>
-          <circle cx="99" cy="39" r="4" fill="#f6e7ad"/>
-          <path d="M108 44 L139 53 L108 59Z" fill="#e4a92f" stroke="#6b4216" stroke-width="3"/>
-          <path d="M63 75 L48 94 M83 75 L91 94" stroke="#d19a29" stroke-width="4" stroke-linecap="round"/>
-        </svg>
-      </div>
-    </div>
-    <div class="intro-word" aria-label="SINBAD">
-      <span class="intro-letter" style="--i:0">S</span>
-      <span class="intro-letter" style="--i:1">I</span>
-      <span class="intro-letter" style="--i:2">N</span>
-      <span class="intro-letter" style="--i:3">B</span>
-      <span class="intro-letter" style="--i:4">A</span>
-      <span class="intro-letter" style="--i:5">D</span>
-    </div>
-    <div class="intro-marine">MARINE</div>
-    <p>Navigate Smarter. Command Better.</p>
-  </div>
-  <div class="intro-disclaimer">Visual introduction — not for navigation</div>
-  <button id="introSound" class="intro-sound" type="button" aria-pressed="false">Enable cinematic sound</button>
-  <button id="skipIntro" class="skip-intro" type="button">Skip Intro</button>
-</section>
-
 <section id="publicGateway" class="public-gateway" aria-live="polite">
   <div class="gateway-orbit"></div>
   <div class="gateway-card">
@@ -92,7 +21,6 @@
       <button class="btn primary gateway-signin" id="openCaptainSignIn">Member Sign In</button>
       <button class="btn gateway-signin" id="openRegistration" type="button">Create Account</button>
     </div>
-    <button class="text-button replay-intro" id="replayIntro" type="button">Replay cinematic intro</button>
     <small>Navigate Smarter. Command Better.</small>
   </div>
 </section>
@@ -168,7 +96,7 @@
 <div class="brand"><div class="logo">⚓</div><div><h1>SINBAD MARINE</h1><small>Özgür Maceraperest Dostlar • Navigate Smarter. Command Better.</small></div></div>
   <div class="topbar-account-actions">
     <button class="account-password-button" id="openAccountPassword" type="button">Account &amp; Password</button>
-    <div class="version">● v8.15.4</div>
+    <div class="version">● v8.15.5</div>
   </div>
 </header>
 
@@ -668,13 +596,12 @@ Captain Sinbad uses local Sinbad Marine data and keyword intelligence. Secure cl
 </button>
 
 
-<footer>Sinbad Marine • Cinematic World Chart • One Bridge. Every Operation.</footer>
+<footer>Sinbad Marine • Secure Marine Command Platform • One Bridge. Every Operation.</footer>
 
 
-<script src="./pilot-data.js?v=8150"></script>
-<script src="./route-data.js?v=8150"></script>
+<script src="./pilot-data.js?v=8155"></script>
+<script src="./route-data.js?v=8155"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="./intro.js?v=8150"></script>
-<script src="./app.js?v=8150"></script>
+<script src="./app.js?v=8155"></script>
 </body>
 </html>
