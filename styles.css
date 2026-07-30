@@ -126,6 +126,7 @@ linear-gradient(145deg,#03101b,#071d2d 55%,#04131f)}
 .gateway-mark{width:74px;height:74px;margin:0 auto 18px;border-radius:22px;display:grid;place-items:center;font-size:36px;color:#06131d;background:linear-gradient(145deg,#efd48e,#bd8841);box-shadow:0 18px 38px rgba(0,0,0,.35)}
 .gateway-mark.small{width:54px;height:54px;font-size:26px;border-radius:16px}
 .gateway-signin{min-width:220px;padding:14px 22px;font-size:16px}
+.gateway-auth-actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
 .auth-dialog{width:min(490px,calc(100% - 28px));padding:0;border:0;border-radius:24px;background:transparent;color:#fff}
 .auth-dialog::backdrop{background:rgba(0,8,14,.78);backdrop-filter:blur(9px)}
 .auth-card{position:relative;padding:34px;border:1px solid rgba(226,191,114,.3);border-radius:24px;background:#071b2a;box-shadow:0 35px 90px rgba(0,0,0,.55)}
@@ -136,6 +137,8 @@ linear-gradient(145deg,#03101b,#071d2d 55%,#04131f)}
 .btn.full{width:100%;margin-top:8px}.text-button{display:block;margin:15px auto 0;border:0;background:none;color:var(--gold);cursor:pointer}
 .auth-message{min-height:24px;margin-top:16px;padding:10px 12px;border-radius:10px;color:#dce7ec;line-height:1.4}
 .auth-message.error{background:rgba(201,108,108,.12);color:#f2bcbc}.auth-message.success{background:rgba(94,217,181,.11);color:#aef0da}
+.auth-note,.invite-welcome{margin:16px 0 8px;padding:12px 14px;border:1px solid rgba(226,191,114,.18);border-radius:12px;background:rgba(226,191,114,.07);color:#c7d4db;font-size:13px;line-height:1.55}
+.invite-welcome{color:#dff7ee;border-color:rgba(94,217,181,.25);background:rgba(94,217,181,.08)}
 @media(max-width:600px){.gateway-card{padding:40px 22px}.auth-card{padding:30px 20px}}
 body{
  background:

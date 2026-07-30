@@ -353,6 +353,10 @@ let selectedWorkspaceId = localStorage.getItem('atlas_selected_workspace') || lo
 let currentWorkspaceRole = '';
 if(selectedWorkspaceId)localStorage.setItem('atlas_selected_workspace',selectedWorkspaceId);
 let authSubscription = null;
+let pendingInviteSetup =
+  /(?:[?#&])type=invite(?:&|$)/i.test(location.href) ||
+  sessionStorage.getItem('sinbad_pending_invite_setup') === '1';
+if(pendingInviteSetup)sessionStorage.setItem('sinbad_pending_invite_setup','1');
 
 function setAuthMessage(message='',type=''){
   const el=$('authMessage');
@@ -361,19 +365,39 @@ function setAuthMessage(message='',type=''){
   el.className=`auth-message ${type}`.trim();
 }
 function setAppAccess(){
-  const signedIn=Boolean(cloudSession?.user);
+  const signedIn=Boolean(cloudSession?.user) && !needsInviteSetup(cloudSession.user);
   document.body.classList.remove('auth-pending','signed-out','authenticated');
   document.body.classList.add(signedIn?'authenticated':'signed-out');
   if(signedIn && $('authDialog')?.open)$('authDialog').close();
 }
-function showRecoveryPanel(show=true){
-  $('signInPanel').hidden=show;
-  $('recoveryPanel').hidden=!show;
-  $('authTitle').textContent=show?'Recover Captain Access':'Captain Sign In';
-  $('authHelp').textContent=show
-    ?'Request the 8-digit code sent by Atlas Marine OS, then choose a new password.'
-    :'Sign in to open the complete Atlas Marine OS management bridge.';
+function needsInviteSetup(user=cloudSession?.user){
+  return Boolean(
+    user &&
+    (pendingInviteSetup || (user.invited_at && user.user_metadata?.sinbad_account_ready !== true))
+  );
+}
+function showAuthPanel(panel='signin'){
+  const panels={
+    signin:$('signInPanel'),
+    registration:$('registrationPanel'),
+    invite:$('inviteSetupPanel'),
+    recovery:$('recoveryPanel')
+  };
+  Object.entries(panels).forEach(([name,element])=>{if(element)element.hidden=name!==panel;});
+  const copy={
+    signin:['Member Sign In','Sign in to open your authorized Sinbad Marine workspace.'],
+    registration:['Create Sinbad Marine Account','Register with your email address. Private workspace access still requires an invitation or Captain Varol Çolak’s approval.'],
+    invite:['Complete Your Invitation','Your invitation is verified. Set your password to enter the workspace assigned to you.'],
+    recovery:['Recover Member Access','Request the 8-digit code sent by Sinbad Marine, then choose a new password.']
+  }[panel];
+  $('authTitle').textContent=copy[0];
+  $('authHelp').textContent=copy[1];
   setAuthMessage();
+}
+function showRecoveryPanel(show=true){showAuthPanel(show?'recovery':'signin');}
+function openAuthDialog(panel='signin'){
+  showAuthPanel(panel);
+  if(!$('authDialog').open)$('authDialog').showModal();
 }
 
 
@@ -411,11 +435,19 @@ function initCloudClient(){
   try{
     cloudClient=window.supabase.createClient(url,key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
     if(authSubscription)authSubscription.unsubscribe();
-    const {data}=cloudClient.auth.onAuthStateChange(async(_event,session)=>{
+    const {data}=cloudClient.auth.onAuthStateChange(async(event,session)=>{
       cloudSession=session;
       updateCloudStatus();
       setAppAccess();
-      if(session?.user)await loadWorkspaces();
+      if(session?.user){
+        if(needsInviteSetup(session.user)){
+          pendingInviteSetup=true;
+          sessionStorage.setItem('sinbad_pending_invite_setup','1');
+          setTimeout(()=>openAuthDialog('invite'),0);
+        }else{
+          await loadWorkspaces();
+        }
+      }
     });
     authSubscription=data.subscription;
     updateCloudStatus(); return cloudClient;
@@ -439,7 +471,10 @@ async function restoreCloudSession(){
   const {data,error}=await cloudClient.auth.getSession();
   if(error)setAuthMessage(error.message,'error');
   cloudSession=data.session; updateCloudStatus(); setAppAccess();
-  if(cloudSession?.user) await loadWorkspaces();
+  if(cloudSession?.user){
+    if(needsInviteSetup(cloudSession.user))openAuthDialog('invite');
+    else await loadWorkspaces();
+  }
 }
 async function saveCloudConfig(){
   const url=$('supabaseUrlInput').value.trim().replace(/\/$/,'');
@@ -461,7 +496,12 @@ async function cloudSignIn(){
   if(!cloudClient){alert('Configure Atlas Cloud first.');return;}
   const {data,error}=await cloudClient.auth.signInWithPassword({email:$('cloudEmail').value.trim(),password:$('cloudPassword').value});
   if(error){alert(error.message);return;}
-  cloudSession=data.session; updateCloudStatus(); setAppAccess(); await loadWorkspaces(); alert('Welcome aboard.');
+  cloudSession=data.session;
+  updateCloudStatus();
+  setAppAccess();
+  if(needsInviteSetup(cloudSession?.user)){openAuthDialog('invite');return;}
+  await loadWorkspaces();
+  alert('Welcome aboard.');
 }
 async function cloudSignOut(){
   if(cloudClient)await cloudClient.auth.signOut();
@@ -479,7 +519,61 @@ async function gatewaySignIn(){
   cloudSession=data.session;
   updateCloudStatus();
   setAppAccess();
+  if(needsInviteSetup(cloudSession?.user)){openAuthDialog('invite');return;}
   await loadWorkspaces();
+}
+async function createAccount(){
+  if(!cloudClient){setAuthMessage('Atlas Cloud connection is not configured.','error');return;}
+  const name=$('registrationName').value.trim();
+  const email=$('registrationEmail').value.trim();
+  const password=$('registrationPassword').value;
+  const confirmPassword=$('registrationPasswordConfirm').value;
+  if(!name){setAuthMessage('Enter your full name.','error');return;}
+  if(!email){setAuthMessage('Enter your email address.','error');return;}
+  if(password.length<8){setAuthMessage('Password must be at least 8 characters.','error');return;}
+  if(password!==confirmPassword){setAuthMessage('Passwords do not match.','error');return;}
+  setAuthMessage('Creating your account…');
+  const emailRedirectTo=`${location.origin}${location.pathname}`;
+  const {data,error}=await cloudClient.auth.signUp({
+    email,
+    password,
+    options:{emailRedirectTo,data:{display_name:name,sinbad_account_ready:true}}
+  });
+  if(error){setAuthMessage(error.message,'error');return;}
+  if(data.session){
+    cloudSession=data.session;
+    setAppAccess();
+    await loadWorkspaces();
+    setAuthMessage('Account created. Workspace access will appear after authorization.','success');
+  }else{
+    showAuthPanel('signin');
+    $('gatewayEmail').value=email;
+    setAuthMessage('Account created. Confirm your email, then sign in. Private workspace access requires approval.','success');
+  }
+}
+async function completeInviteAccount(){
+  if(!cloudClient || !cloudSession?.user){
+    setAuthMessage('The invitation session is missing or expired. Open the newest invitation email again.','error');
+    return;
+  }
+  const name=$('inviteDisplayName').value.trim();
+  const password=$('invitePassword').value;
+  const confirmPassword=$('invitePasswordConfirm').value;
+  if(!name){setAuthMessage('Enter your full name.','error');return;}
+  if(password.length<8){setAuthMessage('Password must be at least 8 characters.','error');return;}
+  if(password!==confirmPassword){setAuthMessage('Passwords do not match.','error');return;}
+  setAuthMessage('Completing your account…');
+  const {data,error}=await cloudClient.auth.updateUser({
+    password,
+    data:{display_name:name,sinbad_account_ready:true}
+  });
+  if(error){setAuthMessage(error.message,'error');return;}
+  cloudSession={...cloudSession,user:data.user};
+  pendingInviteSetup=false;
+  sessionStorage.removeItem('sinbad_pending_invite_setup');
+  setAppAccess();
+  await loadWorkspaces();
+  setAuthMessage('Account completed. Welcome aboard.','success');
 }
 async function requestRecoveryCode(){
   if(!cloudClient){setAuthMessage('Atlas Cloud connection is not configured.','error');return;}
@@ -1255,14 +1349,18 @@ $('memberList').addEventListener('click',e=>{
 $('openLocalDocuments').addEventListener('click',()=>openWorkspace('documents'));
 
 $('openCaptainSignIn').addEventListener('click',()=>{
-  showRecoveryPanel(false);
-  $('authDialog').showModal();
+  openAuthDialog('signin');
 });
+$('openRegistration').addEventListener('click',()=>openAuthDialog('registration'));
 $('closeAuthDialog').addEventListener('click',()=>$('authDialog').close());
 $('gatewaySignIn').addEventListener('click',gatewaySignIn);
 $('gatewayPassword').addEventListener('keydown',e=>{if(e.key==='Enter')gatewaySignIn();});
 $('showRecovery').addEventListener('click',()=>showRecoveryPanel(true));
 $('showSignIn').addEventListener('click',()=>showRecoveryPanel(false));
+$('showRegistration').addEventListener('click',()=>showAuthPanel('registration'));
+$('registrationBackToSignIn').addEventListener('click',()=>showAuthPanel('signin'));
+$('createAccount').addEventListener('click',createAccount);
+$('completeInviteSetup').addEventListener('click',completeInviteAccount);
 $('requestRecoveryCode').addEventListener('click',requestRecoveryCode);
 $('completeRecovery').addEventListener('click',completeRecovery);
 $('getCurrentLocation')?.addEventListener('click',getCurrentLocation);

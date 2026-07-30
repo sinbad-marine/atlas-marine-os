@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#071827">
 <title>Sinbad Marine</title>
-<link rel="manifest" href="./manifest.webmanifest?v=8140">
-<link rel="apple-touch-icon" href="./icon-192.png?v=8140">
-<link rel="stylesheet" href="./styles.css?v=8140">
+<link rel="manifest" href="./manifest.webmanifest?v=8141">
+<link rel="apple-touch-icon" href="./icon-192.png?v=8141">
+<link rel="stylesheet" href="./styles.css?v=8141">
 </head>
 <body class="auth-pending">
 <section id="cinematicIntro" class="cinematic-intro" aria-label="Sinbad Marine cinematic introduction">
@@ -37,7 +37,10 @@
     <div class="eyebrow">SINBAD MARINE</div>
     <h1>Sinbad Marine is currently under development.</h1>
     <p>Our secure marine intelligence and yacht operations platform is being prepared for launch.</p>
-    <button class="btn primary gateway-signin" id="openCaptainSignIn">Captain Sign In</button>
+    <div class="gateway-auth-actions">
+      <button class="btn primary gateway-signin" id="openCaptainSignIn">Member Sign In</button>
+      <button class="btn gateway-signin" id="openRegistration" type="button">Create Account</button>
+    </div>
     <button class="text-button replay-intro" id="replayIntro" type="button">Replay cinematic intro</button>
     <small>Navigate Smarter. Command Better.</small>
   </div>
@@ -47,17 +50,34 @@
   <form method="dialog" class="auth-card" id="authForm">
     <button class="dialog-close" id="closeAuthDialog" type="button" aria-label="Close">×</button>
     <div class="gateway-mark small">⚓</div>
-    <div class="eyebrow">SECURE CAPTAIN ACCESS</div>
-    <h2 id="authTitle">Captain Sign In</h2>
+    <div class="eyebrow">SECURE MEMBER ACCESS</div>
+    <h2 id="authTitle">Member Sign In</h2>
     <p id="authHelp" class="muted">Sign in to open the complete Sinbad Marine management bridge.</p>
     <div id="signInPanel">
-      <label>Email<input id="gatewayEmail" type="email" autocomplete="email" value="varolcolak2013@gmail.com"></label>
+      <label>Email<input id="gatewayEmail" type="email" autocomplete="email"></label>
       <label>Password<input id="gatewayPassword" type="password" autocomplete="current-password"></label>
       <button class="btn primary full" id="gatewaySignIn" type="button">Sign In</button>
       <button class="text-button" id="showRecovery" type="button">I forgot my password</button>
+      <button class="text-button" id="showRegistration" type="button">Create a new account</button>
+    </div>
+    <div id="registrationPanel" hidden>
+      <label>Full name<input id="registrationName" type="text" autocomplete="name" maxlength="120"></label>
+      <label>Email<input id="registrationEmail" type="email" autocomplete="email"></label>
+      <label>Password<input id="registrationPassword" type="password" minlength="8" autocomplete="new-password"></label>
+      <label>Confirm password<input id="registrationPasswordConfirm" type="password" minlength="8" autocomplete="new-password"></label>
+      <button class="btn primary full" id="createAccount" type="button">Create Account</button>
+      <p class="auth-note">A new account can sign in after email confirmation, but private workspaces require an invitation or approval from Captain Varol Çolak.</p>
+      <button class="text-button" id="registrationBackToSignIn" type="button">Back to sign in</button>
+    </div>
+    <div id="inviteSetupPanel" hidden>
+      <p class="invite-welcome">Welcome aboard. Your invitation is verified. Choose a password to complete your Sinbad Marine account.</p>
+      <label>Full name<input id="inviteDisplayName" type="text" autocomplete="name" maxlength="120"></label>
+      <label>New password<input id="invitePassword" type="password" minlength="8" autocomplete="new-password"></label>
+      <label>Confirm password<input id="invitePasswordConfirm" type="password" minlength="8" autocomplete="new-password"></label>
+      <button class="btn primary full" id="completeInviteSetup" type="button">Complete Account & Enter</button>
     </div>
     <div id="recoveryPanel" hidden>
-      <label>Email<input id="recoveryEmail" type="email" autocomplete="email" value="varolcolak2013@gmail.com"></label>
+      <label>Email<input id="recoveryEmail" type="email" autocomplete="email"></label>
       <button class="btn primary full" id="requestRecoveryCode" type="button">Send recovery code</button>
       <label>8-digit recovery code<input id="recoveryCode" inputmode="numeric" maxlength="8" autocomplete="one-time-code"></label>
       <label>New password<input id="recoveryNewPassword" type="password" minlength="8" autocomplete="new-password"></label>
@@ -69,7 +89,7 @@
 </dialog>
 <header class="topbar">
 <div class="brand"><div class="logo">⚓</div><div><h1>SINBAD MARINE</h1><small>Özgür Maceraperest Dostlar • Navigate Smarter. Command Better.</small></div></div>
-  <div class="version">● v8.14.0</div>
+  <div class="version">● v8.14.1</div>
 </header>
 
 
@@ -571,10 +591,10 @@ Captain Sinbad uses local Sinbad Marine data and keyword intelligence. Secure cl
 <footer>Sinbad Marine • Cinematic World Chart • One Bridge. Every Operation.</footer>
 
 
-<script src="./pilot-data.js?v=8140"></script>
-<script src="./route-data.js?v=8140"></script>
+<script src="./pilot-data.js?v=8141"></script>
+<script src="./route-data.js?v=8141"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="./intro.js?v=8140"></script>
-<script src="./app.js?v=8140"></script>
+<script src="./intro.js?v=8141"></script>
+<script src="./app.js?v=8141"></script>
 </body>
 </html>
