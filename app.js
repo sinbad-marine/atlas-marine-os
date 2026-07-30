@@ -586,16 +586,23 @@ async function cloudSignOut(){
 
 async function gatewaySignIn(){
   setAuthMessage('Signing in…');
-  if(!cloudClient){setAuthMessage('Atlas Cloud configuration was not found. Open the previously configured v8.7 site once, or configure it in Cloud Control Center.','error');return;}
+  if(!cloudClient){setAuthMessage('Atlas Cloud connection is not ready. Open Cloud Setup & Security and save the Project URL again.','error');return;}
   const email=$('gatewayEmail').value.trim();
   const password=$('gatewayPassword').value;
-  const {data,error}=await cloudClient.auth.signInWithPassword({email,password});
-  if(error){setAuthMessage(error.message,'error');return;}
-  cloudSession=data.session;
-  updateCloudStatus();
-  setAppAccess();
-  if(needsInviteSetup(cloudSession?.user)){openAuthDialog('invite');return;}
-  await loadWorkspaces();
+  try{
+    const {data,error}=await cloudClient.auth.signInWithPassword({email,password});
+    if(error){setAuthMessage(error.message,'error');return;}
+    cloudSession=data.session;
+    updateCloudStatus();
+    setAppAccess();
+    if(needsInviteSetup(cloudSession?.user)){openAuthDialog('invite');return;}
+    await loadWorkspaces();
+  }catch(error){
+    const message=/Unexpected token|valid JSON|Failed to fetch|NetworkError/i.test(String(error?.message||error))
+      ? 'Atlas Cloud could not be reached. Check your internet connection and try again.'
+      : (error?.message||'Sign in failed. Please try again.');
+    setAuthMessage(message,'error');
+  }
 }
 async function createAccount(){
   if(!cloudClient){setAuthMessage('Atlas Cloud connection is not configured.','error');return;}
