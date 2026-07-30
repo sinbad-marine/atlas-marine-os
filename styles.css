@@ -95,10 +95,24 @@ body.authenticated .public-gateway{display:none}
 .cinematic-intro{position:fixed;inset:0;z-index:1000;background:#01040a;overflow:hidden;opacity:1;visibility:visible;transition:opacity 3s cubic-bezier(.4,0,.2,1),visibility 3s}
 .cinematic-intro.finished{opacity:0;visibility:hidden;pointer-events:none}
 #introCanvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-.intro-brand{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);width:min(920px,92vw);text-align:center;opacity:0;color:#f7f0df;text-shadow:0 5px 26px rgba(0,0,0,.8);pointer-events:none}
+.intro-brand{position:absolute;left:50%;top:64%;transform:translate(-50%,-50%);width:min(920px,92vw);text-align:center;opacity:0;color:#f7f0df;text-shadow:0 5px 26px rgba(0,0,0,.8);pointer-events:none}
 .intro-brand.visible{opacity:1}
-.sinbad-hero{position:absolute;left:50%;bottom:-18px;z-index:0;width:clamp(230px,31vw,420px);height:auto;opacity:0;filter:drop-shadow(0 22px 28px rgba(0,0,0,.72));transform:translate(-50%,-72vh) scale(.82)}
-.intro-brand.visible .sinbad-hero{animation:sinbadDescend .95s 1.25s cubic-bezier(.18,.78,.24,1) forwards}
+.intro-character-stage{position:absolute;left:50%;bottom:-34px;z-index:0;width:clamp(230px,31vw,410px);aspect-ratio:360/520;opacity:0;filter:drop-shadow(0 22px 28px rgba(0,0,0,.65));transform:translate(-50%,-70vh) scale(.84)}
+.intro-sinbad{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.intro-brand.visible .intro-character-stage{animation:sinbadDescend 1.15s 1.25s cubic-bezier(.18,.78,.24,1) forwards}
+.sinbad-arm{transform-box:view-box}
+.sinbad-arm-left{transform-origin:132px 278px}.sinbad-arm-right{transform-origin:228px 278px}
+.intro-brand.visible .sinbad-arm-left{animation:crossLeftArm 1.25s 2.35s cubic-bezier(.34,.03,.2,1) forwards}
+.intro-brand.visible .sinbad-arm-right{animation:crossRightArm 1.25s 2.35s cubic-bezier(.34,.03,.2,1) forwards}
+.intro-brand.visible .sinbad-eyes{transform-box:fill-box;transform-origin:center;animation:sinbadBlink 4.1s 2.6s ease-in-out infinite}
+.intro-brand.visible .sinbad-brow{animation:sinbadBrow 1.1s 3.2s ease forwards}
+.intro-brand.visible .sinbad-smile{transform-box:fill-box;transform-origin:center;animation:sinbadSmile 1.15s 3.1s ease forwards}
+.raven-flight{position:absolute;left:13%;top:37%;width:36%;opacity:0;transform:translate(-74vw,-31vh) rotate(-14deg) scale(.62)}
+.raven-flight svg{width:100%;overflow:visible}
+.intro-brand.visible .raven-flight{animation:ravenArrive 2.15s 1.85s cubic-bezier(.25,.62,.3,1) forwards}
+.raven-wing{transform-box:fill-box;transform-origin:center}
+.intro-brand.visible .raven-wing-left{animation:ravenWingLeft .24s 1.85s ease-in-out 8 alternate}
+.intro-brand.visible .raven-wing-right{animation:ravenWingRight .24s 1.85s ease-in-out 8 alternate}
 .intro-word{position:relative;z-index:2;display:flex;justify-content:center;align-items:flex-end;gap:clamp(2px,1.3vw,18px);font-family:Georgia,'Times New Roman',serif;font-size:clamp(58px,10vw,132px);font-weight:900;line-height:.84;letter-spacing:.02em}
 .intro-letter{display:inline-block;opacity:0;color:#79d4f2;background:linear-gradient(180deg,#ffffff 0%,#edfaff 13%,#aee9f7 29%,#45b9df 51%,#0875a9 75%,#03436d 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 2px 0 #dffaff) drop-shadow(0 5px 0 #3b9ac2) drop-shadow(0 9px 0 #12577e) drop-shadow(0 15px 12px rgba(0,8,18,.72));transform:translateY(-72vh) rotate(-4deg)}
 .intro-brand.visible .intro-letter{animation:sinbadLetterDrop .62s calc(var(--i)*.16s) cubic-bezier(.2,.82,.26,1.08) forwards}
@@ -113,6 +127,14 @@ body.authenticated .public-gateway{display:none}
 .replay-intro{margin-top:12px}
 @keyframes sinbadLetterDrop{0%{opacity:0;transform:translateY(-72vh) rotate(-4deg)}76%{opacity:1;transform:translateY(6px) rotate(1deg)}100%{opacity:1;transform:translateY(0) rotate(0)}}
 @keyframes sinbadDescend{0%{opacity:0;transform:translate(-50%,-72vh) scale(.82)}72%{opacity:1;transform:translate(-50%,8px) scale(1.02)}100%{opacity:1;transform:translate(-50%,0) scale(1)}}
+@keyframes crossLeftArm{0%{transform:rotate(0)}62%{transform:rotate(-116deg)}100%{transform:rotate(-110deg)}}
+@keyframes crossRightArm{0%{transform:rotate(0)}62%{transform:rotate(116deg)}100%{transform:rotate(110deg)}}
+@keyframes sinbadBlink{0%,42%,48%,100%{transform:scaleY(1)}45%,46%{transform:scaleY(.08)}}
+@keyframes sinbadBrow{from{transform:translateY(0)}to{transform:translateY(-3px)}}
+@keyframes sinbadSmile{from{transform:scale(.82,.45)}to{transform:scale(1,1)}}
+@keyframes ravenArrive{0%{opacity:0;transform:translate(-74vw,-31vh) rotate(-14deg) scale(.62)}12%{opacity:1}68%{transform:translate(-5vw,-8vh) rotate(7deg) scale(.9)}86%{transform:translate(7px,-8px) rotate(-5deg) scale(1.03)}100%{opacity:1;transform:translate(0,0) rotate(0) scale(1)}}
+@keyframes ravenWingLeft{from{transform:rotate(8deg)}to{transform:rotate(-34deg)}}
+@keyframes ravenWingRight{from{transform:rotate(-8deg)}to{transform:rotate(34deg)}}
 @keyframes sinbadMarineReveal{from{opacity:0;transform:translateY(20px);filter:blur(5px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
 @media(prefers-reduced-motion:reduce){.cinematic-intro{display:none}.public-gateway{animation:none!important}}
 .public-gateway{min-height:100vh;display:grid;place-items:center;padding:28px;position:relative;overflow:hidden;background:

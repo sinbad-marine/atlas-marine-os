@@ -552,28 +552,55 @@ async function createAccount(){
   }
 }
 async function completeInviteAccount(){
-  if(!cloudClient || !cloudSession?.user){
-    setAuthMessage('The invitation session is missing or expired. Open the newest invitation email again.','error');
-    return;
+  try{
+    if(!cloudClient){
+      setAuthMessage('Atlas Cloud connection is not configured.','error');
+      return;
+    }
+    const name=String($('inviteDisplayName').value||'').trim();
+    const password=String($('invitePassword').value||'').normalize('NFKC');
+    const confirmPassword=String($('invitePasswordConfirm').value||'').normalize('NFKC');
+    if(!name){setAuthMessage('Enter your full name.','error');return;}
+    if(password.length<8){setAuthMessage('Password must be at least 8 characters.','error');return;}
+    if(password!==confirmPassword){setAuthMessage('Passwords do not match.','error');return;}
+
+    setAuthMessage('Checking your invitation session…');
+    const {data:sessionData,error:sessionError}=await cloudClient.auth.getSession();
+    if(sessionError)throw sessionError;
+    const activeSession=sessionData?.session||cloudSession;
+    if(!activeSession?.user){
+      setAuthMessage('The invitation link is missing or expired. Open the newest invitation email and try again.','error');
+      return;
+    }
+    cloudSession=activeSession;
+
+    // Password and profile metadata are updated separately. Some browsers
+    // reject the combined invitation payload with a DOM pattern error.
+    setAuthMessage('Creating your secure password…');
+    const {data:passwordData,error:passwordError}=await cloudClient.auth.updateUser({password});
+    if(passwordError)throw passwordError;
+
+    setAuthMessage('Saving your captain profile…');
+    const {data:profileData,error:profileError}=await cloudClient.auth.updateUser({
+      data:{display_name:name,sinbad_account_ready:true}
+    });
+    const finalUser=profileData?.user||passwordData?.user||activeSession.user;
+    cloudSession={...activeSession,user:finalUser};
+    pendingInviteSetup=false;
+    sessionStorage.removeItem('sinbad_pending_invite_setup');
+    setAppAccess();
+    await loadWorkspaces();
+    setAuthMessage(
+      profileError
+        ? 'Password created. Your profile name can be completed later.'
+        : 'Account completed. Welcome aboard.',
+      'success'
+    );
+  }catch(error){
+    console.error('Invitation setup failed',error);
+    const message=error?.message||String(error||'Unknown invitation error');
+    setAuthMessage(`Account setup could not be completed: ${message}`,'error');
   }
-  const name=$('inviteDisplayName').value.trim();
-  const password=$('invitePassword').value;
-  const confirmPassword=$('invitePasswordConfirm').value;
-  if(!name){setAuthMessage('Enter your full name.','error');return;}
-  if(password.length<8){setAuthMessage('Password must be at least 8 characters.','error');return;}
-  if(password!==confirmPassword){setAuthMessage('Passwords do not match.','error');return;}
-  setAuthMessage('Completing your account…');
-  const {data,error}=await cloudClient.auth.updateUser({
-    password,
-    data:{display_name:name,sinbad_account_ready:true}
-  });
-  if(error){setAuthMessage(error.message,'error');return;}
-  cloudSession={...cloudSession,user:data.user};
-  pendingInviteSetup=false;
-  sessionStorage.removeItem('sinbad_pending_invite_setup');
-  setAppAccess();
-  await loadWorkspaces();
-  setAuthMessage('Account completed. Welcome aboard.','success');
 }
 async function requestRecoveryCode(){
   if(!cloudClient){setAuthMessage('Atlas Cloud connection is not configured.','error');return;}
