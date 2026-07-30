@@ -211,19 +211,43 @@ starImage.src = "./nasa-deep-star-map.jpg";
     ctx.fillStyle=night;ctx.fillRect(cx-radius,cy-radius,radius*2,radius*2);
     ctx.restore();
 
-    for(let i=4;i>0;i--){
-      ctx.strokeStyle=`rgba(83,189,240,${.035*i})`;
-      ctx.lineWidth=i*3.2;
-      ctx.beginPath();ctx.arc(cx,cy,radius+i*.6,0,Math.PI*2);ctx.stroke();
-    }
-    ctx.strokeStyle="rgba(191,230,247,.72)";
-    ctx.lineWidth=1.1;ctx.beginPath();ctx.arc(cx,cy,radius,0,Math.PI*2);ctx.stroke();
+    // A physically restrained atmosphere: no concentric neon rings.
+    // The sun is upper-left, so scattering is strongest only on that limb.
+    const lightAngle=Math.atan2(height*.31-cy,width*.04-cx);
+    ctx.save();
+    ctx.globalCompositeOperation="lighter";
+    ctx.lineCap="round";
 
-    const rim=ctx.createRadialGradient(cx-radius*.12,cy-radius*.1,radius*.86,cx,cy,radius*1.13);
-    rim.addColorStop(0,"rgba(0,0,0,0)");
-    rim.addColorStop(.83,"rgba(0,0,0,0)");
-    rim.addColorStop(1,"rgba(70,177,234,.18)");
-    ctx.fillStyle=rim;ctx.beginPath();ctx.arc(cx,cy,radius*1.13,0,Math.PI*2);ctx.fill();
+    ctx.shadowColor="rgba(83,178,226,.24)";
+    ctx.shadowBlur=Math.max(5,radius*.025);
+    ctx.strokeStyle="rgba(105,190,230,.16)";
+    ctx.lineWidth=Math.max(.7,radius*.0045);
+    ctx.beginPath();
+    ctx.arc(cx,cy,radius+.35,lightAngle-1.42,lightAngle+1.42);
+    ctx.stroke();
+
+    ctx.shadowColor="rgba(190,230,246,.28)";
+    ctx.shadowBlur=Math.max(3,radius*.012);
+    ctx.strokeStyle="rgba(205,235,247,.34)";
+    ctx.lineWidth=Math.max(.55,radius*.0026);
+    ctx.beginPath();
+    ctx.arc(cx,cy,radius+.15,lightAngle-.92,lightAngle+.92);
+    ctx.stroke();
+
+    // Very subtle warm scattering at the point closest to the sun.
+    ctx.shadowColor="rgba(255,205,145,.16)";
+    ctx.shadowBlur=Math.max(2,radius*.008);
+    ctx.strokeStyle="rgba(255,224,181,.18)";
+    ctx.lineWidth=Math.max(.45,radius*.0018);
+    ctx.beginPath();
+    ctx.arc(cx,cy,radius+.05,lightAngle-.28,lightAngle+.28);
+    ctx.stroke();
+    ctx.restore();
+
+    // A barely visible hairline keeps the night-side silhouette crisp.
+    ctx.strokeStyle="rgba(104,166,196,.09)";
+    ctx.lineWidth=Math.max(.35,radius*.0012);
+    ctx.beginPath();ctx.arc(cx,cy,radius,0,Math.PI*2);ctx.stroke();
   }
 
   function drawUnfoldedChart(cx,cy,progress,time) {
