@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.15.7-correct-supabase-url';
+const CACHE='sinbad-marine-v8.15.8-connection-diagnostics';
 const ASSETS=[
   './',
   './index.html',

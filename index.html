@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#071827">
 <title>Sinbad Marine</title>
-<link rel="manifest" href="./manifest.webmanifest?v=8155">
+<link rel="manifest" href="./manifest.webmanifest?v=8158">
 <link rel="apple-touch-icon" href="./icon-192.png?v=8155">
-<link rel="stylesheet" href="./styles.css?v=8155">
+<link rel="stylesheet" href="./styles.css?v=8158">
 </head>
 <body class="auth-pending">
 <section id="publicGateway" class="public-gateway" aria-live="polite">
@@ -20,7 +20,9 @@
     <div class="gateway-auth-actions">
       <button class="btn primary gateway-signin" id="openCaptainSignIn">Member Sign In</button>
       <button class="btn gateway-signin" id="openRegistration" type="button">Create Account</button>
+      <button class="btn gateway-signin" id="checkCloudBeforeSignIn" type="button">Check Cloud Connection</button>
     </div>
+    <p id="publicCloudDiagnostic" class="auth-message" role="status"></p>
     <small>Navigate Smarter. Command Better.</small>
   </div>
 </section>
@@ -96,7 +98,7 @@
 <div class="brand"><div class="logo">⚓</div><div><h1>SINBAD MARINE</h1><small>Özgür Maceraperest Dostlar • Navigate Smarter. Command Better.</small></div></div>
   <div class="topbar-account-actions">
     <button class="account-password-button" id="openAccountPassword" type="button">Account &amp; Password</button>
-    <div class="version">● v8.15.7</div>
+    <div class="version">● v8.15.8</div>
   </div>
 </header>
 
@@ -599,9 +601,9 @@ Captain Sinbad uses local Sinbad Marine data and keyword intelligence. Secure cl
 <footer>Sinbad Marine • Secure Marine Command Platform • One Bridge. Every Operation.</footer>
 
 
-<script src="./pilot-data.js?v=8157"></script>
-<script src="./route-data.js?v=8157"></script>
+<script src="./pilot-data.js?v=8158"></script>
+<script src="./route-data.js?v=8158"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="./app.js?v=8157"></script>
+<script src="./app.js?v=8158"></script>
 </body>
 </html>

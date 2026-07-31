@@ -536,6 +536,35 @@ function initCloudClient(){
     cloudClient=null; updateCloudStatus(error.message); return null;
   }
 }
+async function diagnosePublicCloudConnection(){
+  const output=$('publicCloudDiagnostic');
+  const {url,key}=getCloudConfig();
+  output.textContent='Checking the secure Atlas Cloud connection…';
+  output.className='auth-message';
+  if(!url || !key){
+    output.textContent='Cloud configuration is missing.';
+    output.className='auth-message error';
+    return false;
+  }
+  try{
+    const response=await fetch(`${url}/auth/v1/settings`,{
+      method:'GET',
+      headers:{apikey:key,Authorization:`Bearer ${key}`},
+      cache:'no-store'
+    });
+    const raw=await response.text();
+    let detail='';
+    try{detail=JSON.parse(raw)?.message||'';}catch(_error){}
+    if(!response.ok)throw new Error(detail||`Supabase returned HTTP ${response.status}.`);
+    output.textContent='Atlas Cloud is reachable and ready. You may sign in.';
+    output.className='auth-message success';
+    return true;
+  }catch(error){
+    output.textContent=`Atlas Cloud check failed: ${error?.message||'Network request failed.'}`;
+    output.className='auth-message error';
+    return false;
+  }
+}
 function updateCloudStatus(error=''){
   const cfg=getCloudConfig();
   $('cloudConnectionStatus').textContent=error ? 'Configuration error' : (cloudClient?'Configured':'Not configured');
@@ -605,7 +634,7 @@ async function gatewaySignIn(){
     await loadWorkspaces();
   }catch(error){
     const message=/Unexpected token|valid JSON|Failed to fetch|NetworkError/i.test(String(error?.message||error))
-      ? 'Atlas Cloud could not be reached. Check your internet connection and try again.'
+      ? 'Atlas Cloud could not be reached. Close this window and use “Check Cloud Connection” to see the exact connection result.'
       : (error?.message||'Sign in failed. Please try again.');
     setAuthMessage(message,'error');
   }
@@ -1478,6 +1507,7 @@ $('openCaptainSignIn').addEventListener('click',()=>{
   openAuthDialog('signin');
 });
 $('openRegistration').addEventListener('click',()=>openAuthDialog('registration'));
+$('checkCloudBeforeSignIn')?.addEventListener('click',diagnosePublicCloudConnection);
 $('openAccountPassword')?.addEventListener('click',()=>{
   pendingInviteSetup=true;
   sessionStorage.setItem('sinbad_pending_invite_setup','1');
