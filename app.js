@@ -209,6 +209,7 @@ const sinbadState = {
   language: localStorage.getItem('atlas_sinbad_language') || 'tr-TR'
 };
 let pendingSinbadWebQuestion='';
+const SINBAD_WEB_SEARCH_ENABLED=false;
 const SINBAD_WEB_TEXT={
  'tr-TR':{ask:'Atlas Cloud hafızamda bu soruya yetecek bilgi yok. Herkese açık web kaynaklarında arama yapmama izin veriyor musunuz?',result:'Web arama sonucu',denied:'Web araması yapılmadı.'},
  'en-US':{ask:'My Atlas Cloud memory does not contain enough information. May I search public web sources?',result:'Web search result',denied:'The web search was not performed.'},
@@ -220,8 +221,11 @@ const SINBAD_WEB_TEXT={
  'it-IT':{ask:'Atlas Cloud non contiene informazioni sufficienti. Autorizza la ricerca sul web pubblico?',result:'Risultato della ricerca web',denied:'La ricerca web non è stata eseguita.'}
 };
 function requestSinbadWebPermission(question){
-  pendingSinbadWebQuestion=question;const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];
-  $('sinbadWebConsentText').textContent=copy.ask;$('sinbadWebConsent').classList.remove('hidden');return copy.ask;
+  if(!SINBAD_WEB_SEARCH_ENABLED){
+    pendingSinbadWebQuestion='';$('sinbadWebConsent')?.classList.add('hidden');
+    return {'tr-TR':'Sinbad yalnızca onaylı Atlas Cloud denizcilik kütüphanesini kullanıyor. Bu konu için yeterli kaynak yok; ilgili kitabı veya belgeyi kütüphaneye yükleyin.','en-US':'Sinbad uses only the approved Atlas Cloud marine library. There is not enough material for this topic; upload the relevant book or document.','ru-RU':'Синбад использует только утверждённую морскую библиотеку Atlas Cloud. Загрузите соответствующую книгу или документ.','fr-FR':'Sinbad utilise uniquement la bibliothèque maritime Atlas Cloud approuvée. Chargez le livre ou document correspondant.','de-DE':'Sinbad verwendet nur die freigegebene Atlas-Cloud-Seefahrtsbibliothek. Laden Sie das passende Buch oder Dokument hoch.','ar-SA':'يستخدم سندباد مكتبة Atlas Cloud البحرية المعتمدة فقط. حمّل الكتاب أو الوثيقة ذات الصلة.','es-ES':'Sinbad usa únicamente la biblioteca marítima aprobada de Atlas Cloud. Cargue el libro o documento correspondiente.','it-IT':'Sinbad utilizza solo la biblioteca marittima Atlas Cloud approvata. Carichi il libro o documento pertinente.'}[sinbadState.language]||'Sinbad uses only the approved Atlas Cloud marine library. Upload the relevant source.';
+  }
+  pendingSinbadWebQuestion=question;const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];$('sinbadWebConsentText').textContent=copy.ask;$('sinbadWebConsent').classList.remove('hidden');return copy.ask;
 }
 
 function setSinbadVoiceUI(){
