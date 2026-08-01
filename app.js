@@ -1,6 +1,30 @@
 
 
 const $=id=>document.getElementById(id);
+const APP_LANGUAGES=[['tr-TR','Türkçe'],['en-US','English'],['ru-RU','Русский'],['fr-FR','Français'],['de-DE','Deutsch'],['ar-SA','العربية'],['es-ES','Español'],['it-IT','Italiano']];
+const APP_I18N={
+ 'tr-TR':{gatewayTitle:'Sinbad Marine şu anda geliştiriliyor.',gatewayText:'Güvenli denizcilik zekâsı ve yat operasyon platformumuz kullanıma hazırlanıyor.',signIn:'Üye Girişi',createAccount:'Hesap Oluştur',checkCloud:'Bulut Bağlantısını Kontrol Et',heroTitle:'Tek Köprü. Tüm Operasyonlar.'},
+ 'en-US':{gatewayTitle:'Sinbad Marine is currently under development.',gatewayText:'Our secure marine intelligence and yacht operations platform is being prepared for launch.',signIn:'Member Sign In',createAccount:'Create Account',checkCloud:'Check Cloud Connection',heroTitle:'One Bridge. Every Operation.'},
+ 'ru-RU':{gatewayTitle:'Sinbad Marine находится в разработке.',gatewayText:'Наша защищённая платформа морской аналитики и управления яхтой готовится к запуску.',signIn:'Войти',createAccount:'Создать аккаунт',checkCloud:'Проверить облако',heroTitle:'Один мостик. Все операции.'},
+ 'fr-FR':{gatewayTitle:'Sinbad Marine est en cours de développement.',gatewayText:'Notre plateforme sécurisée de renseignement maritime et de gestion de yacht est en préparation.',signIn:'Connexion membre',createAccount:'Créer un compte',checkCloud:'Tester le cloud',heroTitle:'Une passerelle. Toutes les opérations.'},
+ 'de-DE':{gatewayTitle:'Sinbad Marine wird derzeit entwickelt.',gatewayText:'Unsere sichere Plattform für maritime Informationen und Yachtbetrieb wird vorbereitet.',signIn:'Mitglieder-Login',createAccount:'Konto erstellen',checkCloud:'Cloud prüfen',heroTitle:'Eine Brücke. Alle Abläufe.'},
+ 'ar-SA':{gatewayTitle:'يجري حاليًا تطوير Sinbad Marine.',gatewayText:'يتم إعداد منصتنا الآمنة للمعلومات البحرية وعمليات اليخوت للإطلاق.',signIn:'دخول الأعضاء',createAccount:'إنشاء حساب',checkCloud:'فحص الاتصال السحابي',heroTitle:'جسر واحد. كل العمليات.'},
+ 'es-ES':{gatewayTitle:'Sinbad Marine está actualmente en desarrollo.',gatewayText:'Nuestra plataforma segura de inteligencia marítima y operaciones de yates se está preparando.',signIn:'Acceso de miembros',createAccount:'Crear cuenta',checkCloud:'Comprobar la nube',heroTitle:'Un puente. Todas las operaciones.'},
+ 'it-IT':{gatewayTitle:'Sinbad Marine è attualmente in fase di sviluppo.',gatewayText:'La nostra piattaforma sicura per intelligence marittima e gestione yacht è in preparazione.',signIn:'Accesso membri',createAccount:'Crea account',checkCloud:'Controlla il cloud',heroTitle:'Un ponte. Tutte le operazioni.'}
+};
+let appLanguage=localStorage.getItem('atlas_app_language')||'tr-TR';
+function applyAppLanguage(language){
+  appLanguage=APP_I18N[language]?language:'en-US';localStorage.setItem('atlas_app_language',appLanguage);
+  document.documentElement.lang=appLanguage.split('-')[0];document.documentElement.dir=appLanguage.startsWith('ar')?'rtl':'ltr';
+  document.querySelectorAll('[data-i18n]').forEach(element=>{const value=APP_I18N[appLanguage][element.dataset.i18n];if(value)element.textContent=value;});
+  document.querySelectorAll('.app-language').forEach(select=>select.value=appLanguage);
+}
+function setupAppLanguages(){
+  const options=APP_LANGUAGES.map(([value,label])=>`<option value="${value}">${label}</option>`).join('');
+  document.querySelectorAll('.app-language').forEach(select=>{select.innerHTML=options;select.addEventListener('change',event=>applyAppLanguage(event.target.value));});
+  applyAppLanguage(appLanguage);
+}
+setupAppLanguages();
 const get=k=>JSON.parse(localStorage.getItem(k)||'[]');
 const set=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
@@ -180,8 +204,41 @@ if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWork
 
 
 const sinbadState = {
-  messages: JSON.parse(localStorage.getItem('atlas_sinbad_messages') || '[]')
+  messages: JSON.parse(localStorage.getItem('atlas_sinbad_messages') || '[]'),
+  voiceEnabled: localStorage.getItem('atlas_sinbad_voice') !== 'off',
+  language: localStorage.getItem('atlas_sinbad_language') || 'tr-TR'
 };
+let pendingSinbadWebQuestion='';
+const SINBAD_WEB_TEXT={
+ 'tr-TR':{ask:'Atlas Cloud hafızamda bu soruya yetecek bilgi yok. Herkese açık web kaynaklarında arama yapmama izin veriyor musunuz?',result:'Web arama sonucu',denied:'Web araması yapılmadı.'},
+ 'en-US':{ask:'My Atlas Cloud memory does not contain enough information. May I search public web sources?',result:'Web search result',denied:'The web search was not performed.'},
+ 'ru-RU':{ask:'В Atlas Cloud недостаточно информации. Разрешить поиск в открытых источниках?',result:'Результат веб-поиска',denied:'Веб-поиск не выполнен.'},
+ 'fr-FR':{ask:'Atlas Cloud ne contient pas assez d’informations. Autorisez-vous une recherche sur le web public ?',result:'Résultat de recherche web',denied:'La recherche web n’a pas été effectuée.'},
+ 'de-DE':{ask:'Atlas Cloud enthält nicht genügend Informationen. Darf ich im öffentlichen Web suchen?',result:'Web-Suchergebnis',denied:'Die Websuche wurde nicht durchgeführt.'},
+ 'ar-SA':{ask:'لا تحتوي ذاكرة Atlas Cloud على معلومات كافية. هل تسمح لي بالبحث في الويب العام؟',result:'نتيجة بحث الويب',denied:'لم يتم إجراء بحث على الويب.'},
+ 'es-ES':{ask:'Atlas Cloud no contiene suficiente información. ¿Permite buscar en la web pública?',result:'Resultado de búsqueda web',denied:'No se realizó la búsqueda web.'},
+ 'it-IT':{ask:'Atlas Cloud non contiene informazioni sufficienti. Autorizza la ricerca sul web pubblico?',result:'Risultato della ricerca web',denied:'La ricerca web non è stata eseguita.'}
+};
+function requestSinbadWebPermission(question){
+  pendingSinbadWebQuestion=question;const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];
+  $('sinbadWebConsentText').textContent=copy.ask;$('sinbadWebConsent').classList.remove('hidden');return copy.ask;
+}
+
+function setSinbadVoiceUI(){
+  const button=$('toggleSinbadVoice');if(!button)return;
+  button.textContent=sinbadState.voiceEnabled?'🔊 Voice: On':'🔇 Voice: Off';
+  button.setAttribute('aria-pressed',String(sinbadState.voiceEnabled));
+}
+function speakSinbad(text){
+  if(!sinbadState.voiceEnabled||!('speechSynthesis'in window))return;
+  speechSynthesis.cancel();
+  const utterance=new SpeechSynthesisUtterance(String(text).replace(/[•*_#]/g,' '));
+  const voices=speechSynthesis.getVoices();
+  const languageRoot=sinbadState.language.split('-')[0];
+  utterance.voice=voices.find(v=>v.lang.toLowerCase()===sinbadState.language.toLowerCase())||voices.find(v=>v.lang.toLowerCase().startsWith(languageRoot))||voices.find(v=>/^en[-_]/i.test(v.lang))||null;
+  utterance.lang=utterance.voice?.lang||sinbadState.language;utterance.rate=.96;utterance.pitch=.92;
+  speechSynthesis.speak(utterance);
+}
 
 
 function saveSinbadMessages(){
@@ -209,6 +266,11 @@ function addSinbadMessage(role,text){
 }
 async function sinbadLocalAnswer(query){
   const q=query.toLowerCase();
+  const language=sinbadState.language||appLanguage;
+  const greetings={'tr-TR':'Merhaba Kaptan. Sinbad aktif. Rotalar, denizcilik yayınları, belgeler, haritalar ve tekne operasyonları hakkında bana soru sorabilirsiniz.','en-US':'Hello Captain. Sinbad is active. Ask me about routes, marine publications, documents, charts, or yacht operations.','ru-RU':'Здравствуйте, капитан. Синбад активен. Спросите меня о маршрутах, морских изданиях, документах, картах или эксплуатации яхты.','fr-FR':'Bonjour Capitaine. Sinbad est actif. Interrogez-moi sur les routes, publications maritimes, documents, cartes ou opérations du yacht.','de-DE':'Hallo Kapitän. Sinbad ist aktiv. Fragen Sie mich zu Routen, nautischen Publikationen, Dokumenten, Karten oder Yachtbetrieb.','ar-SA':'مرحباً أيها القبطان. سندباد نشط. اسألني عن المسارات أو المنشورات البحرية أو الوثائق أو الخرائط أو عمليات اليخت.','es-ES':'Hola Capitán. Sinbad está activo. Pregúnteme sobre rutas, publicaciones marítimas, documentos, cartas u operaciones del yate.','it-IT':'Salve Capitano. Sinbad è attivo. Mi chieda informazioni su rotte, pubblicazioni nautiche, documenti, carte o operazioni dello yacht.'};
+  if(/^(slm|selam|merhaba|hello|hi|hey|привет|здрав|bonjour|salut|hallo|guten|مرحبا|السلام|hola|buen|ciao|salve)[!. ]*$/iu.test(q))return greetings[language]||greetings['en-US'];
+  const cloudAnswer=await sinbadCloudKnowledgeAnswer(query);
+  if(cloudAnswer)return cloudAnswer;
   const files=await dbAll();
   const crew=get('atlas_crew');
   const fleet=get('atlas_fleet');
@@ -258,7 +320,8 @@ async function sinbadLocalAnswer(query){
   }
 
 
-  return 'I searched the local Atlas Marine OS data but did not find a strong match. After the secure cloud AI backend is connected, I will also read indexed PDFs, publications, charts and cross-device records.';
+  const noMatch={'tr-TR':'Atlas Marine verilerinde güçlü bir eşleşme bulamadım. İlgili kitabı veya belgeyi Atlas Cloud kitaplığına yükleyin ya da sorunuzu daha ayrıntılı yazın.','en-US':'I did not find a strong match in Atlas Marine data. Upload the relevant book or document to the Atlas Cloud library, or ask a more specific question.','ru-RU':'Я не нашёл точного совпадения в данных Atlas Marine. Загрузите нужную книгу или документ в Atlas Cloud либо уточните вопрос.','fr-FR':'Je n’ai pas trouvé de correspondance précise dans Atlas Marine. Chargez le livre ou document dans Atlas Cloud ou précisez votre question.','de-DE':'Ich habe keine eindeutige Übereinstimmung gefunden. Laden Sie das Buch oder Dokument in Atlas Cloud hoch oder stellen Sie eine genauere Frage.','ar-SA':'لم أجد تطابقاً واضحاً في بيانات Atlas Marine. حمّل الكتاب أو الوثيقة إلى مكتبة Atlas Cloud أو اطرح سؤالاً أكثر تحديداً.','es-ES':'No encontré una coincidencia clara en Atlas Marine. Cargue el libro o documento en Atlas Cloud o formule una pregunta más específica.','it-IT':'Non ho trovato una corrispondenza chiara in Atlas Marine. Carichi il libro o documento in Atlas Cloud oppure formuli una domanda più specifica.'};
+  return noMatch[language]||noMatch['en-US'];
 }
 async function sendToSinbad(text){
   const q=(text||'').trim(); if(!q)return;
@@ -268,13 +331,20 @@ async function sendToSinbad(text){
   setTimeout(async()=>{
     const answer=await sinbadLocalAnswer(q);
     $('sinbadThinking').classList.add('hidden');
-    addSinbadMessage('sinbad',answer);
+    addSinbadMessage('sinbad',answer);speakSinbad(answer);
   },650);
 }
 $('sendSinbad').addEventListener('click',()=>sendToSinbad($('sinbadInput').value));
 $('sinbadInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendToSinbad($('sinbadInput').value)}});
 document.querySelectorAll('.sinbad-prompt').forEach(b=>b.addEventListener('click',()=>sendToSinbad(b.textContent)));
 $('sinbadFloat').addEventListener('click',()=>openWorkspace('sinbad'));
+$('toggleSinbadVoice')?.addEventListener('click',()=>{sinbadState.voiceEnabled=!sinbadState.voiceEnabled;localStorage.setItem('atlas_sinbad_voice',sinbadState.voiceEnabled?'on':'off');setSinbadVoiceUI();if(!sinbadState.voiceEnabled)window.speechSynthesis?.cancel();});
+$('stopSinbadVoice')?.addEventListener('click',()=>window.speechSynthesis?.cancel());
+$('sinbadLanguage').value=sinbadState.language;
+$('sinbadLanguage')?.addEventListener('change',e=>{sinbadState.language=e.target.value;localStorage.setItem('atlas_sinbad_language',e.target.value);window.speechSynthesis?.cancel();});
+$('allowSinbadWebSearch')?.addEventListener('click',performSinbadWebSearch);
+$('denySinbadWebSearch')?.addEventListener('click',()=>{pendingSinbadWebQuestion='';$('sinbadWebConsent').classList.add('hidden');const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];addSinbadMessage('sinbad',copy.denied);});
+setSinbadVoiceUI();
 
 
 const originalRenderAll = renderAll;
@@ -898,28 +968,101 @@ async function runSecurityCheck(){
   checks.push(!/secret|service_role/i.test(cfg.key)?'✓ No obvious server secret stored':'✗ Dangerous key detected');
   $('securityCheckResult').textContent=checks.join(' • ');
 }
+const KNOWLEDGE_CHUNK_SIZE=12000;
+function classifyDocument(name,text,bucket){
+  const source=`${name} ${text.slice(0,60000)}`.toLowerCase();
+  const rules=[['SOLAS','solas|safety of life at sea'],['MARPOL','marpol|pollution prevention'],['COLREG','colreg|collision regulations'],['STCW','stcw|watchkeeping'],['ISM / Safety Management','ism code|safety management system'],['Navigation','navigation|passage plan|sailing direction|pilot book'],['Engineering','engine|machinery|generator|hydraulic'],['Yacht Operations','yacht|marina|anchorage|charter']];
+  const match=rules.find(([,pattern])=>new RegExp(pattern,'i').test(source));
+  return match?.[0]||(bucket==='nautical-charts'?'Nautical Chart':bucket==='nautical-publications'?'Nautical Publication':'General Document');
+}
+async function extractDocumentText(file,onProgress=()=>{}){
+  const name=file.name.toLowerCase();
+  if(file.size>50*1024*1024)throw new Error('This file is larger than the current 50 MB cloud limit.');
+  if(file.type.startsWith('text/')||/\.(txt|md|csv|json|xml)$/i.test(name))return (await file.text()).slice(0,4000000);
+  if(/\.docx$/i.test(name)){
+    if(!window.mammoth)throw new Error('DOCX reader could not be loaded.');
+    return (await mammoth.extractRawText({arrayBuffer:await file.arrayBuffer()})).value.slice(0,4000000);
+  }
+  if(file.type==='application/pdf'||/\.pdf$/i.test(name)){
+    const pdfjs=await import('https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs');
+    pdfjs.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs';
+    const pdf=await pdfjs.getDocument({data:await file.arrayBuffer()}).promise,pages=[];
+    for(let pageNo=1;pageNo<=pdf.numPages;pageNo++){
+      onProgress(`Reading PDF page ${pageNo}/${pdf.numPages}…`);
+      const content=await (await pdf.getPage(pageNo)).getTextContent();pages.push(`[Page ${pageNo}]\n${content.items.map(item=>item.str).join(' ')}`);
+      if(pages.reduce((n,p)=>n+p.length,0)>=4000000)break;
+    }
+    return pages.join('\n\n').slice(0,4000000);
+  }
+  if(file.type.startsWith('image/')||/\.(jpg|jpeg|png|webp|tif|tiff)$/i.test(name)){
+    if(!window.Tesseract)throw new Error('Image OCR reader could not be loaded.');
+    const result=await Tesseract.recognize(file,'eng+tur',{logger:m=>{if(m.status)onProgress(`OCR: ${m.status} ${Math.round((m.progress||0)*100)}%`);}});
+    return (result.data?.text||'').slice(0,4000000);
+  }
+  throw new Error('Unsupported file type. Use PDF, DOCX, text or an image.');
+}
+async function saveDocumentKnowledge(documentId,file,text,bucket){
+  const classification=classifyDocument(file.name,text,bucket),summary=text.replace(/\s+/g,' ').trim().slice(0,1200)||`${file.name} contains no machine-readable text.`;
+  const {data:knowledge,error}=await cloudClient.from('document_knowledge').upsert({workspace_id:selectedWorkspaceId,document_id:documentId,title:file.name,classification,summary,language:/[çğıöşü]/i.test(text.slice(0,50000))?'tr':'en',source_mime_type:file.type||null,character_count:text.length,index_status:text?'ready':'metadata_only',indexed_by:cloudSession.user.id,indexed_at:new Date().toISOString()},{onConflict:'workspace_id,document_id'}).select('id').single();
+  if(error)throw error;
+  await cloudClient.from('document_knowledge_chunks').delete().eq('knowledge_id',knowledge.id);
+  const chunks=[];for(let i=0;i<text.length;i+=KNOWLEDGE_CHUNK_SIZE)chunks.push({knowledge_id:knowledge.id,chunk_index:chunks.length,content:text.slice(i,i+KNOWLEDGE_CHUNK_SIZE)});
+  for(let i=0;i<chunks.length;i+=50){const {error:chunkError}=await cloudClient.from('document_knowledge_chunks').insert(chunks.slice(i,i+50));if(chunkError)throw chunkError;}
+  return {classification,chunks:chunks.length};
+}
+async function sinbadCloudKnowledgeAnswer(question){
+  if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId)return null;
+  const status=$('sinbadKnowledgeStatus');if(status)status.textContent='Searching Atlas Cloud…';
+  try{
+    const language=sinbadState.language||appLanguage;
+    const {data:aiData,error:aiError}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language}});
+    if(!aiError&&aiData?.answer){if(status)status.textContent='Atlas Cloud AI active';return aiData.answer;}
+    if(!aiError&&aiData?.needsWebPermission)return requestSinbadWebPermission(question);
+    const terms=question.toLocaleLowerCase(language).normalize('NFKD').replace(/[^a-z0-9çğıöşüа-яёء-ي ]/gi,' ').split(/\s+/).filter(x=>x.length>2).slice(0,8);if(!terms.length)return null;
+    const {data,error}=await cloudClient.from('document_knowledge_chunks').select('content,chunk_index,document_knowledge!inner(title,classification,workspace_id)').eq('document_knowledge.workspace_id',selectedWorkspaceId).ilike('content',`%${terms[0]}%`).limit(12);
+    if(error)throw error;if(!data?.length)return requestSinbadWebPermission(question);
+    const ranked=data.map(row=>({row,score:terms.reduce((n,t)=>n+(row.content.toLocaleLowerCase(language).includes(t)?1:0),0)})).sort((a,b)=>b.score-a.score).slice(0,4);
+    const excerpts=ranked.map(({row})=>{const lower=row.content.toLocaleLowerCase(language),positions=terms.map(t=>lower.indexOf(t)).filter(n=>n>=0),at=positions.length?Math.min(...positions):0;return `• ${row.document_knowledge.title} [${row.document_knowledge.classification}]\n${row.content.slice(Math.max(0,at-180),at+650).replace(/\s+/g,' ').trim()}`;});
+    if(status)status.textContent='Classified cloud archive active';
+    return `Relevant classified Atlas Cloud passages:\n\n${excerpts.join('\n\n')}\n\nVerify critical navigation and safety decisions against the original publication.`;
+  }catch(error){console.warn('Sinbad cloud knowledge unavailable',error);if(status)status.textContent='Atlas Cloud has no matching knowledge';return requestSinbadWebPermission(question);}
+}
+async function performSinbadWebSearch(){
+  const question=pendingSinbadWebQuestion;if(!question)return;$('sinbadWebConsent').classList.add('hidden');pendingSinbadWebQuestion='';
+  $('sinbadThinking').classList.remove('hidden');
+  try{
+    const {data,error}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language:sinbadState.language,allowWebSearch:true}});if(error)throw error;
+    const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];const answer=`${copy.result}:\n\n${data?.answer||'No reliable web result was found.'}`;
+    addSinbadMessage('sinbad',answer);speakSinbad(answer);
+  }catch(error){addSinbadMessage('sinbad',`Web search failed: ${error.message||error}`);}finally{$('sinbadThinking').classList.add('hidden');}
+}
 async function uploadCloudFiles(){
   if(!cloudClient || !cloudSession?.user || !selectedWorkspaceId){$('cloudUploadProgress').textContent='Connect to Atlas Cloud, sign in and select a workspace first.';alert('Connect, sign in and select a workspace first.');return;}
   if(!roleCanManageLibrary()){$('cloudUploadProgress').textContent='Use Library Submissions. Your role cannot publish directly to Atlas Cloud.';return;}
   const files=[...$('cloudFileInput').files]; if(!files.length){alert('Select one or more files.');return;}
   const bucket=$('cloudBucketSelect').value;
   const folder=($('cloudFolderPath').value.trim()||'general').replace(/^\/+|\/+$/g,'').replace(/[^a-zA-Z0-9._/-]+/g,'-');
-  let completed=0;
+  let completed=0;const failures=[];
   for(const file of files){
+    let extractedText='';
+    try{extractedText=await extractDocumentText(file,message=>$('cloudUploadProgress').textContent=`${file.name}: ${message}`);}catch(error){failures.push(`${file.name}: ${error.message}`);continue;}
     $('cloudUploadProgress').textContent=`Uploading ${completed+1}/${files.length}: ${file.name}`;
     const safeName=file.name.replace(/[^a-zA-Z0-9._-]+/g,'-');
     const path=`${selectedWorkspaceId}/${folder}/${Date.now()}-${safeName}`;
     const {error:uploadError}=await cloudClient.storage.from(bucket).upload(path,file,{upsert:false});
-    if(uploadError){$('cloudUploadProgress').textContent=`Upload failed: ${uploadError.message}`;continue;}
-    const {error:metaError}=await cloudClient.from('documents').insert({
+    if(uploadError){failures.push(`${file.name}: upload failed (${uploadError.message})`);continue;}
+    const {data:documentRow,error:metaError}=await cloudClient.from('documents').insert({
       workspace_id:selectedWorkspaceId,bucket_id:bucket,object_path:path,original_filename:file.name,title:file.name,
       mime_type:file.type||null,file_size_bytes:file.size,status:'active',
       classification:bucket==='crew-confidential'?'confidential':'standard',created_by:cloudSession.user.id
-    });
-    if(metaError)$('cloudUploadProgress').textContent=`File uploaded but metadata failed: ${metaError.message}`;
+    }).select('id').single();
+    if(metaError){await cloudClient.storage.from(bucket).remove([path]);failures.push(`${file.name}: catalog failed (${metaError.message})`);continue;}
+    try{await saveDocumentKnowledge(documentRow.id,file,extractedText,bucket);}catch(error){failures.push(`${file.name}: uploaded; knowledge indexing needs setup (${error.message})`);}
     completed++;
   }
   $('cloudUploadProgress').textContent=`✓ ${completed}/${files.length} file(s) uploaded to Atlas Cloud.`; await loadCloudFiles(); await refreshCloudSummary();
+  if(failures.length)$('cloudUploadProgress').textContent+=`\n⚠ ${failures.join('\n⚠ ')}`;
+  $('cloudFileInput').value='';
 }
 async function loadCloudFiles(){
   if(!cloudClient || !selectedWorkspaceId)return;

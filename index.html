@@ -5,22 +5,23 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#071827">
 <title>Sinbad Marine</title>
-<link rel="manifest" href="./manifest.webmanifest?v=8158">
+<link rel="manifest" href="./manifest.webmanifest?v=8160">
 <link rel="apple-touch-icon" href="./icon-192.png?v=8155">
-<link rel="stylesheet" href="./styles.css?v=8158">
+<link rel="stylesheet" href="./styles.css?v=8160">
 </head>
 <body class="auth-pending">
 <section id="publicGateway" class="public-gateway" aria-live="polite">
   <div class="gateway-orbit"></div>
   <div class="gateway-card">
+    <label>🌐 <select id="publicAppLanguage" class="app-language" aria-label="Application language"></select></label>
     <div class="gateway-mark">⚓</div>
     <div class="eyebrow">SINBAD MARINE</div>
-    <h1>Sinbad Marine is currently under development.</h1>
-    <p>Our secure marine intelligence and yacht operations platform is being prepared for launch.</p>
+    <h1 data-i18n="gatewayTitle">Sinbad Marine is currently under development.</h1>
+    <p data-i18n="gatewayText">Our secure marine intelligence and yacht operations platform is being prepared for launch.</p>
     <div class="gateway-auth-actions">
-      <button class="btn primary gateway-signin" id="openCaptainSignIn">Member Sign In</button>
-      <button class="btn gateway-signin" id="openRegistration" type="button">Create Account</button>
-      <button class="btn gateway-signin" id="checkCloudBeforeSignIn" type="button">Check Cloud Connection</button>
+      <button class="btn primary gateway-signin" id="openCaptainSignIn" data-i18n="signIn">Member Sign In</button>
+      <button class="btn gateway-signin" id="openRegistration" type="button" data-i18n="createAccount">Create Account</button>
+      <button class="btn gateway-signin" id="checkCloudBeforeSignIn" type="button" data-i18n="checkCloud">Check Cloud Connection</button>
     </div>
     <p id="publicCloudDiagnostic" class="auth-message" role="status"></p>
     <small>Navigate Smarter. Command Better.</small>
@@ -97,8 +98,9 @@
 <header class="topbar">
 <div class="brand"><div class="logo">⚓</div><div><h1>SINBAD MARINE</h1><small>Özgür Maceraperest Dostlar • Navigate Smarter. Command Better.</small></div></div>
   <div class="topbar-account-actions">
+    <select id="appLanguage" class="app-language" aria-label="Application language"></select>
     <button class="account-password-button" id="openAccountPassword" type="button">Account &amp; Password</button>
-    <div class="version">● v8.15.8</div>
+    <div class="version">● v8.16.0</div>
   </div>
 </header>
 
@@ -107,7 +109,7 @@
 <section class="hero">
   <div>
       <div class="eyebrow">ATLAS CLOUD • CLOUD-FIRST COMMAND PLATFORM</div>
-      <h2>One Bridge. Every Operation.</h2>
+      <h2 data-i18n="heroTitle">One Bridge. Every Operation.</h2>
       <p>Private cloud documents, nautical publications, charts, crew records and Captain Sinbad—available from every authorized device.</p>
     </div>
   <div class="hero-actions">
@@ -399,13 +401,31 @@
         <button type="button" class="btn sinbad-prompt">Review crew expiries</button>
         <button type="button" class="btn sinbad-prompt">Create passage checklist</button>
       </div>
+      <div class="action-row">
+        <label>Answer language
+          <select id="sinbadLanguage" aria-label="Sinbad answer language">
+            <option value="tr-TR">Türkçe</option><option value="en-US">English</option>
+            <option value="ru-RU">Русский</option><option value="fr-FR">Français</option>
+            <option value="de-DE">Deutsch</option><option value="ar-SA">العربية</option>
+            <option value="es-ES">Español</option><option value="it-IT">Italiano</option>
+          </select>
+        </label>
+        <button type="button" class="btn" id="toggleSinbadVoice" aria-pressed="true">🔊 Voice: On</button>
+        <button type="button" class="btn" id="stopSinbadVoice">Stop voice</button>
+        <span class="badge" id="sinbadKnowledgeStatus">Cloud knowledge ready after sign-in</span>
+      </div>
+      <div id="sinbadWebConsent" class="notice hidden" role="alert">
+        <span id="sinbadWebConsentText">Atlas Cloud does not contain enough information. May Sinbad search the public web?</span>
+        <div class="action-row">
+          <button type="button" class="btn primary" id="allowSinbadWebSearch">Allow web search</button>
+          <button type="button" class="btn" id="denySinbadWebSearch">Do not search</button>
+        </div>
+      </div>
       <div class="chat-input-row">
         <textarea id="sinbadInput" placeholder="Ask Captain Sinbad..." aria-label="Message Captain Sinbad"></textarea>
         <button type="button" class="btn primary" id="sendSinbad">Send</button>
       </div>
-      <div class="notice">
-Captain Sinbad uses local Sinbad Marine data and keyword intelligence. Secure cloud AI, full PDF indexing and cross-device memory will activate after the Supabase/OpenAI backend is connected.
-      </div>
+      <div class="notice">Captain Sinbad searches the classified text archive created from your Atlas Cloud books, documents and images. Answers can be read aloud by your device.</div>
     </div>
   </div>
 </section>
@@ -529,14 +549,14 @@ Captain Sinbad uses local Sinbad Marine data and keyword intelligence. Secure cl
       <option value="exports">Exports</option>
     </select>
     <input id="cloudFolderPath" value="general" placeholder="Folder path">
-    <input id="cloudFileInput" type="file" multiple>
+    <input id="cloudFileInput" type="file" multiple accept=".pdf,.docx,.txt,.md,.csv,.json,.xml,.jpg,.jpeg,.png,.webp,.tif,.tiff,application/pdf,image/*">
     <button class="btn primary upload-glow" id="uploadCloudFiles">Upload to Atlas Cloud</button>
     <button class="btn" id="refreshCloudFiles">Refresh</button>
     <button class="btn" id="openLocalDocuments">Open Local Document Center</button>
   </div>
 
 
-  <div class="notice">Files are uploaded under <code>workspace-uuid/folder/file</code>. The Supabase Free plan may limit each file to 50 MB.</div>
+  <div class="notice">PDF, DOCX, text and image files are supported. Images are read with OCR. Files are uploaded under <code>workspace-uuid/folder/file</code>; the current cloud plan may limit each file to 50 MB.</div>
   <div id="cloudUploadProgress" class="notice">Ready.</div>
   <div id="cloudFileList" class="cloud-file-grid">No cloud files loaded.</div>
 </section>
@@ -601,9 +621,11 @@ Captain Sinbad uses local Sinbad Marine data and keyword intelligence. Secure cl
 <footer>Sinbad Marine • Secure Marine Command Platform • One Bridge. Every Operation.</footer>
 
 
-<script src="./pilot-data.js?v=8158"></script>
-<script src="./route-data.js?v=8158"></script>
+<script src="./pilot-data.js?v=8160"></script>
+<script src="./route-data.js?v=8160"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="./app.js?v=8158"></script>
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.9.0/mammoth.browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="./app.js?v=8160"></script>
 </body>
 </html>

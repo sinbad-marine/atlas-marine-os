@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.15.8-connection-diagnostics';
+const CACHE='sinbad-marine-v8.16.0-multilingual-knowledge-voice';
 const ASSETS=[
   './',
   './index.html',
