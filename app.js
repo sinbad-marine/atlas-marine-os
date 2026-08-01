@@ -230,14 +230,69 @@ function setSinbadVoiceUI(){
   button.setAttribute('aria-pressed',String(sinbadState.voiceEnabled));
 }
 function speakSinbad(text){
-  if(!sinbadState.voiceEnabled||!('speechSynthesis'in window))return;
+  if(!sinbadState.voiceEnabled||!('speechSynthesis'in window)){sinbadAwaitingAnswer=false;scheduleSinbadListening();return;}
+  if(sinbadIsListening)sinbadRecognition?.stop();
   speechSynthesis.cancel();
   const utterance=new SpeechSynthesisUtterance(String(text).replace(/[•*_#]/g,' '));
   const voices=speechSynthesis.getVoices();
   const languageRoot=sinbadState.language.split('-')[0];
   utterance.voice=voices.find(v=>v.lang.toLowerCase()===sinbadState.language.toLowerCase())||voices.find(v=>v.lang.toLowerCase().startsWith(languageRoot))||voices.find(v=>/^en[-_]/i.test(v.lang))||null;
   utterance.lang=utterance.voice?.lang||sinbadState.language;utterance.rate=.96;utterance.pitch=.92;
+  utterance.onend=()=>{sinbadAwaitingAnswer=false;scheduleSinbadListening();};
+  utterance.onerror=()=>{sinbadAwaitingAnswer=false;scheduleSinbadListening();};
   speechSynthesis.speak(utterance);
+}
+let sinbadRecognition=null;
+let sinbadIsListening=false;
+let sinbadHandsFreeEnabled=false;
+let sinbadWakeActive=false;
+let sinbadAwaitingAnswer=false;
+let sinbadRestartTimer=null;
+const SINBAD_SPEECH_TEXT={
+ 'tr-TR':{listen:'Dinliyorum… Konuşabilirsiniz.',ready:'🎙️ Sinbad’a Konuş',stop:'⏹ Dinlemeyi Durdur',heard:'Sizi duydum. Sorunuz gönderiliyor…',unsupported:'Bu tarayıcı sesli soru özelliğini desteklemiyor. iPhone/iPad’de güncel Safari, Android’de güncel Chrome kullanın.',denied:'Mikrofon izni verilmedi. Tarayıcı adres çubuğundaki izinlerden mikrofonu açın.',test:'Ses açık Kaptan. Sizi dinlemeye hazırım.'},
+ 'en-US':{listen:'Listening… You may speak.',ready:'🎙️ Speak to Sinbad',stop:'⏹ Stop listening',heard:'I heard you. Sending your question…',unsupported:'This browser does not support voice questions. Use current Safari on iPhone/iPad or current Chrome on Android.',denied:'Microphone permission was not granted. Enable it in the browser site permissions.',test:'Voice is on, Captain. I am ready to listen.'},
+ 'ru-RU':{listen:'Слушаю… Говорите.',ready:'🎙️ Говорить с Синбадом',stop:'⏹ Остановить',heard:'Я вас услышал. Отправляю вопрос…',unsupported:'Этот браузер не поддерживает голосовые вопросы.',denied:'Нет разрешения на микрофон.',test:'Голос включён, капитан. Я готов слушать.'},
+ 'fr-FR':{listen:'Je vous écoute… Parlez.',ready:'🎙️ Parler à Sinbad',stop:'⏹ Arrêter',heard:'Je vous ai entendu. Envoi de la question…',unsupported:'Ce navigateur ne prend pas en charge les questions vocales.',denied:'L’autorisation du microphone est refusée.',test:'La voix est active, Capitaine. Je vous écoute.'},
+ 'de-DE':{listen:'Ich höre zu… Sprechen Sie.',ready:'🎙️ Mit Sinbad sprechen',stop:'⏹ Zuhören beenden',heard:'Ich habe Sie gehört. Die Frage wird gesendet…',unsupported:'Dieser Browser unterstützt keine Sprachfragen.',denied:'Die Mikrofonberechtigung wurde nicht erteilt.',test:'Die Stimme ist aktiv, Kapitän. Ich höre zu.'},
+ 'ar-SA':{listen:'أنا أستمع… تكلّم الآن.',ready:'🎙️ تحدث إلى سندباد',stop:'⏹ إيقاف الاستماع',heard:'سمعتك. يتم إرسال السؤال…',unsupported:'هذا المتصفح لا يدعم الأسئلة الصوتية.',denied:'لم يتم السماح باستخدام الميكروفون.',test:'الصوت يعمل أيها القبطان. أنا مستعد للاستماع.'},
+ 'es-ES':{listen:'Escuchando… Puede hablar.',ready:'🎙️ Hablar con Sinbad',stop:'⏹ Dejar de escuchar',heard:'Le he oído. Enviando la pregunta…',unsupported:'Este navegador no admite preguntas de voz.',denied:'No se concedió permiso para el micrófono.',test:'La voz está activa, Capitán. Estoy listo para escuchar.'},
+ 'it-IT':{listen:'Ti ascolto… Puoi parlare.',ready:'🎙️ Parla con Sinbad',stop:'⏹ Ferma ascolto',heard:'Ti ho sentito. Invio della domanda…',unsupported:'Questo browser non supporta le domande vocali.',denied:'Il permesso del microfono non è stato concesso.',test:'La voce è attiva, Capitano. Sono pronto ad ascoltare.'}
+};
+function speechCopy(){return SINBAD_SPEECH_TEXT[sinbadState.language]||SINBAD_SPEECH_TEXT['en-US'];}
+function handsFreeMessage(){return {'tr-TR':'Eller serbest açık — “Hey Sinbad” deyin.','en-US':'Hands-free active — say “Hey Sinbad”.','ru-RU':'Режим без рук включён — скажите «Hey Sinbad».','fr-FR':'Mode mains libres actif — dites «Hey Sinbad».','de-DE':'Freisprechen aktiv — sagen Sie „Hey Sinbad“.','ar-SA':'وضع التحدث الحر نشط — قل «Hey Sinbad».','es-ES':'Modo manos libres activo — diga «Hey Sinbad».','it-IT':'Modalità vivavoce attiva — dica «Hey Sinbad».'}[sinbadState.language]||'Hands-free active — say “Hey Sinbad”.';}
+function setListeningUI(message='',visible=false){
+  const button=$('startSinbadListening'),status=$('sinbadListeningStatus');if(!button||!status)return;
+  button.textContent=sinbadHandsFreeEnabled?speechCopy().stop:speechCopy().ready;button.setAttribute('aria-pressed',String(sinbadHandsFreeEnabled));
+  status.textContent=message||speechCopy().listen;status.classList.toggle('hidden',!visible);
+}
+function scheduleSinbadListening(delay=500){
+  clearTimeout(sinbadRestartTimer);
+  if(!sinbadHandsFreeEnabled||sinbadAwaitingAnswer||window.speechSynthesis?.speaking)return;
+  sinbadRestartTimer=setTimeout(beginSinbadRecognition,delay);
+}
+function beginSinbadRecognition(){
+  const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!Recognition){setListeningUI(speechCopy().unsupported,true);return;}
+  if(!sinbadHandsFreeEnabled||sinbadIsListening||sinbadAwaitingAnswer)return;
+  sinbadRecognition=new Recognition();sinbadRecognition.lang=sinbadState.language;sinbadRecognition.continuous=false;sinbadRecognition.interimResults=true;sinbadRecognition.maxAlternatives=1;
+  let finalTranscript='';
+  sinbadRecognition.onstart=()=>{sinbadIsListening=true;setListeningUI(sinbadWakeActive?speechCopy().listen:handsFreeMessage(),true);};
+  sinbadRecognition.onresult=event=>{let interim='';for(let i=event.resultIndex;i<event.results.length;i++){const part=event.results[i][0].transcript;if(event.results[i].isFinal)finalTranscript+=part;else interim+=part;}$('sinbadInput').value=(finalTranscript||interim).trim();};
+  sinbadRecognition.onerror=event=>{sinbadIsListening=false;if(event.error==='not-allowed'||event.error==='service-not-allowed'){sinbadHandsFreeEnabled=false;setListeningUI(speechCopy().denied,true);return;}if(!['no-speech','aborted'].includes(event.error))setListeningUI(`Microphone: ${event.error}`,true);};
+  sinbadRecognition.onend=()=>{
+    sinbadIsListening=false;const heard=finalTranscript.trim();
+    const wakeMatch=heard.match(/(?:hey|hei|hej|эй|يا)?\s*(?:sinbad|sindbad|simbad)/iu);
+    let command='';
+    if(wakeMatch){sinbadWakeActive=true;command=heard.slice((wakeMatch.index||0)+wakeMatch[0].length).replace(/^[,.:;!?\s-]+/,'').trim();}
+    else if(sinbadWakeActive)command=heard;
+    if(command){sinbadWakeActive=false;sinbadAwaitingAnswer=true;$('sinbadInput').value=command;setListeningUI(speechCopy().heard,true);setTimeout(()=>sendToSinbad(command),250);}
+    else {if(wakeMatch)setListeningUI(speechCopy().listen,true);else $('sinbadInput').value='';scheduleSinbadListening(wakeMatch?150:500);}
+  };
+  try{sinbadRecognition.start();}catch(error){sinbadIsListening=false;setListeningUI(error.message||String(error),true);}
+}
+function startSinbadListening(){
+  if(sinbadHandsFreeEnabled){sinbadHandsFreeEnabled=false;sinbadWakeActive=false;clearTimeout(sinbadRestartTimer);sinbadRecognition?.abort();setListeningUI('',false);return;}
+  sinbadHandsFreeEnabled=true;sinbadWakeActive=false;setListeningUI(handsFreeMessage(),true);beginSinbadRecognition();
 }
 
 
@@ -325,6 +380,12 @@ async function sinbadLocalAnswer(query){
 }
 async function sendToSinbad(text){
   const q=(text||'').trim(); if(!q)return;
+  if(pendingSinbadWebQuestion&&/^(izin ver|evet|ara|webde ara|allow|yes|search|разрешаю|да|autoriser|oui|erlauben|ja|اسمح|نعم|permitir|sí|consenti|sì)[.! ]*$/iu.test(q)){
+    addSinbadMessage('user',q);$('sinbadInput').value='';await performSinbadWebSearch();return;
+  }
+  if(pendingSinbadWebQuestion&&/^(izin verme|hayır|arama|no|do not search|нет|non|nein|لا|hayır|no buscar|non cercare)[.! ]*$/iu.test(q)){
+    pendingSinbadWebQuestion='';$('sinbadWebConsent').classList.add('hidden');const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];addSinbadMessage('user',q);addSinbadMessage('sinbad',copy.denied);sinbadAwaitingAnswer=false;speakSinbad(copy.denied);return;
+  }
   addSinbadMessage('user',q);
   $('sinbadInput').value='';
   $('sinbadThinking').classList.remove('hidden');
@@ -334,17 +395,20 @@ async function sendToSinbad(text){
     addSinbadMessage('sinbad',answer);speakSinbad(answer);
   },650);
 }
-$('sendSinbad').addEventListener('click',()=>sendToSinbad($('sinbadInput').value));
+$('sendSinbad').addEventListener('click',()=>{window.speechSynthesis?.resume();sendToSinbad($('sinbadInput').value);});
 $('sinbadInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendToSinbad($('sinbadInput').value)}});
 document.querySelectorAll('.sinbad-prompt').forEach(b=>b.addEventListener('click',()=>sendToSinbad(b.textContent)));
 $('sinbadFloat').addEventListener('click',()=>openWorkspace('sinbad'));
 $('toggleSinbadVoice')?.addEventListener('click',()=>{sinbadState.voiceEnabled=!sinbadState.voiceEnabled;localStorage.setItem('atlas_sinbad_voice',sinbadState.voiceEnabled?'on':'off');setSinbadVoiceUI();if(!sinbadState.voiceEnabled)window.speechSynthesis?.cancel();});
 $('stopSinbadVoice')?.addEventListener('click',()=>window.speechSynthesis?.cancel());
+$('startSinbadListening')?.addEventListener('click',startSinbadListening);
+$('testSinbadVoice')?.addEventListener('click',()=>{sinbadState.voiceEnabled=true;localStorage.setItem('atlas_sinbad_voice','on');setSinbadVoiceUI();speakSinbad(speechCopy().test);});
 $('sinbadLanguage').value=sinbadState.language;
-$('sinbadLanguage')?.addEventListener('change',e=>{sinbadState.language=e.target.value;localStorage.setItem('atlas_sinbad_language',e.target.value);window.speechSynthesis?.cancel();});
+$('sinbadLanguage')?.addEventListener('change',e=>{sinbadState.language=e.target.value;localStorage.setItem('atlas_sinbad_language',e.target.value);window.speechSynthesis?.cancel();if(sinbadIsListening)sinbadRecognition?.stop();setListeningUI();});
 $('allowSinbadWebSearch')?.addEventListener('click',performSinbadWebSearch);
 $('denySinbadWebSearch')?.addEventListener('click',()=>{pendingSinbadWebQuestion='';$('sinbadWebConsent').classList.add('hidden');const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];addSinbadMessage('sinbad',copy.denied);});
 setSinbadVoiceUI();
+setListeningUI();
 
 
 const originalRenderAll = renderAll;

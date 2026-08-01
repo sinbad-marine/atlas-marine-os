@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#071827">
 <title>Sinbad Marine</title>
-<link rel="manifest" href="./manifest.webmanifest?v=8160">
+<link rel="manifest" href="./manifest.webmanifest?v=8161">
 <link rel="apple-touch-icon" href="./icon-192.png?v=8155">
-<link rel="stylesheet" href="./styles.css?v=8160">
+<link rel="stylesheet" href="./styles.css?v=8161">
 </head>
 <body class="auth-pending">
 <section id="publicGateway" class="public-gateway" aria-live="polite">
@@ -100,7 +100,7 @@
   <div class="topbar-account-actions">
     <select id="appLanguage" class="app-language" aria-label="Application language"></select>
     <button class="account-password-button" id="openAccountPassword" type="button">Account &amp; Password</button>
-    <div class="version">● v8.16.0</div>
+    <div class="version">● v8.16.1</div>
   </div>
 </header>
 
@@ -411,9 +411,12 @@
           </select>
         </label>
         <button type="button" class="btn" id="toggleSinbadVoice" aria-pressed="true">🔊 Voice: On</button>
+        <button type="button" class="btn primary" id="startSinbadListening" aria-pressed="false">🎙️ Speak to Sinbad</button>
+        <button type="button" class="btn" id="testSinbadVoice">Test voice</button>
         <button type="button" class="btn" id="stopSinbadVoice">Stop voice</button>
         <span class="badge" id="sinbadKnowledgeStatus">Cloud knowledge ready after sign-in</span>
       </div>
+      <div id="sinbadListeningStatus" class="notice hidden" role="status">Microphone is ready.</div>
       <div id="sinbadWebConsent" class="notice hidden" role="alert">
         <span id="sinbadWebConsentText">Atlas Cloud does not contain enough information. May Sinbad search the public web?</span>
         <div class="action-row">
@@ -621,11 +624,11 @@
 <footer>Sinbad Marine • Secure Marine Command Platform • One Bridge. Every Operation.</footer>
 
 
-<script src="./pilot-data.js?v=8160"></script>
-<script src="./route-data.js?v=8160"></script>
+<script src="./pilot-data.js?v=8161"></script>
+<script src="./route-data.js?v=8161"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.9.0/mammoth.browser.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-<script src="./app.js?v=8160"></script>
+<script src="./app.js?v=8161"></script>
 </body>
 </html>

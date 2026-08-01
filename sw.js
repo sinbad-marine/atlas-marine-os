@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.16.0-multilingual-knowledge-voice';
+const CACHE='sinbad-marine-v8.16.1-microphone-voice';
 const ASSETS=[
   './',
   './index.html',
