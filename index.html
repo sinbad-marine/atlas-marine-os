@@ -89,6 +89,8 @@
         <li data-rule="special">At least 1 special character: ! @ # $ % &amp; * ?</li>
         <li data-rule="spaces">No spaces</li>
       </ul>
+      <label>Confirm new password<span class="password-field"><input id="recoveryConfirmPassword" type="password" minlength="12" maxlength="128" autocomplete="new-password"><button class="password-toggle" type="button" data-password-toggle="recoveryConfirmPassword" aria-label="Show password" aria-pressed="false">Show</button></span></label>
+      <p class="password-match" id="recoveryPasswordMatch" aria-live="polite"></p>
       <button class="btn primary full" id="completeRecovery" type="button">Verify code & set password</button>
       <button class="text-button" id="showSignIn" type="button">Back to sign in</button>
     </div>
@@ -692,6 +694,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.9.0/mammoth.browser.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-<script src="./app.js?v=8170"></script>
+<script src="./app.js?v=8171"></script>
 </body>
 </html>
