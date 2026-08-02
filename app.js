@@ -323,6 +323,25 @@ function addSinbadMessage(role,text){
   sinbadState.messages.push({role,text,at:new Date().toISOString()});
   saveSinbadMessages();renderSinbadMessages();
 }
+function renderOfficialSources(){
+  const box=$('officialSourceList');if(!box||typeof OFFICIAL_PUBLICATIONS==='undefined')return;
+  box.innerHTML=OFFICIAL_PUBLICATIONS.map(source=>`<article class="source-card"><strong>${esc(source.title)}</strong><br><small>${esc(source.authority)} • ${esc(source.edition)} • ${esc(source.status)}</small><p>${esc(source.notes)}</p><a href="${esc(source.url)}" target="_blank" rel="noopener noreferrer">Open official source</a></article>`).join('');
+}
+function currentPassageInput(){
+  const fleet=get('atlas_fleet'),vessel=fleet[0]||{};
+  return {departure:$('passageDeparture').value,destination:$('passageDestination').value,region:$('passageRegion').value,distanceNm:$('passageDistance').value,speedKn:$('passageSpeed').value||vessel.cruise,draftM:$('passageDraft').value||vessel.draft,fuelConsumptionLph:$('passageFuelRate').value,fuelMarginPct:$('passageFuelMargin').value,departureTime:$('passageDepartureTime').value};
+}
+function createPassagePlanDraft(){
+  if(!window.SinbadCore||typeof OFFICIAL_PUBLICATIONS==='undefined')return;
+  const plan=SinbadCore.passagePlan(currentPassageInput(),OFFICIAL_PUBLICATIONS.filter(x=>x.status==='approved'));
+  const text=SinbadCore.formatPlan(plan);$('passagePlanOutput').textContent=text;
+  localStorage.setItem('atlas_last_passage_draft',JSON.stringify(plan));
+  addSinbadMessage('sinbad',`Passage plan draft created for ${plan.title}. ${plan.sources.length} approved official source(s) cited. Captain approval and live navigation checks are still required.`);
+}
+async function copyPassagePlanDraft(){
+  const text=$('passagePlanOutput').textContent;if(!text)return;
+  await navigator.clipboard.writeText(text);$('copyPassagePlan').textContent='Copied';setTimeout(()=>$('copyPassagePlan').textContent='Copy draft',1200);
+}
 async function sinbadLocalAnswer(query){
   const q=query.toLowerCase();
   const language=sinbadState.language||appLanguage;
@@ -411,6 +430,9 @@ $('sinbadLanguage').value=sinbadState.language;
 $('sinbadLanguage')?.addEventListener('change',e=>{sinbadState.language=e.target.value;localStorage.setItem('atlas_sinbad_language',e.target.value);window.speechSynthesis?.cancel();if(sinbadIsListening)sinbadRecognition?.stop();setListeningUI();});
 $('allowSinbadWebSearch')?.addEventListener('click',performSinbadWebSearch);
 $('denySinbadWebSearch')?.addEventListener('click',()=>{pendingSinbadWebQuestion='';$('sinbadWebConsent').classList.add('hidden');const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];addSinbadMessage('sinbad',copy.denied);});
+$('createPassagePlan')?.addEventListener('click',createPassagePlanDraft);
+$('copyPassagePlan')?.addEventListener('click',copyPassagePlanDraft);
+renderOfficialSources();
 setSinbadVoiceUI();
 setListeningUI();
 
@@ -752,7 +774,7 @@ async function cloudSignIn(){
   alert('Welcome aboard.');
 }
 async function cloudSignOut(){
-  if(cloudClient)await cloudClient.auth.signOut();
+  if(cloudClient)await cloudClient.auth.signOut({scope:'local'});
   cloudSession=null; selectedWorkspaceId=''; localStorage.removeItem('atlas_selected_workspace');
   updateCloudStatus(); setAppAccess(); $('workspaceSelect').innerHTML='<option value="">Select workspace</option>';
 }
@@ -764,8 +786,12 @@ async function gatewaySignIn(){
   const password=$('gatewayPassword').value;
   try{
     const {data,error}=await cloudClient.auth.signInWithPassword({email,password});
-    if(error){setAuthMessage(error.message,'error');return;}
+    if(error){
+      const hint=/invalid login credentials/i.test(error.message||'')?'Email or password is incorrect. Use the same email shown when the password was created, or choose “I forgot my password”.':friendlyAuthError(error);
+      setAuthMessage(hint,'error');return;
+    }
     cloudSession=data.session;
+    localStorage.setItem('sinbad_last_login_email',cloudSession?.user?.email||email);
     updateCloudStatus();
     setAppAccess();
     if(needsInviteSetup(cloudSession?.user)){openAuthDialog('invite');return;}
@@ -841,17 +867,28 @@ async function completeInviteAccount(){
       data:{display_name:name,sinbad_account_ready:true}
     });
     const finalUser=profileData?.user||passwordData?.user||activeSession.user;
+    const completedEmail=finalUser?.email||activeSession.user?.email||'';
     cloudSession={...activeSession,user:finalUser};
     pendingInviteSetup=false;
     sessionStorage.removeItem('sinbad_pending_invite_setup');
+    setAuthMessage('Account completed. Opening secure sign inâ€¦','success');
+
+    // Re-authenticate with the newly assigned password before completing the
+    // invitation. This proves that the password is permanent, not session-only.
+    const {error:signOutError}=await cloudClient.auth.signOut({scope:'local'});
+    if(signOutError)throw signOutError;
+    const {data:verifiedLogin,error:verifiedLoginError}=await cloudClient.auth.signInWithPassword({email:completedEmail,password});
+    if(verifiedLoginError)throw new Error(`Password verification failed: ${verifiedLoginError.message}`);
+    cloudSession=verifiedLogin.session;
+    localStorage.setItem('sinbad_last_login_email',completedEmail);
+    $('invitePassword').value='';
+    $('invitePasswordConfirm').value='';
+    $('gatewayEmail').value=completedEmail;
+    $('gatewayPassword').value='';
     setAppAccess();
     await loadWorkspaces();
-    setAuthMessage(
-      profileError
-        ? 'Password created. Your profile name can be completed later.'
-        : 'Account completed. Welcome aboard.',
-      'success'
-    );
+    if($('authDialog')?.open)$('authDialog').close();
+    if(profileError)console.warn('Password verified, but profile metadata needs a later retry.',profileError);
   }catch(error){
     console.error('Invitation setup failed',error);
     const message=error?.message||String(error||'Unknown invitation error');
@@ -880,11 +917,11 @@ async function completeRecovery(){
   if(verifyError){setAuthMessage(verifyError.message,'error');return;}
   const {error:updateError}=await cloudClient.auth.updateUser({password});
   if(updateError){setAuthMessage(updateError.message,'error');return;}
-  await cloudClient.auth.signOut();
-  cloudSession=null;
-  showRecoveryPanel(false);
-  setAppAccess();
-  setAuthMessage('Password updated. Sign in with your new password.','success');
+  await cloudClient.auth.signOut({scope:'local'});
+  const {data:verified,error:loginError}=await cloudClient.auth.signInWithPassword({email,password});
+  if(loginError){setAuthMessage(`Password was saved but verification failed: ${friendlyAuthError(loginError)}`,'error');return;}
+  cloudSession=verified.session;localStorage.setItem('sinbad_last_login_email',email);setAppAccess();await loadWorkspaces();
+  if($('authDialog')?.open)$('authDialog').close();
 }
 async function loadWorkspaces(){
   if(!cloudClient || !cloudSession?.user)return;
@@ -941,6 +978,81 @@ function applyRoleAccess(){
   ['uploadCloudFiles','cloudFileInput','uploadCapturedMedia'].forEach(id=>{
     const el=$(id);if(el)el.disabled=!roleCanManageLibrary();
   });
+  const adminBanner=$('adminAccessBanner');
+  if(adminBanner){
+    adminBanner.textContent=!cloudSession?.user?'Sign in to manage your account.':!selectedWorkspaceId?'Select a workspace to manage its members.':roleCanManageMembers()?'Owner access verified. Member administration is enabled.':`Account settings available. Member administration requires the Owner role (current role: ${role}).`;
+    adminBanner.classList.toggle('denied',!roleCanManageMembers());
+  }
+  document.querySelectorAll('.owner-only-setting').forEach(el=>el.dataset.roleHidden=String(!roleCanManageMembers()));
+  refreshAccountSettingsSummary();
+}
+const SETTINGS_ROLES=['owner','administrator','captain','chief_officer','chief_engineer','dpa','developer','visitor','crew','viewer','auditor'];
+let settingsMembers=[];
+function refreshAccountSettingsSummary(){
+  const user=cloudSession?.user, summary=$('settingsAccountSummary');
+  if(!summary)return;
+  summary.textContent=user?`${user.email} • ${currentWorkspaceRole||'no workspace role'} • User ID: ${user.id}`:'No active account.';
+  if(user&&$('settingsDisplayName'))$('settingsDisplayName').value=user.user_metadata?.display_name||'';
+}
+async function saveAccountProfile(){
+  if(!cloudClient||!cloudSession?.user)return;
+  const displayName=$('settingsDisplayName').value.trim();
+  const {data,error}=await cloudClient.auth.updateUser({data:{display_name:displayName}});
+  if(!error&&data?.user)cloudSession={...cloudSession,user:data.user};
+  $('accountSettingsStatus').textContent=error?error.message:'Profile saved.';refreshAccountSettingsSummary();
+}
+async function changeAccountPassword(){
+  if(!cloudClient||!cloudSession?.user){$('accountSettingsStatus').textContent='Sign in first.';return;}
+  const password=$('settingsNewPassword').value, confirmation=$('settingsConfirmPassword').value;
+  if(password!==confirmation){$('accountSettingsStatus').textContent='Passwords do not match.';return;}
+  if(!passwordPolicyStatus(password).valid){$('accountSettingsStatus').textContent=passwordPolicyMessage();return;}
+  const {error}=await cloudClient.auth.updateUser({password});
+  $('accountSettingsStatus').textContent=error?friendlyAuthError(error):'Password changed successfully.';
+  if(!error){$('settingsNewPassword').value='';$('settingsConfirmPassword').value='';}
+}
+async function settingsSignOut(scope='local'){
+  if(!cloudClient)return;
+  if(scope==='global'&&!confirm('Sign out every Sinbad Marine session on all devices?'))return;
+  const {error}=await cloudClient.auth.signOut({scope});
+  if(error){$('accountSettingsStatus').textContent=error.message;return;}
+  cloudSession=null;currentWorkspaceRole='';selectedWorkspaceId='';localStorage.removeItem('atlas_selected_workspace');updateCloudStatus();setAppAccess();openAuthDialog('signin');
+}
+async function invokeMemberAdmin(action,payload={}){
+  if(!roleCanManageMembers())throw new Error('Only the workspace Owner can manage members.');
+  const {data,error}=await cloudClient.functions.invoke('manage-members',{body:{action,workspaceId:selectedWorkspaceId,...payload}});
+  if(error)throw error;if(data?.error)throw new Error(data.error);return data;
+}
+async function sendMemberInvite(){
+  const email=$('memberInviteEmail').value.trim(), role=$('memberInviteRole').value, note=$('memberInviteNote').value.trim();
+  if(!/^\S+@\S+\.\S+$/.test(email)){$('memberInviteStatus').textContent='Enter a valid email address.';return;}
+  $('memberInviteStatus').textContent='Preparing secure invitation…';
+  try{await invokeMemberAdmin('invite',{email,role,note,redirectTo:`${location.origin}${location.pathname}?type=invite`});$('memberInviteStatus').textContent=`Invitation sent to ${email}.`;$('memberInviteEmail').value='';$('memberInviteNote').value='';await loadAdminAudit();}
+  catch(error){$('memberInviteStatus').textContent=`Invitation failed: ${error.message}`;}
+}
+function renderSettingsMembers(){
+  const list=$('settingsMemberList');if(!list)return;
+  const query=$('settingsMemberSearch').value.trim().toLowerCase(), filter=$('settingsMemberFilter').value;
+  const rows=settingsMembers.filter(member=>(!query||`${member.user_id} ${member.role}`.toLowerCase().includes(query))&&(filter==='all'||(filter==='active'&&member.is_active)||(filter==='blocked'&&!member.is_active)||(filter==='developer'&&member.role==='developer')));
+  list.innerHTML=rows.length?rows.map(member=>`<div class="settings-member ${member.is_active?'':'blocked'}"><div><strong>${cloudEsc(member.user_id)}</strong><small>${member.is_active?'Active':'Suspended'} • Joined ${cloudEsc(member.joined_at||'')}</small></div><select class="settings-role" data-user="${cloudEsc(member.user_id)}" aria-label="Role for ${cloudEsc(member.user_id)}">${SETTINGS_ROLES.map(role=>`<option value="${role}" ${member.role===role?'selected':''}>${role}</option>`).join('')}</select><div class="settings-member-actions"><button class="btn settings-save-role" data-user="${cloudEsc(member.user_id)}">Save role</button><button class="btn ${member.is_active?'danger':''} settings-toggle-member" data-user="${cloudEsc(member.user_id)}" data-active="${member.is_active}">${member.is_active?'Suspend':'Restore'}</button></div></div>`).join(''):'No matching members.';
+}
+async function loadSettingsMembers(){
+  if(!roleCanManageMembers()||!selectedWorkspaceId){settingsMembers=[];renderSettingsMembers();return;}
+  const {data,error}=await cloudClient.from('workspace_members').select('user_id,role,is_active,joined_at').eq('workspace_id',selectedWorkspaceId).order('joined_at');
+  if(error){$('settingsMemberList').textContent=error.message;return;}settingsMembers=data||[];renderSettingsMembers();
+}
+async function changeSettingsMember(userId){
+  const select=document.querySelector(`.settings-role[data-user="${CSS.escape(userId)}"]`);if(!select)return;
+  if(!confirm(`Change this member's role to ${select.value}?`))return;
+  try{await invokeMemberAdmin('set_role',{userId,role:select.value});await loadSettingsMembers();await loadMembers();await loadAdminAudit();}catch(error){alert(error.message);}
+}
+async function toggleSettingsMember(userId,isActive){
+  const next=!isActive;if(!confirm(`${next?'Restore':'Suspend'} this member's workspace access?`))return;
+  try{await invokeMemberAdmin('set_active',{userId,isActive:next});await loadSettingsMembers();await loadMembers();await loadAdminAudit();}catch(error){alert(error.message);}
+}
+async function loadAdminAudit(){
+  const list=$('adminAuditList');if(!list||!roleCanManageMembers())return;
+  const {data,error}=await cloudClient.from('member_admin_audit').select('action,target_user_id,target_email,details,created_at').eq('workspace_id',selectedWorkspaceId).order('created_at',{ascending:false}).limit(50);
+  list.innerHTML=error?cloudEsc(error.message):(data?.length?data.map(event=>`<div class="audit-event"><strong>${cloudEsc(event.action)}</strong><small>${cloudEsc(event.target_email||event.target_user_id||'workspace')} • ${cloudEsc(event.created_at)}${event.details?` • ${cloudEsc(JSON.stringify(event.details))}`:''}</small></div>`).join(''):'No administrative events recorded.');
 }
 async function loadMembers(){
   if(!selectedWorkspaceId || !cloudClient)return;
@@ -1687,10 +1799,24 @@ $('testCloudConnection').addEventListener('click',testCloudConnection);
 $('cloudSignIn').addEventListener('click',cloudSignIn);
 $('cloudSignOut').addEventListener('click',cloudSignOut);
 $('refreshWorkspaces').addEventListener('click',loadWorkspaces);
-$('workspaceSelect').addEventListener('change',async e=>{selectedWorkspaceId=e.target.value;localStorage.setItem('atlas_selected_workspace',selectedWorkspaceId);updateCloudStatus();await loadCurrentWorkspaceRole();await loadMembers();await loadCloudFiles();await refreshCloudSummary();});
+$('workspaceSelect').addEventListener('change',async e=>{selectedWorkspaceId=e.target.value;localStorage.setItem('atlas_selected_workspace',selectedWorkspaceId);updateCloudStatus();await loadCurrentWorkspaceRole();await loadMembers();await loadSettingsMembers();await loadAdminAudit();await loadCloudFiles();await refreshCloudSummary();});
 $('refreshMembers').addEventListener('click',loadMembers);
 $('refreshAiJobs').addEventListener('click',loadAiJobs);
 $('runSecurityCheck').addEventListener('click',runSecurityCheck);
+$('saveDisplayName')?.addEventListener('click',saveAccountProfile);
+$('changeAccountPassword')?.addEventListener('click',changeAccountPassword);
+$('settingsSignOut')?.addEventListener('click',()=>settingsSignOut('local'));
+$('settingsSignOutEverywhere')?.addEventListener('click',()=>settingsSignOut('global'));
+$('sendMemberInvite')?.addEventListener('click',sendMemberInvite);
+$('settingsRefreshMembers')?.addEventListener('click',loadSettingsMembers);
+$('settingsMemberSearch')?.addEventListener('input',renderSettingsMembers);
+$('settingsMemberFilter')?.addEventListener('change',renderSettingsMembers);
+$('refreshAdminAudit')?.addEventListener('click',loadAdminAudit);
+$('settingsMemberList')?.addEventListener('click',event=>{
+  const save=event.target.closest('.settings-save-role'),toggle=event.target.closest('.settings-toggle-member');
+  if(save)changeSettingsMember(save.dataset.user);
+  if(toggle)toggleSettingsMember(toggle.dataset.user,toggle.dataset.active==='true');
+});
 $('uploadCloudFiles').addEventListener('click',uploadCloudFiles);
 $('refreshCloudFiles').addEventListener('click',loadCloudFiles);
 $('cloudBucketSelect').addEventListener('change',loadCloudFiles);
@@ -1720,9 +1846,8 @@ $('openCaptainSignIn').addEventListener('click',()=>{
 $('openRegistration').addEventListener('click',()=>openAuthDialog('registration'));
 $('checkCloudBeforeSignIn')?.addEventListener('click',diagnosePublicCloudConnection);
 $('openAccountPassword')?.addEventListener('click',()=>{
-  pendingInviteSetup=true;
-  sessionStorage.setItem('sinbad_pending_invite_setup','1');
-  openAuthDialog('invite');
+  if(cloudSession?.user)openWorkspace('admin-settings');
+  else openAuthDialog('recovery');
 });
 $('closeAuthDialog').addEventListener('click',()=>$('authDialog').close());
 $('gatewaySignIn').addEventListener('click',gatewaySignIn);
@@ -1736,6 +1861,7 @@ $('completeInviteSetup').addEventListener('click',completeInviteAccount);
 $('requestRecoveryCode').addEventListener('click',requestRecoveryCode);
 $('completeRecovery').addEventListener('click',completeRecovery);
 setupPasswordControls();
+if($('gatewayEmail'))$('gatewayEmail').value=localStorage.getItem('sinbad_last_login_email')||'';
 $('getCurrentLocation')?.addEventListener('click',getCurrentLocation);
 $('startLocationWatch')?.addEventListener('click',startLocationWatch);
 $('stopLocationWatch')?.addEventListener('click',stopLocationWatch);
