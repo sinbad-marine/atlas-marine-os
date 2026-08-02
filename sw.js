@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.17.0-admin-security';
+const CACHE='sinbad-marine-v8.17.1-recovery-fix';
 const ASSETS=[
   './',
   './index.html',
