@@ -342,11 +342,34 @@ async function copyPassagePlanDraft(){
   const text=$('passagePlanOutput').textContent;if(!text)return;
   await navigator.clipboard.writeText(text);$('copyPassagePlan').textContent='Copied';setTimeout(()=>$('copyPassagePlan').textContent='Copy draft',1200);
 }
+function academyTrainingQuery(query){
+  return /(chart|harita|nautical|hydrograph|hidrograf|tide|gelgit|current|akıntı|akinti|set\b|drift|colreg|rule of the road|seyir kural|light|shape|sound signal|enc\b|ecdis|electronic navigation|weather|hava|visibility|görüş|goruş|course|bearing|kerteriz|compass|pusula|navigation|navigasyon|seyir eğitim|seyir egitim)/iu.test(query);
+}
+function academyOfflineAnswer(query){
+  if(!academyTrainingQuery(query)||!window.SinbadAcademy||!window.SINBAD_TRAINING_DATA)return null;
+  return SinbadAcademy.answer(query,SINBAD_TRAINING_DATA)?.text||null;
+}
+function renderAcademyLesson(){
+  const category=$('academyModule')?.value,lesson=window.SinbadAcademy?.lesson(category,window.SINBAD_TRAINING_DATA),output=$('academyOutput');
+  if(!lesson||!output)return;
+  const progress=JSON.parse(localStorage.getItem('sinbad_academy_progress')||'{}');progress[category]={openedAt:new Date().toISOString(),status:'studying'};localStorage.setItem('sinbad_academy_progress',JSON.stringify(progress));
+  output.textContent=`${lesson.title}\n\nLearning objectives\n${lesson.objectives.map(x=>'• '+x).join('\n')}\n\nPractice\n${lesson.practice}\n\nOfficial offline sources\n${lesson.sources.map((x,i)=>`[S${i+1}] ${x.title} — ${x.authority}`).join('\n')||'No matching offline source.'}\n\n⚠ Training only. Operational decisions require current official information and captain approval.`;
+}
+function renderAcademyQuiz(){
+  const category=$('academyModule')?.value,items=window.SinbadAcademy?.quiz(category)||[],output=$('academyOutput');if(!items.length||!output)return;
+  const item=items[Math.floor(Math.random()*items.length)];output.replaceChildren();
+  const title=document.createElement('strong');title.textContent=item.q;output.append(title);
+  const choices=document.createElement('div');choices.className='academy-choices';
+  item.choices.forEach((choice,index)=>{const button=document.createElement('button');button.type='button';button.className='btn';button.textContent=choice;button.addEventListener('click',()=>{[...choices.children].forEach(x=>x.disabled=true);button.classList.add(index===item.answer?'primary':'danger');const result=document.createElement('p');result.textContent=`${index===item.answer?'✓ Correct':'✗ Review'} — ${item.explanation} [${item.source}]`;output.append(result);if(index===item.answer){const progress=JSON.parse(localStorage.getItem('sinbad_academy_progress')||'{}');progress[category]={completedAt:new Date().toISOString(),status:'practised'};localStorage.setItem('sinbad_academy_progress',JSON.stringify(progress));}});choices.append(button);});
+  output.append(choices);const source=document.createElement('small');source.className='academy-source';source.textContent=`Official source: ${item.source}`;output.append(source);
+}
 async function sinbadLocalAnswer(query){
   const q=query.toLowerCase();
   const language=sinbadState.language||appLanguage;
   const greetings={'tr-TR':'Merhaba Kaptan. Sinbad aktif. Rotalar, denizcilik yayınları, belgeler, haritalar ve tekne operasyonları hakkında bana soru sorabilirsiniz.','en-US':'Hello Captain. Sinbad is active. Ask me about routes, marine publications, documents, charts, or yacht operations.','ru-RU':'Здравствуйте, капитан. Синбад активен. Спросите меня о маршрутах, морских изданиях, документах, картах или эксплуатации яхты.','fr-FR':'Bonjour Capitaine. Sinbad est actif. Interrogez-moi sur les routes, publications maritimes, documents, cartes ou opérations du yacht.','de-DE':'Hallo Kapitän. Sinbad ist aktiv. Fragen Sie mich zu Routen, nautischen Publikationen, Dokumenten, Karten oder Yachtbetrieb.','ar-SA':'مرحباً أيها القبطان. سندباد نشط. اسألني عن المسارات أو المنشورات البحرية أو الوثائق أو الخرائط أو عمليات اليخت.','es-ES':'Hola Capitán. Sinbad está activo. Pregúnteme sobre rutas, publicaciones marítimas, documentos, cartas u operaciones del yate.','it-IT':'Salve Capitano. Sinbad è attivo. Mi chieda informazioni su rotte, pubblicazioni nautiche, documenti, carte o operazioni dello yacht.'};
   if(/^(slm|selam|merhaba|hello|hi|hey|привет|здрав|bonjour|salut|hallo|guten|مرحبا|السلام|hola|buen|ciao|salve)[!. ]*$/iu.test(q))return greetings[language]||greetings['en-US'];
+  const offlineTrainingAnswer=academyOfflineAnswer(query);
+  if(offlineTrainingAnswer)return offlineTrainingAnswer;
   const cloudAnswer=await sinbadCloudKnowledgeAnswer(query);
   if(cloudAnswer)return cloudAnswer;
   const files=await dbAll();
@@ -432,6 +455,8 @@ $('allowSinbadWebSearch')?.addEventListener('click',performSinbadWebSearch);
 $('denySinbadWebSearch')?.addEventListener('click',()=>{pendingSinbadWebQuestion='';$('sinbadWebConsent').classList.add('hidden');const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];addSinbadMessage('sinbad',copy.denied);});
 $('createPassagePlan')?.addEventListener('click',createPassagePlanDraft);
 $('copyPassagePlan')?.addEventListener('click',copyPassagePlanDraft);
+$('startAcademyLesson')?.addEventListener('click',renderAcademyLesson);
+$('startAcademyQuiz')?.addEventListener('click',renderAcademyQuiz);
 renderOfficialSources();
 setSinbadVoiceUI();
 setListeningUI();
