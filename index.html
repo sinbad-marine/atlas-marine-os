@@ -149,6 +149,7 @@
   <article class="module-card" data-cloud-bucket="nautical-charts"><div>🗺️</div><h3>Nautical Charts</h3><p>Private chart archive organized by country, region and chart number.</p><a>Open cloud charts →</a></article>
   <article class="module-card" data-open="knowledge"><div>🤖</div><h3>Atlas Knowledge Search</h3><p>Search uploaded filenames, folders, tags and extracted text notes.</p><a>Open →</a></article><article class="module-card" data-open="sinbad"><div>🧞‍♂️</div><h3>Captain Sinbad</h3><p>Atlas AI marine intelligence guide and conversation workspace.</p><a>Open Sinbad →</a></article>
   <article class="module-card" data-open="cloud-control"><div>☁️</div><h3>Atlas Cloud Control Center</h3><p>Connect Supabase, manage workspaces, users, storage and AI status.</p><a>Open →</a></article>
+  <article class="module-card featured-card" data-open="admin-settings"><div>⚙️</div><h3>Settings &amp; Administration</h3><p>Account security, invitations, member access, developer roles and audit history.</p><a>Open settings →</a></article>
   <article class="module-card" data-open="cloud-documents"><div>🗄️</div><h3>Cloud Document Center</h3><p>Upload and browse private documents, publications and charts.</p><a>Open →</a></article>
   <article class="module-card" data-open="fleet"><div>🚢</div><h3>Fleet Manager</h3><p>Vessel particulars and machinery.</p><a>Open →</a></article>
   <article class="module-card" data-open="pilot"><div>📍</div><h3>Pilot Library</h3><p>Marinas, anchorages and captain notes.</p><a>Open →</a></article>
@@ -554,6 +555,43 @@
 </section>
 
 
+<section id="admin-settings" class="workspace">
+  <div class="workspace-head">
+    <div><div class="eyebrow">OWNER-CONTROLLED ADMINISTRATION</div><h2>Settings &amp; Administration</h2><p>Manage your account and authorized Sinbad Marine members from one secure center.</p></div>
+    <button class="btn close">Close</button>
+  </div>
+  <div id="adminAccessBanner" class="role-access-banner">Sign in and select a workspace to load administration settings.</div>
+  <div class="settings-grid">
+    <article class="control-panel settings-card">
+      <h3>My Account</h3><div id="settingsAccountSummary" class="notice">No active account.</div>
+      <label>Display name<input id="settingsDisplayName" type="text" maxlength="120" autocomplete="name"></label>
+      <button class="btn" id="saveDisplayName" type="button">Save profile</button><hr>
+      <label>New password<input id="settingsNewPassword" type="password" minlength="12" maxlength="128" autocomplete="new-password"></label>
+      <label>Confirm new password<input id="settingsConfirmPassword" type="password" minlength="12" maxlength="128" autocomplete="new-password"></label>
+      <button class="btn primary" id="changeAccountPassword" type="button">Change password</button>
+      <div class="action-row"><button class="btn" id="settingsSignOut" type="button">Sign out here</button><button class="btn danger" id="settingsSignOutEverywhere" type="button">Sign out all devices</button></div>
+      <div id="accountSettingsStatus" class="notice" role="status">Account actions are protected by your current session.</div>
+    </article>
+    <article class="control-panel settings-card owner-only-setting">
+      <h3>Invite a Member</h3><p class="muted">Access starts only after the recipient accepts the invitation.</p>
+      <label>Email<input id="memberInviteEmail" type="email" autocomplete="off" placeholder="name@example.com"></label>
+      <label>Role<select id="memberInviteRole"><option value="visitor">Visitor</option><option value="crew">Crew</option><option value="viewer">Viewer</option><option value="developer">Developer</option><option value="captain">Captain</option><option value="chief_officer">Chief Officer</option><option value="chief_engineer">Chief Engineer</option><option value="dpa">DPA</option><option value="auditor">Auditor</option><option value="administrator">Administrator</option><option value="owner">Owner</option></select></label>
+      <label>Invitation note<textarea id="memberInviteNote" rows="3" maxlength="500" placeholder="Purpose and expected access"></textarea></label>
+      <button class="btn primary full" id="sendMemberInvite" type="button">Send secure invitation</button><div id="memberInviteStatus" class="notice" role="status">No invitation sent.</div>
+    </article>
+    <article class="control-panel settings-card owner-only-setting settings-members-card">
+      <div class="submission-head"><h3>Members &amp; Access</h3><button class="btn" id="settingsRefreshMembers" type="button">Refresh</button></div>
+      <div class="settings-filters"><input id="settingsMemberSearch" type="search" placeholder="Search member or ID"><select id="settingsMemberFilter"><option value="all">All members</option><option value="active">Active</option><option value="blocked">Suspended</option><option value="developer">Developers</option></select></div>
+      <div id="settingsMemberList" class="settings-member-list">No members loaded.</div><div class="notice">The last active Owner cannot be suspended or downgraded.</div>
+    </article>
+    <article class="control-panel settings-card owner-only-setting">
+      <div class="submission-head"><h3>Security &amp; Audit</h3><button class="btn" id="refreshAdminAudit" type="button">Refresh</button></div>
+      <div class="security-checks"><span>🔒 Owner-only administration</span><span>🧑‍💻 Developer access is limited</span><span>⛔ Suspended members lose workspace access</span><span>📋 Administrative actions are logged</span></div>
+      <div id="adminAuditList" class="audit-list">No administrative events loaded.</div>
+    </article>
+  </div>
+</section>
+
 <section id="cloud-documents" class="workspace">
   <div class="workspace-head">
     <div><div class="eyebrow">PRIMARY DOCUMENT VAULT</div><h2>Cloud Document Center</h2><p>Upload once. Access securely from every authorized device.</p></div>
@@ -654,6 +692,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.9.0/mammoth.browser.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-<script src="./app.js?v=8162"></script>
+<script src="./app.js?v=8170"></script>
 </body>
 </html>
