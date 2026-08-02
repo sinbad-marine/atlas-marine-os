@@ -595,6 +595,7 @@ function setupPasswordControls(){
   $('invitePassword')?.addEventListener('input',()=>{updatePasswordRules('invitePassword');updatePasswordMatch('invitePassword','invitePasswordConfirm','invitePasswordMatch');});
   $('invitePasswordConfirm')?.addEventListener('input',()=>updatePasswordMatch('invitePassword','invitePasswordConfirm','invitePasswordMatch'));
   $('recoveryNewPassword')?.addEventListener('input',()=>updatePasswordRules('recoveryNewPassword'));
+  $('recoveryConfirmPassword')?.addEventListener('input',()=>updatePasswordMatch('recoveryNewPassword','recoveryConfirmPassword','recoveryPasswordMatch'));
   updateRegistrationPasswordState();
   updatePasswordRules('invitePassword');
   updatePasswordRules('recoveryNewPassword');
@@ -908,19 +909,25 @@ async function requestRecoveryCode(){
 async function completeRecovery(){
   if(!cloudClient){setAuthMessage('Atlas Cloud connection is not configured.','error');return;}
   const email=$('recoveryEmail').value.trim();
-  const token=$('recoveryCode').value.replace(/\D/g,'');
-  const password=$('recoveryNewPassword').value;
-  if(token.length<6||token.length>8){setAuthMessage('Enter the recovery code from the newest email.','error');return;}
+  const token=$('recoveryCode').value.trim().replace(/[\s-]/g,'');
+  const password=String($('recoveryNewPassword').value||'').normalize('NFKC');
+  const confirmation=String($('recoveryConfirmPassword').value||'').normalize('NFKC');
+  if(!email){setAuthMessage('Enter the email address that received the code.','error');return;}
+  if(token.length<6||token.length>10){setAuthMessage('Enter the newest recovery code exactly as shown in the email.','error');return;}
   if(!passwordPolicyStatus(password).valid){setAuthMessage(passwordPolicyMessage(),'error');return;}
+  if(password!==confirmation){setAuthMessage('Passwords do not match.','error');return;}
   setAuthMessage('Verifying code…');
   const {error:verifyError}=await cloudClient.auth.verifyOtp({email,token,type:'recovery'});
-  if(verifyError){setAuthMessage(verifyError.message,'error');return;}
-  const {error:updateError}=await cloudClient.auth.updateUser({password});
+  if(verifyError){setAuthMessage(`Code verification failed: ${friendlyAuthError(verifyError)}`,'error');return;}
+  const {error:updateError}=await cloudClient.auth.updateUser({password,data:{sinbad_account_ready:true}});
   if(updateError){setAuthMessage(updateError.message,'error');return;}
   await cloudClient.auth.signOut({scope:'local'});
   const {data:verified,error:loginError}=await cloudClient.auth.signInWithPassword({email,password});
   if(loginError){setAuthMessage(`Password was saved but verification failed: ${friendlyAuthError(loginError)}`,'error');return;}
+  pendingInviteSetup=false;
+  sessionStorage.removeItem('sinbad_pending_invite_setup');
   cloudSession=verified.session;localStorage.setItem('sinbad_last_login_email',email);setAppAccess();await loadWorkspaces();
+  $('recoveryCode').value='';$('recoveryNewPassword').value='';$('recoveryConfirmPassword').value='';
   if($('authDialog')?.open)$('authDialog').close();
 }
 async function loadWorkspaces(){
