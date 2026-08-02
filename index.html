@@ -401,6 +401,29 @@
         <button type="button" class="btn sinbad-prompt">Review crew expiries</button>
         <button type="button" class="btn sinbad-prompt">Create passage checklist</button>
       </div>
+      <details class="sinbad-planner">
+        <summary>Passage Plan Studio — first working version</summary>
+        <div class="passage-form">
+          <label>Departure<input id="passageDeparture" placeholder="Marmaris"></label>
+          <label>Destination<input id="passageDestination" placeholder="Rhodes"></label>
+          <label>Region<input id="passageRegion" placeholder="Aegean / Eastern Mediterranean"></label>
+          <label>Distance (NM)<input id="passageDistance" type="number" min="0" step="0.1"></label>
+          <label>Planning speed (kn)<input id="passageSpeed" type="number" min="0.1" step="0.1" value="10"></label>
+          <label>Vessel draft (m)<input id="passageDraft" type="number" min="0" step="0.1"></label>
+          <label>Fuel consumption (L/h)<input id="passageFuelRate" type="number" min="0" step="1"></label>
+          <label>Fuel margin (%)<input id="passageFuelMargin" type="number" min="0" step="1" value="20"></label>
+          <label>Departure time<input id="passageDepartureTime" type="datetime-local"></label>
+        </div>
+        <div class="action-row">
+          <button type="button" class="btn primary" id="createPassagePlan">Create sourced draft</button>
+          <button type="button" class="btn" id="copyPassagePlan">Copy draft</button>
+        </div>
+        <pre id="passagePlanOutput" class="passage-output">Enter voyage details. Sinbad will create a draft, not an approved navigation plan.</pre>
+      </details>
+      <details class="sinbad-sources">
+        <summary>Approved official source catalogue</summary>
+        <div id="officialSourceList" class="source-list"></div>
+      </details>
       <div class="action-row">
         <label>Answer language
           <select id="sinbadLanguage" aria-label="Sinbad answer language">
@@ -625,10 +648,12 @@
 
 
 <script src="./pilot-data.js?v=8161"></script>
-<script src="./route-data.js?v=8161"></script>
+<script src="./route-data.js?v=8162"></script>
+<script src="./official-publications.js?v=8162"></script>
+<script src="./sinbad-core.js?v=8162"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.9.0/mammoth.browser.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-<script src="./app.js?v=8161"></script>
+<script src="./app.js?v=8162"></script>
 </body>
 </html>

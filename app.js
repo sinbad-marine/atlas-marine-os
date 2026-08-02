@@ -323,6 +323,25 @@ function addSinbadMessage(role,text){
   sinbadState.messages.push({role,text,at:new Date().toISOString()});
   saveSinbadMessages();renderSinbadMessages();
 }
+function renderOfficialSources(){
+  const box=$('officialSourceList');if(!box||typeof OFFICIAL_PUBLICATIONS==='undefined')return;
+  box.innerHTML=OFFICIAL_PUBLICATIONS.map(source=>`<article class="source-card"><strong>${esc(source.title)}</strong><br><small>${esc(source.authority)} • ${esc(source.edition)} • ${esc(source.status)}</small><p>${esc(source.notes)}</p><a href="${esc(source.url)}" target="_blank" rel="noopener noreferrer">Open official source</a></article>`).join('');
+}
+function currentPassageInput(){
+  const fleet=get('atlas_fleet'),vessel=fleet[0]||{};
+  return {departure:$('passageDeparture').value,destination:$('passageDestination').value,region:$('passageRegion').value,distanceNm:$('passageDistance').value,speedKn:$('passageSpeed').value||vessel.cruise,draftM:$('passageDraft').value||vessel.draft,fuelConsumptionLph:$('passageFuelRate').value,fuelMarginPct:$('passageFuelMargin').value,departureTime:$('passageDepartureTime').value};
+}
+function createPassagePlanDraft(){
+  if(!window.SinbadCore||typeof OFFICIAL_PUBLICATIONS==='undefined')return;
+  const plan=SinbadCore.passagePlan(currentPassageInput(),OFFICIAL_PUBLICATIONS.filter(x=>x.status==='approved'));
+  const text=SinbadCore.formatPlan(plan);$('passagePlanOutput').textContent=text;
+  localStorage.setItem('atlas_last_passage_draft',JSON.stringify(plan));
+  addSinbadMessage('sinbad',`Passage plan draft created for ${plan.title}. ${plan.sources.length} approved official source(s) cited. Captain approval and live navigation checks are still required.`);
+}
+async function copyPassagePlanDraft(){
+  const text=$('passagePlanOutput').textContent;if(!text)return;
+  await navigator.clipboard.writeText(text);$('copyPassagePlan').textContent='Copied';setTimeout(()=>$('copyPassagePlan').textContent='Copy draft',1200);
+}
 async function sinbadLocalAnswer(query){
   const q=query.toLowerCase();
   const language=sinbadState.language||appLanguage;
@@ -411,6 +430,9 @@ $('sinbadLanguage').value=sinbadState.language;
 $('sinbadLanguage')?.addEventListener('change',e=>{sinbadState.language=e.target.value;localStorage.setItem('atlas_sinbad_language',e.target.value);window.speechSynthesis?.cancel();if(sinbadIsListening)sinbadRecognition?.stop();setListeningUI();});
 $('allowSinbadWebSearch')?.addEventListener('click',performSinbadWebSearch);
 $('denySinbadWebSearch')?.addEventListener('click',()=>{pendingSinbadWebQuestion='';$('sinbadWebConsent').classList.add('hidden');const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];addSinbadMessage('sinbad',copy.denied);});
+$('createPassagePlan')?.addEventListener('click',createPassagePlanDraft);
+$('copyPassagePlan')?.addEventListener('click',copyPassagePlanDraft);
+renderOfficialSources();
 setSinbadVoiceUI();
 setListeningUI();
 

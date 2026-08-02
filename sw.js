@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.16.1-microphone-voice';
+const CACHE='sinbad-marine-v8.16.2-assistant-v1';
 const ASSETS=[
   './',
   './index.html',
@@ -6,6 +6,8 @@ const ASSETS=[
   './app.js',
   './pilot-data.js',
   './route-data.js',
+  './official-publications.js',
+  './sinbad-core.js',
   './manifest.webmanifest',
   './icon-192.png',
   './icon-512.png'
