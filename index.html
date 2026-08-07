@@ -427,6 +427,26 @@
         <summary>Approved official source catalogue</summary>
         <div id="officialSourceList" class="source-list"></div>
       </details>
+      <details class="sinbad-academy" open>
+        <summary>Sinbad Navigation Academy - offline training</summary>
+        <div class="academy-grid">
+          <label>Training module
+            <select id="academyModule">
+              <option value="chart-reading">Chart reading and hydrography</option>
+              <option value="tides-water-levels">Tides and water levels</option>
+              <option value="currents-set-drift">Currents, set and drift</option>
+              <option value="colregs-navigation-rules">COLREG and navigation rules</option>
+              <option value="electronic-navigation">Electronic navigation and ENC</option>
+              <option value="marine-weather">Marine weather</option>
+            </select>
+          </label>
+          <div class="action-row">
+            <button type="button" class="btn primary" id="startAcademyLesson">Open lesson</button>
+            <button type="button" class="btn" id="startAcademyQuiz">Practice question</button>
+          </div>
+        </div>
+        <div id="academyOutput" class="academy-output" aria-live="polite">Choose a module. Lessons and source search remain available without an internet connection.</div>
+      </details>
       <div class="action-row">
         <label>Answer language
           <select id="sinbadLanguage" aria-label="Sinbad answer language">
@@ -691,9 +711,11 @@
 <script src="./route-data.js?v=8162"></script>
 <script src="./official-publications.js?v=8162"></script>
 <script src="./sinbad-core.js?v=8162"></script>
+<script src="./sinbad-training-data.js?v=8180"></script>
+<script src="./sinbad-academy.js?v=8180"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.9.0/mammoth.browser.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-<script src="./app.js?v=8171"></script>
+<script src="./app.js?v=8180"></script>
 </body>
 </html>

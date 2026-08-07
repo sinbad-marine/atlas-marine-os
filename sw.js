@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.17.1-recovery-fix';
+const CACHE='sinbad-marine-v8.18.0-navigation-academy';
 const ASSETS=[
   './',
   './index.html',
@@ -8,6 +8,8 @@ const ASSETS=[
   './route-data.js',
   './official-publications.js',
   './sinbad-core.js',
+  './sinbad-training-data.js',
+  './sinbad-academy.js',
   './manifest.webmanifest',
   './icon-192.png',
   './icon-512.png'
