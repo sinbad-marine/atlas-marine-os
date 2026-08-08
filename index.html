@@ -468,6 +468,22 @@
           <button type="button" class="btn" id="copyPassagePlan">Copy draft</button>
         </div>
         <pre id="passagePlanOutput" class="passage-output">Enter voyage details. Sinbad will create a draft, not an approved navigation plan.</pre>
+        <section class="bridge-panel" aria-labelledby="bridgeTitle">
+          <div class="bridge-head">
+            <div><strong id="bridgeTitle">Sinbad Bridge — OpenCPN route exchange</strong><small>Transfers GPX routes and waypoints only. Licensed chart data never leaves OpenCPN.</small></div>
+            <span id="bridgeStatus" class="bridge-status offline">Bridge offline</span>
+          </div>
+          <div id="bridgeWaypoints" class="bridge-waypoints"></div>
+          <div class="action-row">
+            <button type="button" class="btn" id="addBridgeWaypoint">Add waypoint</button>
+            <button type="button" class="btn" id="importBridgeGpx">Import GPX</button>
+            <input id="bridgeGpxFile" type="file" accept=".gpx,application/gpx+xml,application/xml,text/xml" hidden>
+            <button type="button" class="btn" id="downloadBridgeGpx">Download GPX</button>
+            <button type="button" class="btn primary" id="sendBridgeGpx">Send to local Bridge</button>
+          </div>
+          <p id="bridgeMessage" class="muted">Start Sinbad Bridge on this Windows computer, then add at least two waypoints.</p>
+          <p class="bridge-warning">Planning and decision support only — not a certified ECDIS. Captain approval and current official charts remain mandatory.</p>
+        </section>
       </details>
       <details class="sinbad-sources">
         <summary>Approved official source catalogue</summary>

@@ -392,6 +392,56 @@ async function copyPassagePlanDraft(){
   const text=$('passagePlanOutput').textContent;if(!text)return;
   await navigator.clipboard.writeText(text);$('copyPassagePlan').textContent='Copied';setTimeout(()=>$('copyPassagePlan').textContent='Copy draft',1200);
 }
+const SINBAD_BRIDGE_URL='http://127.0.0.1:31983';
+let bridgeWaypoints=[];
+function bridgeXml(value){return String(value??'').replace(/[<>&"']/g,ch=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&apos;'}[ch]));}
+function bridgeRouteName(){
+  const departure=$('passageDeparture')?.value.trim()||'Departure',destination=$('passageDestination')?.value.trim()||'Destination';
+  return `${departure} to ${destination}`;
+}
+function renderBridgeWaypoints(){
+  const box=$('bridgeWaypoints');if(!box)return;
+  box.innerHTML=bridgeWaypoints.map((point,index)=>`<div class="bridge-waypoint" data-bridge-index="${index}"><span class="bridge-waypoint-index">WP${String(index+1).padStart(2,'0')}</span><input data-field="name" value="${esc(point.name)}" placeholder="Waypoint name" aria-label="Waypoint ${index+1} name"><input data-field="lat" type="number" min="-90" max="90" step="0.000001" value="${esc(point.lat)}" placeholder="Latitude" aria-label="Waypoint ${index+1} latitude"><input data-field="lon" type="number" min="-180" max="180" step="0.000001" value="${esc(point.lon)}" placeholder="Longitude" aria-label="Waypoint ${index+1} longitude"><button type="button" class="btn bridge-remove" data-remove-bridge="${index}">Remove</button></div>`).join('');
+}
+function addBridgeWaypoint(point={}){
+  bridgeWaypoints.push({name:point.name||`WP${String(bridgeWaypoints.length+1).padStart(2,'0')}`,lat:point.lat??'',lon:point.lon??''});renderBridgeWaypoints();
+}
+function syncBridgeWaypoint(event){
+  const row=event.target.closest('[data-bridge-index]');if(!row||!event.target.dataset.field)return;
+  bridgeWaypoints[Number(row.dataset.bridgeIndex)][event.target.dataset.field]=event.target.value;
+}
+function validBridgeWaypoints(){
+  const points=bridgeWaypoints.map((point,index)=>({name:point.name.trim()||`WP${index+1}`,lat:Number(point.lat),lon:Number(point.lon)}));
+  if(points.length<2||points.some(point=>!Number.isFinite(point.lat)||!Number.isFinite(point.lon)||Math.abs(point.lat)>90||Math.abs(point.lon)>180))throw new Error('Add at least two waypoints with valid latitude and longitude.');
+  return points;
+}
+function buildBridgeGpx(){
+  const points=validBridgeWaypoints(),name=bridgeRouteName(),created=new Date().toISOString();
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Sinbad Marine ECS" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">\n  <metadata><name>${bridgeXml(name)}</name><time>${created}</time><desc>Planning draft. Verify against current official charts and Notices to Mariners.</desc></metadata>\n  ${points.map(point=>`<wpt lat="${point.lat.toFixed(6)}" lon="${point.lon.toFixed(6)}"><name>${bridgeXml(point.name)}</name></wpt>`).join('\n  ')}\n  <rte><name>${bridgeXml(name)}</name><desc>Sinbad planning route — captain approval required.</desc>\n    ${points.map(point=>`<rtept lat="${point.lat.toFixed(6)}" lon="${point.lon.toFixed(6)}"><name>${bridgeXml(point.name)}</name></rtept>`).join('\n    ')}\n  </rte>\n</gpx>\n`;
+}
+function safeBridgeFilename(){return `${bridgeRouteName().replace(/[^a-z0-9_-]+/gi,'-').replace(/^-|-$/g,'')||'sinbad-route'}.gpx`;}
+function downloadBridgeGpx(){
+  try{const blob=new Blob([buildBridgeGpx()],{type:'application/gpx+xml'}),link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=safeBridgeFilename();link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000);$('bridgeMessage').textContent='GPX downloaded. Import it in OpenCPN Route & Mark Manager.';}catch(error){$('bridgeMessage').textContent=error.message;}
+}
+async function sendBridgeGpx(){
+  try{
+    const response=await fetch(`${SINBAD_BRIDGE_URL}/routes`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({filename:safeBridgeFilename(),name:bridgeRouteName(),gpx:buildBridgeGpx()})});
+    if(!response.ok)throw new Error(`Bridge returned ${response.status}`);const result=await response.json();$('bridgeMessage').textContent=`Route saved locally: ${result.path}. Import it from OpenCPN Route & Mark Manager.`;checkBridgeStatus();
+  }catch(error){$('bridgeMessage').textContent='Local Bridge is not reachable. Start bridge/start-sinbad-bridge.cmd, or use Download GPX.';}
+}
+async function checkBridgeStatus(){
+  const badge=$('bridgeStatus');if(!badge)return;
+  try{const response=await fetch(`${SINBAD_BRIDGE_URL}/status`,{cache:'no-store'});if(!response.ok)throw new Error();const status=await response.json();badge.textContent=`Bridge online · ${status.routes} route(s)`;badge.className='bridge-status online';}
+  catch(error){badge.textContent='Bridge offline';badge.className='bridge-status offline';}
+}
+async function importBridgeGpxFile(file){
+  if(!file)return;try{
+    const xml=new DOMParser().parseFromString(await file.text(),'application/xml');if(xml.querySelector('parsererror'))throw new Error('Invalid GPX file.');
+    const routePoints=[...xml.getElementsByTagNameNS('*','rtept')],points=routePoints.length?routePoints:[...xml.getElementsByTagNameNS('*','wpt')];
+    if(points.length<2)throw new Error('GPX route must contain at least two points.');
+    bridgeWaypoints=points.map((node,index)=>({name:node.getElementsByTagNameNS('*','name')[0]?.textContent||`WP${index+1}`,lat:node.getAttribute('lat')||'',lon:node.getAttribute('lon')||''}));renderBridgeWaypoints();$('bridgeMessage').textContent=`Imported ${bridgeWaypoints.length} GPX waypoint(s).`;
+  }catch(error){$('bridgeMessage').textContent=error.message;}
+}
 function academyTrainingQuery(query){
   return /(chart|harita|nautical|hydrograph|hidrograf|tide|gelgit|current|akıntı|akinti|set\b|drift|colreg|rule of the road|seyir kural|light|shape|sound signal|enc\b|ecdis|electronic navigation|weather|hava|visibility|görüş|goruş|course|bearing|kerteriz|compass|pusula|navigation|navigasyon|seyir eğitim|seyir egitim)/iu.test(query);
 }
@@ -505,6 +555,14 @@ $('allowSinbadWebSearch')?.addEventListener('click',performSinbadWebSearch);
 $('denySinbadWebSearch')?.addEventListener('click',()=>{pendingSinbadWebQuestion='';$('sinbadWebConsent').classList.add('hidden');const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];addSinbadMessage('sinbad',copy.denied);});
 $('createPassagePlan')?.addEventListener('click',createPassagePlanDraft);
 $('copyPassagePlan')?.addEventListener('click',copyPassagePlanDraft);
+$('addBridgeWaypoint')?.addEventListener('click',()=>addBridgeWaypoint());
+$('bridgeWaypoints')?.addEventListener('input',syncBridgeWaypoint);
+$('bridgeWaypoints')?.addEventListener('click',event=>{const button=event.target.closest('[data-remove-bridge]');if(button){bridgeWaypoints.splice(Number(button.dataset.removeBridge),1);renderBridgeWaypoints();}});
+$('downloadBridgeGpx')?.addEventListener('click',downloadBridgeGpx);
+$('sendBridgeGpx')?.addEventListener('click',sendBridgeGpx);
+$('importBridgeGpx')?.addEventListener('click',()=>$('bridgeGpxFile')?.click());
+$('bridgeGpxFile')?.addEventListener('change',event=>importBridgeGpxFile(event.target.files?.[0]));
+addBridgeWaypoint({name:'Departure'});addBridgeWaypoint({name:'Destination'});checkBridgeStatus();setInterval(checkBridgeStatus,30000);
 $('startAcademyLesson')?.addEventListener('click',renderAcademyLesson);
 $('startAcademyQuiz')?.addEventListener('click',renderAcademyQuiz);
 renderOfficialSources();
