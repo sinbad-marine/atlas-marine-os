@@ -346,24 +346,44 @@
 
 <section id="enc-viewer" class="workspace">
   <div class="workspace-head">
-    <div><div class="eyebrow">OFFICIAL NOAA ENC DISPLAY</div><h2>Sinbad ENC Viewer</h2><p>Your archived S-57 packages are displayed through NOAA's official, continuously updated ENC service.</p></div>
+    <div><div class="eyebrow">GLOBAL MARINE CHART &amp; ENC WORKSPACE</div><h2>Sinbad Marine Chart</h2><p>Global bathymetry and seamarks with official NOAA ENC coverage where available.</p></div>
     <button class="btn close">Close</button>
   </div>
   <div class="enc-safety"><strong>Planning aid only.</strong> Do not use this web display as the sole means of navigation. Verify aboard with an approved, updated ECDIS/ECS and official notices.</div>
   <div class="enc-toolbar">
-    <button class="btn primary" id="encResetView" type="button">Show NOAA Coverage</button>
+    <button class="btn primary" id="encMediterraneanView" type="button">Mediterranean</button>
+    <button class="btn" id="encResetView" type="button">NOAA / USA</button>
     <button class="btn" id="encUseLocation" type="button">Go to My Position</button>
-    <label class="enc-toggle"><input id="encLayerToggle" type="checkbox" checked> ENC layer</label>
+    <label class="enc-toggle"><input id="encBathymetryToggle" type="checkbox" checked> EMODnet depths</label>
+    <label class="enc-toggle"><input id="encSeamarkToggle" type="checkbox" checked> Seamarks</label>
+    <label class="enc-toggle"><input id="encLayerToggle" type="checkbox" checked> NOAA ENC</label>
     <label class="enc-opacity">Opacity <input id="encOpacity" type="range" min="20" max="100" value="100"></label>
     <a class="btn" href="https://nauticalcharts.noaa.gov/enconline/enconline.html" target="_blank" rel="noopener">Open NOAA Viewer</a>
+  </div>
+  <div class="enc-operations-grid">
+    <article class="enc-layer-panel">
+      <h3>Chart Layers</h3>
+      <p>EMODnet provides global/European bathymetry. OpenSeaMap adds community seamarks. NOAA ENC appears in United States charted waters.</p>
+      <div class="enc-layer-legend"><span><i class="depth"></i> Bathymetry</span><span><i class="seamark"></i> Aids to navigation</span><span><i class="official"></i> Official ENC</span></div>
+    </article>
+    <article class="enc-safety-panel">
+      <h3>Vessel Safety Depth</h3>
+      <div class="enc-safety-inputs">
+        <label>Draft (m)<input id="encDraft" type="number" min="0" step="0.1" value="2.0"></label>
+        <label>Required UKC (m)<input id="encUkc" type="number" min="0" step="0.1" value="1.0"></label>
+        <label>Squat allowance (m)<input id="encSquat" type="number" min="0" step="0.1" value="0.3"></label>
+      </div>
+      <div class="enc-safety-result">Calculated safety depth <strong id="encSafetyDepth">3.3 m</strong></div>
+      <small>Advisory calculation only. Add tide, wave response, density, heel and company margins where applicable.</small>
+    </article>
   </div>
   <div class="enc-map-shell">
     <div id="encMap" role="application" aria-label="Interactive NOAA electronic navigational chart"></div>
     <div id="encMapStatus" class="enc-map-status">Loading official ENC layer…</div>
   </div>
   <div class="enc-info-grid">
-    <article><span>Source</span><strong>NOAA Office of Coast Survey</strong></article>
-    <article><span>Display</span><strong>S-52 / S-57 ENC portrayal</strong></article>
+    <article><span>Sources</span><strong>NOAA • EMODnet • OpenSeaMap</strong></article>
+    <article><span>Mode</span><strong>ECS planning &amp; decision support</strong></article>
     <article><span>Archive</span><strong>61 cloud packages retained</strong></article>
   </div>
 </section>
@@ -743,6 +763,6 @@
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.9.0/mammoth.browser.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/ol@10.6.1/dist/ol.js"></script>
-<script src="./app.js?v=8191"></script>
+<script src="./app.js?v=8200"></script>
 </body>
 </html>
