@@ -32,8 +32,41 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&
 
 document.querySelectorAll('[data-open]').forEach(x=>x.onclick=()=>openWorkspace(x.dataset.open));
 document.querySelectorAll('.close').forEach(x=>x.onclick=closeWorkspaces);
-function openWorkspace(id){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');$(id).scrollIntoView({behavior:'smooth'});renderAll()}
+function openWorkspace(id){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');$(id).scrollIntoView({behavior:'smooth'});renderAll();if(id==='enc-viewer')initEncViewer()}
 function closeWorkspaces(){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));scrollTo({top:0,behavior:'smooth'})}
+
+let encMap=null,encChartLayer=null;
+function initEncViewer(){
+  if(encMap){setTimeout(()=>encMap.updateSize(),80);return;}
+  const status=$('encMapStatus');
+  if(!window.ol){status.textContent='Map library could not be loaded. Check the internet connection and reload.';status.classList.add('error');return;}
+  const chartSource=new ol.source.TileWMS({
+    url:'https://gis.charttools.noaa.gov/arcgis/rest/services/MCS/ENCOnline/MapServer/exts/MaritimeChartService/WMSServer',
+    params:{LAYERS:'0',TILED:true,FORMAT:'image/png',TRANSPARENT:true,VERSION:'1.3.0'},
+    crossOrigin:'anonymous',transition:180
+  });
+  let loaded=false;
+  chartSource.on('tileloadend',()=>{if(!loaded){loaded=true;status.textContent='Official NOAA ENC layer connected.';status.classList.add('ready')}});
+  chartSource.on('tileloaderror',()=>{if(!loaded){status.textContent='NOAA ENC layer is temporarily unavailable. Use “Open NOAA Viewer” or try again shortly.';status.classList.add('error')}});
+  encChartLayer=new ol.layer.Tile({source:chartSource,zIndex:2});
+  encMap=new ol.Map({
+    target:'encMap',
+    layers:[new ol.layer.Tile({source:new ol.source.OSM(),zIndex:1}),encChartLayer],
+    view:new ol.View({center:ol.proj.fromLonLat([-98.5,38.5]),zoom:4,minZoom:2,maxZoom:19})
+  });
+  encMap.addControl(new ol.control.ScaleLine({units:'nautical'}));
+  $('encLayerToggle').addEventListener('change',e=>encChartLayer.setVisible(e.target.checked));
+  $('encOpacity').addEventListener('input',e=>encChartLayer.setOpacity(Number(e.target.value)/100));
+  $('encResetView').addEventListener('click',()=>encMap.getView().animate({center:ol.proj.fromLonLat([-98.5,38.5]),zoom:4,duration:650}));
+  $('encUseLocation').addEventListener('click',()=>{
+    if(!navigator.geolocation){status.textContent='Location is not supported on this device.';return;}
+    status.textContent='Reading your position…';status.classList.remove('error','ready');
+    navigator.geolocation.getCurrentPosition(pos=>{
+      encMap.getView().animate({center:ol.proj.fromLonLat([pos.coords.longitude,pos.coords.latitude]),zoom:12,duration:800});
+      status.textContent='Map centered on your current position.';status.classList.add('ready');
+    },err=>{status.textContent=`Location could not be read: ${err.message}`;status.classList.add('error')},{enableHighAccuracy:true,timeout:12000});
+  });
+}
 
 
 let db;
