@@ -35,7 +35,7 @@ document.querySelectorAll('.close').forEach(x=>x.onclick=closeWorkspaces);
 function openWorkspace(id){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');$(id).scrollIntoView({behavior:'smooth'});renderAll();if(id==='enc-viewer')initEncViewer()}
 function closeWorkspaces(){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));scrollTo({top:0,behavior:'smooth'})}
 
-let encMap=null,encChartLayer=null;
+let encMap=null,encChartLayer=null,encBathymetryLayer=null,encSeamarkLayer=null;
 function initEncViewer(){
   if(encMap){setTimeout(()=>encMap.updateSize(),80);return;}
   const status=$('encMapStatus');
@@ -49,15 +49,32 @@ function initEncViewer(){
   chartSource.on('tileloadend',()=>{if(!loaded){loaded=true;status.textContent='Official NOAA ENC layer connected.';status.classList.add('ready')}});
   chartSource.on('tileloaderror',()=>{if(!loaded){status.textContent='NOAA ENC layer is temporarily unavailable. Use “Open NOAA Viewer” or try again shortly.';status.classList.add('error')}});
   encChartLayer=new ol.layer.Tile({source:chartSource,zIndex:2});
+  encBathymetryLayer=new ol.layer.Tile({
+    source:new ol.source.TileWMS({url:'https://ows.emodnet-bathymetry.eu/wms',params:{LAYERS:'emodnet:mean_multicolour',TILED:true,FORMAT:'image/png',TRANSPARENT:false,VERSION:'1.3.0'},crossOrigin:'anonymous'}),
+    opacity:.82,zIndex:1
+  });
+  encSeamarkLayer=new ol.layer.Tile({
+    source:new ol.source.XYZ({url:'https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png',crossOrigin:'anonymous',attributions:'OpenSeaMap contributors'}),
+    zIndex:3
+  });
   encMap=new ol.Map({
     target:'encMap',
-    layers:[new ol.layer.Tile({source:new ol.source.OSM(),zIndex:1}),encChartLayer],
-    view:new ol.View({center:ol.proj.fromLonLat([-98.5,38.5]),zoom:4,minZoom:2,maxZoom:19})
+    layers:[new ol.layer.Tile({source:new ol.source.OSM(),zIndex:0}),encBathymetryLayer,encChartLayer,encSeamarkLayer],
+    view:new ol.View({center:ol.proj.fromLonLat([18,36]),zoom:5,minZoom:2,maxZoom:19})
   });
   encMap.addControl(new ol.control.ScaleLine({units:'nautical'}));
   $('encLayerToggle').addEventListener('change',e=>encChartLayer.setVisible(e.target.checked));
+  $('encBathymetryToggle').addEventListener('change',e=>encBathymetryLayer.setVisible(e.target.checked));
+  $('encSeamarkToggle').addEventListener('change',e=>encSeamarkLayer.setVisible(e.target.checked));
   $('encOpacity').addEventListener('input',e=>encChartLayer.setOpacity(Number(e.target.value)/100));
   $('encResetView').addEventListener('click',()=>encMap.getView().animate({center:ol.proj.fromLonLat([-98.5,38.5]),zoom:4,duration:650}));
+  $('encMediterraneanView').addEventListener('click',()=>encMap.getView().animate({center:ol.proj.fromLonLat([18,36]),zoom:5,duration:650}));
+  const calculateSafetyDepth=()=>{
+    const draft=Math.max(0,Number($('encDraft').value)||0),ukc=Math.max(0,Number($('encUkc').value)||0),squat=Math.max(0,Number($('encSquat').value)||0);
+    $('encSafetyDepth').textContent=`${(draft+ukc+squat).toFixed(1)} m`;
+  };
+  ['encDraft','encUkc','encSquat'].forEach(id=>$(id).addEventListener('input',calculateSafetyDepth));
+  calculateSafetyDepth();
   $('encUseLocation').addEventListener('click',()=>{
     if(!navigator.geolocation){status.textContent='Location is not supported on this device.';return;}
     status.textContent='Reading your position…';status.classList.remove('error','ready');
