@@ -1319,7 +1319,7 @@ async function loadCloudFiles(){
       <h4>${cloudEsc(d.title||d.original_filename)}</h4>
       <small>${cloudEsc(d.bucket_id)} • ${Math.round((d.file_size_bytes||0)/1024)} KB<br>${cloudEsc(d.status)} • ${cloudEsc(d.classification)}</small>
       <div class="cloud-file-actions">
-        <button class="btn cloud-open-file" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}">Open</button>
+        <button class="btn cloud-open-file" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}" data-name="${cloudEsc(d.original_filename)}">${d.bucket_id==='nautical-charts'?'View ENC':'Open'}</button>
         <button class="btn cloud-download-file" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}" data-name="${cloudEsc(d.original_filename)}">Download</button>
         <button class="btn cloud-share-file" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}" data-name="${cloudEsc(d.original_filename)}">Share</button>
         ${roleCanManageLibrary()?`<button class="btn cloud-rename-file" data-id="${cloudEsc(d.id)}" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}" data-name="${cloudEsc(d.original_filename)}">Rename</button>
@@ -1328,7 +1328,16 @@ async function loadCloudFiles(){
       </div>
     </article>`).join('') : 'No cloud files in this category.';
 }
-async function openCloudFile(bucket,path){
+async function openCloudFile(bucket,path,filename=''){
+  if(bucket==='nautical-charts'){
+    openWorkspace('enc-viewer');
+    initEncViewer();
+    const status=$('encMapStatus');
+    if(status)status.textContent=filename
+      ? `${filename} is preserved in the chart archive. Visual ENC display opened.`
+      : 'Visual ENC display opened.';
+    return;
+  }
   const {data,error}=await cloudClient.storage.from(bucket).createSignedUrl(path,300);
   if(error){alert(error.message);return;} window.open(data.signedUrl,'_blank','noopener');
 }
@@ -1892,7 +1901,7 @@ $('cloudFileList').addEventListener('click',e=>{
   const r=e.target.closest('.cloud-rename-file');
   const i=e.target.closest('.cloud-index-file');
   const x=e.target.closest('.cloud-delete-file');
-  if(o)openCloudFile(o.dataset.bucket,o.dataset.path);
+  if(o)openCloudFile(o.dataset.bucket,o.dataset.path,o.dataset.name||'');
   if(d)downloadCloudFile(d.dataset.bucket,d.dataset.path,d.dataset.name);
   if(s)shareCloudFile(s.dataset.bucket,s.dataset.path,s.dataset.name);
   if(r)renameCloudFile(r.dataset.id,r.dataset.bucket,r.dataset.path,r.dataset.name);
