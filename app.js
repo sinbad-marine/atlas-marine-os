@@ -1365,7 +1365,15 @@ async function sinbadCloudKnowledgeAnswer(question){
     const language=sinbadState.language||appLanguage;
     const history=sinbadState.messages.slice(-12,-1).map(message=>({role:message.role==='sinbad'?'assistant':'user',content:message.text}));
     const {data:aiData,error:aiError}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language,history}});
-    if(!aiError&&aiData?.answer){if(status)status.textContent='Atlas Cloud AI active';return aiData.answer;}
+    if(!aiError&&aiData?.answer){
+      const answer=String(aiData.answer).trim();
+      // Older cloud deployments can return a polite "no source found" notice
+      // as if it were a complete AI answer. Treat those notices as a miss so
+      // the installed Ollama brain gets an opportunity to answer instead.
+      const cloudMiss=/yeterli kaynak bulunamad[ıi]|eşleşen bir kaynak bulamad[ıi]|AI bağlantısı henüz etkin|not enough (?:material|source)|no matching (?:knowledge|source)|keine ausreichende quelle|keine passende quelle/i.test(answer);
+      if(!cloudMiss){if(status)status.textContent='Atlas Cloud AI active';return answer;}
+      if(status)status.textContent='Atlas Cloud has no answer · trying offline brain';
+    }
     if(!aiError&&aiData?.needsWebPermission)return requestSinbadWebPermission(question);
     const terms=question.toLocaleLowerCase(language).normalize('NFKD').replace(/[^a-z0-9çğıöşüа-яёء-ي ]/gi,' ').split(/\s+/).filter(x=>x.length>2).slice(0,8);if(!terms.length)return null;
     const {data,error}=await cloudClient.from('document_knowledge_chunks').select('content,chunk_index,document_knowledge!inner(title,classification,workspace_id)').eq('document_knowledge.workspace_id',selectedWorkspaceId).ilike('content',`%${terms[0]}%`).limit(12);

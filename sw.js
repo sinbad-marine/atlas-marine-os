@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.1-offline-brain';
+const CACHE='sinbad-marine-v8.20.2-offline-brain-fallback';
 const ASSETS=[
   './',
   './index.html',
