@@ -431,8 +431,42 @@ async function sendBridgeGpx(){
 }
 async function checkBridgeStatus(){
   const badge=$('bridgeStatus');if(!badge)return;
-  try{const response=await fetch(`${SINBAD_BRIDGE_URL}/status`,{cache:'no-store'});if(!response.ok)throw new Error();const status=await response.json();badge.textContent=`Bridge online · ${status.routes} route(s)`;badge.className='bridge-status online';}
+  try{const response=await fetch(`${SINBAD_BRIDGE_URL}/status`,{cache:'no-store'});if(!response.ok)throw new Error();const status=await response.json();const indexed=status.library?.chunks??status.library?.count??0;badge.textContent=`Bridge online · ${status.routes} route(s) · ${indexed} memory chunk(s)`;badge.className='bridge-status online';}
   catch(error){badge.textContent='Bridge offline';badge.className='bridge-status offline';}
+}
+async function sinbadBridgeJson(path,options={}){
+  const response=await fetch(`${SINBAD_BRIDGE_URL}${path}`,{cache:'no-store',...options,headers:{'Content-Type':'application/json',...(options.headers||{})}});
+  if(!response.ok)throw new Error(`Bridge returned ${response.status}`);
+  return response.json();
+}
+async function syncSinbadOfflineMemory(){
+  const button=$('syncSinbadMemory'),status=$('sinbadMemoryStatus');
+  if(button)button.disabled=true;if(status)status.textContent='Preparing offline memory…';
+  let documents=0,errors=0;
+  try{
+    await sinbadBridgeJson('/status');
+    if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId)throw new Error('Atlas Cloud workspace is not connected.');
+    const knowledge=[];
+    for(let from=0;;from+=100){
+      const {data,error}=await cloudClient.from('document_knowledge').select('id,title,classification,summary,index_status').eq('workspace_id',selectedWorkspaceId).range(from,from+99);
+      if(error)throw error;knowledge.push(...(data||[]));if(!data||data.length<100)break;
+    }
+    for(const doc of knowledge){
+      try{
+        const {data,error}=await cloudClient.from('document_knowledge_chunks').select('content,chunk_index').eq('knowledge_id',doc.id).order('chunk_index');
+        if(error)throw error;const parts=[doc.summary,...(data||[]).map(item=>item.content)].filter(Boolean);if(!parts.length)continue;
+        await sinbadBridgeJson('/library/ingest',{method:'POST',body:JSON.stringify({title:doc.title||`Atlas document ${doc.id}`,text:parts.join('\n\n'),sourceUrl:`atlas-cloud://document-knowledge/${doc.id}`,kind:doc.classification||'publication'})});documents++;
+      }catch(error){console.warn('Offline memory document skipped',doc.id,error);errors++;}
+      if(status)status.textContent=`Reading library… ${documents}/${knowledge.length}`;
+    }
+    const catalogue=(typeof OFFICIAL_PUBLICATIONS==='undefined'?[]:OFFICIAL_PUBLICATIONS).map(source=>[
+      `Title: ${source.title}`,`Authority: ${source.authority}`,`Edition: ${source.edition}`,`Region: ${source.region}`,`Type: ${source.type}`,`Access: ${source.access}`,`Status: ${source.status}`,`URL: ${source.url}`,`Local file: ${source.localFile||''}`,`Notes: ${source.notes||''}`
+    ].join('\n')).join('\n\n---\n\n');
+    if(catalogue){await sinbadBridgeJson('/library/ingest',{method:'POST',body:JSON.stringify({title:'Approved official source catalogue',text:catalogue,sourceUrl:'atlas://official-publications',kind:'official-source-catalogue'})});documents++;}
+    const result=await sinbadBridgeJson('/library/reindex',{method:'POST',body:'{}'});const total=result.chunks??result.count??0;
+    if(status)status.textContent=`Offline memory ready · ${documents} documents · ${total} chunks${errors?` · ${errors} skipped`:''}`;checkBridgeStatus();
+  }catch(error){console.error(error);if(status)status.textContent=`Sync failed: ${error.message}`;}
+  finally{if(button)button.disabled=false;}
 }
 async function importBridgeGpxFile(file){
   if(!file)return;try{
@@ -590,6 +624,7 @@ $('downloadBridgeGpx')?.addEventListener('click',downloadBridgeGpx);
 $('sendBridgeGpx')?.addEventListener('click',sendBridgeGpx);
 $('importBridgeGpx')?.addEventListener('click',()=>$('bridgeGpxFile')?.click());
 $('bridgeGpxFile')?.addEventListener('change',event=>importBridgeGpxFile(event.target.files?.[0]));
+$('syncSinbadMemory')?.addEventListener('click',syncSinbadOfflineMemory);
 addBridgeWaypoint({name:'Departure'});addBridgeWaypoint({name:'Destination'});checkBridgeStatus();setInterval(checkBridgeStatus,30000);
 $('startAcademyLesson')?.addEventListener('click',renderAcademyLesson);
 $('startAcademyQuiz')?.addEventListener('click',renderAcademyQuiz);
@@ -1382,15 +1417,15 @@ async function sinbadCloudKnowledgeAnswer(question){
       if(!cloudMiss&&!cloudMissFallback){if(status)status.textContent='Atlas Cloud AI active';return answer;}
       if(status)status.textContent='Atlas Cloud has no answer · trying offline brain';
     }
-    if(!aiError&&aiData?.needsWebPermission)return requestSinbadWebPermission(question);
+    if(!aiError&&aiData?.needsWebPermission){if(status)status.textContent='Atlas Cloud has no answer · trying offline brain';return null;}
     const terms=question.toLocaleLowerCase(language).normalize('NFKD').replace(/[^a-z0-9çğıöşüа-яёء-ي ]/gi,' ').split(/\s+/).filter(x=>x.length>2).slice(0,8);if(!terms.length)return null;
     const {data,error}=await cloudClient.from('document_knowledge_chunks').select('content,chunk_index,document_knowledge!inner(title,classification,workspace_id)').eq('document_knowledge.workspace_id',selectedWorkspaceId).ilike('content',`%${terms[0]}%`).limit(12);
-    if(error)throw error;if(!data?.length)return requestSinbadWebPermission(question);
+    if(error)throw error;if(!data?.length){if(status)status.textContent='Atlas Cloud has no answer · trying offline brain';return null;}
     const ranked=data.map(row=>({row,score:terms.reduce((n,t)=>n+(row.content.toLocaleLowerCase(language).includes(t)?1:0),0)})).sort((a,b)=>b.score-a.score).slice(0,4);
     const excerpts=ranked.map(({row})=>{const lower=row.content.toLocaleLowerCase(language),positions=terms.map(t=>lower.indexOf(t)).filter(n=>n>=0),at=positions.length?Math.min(...positions):0;return `• ${row.document_knowledge.title} [${row.document_knowledge.classification}]\n${row.content.slice(Math.max(0,at-180),at+650).replace(/\s+/g,' ').trim()}`;});
     if(status)status.textContent='Classified cloud archive active';
     return `Relevant classified Atlas Cloud passages:\n\n${excerpts.join('\n\n')}\n\nVerify critical navigation and safety decisions against the original publication.`;
-  }catch(error){console.warn('Sinbad cloud knowledge unavailable',error);if(status)status.textContent='Atlas Cloud has no matching knowledge';return requestSinbadWebPermission(question);}
+  }catch(error){console.warn('Sinbad cloud knowledge unavailable',error);if(status)status.textContent='Atlas Cloud unavailable · trying offline brain';return null;}
 }
 async function performSinbadWebSearch(){
   const question=pendingSinbadWebQuestion;if(!question)return;$('sinbadWebConsent').classList.add('hidden');pendingSinbadWebQuestion='';

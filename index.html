@@ -103,7 +103,7 @@
   <div class="topbar-account-actions">
     <select id="appLanguage" class="app-language" aria-label="Application language"></select>
     <button class="account-password-button" id="openAccountPassword" type="button">Account &amp; Password</button>
-    <div class="version">● v8.20.3</div>
+    <div class="version">● v8.20.4</div>
   </div>
 </header>
 
@@ -481,6 +481,10 @@
             <button type="button" class="btn" id="downloadBridgeGpx">Download GPX</button>
             <button type="button" class="btn primary" id="sendBridgeGpx">Send to local Bridge</button>
           </div>
+          <div class="action-row">
+            <button type="button" class="btn primary" id="syncSinbadMemory">Build offline memory</button>
+            <span class="badge" id="sinbadMemoryStatus">Offline memory not synced</span>
+          </div>
           <p id="bridgeMessage" class="muted">Start Sinbad Bridge on this Windows computer, then add at least two waypoints.</p>
           <p class="bridge-warning">Planning and decision support only — not a certified ECDIS. Captain approval and current official charts remain mandatory.</p>
         </section>
@@ -779,6 +783,6 @@
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.9.0/mammoth.browser.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/ol@10.6.1/dist/ol.js"></script>
-<script src="./app.js?v=8203"></script>
+<script src="./app.js?v=8204"></script>
 </body>
 </html>

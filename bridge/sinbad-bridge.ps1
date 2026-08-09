@@ -9,8 +9,11 @@ Add-Type -AssemblyName System.Net.Http
 $bridgeRoot = if ([string]::IsNullOrWhiteSpace($ExchangeRoot)) { Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'Sinbad Bridge' } else { $ExchangeRoot }
 $routeRoot = Join-Path $bridgeRoot 'Routes'
 $libraryRoot = Join-Path $bridgeRoot 'Library'
+$importRoot = Join-Path $libraryRoot 'Imported'
+$indexPath = Join-Path $libraryRoot '.sinbad-index.json'
 New-Item -ItemType Directory -Force -Path $routeRoot | Out-Null
 New-Item -ItemType Directory -Force -Path $libraryRoot | Out-Null
+New-Item -ItemType Directory -Force -Path $importRoot | Out-Null
 
 $listener = [Net.Sockets.TcpListener]::new([Net.IPAddress]::Loopback, $Port)
 $listener.Start()
@@ -96,23 +99,97 @@ function Get-OllamaStatus {
   }
 }
 
+function Convert-ToLibraryText($file) {
+  $ext = $file.Extension.ToLowerInvariant()
+  if ($ext -in '.txt','.md','.csv','.json','.xml','.html','.htm','.log','.yaml','.yml') {
+    $text = [IO.File]::ReadAllText($file.FullName)
+    if ($ext -in '.html','.htm','.xml') {
+      $text = [Net.WebUtility]::HtmlDecode(([regex]::Replace($text, '<[^>]+>', ' ')))
+    }
+    return $text
+  }
+  if ($ext -eq '.docx') {
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+    $zip = [IO.Compression.ZipFile]::OpenRead($file.FullName)
+    try {
+      $entry = $zip.GetEntry('word/document.xml')
+      if (-not $entry) { return '' }
+      $reader = [IO.StreamReader]::new($entry.Open(), [Text.Encoding]::UTF8)
+      try { $xml = $reader.ReadToEnd() } finally { $reader.Dispose() }
+      $xml = $xml -replace '</w:p>', "`n" -replace '<w:tab[^>]*/>', "`t"
+      return [Net.WebUtility]::HtmlDecode(([regex]::Replace($xml, '<[^>]+>', ' ')))
+    } finally { $zip.Dispose() }
+  }
+  if ($ext -eq '.pdf') {
+    $tool = Get-Command pdftotext.exe -ErrorAction SilentlyContinue
+    if (-not $tool) { throw 'PDF text extractor is not installed.' }
+    $temp = [IO.Path]::GetTempFileName()
+    try { & $tool.Source -enc UTF-8 -nopgbrk $file.FullName $temp 2>$null; return [IO.File]::ReadAllText($temp) } finally { Remove-Item -LiteralPath $temp -Force -ErrorAction SilentlyContinue }
+  }
+  return ''
+}
+
+function Split-LibraryText([string]$text) {
+  $chunks = New-Object System.Collections.Generic.List[string]
+  $clean = [regex]::Replace($text, '\s+', ' ').Trim()
+  $start = 0
+  while ($start -lt $clean.Length) {
+    $length = [Math]::Min(2800, $clean.Length - $start)
+    $chunks.Add($clean.Substring($start, $length))
+    if ($start + $length -ge $clean.Length) { break }
+    $start += 2500
+  }
+  return @($chunks)
+}
+
+function Update-LibraryIndex {
+  $documents = New-Object System.Collections.Generic.List[object]
+  $skipped = New-Object System.Collections.Generic.List[string]
+  Get-ChildItem -LiteralPath $libraryRoot -File -Recurse -ErrorAction SilentlyContinue |
+    Where-Object { $_.FullName -ne $indexPath -and $_.Extension.ToLowerInvariant() -in '.txt','.md','.csv','.json','.xml','.html','.htm','.log','.yaml','.yml','.docx','.pdf' -and $_.Length -lt 100MB } |
+    ForEach-Object {
+      try {
+        $text = Convert-ToLibraryText $_
+        if (-not [string]::IsNullOrWhiteSpace($text)) {
+          $documents.Add([pscustomobject]@{ title=$_.BaseName; path=$_.FullName; modified=$_.LastWriteTimeUtc.ToString('o'); chunks=@(Split-LibraryText $text) })
+        }
+      } catch { $skipped.Add("$($_.Name): $($_.Exception.Message)") }
+    }
+  $script:LibraryIndex = [pscustomobject]@{ version=1; builtAt=[DateTime]::UtcNow.ToString('o'); documents=@($documents); skipped=@($skipped) }
+  [IO.File]::WriteAllText($indexPath, ($script:LibraryIndex | ConvertTo-Json -Depth 8), [Text.UTF8Encoding]::new($false))
+  return Get-LibraryStatus
+}
+
+function Get-LibraryStatus {
+  $docs = @($script:LibraryIndex.documents)
+  return @{ documents=$docs.Count; chunks=@($docs | ForEach-Object { @($_.chunks).Count } | Measure-Object -Sum).Sum; builtAt=$script:LibraryIndex.builtAt; skipped=@($script:LibraryIndex.skipped).Count; folder=$libraryRoot }
+}
+
+function Import-LibraryDocument($payload) {
+  $title = if ([string]::IsNullOrWhiteSpace([string]$payload.title)) { 'Atlas Library Document' } else { [string]$payload.title }
+  $safe = [regex]::Replace($title, '[^\p{L}\p{N}._-]', '-')
+  if ($safe.Length -gt 90) { $safe = $safe.Substring(0,90) }
+  $hashBytes = [Security.Cryptography.SHA256]::Create().ComputeHash([Text.Encoding]::UTF8.GetBytes("$title|$($payload.sourceUrl)"))
+  $hash = ([BitConverter]::ToString($hashBytes)).Replace('-','').Substring(0,12).ToLowerInvariant()
+  $target = Join-Path $importRoot "$hash-$safe.txt"
+  $content = "TITLE: $title`r`nSOURCE URL: $($payload.sourceUrl)`r`nTYPE: $($payload.kind)`r`n`r`n$($payload.text)"
+  [IO.File]::WriteAllText($target, $content, [Text.UTF8Encoding]::new($false))
+  return @{ ok=$true; path=$target }
+}
+
 function Get-LocalLibraryContext([string]$question) {
   $terms = @($question.ToLowerInvariant() -split '[^\p{L}\p{N}]+' | Where-Object { $_.Length -gt 2 } | Select-Object -Unique -First 10)
   if (-not $terms.Count) { return '' }
-  $matches = New-Object System.Collections.Generic.List[string]
-  Get-ChildItem -LiteralPath $libraryRoot -File -Recurse -ErrorAction SilentlyContinue |
-    Where-Object { $_.Extension -in '.txt','.md','.csv','.json' -and $_.Length -lt 10MB } |
-    Select-Object -First 250 | ForEach-Object {
-      try {
-        $text = [IO.File]::ReadAllText($_.FullName)
-        $score = @($terms | Where-Object { $text.IndexOf($_, [StringComparison]::OrdinalIgnoreCase) -ge 0 }).Count
-        if ($score -gt 0) {
-          $snippet = $text.Substring(0, [Math]::Min($text.Length, 5000))
-          $matches.Add("SOURCE: $($_.Name)`n$snippet")
-        }
-      } catch {}
+  $matches = New-Object System.Collections.Generic.List[object]
+  foreach ($doc in @($script:LibraryIndex.documents)) {
+    $i = 0
+    foreach ($chunk in @($doc.chunks)) {
+      $score = @($terms | Where-Object { $chunk.IndexOf($_, [StringComparison]::OrdinalIgnoreCase) -ge 0 }).Count
+      if ($score -gt 0) { $matches.Add([pscustomobject]@{ score=$score; citation="SOURCE: $($doc.title) (chunk $i)`n$chunk" }) }
+      $i++
     }
-  return (@($matches | Select-Object -First 5) -join "`n`n---`n`n")
+  }
+  return (@($matches | Sort-Object score -Descending | Select-Object -First 6 | ForEach-Object { $_.citation }) -join "`n`n---`n`n")
 }
 
 function Invoke-SinbadLocalAi($payload) {
@@ -124,6 +201,7 @@ function Invoke-SinbadLocalAi($payload) {
   $context = Get-LocalLibraryContext $question
   $system = @'
 You are Captain Sinbad, the offline assistant of Atlas Marine OS. Be a warm, intelligent companion and a practical marine guide. Your primary working languages are Turkish, English and German. Detect which of these languages the user is writing in and reply naturally in the same language unless the user requests another language. You can translate accurately among Turkish, English and German, preserving maritime and technical terminology. Use complete, natural answers and conversation history. You can help with seamanship education, passage-plan drafts, checklists, documents, software and programming. Never invent live weather, current Notices to Mariners, chart corrections, port status, coordinates, depths or regulations. Clearly say when internet, current official publications or vessel-specific data are required. You are planning and decision support, not certified ECDIS. For code changes, explain the plan and create a reviewable draft; never publish, delete data, spend money or change credentials without explicit owner approval.
+When LOCAL OWNER LIBRARY EXCERPTS are supplied, reason from them, distinguish quoted evidence from your inference, and cite the source title in the answer. Never claim a source says something absent from the excerpts.
 '@
   $messages = @(@{ role='system'; content=$system }) + $history
   $userContent = if ($context) { "$question`n`nLOCAL OWNER LIBRARY EXCERPTS:`n$context" } else { $question }
@@ -133,6 +211,11 @@ You are Captain Sinbad, the offline assistant of Atlas Marine OS. Be a warm, int
   if ([string]::IsNullOrWhiteSpace($result.message.content)) { throw 'The local AI returned no answer.' }
   return @{ answer=$result.message.content; model=$result.model; mode=if ($context) {'offline-local-rag'} else {'offline-local-ai'} }
 }
+
+if (Test-Path -LiteralPath $indexPath) {
+  try { $script:LibraryIndex = Get-Content -LiteralPath $indexPath -Raw | ConvertFrom-Json } catch { $script:LibraryIndex = $null }
+}
+if (-not $script:LibraryIndex) { $null = Update-LibraryIndex }
 
 try {
   while ($true) {
@@ -177,7 +260,14 @@ try {
       if ($method -eq 'OPTIONS') { Write-HttpResponse $stream 204 'No Content' ''; continue }
       if ($method -eq 'GET' -and $path -eq '/status') {
         $count = @(Get-ChildItem -LiteralPath $routeRoot -Filter '*.gpx' -File -ErrorAction SilentlyContinue).Count
-        Write-HttpResponse $stream 200 'OK' (Json @{ name='Sinbad Bridge'; version='0.2.0'; routes=$count; exchangeFolder=$routeRoot; libraryFolder=$libraryRoot; ai=(Get-OllamaStatus) }); continue
+        Write-HttpResponse $stream 200 'OK' (Json @{ name='Sinbad Bridge'; version='0.3.0'; routes=$count; exchangeFolder=$routeRoot; libraryFolder=$libraryRoot; library=(Get-LibraryStatus); ai=(Get-OllamaStatus) }); continue
+      }
+      if ($method -eq 'GET' -and $path -eq '/library/status') { Write-HttpResponse $stream 200 'OK' (Json (Get-LibraryStatus)); continue }
+      if ($method -eq 'POST' -and $path -eq '/library/reindex') { Write-HttpResponse $stream 200 'OK' (Json (Update-LibraryIndex)); continue }
+      if ($method -eq 'POST' -and $path -eq '/library/ingest') {
+        $payload = $body | ConvertFrom-Json
+        $result = Import-LibraryDocument $payload
+        Write-HttpResponse $stream 201 'Created' (Json $result); continue
       }
       if ($method -eq 'GET' -and $path -eq '/ai/status') {
         Write-HttpResponse $stream 200 'OK' (Json (Get-OllamaStatus)); continue
