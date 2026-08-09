@@ -468,10 +468,21 @@ async function sinbadLocalAnswer(query){
   const language=sinbadState.language||appLanguage;
   const greetings={'tr-TR':'Merhaba Kaptan. Sinbad aktif. Rotalar, denizcilik yayınları, belgeler, haritalar ve tekne operasyonları hakkında bana soru sorabilirsiniz.','en-US':'Hello Captain. Sinbad is active. Ask me about routes, marine publications, documents, charts, or yacht operations.','ru-RU':'Здравствуйте, капитан. Синбад активен. Спросите меня о маршрутах, морских изданиях, документах, картах или эксплуатации яхты.','fr-FR':'Bonjour Capitaine. Sinbad est actif. Interrogez-moi sur les routes, publications maritimes, documents, cartes ou opérations du yacht.','de-DE':'Hallo Kapitän. Sinbad ist aktiv. Fragen Sie mich zu Routen, nautischen Publikationen, Dokumenten, Karten oder Yachtbetrieb.','ar-SA':'مرحباً أيها القبطان. سندباد نشط. اسألني عن المسارات أو المنشورات البحرية أو الوثائق أو الخرائط أو عمليات اليخت.','es-ES':'Hola Capitán. Sinbad está activo. Pregúnteme sobre rutas, publicaciones marítimas, documentos, cartas u operaciones del yate.','it-IT':'Salve Capitano. Sinbad è attivo. Mi chieda informazioni su rotte, pubblicazioni nautiche, documenti, carte o operazioni dello yacht.'};
   if(/^(slm|selam|merhaba|hello|hi|hey|привет|здрав|bonjour|salut|hallo|guten|مرحبا|السلام|hola|buen|ciao|salve)[!. ]*$/iu.test(q))return greetings[language]||greetings['en-US'];
-  const offlineTrainingAnswer=academyOfflineAnswer(query);
-  if(offlineTrainingAnswer)return offlineTrainingAnswer;
+  // At sea, avoid waiting for an unreachable cloud request. When the browser
+  // reports that it is offline, ask the local Ollama brain first.
+  const offlineFirst=navigator.onLine===false;
+  if(offlineFirst){
+    const offlineFirstAnswer=await sinbadOfflineAiAnswer(query);
+    if(offlineFirstAnswer)return offlineFirstAnswer;
+  }
   const cloudAnswer=await sinbadCloudKnowledgeAnswer(query);
   if(cloudAnswer)return cloudAnswer;
+  if(!offlineFirst){
+    const localAiAnswer=await sinbadOfflineAiAnswer(query);
+    if(localAiAnswer)return localAiAnswer;
+  }
+  const offlineTrainingAnswer=academyOfflineAnswer(query);
+  if(offlineTrainingAnswer)return offlineTrainingAnswer;
   const files=await dbAll();
   const crew=get('atlas_crew');
   const fleet=get('atlas_fleet');
@@ -523,6 +534,23 @@ async function sinbadLocalAnswer(query){
 
   const noMatch={'tr-TR':'Atlas Marine verilerinde güçlü bir eşleşme bulamadım. İlgili kitabı veya belgeyi Atlas Cloud kitaplığına yükleyin ya da sorunuzu daha ayrıntılı yazın.','en-US':'I did not find a strong match in Atlas Marine data. Upload the relevant book or document to the Atlas Cloud library, or ask a more specific question.','ru-RU':'Я не нашёл точного совпадения в данных Atlas Marine. Загрузите нужную книгу или документ в Atlas Cloud либо уточните вопрос.','fr-FR':'Je n’ai pas trouvé de correspondance précise dans Atlas Marine. Chargez le livre ou document dans Atlas Cloud ou précisez votre question.','de-DE':'Ich habe keine eindeutige Übereinstimmung gefunden. Laden Sie das Buch oder Dokument in Atlas Cloud hoch oder stellen Sie eine genauere Frage.','ar-SA':'لم أجد تطابقاً واضحاً في بيانات Atlas Marine. حمّل الكتاب أو الوثيقة إلى مكتبة Atlas Cloud أو اطرح سؤالاً أكثر تحديداً.','es-ES':'No encontré una coincidencia clara en Atlas Marine. Cargue el libro o documento en Atlas Cloud o formule una pregunta más específica.','it-IT':'Non ho trovato una corrispondenza chiara in Atlas Marine. Carichi il libro o documento in Atlas Cloud oppure formuli una domanda più specifica.'};
   return noMatch[language]||noMatch['en-US'];
+}
+async function sinbadOfflineAiAnswer(question){
+  const status=$('sinbadKnowledgeStatus');
+  try{
+    if(status)status.textContent='Connecting to Sinbad offline brain…';
+    const history=sinbadState.messages.slice(-12,-1).map(message=>({role:message.role==='sinbad'?'assistant':'user',content:message.text}));
+    const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/chat`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question,language:sinbadState.language||appLanguage,history})});
+    if(!response.ok)throw new Error(`Offline brain returned ${response.status}`);
+    const data=await response.json();
+    if(!data?.answer)return null;
+    if(status)status.textContent=`Sinbad offline AI active · ${data.model||'local model'}`;
+    return data.answer;
+  }catch(error){
+    console.warn('Sinbad offline AI unavailable',error);
+    if(status)status.textContent='Offline AI is not installed or Bridge is closed';
+    return null;
+  }
 }
 async function sendToSinbad(text){
   const q=(text||'').trim(); if(!q)return;
@@ -1335,7 +1363,8 @@ async function sinbadCloudKnowledgeAnswer(question){
   const status=$('sinbadKnowledgeStatus');if(status)status.textContent='Searching Atlas Cloud…';
   try{
     const language=sinbadState.language||appLanguage;
-    const {data:aiData,error:aiError}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language}});
+    const history=sinbadState.messages.slice(-12,-1).map(message=>({role:message.role==='sinbad'?'assistant':'user',content:message.text}));
+    const {data:aiData,error:aiError}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language,history}});
     if(!aiError&&aiData?.answer){if(status)status.textContent='Atlas Cloud AI active';return aiData.answer;}
     if(!aiError&&aiData?.needsWebPermission)return requestSinbadWebPermission(question);
     const terms=question.toLocaleLowerCase(language).normalize('NFKD').replace(/[^a-z0-9çğıöşüа-яёء-ي ]/gi,' ').split(/\s+/).filter(x=>x.length>2).slice(0,8);if(!terms.length)return null;
@@ -1351,7 +1380,8 @@ async function performSinbadWebSearch(){
   const question=pendingSinbadWebQuestion;if(!question)return;$('sinbadWebConsent').classList.add('hidden');pendingSinbadWebQuestion='';
   $('sinbadThinking').classList.remove('hidden');
   try{
-    const {data,error}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language:sinbadState.language,allowWebSearch:true}});if(error)throw error;
+    const history=sinbadState.messages.slice(-12).map(message=>({role:message.role==='sinbad'?'assistant':'user',content:message.text}));
+    const {data,error}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language:sinbadState.language,allowWebSearch:true,history}});if(error)throw error;
     const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];const answer=`${copy.result}:\n\n${data?.answer||'No reliable web result was found.'}`;
     addSinbadMessage('sinbad',answer);speakSinbad(answer);
   }catch(error){addSinbadMessage('sinbad',`Web search failed: ${error.message||error}`);}finally{$('sinbadThinking').classList.add('hidden');}
