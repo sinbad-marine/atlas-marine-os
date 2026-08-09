@@ -1371,7 +1371,12 @@ async function sinbadCloudKnowledgeAnswer(question){
       // as if it were a complete AI answer. Treat those notices as a miss so
       // the installed Ollama brain gets an opportunity to answer instead.
       const cloudMiss=/yeterli kaynak bulunamad[ıi]|eşleşen bir kaynak bulamad[ıi]|AI bağlantısı henüz etkin|not enough (?:material|source)|no matching (?:knowledge|source)|keine ausreichende quelle|keine passende quelle/i.test(answer);
-      if(!cloudMiss){if(status)status.textContent='Atlas Cloud AI active';return answer;}
+      const normalizedAnswer=answer.toLocaleLowerCase('tr-TR').normalize('NFKD').replace(/[\u0300-\u036f]/g,'');
+      const cloudMissFallback=normalizedAnswer.includes('yeterli kaynak yok')
+        || normalizedAnswer.includes('yeterli kaynak bulunamadi')
+        || normalizedAnswer.includes('yalnizca onayli atlas cloud')
+        || normalizedAnswer.includes('kitabi veya belgeyi kutuphaneye yukleyin');
+      if(!cloudMiss&&!cloudMissFallback){if(status)status.textContent='Atlas Cloud AI active';return answer;}
       if(status)status.textContent='Atlas Cloud has no answer · trying offline brain';
     }
     if(!aiError&&aiData?.needsWebPermission)return requestSinbadWebPermission(question);
