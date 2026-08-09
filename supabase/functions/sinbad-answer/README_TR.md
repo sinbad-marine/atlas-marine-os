@@ -1,6 +1,6 @@
 # Sinbad Answer Edge Function
 
-Bu fonksiyon tarayıcıdaki kullanıcı oturumunu doğrular, kullanıcının seçilen workspace üyeliğini kontrol eder, yalnızca o workspace içindeki onaylı bilgi parçalarını toplar ve cevabı kaynak numaralarıyla üretir.
+Bu fonksiyon Sinbad'ın gerçek AI beynidir. Kullanıcı oturumunu ve workspace üyeliğini doğrular; özel kütüphaneden ilgili parçaları bulur, konuşma geçmişini kullanır ve kaynaklı cevap üretir. Kütüphanede eşleşme yoksa kararlı genel denizcilik bilgisiyle yardımcı olabilir. Güncel bilgi gerektiğinde kullanıcıdan web arama izni ister.
 
 Gerekli sunucu sırları:
 
@@ -9,12 +9,12 @@ Gerekli sunucu sırları:
 
 Supabase tarafından sağlanan `SUPABASE_URL` ve `SUPABASE_ANON_KEY` kullanılır. OpenAI anahtarı hiçbir zaman web uygulamasına veya GitHub deposuna yazılmamalıdır.
 
-Fonksiyon dağıtılmadan önce:
+Canlıya alma sırası:
 
-1. GitHub deposunu private yapın veya hassas içeriği ayrı private depoya taşıyın.
+1. `OPENAI_API_KEY` değerini Supabase Edge Function secret olarak kaydedin.
 2. `document_knowledge` ve `document_knowledge_chunks` RLS politikalarını doğrulayın.
-3. Supabase secret olarak API anahtarını ekleyin.
-4. Ödeme ve API harcama limiti için ürün sahibi onayı alın.
-5. Fonksiyonu dağıtın ve yetkisiz workspace testi yapın.
+3. `sinbad-answer` fonksiyonunu doğru Supabase projesine deploy edin.
+4. Oturum açıkken genel sohbet, kütüphane sorusu ve güncel web izni akışlarını ayrı ayrı test edin.
+5. OpenAI kullanım bütçesi ve harcama alarmı belirleyin.
 
-Bu dosya yalnızca yerel hazırlıktır; fonksiyon otomatik olarak dağıtılmamıştır.
+Bu klasördeki kodun GitHub Pages'e gönderilmesi Edge Function'ı otomatik deploy etmez; Supabase dağıtımı ayrıca yapılmalıdır.

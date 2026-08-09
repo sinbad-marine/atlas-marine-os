@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.18.0-navigation-academy';
+const CACHE='sinbad-marine-v8.20.1-offline-brain';
 const ASSETS=[
   './',
   './index.html',
