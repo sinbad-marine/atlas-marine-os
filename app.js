@@ -1371,7 +1371,10 @@ async function sinbadCloudKnowledgeAnswer(question){
       // as if it were a complete AI answer. Treat those notices as a miss so
       // the installed Ollama brain gets an opportunity to answer instead.
       const cloudMiss=/yeterli kaynak bulunamad[ıi]|eşleşen bir kaynak bulamad[ıi]|AI bağlantısı henüz etkin|not enough (?:material|source)|no matching (?:knowledge|source)|keine ausreichende quelle|keine passende quelle/i.test(answer);
-      const normalizedAnswer=answer.toLocaleLowerCase('tr-TR').normalize('NFKD').replace(/[\u0300-\u036f]/g,'');
+      const normalizedAnswer=answer.toLocaleLowerCase('tr-TR')
+        .replace(/[ıİ]/g,'i').replace(/[şŞ]/g,'s').replace(/[ğĞ]/g,'g')
+        .replace(/[üÜ]/g,'u').replace(/[öÖ]/g,'o').replace(/[çÇ]/g,'c')
+        .normalize('NFKD').replace(/[\u0300-\u036f]/g,'');
       const cloudMissFallback=normalizedAnswer.includes('yeterli kaynak yok')
         || normalizedAnswer.includes('yeterli kaynak bulunamadi')
         || normalizedAnswer.includes('yalnizca onayli atlas cloud')
