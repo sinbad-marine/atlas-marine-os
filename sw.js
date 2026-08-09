@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.2-offline-brain-fallback';
+const CACHE='sinbad-marine-v8.20.3-turkish-fold-fix';
 const ASSETS=[
   './',
   './index.html',
