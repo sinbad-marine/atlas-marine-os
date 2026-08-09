@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.3-turkish-fold-fix';
+const CACHE='sinbad-marine-v8.20.4-persistent-memory';
 const ASSETS=[
   './',
   './index.html',
