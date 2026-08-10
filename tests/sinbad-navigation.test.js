@@ -79,6 +79,56 @@ test("computes great-circle inverse", () => {
   assert.ok(Math.abs(result.initialCourse - 90) < 0.001);
 });
 
+test("computes great-circle destination and midpoint", () => {
+  const destination = nav.greatCircleDestination(0, 0, 90, 5403.64);
+  assert.ok(Math.abs(destination.lat) < 0.001);
+  assert.ok(Math.abs(destination.lon - 90) < 0.001);
+  const midpoint = nav.intermediateGreatCirclePoint(0, 0, 0, 90, 0.5);
+  assert.ok(Math.abs(midpoint.lon - 45) < 0.001);
+});
+
+test("computes rhumb-line inverse", () => {
+  const inverse = nav.rhumbInverse(43.25, -10, 42.8557, -9.2295);
+  assert.ok(Math.abs(inverse.distanceNm - 41.25) < 0.05);
+  assert.ok(Math.abs(inverse.course - 125) < 0.05);
+});
+
+test("solves speed distance and time", () => {
+  assert.deepEqual(nav.speedDistanceTime({ speedKnots: 12, hours: 5 }), { distanceNm: 60, speedKnots: 12, hours: 5 });
+  assert.equal(nav.speedDistanceTime({ distanceNm: 120, speedKnots: 10 }).hours, 12);
+  assert.equal(nav.speedDistanceTime({ distanceNm: 120, hours: 8 }).speedKnots, 15);
+});
+
+test("converts compass and true courses using signed east-positive corrections", () => {
+  assert.equal(nav.compassToTrue(100, 2, -5), 97);
+  assert.equal(nav.trueToCompass(97, 2, -5), 100);
+});
+
+test("computes CPA and TCPA for crossing traffic", () => {
+  const result = nav.cpaTcpa(
+    { lat: 0, lon: 0, course: 90, speed: 10 },
+    { lat: 10 / 60, lon: 10 / 60, course: 180, speed: 10 }
+  );
+  assert.ok(Math.abs(result.tcpaHours - 1) < 0.001);
+  assert.ok(result.cpaNm < 0.01);
+  assert.equal(result.past, false);
+});
+
+test("computes cross-track error and passage fuel reserve", () => {
+  const track = nav.crossTrackError(0, 0, 0, 10, 1, 5);
+  assert.ok(Math.abs(Math.abs(track.crossTrackNm) - 60.04) < 0.1);
+  const fuel = nav.passageFuel(100, 10, 20, 15);
+  assert.equal(fuel.hours, 10);
+  assert.equal(fuel.baseFuel, 200);
+  assert.ok(Math.abs(fuel.totalFuel - 230) < 1e-9);
+});
+
+test("answers Turkish speed distance and time questions", () => {
+  assert.match(nav.answer("12 knot hızla 5 saatte kaç deniz mili giderim?", "tr"), /60\.00 deniz mili/);
+  assert.match(nav.answer("120 deniz mili mesafeyi 10 knot ile kaç saatte giderim?", "tr"), /12\.00 saat/);
+  assert.match(nav.answer("120 deniz milini 8 saatte tamamlamak için gerekli hız kaç knot?", "tr"), /15\.00 knot/);
+});
+
 test("keeps unsafe or incomplete calculations bounded", () => {
   const response = nav.answer("DR pozisyonumu hesapla", "tr");
   assert.match(response, /eksik bilgiler/i);

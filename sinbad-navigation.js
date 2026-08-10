@@ -83,6 +83,130 @@
     return { distanceNm: central * R_NM, initialCourse: normalize360(toDeg(Math.atan2(y, x))) };
   }
 
+  function greatCircleDestination(lat, lon, initialCourse, distanceNm) {
+    const phi1 = toRad(Number(lat));
+    const lambda1 = toRad(Number(lon));
+    const theta = toRad(normalize360(Number(initialCourse)));
+    const delta = Number(distanceNm) / R_NM;
+    const phi2 = Math.asin(Math.sin(phi1) * Math.cos(delta) + Math.cos(phi1) * Math.sin(delta) * Math.cos(theta));
+    const lambda2 = lambda1 + Math.atan2(
+      Math.sin(theta) * Math.sin(delta) * Math.cos(phi1),
+      Math.cos(delta) - Math.sin(phi1) * Math.sin(phi2)
+    );
+    return { lat: toDeg(phi2), lon: ((toDeg(lambda2) + 540) % 360) - 180 };
+  }
+
+  function rhumbInverse(lat1, lon1, lat2, lon2) {
+    const phi1 = toRad(Number(lat1));
+    const phi2 = toRad(Number(lat2));
+    const deltaPhi = phi2 - phi1;
+    let deltaLambda = toRad(Number(lon2) - Number(lon1));
+    if (Math.abs(deltaLambda) > Math.PI) deltaLambda += deltaLambda > 0 ? -2 * Math.PI : 2 * Math.PI;
+    const deltaPsi = Math.log(Math.tan(phi2 / 2 + Math.PI / 4) / Math.tan(phi1 / 2 + Math.PI / 4));
+    const q = Math.abs(deltaPsi) > 1e-12 ? deltaPhi / deltaPsi : Math.cos(phi1);
+    return {
+      distanceNm: Math.hypot(deltaPhi, q * deltaLambda) * R_NM,
+      course: normalize360(toDeg(Math.atan2(deltaLambda, deltaPsi)))
+    };
+  }
+
+  function intermediateGreatCirclePoint(lat1, lon1, lat2, lon2, fraction) {
+    const f = Number(fraction);
+    if (f < 0 || f > 1) throw new RangeError("fraction must be between 0 and 1");
+    const inverse = greatCircleInverse(lat1, lon1, lat2, lon2);
+    return greatCircleDestination(lat1, lon1, inverse.initialCourse, inverse.distanceNm * f);
+  }
+
+  function crossTrackError(startLat, startLon, endLat, endLon, vesselLat, vesselLon) {
+    const route = greatCircleInverse(startLat, startLon, endLat, endLon);
+    const vessel = greatCircleInverse(startLat, startLon, vesselLat, vesselLon);
+    const delta13 = vessel.distanceNm / R_NM;
+    const angle = toRad(vessel.initialCourse - route.initialCourse);
+    const crossTrackNm = Math.asin(Math.sin(delta13) * Math.sin(angle)) * R_NM;
+    const alongTrackNm = Math.acos(Math.min(1, Math.max(-1, Math.cos(delta13) / Math.cos(crossTrackNm / R_NM)))) * R_NM;
+    return { crossTrackNm, alongTrackNm };
+  }
+
+  function speedDistanceTime(values) {
+    const distanceNm = values.distanceNm == null ? null : Number(values.distanceNm);
+    const speedKnots = values.speedKnots == null ? null : Number(values.speedKnots);
+    const hours = values.hours == null ? null : Number(values.hours);
+    const supplied = [distanceNm, speedKnots, hours].filter(value => value != null && Number.isFinite(value)).length;
+    if (supplied !== 2) throw new RangeError("provide exactly two of distanceNm, speedKnots, and hours");
+    if ([distanceNm, speedKnots, hours].some(value => value != null && value < 0)) throw new RangeError("navigation values cannot be negative");
+    if (distanceNm == null) return { distanceNm: speedKnots * hours, speedKnots, hours };
+    if (speedKnots == null) {
+      if (hours === 0) throw new RangeError("hours must be greater than zero");
+      return { distanceNm, speedKnots: distanceNm / hours, hours };
+    }
+    if (speedKnots === 0) throw new RangeError("speed must be greater than zero");
+    return { distanceNm, speedKnots, hours: distanceNm / speedKnots };
+  }
+
+  function compassToTrue(compassCourse, deviation, variation) {
+    return normalize360(Number(compassCourse) + Number(deviation) + Number(variation));
+  }
+
+  function trueToCompass(trueCourse, deviation, variation) {
+    return normalize360(Number(trueCourse) - Number(variation) - Number(deviation));
+  }
+
+  function cpaTcpa(own, target) {
+    const meanLat = toRad((Number(own.lat) + Number(target.lat)) / 2);
+    const relativePosition = {
+      east: (Number(target.lon) - Number(own.lon)) * 60 * Math.cos(meanLat),
+      north: (Number(target.lat) - Number(own.lat)) * 60
+    };
+    const ownVelocity = vector(own.speed, own.course);
+    const targetVelocity = vector(target.speed, target.course);
+    const relativeVelocity = {
+      east: targetVelocity.east - ownVelocity.east,
+      north: targetVelocity.north - ownVelocity.north
+    };
+    const velocitySquared = relativeVelocity.east ** 2 + relativeVelocity.north ** 2;
+    const rawTcpaHours = velocitySquared < 1e-12 ? Infinity : -(
+      relativePosition.east * relativeVelocity.east + relativePosition.north * relativeVelocity.north
+    ) / velocitySquared;
+    const evaluationHours = Math.max(0, rawTcpaHours);
+    const closestEast = relativePosition.east + relativeVelocity.east * evaluationHours;
+    const closestNorth = relativePosition.north + relativeVelocity.north * evaluationHours;
+    return {
+      cpaNm: Math.hypot(closestEast, closestNorth),
+      tcpaHours: rawTcpaHours,
+      past: rawTcpaHours < 0,
+      relativeBearing: vectorToPolar(relativePosition.east, relativePosition.north).direction
+    };
+  }
+
+  function passageFuel(distanceNm, speedKnots, consumptionPerHour, reservePercent) {
+    const hours = speedDistanceTime({ distanceNm, speedKnots }).hours;
+    const baseFuel = hours * Number(consumptionPerHour);
+    return { hours, baseFuel, totalFuel: baseFuel * (1 + Number(reservePercent || 0) / 100) };
+  }
+
+  function parseSpeedDistanceTimeQuestion(question) {
+    const text = normalizeText(question);
+    let solve = null;
+    if (/(?:kaç|kac)\s*(?:saat|dakika)|\b(?:süre|sure|eta)\b/.test(text)) solve = "hours";
+    else if (/(?:kaç|kac)\s*(?:knot|kt)|\b(?:gerekli|ortalama)\s*(?:hız|hiz)\b/.test(text)) solve = "speedKnots";
+    else if (/(?:kaç|kac)\s*(?:deniz mili|mil|nm)|\bmesafe(?:yi)?\b/.test(text)) solve = "distanceNm";
+    if (!solve) return null;
+
+    const distanceMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:deniz mil(?:i|ini)?|nm)\b/);
+    const speedMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:knot|knots|kt|kts|kn)\b/);
+    const hourMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:saat(?:te)?|hour|hours)\b/);
+    const minuteMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:dakika|minute|minutes|min)\b/);
+    const parsed = {
+      solve,
+      distanceNm: distanceMatch ? Number(distanceMatch[1]) : null,
+      speedKnots: speedMatch ? Number(speedMatch[1]) : null,
+      hours: Number(hourMatch?.[1] || 0) + Number(minuteMatch?.[1] || 0) / 60
+    };
+    if (!parsed.hours) parsed.hours = null;
+    parsed[solve] = null;
+    return parsed;
+  }
+
   function vector(speed, direction) {
     const angle = toRad(normalize360(Number(direction)));
     return { east: Number(speed) * Math.sin(angle), north: Number(speed) * Math.cos(angle) };
@@ -187,6 +311,31 @@
   }
 
   function answer(question, language) {
+    const sdt = parseSpeedDistanceTimeQuestion(question);
+    if (sdt) {
+      const lang = languageCode(language);
+      const supplied = [sdt.distanceNm, sdt.speedKnots, sdt.hours].filter(value => value != null).length;
+      if (supplied !== 2) {
+        if (lang === "en") return "Provide two of distance, speed, and time so I can calculate the third.";
+        if (lang === "de") return "Bitte zwei Werte aus Distanz, Geschwindigkeit und Zeit angeben.";
+        return "Mesafe, hız ve süre bilgilerinden ikisini verin; üçüncüsünü hesaplayayım.";
+      }
+      const result = speedDistanceTime(sdt);
+      if (sdt.solve === "distanceNm") {
+        if (lang === "en") return `Distance run: ${result.distanceNm.toFixed(2)} NM.`;
+        if (lang === "de") return `Zurückgelegte Distanz: ${result.distanceNm.toFixed(2)} sm.`;
+        return `Kat edilen mesafe: ${result.distanceNm.toFixed(2)} deniz mili.`;
+      }
+      if (sdt.solve === "hours") {
+        if (lang === "en") return `Passage time: ${result.hours.toFixed(2)} hours.`;
+        if (lang === "de") return `Fahrtdauer: ${result.hours.toFixed(2)} Stunden.`;
+        return `Seyir süresi: ${result.hours.toFixed(2)} saat.`;
+      }
+      if (lang === "en") return `Required average speed: ${result.speedKnots.toFixed(2)} kn.`;
+      if (lang === "de") return `Erforderliche Durchschnittsgeschwindigkeit: ${result.speedKnots.toFixed(2)} kn.`;
+      return `Gerekli ortalama hız: ${result.speedKnots.toFixed(2)} knot.`;
+    }
+
     const current = parseCurrentQuestion(question);
     if (current) {
       const lang = languageCode(language);
@@ -251,7 +400,17 @@
     formatCoordinate,
     distanceRun,
     rhumbDestination,
+    rhumbInverse,
     greatCircleInverse,
+    greatCircleDestination,
+    intermediateGreatCirclePoint,
+    crossTrackError,
+    speedDistanceTime,
+    compassToTrue,
+    trueToCompass,
+    cpaTcpa,
+    passageFuel,
+    parseSpeedDistanceTimeQuestion,
     currentResult,
     courseToSteer,
     parseCurrentQuestion,
