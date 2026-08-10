@@ -127,6 +127,44 @@
     return { crossTrackNm, alongTrackNm };
   }
 
+  function routeLegProgress(start, end, vessel, speedOverGroundKnots) {
+    const leg = greatCircleInverse(start.lat, start.lon, end.lat, end.lon);
+    const track = crossTrackError(start.lat, start.lon, end.lat, end.lon, vessel.lat, vessel.lon);
+    const alongTrackNm = Math.max(0, track.alongTrackNm);
+    const remainingNm = Math.max(0, leg.distanceNm - alongTrackNm);
+    const speed = Number(speedOverGroundKnots);
+    return {
+      legDistanceNm: leg.distanceNm,
+      alongTrackNm,
+      remainingNm,
+      crossTrackNm: track.crossTrackNm,
+      percentComplete: leg.distanceNm === 0 ? 100 : Math.min(100, alongTrackNm / leg.distanceNm * 100),
+      hoursRemaining: speed > 0 ? remainingNm / speed : Infinity,
+      passedWaypoint: track.alongTrackNm > leg.distanceNm
+    };
+  }
+
+  function routeCorridorStatus(start, end, vessel, corridorHalfWidthNm) {
+    const track = crossTrackError(start.lat, start.lon, end.lat, end.lon, vessel.lat, vessel.lon);
+    const limit = Math.abs(Number(corridorHalfWidthNm));
+    const offset = Math.abs(track.crossTrackNm);
+    return {
+      crossTrackNm: track.crossTrackNm,
+      side: track.crossTrackNm > 0 ? "starboard" : track.crossTrackNm < 0 ? "port" : "on-track",
+      withinCorridor: offset <= limit,
+      exceedanceNm: Math.max(0, offset - limit)
+    };
+  }
+
+  function relativeToTrueBearing(relativeBearing, vesselHeading) {
+    return normalize360(Number(vesselHeading) + Number(relativeBearing));
+  }
+
+  function trueToRelativeBearing(trueBearing, vesselHeading) {
+    const clockwise = normalize360(Number(trueBearing) - Number(vesselHeading));
+    return { clockwise, signed: clockwise > 180 ? clockwise - 360 : clockwise };
+  }
+
   function speedDistanceTime(values) {
     const distanceNm = values.distanceNm == null ? null : Number(values.distanceNm);
     const speedKnots = values.speedKnots == null ? null : Number(values.speedKnots);
@@ -559,6 +597,22 @@
     return { inboundCourse: inbound, outboundCourse: outbound, courseChange: signedChange, turnDirection: signedChange >= 0 ? "starboard" : "port", ...geometry };
   }
 
+  function wheelOverStatus(vessel, waypoint, next, speedKnots, rateOfTurnDegPerMinute, safetyMarginNm) {
+    const inbound = rhumbInverse(vessel.lat, vessel.lon, waypoint.lat, waypoint.lon);
+    const outbound = rhumbInverse(waypoint.lat, waypoint.lon, next.lat, next.lon).course;
+    const signedChange = ((outbound - inbound.course + 540) % 360) - 180;
+    const geometry = turnGeometry(speedKnots, rateOfTurnDegPerMinute, signedChange);
+    const triggerDistanceNm = geometry.wheelOverDistanceNm + Number(safetyMarginNm || 0);
+    return {
+      distanceToWaypointNm: inbound.distanceNm,
+      triggerDistanceNm,
+      turnNow: inbound.distanceNm <= triggerDistanceNm,
+      courseChange: signedChange,
+      turnDirection: signedChange >= 0 ? "starboard" : "port",
+      ...geometry
+    };
+  }
+
   function parseSpeedDistanceTimeQuestion(question) {
     const text = normalizeText(question);
     let solve = null;
@@ -780,6 +834,10 @@
     greatCircleDestination,
     intermediateGreatCirclePoint,
     crossTrackError,
+    routeLegProgress,
+    routeCorridorStatus,
+    relativeToTrueBearing,
+    trueToRelativeBearing,
     speedDistanceTime,
     compassToTrue,
     trueToCompass,
@@ -820,6 +878,7 @@
     rankCollisionRisks,
     routeSummary,
     waypointTurnPlan,
+    wheelOverStatus,
     parseSpeedDistanceTimeQuestion,
     currentResult,
     courseToSteer,
