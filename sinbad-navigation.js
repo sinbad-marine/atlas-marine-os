@@ -578,6 +578,47 @@
     return normalize360(Number(desiredTrack) + correction);
   }
 
+  function apparentWind(trueWindSpeedKnots, trueWindFrom, vesselCourse, vesselSpeedKnots) {
+    const trueFlow = vector(trueWindSpeedKnots, Number(trueWindFrom) + 180);
+    const vessel = vector(vesselSpeedKnots, vesselCourse);
+    const apparentFlow = vectorToPolar(trueFlow.east - vessel.east, trueFlow.north - vessel.north);
+    return {
+      speedKnots: apparentFlow.speed,
+      from: normalize360(apparentFlow.direction + 180),
+      relativeFrom: normalize360(apparentFlow.direction + 180 - Number(vesselCourse))
+    };
+  }
+
+  function trueWindFromApparent(apparentWindSpeedKnots, apparentWindFrom, vesselCourse, vesselSpeedKnots) {
+    const apparentFlow = vector(apparentWindSpeedKnots, Number(apparentWindFrom) + 180);
+    const vessel = vector(vesselSpeedKnots, vesselCourse);
+    const trueFlow = vectorToPolar(apparentFlow.east + vessel.east, apparentFlow.north + vessel.north);
+    return { speedKnots: trueFlow.speed, from: normalize360(trueFlow.direction + 180) };
+  }
+
+  function beaufortForce(windSpeedKnots) {
+    const speed = Math.max(0, Number(windSpeedKnots));
+    const upperLimits = [1, 3, 6, 10, 16, 21, 27, 33, 40, 47, 55, 63];
+    const force = upperLimits.findIndex(limit => speed < limit);
+    return force < 0 ? 12 : force;
+  }
+
+  function waveEncounterPeriod(wavePeriodSeconds, waveFrom, vesselCourse, vesselSpeedKnots, wavelengthMeters) {
+    const period = Number(wavePeriodSeconds);
+    if (period <= 0) throw new RangeError("wave period must be greater than zero");
+    const wavelength = wavelengthMeters == null ? 9.80665 * period ** 2 / (2 * Math.PI) : Number(wavelengthMeters);
+    if (wavelength <= 0) throw new RangeError("wavelength must be greater than zero");
+    const waveToward = normalize360(Number(waveFrom) + 180);
+    const relativeAngle = toRad(Number(vesselCourse) - waveToward);
+    const vesselMetersPerSecond = Number(vesselSpeedKnots) * 0.514444;
+    const encounterFrequencyHz = Math.abs(1 / period - vesselMetersPerSecond * Math.cos(relativeAngle) / wavelength);
+    return {
+      wavelengthMeters: wavelength,
+      encounterFrequencyHz,
+      encounterPeriodSeconds: encounterFrequencyHz < 1e-12 ? Infinity : 1 / encounterFrequencyHz
+    };
+  }
+
   function turnGeometry(speedKnots, rateOfTurnDegPerMinute, courseChangeDegrees) {
     const omega = toRad(Math.abs(Number(rateOfTurnDegPerMinute)));
     if (omega <= 0) throw new RangeError("rate of turn must be greater than zero");
@@ -976,6 +1017,10 @@
     positionUncertainty,
     traverse,
     applyLeeway,
+    apparentWind,
+    trueWindFromApparent,
+    beaufortForce,
+    waveEncounterPeriod,
     turnGeometry,
     turnAdvanceTransfer,
     stoppingPerformance,

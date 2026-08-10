@@ -452,6 +452,29 @@ test("computes combined geographic range of observer and light", () => {
   assert.ok(Math.abs(range.geographicRangeNm - 16.64) < 1e-9);
 });
 
+test("converts true wind to apparent wind and back", () => {
+  const apparent = nav.apparentWind(20, 0, 90, 10);
+  assert.ok(Math.abs(apparent.speedKnots - Math.sqrt(500)) < 0.001);
+  const restored = nav.trueWindFromApparent(apparent.speedKnots, apparent.from, 90, 10);
+  assert.ok(Math.abs(restored.speedKnots - 20) < 0.001);
+  assert.ok(Math.abs(restored.from) < 0.001 || Math.abs(restored.from - 360) < 0.001);
+});
+
+test("classifies wind speed on the Beaufort scale", () => {
+  assert.equal(nav.beaufortForce(0), 0);
+  assert.equal(nav.beaufortForce(15), 4);
+  assert.equal(nav.beaufortForce(64), 12);
+});
+
+test("computes wave encounter period", () => {
+  const stationary = nav.waveEncounterPeriod(10, 0, 0, 0);
+  assert.ok(Math.abs(stationary.encounterPeriodSeconds - 10) < 1e-9);
+  const intoSeas = nav.waveEncounterPeriod(10, 0, 0, 10);
+  assert.ok(intoSeas.encounterPeriodSeconds < 10);
+  const following = nav.waveEncounterPeriod(10, 180, 0, 10);
+  assert.ok(following.encounterPeriodSeconds > 10);
+});
+
 test("keeps unsafe or incomplete calculations bounded", () => {
   const response = nav.answer("DR pozisyonumu hesapla", "tr");
   assert.match(response, /eksik bilgiler/i);
