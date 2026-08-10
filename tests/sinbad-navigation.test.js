@@ -362,6 +362,39 @@ test("builds geographic bounds for an anchor swing circle", () => {
   assert.ok(bounds.east > 20 && bounds.west < 20);
 });
 
+test("tracks progress remaining distance and ETA on a route leg", () => {
+  const progress = nav.routeLegProgress(
+    { lat: 0, lon: 0 }, { lat: 0, lon: 2 }, { lat: 0, lon: 1 }, 10
+  );
+  assert.ok(progress.percentComplete > 49.9 && progress.percentComplete < 50.1);
+  assert.ok(progress.remainingNm > 60 && progress.remainingNm < 60.1);
+  assert.ok(progress.hoursRemaining > 6 && progress.hoursRemaining < 6.01);
+});
+
+test("detects route corridor exceedance and side", () => {
+  const status = nav.routeCorridorStatus(
+    { lat: 0, lon: 0 }, { lat: 0, lon: 2 }, { lat: 0.1, lon: 1 }, 2
+  );
+  assert.equal(status.withinCorridor, false);
+  assert.ok(status.exceedanceNm > 4);
+  assert.notEqual(status.side, "on-track");
+});
+
+test("converts relative and true bearings", () => {
+  assert.equal(nav.relativeToTrueBearing(40, 350), 30);
+  assert.deepEqual(nav.trueToRelativeBearing(30, 350), { clockwise: 40, signed: 40 });
+  assert.deepEqual(nav.trueToRelativeBearing(330, 10), { clockwise: 320, signed: -40 });
+});
+
+test("raises a wheel-over trigger near a waypoint", () => {
+  const status = nav.wheelOverStatus(
+    { lat: 0, lon: -0.01 }, { lat: 0, lon: 0 }, { lat: 0.1, lon: 0 }, 12, 3, 0.1
+  );
+  assert.equal(status.turnDirection, "port");
+  assert.equal(status.turnNow, true);
+  assert.ok(status.triggerDistanceNm > status.distanceToWaypointNm);
+});
+
 test("keeps unsafe or incomplete calculations bounded", () => {
   const response = nav.answer("DR pozisyonumu hesapla", "tr");
   assert.match(response, /eksik bilgiler/i);
