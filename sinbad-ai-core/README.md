@@ -65,3 +65,13 @@ evidence, citations preserve available provenance without inventing metadata,
 and insufficient, conflicting, or failed retrieval states stop conclusively.
 Document content remains `DATA_ONLY`; this layer performs no expert execution
 and contains no navigation mathematics.
+
+## Phase 2C plan-only integration boundary
+
+`orchestrator/grounded-orchestrator.js` composes the existing Phase 1 decision
+pipeline, Phase 2A retrieval engine, and Phase 2B grounding pipeline under one
+transaction identifier and unified result. It propagates upstream safe stops,
+keeps expert execution disabled, and never imports or invokes the navigation
+engine. Claims remain explicitly structured inputs; no free-form model claim
+generation, web retrieval, live vessel data, or navigation mathematics is
+introduced.
