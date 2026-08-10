@@ -700,3 +700,33 @@ test("asks for missing plane-sailing inputs", () => {
   const response = nav.answer("D\u00fczlem seyri hesapla", "tr");
   assert.match(response, /enlem fark\u0131, departure/);
 });
+
+test("answers a leeway correction question", () => {
+  const response = nav.answer("R\u00fczg\u00e2r sapmas\u0131 hesapla: istenen rota 100 derece, sapma 5 derece, r\u00fczg\u00e2r taraf\u0131 sancak", "tr");
+  assert.match(response, /105\.0\u00b0T/);
+  assert.match(response, /do\u011frulanmal\u0131d\u0131r/);
+});
+
+test("answers an apparent-wind triangle question", () => {
+  const response = nav.answer("G\u00f6r\u00fcn\u00fcr r\u00fczg\u00e2r hesapla: hakiki r\u00fczg\u00e2r h\u0131z\u0131 20 knot, hakiki r\u00fczg\u00e2r y\u00f6n\u00fc 0 derece, gemi rotas\u0131 90 derece, gemi h\u0131z\u0131 10 knot", "tr");
+  assert.match(response, /22\.36 knot/);
+  assert.match(response, /26\.6\u00b0T/);
+});
+
+test("answers a true-wind triangle question", () => {
+  const response = nav.answer("Hakiki r\u00fczg\u00e2r hesapla: g\u00f6r\u00fcn\u00fcr r\u00fczg\u00e2r h\u0131z\u0131 22.3607 knot, g\u00f6r\u00fcn\u00fcr r\u00fczg\u00e2r y\u00f6n\u00fc 26.565 derece, gemi rotas\u0131 90 derece, gemi h\u0131z\u0131 10 knot", "tr");
+  assert.match(response, /20\.00 knot/);
+  assert.match(response, /0\.0\u00b0T/);
+});
+
+test("answers a multi-leg traverse question", () => {
+  const response = nav.answer("Travers seyri: etap 1 rota 90 derece mesafe 10 NM; etap 2 rota 0 derece mesafe 10 NM", "tr");
+  assert.match(response, /20\.00 deniz mili/);
+  assert.match(response, /14\.14 deniz mili/);
+  assert.match(response, /45\.0\u00b0T/);
+});
+
+test("asks for incomplete wind-triangle inputs", () => {
+  const response = nav.answer("G\u00f6r\u00fcn\u00fcr r\u00fczg\u00e2r hesapla", "tr");
+  assert.match(response, /eksik bilgiler/i);
+});

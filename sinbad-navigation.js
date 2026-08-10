@@ -1050,6 +1050,41 @@
     };
   }
 
+  function parseLeewayQuestion(question) {
+    const text = normalizeText(question);
+    if (!/(?:r\u00fczg\u00e2r sapmas\u0131|r\u00fczgar sapmas\u0131|ruzgar sapmasi|leeway)/.test(text)) return null;
+    const sideMatch = text.match(/(?:r\u00fczg\u00e2r taraf\u0131|r\u00fczgar taraf\u0131|ruzgar tarafi|wind side)\s*(?:is|=|:)?\s*(sancak|iskele|starboard|port)/);
+    return {
+      desiredTrack: labelledNumber(text, "istenen rota|hedef rota|desired track|desired course", "derece|deg|\u00b0|t"),
+      leewayDegrees: labelledNumber(text, "sapma|leeway", "derece|deg|\u00b0"),
+      windSide: sideMatch ? sideMatch[1] : null
+    };
+  }
+
+  function parseWindTriangleQuestion(question) {
+    const text = normalizeText(question);
+    const apparentMode = /(?:g\u00f6r\u00fcn\u00fcr r\u00fczg\u00e2r|gorunur ruzgar|apparent wind)/.test(text);
+    const trueMode = /(?:hakiki r\u00fczg\u00e2r|hakiki ruzgar|true wind)/.test(text);
+    if (!apparentMode && !trueMode) return null;
+    const wantsTrue = /^(?:hakiki r\u00fczg\u00e2r|hakiki ruzgar|true wind)\s*(?:hesapla|nedir|bul|calculate)/.test(text);
+    return {
+      mode: wantsTrue ? "toTrue" : "toApparent",
+      windSpeed: labelledNumber(text, wantsTrue ? "g\u00f6r\u00fcn\u00fcr r\u00fczg\u00e2r h\u0131z\u0131|gorunur ruzgar hizi|apparent wind speed" : "hakiki r\u00fczg\u00e2r h\u0131z\u0131|hakiki ruzgar hizi|true wind speed", "knot|knots|kt|kts|kn"),
+      windFrom: labelledNumber(text, wantsTrue ? "g\u00f6r\u00fcn\u00fcr r\u00fczg\u00e2r y\u00f6n\u00fc|gorunur ruzgar yonu|apparent wind from" : "hakiki r\u00fczg\u00e2r y\u00f6n\u00fc|hakiki ruzgar yonu|true wind from", "derece|deg|\u00b0|t"),
+      vesselCourse: labelledNumber(text, "gemi rotas\u0131|gemi rotasi|vessel course|ship course", "derece|deg|\u00b0|t"),
+      vesselSpeed: labelledNumber(text, "gemi h\u0131z\u0131|gemi hizi|vessel speed|ship speed", "knot|knots|kt|kts|kn")
+    };
+  }
+
+  function parseTraverseQuestion(question) {
+    const text = normalizeText(question);
+    if (!/(?:travers seyri|traverse sailing|\u00e7ok etap|cok etap)/.test(text)) return null;
+    const legs = [];
+    const pattern = /(?:etap|leg)\s*\d+\s*(?:rota|course)\s*(\d+(?:\.\d+)?)\s*(?:derece|deg|\u00b0|t)?\s*(?:,|;)?\s*(?:mesafe|distance)\s*(\d+(?:\.\d+)?)\s*(?:deniz mili|nm)/g;
+    for (const match of text.matchAll(pattern)) legs.push({ course: Number(match[1]), distanceNm: Number(match[2]) });
+    return { legs };
+  }
+
   function vector(speed, direction) {
     const angle = toRad(normalize360(Number(direction)));
     return { east: Number(speed) * Math.sin(angle), north: Number(speed) * Math.cos(angle) };
@@ -1155,6 +1190,40 @@
 
   function answer(question, language) {
     const lang = languageCode(language);
+    const leewayQuestion = parseLeewayQuestion(question);
+    if (leewayQuestion) {
+      const missing = [];
+      if (leewayQuestion.desiredTrack == null) missing.push(lang === "tr" ? "istenen rota" : "desired track");
+      if (leewayQuestion.leewayDegrees == null) missing.push(lang === "tr" ? "sapma a\u00e7\u0131s\u0131" : "leeway angle");
+      if (!leewayQuestion.windSide) missing.push(lang === "tr" ? "r\u00fczg\u00e2r taraf\u0131" : "wind side");
+      if (missing.length) return lang === "tr" ? `R\u00fczg\u00e2r sapmas\u0131 hesab\u0131 i\u00e7in eksik bilgiler: ${missing.join(", ")}.` : `Missing leeway inputs: ${missing.join(", ")}.`;
+      const result = applyLeeway(leewayQuestion.desiredTrack, leewayQuestion.leewayDegrees, leewayQuestion.windSide);
+      return lang === "tr" ? `R\u00fczg\u00e2r sapmas\u0131 i\u00e7in tutulacak rota ${result.toFixed(1)}\u00b0T. R\u00fczg\u00e2r taraf\u0131 ve sapma i\u015fareti gemi davran\u0131\u015f\u0131yla do\u011frulanmal\u0131d\u0131r.` : `Course to steer for leeway: ${result.toFixed(1)}\u00b0T. Verify wind side and correction sign against vessel behaviour.`;
+    }
+
+    const windQuestion = parseWindTriangleQuestion(question);
+    if (windQuestion) {
+      const missing = [];
+      if (windQuestion.windSpeed == null) missing.push(lang === "tr" ? "r\u00fczg\u00e2r h\u0131z\u0131" : "wind speed");
+      if (windQuestion.windFrom == null) missing.push(lang === "tr" ? "r\u00fczg\u00e2r y\u00f6n\u00fc" : "wind direction");
+      if (windQuestion.vesselCourse == null) missing.push(lang === "tr" ? "gemi rotas\u0131" : "vessel course");
+      if (windQuestion.vesselSpeed == null) missing.push(lang === "tr" ? "gemi h\u0131z\u0131" : "vessel speed");
+      if (missing.length) return lang === "tr" ? `R\u00fczg\u00e2r \u00fc\u00e7geni i\u00e7in eksik bilgiler: ${missing.join(", ")}.` : `Missing wind-triangle inputs: ${missing.join(", ")}.`;
+      const result = windQuestion.mode === "toTrue"
+        ? trueWindFromApparent(windQuestion.windSpeed, windQuestion.windFrom, windQuestion.vesselCourse, windQuestion.vesselSpeed)
+        : apparentWind(windQuestion.windSpeed, windQuestion.windFrom, windQuestion.vesselCourse, windQuestion.vesselSpeed);
+      return lang === "tr"
+        ? `${windQuestion.mode === "toTrue" ? "Hakiki" : "G\u00f6r\u00fcn\u00fcr"} r\u00fczg\u00e2r ${result.speedKnots.toFixed(2)} knot, ${result.from.toFixed(1)}\u00b0T y\u00f6n\u00fcnden. Anemometre, gemi hareketi ve meteorolojik verilerle do\u011frulay\u0131n.`
+        : `${windQuestion.mode === "toTrue" ? "True" : "Apparent"} wind ${result.speedKnots.toFixed(2)} kn from ${result.from.toFixed(1)}\u00b0T. Verify with the anemometer, vessel motion, and weather data.`;
+    }
+
+    const traverseQuestion = parseTraverseQuestion(question);
+    if (traverseQuestion) {
+      if (traverseQuestion.legs.length < 2) return lang === "tr" ? "Travers seyri i\u00e7in en az iki etap verin: her etapta rota ve mesafe bulunmal\u0131d\u0131r." : "Provide at least two traverse legs, each with course and distance.";
+      const result = traverse(traverseQuestion.legs);
+      return lang === "tr" ? `Toplam ko\u015fulan mesafe ${result.runNm.toFixed(2)} deniz mili; net mesafe ${result.distanceMadeGoodNm.toFixed(2)} deniz mili, net rota ${result.courseMadeGood.toFixed(1)}\u00b0T. Sonucu harita \u00fczerinde ba\u011f\u0131ms\u0131z olarak kontrol edin.` : `Total run ${result.runNm.toFixed(2)} NM; distance made good ${result.distanceMadeGoodNm.toFixed(2)} NM on ${result.courseMadeGood.toFixed(1)}\u00b0T. Check independently on the chart.`;
+    }
+
     const oceanQuestion = parseOceanRouteQuestion(question);
     if (oceanQuestion) {
       const values = [...Object.values(oceanQuestion.start), ...Object.values(oceanQuestion.end)];
@@ -1585,6 +1654,9 @@
     parseOceanRouteQuestion,
     parsePlaneSailingQuestion,
     parseMiddleLatitudeQuestion,
+    parseLeewayQuestion,
+    parseWindTriangleQuestion,
+    parseTraverseQuestion,
     currentResult,
     courseToSteer,
     parseCurrentQuestion,
