@@ -116,6 +116,36 @@
     };
   }
 
+  function labelledNumber(text, labels, unitPattern) {
+    const match = text.match(new RegExp("(?:" + labels + ")\\s*(?:is|=|:)?\\s*(\\d+(?:\\.\\d+)?)\\s*(?:" + unitPattern + ")?", "i"));
+    return match ? Number(match[1]) : null;
+  }
+
+  function parseCurrentQuestion(question) {
+    const text = normalizeText(question);
+    if (!/(?:akıntı|akinti|current|set|drift)(?=\s|$|[.,;:])/i.test(text)) return null;
+
+    const wantsCourseToSteer = /\b(dümen rotası|dumen rotasi|tutulacak rota|course to steer|cts)\b/.test(text);
+    const course = labelledNumber(text,
+      wantsCourseToSteer ? "istenen rota|hedef rota|yere göre rota|yere gore rota|desired course" : "suya göre rota|suya gore rota|tekne rotası|tekne rotasi|rota|course",
+      "°|derece|deg|t"
+    );
+    const speed = labelledNumber(text,
+      wantsCourseToSteer ? "istenen hız|istenen hiz|hedef hız|hedef hiz|yere göre hız|yere gore hiz|desired speed" : "suya göre hız|suya gore hiz|tekne hızı|tekne hizi|hız|hiz|speed",
+      "knot|knots|kt|kts|kn"
+    );
+    const set = labelledNumber(text, "akıntı seti|akinti seti|akıntı yönü|akinti yonu|current set|set", "°|derece|deg|t");
+    const drift = labelledNumber(text, "akıntı hızı|akinti hizi|current drift|drift", "knot|knots|kt|kts|kn");
+
+    return {
+      mode: wantsCourseToSteer ? "courseToSteer" : "currentResult",
+      course: course == null ? null : normalize360(course),
+      speed,
+      set: set == null ? null : normalize360(set),
+      drift
+    };
+  }
+
   function parseDrQuestion(question) {
     const text = normalizeText(question);
     if (!/\b(dr|dead reckoning|parakete|mevki|pozisyon)\b/.test(text)) return null;
@@ -157,6 +187,33 @@
   }
 
   function answer(question, language) {
+    const current = parseCurrentQuestion(question);
+    if (current) {
+      const lang = languageCode(language);
+      const missing = [];
+      if (current.course == null) missing.push(lang === "tr" ? "rota" : lang === "de" ? "Kurs" : "course");
+      if (current.speed == null) missing.push(lang === "tr" ? "hız" : lang === "de" ? "Geschwindigkeit" : "speed");
+      if (current.set == null) missing.push(lang === "tr" ? "akıntı seti" : lang === "de" ? "Stromrichtung" : "current set");
+      if (current.drift == null) missing.push(lang === "tr" ? "akıntı hızı (drift)" : lang === "de" ? "Stromgeschwindigkeit" : "current drift");
+      if (missing.length) {
+        if (lang === "en") return `I need: ${missing.join(", ")}.`;
+        if (lang === "de") return `Benötigt werden: ${missing.join(", ")}.`;
+        return `Akıntı hesabı için eksik bilgiler: ${missing.join(", ")}.`;
+      }
+
+      if (current.mode === "courseToSteer") {
+        const result = courseToSteer(current.course, current.speed, current.set, current.drift);
+        if (lang === "en") return `Course to steer: ${result.courseToSteer.toFixed(1)}°T; required speed through water ${result.speedThroughWater.toFixed(2)} kn. Decision support only—verify against onboard instruments and approved publications.`;
+        if (lang === "de") return `Zu steuernder Kurs: ${result.courseToSteer.toFixed(1)}°T; erforderliche Fahrt durchs Wasser ${result.speedThroughWater.toFixed(2)} kn. Nur Entscheidungshilfe—mit Bordinstrumenten und zugelassenen Unterlagen prüfen.`;
+        return `Tutulacak rota: ${result.courseToSteer.toFixed(1)}°T; gerekli suya göre hız ${result.speedThroughWater.toFixed(2)} knot. Yalnızca karar desteğidir; gemi cihazları ve onaylı yayınlarla doğrulayın.`;
+      }
+
+      const result = currentResult(current.course, current.speed, current.set, current.drift);
+      if (lang === "en") return `Result over ground: course ${result.courseMadeGood.toFixed(1)}°T; speed ${result.speedMadeGood.toFixed(2)} kn. Decision support only—verify against onboard instruments and approved publications.`;
+      if (lang === "de") return `Ergebnis über Grund: Kurs ${result.courseMadeGood.toFixed(1)}°T; Geschwindigkeit ${result.speedMadeGood.toFixed(2)} kn. Nur Entscheidungshilfe—mit Bordinstrumenten und zugelassenen Unterlagen prüfen.`;
+      return `Yere göre sonuç: rota ${result.courseMadeGood.toFixed(1)}°T; hız ${result.speedMadeGood.toFixed(2)} knot. Yalnızca karar desteğidir; gemi cihazları ve onaylı yayınlarla doğrulayın.`;
+    }
+
     const parsed = parseDrQuestion(question);
     if (!parsed) return null;
     const lang = languageCode(language);
@@ -197,6 +254,7 @@
     greatCircleInverse,
     currentResult,
     courseToSteer,
+    parseCurrentQuestion,
     parseDrQuestion,
     answer
   };
