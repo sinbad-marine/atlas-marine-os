@@ -48,3 +48,11 @@ sinbad-ai-core/
 The legacy `sinbad-core.js` remains the browser-compatible facade while the
 Phase 1 modules are introduced behind it.
 
+## Phase 2A retrieval boundary
+
+`retrieval/` adds a plan-only, offline-first Retrieval & Evidence layer. It
+normalizes evidence provenance, searches injected library `sources/chunks`,
+checks relevance and authority requirements, detects structured claim
+conflicts, and records timing/audit details. Document text is always data and
+cannot alter Core safety, owner authority, or execution policy. This phase does
+not execute experts or modify the navigation mathematics engine.
