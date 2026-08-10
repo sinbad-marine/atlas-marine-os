@@ -1,0 +1,24 @@
+const test=require('node:test');
+const assert=require('node:assert/strict');
+const registryModule=require('../experts/expert-registry.js');
+
+test('registers and ranks experts without executing them',()=>{
+  const registry=registryModule.create();
+  registry.register({id:'basic-nav',intents:['navigation'],priority:10});
+  registry.register({id:'advanced-nav',intents:['navigation'],priority:90});
+  assert.deepEqual(registry.candidates('navigation').map(x=>x.id),['advanced-nav','basic-nav']);
+  assert.equal(registry.get('advanced-nav').execute,null);
+});
+
+test('rejects duplicate expert registrations',()=>{
+  const registry=registryModule.create();
+  registry.register({id:'weather-expert',intents:['passage']});
+  assert.throws(()=>registry.register({id:'weather-expert',intents:['navigation']}));
+});
+
+test('honours an expert can-handle boundary',()=>{
+  const registry=registryModule.create();
+  registry.register({id:'coastal-expert',intents:['navigation'],canHandle:req=>req.context.area==='coastal'});
+  assert.equal(registry.candidates('navigation',{context:{area:'ocean'}}).length,0);
+});
+

@@ -50,5 +50,89 @@
     lines.push('','SOURCES');plan.sources.forEach((x,i)=>lines.push(`[S${i+1}] ${x.title} — ${x.authority}, ${x.edition}`));
     lines.push('','SAFETY GATES');plan.warnings.forEach(w=>lines.push(`⚠ ${w}`));return lines.join('\n');
   }
-  return {terms,searchPublications,passagePlan,formatPlan};
+
+  const INTENTS=[
+    ['emergency',/(mayday|pan[ -]?pan|sos|acil|yangın|yangin|su alıyor|su aliyor|çatışma|catisma|karaya otur|adam denize|man overboard|distress)/i],
+    ['navigation',/(rota|seyir|navigasyon|navigation|course|kerteriz|bearing|mevki|position|cpa|tcpa|akıntı|akinti|current|gelgit|tide|rüzgâr|ruzgar|wind|mesafe|distance|eta|pusula|compass)/i],
+    ['passage',/(passage|sefer plan|seyir plan|berth.to.berth|checklist|yakıt plan|yakit plan|port of refuge)/i],
+    ['publication',/(yayın|yayin|publication|solas|marpol|colreg|notice to mariners|sailing directions|pilot book|almanac|almanak)/i],
+    ['training',/(eğitim|egitim|öğret|ogret|quiz|sınav|sinav|ders|academy|training|explain|açıkla|acikla)/i],
+    ['crew',/(mürettebat|murettebat|crew|sertifika|certificate|stcw|medical|passport|visa|kontrat|contract)/i],
+    ['vessel',/(gemi|tekne|vessel|fleet|filo|draft|su çekimi|su cekimi|makine|engine)/i],
+    ['document',/(belge|doküman|dokuman|document|dosya|file|chart|harita|library|kütüphane|kutuphane)/i]
+  ];
+  const LIVE_DATA=/(şimdi|simdi|güncel|guncel|bugün|bugun|yarın|yarin|hava|weather|navtex|msi|notice to mariners|liman açık|liman acik|traffic|ais)/i;
+  const OPERATIONAL=/(hesapla|calculate|tutulacak rota|course to steer|uygula|execute|başlat|baslat|değiştir|degistir|manevra|approach|yanaş|yanas)/i;
+
+  function detectLanguage(value){
+    const text=String(value||'');
+    if(/[çğıöşüİ]/i.test(text)||/\b(?:ve|için|nedir|hesapla|rota|gemi)\b/i.test(text))return 'tr';
+    if(/[а-яё]/i.test(text))return 'ru';
+    if(/[\u0600-\u06ff]/.test(text))return 'ar';
+    if(/\b(?:und|für|was|schiff)\b/i.test(text))return 'de';
+    return 'en';
+  }
+
+  function analyzeQuery(query){
+    const text=String(query||'').trim();
+    const matches=INTENTS.filter(([,pattern])=>pattern.test(text)).map(([intent])=>intent);
+    const intent=matches[0]||'general';
+    const emergency=intent==='emergency';
+    const operational=OPERATIONAL.test(text);
+    const needsLiveData=LIVE_DATA.test(text);
+    const risk=emergency?'critical':operational&&intent==='navigation'?'high':needsLiveData?'medium':'low';
+    const confidence=intent==='general'?0.35:matches.length===1?0.9:0.72;
+    return {
+      query:text,language:detectLanguage(text),intent,secondaryIntents:matches.slice(1),confidence,risk,
+      emergency,operational,needsLiveData,
+      requiresHumanApproval:emergency||risk==='high',
+      requiresIndependentVerification:emergency||intent==='navigation'||intent==='passage'||needsLiveData
+    };
+  }
+
+  function conversationContext(messages,limit=12){
+    return (Array.isArray(messages)?messages:[]).slice(-Math.max(1,limit)).map(message=>({
+      role:message?.role==='assistant'||message?.role==='sinbad'?'assistant':'user',
+      content:String(message?.content??message?.text??'').trim().slice(0,2000)
+    })).filter(message=>message.content);
+  }
+
+  function safetyGuidance(analysis){
+    const warnings=[];
+    if(analysis.emergency)warnings.push('Immediate danger: prioritize distress procedures, human command and the nearest competent authority.');
+    if(analysis.needsLiveData)warnings.push('Live operational data is required; cached or model knowledge must not be treated as current.');
+    if(analysis.requiresIndependentVerification)warnings.push('Verify against current approved sources, onboard instruments and an independent method.');
+    if(analysis.requiresHumanApproval)warnings.push('The master or responsible human operator retains the final decision.');
+    return warnings;
+  }
+
+  function aiEnvelope(question,messages=[]){
+    const analysis=analyzeQuery(question);
+    return {
+      version:'sinbad-ai-core/1',analysis,history:conversationContext(messages),
+      safety:safetyGuidance(analysis),
+      instructions:[
+        'Separate verified facts, calculations, assumptions and recommendations.',
+        'Never invent live weather, chart corrections, traffic, port status or regulations.',
+        'Ask for missing operational inputs before calculating.',
+        'State uncertainty and cite the source or expert module used.'
+      ]
+    };
+  }
+
+  async function orchestrate(question,options={}){
+    const analysis=analyzeQuery(question);
+    const experts=options.experts||{};
+    const order=[analysis.intent,...analysis.secondaryIntents,'general'];
+    for(const name of [...new Set(order)]){
+      if(typeof experts[name]!=='function')continue;
+      const result=await experts[name](question,{analysis,history:conversationContext(options.history),context:options.context||{}});
+      if(result==null||result==='')continue;
+      const payload=typeof result==='string'?{answer:result}:result;
+      return {handled:true,expert:name,...analysis,...payload,warnings:[...safetyGuidance(analysis),...(payload.warnings||[])]};
+    }
+    return {handled:false,expert:null,...analysis,answer:null,warnings:safetyGuidance(analysis)};
+  }
+
+  return {terms,searchPublications,passagePlan,formatPlan,detectLanguage,analyzeQuery,conversationContext,safetyGuidance,aiEnvelope,orchestrate};
 });
