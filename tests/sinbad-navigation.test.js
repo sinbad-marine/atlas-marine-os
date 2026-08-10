@@ -615,3 +615,32 @@ test("asks for missing rule-of-twelfths inputs", () => {
   const response = nav.answer("12'ler kural\u0131yla gelgit hesapla", "tr");
   assert.match(response, /al\u00e7ak su, y\u00fcksek su/);
 });
+
+test("answers a sextant altitude correction question", () => {
+  const response = nav.answer("Sekstant irtifas\u0131 d\u00fczelt: sekstant irtifas\u0131 45 derece, indeks hatas\u0131 2 dakika, g\u00f6z y\u00fcksekli\u011fi 9 m", "tr");
+  assert.match(response, /D\u00fczeltilmi\u015f irtifa 44\./);
+  assert.match(response, /dip -5\.28'/);
+  assert.match(response, /Almanak/);
+});
+
+test("answers a meridian latitude question", () => {
+  const response = nav.answer("Meridyen enlemi hesapla: g\u00f6zlenen irtifa 70 derece, deklinasyon 10 derece", "tr");
+  assert.match(response, /Zenit mesafesi 20\.00/);
+  assert.match(response, /30\.00\u00b0 veya -10\.00\u00b0/);
+});
+
+test("answers a celestial intercept question", () => {
+  const response = nav.answer("Intercept hesapla: g\u00f6zlenen irtifa 45.2 derece, hesaplanan irtifa 45 derece, azimut 120 derece", "tr");
+  assert.match(response, /Intercept 12\.00 deniz mili/);
+  assert.match(response, /azimuta do\u011fru/);
+});
+
+test("answers an away celestial intercept question", () => {
+  const response = nav.answer("Intercept hesapla: g\u00f6zlenen irtifa 30 derece, hesaplanan irtifa 30.1 derece, azimut 270 derece", "tr");
+  assert.match(response, /6\.00 deniz mili, azimuttan uza\u011fa/);
+});
+
+test("asks for missing celestial intercept inputs", () => {
+  const response = nav.answer("Intercept ve azimut hesab\u0131 yap", "tr");
+  assert.match(response, /g\u00f6zlenen irtifa, hesaplanan irtifa, azimut/);
+});

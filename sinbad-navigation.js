@@ -955,6 +955,35 @@
     };
   }
 
+  function parseSextantCorrectionQuestion(question) {
+    const text = normalizeText(question);
+    if (!/(?:sekstant|sextant).*(?:d\u00fczelt|duzelt|correction|corrected altitude)/.test(text)) return null;
+    return {
+      sextantAltitude: labelledNumber(text, "sekstant irtifas\u0131|sekstant irtifasi|sextant altitude|hs|irtifa", "derece|deg|\u00b0"),
+      indexErrorMinutes: labelledNumber(text, "indeks hatas\u0131|indeks hatasi|index error", "dakika|minutes|min|'" ) ?? 0,
+      eyeHeightMeters: labelledNumber(text, "g\u00f6z y\u00fcksekli\u011fi|goz yuksekligi|eye height", "metre|meter|meters|m") ?? 0
+    };
+  }
+
+  function parseMeridianLatitudeQuestion(question) {
+    const text = normalizeText(question);
+    if (!/(?:meridyen|meridian).*(?:enlem|latitude)/.test(text)) return null;
+    return {
+      observedAltitude: labelledNumber(text, "g\u00f6zlenen irtifa|gozlenen irtifa|observed altitude|ho|irtifa", "derece|deg|\u00b0"),
+      declination: labelledNumber(text, "deklinasyon|declination|dec", "derece|deg|\u00b0")
+    };
+  }
+
+  function parseCelestialInterceptQuestion(question) {
+    const text = normalizeText(question);
+    if (!/(?:intercept|\u0131ntercept|irtifa fark\u0131|irtifa farki)/.test(text) || !/(?:azimut|azimuth)/.test(text)) return null;
+    return {
+      observedAltitude: labelledNumber(text, "g\u00f6zlenen irtifa|gozlenen irtifa|observed altitude|ho", "derece|deg|\u00b0"),
+      computedAltitude: labelledNumber(text, "hesaplanan irtifa|computed altitude|hc", "derece|deg|\u00b0"),
+      azimuth: labelledNumber(text, "azimut|azimuth|zn", "derece|deg|\u00b0")
+    };
+  }
+
   function vector(speed, direction) {
     const angle = toRad(normalize360(Number(direction)));
     return { east: Number(speed) * Math.sin(angle), north: Number(speed) * Math.cos(angle) };
@@ -1060,6 +1089,34 @@
 
   function answer(question, language) {
     const lang = languageCode(language);
+    const sextantQuestion = parseSextantCorrectionQuestion(question);
+    if (sextantQuestion) {
+      if (sextantQuestion.sextantAltitude == null) return lang === "tr" ? "Sekstant d\u00fczeltmesi i\u00e7in sekstant irtifas\u0131n\u0131 derece olarak verin." : "Provide the sextant altitude in degrees.";
+      const result = correctedSextantAltitude(sextantQuestion.sextantAltitude, sextantQuestion.indexErrorMinutes, sextantQuestion.eyeHeightMeters);
+      return lang === "tr" ? `D\u00fczeltilmi\u015f irtifa ${result.correctedAltitude.toFixed(4)}\u00b0; indeks d\u00fczeltmesi ${result.indexCorrectionMinutes.toFixed(2)}', dip ${result.dipMinutes.toFixed(2)}', refraksiyon ${result.refractionMinutes.toFixed(2)}'. Almanak ana d\u00fczeltmeleri ve g\u00f6zlem ko\u015fullar\u0131 ayr\u0131ca uygulanmal\u0131d\u0131r.` : `Corrected altitude ${result.correctedAltitude.toFixed(4)}\u00b0; index correction ${result.indexCorrectionMinutes.toFixed(2)}', dip ${result.dipMinutes.toFixed(2)}', refraction ${result.refractionMinutes.toFixed(2)}'. Apply the remaining almanac corrections and observation conditions separately.`;
+    }
+
+    const meridianQuestion = parseMeridianLatitudeQuestion(question);
+    if (meridianQuestion) {
+      const missing = [];
+      if (meridianQuestion.observedAltitude == null) missing.push(lang === "tr" ? "g\u00f6zlenen irtifa" : "observed altitude");
+      if (meridianQuestion.declination == null) missing.push(lang === "tr" ? "deklinasyon" : "declination");
+      if (missing.length) return lang === "tr" ? `Meridyen enlemi i\u00e7in eksik bilgiler: ${missing.join(", ")}.` : `Missing meridian-latitude inputs: ${missing.join(", ")}.`;
+      const result = meridianLatitudeCandidates(meridianQuestion.observedAltitude, meridianQuestion.declination);
+      return lang === "tr" ? `Zenit mesafesi ${result.zenithDistance.toFixed(2)}\u00b0; olas\u0131 enlemler ${result.candidates.map(value => value.toFixed(2) + "\u00b0").join(" veya ")}. Do\u011fru aday\u0131 g\u00f6k cisminin meridyen y\u00f6n\u00fc ve DR mevkiiyle se\u00e7in.` : `Zenith distance ${result.zenithDistance.toFixed(2)}\u00b0; latitude candidates ${result.candidates.map(value => value.toFixed(2) + "\u00b0").join(" or ")}. Select the correct candidate using the body's meridian bearing and DR position.`;
+    }
+
+    const interceptQuestion = parseCelestialInterceptQuestion(question);
+    if (interceptQuestion) {
+      const missing = [];
+      if (interceptQuestion.observedAltitude == null) missing.push(lang === "tr" ? "g\u00f6zlenen irtifa" : "observed altitude");
+      if (interceptQuestion.computedAltitude == null) missing.push(lang === "tr" ? "hesaplanan irtifa" : "computed altitude");
+      if (interceptQuestion.azimuth == null) missing.push(lang === "tr" ? "azimut" : "azimuth");
+      if (missing.length) return lang === "tr" ? `Intercept hesab\u0131 i\u00e7in eksik bilgiler: ${missing.join(", ")}.` : `Missing intercept inputs: ${missing.join(", ")}.`;
+      const result = celestialIntercept(interceptQuestion.observedAltitude, interceptQuestion.computedAltitude, interceptQuestion.azimuth);
+      return lang === "tr" ? `Intercept ${result.distanceNm.toFixed(2)} deniz mili, ${result.direction === "toward" ? "azimuta do\u011fru" : "azimuttan uza\u011fa"}; azimut ${result.azimuth.toFixed(1)}\u00b0. LOP'u uygun harita/prosed\u00fcrle \u00e7izin ve ba\u011f\u0131ms\u0131z g\u00f6zlemle do\u011frulay\u0131n.` : `Intercept ${result.distanceNm.toFixed(2)} NM, ${result.direction === "toward" ? "toward" : "away from"} azimuth ${result.azimuth.toFixed(1)}\u00b0. Plot the LOP using the approved procedure and verify with an independent sight.`;
+    }
+
     const radarQuestion = parseRadarRelativeQuestion(question);
     if (radarQuestion) {
       const missing = [];
@@ -1392,6 +1449,9 @@
     parseRadarRelativeQuestion,
     parseTwelfthsQuestion,
     parseSecondaryPortQuestion,
+    parseSextantCorrectionQuestion,
+    parseMeridianLatitudeQuestion,
+    parseCelestialInterceptQuestion,
     currentResult,
     courseToSteer,
     parseCurrentQuestion,
