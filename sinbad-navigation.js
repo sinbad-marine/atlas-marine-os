@@ -919,6 +919,42 @@
     };
   }
 
+  function parseRadarRelativeQuestion(question) {
+    const text = normalizeText(question);
+    if (!/\b(radar nispi|radar ba\u011f\u0131l|radar bagil|relative motion)\b/.test(text)) return null;
+    return {
+      firstRange: labelledNumber(text, "ilk menzil|birinci menzil|first range", "deniz mili|nm"),
+      firstBearing: labelledNumber(text, "ilk kerteriz|birinci kerteriz|first bearing", "derece|deg|\u00b0"),
+      secondRange: labelledNumber(text, "ikinci menzil|son menzil|second range", "deniz mili|nm"),
+      secondBearing: labelledNumber(text, "ikinci kerteriz|son kerteriz|second bearing", "derece|deg|\u00b0"),
+      intervalMinutes: labelledNumber(text, "aral\u0131k|aralik|interval", "dakika|minutes|min")
+    };
+  }
+
+  function parseTwelfthsQuestion(question) {
+    const text = normalizeText(question);
+    if (!/(?:12'?ler kural\u0131|12ler kurali|on ikiler kural\u0131|on ikiler kurali|rule of twelfths)/.test(text)) return null;
+    return {
+      lowWater: labelledNumber(text, "al\u00e7ak su|alcak su|low water|lw", "metre|meter|meters|m"),
+      highWater: labelledNumber(text, "y\u00fcksek su|yuksek su|high water|hw", "metre|meter|meters|m"),
+      hoursSinceLow: labelledNumber(text, "al\u00e7ak sudan sonra|alcak sudan sonra|ge\u00e7en s\u00fcre|gecen sure|hours since low", "saat|hours|hour|h"),
+      durationHours: labelledNumber(text, "gelgit s\u00fcresi|gelgit suresi|duration", "saat|hours|hour|h") ?? 6
+    };
+  }
+
+  function parseSecondaryPortQuestion(question) {
+    const text = normalizeText(question);
+    if (!/\b(tali liman|ikincil liman|secondary port)\b/.test(text)) return null;
+    const isoMatch = String(question).match(/\b(\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}(?::\d{2})?(?:Z|[+-]\d{2}:?\d{2})?)\b/i);
+    return {
+      referenceTimeIso: isoMatch ? isoMatch[1].replace(" ", "T") : null,
+      referenceHeight: labelledNumber(text, "referans y\u00fcksekli\u011fi|referans yuksekligi|reference height|y\u00fckseklik|yukseklik", "metre|meter|meters|m"),
+      timeMinutes: labelledNumber(text, "zaman d\u00fczeltmesi|zaman duzeltmesi|time correction", "dakika|minutes|min") ?? 0,
+      heightRatio: labelledNumber(text, "y\u00fckseklik oran\u0131|yukseklik orani|height ratio|oran", "") ?? 1,
+      heightAddition: labelledNumber(text, "y\u00fckseklik ilavesi|yukseklik ilavesi|height addition|ilave", "metre|meter|meters|m") ?? 0
+    };
+  }
+
   function vector(speed, direction) {
     const angle = toRad(normalize360(Number(direction)));
     return { east: Number(speed) * Math.sin(angle), north: Number(speed) * Math.cos(angle) };
@@ -1024,6 +1060,41 @@
 
   function answer(question, language) {
     const lang = languageCode(language);
+    const radarQuestion = parseRadarRelativeQuestion(question);
+    if (radarQuestion) {
+      const missing = [];
+      if (radarQuestion.firstRange == null) missing.push(lang === "tr" ? "ilk menzil" : "first range");
+      if (radarQuestion.firstBearing == null) missing.push(lang === "tr" ? "ilk kerteriz" : "first bearing");
+      if (radarQuestion.secondRange == null) missing.push(lang === "tr" ? "ikinci menzil" : "second range");
+      if (radarQuestion.secondBearing == null) missing.push(lang === "tr" ? "ikinci kerteriz" : "second bearing");
+      if (radarQuestion.intervalMinutes == null) missing.push(lang === "tr" ? "zaman aral\u0131\u011f\u0131" : "time interval");
+      if (missing.length) return lang === "tr" ? `Radar nispi hareket hesab\u0131 i\u00e7in eksik bilgiler: ${missing.join(", ")}.` : `Missing radar relative-motion inputs: ${missing.join(", ")}.`;
+      const result = radarRelativeMotion(radarQuestion.firstRange, radarQuestion.firstBearing, radarQuestion.secondRange, radarQuestion.secondBearing, radarQuestion.intervalMinutes);
+      const tcpaMinutes = Number.isFinite(result.tcpaHours) ? result.tcpaHours * 60 : Infinity;
+      return lang === "tr" ? `Nispi rota ${result.relativeCourse.toFixed(1)}\u00b0; nispi h\u0131z ${result.relativeSpeed.toFixed(2)} knot; CPA ${result.cpaNm.toFixed(2)} deniz mili; TCPA ${Number.isFinite(tcpaMinutes) ? tcpaMinutes.toFixed(1) + " dakika" : "hesaplanam\u0131yor"}. ARPA izini, kerteriz kararl\u0131l\u0131\u011f\u0131n\u0131 ve COLREG de\u011ferlendirmesini do\u011frulay\u0131n.` : `Relative course ${result.relativeCourse.toFixed(1)}\u00b0; relative speed ${result.relativeSpeed.toFixed(2)} kn; CPA ${result.cpaNm.toFixed(2)} NM; TCPA ${Number.isFinite(tcpaMinutes) ? tcpaMinutes.toFixed(1) + " minutes" : "unavailable"}. Verify the ARPA track, bearing stability, and COLREG assessment.`;
+    }
+
+    const twelfthsQuestion = parseTwelfthsQuestion(question);
+    if (twelfthsQuestion) {
+      const missing = [];
+      if (twelfthsQuestion.lowWater == null) missing.push(lang === "tr" ? "al\u00e7ak su" : "low water");
+      if (twelfthsQuestion.highWater == null) missing.push(lang === "tr" ? "y\u00fcksek su" : "high water");
+      if (twelfthsQuestion.hoursSinceLow == null) missing.push(lang === "tr" ? "al\u00e7ak sudan sonra ge\u00e7en s\u00fcre" : "hours since low water");
+      if (missing.length) return lang === "tr" ? `12'ler kural\u0131 i\u00e7in eksik bilgiler: ${missing.join(", ")}.` : `Missing rule-of-twelfths inputs: ${missing.join(", ")}.`;
+      const result = ruleOfTwelfths(twelfthsQuestion.lowWater, twelfthsQuestion.highWater, twelfthsQuestion.hoursSinceLow, twelfthsQuestion.durationHours);
+      return lang === "tr" ? `12'ler kural\u0131na g\u00f6re tahmini gelgit y\u00fcksekli\u011fi ${result.height.toFixed(2)} m. Bu yaln\u0131zca yakla\u015f\u0131md\u0131r; onayl\u0131 gelgit tablosu ve yerel d\u00fczeltmeler esast\u0131r.` : `Estimated tide height by the rule of twelfths: ${result.height.toFixed(2)} m. This is an approximation; approved tide tables and local corrections prevail.`;
+    }
+
+    const secondaryPortQuestion = parseSecondaryPortQuestion(question);
+    if (secondaryPortQuestion) {
+      const missing = [];
+      if (!secondaryPortQuestion.referenceTimeIso) missing.push(lang === "tr" ? "referans zaman\u0131" : "reference time");
+      if (secondaryPortQuestion.referenceHeight == null) missing.push(lang === "tr" ? "referans y\u00fcksekli\u011fi" : "reference height");
+      if (missing.length) return lang === "tr" ? `Tali liman hesab\u0131 i\u00e7in eksik bilgiler: ${missing.join(", ")}.` : `Missing secondary-port inputs: ${missing.join(", ")}.`;
+      const result = secondaryPortTide({ timeIso: secondaryPortQuestion.referenceTimeIso, height: secondaryPortQuestion.referenceHeight }, { timeMinutes: secondaryPortQuestion.timeMinutes, heightRatio: secondaryPortQuestion.heightRatio, heightAddition: secondaryPortQuestion.heightAddition });
+      return lang === "tr" ? `Tali liman tahmini: zaman ${result.timeIso}; y\u00fckseklik ${result.height.toFixed(2)} m. G\u00fcncel resmi tali liman farklar\u0131yla do\u011frulay\u0131n.` : `Secondary-port estimate: time ${result.timeIso}; height ${result.height.toFixed(2)} m. Verify against current official secondary-port differences.`;
+    }
+
     const turnQuestion = parseTurnQuestion(question);
     if (turnQuestion) {
       const missing = [];
@@ -1318,6 +1389,9 @@
     parseTurnQuestion,
     parseGeographicRangeQuestion,
     parseVariationQuestion,
+    parseRadarRelativeQuestion,
+    parseTwelfthsQuestion,
+    parseSecondaryPortQuestion,
     currentResult,
     courseToSteer,
     parseCurrentQuestion,

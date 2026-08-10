@@ -586,3 +586,32 @@ test("asks for missing turn inputs", () => {
   const response = nav.answer("Wheel-over mesafesini hesapla", "tr");
   assert.match(response, /h\u0131z, d\u00f6n\u00fc\u015f oran\u0131, rota de\u011fi\u015fimi/);
 });
+
+test("answers a radar relative-motion question", () => {
+  const response = nav.answer("Radar nispi hareket: ilk menzil 10 NM, ilk kerteriz 0 derece, ikinci menzil 5 NM, ikinci kerteriz 0 derece, aral\u0131k 30 dakika", "tr");
+  assert.match(response, /Nispi rota 180\.0/);
+  assert.match(response, /CPA 0\.00/);
+  assert.match(response, /TCPA 30\.0 dakika/);
+});
+
+test("answers a rule-of-twelfths tide question", () => {
+  const response = nav.answer("12'ler kural\u0131: al\u00e7ak su 1 m, y\u00fcksek su 7 m, al\u00e7ak sudan sonra 3 saat, gelgit s\u00fcresi 6 saat", "tr");
+  assert.match(response, /4\.00 m/);
+  assert.match(response, /yakla\u015f\u0131md\u0131r/);
+});
+
+test("answers a secondary-port tide correction question", () => {
+  const response = nav.answer("Tali liman hesab\u0131: referans zaman\u0131 2026-08-10T10:00:00Z, referans y\u00fcksekli\u011fi 4 m, zaman d\u00fczeltmesi 35 dakika, y\u00fckseklik oran\u0131 0.9, y\u00fckseklik ilavesi 0.2 m", "tr");
+  assert.match(response, /2026-08-10T10:35:00\.000Z/);
+  assert.match(response, /3\.80 m/);
+});
+
+test("asks for missing radar observations", () => {
+  const response = nav.answer("Radar nispi hareket hesapla", "tr");
+  assert.match(response, /ilk menzil, ilk kerteriz, ikinci menzil, ikinci kerteriz, zaman aral\u0131\u011f\u0131/);
+});
+
+test("asks for missing rule-of-twelfths inputs", () => {
+  const response = nav.answer("12'ler kural\u0131yla gelgit hesapla", "tr");
+  assert.match(response, /al\u00e7ak su, y\u00fcksek su/);
+});
