@@ -297,6 +297,42 @@ test("interpolates compass deviation across north", () => {
   assert.equal(nav.interpolateCompassDeviation(table, 50), 3);
 });
 
+test("computes the minimum tide needed for safe clearance", () => {
+  assert.deepEqual(nav.minimumTideForClearance(4, 4.2, 0.3, 0.5), {
+    requiredDepth: 5,
+    minimumTideHeight: 1,
+    driesAtChartDatum: true
+  });
+});
+
+test("applies secondary-port time and height corrections", () => {
+  const result = nav.secondaryPortTide(
+    { timeIso: "2026-08-10T10:00:00Z", height: 4 },
+    { timeMinutes: 35, heightRatio: 0.9, heightAddition: 0.2 }
+  );
+  assert.equal(result.timeIso, "2026-08-10T10:35:00.000Z");
+  assert.ok(Math.abs(result.height - 3.8) < 1e-9);
+});
+
+test("interpolates tidal stream rate from springs to neaps", () => {
+  assert.deepEqual(nav.interpolateSpringNeapRate(4, 2, 0), { rate: 4, fraction: 0, phase: "spring" });
+  const middle = nav.interpolateSpringNeapRate(4, 2, 3.69);
+  assert.ok(Math.abs(middle.rate - 3) < 1e-9);
+  assert.equal(middle.phase, "intermediate");
+});
+
+test("derives tidal set and drift from DR and observed fixes", () => {
+  const result = nav.setAndDriftFromFixes({ lat: 40, lon: 20 }, { lat: 40, lon: 20 + 2 / (60 * Math.cos(40 * Math.PI / 180)) }, 2);
+  assert.ok(Math.abs(result.set - 90) < 0.01);
+  assert.ok(Math.abs(result.drift - 1) < 0.001);
+});
+
+test("inverts the Barrass formula for a safe squat speed", () => {
+  const speed = nav.maximumSpeedForSquat(0.8, 0.8, false);
+  assert.ok(Math.abs(speed - 10) < 1e-9);
+  assert.ok(nav.maximumSpeedForSquat(0.8, 0.8, true) < speed);
+});
+
 test("keeps unsafe or incomplete calculations bounded", () => {
   const response = nav.answer("DR pozisyonumu hesapla", "tr");
   assert.match(response, /eksik bilgiler/i);
