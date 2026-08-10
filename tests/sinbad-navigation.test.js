@@ -230,6 +230,41 @@ test("builds a waypoint turn plan", () => {
   assert.ok(plan.wheelOverDistanceNm > 3.8);
 });
 
+test("intersects two visual bearings and reports fix quality", () => {
+  const fix = nav.bearingFix(
+    { lat: 0, lon: -1 / 60, bearing: 270 },
+    { lat: -1 / 60, lon: 0, bearing: 180 }
+  );
+  assert.ok(Math.abs(fix.lat) < 1e-9);
+  assert.ok(Math.abs(fix.lon) < 1e-9);
+  assert.ok(Math.abs(fix.crossingAngle - 90) < 1e-9);
+  assert.equal(fix.reliable, true);
+});
+
+test("advances a line of position for a running fix", () => {
+  const fix = nav.runningFix(
+    { lat: 0, lon: 0 }, 270,
+    { lat: -1 / 60, lon: 1 / 60 }, 180,
+    90, 10, 0.1
+  );
+  assert.ok(Math.abs(fix.lat) < 1e-9);
+  assert.ok(Math.abs(fix.lon - 1 / 60) < 1e-9);
+  assert.equal(fix.runNm, 1);
+});
+
+test("computes an estimated position with current", () => {
+  const ep = nav.estimatedPosition({ lat: 0, lon: 0 }, 90, 10, 1, 0, 2);
+  assert.ok(Math.abs(ep.courseMadeGood - 78.6901) < 0.001);
+  assert.ok(Math.abs(ep.speedMadeGood - Math.sqrt(104)) < 1e-9);
+  assert.ok(ep.lat > 0 && ep.lon > 0);
+});
+
+test("builds a bounded DR position uncertainty circle", () => {
+  const uncertainty = nav.positionUncertainty(0.5, 0.2, 2, 10, 3);
+  assert.equal(uncertainty.runNm, 30);
+  assert.ok(uncertainty.radiusNm > 1.2 && uncertainty.radiusNm < 1.4);
+});
+
 test("keeps unsafe or incomplete calculations bounded", () => {
   const response = nav.answer("DR pozisyonumu hesapla", "tr");
   assert.match(response, /eksik bilgiler/i);
