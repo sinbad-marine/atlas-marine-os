@@ -450,6 +450,66 @@
     return { ...position, courseMadeGood: ground.direction, speedMadeGood: ground.speed, distanceNm: ground.speed * Number(hours) };
   }
 
+  function driftedDatum(start, hours, currentSet, currentDrift, leewaySet, leewayDrift) {
+    const current = vector(currentDrift || 0, currentSet || 0);
+    const leeway = vector(leewayDrift || 0, leewaySet || 0);
+    const result = vectorToPolar(current.east + leeway.east, current.north + leeway.north);
+    const distanceNm = result.speed * Number(hours);
+    const position = rhumbDestination(start.lat, start.lon, result.direction, distanceNm);
+    return { ...position, set: result.direction, drift: result.speed, distanceNm };
+  }
+
+  function movingTargetIntercept(ownPosition, ownSpeedKnots, target) {
+    const meanLat = toRad((Number(ownPosition.lat) + Number(target.lat)) / 2);
+    const relative = {
+      east: (Number(target.lon) - Number(ownPosition.lon)) * 60 * Math.cos(meanLat),
+      north: (Number(target.lat) - Number(ownPosition.lat)) * 60
+    };
+    const targetVelocity = vector(target.speed, target.course);
+    const ownSpeed = Number(ownSpeedKnots);
+    if (ownSpeed <= 0) throw new RangeError("own speed must be greater than zero");
+    const a = targetVelocity.east ** 2 + targetVelocity.north ** 2 - ownSpeed ** 2;
+    const b = 2 * (relative.east * targetVelocity.east + relative.north * targetVelocity.north);
+    const c = relative.east ** 2 + relative.north ** 2;
+    let roots;
+    if (Math.abs(a) < 1e-12) roots = Math.abs(b) < 1e-12 ? [] : [-c / b];
+    else {
+      const discriminant = b ** 2 - 4 * a * c;
+      if (discriminant < 0) roots = [];
+      else roots = [(-b - Math.sqrt(discriminant)) / (2 * a), (-b + Math.sqrt(discriminant)) / (2 * a)];
+    }
+    const interceptHours = roots.filter(value => value >= 0).sort((x, y) => x - y)[0];
+    if (interceptHours == null) return { possible: false };
+    const interceptVector = {
+      east: relative.east + targetVelocity.east * interceptHours,
+      north: relative.north + targetVelocity.north * interceptHours
+    };
+    const polar = vectorToPolar(interceptVector.east, interceptVector.north);
+    const position = rhumbDestination(ownPosition.lat, ownPosition.lon, polar.direction, polar.speed);
+    return { possible: true, interceptHours, course: polar.direction, distanceNm: polar.speed, position };
+  }
+
+  function expandingSquarePattern(center, initialCourse, spacingNm, legCount) {
+    const count = Math.max(0, Math.floor(Number(legCount)));
+    const spacing = Number(spacingNm);
+    if (spacing <= 0) throw new RangeError("spacing must be greater than zero");
+    const waypoints = [{ ...center, leg: 0 }];
+    let position = { lat: Number(center.lat), lon: Number(center.lon) };
+    for (let leg = 1; leg <= count; leg += 1) {
+      const course = normalize360(Number(initialCourse) + (leg - 1) * 90);
+      const distanceNm = spacing * Math.ceil(leg / 2);
+      position = rhumbDestination(position.lat, position.lon, course, distanceNm);
+      waypoints.push({ ...position, leg, course, distanceNm });
+    }
+    return waypoints;
+  }
+
+  function searchDatumUncertainty(initialPositionErrorNm, driftSpeedErrorKnots, hours, searchObjectErrorNm) {
+    const driftErrorNm = Math.abs(Number(driftSpeedErrorKnots)) * Number(hours);
+    const radiusNm = Math.hypot(Number(initialPositionErrorNm), driftErrorNm, Number(searchObjectErrorNm || 0));
+    return { radiusNm, driftErrorNm };
+  }
+
   function positionUncertainty(initialErrorNm, speedErrorKnots, courseErrorDegrees, speedKnots, hours) {
     const runNm = distanceRun(speedKnots, hours);
     const alongTrackErrorNm = Math.abs(Number(speedErrorKnots)) * Number(hours);
@@ -863,6 +923,10 @@
     bearingFix,
     runningFix,
     estimatedPosition,
+    driftedDatum,
+    movingTargetIntercept,
+    expandingSquarePattern,
+    searchDatumUncertainty,
     positionUncertainty,
     traverse,
     applyLeeway,

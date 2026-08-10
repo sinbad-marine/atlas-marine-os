@@ -395,6 +395,36 @@ test("raises a wheel-over trigger near a waypoint", () => {
   assert.ok(status.triggerDistanceNm > status.distanceToWaypointNm);
 });
 
+test("projects a search datum from current and leeway", () => {
+  const datum = nav.driftedDatum({ lat: 0, lon: 0 }, 2, 90, 1, 0, 1);
+  assert.ok(Math.abs(datum.set - 45) < 1e-9);
+  assert.ok(Math.abs(datum.drift - Math.sqrt(2)) < 1e-9);
+  assert.ok(Math.abs(datum.distanceNm - 2 * Math.sqrt(2)) < 1e-9);
+});
+
+test("solves an intercept course to a moving target", () => {
+  const intercept = nav.movingTargetIntercept(
+    { lat: 0, lon: 0 }, 10,
+    { lat: 0, lon: 10 / 60, course: 0, speed: 0 }
+  );
+  assert.equal(intercept.possible, true);
+  assert.ok(Math.abs(intercept.interceptHours - 1) < 0.001);
+  assert.ok(Math.abs(intercept.course - 90) < 0.001);
+});
+
+test("builds an expanding-square search pattern", () => {
+  const pattern = nav.expandingSquarePattern({ lat: 0, lon: 0 }, 0, 1, 4);
+  assert.equal(pattern.length, 5);
+  assert.deepEqual(pattern.slice(1).map(point => point.distanceNm), [1, 1, 2, 2]);
+  assert.deepEqual(pattern.slice(1).map(point => point.course), [0, 90, 180, 270]);
+});
+
+test("grows search datum uncertainty with drift time", () => {
+  const uncertainty = nav.searchDatumUncertainty(0.5, 0.4, 3, 0.3);
+  assert.equal(uncertainty.driftErrorNm, 1.2000000000000002);
+  assert.ok(uncertainty.radiusNm > 1.33 && uncertainty.radiusNm < 1.34);
+});
+
 test("keeps unsafe or incomplete calculations bounded", () => {
   const response = nav.answer("DR pozisyonumu hesapla", "tr");
   assert.match(response, /eksik bilgiler/i);
