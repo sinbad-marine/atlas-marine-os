@@ -184,6 +184,70 @@
     return { hours, baseFuel, totalFuel: baseFuel * (1 + Number(reservePercent || 0) / 100) };
   }
 
+  function ruleOfTwelfths(lowWater, highWater, hoursSinceLow, durationHours) {
+    const duration = Number(durationHours || 6);
+    const elapsed = Math.min(duration, Math.max(0, Number(hoursSinceLow)));
+    const sixth = elapsed / duration * 6;
+    const cumulative = [0, 1, 3, 6, 9, 11, 12];
+    const index = Math.min(5, Math.floor(sixth));
+    const fraction = (cumulative[index] + (cumulative[index + 1] - cumulative[index]) * (sixth - index)) / 12;
+    return { height: Number(lowWater) + (Number(highWater) - Number(lowWater)) * fraction, fraction };
+  }
+
+  function underKeelClearance(chartedDepth, tideHeight, draft, squat, safetyMargin) {
+    const availableDepth = Number(chartedDepth) + Number(tideHeight);
+    const requiredDepth = Number(draft) + Number(squat || 0) + Number(safetyMargin || 0);
+    return { availableDepth, requiredDepth, clearance: availableDepth - requiredDepth, safe: availableDepth >= requiredDepth };
+  }
+
+  function correctedSextantAltitude(sextantAltitude, indexErrorMinutes, eyeHeightMeters) {
+    const hs = Number(sextantAltitude);
+    const indexCorrectionMinutes = -Number(indexErrorMinutes || 0);
+    const dipMinutes = -1.76 * Math.sqrt(Math.max(0, Number(eyeHeightMeters || 0)));
+    const apparent = hs + (indexCorrectionMinutes + dipMinutes) / 60;
+    const refractionMinutes = apparent <= 0 ? 0 : -0.97 / Math.tan(toRad(apparent + 7.31 / (apparent + 4.4)));
+    return {
+      apparentAltitude: apparent,
+      correctedAltitude: apparent + refractionMinutes / 60,
+      indexCorrectionMinutes,
+      dipMinutes,
+      refractionMinutes
+    };
+  }
+
+  function meridianLatitudeCandidates(observedAltitude, declination) {
+    const zenithDistance = 90 - Number(observedAltitude);
+    const dec = Number(declination);
+    return {
+      zenithDistance,
+      candidates: [dec + zenithDistance, dec - zenithDistance].filter(value => value >= -90 && value <= 90)
+    };
+  }
+
+  function timeDifferenceToLongitude(seconds, direction) {
+    const degrees = Math.abs(Number(seconds)) / 240;
+    const sign = /^(w|west|batı|bati)$/i.test(String(direction || "")) ? -1 : 1;
+    return sign * degrees;
+  }
+
+  function radarRelativeMotion(firstRange, firstBearing, secondRange, secondBearing, intervalMinutes) {
+    const first = vector(Number(firstRange), Number(firstBearing));
+    const second = vector(Number(secondRange), Number(secondBearing));
+    const hours = Number(intervalMinutes) / 60;
+    if (hours <= 0) throw new RangeError("intervalMinutes must be greater than zero");
+    const relativeVelocity = { east: (second.east - first.east) / hours, north: (second.north - first.north) / hours };
+    const polar = vectorToPolar(relativeVelocity.east, relativeVelocity.north);
+    const velocitySquared = relativeVelocity.east ** 2 + relativeVelocity.north ** 2;
+    const tcpaHours = velocitySquared < 1e-12 ? Infinity : -(second.east * relativeVelocity.east + second.north * relativeVelocity.north) / velocitySquared;
+    const closestEast = second.east + relativeVelocity.east * Math.max(0, tcpaHours);
+    const closestNorth = second.north + relativeVelocity.north * Math.max(0, tcpaHours);
+    return { relativeCourse: polar.direction, relativeSpeed: polar.speed, cpaNm: Math.hypot(closestEast, closestNorth), tcpaHours, past: tcpaHours < 0 };
+  }
+
+  function trialManeuver(own, target, proposedCourse, proposedSpeed) {
+    return cpaTcpa({ ...own, course: proposedCourse, speed: proposedSpeed }, target);
+  }
+
   function parseSpeedDistanceTimeQuestion(question) {
     const text = normalizeText(question);
     let solve = null;
@@ -410,6 +474,13 @@
     trueToCompass,
     cpaTcpa,
     passageFuel,
+    ruleOfTwelfths,
+    underKeelClearance,
+    correctedSextantAltitude,
+    meridianLatitudeCandidates,
+    timeDifferenceToLongitude,
+    radarRelativeMotion,
+    trialManeuver,
     parseSpeedDistanceTimeQuestion,
     currentResult,
     courseToSteer,

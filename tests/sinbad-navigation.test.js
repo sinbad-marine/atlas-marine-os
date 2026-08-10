@@ -129,6 +129,48 @@ test("answers Turkish speed distance and time questions", () => {
   assert.match(nav.answer("120 deniz milini 8 saatte tamamlamak için gerekli hız kaç knot?", "tr"), /15\.00 knot/);
 });
 
+test("estimates tidal height with the rule of twelfths", () => {
+  assert.equal(nav.ruleOfTwelfths(1, 7, 3, 6).height, 4);
+  assert.equal(nav.ruleOfTwelfths(1, 7, 6, 6).height, 7);
+});
+
+test("computes under-keel clearance", () => {
+  assert.deepEqual(nav.underKeelClearance(4, 1.5, 4.2, 0.3, 0.5), {
+    availableDepth: 5.5, requiredDepth: 5, clearance: 0.5, safe: true
+  });
+});
+
+test("applies basic sextant index dip and refraction corrections", () => {
+  const result = nav.correctedSextantAltitude(45, 2, 9);
+  assert.ok(result.correctedAltitude < 45);
+  assert.equal(result.indexCorrectionMinutes, -2);
+  assert.ok(Math.abs(result.dipMinutes + 5.28) < 0.001);
+});
+
+test("returns meridian latitude candidates and converts time to longitude", () => {
+  const latitude = nav.meridianLatitudeCandidates(70, 10);
+  assert.deepEqual(latitude.candidates, [30, -10]);
+  assert.equal(nav.timeDifferenceToLongitude(3600, "west"), -15);
+});
+
+test("solves radar relative motion from two observations", () => {
+  const result = nav.radarRelativeMotion(10, 0, 5, 0, 30);
+  assert.ok(Math.abs(result.relativeCourse - 180) < 0.001);
+  assert.ok(Math.abs(result.relativeSpeed - 10) < 0.001);
+  assert.ok(Math.abs(result.tcpaHours - 0.5) < 0.001);
+  assert.ok(result.cpaNm < 0.001);
+});
+
+test("evaluates a radar trial maneuver", () => {
+  const result = nav.trialManeuver(
+    { lat: 0, lon: 0, course: 90, speed: 10 },
+    { lat: 10 / 60, lon: 10 / 60, course: 180, speed: 10 },
+    0,
+    10
+  );
+  assert.ok(result.cpaNm > 5);
+});
+
 test("keeps unsafe or incomplete calculations bounded", () => {
   const response = nav.answer("DR pozisyonumu hesapla", "tr");
   assert.match(response, /eksik bilgiler/i);
