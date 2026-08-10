@@ -303,6 +303,48 @@
     return { passageHours, etaIso: eta.toISOString() };
   }
 
+  function requiredSpeedProfile(distanceNm, availableHours, minimumSpeed, maximumSpeed) {
+    const requiredSpeed = Number(distanceNm) / Number(availableHours);
+    const feasible = requiredSpeed >= Number(minimumSpeed) && requiredSpeed <= Number(maximumSpeed);
+    return { requiredSpeed, feasible, belowMinimum: requiredSpeed < Number(minimumSpeed), aboveMaximum: requiredSpeed > Number(maximumSpeed) };
+  }
+
+  function rankCollisionRisks(own, targets, limits) {
+    const cpaLimit = Number(limits?.cpaNm ?? 1);
+    const tcpaLimit = Number(limits?.tcpaHours ?? 1);
+    return targets.map(target => {
+      const result = cpaTcpa(own, target);
+      const future = !result.past && Number.isFinite(result.tcpaHours);
+      const severity = future && result.tcpaHours <= tcpaLimit && result.cpaNm <= cpaLimit
+        ? "danger"
+        : future && result.tcpaHours <= tcpaLimit * 2 && result.cpaNm <= cpaLimit * 2 ? "caution" : "monitor";
+      const score = future ? 1 / Math.max(0.05, result.cpaNm) * 1 / Math.max(0.05, result.tcpaHours) : 0;
+      return { id: target.id, ...result, severity, score };
+    }).sort((a, b) => b.score - a.score);
+  }
+
+  function routeSummary(waypoints, speedKnots, consumptionPerHour, reservePercent) {
+    const legs = [];
+    let totalDistanceNm = 0;
+    for (let index = 1; index < waypoints.length; index += 1) {
+      const from = waypoints[index - 1];
+      const to = waypoints[index];
+      const inverse = rhumbInverse(from.lat, from.lon, to.lat, to.lon);
+      totalDistanceNm += inverse.distanceNm;
+      legs.push({ from: from.name || index, to: to.name || index + 1, ...inverse });
+    }
+    const fuel = passageFuel(totalDistanceNm, speedKnots, consumptionPerHour, reservePercent);
+    return { legs, totalDistanceNm, hours: fuel.hours, baseFuel: fuel.baseFuel, totalFuel: fuel.totalFuel };
+  }
+
+  function waypointTurnPlan(previous, waypoint, next, speedKnots, rateOfTurnDegPerMinute) {
+    const inbound = rhumbInverse(previous.lat, previous.lon, waypoint.lat, waypoint.lon).course;
+    const outbound = rhumbInverse(waypoint.lat, waypoint.lon, next.lat, next.lon).course;
+    const signedChange = ((outbound - inbound + 540) % 360) - 180;
+    const geometry = turnGeometry(speedKnots, rateOfTurnDegPerMinute, signedChange);
+    return { inboundCourse: inbound, outboundCourse: outbound, courseChange: signedChange, turnDirection: signedChange >= 0 ? "starboard" : "port", ...geometry };
+  }
+
   function parseSpeedDistanceTimeQuestion(question) {
     const text = normalizeText(question);
     let solve = null;
@@ -543,6 +585,10 @@
     turnGeometry,
     barrassSquat,
     etaFromDeparture,
+    requiredSpeedProfile,
+    rankCollisionRisks,
+    routeSummary,
+    waypointTurnPlan,
     parseSpeedDistanceTimeQuestion,
     currentResult,
     courseToSteer,
