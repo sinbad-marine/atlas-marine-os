@@ -671,3 +671,32 @@ test("rejects an impossible vertical-angle height pair", () => {
   const response = nav.answer("Dikey a\u00e7\u0131 mesafe hesab\u0131: cisim y\u00fcksekli\u011fi 10 m, dikey a\u00e7\u0131 5 derece, g\u00f6z y\u00fcksekli\u011fi 10 m", "tr");
   assert.match(response, /b\u00fcy\u00fck olmal\u0131d\u0131r/);
 });
+
+test("answers an ocean route comparison question", () => {
+  const response = nav.answer("B\u00fcy\u00fck daire ve kerte hatt\u0131 rota kar\u015f\u0131la\u015ft\u0131r: ba\u015flang\u0131\u00e7 enlem 40 derece, ba\u015flang\u0131\u00e7 boylam -70 derece, var\u0131\u015f enlem 40 derece, var\u0131\u015f boylam 10 derece", "tr");
+  assert.match(response, /3542\.23 deniz mili/);
+  assert.match(response, /3679\.49 deniz mili/);
+  assert.match(response, /137\.26 deniz mili/);
+});
+
+test("answers a plane-sailing question", () => {
+  const response = nav.answer("D\u00fczlem seyri hesapla: enlem fark\u0131 60 NM, departure 60 NM", "tr");
+  assert.match(response, /84\.85 deniz mili/);
+  assert.match(response, /45\.0\u00b0T/);
+});
+
+test("answers a middle-latitude sailing question", () => {
+  const response = nav.answer("Orta enlem seyri: ba\u015flang\u0131\u00e7 enlem 40 derece, ba\u015flang\u0131\u00e7 boylam -70 derece, var\u0131\u015f enlem 41 derece, var\u0131\u015f boylam -68 derece", "tr");
+  assert.match(response, /109\.21 deniz mili/);
+  assert.match(response, /56\.7\u00b0T/);
+});
+
+test("asks for missing ocean-route endpoints", () => {
+  const response = nav.answer("B\u00fcy\u00fck daire ve kerte rota kar\u015f\u0131la\u015ft\u0131r", "tr");
+  assert.match(response, /ba\u015flang\u0131\u00e7 ve var\u0131\u015f enlem\/boylamlar\u0131/);
+});
+
+test("asks for missing plane-sailing inputs", () => {
+  const response = nav.answer("D\u00fczlem seyri hesapla", "tr");
+  assert.match(response, /enlem fark\u0131, departure/);
+});
