@@ -265,6 +265,38 @@ test("builds a bounded DR position uncertainty circle", () => {
   assert.ok(uncertainty.radiusNm > 1.2 && uncertainty.radiusNm < 1.4);
 });
 
+test("computes a celestial altitude intercept", () => {
+  assert.deepEqual(nav.celestialIntercept(45.2, 45, 120), {
+    interceptNm: 12.00000000000017,
+    distanceNm: 12.00000000000017,
+    direction: "toward",
+    azimuth: 120
+  });
+  assert.equal(nav.celestialIntercept(30, 30.1, 270).direction, "away");
+});
+
+test("intersects two celestial lines of position", () => {
+  const fix = nav.celestialFix({ lat: 40, lon: 20 }, [
+    { observedAltitude: 30 + 1 / 60, computedAltitude: 30, azimuth: 90 },
+    { observedAltitude: 45 + 2 / 60, computedAltitude: 45, azimuth: 0 }
+  ]);
+  assert.ok(Math.abs(fix.offsetEastNm - 1) < 1e-9);
+  assert.ok(Math.abs(fix.offsetNorthNm - 2) < 1e-9);
+  assert.equal(fix.reliable, true);
+});
+
+test("estimates distance from a vertical sextant angle", () => {
+  const result = nav.distanceByVerticalAngle(100, 5, 10);
+  assert.ok(result.distanceNm > 0.55 && result.distanceNm < 0.56);
+  assert.throws(() => nav.distanceByVerticalAngle(10, 5, 10), /object height/);
+});
+
+test("interpolates compass deviation across north", () => {
+  const table = [{ heading: 350, deviation: -2 }, { heading: 10, deviation: 2 }, { heading: 90, deviation: 4 }];
+  assert.ok(Math.abs(nav.interpolateCompassDeviation(table, 0)) < 1e-9);
+  assert.equal(nav.interpolateCompassDeviation(table, 50), 3);
+});
+
 test("keeps unsafe or incomplete calculations bounded", () => {
   const response = nav.answer("DR pozisyonumu hesapla", "tr");
   assert.match(response, /eksik bilgiler/i);
