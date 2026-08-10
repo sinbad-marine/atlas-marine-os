@@ -644,3 +644,30 @@ test("asks for missing celestial intercept inputs", () => {
   const response = nav.answer("Intercept ve azimut hesab\u0131 yap", "tr");
   assert.match(response, /g\u00f6zlenen irtifa, hesaplanan irtifa, azimut/);
 });
+
+test("answers a vertical-angle distance question", () => {
+  const response = nav.answer("Dikey a\u00e7\u0131 mesafe hesab\u0131: cisim y\u00fcksekli\u011fi 100 m, dikey a\u00e7\u0131 5 derece, g\u00f6z y\u00fcksekli\u011fi 10 m", "tr");
+  assert.match(response, /0\.555 deniz mili/);
+  assert.match(response, /ba\u011f\u0131ms\u0131z mevki hatt\u0131/);
+});
+
+test("answers a time-difference longitude question", () => {
+  const response = nav.answer("Zaman fark\u0131ndan boylam hesapla: zaman fark\u0131 3600 saniye bat\u0131", "tr");
+  assert.match(response, /15\.00\u00b0 Bat\u0131/);
+});
+
+test("converts relative bearing to true bearing conversationally", () => {
+  const response = nav.answer("Nispi kerteriz 40 derece, gemi ba\u015f\u0131 350 derece; hakiki kerteriz nedir?", "tr");
+  assert.match(response, /Hakiki kerteriz 30\.0\u00b0T/);
+});
+
+test("converts true bearing to relative bearing conversationally", () => {
+  const response = nav.answer("Hakiki kerteriz 330 derece, gemi ba\u015f\u0131 10 derece; nispi kerteriz nedir?", "tr");
+  assert.match(response, /saat y\u00f6n\u00fcnde 320\.0\u00b0/);
+  assert.match(response, /-40\.0\u00b0 \(iskele\)/);
+});
+
+test("rejects an impossible vertical-angle height pair", () => {
+  const response = nav.answer("Dikey a\u00e7\u0131 mesafe hesab\u0131: cisim y\u00fcksekli\u011fi 10 m, dikey a\u00e7\u0131 5 derece, g\u00f6z y\u00fcksekli\u011fi 10 m", "tr");
+  assert.match(response, /b\u00fcy\u00fck olmal\u0131d\u0131r/);
+});

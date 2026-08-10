@@ -984,6 +984,37 @@
     };
   }
 
+  function parseVerticalAngleDistanceQuestion(question) {
+    const text = normalizeText(question);
+    if (!/(?:dikey a\u00e7\u0131|dikey aci|vertical angle).*(?:mesafe|distance)/.test(text)) return null;
+    return {
+      objectHeightMeters: labelledNumber(text, "cisim y\u00fcksekli\u011fi|cisim yuksekligi|object height|fener y\u00fcksekli\u011fi|fener yuksekligi", "metre|meter|meters|m"),
+      verticalAngleDegrees: labelledNumber(text, "dikey a\u00e7\u0131|dikey aci|vertical angle|a\u00e7\u0131|aci", "derece|deg|\u00b0"),
+      observerHeightMeters: labelledNumber(text, "g\u00f6z y\u00fcksekli\u011fi|goz yuksekligi|observer height|eye height", "metre|meter|meters|m") ?? 0
+    };
+  }
+
+  function parseLongitudeTimeQuestion(question) {
+    const text = normalizeText(question);
+    if (!/(?:zaman fark\u0131|zaman farki|time difference).*(?:boylam|longitude)/.test(text) && !/(?:boylam|longitude).*(?:zaman fark\u0131|zaman farki|time difference)/.test(text)) return null;
+    const direction = /(?:bat\u0131|bati|west)(?:\s|$|[.,;:])/.test(text) ? "west" : /(?:do\u011fu|dogu|east)(?:\s|$|[.,;:])/.test(text) ? "east" : null;
+    return {
+      seconds: labelledNumber(text, "zaman fark\u0131|zaman farki|time difference|fark", "saniye|seconds|second|sn|s"),
+      direction
+    };
+  }
+
+  function parseBearingConversionQuestion(question) {
+    const text = normalizeText(question);
+    if (!/(?:nispi kerteriz|relative bearing|hakiki kerteriz|true bearing)/.test(text)) return null;
+    const toRelative = /(?:nispi kerteriz|relative bearing)\s+(?:nedir|ne|hesapla|calculate)/.test(text);
+    return {
+      mode: toRelative ? "toRelative" : "toTrue",
+      bearing: labelledNumber(text, toRelative ? "hakiki kerteriz|true bearing|kerteriz" : "nispi kerteriz|relative bearing|kerteriz", "derece|deg|\u00b0"),
+      heading: labelledNumber(text, "gemi ba\u015f\u0131|gemi basi|ba\u015f|bas|heading", "derece|deg|\u00b0")
+    };
+  }
+
   function vector(speed, direction) {
     const angle = toRad(normalize360(Number(direction)));
     return { east: Number(speed) * Math.sin(angle), north: Number(speed) * Math.cos(angle) };
@@ -1089,6 +1120,41 @@
 
   function answer(question, language) {
     const lang = languageCode(language);
+    const verticalQuestion = parseVerticalAngleDistanceQuestion(question);
+    if (verticalQuestion) {
+      const missing = [];
+      if (verticalQuestion.objectHeightMeters == null) missing.push(lang === "tr" ? "cisim y\u00fcksekli\u011fi" : "object height");
+      if (verticalQuestion.verticalAngleDegrees == null) missing.push(lang === "tr" ? "dikey a\u00e7\u0131" : "vertical angle");
+      if (missing.length) return lang === "tr" ? `Dikey a\u00e7\u0131 mesafesi i\u00e7in eksik bilgiler: ${missing.join(", ")}.` : `Missing vertical-angle distance inputs: ${missing.join(", ")}.`;
+      if (verticalQuestion.objectHeightMeters <= verticalQuestion.observerHeightMeters) return lang === "tr" ? "Cisim y\u00fcksekli\u011fi g\u00f6z y\u00fcksekli\u011finden b\u00fcy\u00fck olmal\u0131d\u0131r." : "Object height must exceed observer height.";
+      const result = distanceByVerticalAngle(verticalQuestion.objectHeightMeters, verticalQuestion.verticalAngleDegrees, verticalQuestion.observerHeightMeters);
+      return lang === "tr" ? `Dikey a\u00e7\u0131dan tahmini mesafe ${result.distanceNm.toFixed(3)} deniz mili (${result.distanceMeters.toFixed(1)} m). Harita cisim y\u00fcksekli\u011fi, gelgit ve ba\u011f\u0131ms\u0131z mevki hatt\u0131yla do\u011frulay\u0131n.` : `Estimated distance from vertical angle ${result.distanceNm.toFixed(3)} NM (${result.distanceMeters.toFixed(1)} m). Verify charted object height, tide, and an independent position line.`;
+    }
+
+    const longitudeQuestion = parseLongitudeTimeQuestion(question);
+    if (longitudeQuestion) {
+      const missing = [];
+      if (longitudeQuestion.seconds == null) missing.push(lang === "tr" ? "zaman fark\u0131" : "time difference");
+      if (!longitudeQuestion.direction) missing.push(lang === "tr" ? "do\u011fu/bat\u0131 y\u00f6n\u00fc" : "east/west direction");
+      if (missing.length) return lang === "tr" ? `Zaman fark\u0131ndan boylam i\u00e7in eksik bilgiler: ${missing.join(", ")}.` : `Missing time-to-longitude inputs: ${missing.join(", ")}.`;
+      const longitude = timeDifferenceToLongitude(longitudeQuestion.seconds, longitudeQuestion.direction);
+      return lang === "tr" ? `Boylam fark\u0131 ${Math.abs(longitude).toFixed(2)}\u00b0 ${longitude < 0 ? "Bat\u0131" : "Do\u011fu"}. Kronometre hatas\u0131n\u0131 ve kullan\u0131lan zaman referans\u0131n\u0131 do\u011frulay\u0131n.` : `Longitude difference ${Math.abs(longitude).toFixed(2)}\u00b0 ${longitude < 0 ? "West" : "East"}. Verify chronometer error and the time reference used.`;
+    }
+
+    const bearingQuestion = parseBearingConversionQuestion(question);
+    if (bearingQuestion) {
+      const missing = [];
+      if (bearingQuestion.bearing == null) missing.push(lang === "tr" ? "kerteriz" : "bearing");
+      if (bearingQuestion.heading == null) missing.push(lang === "tr" ? "gemi ba\u015f\u0131" : "vessel heading");
+      if (missing.length) return lang === "tr" ? `Kerteriz d\u00f6n\u00fc\u015f\u00fcm\u00fc i\u00e7in eksik bilgiler: ${missing.join(", ")}.` : `Missing bearing-conversion inputs: ${missing.join(", ")}.`;
+      if (bearingQuestion.mode === "toRelative") {
+        const result = trueToRelativeBearing(bearingQuestion.bearing, bearingQuestion.heading);
+        return lang === "tr" ? `Nispi kerteriz saat y\u00f6n\u00fcnde ${result.clockwise.toFixed(1)}\u00b0; i\u015faretli de\u011fer ${result.signed.toFixed(1)}\u00b0 (${result.signed < 0 ? "iskele" : "sancak"}). Cayro/pusula hatalar\u0131n\u0131 ayr\u0131ca uygulay\u0131n.` : `Relative bearing ${result.clockwise.toFixed(1)}\u00b0 clockwise; signed ${result.signed.toFixed(1)}\u00b0 (${result.signed < 0 ? "port" : "starboard"}). Apply gyro/compass errors separately.`;
+      }
+      const result = relativeToTrueBearing(bearingQuestion.bearing, bearingQuestion.heading);
+      return lang === "tr" ? `Hakiki kerteriz ${result.toFixed(1)}\u00b0T. Cayro/pusula hatalar\u0131n\u0131 ve gemi ba\u015f\u0131n\u0131n zaman\u0131n\u0131 do\u011frulay\u0131n.` : `True bearing ${result.toFixed(1)}\u00b0T. Verify gyro/compass errors and heading timestamp.`;
+    }
+
     const sextantQuestion = parseSextantCorrectionQuestion(question);
     if (sextantQuestion) {
       if (sextantQuestion.sextantAltitude == null) return lang === "tr" ? "Sekstant d\u00fczeltmesi i\u00e7in sekstant irtifas\u0131n\u0131 derece olarak verin." : "Provide the sextant altitude in degrees.";
@@ -1452,6 +1518,9 @@
     parseSextantCorrectionQuestion,
     parseMeridianLatitudeQuestion,
     parseCelestialInterceptQuestion,
+    parseVerticalAngleDistanceQuestion,
+    parseLongitudeTimeQuestion,
+    parseBearingConversionQuestion,
     currentResult,
     courseToSteer,
     parseCurrentQuestion,
