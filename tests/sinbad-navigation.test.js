@@ -171,6 +171,37 @@ test("evaluates a radar trial maneuver", () => {
   assert.ok(result.cpaNm > 5);
 });
 
+test("solves plane and middle-latitude sailing", () => {
+  const plane = nav.planeSailing(30, 40);
+  assert.equal(plane.distanceNm, 50);
+  assert.ok(Math.abs(plane.course - 53.1301) < 0.001);
+  const middle = nav.middleLatitudeSailing(40, 20, 41, 21);
+  assert.ok(middle.distanceNm > 74 && middle.distanceNm < 76);
+});
+
+test("resolves a multi-leg traverse", () => {
+  const result = nav.traverse([{ course: 0, distanceNm: 10 }, { course: 90, distanceNm: 10 }]);
+  assert.ok(Math.abs(result.distanceMadeGoodNm - Math.sqrt(200)) < 0.001);
+  assert.ok(Math.abs(result.courseMadeGood - 45) < 0.001);
+  assert.equal(result.runNm, 20);
+});
+
+test("applies leeway and computes turn geometry", () => {
+  assert.equal(nav.applyLeeway(90, 5, "sancak"), 95);
+  assert.equal(nav.applyLeeway(90, 5, "iskele"), 85);
+  const turn = nav.turnGeometry(12, 3, 90);
+  assert.ok(Math.abs(turn.turnMinutes - 30) < 0.001);
+  assert.ok(turn.radiusNm > 3.8 && turn.radiusNm < 3.9);
+});
+
+test("estimates Barrass squat and ETA", () => {
+  assert.equal(nav.barrassSquat(10, 0.8, false), 0.8);
+  assert.equal(nav.barrassSquat(10, 0.8, true), 1.6);
+  const eta = nav.etaFromDeparture("2026-08-10T00:00:00Z", 100, 10, 2);
+  assert.equal(eta.passageHours, 12);
+  assert.equal(eta.etaIso, "2026-08-10T12:00:00.000Z");
+});
+
 test("keeps unsafe or incomplete calculations bounded", () => {
   const response = nav.answer("DR pozisyonumu hesapla", "tr");
   assert.match(response, /eksik bilgiler/i);

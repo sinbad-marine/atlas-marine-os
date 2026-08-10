@@ -248,6 +248,61 @@
     return cpaTcpa({ ...own, course: proposedCourse, speed: proposedSpeed }, target);
   }
 
+  function planeSailing(deltaLatitudeNm, departureNm) {
+    const north = Number(deltaLatitudeNm);
+    const east = Number(departureNm);
+    const polar = vectorToPolar(east, north);
+    return { distanceNm: polar.speed, course: polar.direction };
+  }
+
+  function middleLatitudeSailing(lat1, lon1, lat2, lon2) {
+    const deltaLatitudeNm = (Number(lat2) - Number(lat1)) * 60;
+    let deltaLongitude = Number(lon2) - Number(lon1);
+    if (Math.abs(deltaLongitude) > 180) deltaLongitude += deltaLongitude > 0 ? -360 : 360;
+    const middleLatitude = toRad((Number(lat1) + Number(lat2)) / 2);
+    const departureNm = deltaLongitude * 60 * Math.cos(middleLatitude);
+    return { ...planeSailing(deltaLatitudeNm, departureNm), deltaLatitudeNm, departureNm };
+  }
+
+  function traverse(legs) {
+    const total = legs.reduce((sum, leg) => {
+      const component = vector(Number(leg.distanceNm), Number(leg.course));
+      sum.east += component.east;
+      sum.north += component.north;
+      sum.runNm += Number(leg.distanceNm);
+      return sum;
+    }, { east: 0, north: 0, runNm: 0 });
+    const result = vectorToPolar(total.east, total.north);
+    return { ...total, distanceMadeGoodNm: result.speed, courseMadeGood: result.direction };
+  }
+
+  function applyLeeway(desiredTrack, leewayDegrees, windSide) {
+    const side = normalizeText(windSide);
+    const correction = /^(starboard|sancak)$/.test(side) ? Number(leewayDegrees) : -Number(leewayDegrees);
+    return normalize360(Number(desiredTrack) + correction);
+  }
+
+  function turnGeometry(speedKnots, rateOfTurnDegPerMinute, courseChangeDegrees) {
+    const omega = toRad(Math.abs(Number(rateOfTurnDegPerMinute)));
+    if (omega <= 0) throw new RangeError("rate of turn must be greater than zero");
+    const radiusNm = (Number(speedKnots) / 60) / omega;
+    const wheelOverDistanceNm = radiusNm * Math.tan(toRad(Math.abs(Number(courseChangeDegrees))) / 2);
+    const turnMinutes = Math.abs(Number(courseChangeDegrees)) / Math.abs(Number(rateOfTurnDegPerMinute));
+    return { radiusNm, wheelOverDistanceNm, turnMinutes };
+  }
+
+  function barrassSquat(speedKnots, blockCoefficient, confinedWater) {
+    const factor = confinedWater ? 2 : 1;
+    return factor * Number(blockCoefficient) * Number(speedKnots) ** 2 / 100;
+  }
+
+  function etaFromDeparture(departureIso, distanceNm, speedKnots, delaysHours) {
+    const passageHours = speedDistanceTime({ distanceNm, speedKnots }).hours + Number(delaysHours || 0);
+    const eta = new Date(new Date(departureIso).getTime() + passageHours * 3600000);
+    if (Number.isNaN(eta.getTime())) throw new RangeError("invalid departure time");
+    return { passageHours, etaIso: eta.toISOString() };
+  }
+
   function parseSpeedDistanceTimeQuestion(question) {
     const text = normalizeText(question);
     let solve = null;
@@ -481,6 +536,13 @@
     timeDifferenceToLongitude,
     radarRelativeMotion,
     trialManeuver,
+    planeSailing,
+    middleLatitudeSailing,
+    traverse,
+    applyLeeway,
+    turnGeometry,
+    barrassSquat,
+    etaFromDeparture,
     parseSpeedDistanceTimeQuestion,
     currentResult,
     courseToSteer,
