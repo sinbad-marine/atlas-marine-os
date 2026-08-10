@@ -530,3 +530,32 @@ test("asks for missing CPA target inputs", () => {
   const response = nav.answer("CPA hesapla: kendi enlem 0 derece boylam 0 derece rota 90 derece h\u0131z 10 knot", "tr");
   assert.match(response, /kendi ve hedef geminin/i);
 });
+
+test("answers a confined-water squat question", () => {
+  const response = nav.answer("Dar suda squat hesapla: h\u0131z 10 knot, blok katsay\u0131s\u0131 0.8", "tr");
+  assert.match(response, /1\.60 m/);
+  assert.match(response, /dar\/s\u0131\u011f su/);
+});
+
+test("answers a maximum safe speed for squat question", () => {
+  const response = nav.answer("Maksimum h\u0131z squat hesab\u0131: izin verilen squat 0.8 m, blok katsay\u0131s\u0131 0.8", "tr");
+  assert.match(response, /10\.00 knot/);
+});
+
+test("answers an anchoring scope and swing question", () => {
+  const response = nav.answer("Demirleme kaloma hesapla: su derinli\u011fi 10 m, gelgit 2 m, ba\u015f y\u00fcksekli\u011fi 3 m, kaloma oran\u0131 5, gemi boyu 40 m", "tr");
+  assert.match(response, /75\.0 m/);
+  assert.match(response, /2\.73 kilit/);
+  assert.match(response, /115\.0 m/);
+});
+
+test("answers a stopping distance question", () => {
+  const response = nav.answer("Durma mesafesi hesapla: h\u0131z 10 knot, yava\u015flama 0.2 m\/s2, reaksiyon 30 saniye", "tr");
+  assert.match(response, /220\.5 m/);
+  assert.match(response, /55\.7 saniye/);
+});
+
+test("asks for missing anchoring inputs", () => {
+  const response = nav.answer("Demirleme kaloma hesapla", "tr");
+  assert.match(response, /su derinli\u011fi, kaloma oran\u0131/);
+});
