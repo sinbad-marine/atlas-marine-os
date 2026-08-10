@@ -888,6 +888,37 @@
     };
   }
 
+  function parseTurnQuestion(question) {
+    const text = normalizeText(question);
+    if (!/\b(wheel[ -]?over|d\u00f6n\u00fc\u015f yar\u0131\u00e7ap\u0131|donus yaricapi|d\u00f6n\u00fc\u015f geometrisi|donus geometrisi|rate of turn)\b/.test(text)) return null;
+    return {
+      speedKnots: labelledNumber(text, "h\u0131z|hiz|speed", "knot|knots|kn"),
+      rateOfTurn: labelledNumber(text, "d\u00f6n\u00fc\u015f oran\u0131|donus orani|rate of turn|rot", "derece\/dakika|deg\/min|\u00b0\/min"),
+      courseChange: labelledNumber(text, "rota de\u011fi\u015fimi|rota degisimi|course change|d\u00f6n\u00fc\u015f a\u00e7\u0131s\u0131|donus acisi", "derece|deg|\u00b0")
+    };
+  }
+
+  function parseGeographicRangeQuestion(question) {
+    const text = normalizeText(question);
+    if (!/\b(co\u011frafi menzil|cografi menzil|ufuk mesafesi|g\u00f6r\u00fc\u015f mesafesi|gorus mesafesi|geographic range|horizon distance)\b/.test(text)) return null;
+    return {
+      eyeHeightMeters: labelledNumber(text, "g\u00f6z y\u00fcksekli\u011fi|goz yuksekligi|eye height|g\u00f6z", "metre|meter|meters|m"),
+      objectHeightMeters: labelledNumber(text, "fener y\u00fcksekli\u011fi|fener yuksekligi|cisim y\u00fcksekli\u011fi|cisim yuksekligi|object height|light height", "metre|meter|meters|m")
+    };
+  }
+
+  function parseVariationQuestion(question) {
+    const text = normalizeText(question);
+    if (!/\b(varyasyon|variation|manyetik de\u011fi\u015fim|manyetik degisim)\b/.test(text) || !/\b(y\u0131ll\u0131k|yillik|annual|g\u00fcncelle|guncelle)\b/.test(text)) return null;
+    const targetYear = labelledNumber(text, "hedef y\u0131l|hedef yil|target year", "") || Number(text.match(/\b20\d{2}\b/g)?.at(-1));
+    return {
+      chartVariation: labelledNumber(text, "harita varyasyonu|chart variation|varyasyon", "derece|deg|\u00b0"),
+      annualChangeMinutes: labelledNumber(text, "y\u0131ll\u0131k de\u011fi\u015fim|yillik degisim|annual change", "dakika|minutes|min|'"),
+      chartYear: labelledNumber(text, "harita y\u0131l\u0131|harita yili|chart year", ""),
+      targetYear
+    };
+  }
+
   function vector(speed, direction) {
     const angle = toRad(normalize360(Number(direction)));
     return { east: Number(speed) * Math.sin(angle), north: Number(speed) * Math.cos(angle) };
@@ -993,6 +1024,39 @@
 
   function answer(question, language) {
     const lang = languageCode(language);
+    const turnQuestion = parseTurnQuestion(question);
+    if (turnQuestion) {
+      const missing = [];
+      if (turnQuestion.speedKnots == null) missing.push(lang === "tr" ? "h\u0131z" : "speed");
+      if (turnQuestion.rateOfTurn == null) missing.push(lang === "tr" ? "d\u00f6n\u00fc\u015f oran\u0131" : "rate of turn");
+      if (turnQuestion.courseChange == null) missing.push(lang === "tr" ? "rota de\u011fi\u015fimi" : "course change");
+      if (missing.length) return lang === "tr" ? `D\u00f6n\u00fc\u015f hesab\u0131 i\u00e7in eksik bilgiler: ${missing.join(", ")}.` : `Missing turn inputs: ${missing.join(", ")}.`;
+      const result = turnGeometry(turnQuestion.speedKnots, turnQuestion.rateOfTurn, turnQuestion.courseChange);
+      return lang === "tr" ? `D\u00f6n\u00fc\u015f yar\u0131\u00e7ap\u0131 ${result.radiusNm.toFixed(2)} deniz mili; wheel-over mesafesi ${result.wheelOverDistanceNm.toFixed(2)} deniz mili; d\u00f6n\u00fc\u015f s\u00fcresi ${result.turnMinutes.toFixed(1)} dakika. Ger\u00e7ek manevra karakteristikleri ve k\u0131lavuzluk plan\u0131yla do\u011frulay\u0131n.` : `Turn radius ${result.radiusNm.toFixed(2)} NM; wheel-over distance ${result.wheelOverDistanceNm.toFixed(2)} NM; turn time ${result.turnMinutes.toFixed(1)} minutes. Verify with actual manoeuvring characteristics and the pilotage plan.`;
+    }
+
+    const rangeQuestion = parseGeographicRangeQuestion(question);
+    if (rangeQuestion) {
+      const missing = [];
+      if (rangeQuestion.eyeHeightMeters == null) missing.push(lang === "tr" ? "g\u00f6z y\u00fcksekli\u011fi" : "eye height");
+      if (rangeQuestion.objectHeightMeters == null) missing.push(lang === "tr" ? "cisim/fener y\u00fcksekli\u011fi" : "object/light height");
+      if (missing.length) return lang === "tr" ? `Co\u011frafi menzil hesab\u0131 i\u00e7in eksik bilgiler: ${missing.join(", ")}.` : `Missing geographic-range inputs: ${missing.join(", ")}.`;
+      const result = geographicRange(rangeQuestion.eyeHeightMeters, rangeQuestion.objectHeightMeters);
+      return lang === "tr" ? `Co\u011frafi g\u00f6r\u00fc\u015f menzili ${result.geographicRangeNm.toFixed(2)} deniz mili (g\u00f6z ufku ${result.observerHorizonNm.toFixed(2)}, fener ufku ${result.objectHorizonNm.toFixed(2)}). Meteorolojik g\u00f6r\u00fc\u015f ve fenerin nominal menzili ayr\u0131ca kontrol edilmelidir.` : `Geographic range ${result.geographicRangeNm.toFixed(2)} NM (observer horizon ${result.observerHorizonNm.toFixed(2)}, light horizon ${result.objectHorizonNm.toFixed(2)}). Also check meteorological visibility and the light's nominal range.`;
+    }
+
+    const variationQuestion = parseVariationQuestion(question);
+    if (variationQuestion) {
+      const missing = [];
+      if (variationQuestion.chartVariation == null) missing.push(lang === "tr" ? "harita varyasyonu" : "chart variation");
+      if (variationQuestion.annualChangeMinutes == null) missing.push(lang === "tr" ? "y\u0131ll\u0131k de\u011fi\u015fim" : "annual change");
+      if (variationQuestion.chartYear == null) missing.push(lang === "tr" ? "harita y\u0131l\u0131" : "chart year");
+      if (!Number.isFinite(variationQuestion.targetYear)) missing.push(lang === "tr" ? "hedef y\u0131l" : "target year");
+      if (missing.length) return lang === "tr" ? `Varyasyon g\u00fcncellemesi i\u00e7in eksik bilgiler: ${missing.join(", ")}.` : `Missing variation-update inputs: ${missing.join(", ")}.`;
+      const result = magneticVariationAtDate(variationQuestion.chartVariation, variationQuestion.annualChangeMinutes, variationQuestion.chartYear, `${variationQuestion.targetYear}-01-01T00:00:00Z`);
+      return lang === "tr" ? `G\u00fcncellenmi\u015f manyetik varyasyon: ${result.variation.toFixed(2)}\u00b0 (do\u011fu pozitif, bat\u0131 negatif). G\u00fcncel harita ve seyir yay\u0131n\u0131yla do\u011frulay\u0131n.` : `Updated magnetic variation: ${result.variation.toFixed(2)}\u00b0 (east positive, west negative). Verify against the current chart and nautical publications.`;
+    }
+
     const squatQuestion = parseSquatQuestion(question);
     if (squatQuestion) {
       if (squatQuestion.blockCoefficient == null) return lang === "tr" ? "Squat hesab\u0131 i\u00e7in blok katsay\u0131s\u0131n\u0131 (Cb) verin." : "Provide the block coefficient (Cb) for the squat calculation.";
@@ -1251,6 +1315,9 @@
     parseSquatQuestion,
     parseAnchorQuestion,
     parseStoppingQuestion,
+    parseTurnQuestion,
+    parseGeographicRangeQuestion,
+    parseVariationQuestion,
     currentResult,
     courseToSteer,
     parseCurrentQuestion,

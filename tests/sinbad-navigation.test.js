@@ -559,3 +559,30 @@ test("asks for missing anchoring inputs", () => {
   const response = nav.answer("Demirleme kaloma hesapla", "tr");
   assert.match(response, /su derinli\u011fi, kaloma oran\u0131/);
 });
+
+test("answers a wheel-over and turn geometry question", () => {
+  const response = nav.answer("Wheel-over hesapla: h\u0131z 12 knot, d\u00f6n\u00fc\u015f oran\u0131 3 derece/dakika, rota de\u011fi\u015fimi 90 derece", "tr");
+  assert.match(response, /3\.82 deniz mili/);
+  assert.match(response, /30\.0 dakika/);
+});
+
+test("answers a lighthouse geographic-range question", () => {
+  const response = nav.answer("Co\u011frafi menzil hesapla: g\u00f6z y\u00fcksekli\u011fi 9 m, fener y\u00fcksekli\u011fi 25 m", "tr");
+  assert.match(response, /16\.64 deniz mili/);
+  assert.match(response, /Meteorolojik g\u00f6r\u00fc\u015f/);
+});
+
+test("updates magnetic variation conversationally", () => {
+  const response = nav.answer("Y\u0131ll\u0131k varyasyon g\u00fcncelle: harita varyasyonu 2 derece, y\u0131ll\u0131k de\u011fi\u015fim 6 dakika, harita y\u0131l\u0131 2020, hedef y\u0131l 2025", "tr");
+  assert.match(response, /2\.50\u00b0/);
+});
+
+test("supports westward annual magnetic change", () => {
+  const response = nav.answer("Y\u0131ll\u0131k varyasyon g\u00fcncelle: harita varyasyonu 2 derece, y\u0131ll\u0131k de\u011fi\u015fim -6 dakika, harita y\u0131l\u0131 2020, hedef y\u0131l 2025", "tr");
+  assert.match(response, /1\.50\u00b0/);
+});
+
+test("asks for missing turn inputs", () => {
+  const response = nav.answer("Wheel-over mesafesini hesapla", "tr");
+  assert.match(response, /h\u0131z, d\u00f6n\u00fc\u015f oran\u0131, rota de\u011fi\u015fimi/);
+});
