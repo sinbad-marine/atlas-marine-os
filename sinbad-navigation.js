@@ -264,6 +264,62 @@
     return { ...planeSailing(deltaLatitudeNm, departureNm), deltaLatitudeNm, departureNm };
   }
 
+  function bearingFix(first, second) {
+    const referenceLat = (Number(first.lat) + Number(second.lat)) / 2;
+    const cosLat = Math.cos(toRad(referenceLat));
+    const point = mark => ({
+      east: Number(mark.lon) * 60 * cosLat,
+      north: Number(mark.lat) * 60
+    });
+    const a = point(first);
+    const b = point(second);
+    // A bearing is observed from the vessel towards the mark, therefore the
+    // position line extending from the mark uses the reciprocal bearing.
+    const da = vector(1, Number(first.bearing) + 180);
+    const db = vector(1, Number(second.bearing) + 180);
+    const determinant = da.east * db.north - da.north * db.east;
+    if (Math.abs(determinant) < 1e-8) throw new RangeError("bearings do not provide a reliable intersection");
+    const delta = { east: b.east - a.east, north: b.north - a.north };
+    const t = (delta.east * db.north - delta.north * db.east) / determinant;
+    const east = a.east + t * da.east;
+    const north = a.north + t * da.north;
+    const crossingAngle = Math.abs(((Number(second.bearing) - Number(first.bearing) + 540) % 180) - 90);
+    return {
+      lat: north / 60,
+      lon: east / (60 * cosLat),
+      crossingAngle: 90 - crossingAngle,
+      reliable: 90 - crossingAngle >= 30
+    };
+  }
+
+  function runningFix(firstMark, firstBearing, secondMark, secondBearing, course, speedKnots, hours) {
+    const run = vector(distanceRun(speedKnots, hours), course);
+    const referenceLat = (Number(firstMark.lat) + Number(secondMark.lat)) / 2;
+    const advancedFirstMark = {
+      lat: Number(firstMark.lat) + run.north / 60,
+      lon: Number(firstMark.lon) + run.east / (60 * Math.cos(toRad(referenceLat))),
+      bearing: Number(firstBearing)
+    };
+    const result = bearingFix(advancedFirstMark, { ...secondMark, bearing: Number(secondBearing) });
+    return { ...result, runNm: distanceRun(speedKnots, hours), advancedLopBy: run };
+  }
+
+  function estimatedPosition(start, course, speedKnots, hours, currentSet, currentDrift) {
+    const ship = vector(speedKnots, course);
+    const current = vector(currentDrift || 0, currentSet || 0);
+    const ground = vectorToPolar(ship.east + current.east, ship.north + current.north);
+    const position = rhumbDestination(start.lat, start.lon, ground.direction, ground.speed * Number(hours));
+    return { ...position, courseMadeGood: ground.direction, speedMadeGood: ground.speed, distanceNm: ground.speed * Number(hours) };
+  }
+
+  function positionUncertainty(initialErrorNm, speedErrorKnots, courseErrorDegrees, speedKnots, hours) {
+    const runNm = distanceRun(speedKnots, hours);
+    const alongTrackErrorNm = Math.abs(Number(speedErrorKnots)) * Number(hours);
+    const crossTrackErrorNm = runNm * Math.sin(toRad(Math.abs(Number(courseErrorDegrees))));
+    const radiusNm = Math.hypot(Number(initialErrorNm), alongTrackErrorNm, crossTrackErrorNm);
+    return { radiusNm, alongTrackErrorNm, crossTrackErrorNm, runNm };
+  }
+
   function traverse(legs) {
     const total = legs.reduce((sum, leg) => {
       const component = vector(Number(leg.distanceNm), Number(leg.course));
@@ -580,6 +636,10 @@
     trialManeuver,
     planeSailing,
     middleLatitudeSailing,
+    bearingFix,
+    runningFix,
+    estimatedPosition,
+    positionUncertainty,
     traverse,
     applyLeeway,
     turnGeometry,
