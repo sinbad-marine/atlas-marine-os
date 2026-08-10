@@ -224,6 +224,72 @@
     };
   }
 
+  function celestialIntercept(observedAltitude, computedAltitude, azimuth) {
+    const interceptNm = (Number(observedAltitude) - Number(computedAltitude)) * 60;
+    return {
+      interceptNm,
+      distanceNm: Math.abs(interceptNm),
+      direction: interceptNm >= 0 ? "toward" : "away",
+      azimuth: normalize360(Number(azimuth))
+    };
+  }
+
+  function celestialFix(assumedPosition, sights) {
+    if (!Array.isArray(sights) || sights.length !== 2) throw new RangeError("exactly two sights are required");
+    const lines = sights.map(sight => {
+      const intercept = celestialIntercept(sight.observedAltitude, sight.computedAltitude, sight.azimuth);
+      const shift = vector(intercept.interceptNm, intercept.azimuth);
+      return { anchor: shift, direction: vector(1, intercept.azimuth + 90), intercept };
+    });
+    const determinant = lines[0].direction.east * lines[1].direction.north - lines[0].direction.north * lines[1].direction.east;
+    if (Math.abs(determinant) < 1e-8) throw new RangeError("sight azimuths do not provide a reliable intersection");
+    const delta = {
+      east: lines[1].anchor.east - lines[0].anchor.east,
+      north: lines[1].anchor.north - lines[0].anchor.north
+    };
+    const t = (delta.east * lines[1].direction.north - delta.north * lines[1].direction.east) / determinant;
+    const offset = {
+      east: lines[0].anchor.east + t * lines[0].direction.east,
+      north: lines[0].anchor.north + t * lines[0].direction.north
+    };
+    const angle = Math.abs(((Number(sights[1].azimuth) - Number(sights[0].azimuth) + 540) % 180) - 90);
+    const crossingAngle = 90 - angle;
+    const meanLat = toRad(Number(assumedPosition.lat));
+    return {
+      lat: Number(assumedPosition.lat) + offset.north / 60,
+      lon: Number(assumedPosition.lon) + offset.east / (60 * Math.cos(meanLat)),
+      offsetEastNm: offset.east,
+      offsetNorthNm: offset.north,
+      crossingAngle,
+      reliable: crossingAngle >= 30,
+      intercepts: lines.map(line => line.intercept)
+    };
+  }
+
+  function distanceByVerticalAngle(objectHeightMeters, verticalAngleDegrees, observerHeightMeters) {
+    const effectiveHeight = Number(objectHeightMeters) - Number(observerHeightMeters || 0);
+    const angle = Number(verticalAngleDegrees);
+    if (effectiveHeight <= 0) throw new RangeError("object height must exceed observer height");
+    if (angle <= 0 || angle >= 90) throw new RangeError("vertical angle must be between 0 and 90 degrees");
+    const distanceMeters = effectiveHeight / Math.tan(toRad(angle));
+    return { distanceMeters, distanceNm: distanceMeters / 1852 };
+  }
+
+  function interpolateCompassDeviation(table, heading) {
+    if (!Array.isArray(table) || table.length < 2) throw new RangeError("at least two deviation entries are required");
+    const entries = table.map(entry => ({ heading: normalize360(Number(entry.heading)), deviation: Number(entry.deviation) }))
+      .sort((a, b) => a.heading - b.heading);
+    const target = normalize360(Number(heading));
+    let upperIndex = entries.findIndex(entry => entry.heading >= target);
+    if (upperIndex < 0) upperIndex = 0;
+    const upper = entries[upperIndex];
+    const lower = entries[(upperIndex - 1 + entries.length) % entries.length];
+    const upperHeading = upper.heading <= lower.heading ? upper.heading + 360 : upper.heading;
+    const targetHeading = target < lower.heading ? target + 360 : target;
+    const fraction = (targetHeading - lower.heading) / (upperHeading - lower.heading);
+    return lower.deviation + (upper.deviation - lower.deviation) * fraction;
+  }
+
   function timeDifferenceToLongitude(seconds, direction) {
     const degrees = Math.abs(Number(seconds)) / 240;
     const sign = /^(w|west|batı|bati)$/i.test(String(direction || "")) ? -1 : 1;
@@ -631,6 +697,10 @@
     underKeelClearance,
     correctedSextantAltitude,
     meridianLatitudeCandidates,
+    celestialIntercept,
+    celestialFix,
+    distanceByVerticalAngle,
+    interpolateCompassDeviation,
     timeDifferenceToLongitude,
     radarRelativeMotion,
     trialManeuver,
