@@ -1015,6 +1015,41 @@
     };
   }
 
+  function parseOceanRouteQuestion(question) {
+    const text = normalizeText(question);
+    if (!/(?:b\u00fcy\u00fck daire|buyuk daire|great circle).*(?:kerte|rhumb|loxodrom)/.test(text) && !/(?:rota kar\u015f\u0131la\u015ft\u0131r|rota karsilastir|compare routes)/.test(text)) return null;
+    return {
+      start: {
+        lat: labelledNumber(text, "ba\u015flang\u0131\u00e7 enlem|baslangic enlem|start latitude", "derece|deg|\u00b0"),
+        lon: labelledNumber(text, "ba\u015flang\u0131\u00e7 boylam|baslangic boylam|start longitude", "derece|deg|\u00b0")
+      },
+      end: {
+        lat: labelledNumber(text, "var\u0131\u015f enlem|varis enlem|biti\u015f enlem|bitis enlem|end latitude", "derece|deg|\u00b0"),
+        lon: labelledNumber(text, "var\u0131\u015f boylam|varis boylam|biti\u015f boylam|bitis boylam|end longitude", "derece|deg|\u00b0")
+      }
+    };
+  }
+
+  function parsePlaneSailingQuestion(question) {
+    const text = normalizeText(question);
+    if (!/(?:d\u00fczlem seyri|duzlem seyri|plane sailing)/.test(text)) return null;
+    return {
+      deltaLatitudeNm: labelledNumber(text, "enlem fark\u0131|enlem farki|delta latitude|dlat", "deniz mili|nm"),
+      departureNm: labelledNumber(text, "departure|do\u011fu bat\u0131 mesafesi|dogu bati mesafesi", "deniz mili|nm")
+    };
+  }
+
+  function parseMiddleLatitudeQuestion(question) {
+    const text = normalizeText(question);
+    if (!/(?:orta enlem seyri|middle latitude sailing|mid latitude sailing)/.test(text)) return null;
+    return {
+      lat1: labelledNumber(text, "ba\u015flang\u0131\u00e7 enlem|baslangic enlem|start latitude", "derece|deg|\u00b0"),
+      lon1: labelledNumber(text, "ba\u015flang\u0131\u00e7 boylam|baslangic boylam|start longitude", "derece|deg|\u00b0"),
+      lat2: labelledNumber(text, "var\u0131\u015f enlem|varis enlem|end latitude", "derece|deg|\u00b0"),
+      lon2: labelledNumber(text, "var\u0131\u015f boylam|varis boylam|end longitude", "derece|deg|\u00b0")
+    };
+  }
+
   function vector(speed, direction) {
     const angle = toRad(normalize360(Number(direction)));
     return { east: Number(speed) * Math.sin(angle), north: Number(speed) * Math.cos(angle) };
@@ -1120,6 +1155,32 @@
 
   function answer(question, language) {
     const lang = languageCode(language);
+    const oceanQuestion = parseOceanRouteQuestion(question);
+    if (oceanQuestion) {
+      const values = [...Object.values(oceanQuestion.start), ...Object.values(oceanQuestion.end)];
+      if (values.some(value => value == null)) return lang === "tr" ? "Rota kar\u015f\u0131la\u015ft\u0131rmas\u0131 i\u00e7in ba\u015flang\u0131\u00e7 ve var\u0131\u015f enlem/boylamlar\u0131n\u0131 verin." : "Provide start and destination latitude/longitude for route comparison.";
+      const result = compareOceanRoutes(oceanQuestion.start, oceanQuestion.end);
+      return lang === "tr" ? `B\u00fcy\u00fck daire ${result.greatCircleDistanceNm.toFixed(2)} deniz mili, ilk rota ${result.greatCircleInitialCourse.toFixed(1)}\u00b0T; kerte hatt\u0131 ${result.rhumbDistanceNm.toFixed(2)} deniz mili, rota ${result.rhumbCourse.toFixed(1)}\u00b0T. Teorik tasarruf ${result.savingNm.toFixed(2)} deniz mili (%${result.savingPercent.toFixed(2)}). Hava, ak\u0131nt\u0131, buz, trafik ve seyir k\u0131s\u0131tlar\u0131yla rota yeniden de\u011ferlendirilmelidir.` : `Great-circle ${result.greatCircleDistanceNm.toFixed(2)} NM, initial course ${result.greatCircleInitialCourse.toFixed(1)}\u00b0T; rhumb line ${result.rhumbDistanceNm.toFixed(2)} NM, course ${result.rhumbCourse.toFixed(1)}\u00b0T. Theoretical saving ${result.savingNm.toFixed(2)} NM (${result.savingPercent.toFixed(2)}%). Reassess for weather, current, ice, traffic, and navigational constraints.`;
+    }
+
+    const planeQuestion = parsePlaneSailingQuestion(question);
+    if (planeQuestion) {
+      const missing = [];
+      if (planeQuestion.deltaLatitudeNm == null) missing.push(lang === "tr" ? "enlem fark\u0131" : "difference of latitude");
+      if (planeQuestion.departureNm == null) missing.push("departure");
+      if (missing.length) return lang === "tr" ? `D\u00fczlem seyri i\u00e7in eksik bilgiler: ${missing.join(", ")}.` : `Missing plane-sailing inputs: ${missing.join(", ")}.`;
+      const result = planeSailing(planeQuestion.deltaLatitudeNm, planeQuestion.departureNm);
+      return lang === "tr" ? `D\u00fczlem seyri mesafesi ${result.distanceNm.toFixed(2)} deniz mili; rota ${result.course.toFixed(1)}\u00b0T. K\u0131sa mesafe yakla\u015f\u0131m\u0131d\u0131r; y\u00fcksek enlem ve uzun etaplarda uygun seyir y\u00f6ntemi kullan\u0131n.` : `Plane-sailing distance ${result.distanceNm.toFixed(2)} NM; course ${result.course.toFixed(1)}\u00b0T. This is a short-distance approximation; use an appropriate sailing method at high latitudes and over long legs.`;
+    }
+
+    const middleQuestion = parseMiddleLatitudeQuestion(question);
+    if (middleQuestion) {
+      const values = [middleQuestion.lat1, middleQuestion.lon1, middleQuestion.lat2, middleQuestion.lon2];
+      if (values.some(value => value == null)) return lang === "tr" ? "Orta enlem seyri i\u00e7in ba\u015flang\u0131\u00e7 ve var\u0131\u015f enlem/boylamlar\u0131n\u0131 verin." : "Provide start and destination latitude/longitude for middle-latitude sailing.";
+      const result = middleLatitudeSailing(middleQuestion.lat1, middleQuestion.lon1, middleQuestion.lat2, middleQuestion.lon2);
+      return lang === "tr" ? `Orta enlem seyri mesafesi ${result.distanceNm.toFixed(2)} deniz mili; rota ${result.course.toFixed(1)}\u00b0T; enlem fark\u0131 ${result.deltaLatitudeNm.toFixed(2)} ve departure ${result.departureNm.toFixed(2)} deniz mili. Harita \u00fczerinde ba\u011f\u0131ms\u0131z kontrol yap\u0131n.` : `Middle-latitude distance ${result.distanceNm.toFixed(2)} NM; course ${result.course.toFixed(1)}\u00b0T; difference of latitude ${result.deltaLatitudeNm.toFixed(2)} and departure ${result.departureNm.toFixed(2)} NM. Cross-check independently on the chart.`;
+    }
+
     const verticalQuestion = parseVerticalAngleDistanceQuestion(question);
     if (verticalQuestion) {
       const missing = [];
@@ -1521,6 +1582,9 @@
     parseVerticalAngleDistanceQuestion,
     parseLongitudeTimeQuestion,
     parseBearingConversionQuestion,
+    parseOceanRouteQuestion,
+    parsePlaneSailingQuestion,
+    parseMiddleLatitudeQuestion,
     currentResult,
     courseToSteer,
     parseCurrentQuestion,
