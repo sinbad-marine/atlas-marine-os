@@ -56,3 +56,12 @@ checks relevance and authority requirements, detects structured claim
 conflicts, and records timing/audit details. Document text is always data and
 cannot alter Core safety, owner authority, or execution policy. This phase does
 not execute experts or modify the navigation mathematics engine.
+
+## Phase 2B grounded answer boundary
+
+`grounding/` consumes the structured Phase 2A retrieval result and produces an
+immutable grounded-answer package. Material claims resolve only to selected
+evidence, citations preserve available provenance without inventing metadata,
+and insufficient, conflicting, or failed retrieval states stop conclusively.
+Document content remains `DATA_ONLY`; this layer performs no expert execution
+and contains no navigation mathematics.
