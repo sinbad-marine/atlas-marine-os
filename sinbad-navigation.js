@@ -447,6 +447,57 @@
     return { radiusNm, wheelOverDistanceNm, turnMinutes };
   }
 
+  function turnAdvanceTransfer(radiusNm, courseChangeDegrees) {
+    const radius = Number(radiusNm);
+    const change = toRad(Math.abs(Number(courseChangeDegrees)));
+    if (radius <= 0) throw new RangeError("turn radius must be greater than zero");
+    return {
+      advanceNm: radius * Math.sin(change),
+      transferNm: radius * (1 - Math.cos(change)),
+      arcDistanceNm: radius * change
+    };
+  }
+
+  function stoppingPerformance(speedKnots, decelerationMetersPerSecondSquared, reactionSeconds) {
+    const speedMps = Number(speedKnots) * 0.514444;
+    const deceleration = Number(decelerationMetersPerSecondSquared);
+    const reaction = Number(reactionSeconds || 0);
+    if (speedMps < 0 || deceleration <= 0 || reaction < 0) throw new RangeError("speed, deceleration, and reaction time must be valid");
+    const reactionDistanceMeters = speedMps * reaction;
+    const brakingDistanceMeters = speedMps ** 2 / (2 * deceleration);
+    const brakingSeconds = speedMps / deceleration;
+    return {
+      stoppingSeconds: reaction + brakingSeconds,
+      stoppingDistanceMeters: reactionDistanceMeters + brakingDistanceMeters,
+      stoppingDistanceNm: (reactionDistanceMeters + brakingDistanceMeters) / 1852,
+      reactionDistanceMeters,
+      brakingDistanceMeters
+    };
+  }
+
+  function anchorScope(waterDepthMeters, tideHeightMeters, bowHeightMeters, scopeRatio, vesselLengthMeters) {
+    const verticalDistanceMeters = Number(waterDepthMeters) + Number(tideHeightMeters || 0) + Number(bowHeightMeters || 0);
+    const ratio = Number(scopeRatio);
+    if (verticalDistanceMeters <= 0 || ratio < 1) throw new RangeError("depth and scope ratio must be valid");
+    const cableLengthMeters = verticalDistanceMeters * ratio;
+    return {
+      verticalDistanceMeters,
+      cableLengthMeters,
+      cableLengthShackles: cableLengthMeters / 27.5,
+      swingRadiusMeters: cableLengthMeters + Number(vesselLengthMeters || 0)
+    };
+  }
+
+  function anchorSwingBounds(anchorPosition, swingRadiusMeters) {
+    const radiusNm = Number(swingRadiusMeters) / 1852;
+    if (radiusNm < 0) throw new RangeError("swing radius cannot be negative");
+    const north = rhumbDestination(anchorPosition.lat, anchorPosition.lon, 0, radiusNm);
+    const east = rhumbDestination(anchorPosition.lat, anchorPosition.lon, 90, radiusNm);
+    const south = rhumbDestination(anchorPosition.lat, anchorPosition.lon, 180, radiusNm);
+    const west = rhumbDestination(anchorPosition.lat, anchorPosition.lon, 270, radiusNm);
+    return { radiusNm, north: north.lat, east: east.lon, south: south.lat, west: west.lon };
+  }
+
   function barrassSquat(speedKnots, blockCoefficient, confinedWater) {
     const factor = confinedWater ? 2 : 1;
     return factor * Number(blockCoefficient) * Number(speedKnots) ** 2 / 100;
@@ -758,6 +809,10 @@
     traverse,
     applyLeeway,
     turnGeometry,
+    turnAdvanceTransfer,
+    stoppingPerformance,
+    anchorScope,
+    anchorSwingBounds,
     barrassSquat,
     maximumSpeedForSquat,
     etaFromDeparture,
