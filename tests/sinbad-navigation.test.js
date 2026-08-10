@@ -333,6 +333,35 @@ test("inverts the Barrass formula for a safe squat speed", () => {
   assert.ok(nav.maximumSpeedForSquat(0.8, 0.8, true) < speed);
 });
 
+test("computes advance transfer and arc distance for a turn", () => {
+  const turn = nav.turnAdvanceTransfer(1, 90);
+  assert.ok(Math.abs(turn.advanceNm - 1) < 1e-9);
+  assert.ok(Math.abs(turn.transferNm - 1) < 1e-9);
+  assert.ok(Math.abs(turn.arcDistanceNm - Math.PI / 2) < 1e-9);
+});
+
+test("estimates reaction and braking distance", () => {
+  const stop = nav.stoppingPerformance(10, 0.2, 30);
+  assert.ok(stop.stoppingSeconds > 55 && stop.stoppingSeconds < 56);
+  assert.ok(stop.stoppingDistanceMeters > 220 && stop.stoppingDistanceMeters < 221);
+  assert.ok(Math.abs(stop.stoppingDistanceNm - stop.stoppingDistanceMeters / 1852) < 1e-12);
+});
+
+test("calculates anchor cable and swing radius", () => {
+  const plan = nav.anchorScope(10, 2, 3, 5, 40);
+  assert.equal(plan.verticalDistanceMeters, 15);
+  assert.equal(plan.cableLengthMeters, 75);
+  assert.ok(Math.abs(plan.cableLengthShackles - 75 / 27.5) < 1e-12);
+  assert.equal(plan.swingRadiusMeters, 115);
+});
+
+test("builds geographic bounds for an anchor swing circle", () => {
+  const bounds = nav.anchorSwingBounds({ lat: 40, lon: 20 }, 1852);
+  assert.equal(bounds.radiusNm, 1);
+  assert.ok(bounds.north > 40 && bounds.south < 40);
+  assert.ok(bounds.east > 20 && bounds.west < 20);
+});
+
 test("keeps unsafe or incomplete calculations bounded", () => {
   const response = nav.answer("DR pozisyonumu hesapla", "tr");
   assert.match(response, /eksik bilgiler/i);
