@@ -813,6 +813,45 @@
     return { windSpeedKnots: speed ? Number(speed[1]) : null };
   }
 
+  function parseCompassQuestion(question) {
+    const text = normalizeText(question);
+    if (!/\b(pusula|compass|hakiki rota|true course)\b/.test(text)) return null;
+    const asksCompass = /(?:pusula(?: rotas\u0131| rotasi)?|compass(?: course)?)\s+(?:nedir|ne|hesapla|calculate)\b/.test(text);
+    const trueMode = !asksCompass && /hakiki rota|true course|hakikiye|true'ya|trueya/.test(text);
+    return {
+      mode: trueMode ? "toTrue" : "toCompass",
+      course: labelledNumber(text, trueMode ? "pusula rotas\u0131|pusula rotasi|compass course|rota" : "hakiki rota|true course|rota", "derece|deg|\u00b0"),
+      deviation: labelledNumber(text, "deviasyon|deviation", "derece|deg|\u00b0") ?? 0,
+      variation: labelledNumber(text, "varyasyon|variation", "derece|deg|\u00b0") ?? 0
+    };
+  }
+
+  function parseEtaQuestion(question) {
+    const text = normalizeText(question);
+    if (!/\b(eta|tahmini var\u0131\u015f|tahmini varis|arrival time)\b/.test(text)) return null;
+    const isoMatch = String(question).match(/\b(\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}(?::\d{2})?(?:Z|[+-]\d{2}:?\d{2})?)\b/i);
+    return {
+      departureIso: isoMatch ? isoMatch[1].replace(" ", "T") : null,
+      distanceNm: labelledNumber(text, "mesafe|distance", "deniz mili|nautical miles|nm"),
+      speedKnots: labelledNumber(text, "h\u0131z|hiz|speed", "knot|knots|kn"),
+      delaysHours: labelledNumber(text, "gecikme|bekleme|delay", "saat|hours|hour|h") ?? 0
+    };
+  }
+
+  function parseCpaQuestion(question) {
+    const text = normalizeText(question);
+    if (!/\b(cpa|tcpa|en yak\u0131n yakla\u015fma|en yakin yaklasma)\b/.test(text)) return null;
+    const parts = text.split(/\b(?:hedef|target)\b/);
+    if (parts.length < 2) return { own: null, target: null };
+    const vessel = section => ({
+      lat: labelledNumber(section, "enlem|latitude|lat", "derece|deg|\u00b0"),
+      lon: labelledNumber(section, "boylam|longitude|lon", "derece|deg|\u00b0"),
+      course: labelledNumber(section, "rota|course", "derece|deg|\u00b0"),
+      speed: labelledNumber(section, "h\u0131z|hiz|speed", "knot|knots|kn")
+    });
+    return { own: vessel(parts[0]), target: vessel(parts.slice(1).join(" ")) };
+  }
+
   function vector(speed, direction) {
     const angle = toRad(normalize360(Number(direction)));
     return { east: Number(speed) * Math.sin(angle), north: Number(speed) * Math.cos(angle) };
@@ -847,7 +886,7 @@
   }
 
   function labelledNumber(text, labels, unitPattern) {
-    const match = text.match(new RegExp("(?:" + labels + ")\\s*(?:is|=|:)?\\s*(\\d+(?:\\.\\d+)?)\\s*(?:" + unitPattern + ")?", "i"));
+    const match = text.match(new RegExp("(?:" + labels + ")\\s*(?:is|=|:)?\\s*([+-]?\\d+(?:\\.\\d+)?)\\s*(?:" + unitPattern + ")?", "i"));
     return match ? Number(match[1]) : null;
   }
 
@@ -918,6 +957,39 @@
 
   function answer(question, language) {
     const lang = languageCode(language);
+    const compass = parseCompassQuestion(question);
+    if (compass) {
+      if (compass.course == null) return lang === "tr" ? "Pusula d\u00f6n\u00fc\u015f\u00fcm\u00fc i\u00e7in rota de\u011ferini derece olarak verin." : "Provide the course in degrees for the compass conversion.";
+      const result = compass.mode === "toTrue"
+        ? compassToTrue(compass.course, compass.deviation, compass.variation)
+        : trueToCompass(compass.course, compass.deviation, compass.variation);
+      return lang === "tr"
+        ? `${compass.mode === "toTrue" ? "Hakiki rota" : "Pusula rotas\u0131"}: ${result.toFixed(1)}\u00b0. Do\u011fu pozitif, bat\u0131 negatif i\u015faretle hesapland\u0131; gemi pusula kart\u0131yla do\u011frulay\u0131n.`
+        : `${compass.mode === "toTrue" ? "True course" : "Compass course"}: ${result.toFixed(1)}\u00b0. East is positive and west negative; verify against the vessel's compass card.`;
+    }
+
+    const etaQuestion = parseEtaQuestion(question);
+    if (etaQuestion) {
+      const missing = [];
+      if (!etaQuestion.departureIso) missing.push(lang === "tr" ? "kalk\u0131\u015f zaman\u0131 (ISO)" : "departure time (ISO)");
+      if (etaQuestion.distanceNm == null) missing.push(lang === "tr" ? "mesafe" : "distance");
+      if (etaQuestion.speedKnots == null) missing.push(lang === "tr" ? "h\u0131z" : "speed");
+      if (missing.length) return lang === "tr" ? `ETA hesab\u0131 i\u00e7in eksik bilgiler: ${missing.join(", ")}.` : `Missing ETA inputs: ${missing.join(", ")}.`;
+      const result = etaFromDeparture(etaQuestion.departureIso, etaQuestion.distanceNm, etaQuestion.speedKnots, etaQuestion.delaysHours);
+      return lang === "tr" ? `Tahmini var\u0131\u015f (ETA): ${result.etaIso}; toplam s\u00fcre ${result.passageHours.toFixed(2)} saat.` : `Estimated arrival (ETA): ${result.etaIso}; total time ${result.passageHours.toFixed(2)} hours.`;
+    }
+
+    const cpaQuestion = parseCpaQuestion(question);
+    if (cpaQuestion) {
+      const values = cpaQuestion.own && cpaQuestion.target ? [...Object.values(cpaQuestion.own), ...Object.values(cpaQuestion.target)] : [];
+      if (values.length !== 8 || values.some(value => value == null)) return lang === "tr" ? "CPA/TCPA i\u00e7in kendi ve hedef geminin enlem, boylam, rota ve h\u0131z\u0131n\u0131 verin." : "Provide latitude, longitude, course, and speed for own ship and target.";
+      const result = cpaTcpa(cpaQuestion.own, cpaQuestion.target);
+      const tcpaMinutes = Number.isFinite(result.tcpaHours) ? result.tcpaHours * 60 : Infinity;
+      return lang === "tr"
+        ? `CPA ${result.cpaNm.toFixed(2)} deniz mili; TCPA ${Number.isFinite(tcpaMinutes) ? tcpaMinutes.toFixed(1) + " dakika" : "hesaplanam\u0131yor"}; durum: ${result.past ? "en yak\u0131n ge\u00e7i\u015f geride" : "yakla\u015fma s\u00fcr\u00fcyor"}. ARPA/AIS ve g\u00f6rsel kerterizlerle do\u011frulay\u0131n.`
+        : `CPA ${result.cpaNm.toFixed(2)} NM; TCPA ${Number.isFinite(tcpaMinutes) ? tcpaMinutes.toFixed(1) + " minutes" : "unavailable"}; ${result.past ? "closest approach has passed" : "approach is ongoing"}. Verify with ARPA/AIS and visual bearings.`;
+    }
+
     const ukc = parseUkcQuestion(question);
     if (ukc) {
       const missing = [];
@@ -1104,6 +1176,9 @@
     parseUkcQuestion,
     parseFuelQuestion,
     parseBeaufortQuestion,
+    parseCompassQuestion,
+    parseEtaQuestion,
+    parseCpaQuestion,
     currentResult,
     courseToSteer,
     parseCurrentQuestion,

@@ -501,3 +501,32 @@ test("keeps unsafe or incomplete calculations bounded", () => {
   const response = nav.answer("DR pozisyonumu hesapla", "tr");
   assert.match(response, /eksik bilgiler/i);
 });
+
+test("answers a Turkish compass-to-true conversion", () => {
+  const response = nav.answer("Pusula rotas\u0131 100 derece, deviasyon 2 derece, varyasyon -3 derece; hakiki rota nedir?", "tr");
+  assert.match(response, /Hakiki rota: 99\.0/);
+  assert.match(response, /do\u011frulay\u0131n/i);
+});
+
+test("answers a Turkish true-to-compass conversion", () => {
+  const response = nav.answer("Hakiki rota 99 derece, deviasyon 2 derece, varyasyon -3 derece; pusula nedir?", "tr");
+  assert.match(response, /Pusula rotas\u0131: 100\.0/);
+});
+
+test("answers an ETA question with delay", () => {
+  const response = nav.answer("ETA hesapla: kalk\u0131\u015f 2026-08-10T10:00:00Z, mesafe 100 deniz mili, h\u0131z 10 knot, gecikme 2 saat", "tr");
+  assert.match(response, /2026-08-10T22:00:00\.000Z/);
+  assert.match(response, /12\.00 saat/);
+});
+
+test("answers a head-on CPA and TCPA question", () => {
+  const response = nav.answer("CPA TCPA hesapla: kendi enlem 0 derece boylam 0 derece rota 90 derece h\u0131z 10 knot; hedef enlem 0 derece boylam 0.1666667 derece rota 270 derece h\u0131z 10 knot", "tr");
+  assert.match(response, /CPA 0\.00/);
+  assert.match(response, /TCPA 30\.0 dakika/);
+  assert.match(response, /ARPA\/AIS/);
+});
+
+test("asks for missing CPA target inputs", () => {
+  const response = nav.answer("CPA hesapla: kendi enlem 0 derece boylam 0 derece rota 90 derece h\u0131z 10 knot", "tr");
+  assert.match(response, /kendi ve hedef geminin/i);
+});
