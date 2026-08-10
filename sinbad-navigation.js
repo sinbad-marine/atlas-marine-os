@@ -852,6 +852,42 @@
     return { own: vessel(parts[0]), target: vessel(parts.slice(1).join(" ")) };
   }
 
+  function parseSquatQuestion(question) {
+    const text = normalizeText(question);
+    if (!/\b(squat|\u00e7\u00f6kme|cokme)\b/.test(text)) return null;
+    if (/\b(ukc|under keel|minimum gelgit|minimum tide)\b/.test(text)) return null;
+    const maximumMode = /maksimum h\u0131z|maksimum hiz|azami h\u0131z|azami hiz|maximum speed/.test(text);
+    return {
+      mode: maximumMode ? "maximumSpeed" : "squat",
+      speedKnots: labelledNumber(text, "h\u0131z|hiz|speed", "knot|knots|kn"),
+      blockCoefficient: labelledNumber(text, "blok katsay\u0131s\u0131|blok katsayisi|block coefficient|cb", ""),
+      maximumSquatMeters: labelledNumber(text, "izin verilen squat|squat s\u0131n\u0131r\u0131|squat siniri|maximum squat", "metre|meter|meters|m"),
+      confinedWater: /dar su|s\u0131\u011f su|sig su|confined water|shallow water/.test(text)
+    };
+  }
+
+  function parseAnchorQuestion(question) {
+    const text = normalizeText(question);
+    if (!/\b(demir|demirleme|kaloma|anchor|scope)\b/.test(text)) return null;
+    return {
+      waterDepthMeters: labelledNumber(text, "su derinli\u011fi|su derinligi|water depth|derinlik", "metre|meter|meters|m"),
+      tideHeightMeters: labelledNumber(text, "gelgit y\u00fcksekli\u011fi|gelgit yuksekligi|gelgit|tide height", "metre|meter|meters|m") ?? 0,
+      bowHeightMeters: labelledNumber(text, "ba\u015f y\u00fcksekli\u011fi|bas yuksekligi|bow height", "metre|meter|meters|m") ?? 0,
+      scopeRatio: labelledNumber(text, "kaloma oran\u0131|kaloma orani|scope ratio|oran", "") ,
+      vesselLengthMeters: labelledNumber(text, "gemi boyu|tekne boyu|vessel length|loa", "metre|meter|meters|m") ?? 0
+    };
+  }
+
+  function parseStoppingQuestion(question) {
+    const text = normalizeText(question);
+    if (!/\b(durma mesafesi|duru\u015f mesafesi|durus mesafesi|stopping distance|stop distance)\b/.test(text)) return null;
+    return {
+      speedKnots: labelledNumber(text, "h\u0131z|hiz|speed", "knot|knots|kn"),
+      deceleration: labelledNumber(text, "yava\u015flama|yavaslama|deceleration", "m\/s2|m\/s\u00b2|metre\/saniye kare"),
+      reactionSeconds: labelledNumber(text, "reaksiyon|reaction", "saniye|seconds|second|sn|s") ?? 0
+    };
+  }
+
   function vector(speed, direction) {
     const angle = toRad(normalize360(Number(direction)));
     return { east: Number(speed) * Math.sin(angle), north: Number(speed) * Math.cos(angle) };
@@ -957,6 +993,39 @@
 
   function answer(question, language) {
     const lang = languageCode(language);
+    const squatQuestion = parseSquatQuestion(question);
+    if (squatQuestion) {
+      if (squatQuestion.blockCoefficient == null) return lang === "tr" ? "Squat hesab\u0131 i\u00e7in blok katsay\u0131s\u0131n\u0131 (Cb) verin." : "Provide the block coefficient (Cb) for the squat calculation.";
+      if (squatQuestion.mode === "maximumSpeed") {
+        if (squatQuestion.maximumSquatMeters == null) return lang === "tr" ? "Azami h\u0131z i\u00e7in izin verilen squat s\u0131n\u0131r\u0131n\u0131 metre olarak verin." : "Provide the maximum permitted squat in metres.";
+        const speed = maximumSpeedForSquat(squatQuestion.maximumSquatMeters, squatQuestion.blockCoefficient, squatQuestion.confinedWater);
+        return lang === "tr" ? `Hesaplanan azami h\u0131z: ${speed.toFixed(2)} knot. Bu Barrass tahminidir; ger\u00e7ek UKC, kanal ve gemi verileriyle daha d\u00fc\u015f\u00fck emniyetli h\u0131z uygulanabilir.` : `Calculated maximum speed: ${speed.toFixed(2)} kn. This is a Barrass estimate; actual UKC, channel, and vessel data may require a lower safe speed.`;
+      }
+      if (squatQuestion.speedKnots == null) return lang === "tr" ? "Squat hesab\u0131 i\u00e7in gemi h\u0131z\u0131n\u0131 knot olarak verin." : "Provide vessel speed in knots for the squat calculation.";
+      const squat = barrassSquat(squatQuestion.speedKnots, squatQuestion.blockCoefficient, squatQuestion.confinedWater);
+      return lang === "tr" ? `Tahmini squat: ${squat.toFixed(2)} m (${squatQuestion.confinedWater ? "dar/s\u0131\u011f su" : "a\u00e7\u0131k su"} modeli). UKC hesab\u0131na ekleyin ve gemiye \u00f6zel verilerle do\u011frulay\u0131n.` : `Estimated squat: ${squat.toFixed(2)} m (${squatQuestion.confinedWater ? "confined/shallow water" : "open water"} model). Include it in UKC and verify with vessel-specific data.`;
+    }
+
+    const anchorQuestion = parseAnchorQuestion(question);
+    if (anchorQuestion) {
+      const missing = [];
+      if (anchorQuestion.waterDepthMeters == null) missing.push(lang === "tr" ? "su derinli\u011fi" : "water depth");
+      if (anchorQuestion.scopeRatio == null) missing.push(lang === "tr" ? "kaloma oran\u0131" : "scope ratio");
+      if (missing.length) return lang === "tr" ? `Demirleme hesab\u0131 i\u00e7in eksik bilgiler: ${missing.join(", ")}.` : `Missing anchoring inputs: ${missing.join(", ")}.`;
+      const result = anchorScope(anchorQuestion.waterDepthMeters, anchorQuestion.tideHeightMeters, anchorQuestion.bowHeightMeters, anchorQuestion.scopeRatio, anchorQuestion.vesselLengthMeters);
+      return lang === "tr" ? `Gerekli kaloma ${result.cableLengthMeters.toFixed(1)} m (${result.cableLengthShackles.toFixed(2)} kilit); tahmini sal\u0131n\u0131m yar\u0131\u00e7ap\u0131 ${result.swingRadiusMeters.toFixed(1)} m. R\u00fczg\u00e2r, ak\u0131nt\u0131, zemin ve yerel limitlerle do\u011frulay\u0131n.` : `Required cable ${result.cableLengthMeters.toFixed(1)} m (${result.cableLengthShackles.toFixed(2)} shackles); estimated swing radius ${result.swingRadiusMeters.toFixed(1)} m. Verify for wind, current, holding ground, and local limits.`;
+    }
+
+    const stopQuestion = parseStoppingQuestion(question);
+    if (stopQuestion) {
+      const missing = [];
+      if (stopQuestion.speedKnots == null) missing.push(lang === "tr" ? "h\u0131z" : "speed");
+      if (stopQuestion.deceleration == null) missing.push(lang === "tr" ? "yava\u015flama" : "deceleration");
+      if (missing.length) return lang === "tr" ? `Durma hesab\u0131 i\u00e7in eksik bilgiler: ${missing.join(", ")}.` : `Missing stopping inputs: ${missing.join(", ")}.`;
+      const result = stoppingPerformance(stopQuestion.speedKnots, stopQuestion.deceleration, stopQuestion.reactionSeconds);
+      return lang === "tr" ? `Tahmini durma mesafesi ${result.stoppingDistanceMeters.toFixed(1)} m (${result.stoppingDistanceNm.toFixed(3)} deniz mili); toplam s\u00fcre ${result.stoppingSeconds.toFixed(1)} saniye. Makine tepki s\u00fcresi, y\u00fck, r\u00fczg\u00e2r ve ak\u0131nt\u0131ya g\u00f6re emniyet pay\u0131 ekleyin.` : `Estimated stopping distance ${result.stoppingDistanceMeters.toFixed(1)} m (${result.stoppingDistanceNm.toFixed(3)} NM); total time ${result.stoppingSeconds.toFixed(1)} seconds. Add margin for machinery response, loading, wind, and current.`;
+    }
+
     const compass = parseCompassQuestion(question);
     if (compass) {
       if (compass.course == null) return lang === "tr" ? "Pusula d\u00f6n\u00fc\u015f\u00fcm\u00fc i\u00e7in rota de\u011ferini derece olarak verin." : "Provide the course in degrees for the compass conversion.";
@@ -1179,6 +1248,9 @@
     parseCompassQuestion,
     parseEtaQuestion,
     parseCpaQuestion,
+    parseSquatQuestion,
+    parseAnchorQuestion,
+    parseStoppingQuestion,
     currentResult,
     courseToSteer,
     parseCurrentQuestion,
