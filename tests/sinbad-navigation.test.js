@@ -425,6 +425,33 @@ test("grows search datum uncertainty with drift time", () => {
   assert.ok(uncertainty.radiusNm > 1.33 && uncertainty.radiusNm < 1.34);
 });
 
+test("generates equally spaced great-circle waypoints", () => {
+  const points = nav.greatCircleWaypoints({ lat: 0, lon: 0 }, { lat: 0, lon: 90 }, 3);
+  assert.equal(points.length, 4);
+  assert.ok(Math.abs(points[1].lon - 30) < 0.001);
+  assert.ok(Math.abs(points[2].fraction - 2 / 3) < 1e-12);
+});
+
+test("compares rhumb-line and great-circle ocean routes", () => {
+  const comparison = nav.compareOceanRoutes({ lat: 40, lon: -70 }, { lat: 40, lon: 10 });
+  assert.ok(comparison.rhumbDistanceNm > comparison.greatCircleDistanceNm);
+  assert.ok(comparison.savingNm > 100);
+  assert.ok(comparison.savingPercent > 0);
+});
+
+test("updates charted magnetic variation by annual change", () => {
+  const result = nav.magneticVariationAtDate(2, 6, 2020, "2025-01-01T00:00:00Z");
+  assert.ok(Math.abs(result.variation - 2.5) < 0.001);
+  assert.ok(Math.abs(result.changeDegrees - 0.5) < 0.001);
+});
+
+test("computes combined geographic range of observer and light", () => {
+  const range = nav.geographicRange(9, 25);
+  assert.ok(Math.abs(range.observerHorizonNm - 6.24) < 1e-9);
+  assert.ok(Math.abs(range.objectHorizonNm - 10.4) < 1e-9);
+  assert.ok(Math.abs(range.geographicRangeNm - 16.64) < 1e-9);
+});
+
 test("keeps unsafe or incomplete calculations bounded", () => {
   const response = nav.answer("DR pozisyonumu hesapla", "tr");
   assert.match(response, /eksik bilgiler/i);

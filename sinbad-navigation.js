@@ -117,6 +117,31 @@
     return greatCircleDestination(lat1, lon1, inverse.initialCourse, inverse.distanceNm * f);
   }
 
+  function greatCircleWaypoints(start, end, segmentCount) {
+    const segments = Math.floor(Number(segmentCount));
+    if (segments < 1) throw new RangeError("segment count must be at least one");
+    const inverse = greatCircleInverse(start.lat, start.lon, end.lat, end.lon);
+    return Array.from({ length: segments + 1 }, (_, index) => {
+      const fraction = index / segments;
+      const point = intermediateGreatCirclePoint(start.lat, start.lon, end.lat, end.lon, fraction);
+      return { ...point, fraction, distanceFromStartNm: inverse.distanceNm * fraction };
+    });
+  }
+
+  function compareOceanRoutes(start, end) {
+    const greatCircle = greatCircleInverse(start.lat, start.lon, end.lat, end.lon);
+    const rhumb = rhumbInverse(start.lat, start.lon, end.lat, end.lon);
+    const savingNm = rhumb.distanceNm - greatCircle.distanceNm;
+    return {
+      greatCircleDistanceNm: greatCircle.distanceNm,
+      rhumbDistanceNm: rhumb.distanceNm,
+      savingNm,
+      savingPercent: rhumb.distanceNm === 0 ? 0 : savingNm / rhumb.distanceNm * 100,
+      greatCircleInitialCourse: greatCircle.initialCourse,
+      rhumbCourse: rhumb.course
+    };
+  }
+
   function crossTrackError(startLat, startLon, endLat, endLon, vesselLat, vesselLon) {
     const route = greatCircleInverse(startLat, startLon, endLat, endLon);
     const vessel = greatCircleInverse(startLat, startLon, vesselLat, vesselLon);
@@ -187,6 +212,23 @@
 
   function trueToCompass(trueCourse, deviation, variation) {
     return normalize360(Number(trueCourse) - Number(variation) - Number(deviation));
+  }
+
+  function magneticVariationAtDate(chartVariationDegrees, annualChangeMinutes, chartYear, targetDate) {
+    const date = new Date(targetDate);
+    if (Number.isNaN(date.getTime())) throw new RangeError("invalid target date");
+    const start = Date.UTC(Number(chartYear), 0, 1);
+    const years = (date.getTime() - start) / (365.2425 * 86400000);
+    const variation = Number(chartVariationDegrees) + Number(annualChangeMinutes) / 60 * years;
+    return { variation, years, changeDegrees: variation - Number(chartVariationDegrees) };
+  }
+
+  function geographicRange(eyeHeightMeters, objectHeightMeters) {
+    const eye = Math.max(0, Number(eyeHeightMeters || 0));
+    const object = Math.max(0, Number(objectHeightMeters || 0));
+    const observerHorizonNm = 2.08 * Math.sqrt(eye);
+    const objectHorizonNm = 2.08 * Math.sqrt(object);
+    return { observerHorizonNm, objectHorizonNm, geographicRangeNm: observerHorizonNm + objectHorizonNm };
   }
 
   function cpaTcpa(own, target) {
@@ -893,6 +935,8 @@
     greatCircleInverse,
     greatCircleDestination,
     intermediateGreatCirclePoint,
+    greatCircleWaypoints,
+    compareOceanRoutes,
     crossTrackError,
     routeLegProgress,
     routeCorridorStatus,
@@ -901,6 +945,8 @@
     speedDistanceTime,
     compassToTrue,
     trueToCompass,
+    magneticVariationAtDate,
+    geographicRange,
     cpaTcpa,
     passageFuel,
     ruleOfTwelfths,
