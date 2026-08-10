@@ -202,6 +202,34 @@ test("estimates Barrass squat and ETA", () => {
   assert.equal(eta.etaIso, "2026-08-10T12:00:00.000Z");
 });
 
+test("checks whether an ETA speed profile is feasible", () => {
+  assert.deepEqual(nav.requiredSpeedProfile(120, 10, 5, 15), { requiredSpeed: 12, feasible: true, belowMinimum: false, aboveMaximum: false });
+  assert.equal(nav.requiredSpeedProfile(120, 6, 5, 15).aboveMaximum, true);
+});
+
+test("ranks multiple collision risks", () => {
+  const own = { lat: 0, lon: 0, course: 90, speed: 10 };
+  const risks = nav.rankCollisionRisks(own, [
+    { id: "crossing", lat: 10 / 60, lon: 10 / 60, course: 180, speed: 10 },
+    { id: "distant", lat: 2, lon: 2, course: 0, speed: 5 }
+  ], { cpaNm: 1, tcpaHours: 2 });
+  assert.equal(risks[0].id, "crossing");
+  assert.equal(risks[0].severity, "danger");
+});
+
+test("summarizes route legs fuel and duration", () => {
+  const summary = nav.routeSummary([{ name: "A", lat: 0, lon: 0 }, { name: "B", lat: 0, lon: 1 }], 10, 20, 10);
+  assert.ok(Math.abs(summary.totalDistanceNm - 60.04) < 0.1);
+  assert.ok(Math.abs(summary.totalFuel - summary.hours * 22) < 1e-9);
+});
+
+test("builds a waypoint turn plan", () => {
+  const plan = nav.waypointTurnPlan({ lat: -1, lon: 0 }, { lat: 0, lon: 0 }, { lat: 0, lon: 1 }, 12, 3);
+  assert.equal(plan.turnDirection, "starboard");
+  assert.ok(Math.abs(plan.courseChange - 90) < 0.01);
+  assert.ok(plan.wheelOverDistanceNm > 3.8);
+});
+
 test("keeps unsafe or incomplete calculations bounded", () => {
   const response = nav.answer("DR pozisyonumu hesapla", "tr");
   assert.match(response, /eksik bilgiler/i);
