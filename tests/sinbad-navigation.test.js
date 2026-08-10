@@ -49,6 +49,30 @@ test("computes course to steer", () => {
   assert.ok(Math.abs(result.speed - 10.198) < 0.01);
 });
 
+test("answers a Turkish current set and drift question", () => {
+  const response = nav.answer(
+    "Suya göre rota 000 derece, suya göre hız 10 knot, akıntı seti 090 derece ve akıntı hızı 5 knot. Yere göre sonucu hesapla",
+    "tr"
+  );
+  assert.match(response, /26\.6°T/);
+  assert.match(response, /11\.18 knot/);
+});
+
+test("answers a Turkish course-to-steer question", () => {
+  const response = nav.answer(
+    "İstenen rota 090 derece, istenen hız 10 knot, akıntı seti 180 derece ve drift 2 knot. Tutulacak rota nedir?",
+    "tr"
+  );
+  assert.match(response, /78\.7°T/);
+  assert.match(response, /10\.20 knot/);
+});
+
+test("asks for missing current inputs", () => {
+  const response = nav.answer("Akıntı seti 090 derece, tutulacak rota nedir?", "tr");
+  assert.match(response, /eksik bilgiler/i);
+  assert.match(response, /akıntı hızı/);
+});
+
 test("computes great-circle inverse", () => {
   const result = nav.greatCircleInverse(0, 0, 0, 90);
   assert.ok(Math.abs(result.distanceNm - 5403.64) < 0.1);
