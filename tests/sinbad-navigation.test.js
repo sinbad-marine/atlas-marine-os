@@ -475,6 +475,28 @@ test("computes wave encounter period", () => {
   assert.ok(following.encounterPeriodSeconds > 10);
 });
 
+test("answers a Turkish UKC question", () => {
+  const response = nav.answer("UKC hesapla: harita derinliği 4 m, gelgit 1.5 m, su çekimi 4.2 m, squat 0.3 m, emniyet payı 0.5 m", "tr");
+  assert.match(response, /0\.50 m/);
+  assert.match(response, /uygun/);
+});
+
+test("answers a minimum tide question", () => {
+  const response = nav.answer("Gerekli minimum gelgit nedir? harita derinliği 4 m, su çekimi 4.2 m, squat 0.3 m, emniyet payı 0.5 m", "tr");
+  assert.match(response, /1\.00 m/);
+});
+
+test("answers a Turkish passage fuel question", () => {
+  const response = nav.answer("100 deniz mili için 10 knot hız, saatlik tüketim 20 litre ve rezerv yüzde 10 yakıt hesapla", "tr");
+  assert.match(response, /10\.00 saat/);
+  assert.match(response, /220\.00 litre/);
+});
+
+test("answers a Turkish Beaufort question", () => {
+  const response = nav.answer("15 knot rüzgar kaç bofor?", "tr");
+  assert.match(response, /Beaufort 4/);
+});
+
 test("keeps unsafe or incomplete calculations bounded", () => {
   const response = nav.answer("DR pozisyonumu hesapla", "tr");
   assert.match(response, /eksik bilgiler/i);

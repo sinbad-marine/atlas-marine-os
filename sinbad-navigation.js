@@ -779,6 +779,40 @@
     return parsed;
   }
 
+  function parseUkcQuestion(question) {
+    const text = normalizeText(question);
+    if (!/\b(ukc|under keel|omurga altı|omurga alti|karina altı|karina alti|minimum gelgit|gerekli gelgit)\b/.test(text)) return null;
+    return {
+      mode: /minimum gelgit|gerekli gelgit|minimum tide|required tide/.test(text) ? "minimumTide" : "clearance",
+      chartedDepth: labelledNumber(text, "harita derinliği|harita derinligi|charted depth|derinlik", "metre|meter|meters|m"),
+      tideHeight: labelledNumber(text, "gelgit yüksekliği|gelgit yuksekligi|gelgit|tide height|tide", "metre|meter|meters|m"),
+      draft: labelledNumber(text, "su çekimi|su cekimi|draft", "metre|meter|meters|m"),
+      squat: labelledNumber(text, "squat|çökme|cokme", "metre|meter|meters|m") ?? 0,
+      safetyMargin: labelledNumber(text, "emniyet payı|emniyet payi|güvenlik payı|guvenlik payi|safety margin", "metre|meter|meters|m") ?? 0
+    };
+  }
+
+  function parseFuelQuestion(question) {
+    const text = normalizeText(question);
+    if (!/\b(yakıt|yakit|fuel)\b/.test(text)) return null;
+    const distance = text.match(/(\d+(?:\.\d+)?)\s*(?:deniz mili|nm)\b/);
+    const speed = text.match(/(\d+(?:\.\d+)?)\s*(?:knot|knots|kt|kts|kn)\b/);
+    const reserve = text.match(/(?:rezerv|reserve)\s*(?:yüzde|yuzde|%)?\s*(\d+(?:\.\d+)?)/);
+    return {
+      distanceNm: distance ? Number(distance[1]) : null,
+      speedKnots: speed ? Number(speed[1]) : null,
+      consumptionPerHour: labelledNumber(text, "saatlik tüketim|saatlik tuketim|tüketim|tuketim|consumption", "litre|liter|litres|liters|l(?:\\/h)?"),
+      reservePercent: reserve ? Number(reserve[1]) : 0
+    };
+  }
+
+  function parseBeaufortQuestion(question) {
+    const text = normalizeText(question);
+    if (!/\b(beaufort|bofor)\b/.test(text)) return null;
+    const speed = text.match(/(\d+(?:\.\d+)?)\s*(?:knot|knots|kt|kts|kn)\b/);
+    return { windSpeedKnots: speed ? Number(speed[1]) : null };
+  }
+
   function vector(speed, direction) {
     const angle = toRad(normalize360(Number(direction)));
     return { east: Number(speed) * Math.sin(angle), north: Number(speed) * Math.cos(angle) };
@@ -883,9 +917,42 @@
   }
 
   function answer(question, language) {
+    const lang = languageCode(language);
+    const ukc = parseUkcQuestion(question);
+    if (ukc) {
+      const missing = [];
+      if (ukc.chartedDepth == null) missing.push(lang === "tr" ? "harita derinliği" : "charted depth");
+      if (ukc.draft == null) missing.push(lang === "tr" ? "su çekimi" : "draft");
+      if (ukc.mode === "clearance" && ukc.tideHeight == null) missing.push(lang === "tr" ? "gelgit yüksekliği" : "tide height");
+      if (missing.length) return lang === "tr" ? `UKC hesabı için eksik bilgiler: ${missing.join(", ")}.` : `Missing UKC inputs: ${missing.join(", ")}.`;
+      if (ukc.mode === "minimumTide") {
+        const result = minimumTideForClearance(ukc.chartedDepth, ukc.draft, ukc.squat, ukc.safetyMargin);
+        return lang === "tr" ? `Gerekli minimum gelgit yüksekliği: ${result.minimumTideHeight.toFixed(2)} m. Onaylı gelgit tahmini ve güncel iskandille doğrulayın.` : `Required minimum tide height: ${result.minimumTideHeight.toFixed(2)} m. Verify with approved predictions and current soundings.`;
+      }
+      const result = underKeelClearance(ukc.chartedDepth, ukc.tideHeight, ukc.draft, ukc.squat, ukc.safetyMargin);
+      return lang === "tr" ? `Omurga altı açıklığı (UKC): ${result.clearance.toFixed(2)} m; durum: ${result.safe ? "hesaplanan sınıra göre uygun" : "yetersiz"}. Kaptan kararı, güncel iskandil ve şirket limitleri esastır.` : `Under-keel clearance: ${result.clearance.toFixed(2)} m; status: ${result.safe ? "within the entered limit" : "insufficient"}. Captain's judgment, current soundings, and company limits prevail.`;
+    }
+
+    const fuelQuestion = parseFuelQuestion(question);
+    if (fuelQuestion) {
+      const missing = [];
+      if (fuelQuestion.distanceNm == null) missing.push(lang === "tr" ? "mesafe" : "distance");
+      if (fuelQuestion.speedKnots == null) missing.push(lang === "tr" ? "hız" : "speed");
+      if (fuelQuestion.consumptionPerHour == null) missing.push(lang === "tr" ? "saatlik tüketim" : "hourly consumption");
+      if (missing.length) return lang === "tr" ? `Yakıt hesabı için eksik bilgiler: ${missing.join(", ")}.` : `Missing fuel inputs: ${missing.join(", ")}.`;
+      const result = passageFuel(fuelQuestion.distanceNm, fuelQuestion.speedKnots, fuelQuestion.consumptionPerHour, fuelQuestion.reservePercent);
+      return lang === "tr" ? `Tahmini geçiş süresi ${result.hours.toFixed(2)} saat; rezerv dâhil yakıt ${result.totalFuel.toFixed(2)} litre.` : `Estimated passage time ${result.hours.toFixed(2)} hours; fuel including reserve ${result.totalFuel.toFixed(2)} litres.`;
+    }
+
+    const beaufort = parseBeaufortQuestion(question);
+    if (beaufort) {
+      if (beaufort.windSpeedKnots == null) return lang === "tr" ? "Beaufort hesabı için rüzgâr hızını knot olarak verin." : "Provide wind speed in knots for the Beaufort calculation.";
+      const force = beaufortForce(beaufort.windSpeedKnots);
+      return lang === "tr" ? `${beaufort.windSpeedKnots.toFixed(1)} knot rüzgâr Beaufort ${force} kuvvetindedir.` : `${beaufort.windSpeedKnots.toFixed(1)} kn wind is Beaufort force ${force}.`;
+    }
+
     const sdt = parseSpeedDistanceTimeQuestion(question);
     if (sdt) {
-      const lang = languageCode(language);
       const supplied = [sdt.distanceNm, sdt.speedKnots, sdt.hours].filter(value => value != null).length;
       if (supplied !== 2) {
         if (lang === "en") return "Provide two of distance, speed, and time so I can calculate the third.";
@@ -937,7 +1004,6 @@
 
     const parsed = parseDrQuestion(question);
     if (!parsed) return null;
-    const lang = languageCode(language);
 
     if (parsed.ambiguous) {
       if (lang === "en") return "Course is ambiguous: write it as ‘course 125°T’. East/west describes longitude, not course.";
@@ -1035,6 +1101,9 @@
     waypointTurnPlan,
     wheelOverStatus,
     parseSpeedDistanceTimeQuestion,
+    parseUkcQuestion,
+    parseFuelQuestion,
+    parseBeaufortQuestion,
     currentResult,
     courseToSteer,
     parseCurrentQuestion,
