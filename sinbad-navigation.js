@@ -200,6 +200,40 @@
     return { availableDepth, requiredDepth, clearance: availableDepth - requiredDepth, safe: availableDepth >= requiredDepth };
   }
 
+  function minimumTideForClearance(chartedDepth, draft, squat, safetyMargin) {
+    const requiredDepth = Number(draft) + Number(squat || 0) + Number(safetyMargin || 0);
+    const minimumTideHeight = requiredDepth - Number(chartedDepth);
+    return { requiredDepth, minimumTideHeight, driesAtChartDatum: minimumTideHeight > 0 };
+  }
+
+  function secondaryPortTide(referenceEvent, correction) {
+    const time = new Date(referenceEvent.timeIso);
+    if (Number.isNaN(time.getTime())) throw new RangeError("invalid reference event time");
+    const correctedTime = new Date(time.getTime() + Number(correction.timeMinutes || 0) * 60000);
+    const correctedHeight = Number(referenceEvent.height) * Number(correction.heightRatio ?? 1) + Number(correction.heightAddition || 0);
+    return { timeIso: correctedTime.toISOString(), height: correctedHeight };
+  }
+
+  function interpolateSpringNeapRate(springRate, neapRate, daysAfterSpring, springToNeapDays) {
+    const interval = Number(springToNeapDays || 7.38);
+    const elapsed = Math.min(interval, Math.max(0, Number(daysAfterSpring)));
+    const fraction = (1 - Math.cos(Math.PI * elapsed / interval)) / 2;
+    const rate = Number(springRate) + (Number(neapRate) - Number(springRate)) * fraction;
+    return { rate, fraction, phase: elapsed === 0 ? "spring" : elapsed === interval ? "neap" : "intermediate" };
+  }
+
+  function setAndDriftFromFixes(deadReckoningPosition, observedPosition, hours) {
+    const elapsed = Number(hours);
+    if (elapsed <= 0) throw new RangeError("hours must be greater than zero");
+    const offset = middleLatitudeSailing(
+      deadReckoningPosition.lat,
+      deadReckoningPosition.lon,
+      observedPosition.lat,
+      observedPosition.lon
+    );
+    return { set: offset.course, drift: offset.distanceNm / elapsed, distanceNm: offset.distanceNm, hours: elapsed };
+  }
+
   function correctedSextantAltitude(sextantAltitude, indexErrorMinutes, eyeHeightMeters) {
     const hs = Number(sextantAltitude);
     const indexCorrectionMinutes = -Number(indexErrorMinutes || 0);
@@ -416,6 +450,13 @@
   function barrassSquat(speedKnots, blockCoefficient, confinedWater) {
     const factor = confinedWater ? 2 : 1;
     return factor * Number(blockCoefficient) * Number(speedKnots) ** 2 / 100;
+  }
+
+  function maximumSpeedForSquat(maximumSquatMeters, blockCoefficient, confinedWater) {
+    const factor = confinedWater ? 2 : 1;
+    const coefficient = factor * Number(blockCoefficient);
+    if (Number(maximumSquatMeters) < 0 || coefficient <= 0) throw new RangeError("squat allowance and block coefficient must be valid");
+    return Math.sqrt(Number(maximumSquatMeters) * 100 / coefficient);
   }
 
   function etaFromDeparture(departureIso, distanceNm, speedKnots, delaysHours) {
@@ -695,6 +736,10 @@
     passageFuel,
     ruleOfTwelfths,
     underKeelClearance,
+    minimumTideForClearance,
+    secondaryPortTide,
+    interpolateSpringNeapRate,
+    setAndDriftFromFixes,
     correctedSextantAltitude,
     meridianLatitudeCandidates,
     celestialIntercept,
@@ -714,6 +759,7 @@
     applyLeeway,
     turnGeometry,
     barrassSquat,
+    maximumSpeedForSquat,
     etaFromDeparture,
     requiredSpeedProfile,
     rankCollisionRisks,
