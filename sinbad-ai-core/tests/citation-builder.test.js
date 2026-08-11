@@ -2,13 +2,14 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const builder=require('../grounding/citation-builder.js');
 const evidence=require('../retrieval/contracts.js');
+const verifier=require('../verification/claim-support-verifier.js');const fixture=require('./phase2e-test-fixtures.js');
 
 function official(overrides={}){
-  return evidence.evidence({id:'e1',sourceId:'official',sourceType:'publication',evidenceClass:'verified-authoritative',authority:'authoritative',verified:true,title:'Official Pilot',location:{section:'Harbor',page:12},publishedAt:'2026-01-01',version:'2',relevance:.9,...overrides});
+  const content=overrides.content||'Depth is published.';return evidence.evidence({id:'e1',sourceId:'official',sourceType:'publication',evidenceClass:'verified-authoritative',authority:'authoritative',verified:true,title:'Official Pilot',content,location:{section:'Harbor',page:12},publishedAt:'2026-01-01',version:'2',relevance:.9,provenance:fixture.lineage(content),...overrides});
 }
 
 test('maps claims only to real selected evidence and preserves source metadata',()=>{
-  const result=builder.build({selected:[official()],claims:[{id:'c1',text:'Depth is published.',evidenceIds:['e1'],requiresAuthoritative:true}]});
+  const item=official(),claim=fixture.exactClaim({content:item.content,statement:'Depth is published.'}),verification=verifier.verify(claim,{selected:[item]});const result=builder.build({selected:[item],claims:[claim],verifications:[verification]});
   assert.equal(result.errors.length,0);
   assert.equal(result.claims[0].supported,true);
   assert.equal(result.citations[0].sourceId,'official');
@@ -17,19 +18,17 @@ test('maps claims only to real selected evidence and preserves source metadata',
 });
 
 test('rejects orphan and rejected evidence references',()=>{
-  const result=builder.build({selected:[official()],rejected:[{item:official({id:'e2'}),reason:'LOW_RELEVANCE'}],claims:[
-    {id:'c1',text:'Bad',evidenceIds:['missing']},{id:'c2',text:'Rejected',evidenceIds:['e2']}
-  ]});
-  assert.deepEqual(result.errors.filter(x=>x.reason.endsWith('EVIDENCE_REFERENCE')).map(x=>x.reason),['ORPHAN_EVIDENCE_REFERENCE','REJECTED_EVIDENCE_REFERENCE']);
+  const item=official(),rejected=official({id:'e2',provenance:fixture.lineage('Depth is published.',{chunkId:'chunk-2'})});const claims=[fixture.exactClaim({content:item.content,statement:'Bad',evidenceId:'missing'}),fixture.exactClaim({content:rejected.content,statement:'Depth',evidenceId:'e2'})];const rejectedList=[{item:rejected,reason:'LOW_RELEVANCE'}];const verifications=claims.map(claim=>verifier.verify(claim,{selected:[item],rejected:rejectedList}));const result=builder.build({selected:[item],rejected:rejectedList,claims,verifications});
+  assert.deepEqual(result.errors.map(x=>x.reason),['CLAIM_UNSUPPORTED','CLAIM_UNSUPPORTED']);
   assert.equal(result.citations.length,0);
 });
 
 test('memory, secondary, and user documents cannot support an authoritative claim',()=>{
   for(const evidenceClass of ['memory-context','secondary','user-provided']){
-    const item=official({evidenceClass,authority:'authoritative',verified:true});
-    const result=builder.build({selected:[item],claims:[{id:'c',text:'Claim',evidenceIds:['e1'],requiresAuthoritative:true}]});
+    const item=official({evidenceClass,authority:'authoritative',verified:true});const claim=fixture.exactClaim({content:item.content,statement:'Depth',requiresAuthoritative:true});const verification=verifier.verify(claim,{selected:[item]});
+    const result=builder.build({selected:[item],claims:[claim],verifications:[verification]});
     assert.equal(result.claims[0].supported,false);
-    assert.equal(result.errors.some(x=>x.reason==='AUTHORITATIVE_SUPPORT_MISSING'),true);
-    assert.notEqual(result.citations[0].sourceClass,'verified-authoritative');
+    assert.equal(result.errors.some(x=>['CLAIM_AUTHORITY_INSUFFICIENT','CLAIM_UNSUPPORTED'].includes(x.reason)),true);
+    assert.equal(result.citations.length,0);
   }
 });

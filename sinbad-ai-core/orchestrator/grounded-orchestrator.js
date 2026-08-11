@@ -67,7 +67,7 @@
       const phase2aDurationMs=Math.max(0,clock()-phase2aStarted);
 
       const phase2bStarted=clock();
-      const grounded=grounding.run({retrievalResult,claims:Array.isArray(input.claims)?input.claims:[]},{audit:sharedAudit});
+      const grounded=grounding.run({transactionId,retrievalResult,claims:Array.isArray(input.claims)?input.claims:[]},{audit:sharedAudit});
       const phase2bDurationMs=Math.max(0,clock()-phase2bStarted);
       const status=grounded.status==='GROUNDED'?'GROUNDED_PLAN_READY':grounded.status;
       const selected=retrievalResult.evaluation?.selected?.map(item=>item.id)||[];

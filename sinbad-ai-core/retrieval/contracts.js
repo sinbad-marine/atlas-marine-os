@@ -1,8 +1,9 @@
 (function(root,factory){
-  const api=factory();
+  const load=path=>typeof module==='object'&&module.exports?require(path):null;
+  const api=factory({claims:load('../verification/claim-contracts.js')||root.SinbadClaimContracts});
   if(typeof module==='object'&&module.exports)module.exports=api;
   root.SinbadRetrievalContracts=api;
-})(typeof globalThis!=='undefined'?globalThis:this,function(){
+})(typeof globalThis!=='undefined'?globalThis:this,function(deps){
   const EVIDENCE_CLASSES=Object.freeze([
     'verified-authoritative','secondary','user-provided','memory-context'
   ]);
@@ -45,6 +46,7 @@
     const claims=Object.freeze((Array.isArray(input.claims)?input.claims:[]).map(claim=>Object.freeze({
       key:String(claim?.key||''),value:String(claim?.value??''),scope:claim?.scope==null?null:String(claim.scope)
     })).filter(claim=>claim.key));
+    const structuredFacts=Object.freeze((Array.isArray(input.structuredFacts)?input.structuredFacts:[]).map((fact,index)=>deps.claims.structuredFact(fact,{evidenceId:String(input.id||''),factOrdinal:index})));
     return Object.freeze({
       id:String(input.id||''),sourceId:String(input.sourceId||''),
       sourceType:String(input.sourceType||'unknown'),evidenceClass,authority,verified,
@@ -53,7 +55,7 @@
       publishedAt:input.publishedAt==null?null:String(input.publishedAt),
       version:input.version==null?null:String(input.version),
       retrievedAt:input.retrievedAt==null?null:String(input.retrievedAt),
-      claims,
+      claims,structuredFacts,
       provenance:Object.freeze({...((input.provenance&&typeof input.provenance==='object')?input.provenance:{})}),
       instructionPolicy:'DATA_ONLY',maySatisfyAuthoritativeRequirement:verified&&authority==='authoritative'
     });

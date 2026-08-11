@@ -3,7 +3,7 @@
   if(typeof module==='object'&&module.exports)module.exports=api;
   root.SinbadGroundingContracts=api;
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
-  const STATUSES=Object.freeze(['GROUNDED','SOURCE_INSUFFICIENT','EVIDENCE_CONFLICT','RETRIEVAL_FAILURE','INVALID_CLAIMS','PROVENANCE_INCOMPLETE']);
+  const STATUSES=Object.freeze(['GROUNDED','SOURCE_INSUFFICIENT','EVIDENCE_CONFLICT','RETRIEVAL_FAILURE','INVALID_CLAIMS','PROVENANCE_INCOMPLETE','CLAIM_CONTRADICTED','CLAIM_SCOPE_MISMATCH']);
   const CONFIDENCE_STATES=Object.freeze(['HIGH','MODERATE','LOW','NON_CONCLUSIVE']);
 
   function immutableArray(value,mapper=x=>x){
@@ -24,10 +24,13 @@
   }
   function claim(input={}){
     return Object.freeze({
-      id:String(input.id||''),text:String(input.text||''),
+      id:String(input.claimId||input.id||''),claimId:String(input.claimId||input.id||''),text:String(input.statement||input.text||''),statement:String(input.statement||input.text||''),
       evidenceIds:immutableArray(input.evidenceIds,String),
       citationIds:immutableArray(input.citationIds,String),
-      requiresAuthoritative:Boolean(input.requiresAuthoritative),supported:Boolean(input.supported)
+      requiresAuthoritative:Boolean(input.requiresAuthoritative),supported:Boolean(input.supported),
+      verificationStatus:input.verificationStatus==null?null:String(input.verificationStatus),
+      verificationReason:input.verificationReason==null?null:String(input.verificationReason),
+      verifierVersion:input.verifierVersion==null?null:String(input.verifierVersion)
     });
   }
   function confidence(input={}){
@@ -47,7 +50,7 @@
       confidence:confidence(input.confidence),uncertainty:immutableArray(input.uncertainty,String),
       warnings:immutableArray(input.warnings,String),provenance:Object.freeze({...((input.provenance&&typeof input.provenance==='object')?input.provenance:{})}),
       metrics:Object.freeze({...((input.metrics&&typeof input.metrics==='object')?input.metrics:{})}),
-      security:Object.freeze({documentContentPolicy:'DATA_ONLY',documentInstructionsExecuted:false,expertExecutionPerformed:false})
+      security:Object.freeze({documentContentPolicy:'DATA_ONLY',documentInstructionsExecuted:false,claimGenerationPerformed:false,expertExecutionPerformed:false})
     });
   }
   return {STATUSES,CONFIDENCE_STATES,citation,claim,confidence,groundedAnswer};
