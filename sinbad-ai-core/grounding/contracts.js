@@ -3,7 +3,7 @@
   if(typeof module==='object'&&module.exports)module.exports=api;
   root.SinbadGroundingContracts=api;
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
-  const STATUSES=Object.freeze(['GROUNDED','SOURCE_INSUFFICIENT','EVIDENCE_CONFLICT','RETRIEVAL_FAILURE','INVALID_CLAIMS']);
+  const STATUSES=Object.freeze(['GROUNDED','SOURCE_INSUFFICIENT','EVIDENCE_CONFLICT','RETRIEVAL_FAILURE','INVALID_CLAIMS','PROVENANCE_INCOMPLETE']);
   const CONFIDENCE_STATES=Object.freeze(['HIGH','MODERATE','LOW','NON_CONCLUSIVE']);
 
   function immutableArray(value,mapper=x=>x){
@@ -18,7 +18,8 @@
         section:nullable(input.location?.section),page:nullable(input.location?.page),
         chunk:nullable(input.location?.chunk),uri:nullable(input.location?.uri)
       }),publishedAt:nullable(input.publishedAt),version:nullable(input.version),
-      authority:nullable(input.authority),verified:Boolean(input.verified),metadataComplete:Boolean(input.metadataComplete)
+      authority:nullable(input.authority),verified:Boolean(input.verified),metadataComplete:Boolean(input.metadataComplete),
+      provenance:Object.freeze({...((input.provenance&&typeof input.provenance==='object')?input.provenance:{})})
     });
   }
   function claim(input={}){

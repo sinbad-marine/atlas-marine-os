@@ -54,6 +54,7 @@
       version:input.version==null?null:String(input.version),
       retrievedAt:input.retrievedAt==null?null:String(input.retrievedAt),
       claims,
+      provenance:Object.freeze({...((input.provenance&&typeof input.provenance==='object')?input.provenance:{})}),
       instructionPolicy:'DATA_ONLY',maySatisfyAuthoritativeRequirement:verified&&authority==='authoritative'
     });
   }

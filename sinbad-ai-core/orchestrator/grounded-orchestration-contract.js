@@ -6,7 +6,7 @@
   const STATUSES=Object.freeze([
     'GROUNDED_PLAN_READY','PLAN_ONLY_READY','INVALID_INPUT','LOW_CONFIDENCE','SAFETY_BLOCKED',
     'ROUTING_BLOCKED','SOURCE_INSUFFICIENT','EVIDENCE_CONFLICT','RETRIEVAL_FAILURE',
-    'INVALID_CLAIMS','PIPELINE_ERROR'
+    'INVALID_CLAIMS','PROVENANCE_INCOMPLETE','PIPELINE_ERROR'
   ]);
   function immutableArray(value,mapper=x=>x){return Object.freeze((Array.isArray(value)?value:[]).map(mapper));}
   function result(input={}){

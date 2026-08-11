@@ -25,7 +25,7 @@
       const rawClaims=status==='GROUNDED'&&Array.isArray(input.claims)?input.claims:[];
       const synthesisDurationMs=Math.max(0,clock()-synthesisStarted);
       const citationResult=deps.citations.build({selected,rejected,claims:rawClaims,clock});
-      if(status==='GROUNDED'&&citationResult.errors.length)status=citationResult.errors.some(x=>x.reason==='AUTHORITATIVE_SUPPORT_MISSING')?'SOURCE_INSUFFICIENT':'INVALID_CLAIMS';
+      if(status==='GROUNDED'&&citationResult.errors.length)status=citationResult.errors.some(x=>x.reason==='PROVENANCE_INCOMPLETE')?'PROVENANCE_INCOMPLETE':citationResult.errors.some(x=>x.reason==='AUTHORITATIVE_SUPPORT_MISSING')?'SOURCE_INSUFFICIENT':'INVALID_CLAIMS';
       if(status!=='GROUNDED'){
         uncertainty.push(status);
         warnings.push(status==='EVIDENCE_CONFLICT'?'Conflicting evidence remains unresolved.':'Requested conclusion is not supported by sufficient evidence.');

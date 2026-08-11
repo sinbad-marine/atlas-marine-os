@@ -1,0 +1,9 @@
+'use strict';
+const contracts=require('./contracts.js');
+const REQUIRED=Object.freeze(['indexId','indexHash','policyId','policyHash','issuerId','sourceId','documentId','editionId','canonicalHash','chunkId','chunkContentHash','chunkerVersion','license','authorityDecision']);
+const validatedSnapshots=new WeakSet();
+function fromChunk(chunk,index){const value={indexId:index.indexId,indexHash:index.indexHash,policyId:index.policyId,policyHash:index.policyHash,issuerId:chunk.issuerId,sourceId:chunk.sourceId,documentId:chunk.documentId,editionId:chunk.editionId,rawHash:chunk.rawHash||null,canonicalHash:chunk.canonicalHash,chunkId:chunk.chunkId,chunkContentHash:chunk.contentHash,chunkerVersion:chunk.chunkerVersion,license:chunk.license,authorityDecision:chunk.reason,editionStatus:chunk.status};for(const key of REQUIRED)if(value[key]==null||value[key]==='')contracts.fail(contracts.STATES.PROVENANCE_INCOMPLETE,`missing lineage: ${key}`);return Object.freeze(value);}
+function validate(value,{authoritative=false}={}){if(!value||typeof value!=='object')contracts.fail(contracts.STATES.PROVENANCE_INCOMPLETE,'lineage required');for(const key of REQUIRED)if(value[key]==null||value[key]==='')contracts.fail(contracts.STATES.PROVENANCE_INCOMPLETE,`missing lineage: ${key}`);if(authoritative&&value.authorityDecision!=='TRUST_POLICY_GRANTED')contracts.fail(contracts.STATES.PROVENANCE_INCOMPLETE,'authoritative lineage lacks trusted policy grant');return Object.freeze({...value});}
+function markValidatedSnapshot(snapshot){if(!snapshot||typeof snapshot!=='object')contracts.fail(contracts.STATES.INDEX_UNAVAILABLE,'validated snapshot object required');validatedSnapshots.add(snapshot);return snapshot;}
+function isValidatedSnapshot(snapshot){return Boolean(snapshot&&typeof snapshot==='object'&&validatedSnapshots.has(snapshot));}
+module.exports=Object.freeze({REQUIRED,fromChunk,validate,markValidatedSnapshot,isValidatedSnapshot});

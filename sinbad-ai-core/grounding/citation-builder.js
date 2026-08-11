@@ -1,6 +1,6 @@
 (function(root,factory){
   const load=path=>typeof module==='object'&&module.exports?require(path):null;
-  const api=factory({contracts:load('./contracts.js')||root.SinbadGroundingContracts});
+  const api=factory({contracts:load('./contracts.js')||root.SinbadGroundingContracts,provenance:load('../library/provenance.js')||root.SinbadLibraryProvenance});
   if(typeof module==='object'&&module.exports)module.exports=api;
   root.SinbadCitationBuilder=api;
 })(typeof globalThis!=='undefined'?globalThis:this,function(deps){
@@ -18,12 +18,13 @@
         if(rejectedIds.has(evidenceId)){errors.push(Object.freeze({claimId:id,evidenceId,reason:'REJECTED_EVIDENCE_REFERENCE'}));continue;}
         const item=selectedById.get(evidenceId);
         if(!item){errors.push(Object.freeze({claimId:id,evidenceId,reason:'ORPHAN_EVIDENCE_REFERENCE'}));continue;}
+        if(item.sourceType==='offline-publication'&&item.maySatisfyAuthoritativeRequirement){try{deps.provenance.validate(item.provenance,{authoritative:true});}catch(error){errors.push(Object.freeze({claimId:id,evidenceId,reason:'PROVENANCE_INCOMPLETE'}));continue;}}
         const citationId=`citation:${id}:${evidenceId}`;
         const metadataComplete=Boolean(item.sourceId&&item.sourceType&&item.title&&item.location&&(item.location.page||item.location.section||item.location.chunk||item.location.uri));
         citations.push(deps.contracts.citation({
           id:citationId,claimId:id,evidenceId,sourceId:item.sourceId||null,sourceType:item.sourceType||null,
           sourceClass:item.evidenceClass||null,title:item.title||null,location:item.location||{},publishedAt:item.publishedAt,
-          version:item.version,authority:item.authority||null,verified:item.verified,metadataComplete
+          version:item.version,authority:item.authority||null,verified:item.verified,metadataComplete,provenance:item.provenance||{}
         }));
         citationIds.push(citationId);used.add(evidenceId);
         if(item.maySatisfyAuthoritativeRequirement)authoritative=true;
