@@ -24,7 +24,7 @@
     function linkedAudit(transactionId,phase1Entries,sharedEntries){
       return Object.freeze([
         ...phase1Entries.map(entry=>Object.freeze({...entry,transactionId,phase:'1'})),
-        ...sharedEntries.map(entry=>Object.freeze({...entry,transactionId,phase:entry.stage==='retrieval'||entry.stage==='evidence-evaluation'?'2A':entry.stage==='claim-planning'?'2F':entry.stage==='query-coverage'?'2G':'2B'}))
+        ...sharedEntries.map(entry=>Object.freeze({...entry,transactionId,phase:entry.stage==='retrieval'||entry.stage==='evidence-evaluation'?'2A':entry.stage==='claim-planning'?'2F':entry.stage==='query-coverage'?'2G':entry.stage==='answer-composition'?'2H':'2B'}))
       ]);
     }
     function finish(input){return deps.contract.result(input);}
