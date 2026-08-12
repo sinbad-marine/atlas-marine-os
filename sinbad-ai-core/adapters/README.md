@@ -114,3 +114,20 @@ The adapter acquires a same-process identity lock before calling `present`, so
 concurrent duplicate calls cannot repeat the presentation side effect. An
 optional `diagnose` hook receives fixed, content-free reason codes only.
 
+## Phase 2Y durable idempotency store
+
+`trusted-terminal-delivery-adapter.create()` requires `idempotencyStore` with
+asynchronous `claim(key)` and `settle(key, summary)` methods. `claim` must be an
+atomic insert-if-absent backed by durable shared storage and must return exactly
+`true` only for the sole winner. It runs before `present`. `settle` may update
+only the winning key and must return exactly `true` after durably recording the
+minimal summary. Timeouts, ambiguous writes, false values and exceptions fail
+closed. Settlement failure after presentation returns non-retriable `UNSETTLED`
+with known terminal fields; it never masquerades as a pre-presentation block.
+Never implement production claiming as read-then-write or with a process-local
+collection.
+The store must also declare `version` equal to the Phase 2Y store contract,
+`durable: true`, and a positive `claimLeaseMs`. Lease expiry/recovery must be
+atomic and fenced by the store: a transport timeout may be an ambiguous winning
+claim, so the application must not simply retry presentation.
+

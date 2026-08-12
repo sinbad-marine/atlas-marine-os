@@ -338,10 +338,27 @@ Callers cannot supply an outcome or terminal identifiers. Package subpath
 exports are closed; production build/lint policy must also reject repository-
 relative imports of Phase 2P–2W internals. An in-process identity lock is taken
 before presentation, so concurrent replay cannot invoke the presenter twice.
-Unexpected post-presentation chain failures return `BLOCKED`, distinct from a
-verified presentation failure, and may emit only fixed content-free diagnostic
-codes through the optional trusted `diagnose` hook.
+Post-claim chain denial returns `BLOCKED` only after its minimal failure stage
+is durably settled. Settlement failure after presentation or state application
+returns `TRUSTED_TERMINAL_DELIVERY_UNSETTLED`, preserving known terminal fields
+for operator reconciliation. Both paths may emit only fixed content-free
+diagnostic codes through the optional trusted `diagnose` hook.
 Because an external presentation and a process-local Core record cannot form a
-single distributed transaction, a post-presentation `BLOCKED` result is
+single distributed transaction, a post-presentation `UNSETTLED` result is
 non-retriable for that authorization. Durable transport idempotency and any
 operator-approved recovery authorization belong to the trusted adapter.
+
+## Phase 2Y durable terminal idempotency
+
+Phase 2Y requires a trusted durable idempotency store validated by
+`adapters/durable-idempotency-store.js`. Before any presentation side effect,
+the adapter derives a content-free SHA-256 key from the authentic transaction,
+session, channel and delivery hash, then awaits an atomic `claim(key)`. Only an
+exact boolean `true` permits presentation. A denial, exception or ambiguous
+claim result fails closed before presentation and the same authorization is not
+retried. After Core applies terminal state, `settle(key, summary)` persists only
+status, terminal state, outcome and transition hash. Store implementations must
+provide durable uniqueness across all application instances; an in-memory Set
+is valid only as a test double. Stores must declare the exact Phase 2Y store
+version, `durable: true` and a positive `claimLeaseMs`. The lease policy must
+make ambiguous claim timeouts recoverable without permitting two live winners.
