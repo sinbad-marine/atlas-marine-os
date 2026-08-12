@@ -11,7 +11,7 @@
   function immutableArray(value,mapper=x=>x){return Object.freeze((Array.isArray(value)?value:[]).map(mapper));}
   function result(input={}){
     return Object.freeze({
-      version:'sinbad-grounded-orchestrator/2J',transactionId:String(input.transactionId||''),
+      version:'sinbad-grounded-orchestrator/2K',transactionId:String(input.transactionId||''),
       status:STATUSES.includes(input.status)?input.status:'PIPELINE_ERROR',
       intent:input.intent||null,safety:input.safety||null,context:input.context||null,
       routing:input.routing||null,
@@ -19,6 +19,7 @@
       retrieval:Object.freeze({required:Boolean(input.retrieval?.required),status:input.retrieval?.status||null,metrics:input.retrieval?.metrics||null}),
       evidence:Object.freeze({status:input.evidence?.status||null,selected:immutableArray(input.evidence?.selected,String),rejected:immutableArray(input.evidence?.rejected,x=>Object.freeze({...x}))}),
       groundedAnswer:input.groundedAnswer||null,
+      answerSeal:input.answerSeal&&typeof input.answerSeal==='object'?Object.freeze({schemaVersion:String(input.answerSeal.schemaVersion||''),sealerVersion:String(input.answerSeal.sealerVersion||''),status:String(input.answerSeal.status||''),reasonCode:input.answerSeal.reasonCode==null?null:String(input.answerSeal.reasonCode),transactionId:String(input.answerSeal.transactionId||''),queryHash:String(input.answerSeal.queryHash||''),answerHash:String(input.answerSeal.answerHash||''),mapVerifierVersion:String(input.answerSeal.mapVerifierVersion||''),evidenceIds:immutableArray(input.answerSeal.evidenceIds,String),sealHash:input.answerSeal.sealHash==null?null:String(input.answerSeal.sealHash)}):null,
       claimPlan:input.claimPlan||null,
       claimCoverage:input.claimCoverage||null,
       citations:immutableArray(input.citations,x=>x),provenance:input.provenance||null,

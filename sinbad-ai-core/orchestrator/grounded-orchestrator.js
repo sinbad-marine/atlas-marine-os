@@ -4,7 +4,8 @@
     contract:load('./grounded-orchestration-contract.js')||root.SinbadGroundedOrchestrationContract,
     audit:load('./audit-log.js')||root.SinbadAuditLog,
     claimPlanner:load('../verification/claim-planner.js')||root.SinbadClaimPlanner,
-    coverageGate:load('../verification/query-coverage-gate.js')||root.SinbadQueryCoverageGate
+    coverageGate:load('../verification/query-coverage-gate.js')||root.SinbadQueryCoverageGate,
+    answerSealer:load('../verification/grounded-answer-seal.js')||root.SinbadGroundedAnswerSeal
   });
   if(typeof module==='object'&&module.exports)module.exports=api;
   root.SinbadGroundedOrchestrator=api;
@@ -27,6 +28,7 @@
       if(stage==='claim-verification')return '2E';if(stage==='claim-planning')return '2F';
       if(stage==='query-coverage')return '2G';if(stage==='answer-composition')return '2H';
       if(stage==='answer-citation-map')return '2I';if(stage==='answer-citation-verification')return '2J';
+      if(stage==='answer-sealing')return '2K';
       return 'UNKNOWN';
     }
 
@@ -87,19 +89,23 @@
       const claimCoverage=!suppliedClaims.length&&claimPlan?.status==='CLAIMS_PLANNED'?deps.coverageGate.evaluate({transactionId,query:phase1.request.question,claimPlan},{audit:sharedAudit}):null;
       const grounded=grounding.run({transactionId,retrievalResult,claims:suppliedClaims.length?suppliedClaims:plannedClaims,claimPlan,claimCoverage,planningQuery:phase1.request.question},{audit:sharedAudit});
       const phase2bDurationMs=Math.max(0,clock()-phase2bStarted);
-      const status=grounded.status==='GROUNDED'?'GROUNDED_PLAN_READY':grounded.status;
+      let status=grounded.status==='GROUNDED'?'GROUNDED_PLAN_READY':grounded.status;
       const selected=retrievalResult.evaluation?.selected?.map(item=>item.id)||[];
       const rejected=[
         ...(retrievalResult.evaluation?.rejected||[]).map(entry=>({id:entry.item?.id||null,reason:entry.reason})),
         ...(retrievalResult.rejected||[]).map(entry=>({id:entry.id||null,adapterId:entry.adapterId||null,reason:entry.reason}))
       ];
+      const sealInput={transactionId,query:phase1.request.question,answerHash:grounded.composition?.answerHash,mapVerifierVersion:grounded.mapVerification?.verifierVersion,evidenceIds:selected};
+      const answerSeal=status==='GROUNDED_PLAN_READY'&&deps.answerSealer&&typeof deps.answerSealer.seal==='function'&&typeof deps.answerSealer.isBound==='function'?deps.answerSealer.seal(sealInput,{audit:sharedAudit}):null;
+      const sealFailed=status==='GROUNDED_PLAN_READY'&&(!answerSeal||!deps.answerSealer.isBound(answerSeal,sealInput));
+      if(sealFailed)status='PIPELINE_ERROR';
       return finish({
         transactionId,status,intent:phase1.analysis,safety:phase1.safety,
         context:contextEntry?.details||null,routing:phase1.routing,
         retrieval:{required:true,status:retrievalResult.status,metrics:retrievalResult.metrics},
         evidence:{status:retrievalResult.status,selected,rejected},
-        groundedAnswer:grounded,claimPlan,claimCoverage,citations:grounded.citations,provenance:grounded.provenance,
-        confidence:grounded.confidence,warnings:grounded.warnings,
+        groundedAnswer:sealFailed?null:grounded,answerSeal:sealFailed?null:answerSeal,claimPlan,claimCoverage,citations:sealFailed?[]:grounded.citations,provenance:sealFailed?null:grounded.provenance,
+        confidence:sealFailed?null:grounded.confidence,warnings:sealFailed?['Grounded answer sealing failed.']:grounded.warnings,
         audit:linkedAudit(transactionId,phase1.audit||[],sharedAudit.snapshot()),
         metrics:{phase1DurationMs,phase2aDurationMs,phase2bDurationMs,totalDurationMs:Math.max(0,clock()-totalStarted)}
       });
