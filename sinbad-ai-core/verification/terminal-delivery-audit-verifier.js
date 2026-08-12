@@ -1,0 +1,18 @@
+'use strict';
+const crypto=require('node:crypto');
+const records=require('../audit/terminal-delivery-audit-record.js');
+const EXPECTED_RECORD_VERSION='sinbad-terminal-delivery-audit-record/2T-v1';
+if(records.RECORD_VERSION!==EXPECTED_RECORD_VERSION)throw new Error(`Unsupported terminal audit record version: ${records.RECORD_VERSION}`);
+const VERIFICATION_VERSION='sinbad-terminal-delivery-audit-verification/2U-v1';
+const VERIFIER_VERSION='sinbad-independent-terminal-delivery-audit-verifier/2U-v1';
+const verifiedRecords=new WeakSet();
+const authenticResults=new WeakSet();
+const resultManifests=new WeakMap();
+function canonical(value){if(Array.isArray(value))return `[${value.map(canonical).join(',')}]`;if(value&&typeof value==='object')return `{${Object.keys(value).sort().map(key=>`${JSON.stringify(key)}:${canonical(value[key])}`).join(',')}}`;return JSON.stringify(value);}
+function sha256(value){return crypto.createHash('sha256').update(Buffer.isBuffer(value)?value:Buffer.from(String(value),'utf8')).digest('hex');}
+function blocked(){return Object.freeze({version:VERIFICATION_VERSION,verifierVersion:VERIFIER_VERSION,status:'TERMINAL_AUDIT_INVALID',reasonCode:'TERMINAL_AUDIT_VERIFICATION_DENIED',outcome:null,sourceCount:0,auditHash:null,auditVerificationHash:null});}
+function verify(record={},expected={}){const snapshot=records.boundSnapshot(record,expected);if(!snapshot||verifiedRecords.has(record)||!Number.isInteger(snapshot.sourceCount)||snapshot.sourceCount<0||snapshot.sourceCount>64||!/^[a-f0-9]{64}$/u.test(snapshot.closureHash)||!/^[a-f0-9]{64}$/u.test(snapshot.closureVerificationHash)||!/^[a-f0-9]{64}$/u.test(snapshot.auditHash))return blocked();const manifest=Object.freeze({version:VERIFICATION_VERSION,verifierVersion:VERIFIER_VERSION,status:'TERMINAL_AUDIT_VERIFIED',auditId:snapshot.auditId,closureId:snapshot.closureId,outcome:snapshot.outcome,sourceCount:snapshot.sourceCount,closureHash:snapshot.closureHash,closureVerificationHash:snapshot.closureVerificationHash,auditHash:snapshot.auditHash});const output=Object.freeze({version:VERIFICATION_VERSION,verifierVersion:VERIFIER_VERSION,status:'TERMINAL_AUDIT_VERIFIED',reasonCode:null,outcome:snapshot.outcome,sourceCount:snapshot.sourceCount,auditHash:snapshot.auditHash,auditVerificationHash:sha256(canonical(manifest))});verifiedRecords.add(record);authenticResults.add(output);resultManifests.set(output,manifest);return output;}
+function isAuthenticResult(value){return Boolean(value&&typeof value==='object'&&authenticResults.has(value));}
+function boundSnapshot(value,expected={}){if(!isAuthenticResult(value)||value.status!=='TERMINAL_AUDIT_VERIFIED'||value.reasonCode!==null)return null;const manifest=resultManifests.get(value),auditId=records.clean(expected.auditId),closureId=records.clean(expected.closureId),outcome=String(expected.outcome||'');if(!manifest||!auditId||!closureId||!['DELIVERED','FAILED'].includes(outcome)||manifest.auditId!==auditId||manifest.closureId!==closureId||manifest.outcome!==outcome||value.outcome!==manifest.outcome||value.sourceCount!==manifest.sourceCount||value.auditHash!==manifest.auditHash||value.auditVerificationHash!==sha256(canonical(manifest)))return null;return Object.freeze({auditId:manifest.auditId,closureId:manifest.closureId,outcome:manifest.outcome,sourceCount:manifest.sourceCount,closureHash:manifest.closureHash,closureVerificationHash:manifest.closureVerificationHash,auditHash:manifest.auditHash,auditVerificationHash:value.auditVerificationHash});}
+function isBound(value,expected={}){return boundSnapshot(value,expected)!==null;}
+module.exports=Object.freeze({EXPECTED_RECORD_VERSION,VERIFICATION_VERSION,VERIFIER_VERSION,canonical,sha256,verify,isAuthenticResult,boundSnapshot,isBound});

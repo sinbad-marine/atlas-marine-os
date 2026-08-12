@@ -42,3 +42,60 @@ The recorder accepts authorization objects only in the authorizing process;
 serialized or cloned authorizations fail closed. Durable replay prevention is
 the responsibility of the delivery persistence boundary.
 
+## Phase 2Q terminal-receipt verification
+
+`../verification/terminal-delivery-receipt-verifier.js` verifies that a Phase
+2P terminal receipt is authentic, hash-intact and bound to the adapter's exact
+transaction, session, channel, attempt and outcome expectations. Verification
+is same-process and response-free. Its success contract omits transaction,
+session, channel and attempt identifiers while binding them inside the opaque
+verification hash. Copies, Proxy wrappers, mutations and target mismatches
+return one uniform denial without echoing identifiers.
+
+## Phase 2R single-use terminal closure
+
+`../delivery/single-use-terminal-closure.js` lets an adapter consume a bound
+Phase 2Q verification once. It rechecks the hidden target manifest through the
+verifier and emits a minimal closure proof without response or target content.
+Replay, copies, clones, Proxy wrappers and mismatched closure context are denied
+uniformly. Same-process identity is mandatory; persistence is outside Core.
+
+## Phase 2S terminal-closure verification
+
+`../verification/terminal-closure-verifier.js` verifies an authentic Phase 2R
+closure once against its hidden closure identifier and outcome binding. The
+result exposes only terminal outcome, source count, closure hash and its own
+verification hash. It never exposes response or target identifiers and remains
+same-process, offline and fail-closed.
+
+## Phase 2T terminal audit record
+
+`../audit/terminal-delivery-audit-record.js` produces a single content-free
+audit record from a bound Phase 2S verification. Adapters may persist this
+minimal record but must not treat its process-local authenticity as durable
+cross-process authorization.
+
+## Phase 2U terminal audit verification
+
+`../verification/terminal-delivery-audit-verifier.js` independently verifies a
+Phase 2T record once and retains audit/closure identifiers only inside its
+same-process bound manifest. Persisted hashes are observational audit data, not
+portable authorization credentials.
+
+## Phase 2V mandatory completion gate
+
+Adapters must use `../delivery/terminal-completion-gate.js` to declare terminal
+completion. Phase 2P receipts and Phase 2Q–2U intermediate objects are not
+completion credentials and must never independently update terminal state.
+Adapters must generate attempt, closure and audit identifiers inside their
+trusted boundary. Client-supplied identifiers must not be forwarded as these
+bindings. Existing adapters must not call standalone Phase 2P before Phase 2V;
+an already consumed authorization fails closed and is deliberately non-retriable.
+
+## Phase 2W terminal-state transition
+
+`terminal-state-transition.js` is the only adapter-facing terminal state gate.
+It consumes one authentic Phase 2V completion and emits a minimal immutable
+success or failure transition. Reusing a completion or presenting an earlier
+chain object cannot update terminal state.
+
