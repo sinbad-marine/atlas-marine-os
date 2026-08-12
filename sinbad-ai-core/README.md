@@ -146,3 +146,14 @@ remains extractive and `PLAN_ONLY`.
 Phase 2H intentionally advances the grounded-answer and grounded-orchestrator
 contract version strings to `2H`; exact-version consumers must upgrade with
 this boundary.
+
+## Phase 2I answer-citation map boundary
+
+The verified composer emits an immutable citation map for the final extractive
+answer. Every unique answer segment carries exact UTF-16 code-unit offsets, a
+SHA-256 statement hash, all contributing claim identities and their resolved
+citation identities. Per-claim bindings preserve which citations support each
+claim even when identical visible text is deduplicated. The complete answer is
+hash-bound, runtime offset/hash invariants fail closed, claim cardinality is
+bounded, and invalid composition exposes no segments. Phase 2I advances the
+grounded-answer and orchestrator contract versions to `2I`.
