@@ -2,7 +2,8 @@
   const load=path=>typeof module==='object'&&module.exports?require(path):null;
   const api=factory({
     contract:load('./grounded-orchestration-contract.js')||root.SinbadGroundedOrchestrationContract,
-    audit:load('./audit-log.js')||root.SinbadAuditLog
+    audit:load('./audit-log.js')||root.SinbadAuditLog,
+    claimPlanner:load('../verification/claim-planner.js')||root.SinbadClaimPlanner
   });
   if(typeof module==='object'&&module.exports)module.exports=api;
   root.SinbadGroundedOrchestrator=api;
@@ -12,6 +13,7 @@
     const decision=options.decisionPipeline;
     const retrieval=options.retrievalEngine;
     const grounding=options.groundingPipeline;
+    const planner=options.claimPlanner||deps.claimPlanner;
     if(!decision||typeof decision.run!=='function')throw new TypeError('Phase 1 decision pipeline is required');
     if(!retrieval||typeof retrieval.run!=='function')throw new TypeError('Phase 2A retrieval engine is required');
     if(!grounding||typeof grounding.run!=='function')throw new TypeError('Phase 2B grounding pipeline is required');
@@ -21,7 +23,7 @@
     function linkedAudit(transactionId,phase1Entries,sharedEntries){
       return Object.freeze([
         ...phase1Entries.map(entry=>Object.freeze({...entry,transactionId,phase:'1'})),
-        ...sharedEntries.map(entry=>Object.freeze({...entry,transactionId,phase:entry.stage==='retrieval'||entry.stage==='evidence-evaluation'?'2A':'2B'}))
+        ...sharedEntries.map(entry=>Object.freeze({...entry,transactionId,phase:entry.stage==='retrieval'||entry.stage==='evidence-evaluation'?'2A':entry.stage==='claim-planning'?'2F':'2B'}))
       ]);
     }
     function finish(input){return deps.contract.result(input);}
@@ -67,7 +69,12 @@
       const phase2aDurationMs=Math.max(0,clock()-phase2aStarted);
 
       const phase2bStarted=clock();
-      const grounded=grounding.run({transactionId,retrievalResult,claims:Array.isArray(input.claims)?input.claims:[]},{audit:sharedAudit});
+      const suppliedClaims=Array.isArray(input.claims)?input.claims:[];
+      const selectedEvidence=retrievalResult.evaluation?.selected||[];let claimPlan=null;
+      const plannedQueryHash=deps.claimPlanner.queryHash(phase1.request.question);
+      if(!suppliedClaims.length){try{claimPlan=planner&&typeof planner.plan==='function'?planner.plan({transactionId,query:phase1.request.question,selected:selectedEvidence,limit:input.claimPlanning?.limit},{audit:sharedAudit}):deps.claimPlanner.unavailable({transactionId,queryHash:plannedQueryHash,selectedEvidenceCount:selectedEvidence.length});}catch(error){sharedAudit.append('claim-planning','evidence-bound-claim-planner','stopped','CLAIM_PLANNER_FAILURE',{reasonCode:error?.code||'INTERNAL_ERROR'});claimPlan=deps.claimPlanner.unavailable({transactionId,queryHash:plannedQueryHash,selectedEvidenceCount:selectedEvidence.length,reasonCode:error?.code||'INTERNAL_ERROR'});}}
+      const plannedClaims=Array.isArray(claimPlan?.claims)?claimPlan.claims:[];
+      const grounded=grounding.run({transactionId,retrievalResult,claims:suppliedClaims.length?suppliedClaims:plannedClaims,claimPlan,planningQuery:phase1.request.question},{audit:sharedAudit});
       const phase2bDurationMs=Math.max(0,clock()-phase2bStarted);
       const status=grounded.status==='GROUNDED'?'GROUNDED_PLAN_READY':grounded.status;
       const selected=retrievalResult.evaluation?.selected?.map(item=>item.id)||[];
@@ -80,7 +87,7 @@
         context:contextEntry?.details||null,routing:phase1.routing,
         retrieval:{required:true,status:retrievalResult.status,metrics:retrievalResult.metrics},
         evidence:{status:retrievalResult.status,selected,rejected},
-        groundedAnswer:grounded,citations:grounded.citations,provenance:grounded.provenance,
+        groundedAnswer:grounded,claimPlan,citations:grounded.citations,provenance:grounded.provenance,
         confidence:grounded.confidence,warnings:grounded.warnings,
         audit:linkedAudit(transactionId,phase1.audit||[],sharedAudit.snapshot()),
         metrics:{phase1DurationMs,phase2aDurationMs,phase2bDurationMs,totalDurationMs:Math.max(0,clock()-totalStarted)}

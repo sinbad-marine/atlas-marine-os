@@ -109,3 +109,18 @@ The runtime remains `PLAN_ONLY`: it performs no claim generation, expert
 execution, live/web retrieval or navigation calculation. Phase 2E and the
 occurrence-position extension preserve the Phase 2A conflict rules and the
 Phase 2B citation boundary.
+
+## Phase 2F evidence-bound claim planning boundary
+
+`verification/claim-planner.js` can derive deterministic exact-span FACT
+claims only from complete canonical lines in already selected v2 offline
+evidence. Every candidate is bound to immutable evidence hashes, UTF-16
+offsets and a canonical occurrence identity before the independent Phase 2E
+verifier sees it. Overlapping chunks deduplicate the same document occurrence;
+truncated lines, legacy indexes, malformed provenance and query-unrelated text
+fail closed. Caller-supplied claims retain the existing Phase 2E path.
+
+Planning is extractive rather than free-form: publication text is copied
+exactly and remains `DATA_ONLY`. The runtime stays `PLAN_ONLY`, performs no
+model or expert execution, makes no network request, and activates no
+navigation mathematics.
