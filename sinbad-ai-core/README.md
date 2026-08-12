@@ -157,3 +157,20 @@ claim even when identical visible text is deduplicated. The complete answer is
 hash-bound, runtime offset/hash invariants fail closed, claim cardinality is
 bounded, and invalid composition exposes no segments. Phase 2I advances the
 grounded-answer and orchestrator contract versions to `2I`.
+
+## Phase 2J independent citation-map verification boundary
+
+`verification/answer-citation-map-verifier.js` independently reconstructs the
+trust checks for the Phase 2I manifest without importing the composer. It
+verifies the complete answer hash, contiguous UTF-16 segment coverage, segment
+hashes, unique claim coverage, exact per-claim citation bindings and the absence
+of unused citations. Copied verifier results are unauthentic, and any mismatch
+removes answer, citations, evidence use and composition output. The grounded
+answer and orchestrator contract versions advance to `2J`.
+
+Verifier authenticity is checked only inside the synchronous pipeline trust
+boundary. The serialized `mapVerification` field in the final answer is an
+observational report, not a portable authentication token; downstream systems
+must trust the grounded-answer producer rather than attempting to re-authenticate
+the copied report object. Unknown shared audit stages are labeled `UNKNOWN`
+instead of being silently attributed to an established phase.

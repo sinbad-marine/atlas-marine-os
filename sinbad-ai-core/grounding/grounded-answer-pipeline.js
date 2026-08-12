@@ -7,7 +7,8 @@
     verifier:load('../verification/claim-support-verifier.js')||root.SinbadClaimSupportVerifier,
     planner:load('../verification/claim-planner.js')||root.SinbadClaimPlanner,
     coverage:load('../verification/query-coverage-gate.js')||root.SinbadQueryCoverageGate,
-    composer:load('./verified-answer-composer.js')||root.SinbadVerifiedAnswerComposer
+    composer:load('./verified-answer-composer.js')||root.SinbadVerifiedAnswerComposer,
+    mapVerifier:load('../verification/answer-citation-map-verifier.js')||root.SinbadAnswerCitationMapVerifier
   });
   if(typeof module==='object'&&module.exports)module.exports=api;
   root.SinbadGroundedAnswerPipeline=api;
@@ -43,6 +44,8 @@
       const composerAvailable=deps.composer&&typeof deps.composer.compose==='function';
       const composition=status==='GROUNDED'&&composerAvailable?deps.composer.compose({claims:citationResult.claims,citations:citationResult.citations},{audit}):null;
       if(status==='GROUNDED'&&(!composition||composition.status!=='ANSWER_COMPOSED'))status='INVALID_CLAIMS';
+      const mapVerification=status==='GROUNDED'&&composition&&deps.mapVerifier&&typeof deps.mapVerifier.verify==='function'&&typeof deps.mapVerifier.isAuthenticResult==='function'?deps.mapVerifier.verify({answer:composition.answer,composition,claims:citationResult.claims,citations:citationResult.citations},{audit}):null;
+      if(status==='GROUNDED'&&(!mapVerification||!deps.mapVerifier.isAuthenticResult(mapVerification)||mapVerification.status!=='MAP_VERIFIED'))status='INVALID_CLAIMS';
       const outputClaims=status==='GROUNDED'?citationResult.claims:Object.freeze(citationResult.claims.map(claim=>deps.contracts.claim({...claim,citationIds:[]})));
       const outputCitations=status==='GROUNDED'?citationResult.citations:Object.freeze([]);
       const outputEvidenceUsed=status==='GROUNDED'?citationResult.evidenceUsed:Object.freeze([]);
@@ -51,7 +54,7 @@
         warnings.push(status==='EVIDENCE_CONFLICT'?'Conflicting evidence remains unresolved.':'Requested conclusion is not supported by sufficient evidence.');
       }
       const confidence=deps.confidence.evaluate({status,claims:outputClaims,citations:outputCitations});
-      const answer=status==='GROUNDED'?composition.answer:null;
+      const answer=status==='GROUNDED'?composition.answer:null;const outputComposition=status==='GROUNDED'?composition:null;const outputMapVerification=status==='GROUNDED'?mapVerification:null;
       const provenance=Object.freeze({
         retrievalVersion:retrieval.version||null,retrievalStatus:retrieval.status||null,
         selectedEvidence:Object.freeze(selected.map(item=>item.id)),
@@ -65,7 +68,7 @@
         audit.append('citation-provenance','citation-builder',status==='GROUNDED'&&!citationResult.errors.length?'passed':'stopped',status==='GROUNDED'&&!citationResult.errors.length?'CITATIONS_RESOLVED':'CITATION_VALIDATION_FAILED',{citationCount:outputCitations.length,evidenceUsed:outputEvidenceUsed,errors:citationResult.errors});
         audit.append('grounded-confidence','confidence-evaluator',confidence.state==='NON_CONCLUSIVE'?'stopped':'passed',confidence.state,{reasons:confidence.reasons});
       }
-      return deps.contracts.groundedAnswer({status,answer,claims:outputClaims,citations:outputCitations,composition,
+      return deps.contracts.groundedAnswer({status,answer,claims:outputClaims,citations:outputCitations,composition:outputComposition,mapVerification:outputMapVerification,
         evidenceUsed:outputEvidenceUsed,evidenceRejected:provenance.rejectedEvidence,confidence,uncertainty,warnings,provenance,metrics});
     }
     return Object.freeze({run});

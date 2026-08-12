@@ -21,10 +21,19 @@
     const clock=typeof options.clock==='function'?options.clock:()=>Date.now();
     const now=typeof options.now==='function'?options.now:()=>new Date().toISOString();
 
+    function phaseForStage(stage){
+      if(stage==='retrieval'||stage==='evidence-evaluation')return '2A';
+      if(['grounded-synthesis','citation-provenance','grounded-confidence'].includes(stage))return '2B';
+      if(stage==='claim-verification')return '2E';if(stage==='claim-planning')return '2F';
+      if(stage==='query-coverage')return '2G';if(stage==='answer-composition')return '2H';
+      if(stage==='answer-citation-map')return '2I';if(stage==='answer-citation-verification')return '2J';
+      return 'UNKNOWN';
+    }
+
     function linkedAudit(transactionId,phase1Entries,sharedEntries){
       return Object.freeze([
         ...phase1Entries.map(entry=>Object.freeze({...entry,transactionId,phase:'1'})),
-        ...sharedEntries.map(entry=>Object.freeze({...entry,transactionId,phase:entry.stage==='retrieval'||entry.stage==='evidence-evaluation'?'2A':entry.stage==='claim-planning'?'2F':entry.stage==='query-coverage'?'2G':entry.stage==='answer-composition'?'2H':entry.stage==='answer-citation-map'?'2I':'2B'}))
+        ...sharedEntries.map(entry=>Object.freeze({...entry,transactionId,phase:phaseForStage(entry.stage)}))
       ]);
     }
     function finish(input){return deps.contract.result(input);}
