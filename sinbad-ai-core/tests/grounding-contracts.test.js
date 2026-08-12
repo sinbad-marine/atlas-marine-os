@@ -4,7 +4,7 @@ const contracts=require('../grounding/contracts.js');
 
 test('creates a deeply immutable grounded answer contract',()=>{
   const result=contracts.groundedAnswer({status:'GROUNDED',answer:'Fact.',claims:[{id:'c1',text:'Fact.',evidenceIds:['e1'],citationIds:['x'],supported:true}],citations:[{id:'x',claimId:'c1',evidenceId:'e1'}],composition:{status:'ANSWER_COMPOSED',answer:'Fact.',answerHash:'hash',claimIds:['c1'],segments:[{startOffset:0,endOffset:5,offsetEncoding:'UTF16_CODE_UNIT',statementHash:'span',claimIds:['c1'],citationIds:['x'],bindings:[{claimId:'c1',citationIds:['x']}]}],metrics:{verifiedClaimCount:1,segmentCount:1}},confidence:{state:'HIGH',reasons:['SUPPORTED']}});
-  assert.equal(result.version,'sinbad-grounded-answer/2I');
+  assert.equal(result.version,'sinbad-grounded-answer/2J');
   assert.equal(Object.isFrozen(result),true);
   assert.equal(Object.isFrozen(result.claims),true);
   assert.equal(Object.isFrozen(result.claims[0]),true);

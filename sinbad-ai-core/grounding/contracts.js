@@ -51,10 +51,11 @@
   }
   function groundedAnswer(input={}){
     return Object.freeze({
-      version:'sinbad-grounded-answer/2I',
+      version:'sinbad-grounded-answer/2J',
       status:STATUSES.includes(input.status)?input.status:'INVALID_CLAIMS',
       answer:input.answer==null?null:String(input.answer),
       composition:composition(input.composition),
+      mapVerification:input.mapVerification&&typeof input.mapVerification==='object'?Object.freeze({schemaVersion:nullable(input.mapVerification.schemaVersion),verifierVersion:nullable(input.mapVerification.verifierVersion),status:nullable(input.mapVerification.status),reasonCode:nullable(input.mapVerification.reasonCode),answerHash:nullable(input.mapVerification.answerHash),segmentCount:Number(input.mapVerification.segmentCount)||0,claimCount:Number(input.mapVerification.claimCount)||0,citationCount:Number(input.mapVerification.citationCount)||0}):null,
       claims:immutableArray(input.claims,claim),citations:immutableArray(input.citations,citation),
       evidenceUsed:immutableArray(input.evidenceUsed,String),
       evidenceRejected:immutableArray(input.evidenceRejected,x=>Object.freeze({...x})),
