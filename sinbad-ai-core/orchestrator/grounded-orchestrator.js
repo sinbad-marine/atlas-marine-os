@@ -3,7 +3,8 @@
   const api=factory({
     contract:load('./grounded-orchestration-contract.js')||root.SinbadGroundedOrchestrationContract,
     audit:load('./audit-log.js')||root.SinbadAuditLog,
-    claimPlanner:load('../verification/claim-planner.js')||root.SinbadClaimPlanner
+    claimPlanner:load('../verification/claim-planner.js')||root.SinbadClaimPlanner,
+    coverageGate:load('../verification/query-coverage-gate.js')||root.SinbadQueryCoverageGate
   });
   if(typeof module==='object'&&module.exports)module.exports=api;
   root.SinbadGroundedOrchestrator=api;
@@ -23,7 +24,7 @@
     function linkedAudit(transactionId,phase1Entries,sharedEntries){
       return Object.freeze([
         ...phase1Entries.map(entry=>Object.freeze({...entry,transactionId,phase:'1'})),
-        ...sharedEntries.map(entry=>Object.freeze({...entry,transactionId,phase:entry.stage==='retrieval'||entry.stage==='evidence-evaluation'?'2A':entry.stage==='claim-planning'?'2F':'2B'}))
+        ...sharedEntries.map(entry=>Object.freeze({...entry,transactionId,phase:entry.stage==='retrieval'||entry.stage==='evidence-evaluation'?'2A':entry.stage==='claim-planning'?'2F':entry.stage==='query-coverage'?'2G':'2B'}))
       ]);
     }
     function finish(input){return deps.contract.result(input);}
@@ -74,7 +75,8 @@
       const plannedQueryHash=deps.claimPlanner.queryHash(phase1.request.question);
       if(!suppliedClaims.length){try{claimPlan=planner&&typeof planner.plan==='function'?planner.plan({transactionId,query:phase1.request.question,selected:selectedEvidence,limit:input.claimPlanning?.limit},{audit:sharedAudit}):deps.claimPlanner.unavailable({transactionId,queryHash:plannedQueryHash,selectedEvidenceCount:selectedEvidence.length});}catch(error){sharedAudit.append('claim-planning','evidence-bound-claim-planner','stopped','CLAIM_PLANNER_FAILURE',{reasonCode:error?.code||'INTERNAL_ERROR'});claimPlan=deps.claimPlanner.unavailable({transactionId,queryHash:plannedQueryHash,selectedEvidenceCount:selectedEvidence.length,reasonCode:error?.code||'INTERNAL_ERROR'});}}
       const plannedClaims=Array.isArray(claimPlan?.claims)?claimPlan.claims:[];
-      const grounded=grounding.run({transactionId,retrievalResult,claims:suppliedClaims.length?suppliedClaims:plannedClaims,claimPlan,planningQuery:phase1.request.question},{audit:sharedAudit});
+      const claimCoverage=!suppliedClaims.length&&claimPlan?.status==='CLAIMS_PLANNED'?deps.coverageGate.evaluate({transactionId,query:phase1.request.question,claimPlan},{audit:sharedAudit}):null;
+      const grounded=grounding.run({transactionId,retrievalResult,claims:suppliedClaims.length?suppliedClaims:plannedClaims,claimPlan,claimCoverage,planningQuery:phase1.request.question},{audit:sharedAudit});
       const phase2bDurationMs=Math.max(0,clock()-phase2bStarted);
       const status=grounded.status==='GROUNDED'?'GROUNDED_PLAN_READY':grounded.status;
       const selected=retrievalResult.evaluation?.selected?.map(item=>item.id)||[];
@@ -87,7 +89,7 @@
         context:contextEntry?.details||null,routing:phase1.routing,
         retrieval:{required:true,status:retrievalResult.status,metrics:retrievalResult.metrics},
         evidence:{status:retrievalResult.status,selected,rejected},
-        groundedAnswer:grounded,claimPlan,citations:grounded.citations,provenance:grounded.provenance,
+        groundedAnswer:grounded,claimPlan,claimCoverage,citations:grounded.citations,provenance:grounded.provenance,
         confidence:grounded.confidence,warnings:grounded.warnings,
         audit:linkedAudit(transactionId,phase1.audit||[],sharedAudit.snapshot()),
         metrics:{phase1DurationMs,phase2aDurationMs,phase2bDurationMs,totalDurationMs:Math.max(0,clock()-totalStarted)}
