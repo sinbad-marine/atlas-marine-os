@@ -43,14 +43,15 @@
     if(!input||typeof input!=='object')return null;
     return Object.freeze({
       schemaVersion:nullable(input.schemaVersion),composerVersion:nullable(input.composerVersion),
-      status:nullable(input.status),reasonCode:nullable(input.reasonCode),answer:nullable(input.answer),
+      status:nullable(input.status),reasonCode:nullable(input.reasonCode),answer:nullable(input.answer),answerHash:nullable(input.answerHash),
       claimIds:immutableArray(input.claimIds,String),
-      metrics:Object.freeze({verifiedClaimCount:Number(input.metrics?.verifiedClaimCount)||0,uniqueStatementCount:Number(input.metrics?.uniqueStatementCount)||0,deduplicatedStatementCount:Number(input.metrics?.deduplicatedStatementCount)||0})
+      segments:immutableArray(input.segments,segment=>Object.freeze({startOffset:Number(segment?.startOffset)||0,endOffset:Number(segment?.endOffset)||0,offsetEncoding:nullable(segment?.offsetEncoding),statementHash:nullable(segment?.statementHash),claimIds:immutableArray(segment?.claimIds,String),citationIds:immutableArray(segment?.citationIds,String),bindings:immutableArray(segment?.bindings,binding=>Object.freeze({claimId:String(binding?.claimId||''),citationIds:immutableArray(binding?.citationIds,String)}))})),
+      metrics:Object.freeze({verifiedClaimCount:Number(input.metrics?.verifiedClaimCount)||0,uniqueStatementCount:Number(input.metrics?.uniqueStatementCount)||0,deduplicatedStatementCount:Number(input.metrics?.deduplicatedStatementCount)||0,segmentCount:Number(input.metrics?.segmentCount)||0})
     });
   }
   function groundedAnswer(input={}){
     return Object.freeze({
-      version:'sinbad-grounded-answer/2H',
+      version:'sinbad-grounded-answer/2I',
       status:STATUSES.includes(input.status)?input.status:'INVALID_CLAIMS',
       answer:input.answer==null?null:String(input.answer),
       composition:composition(input.composition),
