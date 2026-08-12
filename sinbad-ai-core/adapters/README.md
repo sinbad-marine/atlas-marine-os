@@ -31,3 +31,14 @@ use a strict normalized ASCII grammar. Nonce replay records have a bounded
 15-minute lifetime and hard capacity; capacity exhaustion fails closed. All
 external denials share one reason code to avoid replay-probing distinctions.
 
+## Phase 2P terminal delivery receipt
+
+`../delivery/terminal-delivery-receipt.js` lets a UI adapter close an authentic
+Phase 2O authorization once with `DELIVERED` or `FAILED`. The terminal receipt
+is session/channel bound and response-free: it exposes hashes, outcome and
+source count but never answer or source content. Duplicate, copied, retargeted
+or malformed receipt attempts are denied uniformly.
+The recorder accepts authorization objects only in the authorizing process;
+serialized or cloned authorizations fail closed. Durable replay prevention is
+the responsibility of the delivery persistence boundary.
+

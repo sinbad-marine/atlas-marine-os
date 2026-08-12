@@ -245,3 +245,16 @@ without changing the Phase 2M orchestrator version. Replay state is TTL-bounded
 and capacity-bounded, identifiers use a strict normalized ASCII grammar, hash
 verification shares the Phase 2N delivery schema, and all public denials expose
 one uniform reason code.
+
+## Phase 2P terminal delivery receipt boundary
+
+`delivery/terminal-delivery-receipt.js` records exactly one terminal
+`DELIVERED` or `FAILED` outcome for an authentic Phase 2O authorization. The
+receipt must match the authorized session and channel and carries a strict
+attempt identifier. It contains only transaction and binding hashes, outcome
+and source count—never answer or source content. Copied, Proxy-wrapped,
+retargeted, malformed or repeated receipts fail closed with a uniform denial.
+Phase 2P adds an offline receipt contract without changing earlier versions.
+Single-use receipt enforcement is process-local. Deployments that require
+cross-restart deduplication must persist a receipt or authorization identifier
+inside their delivery storage boundary.
