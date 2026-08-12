@@ -215,3 +215,18 @@ only when they use an absolute `https:` URI. The package declares
 `text/plain; charset=utf-8`, rejects unsafe control characters and treats every
 remaining string as opaque text. Exact-version consumers pinned to `2L` must
 migrate explicitly before accepting the `2M` public-response contract.
+
+## Phase 2N public delivery adapter boundary
+
+`adapters/public-response-adapter.js` independently verifies the serialized
+Phase 2M public-response hash and exact contract/policy versions before creating
+the minimal view consumed by Atlas UI adapters. It never copies internal claims,
+evidence, provenance, seals or orchestration diagnostics. Wrong versions,
+pipeline stops, transaction mismatch, altered content, duplicate sources,
+unsafe links and invalid hashes return `DELIVERY_BLOCKED` with no answer or
+sources. This adapter adds its own `2N` delivery contract without changing the
+grounded orchestrator's `2M` version. Delivery authorization is process-local:
+copied or serialized orchestration results are rejected even when an attacker
+recomputes every observable hash. The orchestrator and adapter must use one
+loaded contract-module instance; duplicate bundles and Proxy wrappers fail
+closed. Present-but-blank citation URIs are rejected rather than normalized.
