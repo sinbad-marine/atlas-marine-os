@@ -174,3 +174,12 @@ observational report, not a portable authentication token; downstream systems
 must trust the grounded-answer producer rather than attempting to re-authenticate
 the copied report object. Unknown shared audit stages are labeled `UNKNOWN`
 instead of being silently attributed to an established phase.
+
+## Phase 2K transaction-bound grounded-answer seal
+
+`verification/grounded-answer-seal.js` binds every successfully grounded plan
+to its transaction identifier, normalized query hash, verified answer hash,
+map-verifier version and canonical selected-evidence set. The seal is immutable,
+deterministic and authentic only inside the producing process. Replay across any
+bound field fails, and missing or invalid sealing suppresses the grounded answer
+and returns a pipeline error. The orchestrator contract advances to `2K`.
