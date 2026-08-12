@@ -6,7 +6,8 @@
     claimPlanner:load('../verification/claim-planner.js')||root.SinbadClaimPlanner,
     coverageGate:load('../verification/query-coverage-gate.js')||root.SinbadQueryCoverageGate,
     answerSealer:load('../verification/grounded-answer-seal.js')||root.SinbadGroundedAnswerSeal,
-    answerReleaseGate:load('../verification/grounded-answer-release-gate.js')||root.SinbadGroundedAnswerReleaseGate
+    answerReleaseGate:load('../verification/grounded-answer-release-gate.js')||root.SinbadGroundedAnswerReleaseGate,
+    publicResponseProjector:load('../delivery/public-grounded-response.js')||root.SinbadPublicGroundedResponse
   });
   if(typeof module==='object'&&module.exports)module.exports=api;
   root.SinbadGroundedOrchestrator=api;
@@ -31,6 +32,7 @@
       if(stage==='answer-citation-map')return '2I';if(stage==='answer-citation-verification')return '2J';
       if(stage==='answer-sealing')return '2K';
       if(stage==='answer-release')return '2L';
+      if(stage==='public-response-projection')return '2M';
       return 'UNKNOWN';
     }
 
@@ -104,14 +106,18 @@
       const answerRelease=!sealFailed&&status==='GROUNDED_PLAN_READY'&&releaseGate&&typeof releaseGate.release==='function'&&typeof releaseGate.isBound==='function'?releaseGate.release({sealInput,answerSeal,groundedAnswer:grounded},{answerSealer:deps.answerSealer,audit:sharedAudit}):null;
       const releaseInput={transactionId,queryHash:answerSeal?.queryHash,answerHash:grounded.composition?.answerHash,sealHash:answerSeal?.sealHash,evidenceIds:grounded.evidenceUsed,citationIds:grounded.citations?.map(item=>item.id)};
       const releaseFailed=status==='GROUNDED_PLAN_READY'&&(sealFailed||!answerRelease||!releaseGate.isBound(answerRelease,releaseInput));
-      if(releaseFailed)status='PIPELINE_ERROR';
+      const projector=options.publicResponseProjector||deps.publicResponseProjector;
+      const publicResponse=!releaseFailed&&status==='GROUNDED_PLAN_READY'&&projector&&typeof projector.project==='function'&&typeof projector.isBound==='function'?projector.project({answerRelease,groundedAnswer:grounded},{answerReleaseGate:releaseGate,audit:sharedAudit}):null;
+      const publicInput={transactionId,answer:grounded.answer,answerHash:grounded.composition?.answerHash,releaseHash:answerRelease?.releaseHash,citations:grounded.citations};
+      const projectionFailed=status==='GROUNDED_PLAN_READY'&&(releaseFailed||!publicResponse||!projector.isBound(publicResponse,publicInput));
+      if(projectionFailed)status='PIPELINE_ERROR';
       return finish({
         transactionId,status,intent:phase1.analysis,safety:phase1.safety,
         context:contextEntry?.details||null,routing:phase1.routing,
         retrieval:{required:true,status:retrievalResult.status,metrics:retrievalResult.metrics},
         evidence:{status:retrievalResult.status,selected,rejected},
-        groundedAnswer:releaseFailed?null:grounded,answerSeal:releaseFailed?null:answerSeal,answerRelease:releaseFailed?null:answerRelease,claimPlan,claimCoverage,citations:releaseFailed?[]:grounded.citations,provenance:releaseFailed?null:grounded.provenance,
-        confidence:releaseFailed?null:grounded.confidence,warnings:releaseFailed?[sealFailed?'Grounded answer sealing failed.':'Grounded answer release failed.']:grounded.warnings,
+        groundedAnswer:projectionFailed?null:grounded,answerSeal:projectionFailed?null:answerSeal,answerRelease:projectionFailed?null:answerRelease,publicResponse:projectionFailed?null:publicResponse,claimPlan,claimCoverage,citations:projectionFailed?[]:grounded.citations,provenance:projectionFailed?null:grounded.provenance,
+        confidence:projectionFailed?null:grounded.confidence,warnings:projectionFailed?[sealFailed?'Grounded answer sealing failed.':releaseFailed?'Grounded answer release failed.':'Public response projection failed.']:grounded.warnings,
         audit:linkedAudit(transactionId,phase1.audit||[],sharedAudit.snapshot()),
         metrics:{phase1DurationMs,phase2aDurationMs,phase2bDurationMs,totalDurationMs:Math.max(0,clock()-totalStarted)}
       });

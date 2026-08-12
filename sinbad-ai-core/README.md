@@ -198,3 +198,20 @@ Release authenticity is deliberately process-local: the serialized manifest
 and `releaseHash` are observational transport data, not portable credentials.
 Only the producing process may call `isBound` to authorize delivery. Consumers
 pinned to the exact `2K` orchestrator version must migrate explicitly to `2L`.
+
+## Phase 2M public grounded-response projection
+
+`delivery/public-grounded-response.js` projects an authentic Phase 2L release
+into the only package intended for user-facing adapters. It exposes the exact
+verified answer and a deterministic set of presentation-safe citation fields,
+while excluding claims, evidence identifiers, evidence content, policy/index
+hashes and internal provenance. The projection is bound to the transaction,
+answer and release hashes; copied, replayed, altered, duplicate-citation or
+unverified-citation inputs fail closed and suppress every delivery surface.
+Projection authenticity remains process-local, the runtime stays `PLAN_ONLY`,
+and the grounded orchestrator contract advances to `2M`. Public adapters must
+honor the bound `TEXT_ONLY_NO_HTML` rendering policy; citation links are exposed
+only when they use an absolute `https:` URI. The package declares
+`text/plain; charset=utf-8`, rejects unsafe control characters and treats every
+remaining string as opaque text. Exact-version consumers pinned to `2L` must
+migrate explicitly before accepting the `2M` public-response contract.
