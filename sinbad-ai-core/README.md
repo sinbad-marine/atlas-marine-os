@@ -230,3 +230,18 @@ copied or serialized orchestration results are rejected even when an attacker
 recomputes every observable hash. The orchestrator and adapter must use one
 loaded contract-module instance; duplicate bundles and Proxy wrappers fail
 closed. Present-but-blank citation URIs are rejected rather than normalized.
+
+## Phase 2O single-use delivery authorization boundary
+
+`delivery/single-use-delivery-authorizer.js` prevents an authentic Phase 2N
+delivery from being presented more than once or replayed into another session
+or UI channel. Authorization requires a caller-supplied nonce and binds the
+delivery hash, transaction, session and channel into an immutable authorization
+hash. Delivery-object identity and each session/channel nonce tuple are consumed
+once inside the process. Replay, copying, Proxy wrapping, retargeting, malformed
+context and changed hashes fail closed without answer or sources. The runtime
+remains offline and `PLAN_ONLY`; Phase 2O adds a delivery-authorization contract
+without changing the Phase 2M orchestrator version. Replay state is TTL-bounded
+and capacity-bounded, identifiers use a strict normalized ASCII grammar, hash
+verification shares the Phase 2N delivery schema, and all public denials expose
+one uniform reason code.

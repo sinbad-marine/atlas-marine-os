@@ -19,3 +19,15 @@ The producer and adapter must share one loaded orchestration-contract module
 instance; duplicated bundles intentionally fail closed rather than weakening
 object-identity authentication. A present-but-blank URI is invalid, not absent.
 
+## Phase 2O single-use delivery authorization
+
+`../delivery/single-use-delivery-authorizer.js` accepts only an authentic Phase
+2N delivery and binds its single allowed presentation to a non-empty session,
+target channel and caller nonce. The delivery object and the session/channel
+nonce tuple are consumed atomically in process. Reuse, copying, Proxy wrapping,
+retargeting, malformed context or hash changes return a response-free
+`DELIVERY_AUTHORIZATION_BLOCKED` result. Session, channel and nonce identifiers
+use a strict normalized ASCII grammar. Nonce replay records have a bounded
+15-minute lifetime and hard capacity; capacity exhaustion fails closed. All
+external denials share one reason code to avoid replay-probing distinctions.
+
