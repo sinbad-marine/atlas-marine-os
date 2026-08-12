@@ -183,3 +183,18 @@ map-verifier version and canonical selected-evidence set. The seal is immutable,
 deterministic and authentic only inside the producing process. Replay across any
 bound field fails, and missing or invalid sealing suppresses the grounded answer
 and returns a pipeline error. The orchestrator contract advances to `2K`.
+
+## Phase 2L grounded-answer release gate
+
+`verification/grounded-answer-release-gate.js` permits a grounded answer to
+leave the Core boundary only when its authentic Phase 2K seal remains bound to
+the transaction, query, answer and selected evidence. The immutable release
+manifest additionally binds the exact citation identity set. Copied, forged,
+replayed, incomplete or mutated inputs fail closed; release failure suppresses
+answer, seal, citations, provenance and confidence. The runtime remains
+`PLAN_ONLY`, and the orchestrator contract advances to `2L`.
+
+Release authenticity is deliberately process-local: the serialized manifest
+and `releaseHash` are observational transport data, not portable credentials.
+Only the producing process may call `isBound` to authorize delivery. Consumers
+pinned to the exact `2K` orchestrator version must migrate explicitly to `2L`.

@@ -5,7 +5,8 @@
     audit:load('./audit-log.js')||root.SinbadAuditLog,
     claimPlanner:load('../verification/claim-planner.js')||root.SinbadClaimPlanner,
     coverageGate:load('../verification/query-coverage-gate.js')||root.SinbadQueryCoverageGate,
-    answerSealer:load('../verification/grounded-answer-seal.js')||root.SinbadGroundedAnswerSeal
+    answerSealer:load('../verification/grounded-answer-seal.js')||root.SinbadGroundedAnswerSeal,
+    answerReleaseGate:load('../verification/grounded-answer-release-gate.js')||root.SinbadGroundedAnswerReleaseGate
   });
   if(typeof module==='object'&&module.exports)module.exports=api;
   root.SinbadGroundedOrchestrator=api;
@@ -29,6 +30,7 @@
       if(stage==='query-coverage')return '2G';if(stage==='answer-composition')return '2H';
       if(stage==='answer-citation-map')return '2I';if(stage==='answer-citation-verification')return '2J';
       if(stage==='answer-sealing')return '2K';
+      if(stage==='answer-release')return '2L';
       return 'UNKNOWN';
     }
 
@@ -98,14 +100,18 @@
       const sealInput={transactionId,query:phase1.request.question,answerHash:grounded.composition?.answerHash,mapVerifierVersion:grounded.mapVerification?.verifierVersion,evidenceIds:selected};
       const answerSeal=status==='GROUNDED_PLAN_READY'&&deps.answerSealer&&typeof deps.answerSealer.seal==='function'&&typeof deps.answerSealer.isBound==='function'?deps.answerSealer.seal(sealInput,{audit:sharedAudit}):null;
       const sealFailed=status==='GROUNDED_PLAN_READY'&&(!answerSeal||!deps.answerSealer.isBound(answerSeal,sealInput));
-      if(sealFailed)status='PIPELINE_ERROR';
+      const releaseGate=options.answerReleaseGate||deps.answerReleaseGate;
+      const answerRelease=!sealFailed&&status==='GROUNDED_PLAN_READY'&&releaseGate&&typeof releaseGate.release==='function'&&typeof releaseGate.isBound==='function'?releaseGate.release({sealInput,answerSeal,groundedAnswer:grounded},{answerSealer:deps.answerSealer,audit:sharedAudit}):null;
+      const releaseInput={transactionId,queryHash:answerSeal?.queryHash,answerHash:grounded.composition?.answerHash,sealHash:answerSeal?.sealHash,evidenceIds:grounded.evidenceUsed,citationIds:grounded.citations?.map(item=>item.id)};
+      const releaseFailed=status==='GROUNDED_PLAN_READY'&&(sealFailed||!answerRelease||!releaseGate.isBound(answerRelease,releaseInput));
+      if(releaseFailed)status='PIPELINE_ERROR';
       return finish({
         transactionId,status,intent:phase1.analysis,safety:phase1.safety,
         context:contextEntry?.details||null,routing:phase1.routing,
         retrieval:{required:true,status:retrievalResult.status,metrics:retrievalResult.metrics},
         evidence:{status:retrievalResult.status,selected,rejected},
-        groundedAnswer:sealFailed?null:grounded,answerSeal:sealFailed?null:answerSeal,claimPlan,claimCoverage,citations:sealFailed?[]:grounded.citations,provenance:sealFailed?null:grounded.provenance,
-        confidence:sealFailed?null:grounded.confidence,warnings:sealFailed?['Grounded answer sealing failed.']:grounded.warnings,
+        groundedAnswer:releaseFailed?null:grounded,answerSeal:releaseFailed?null:answerSeal,answerRelease:releaseFailed?null:answerRelease,claimPlan,claimCoverage,citations:releaseFailed?[]:grounded.citations,provenance:releaseFailed?null:grounded.provenance,
+        confidence:releaseFailed?null:grounded.confidence,warnings:releaseFailed?[sealFailed?'Grounded answer sealing failed.':'Grounded answer release failed.']:grounded.warnings,
         audit:linkedAudit(transactionId,phase1.audit||[],sharedAudit.snapshot()),
         metrics:{phase1DurationMs,phase2aDurationMs,phase2bDurationMs,totalDurationMs:Math.max(0,clock()-totalStarted)}
       });
