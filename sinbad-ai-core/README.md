@@ -124,3 +124,25 @@ Planning is extractive rather than free-form: publication text is copied
 exactly and remains `DATA_ONLY`. The runtime stays `PLAN_ONLY`, performs no
 model or expert execution, makes no network request, and activates no
 navigation mathematics.
+
+## Phase 2G query-claim coverage boundary
+
+`verification/query-coverage-gate.js` requires the complete set of principal
+query tokens to be substantially represented by the authentic Phase 2F claim
+plan. Coverage results are immutable and bound to the transaction and normalized
+query hash. Partial or incidental line matches stop as source insufficiency;
+forged, copied or replayed coverage artifacts are invalid claims.
+
+## Phase 2H verified answer composition boundary
+
+`grounding/verified-answer-composer.js` assembles answer text only from claims
+that passed independent verification and received at least one resolved
+citation. Claims are ordered deterministically by identity and repeated exact
+statements are emitted once. The composition keeps every contributing claim ID,
+so repeated statements intentionally have a many-claims-to-one-text mapping.
+Invalid composition stops before answer, citation or evidence output. The layer
+remains extractive and `PLAN_ONLY`.
+
+Phase 2H intentionally advances the grounded-answer and grounded-orchestrator
+contract version strings to `2H`; exact-version consumers must upgrade with
+this boundary.

@@ -11,7 +11,7 @@
   function immutableArray(value,mapper=x=>x){return Object.freeze((Array.isArray(value)?value:[]).map(mapper));}
   function result(input={}){
     return Object.freeze({
-      version:'sinbad-grounded-orchestrator/2G',transactionId:String(input.transactionId||''),
+      version:'sinbad-grounded-orchestrator/2H',transactionId:String(input.transactionId||''),
       status:STATUSES.includes(input.status)?input.status:'PIPELINE_ERROR',
       intent:input.intent||null,safety:input.safety||null,context:input.context||null,
       routing:input.routing||null,

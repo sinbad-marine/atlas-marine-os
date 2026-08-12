@@ -39,11 +39,21 @@
       reasons:immutableArray(input.reasons,String)
     });
   }
+  function composition(input={}){
+    if(!input||typeof input!=='object')return null;
+    return Object.freeze({
+      schemaVersion:nullable(input.schemaVersion),composerVersion:nullable(input.composerVersion),
+      status:nullable(input.status),reasonCode:nullable(input.reasonCode),answer:nullable(input.answer),
+      claimIds:immutableArray(input.claimIds,String),
+      metrics:Object.freeze({verifiedClaimCount:Number(input.metrics?.verifiedClaimCount)||0,uniqueStatementCount:Number(input.metrics?.uniqueStatementCount)||0,deduplicatedStatementCount:Number(input.metrics?.deduplicatedStatementCount)||0})
+    });
+  }
   function groundedAnswer(input={}){
     return Object.freeze({
-      version:'sinbad-grounded-answer/2B',
+      version:'sinbad-grounded-answer/2H',
       status:STATUSES.includes(input.status)?input.status:'INVALID_CLAIMS',
       answer:input.answer==null?null:String(input.answer),
+      composition:composition(input.composition),
       claims:immutableArray(input.claims,claim),citations:immutableArray(input.citations,citation),
       evidenceUsed:immutableArray(input.evidenceUsed,String),
       evidenceRejected:immutableArray(input.evidenceRejected,x=>Object.freeze({...x})),
@@ -53,5 +63,5 @@
       security:Object.freeze({documentContentPolicy:'DATA_ONLY',documentInstructionsExecuted:false,claimGenerationPerformed:false,expertExecutionPerformed:false})
     });
   }
-  return {STATUSES,CONFIDENCE_STATES,citation,claim,confidence,groundedAnswer};
+  return {STATUSES,CONFIDENCE_STATES,citation,claim,confidence,composition,groundedAnswer};
 });
