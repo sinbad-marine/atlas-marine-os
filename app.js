@@ -500,8 +500,16 @@ function renderAcademyQuiz(){
 async function sinbadLocalAnswer(query){
   const q=query.toLowerCase();
   const language=sinbadState.language||appLanguage;
-  const navigationAnswer=window.SinbadNavigation?.answer?.(query,language);
-  if(navigationAnswer)return navigationAnswer;
+  const coreResult=await window.SinbadCore?.orchestrate?.(query,{
+    history:sinbadState.messages,
+    experts:{
+      emergency:()=>language==='tr-TR'
+        ? 'ACİL DURUM: İnsan komutasını ve geminin onaylı acil durum prosedürlerini derhal devreye alın. Uygunsa MAYDAY/PAN-PAN çağrısı yapın, mevkiyi ve tehlikenin niteliğini bildirin; Sinbad yalnızca karar desteğidir.'
+        : 'EMERGENCY: Activate human command and the vessel approved emergency procedures immediately. When appropriate transmit MAYDAY/PAN-PAN with position and nature of distress; Sinbad is decision support only.',
+      navigation:()=>window.SinbadNavigation?.answer?.(query,language)
+    }
+  });
+  if(coreResult?.handled)return coreResult.answer;
   const greetings={'tr-TR':'Merhaba Kaptan. Sinbad aktif. Rotalar, denizcilik yayınları, belgeler, haritalar ve tekne operasyonları hakkında bana soru sorabilirsiniz.','en-US':'Hello Captain. Sinbad is active. Ask me about routes, marine publications, documents, charts, or yacht operations.','ru-RU':'Здравствуйте, капитан. Синбад активен. Спросите меня о маршрутах, морских изданиях, документах, картах или эксплуатации яхты.','fr-FR':'Bonjour Capitaine. Sinbad est actif. Interrogez-moi sur les routes, publications maritimes, documents, cartes ou opérations du yacht.','de-DE':'Hallo Kapitän. Sinbad ist aktiv. Fragen Sie mich zu Routen, nautischen Publikationen, Dokumenten, Karten oder Yachtbetrieb.','ar-SA':'مرحباً أيها القبطان. سندباد نشط. اسألني عن المسارات أو المنشورات البحرية أو الوثائق أو الخرائط أو عمليات اليخت.','es-ES':'Hola Capitán. Sinbad está activo. Pregúnteme sobre rutas, publicaciones marítimas, documentos, cartas u operaciones del yate.','it-IT':'Salve Capitano. Sinbad è attivo. Mi chieda informazioni su rotte, pubblicazioni nautiche, documenti, carte o operazioni dello yacht.'};
   if(/^(slm|selam|merhaba|hello|hi|hey|привет|здрав|bonjour|salut|hallo|guten|مرحبا|السلام|hola|buen|ciao|salve)[!. ]*$/iu.test(q))return greetings[language]||greetings['en-US'];
   // At sea, avoid waiting for an unreachable cloud request. When the browser
@@ -576,7 +584,8 @@ async function sinbadOfflineAiAnswer(question){
   try{
     if(status)status.textContent='Connecting to Sinbad offline brain…';
     const history=sinbadState.messages.slice(-12,-1).map(message=>({role:message.role==='sinbad'?'assistant':'user',content:message.text}));
-    const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/chat`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question,language:sinbadState.language||appLanguage,history})});
+    const coreEnvelope=window.SinbadCore?.aiEnvelope?.(question,history);
+    const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/chat`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question,language:sinbadState.language||appLanguage,history,coreEnvelope})});
     if(!response.ok)throw new Error(`Offline brain returned ${response.status}`);
     const data=await response.json();
     if(!data?.answer)return null;
@@ -1401,7 +1410,8 @@ async function sinbadCloudKnowledgeAnswer(question){
   try{
     const language=sinbadState.language||appLanguage;
     const history=sinbadState.messages.slice(-12,-1).map(message=>({role:message.role==='sinbad'?'assistant':'user',content:message.text}));
-    const {data:aiData,error:aiError}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language,history}});
+    const coreEnvelope=window.SinbadCore?.aiEnvelope?.(question,history);
+    const {data:aiData,error:aiError}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language,history,coreEnvelope}});
     if(!aiError&&aiData?.answer){
       const answer=String(aiData.answer).trim();
       // Older cloud deployments can return a polite "no source found" notice

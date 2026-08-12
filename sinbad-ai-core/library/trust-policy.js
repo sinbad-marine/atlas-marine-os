@@ -1,0 +1,13 @@
+'use strict';
+const contracts=require('./contracts.js');const identity=require('./identity.js');
+function create(input={}){const policy=contracts.validatePolicy(input.policy);const policyHash=identity.sha256(Buffer.from(identity.canonical(policy),'utf8'));if(input.expectedPolicyHash&&input.expectedPolicyHash!==policyHash)contracts.fail(contracts.STATES.TRUST_POLICY_INVALID,'policy hash mismatch');function resolve(document,options={}){const issuer=policy.issuers.find(x=>x.issuerId===document.issuerId);if(!issuer)contracts.fail(contracts.STATES.UNKNOWN_ISSUER,'issuer is not allowlisted',{issuerId:document.issuerId});const grant=issuer.sources.find(x=>x.sourceId===document.sourceId&&x.documentId===document.documentId&&x.editionId===document.editionId);if(!grant)contracts.fail(contracts.STATES.AUTHORITY_NOT_GRANTED,'no exact trust grant');if(grant.canonicalHash!==document.canonicalHash)contracts.fail(contracts.STATES.HASH_MISMATCH,'canonical hash mismatch',{dimension:'CANONICAL_HASH'});if(!['public-domain','licensed-local-use','redistribution-prohibited'].includes(grant.license))contracts.fail(contracts.STATES.LICENSE_REJECTED,'license does not permit ingestion');if(grant.status==='revoked')contracts.fail(contracts.STATES.EDITION_REVOKED,'edition is revoked');const stale=grant.status==='expired'||grant.status==='superseded'||(grant.expiresAt&&Date.parse(grant.expiresAt)<=Date.parse(options.at||new Date().toISOString()));if(stale&&!options.historical)contracts.fail(contracts.STATES.EDITION_STALE,'edition is not current',{status:grant.status});const authoritative=grant.authority==='authoritative'&&!stale;return Object.freeze({policyId:policy.policyId,policyHash,issuerId:issuer.issuerId,authority:authoritative?'authoritative':'secondary',verified:authoritative,maySatisfyAuthoritativeRequirement:authoritative,license:grant.license,status:stale?'historical':grant.status,reason:stale?'EDITION_STALE':authoritative?'TRUST_POLICY_GRANTED':'AUTHORITY_NOT_GRANTED'});}return Object.freeze({policy,policyHash,resolve});}
+function createWithLicenseValidity(input={}){
+  const resolver=create(input);
+  return Object.freeze({...resolver,resolve(document,options={}){
+    const issuer=resolver.policy.issuers.find(x=>x.issuerId===document.issuerId);
+    const grant=issuer?.sources.find(x=>x.sourceId===document.sourceId&&x.documentId===document.documentId&&x.editionId===document.editionId);
+    if(grant?.licenseExpiresAt&&Date.parse(grant.licenseExpiresAt)<=Date.parse(options.at||new Date().toISOString()))contracts.fail(contracts.STATES.LICENSE_REJECTED,'license is expired',{licenseExpiresAt:grant.licenseExpiresAt});
+    return resolver.resolve(document,options);
+  }});
+}
+module.exports=Object.freeze({create:createWithLicenseValidity});

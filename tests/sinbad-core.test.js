@@ -27,3 +27,55 @@ test('never hides missing operational inputs',()=>{
   assert.ok(plan.warnings.some(x=>x.includes('Distance is missing')));
   assert.ok(plan.warnings.some(x=>x.includes('draft is missing')));
 });
+
+test('classifies marine intent and operational risk',()=>{
+  const result=core.analyzeQuery('Akıntıya göre tutulacak rotayı hesapla');
+  assert.equal(result.intent,'navigation');
+  assert.equal(result.risk,'high');
+  assert.equal(result.requiresHumanApproval,true);
+  assert.equal(result.requiresIndependentVerification,true);
+});
+
+test('raises a critical safety gate for distress language',()=>{
+  const result=core.analyzeQuery('Mayday, gemi su alıyor');
+  assert.equal(result.intent,'emergency');
+  assert.equal(result.risk,'critical');
+  assert.ok(core.safetyGuidance(result).some(x=>x.includes('Immediate danger')));
+});
+
+test('flags questions that require current live data',()=>{
+  const result=core.analyzeQuery('Bugün liman açık mı ve hava nasıl?');
+  assert.equal(result.needsLiveData,true);
+  assert.ok(core.safetyGuidance(result).some(x=>x.includes('Live operational data')));
+});
+
+test('normalizes bounded conversation context',()=>{
+  const history=core.conversationContext([
+    {role:'user',text:'first'},
+    {role:'sinbad',text:'second'},
+    {role:'user',text:'third'}
+  ],2);
+  assert.deepEqual(history,[{role:'assistant',content:'second'},{role:'user',content:'third'}]);
+});
+
+test('builds a versioned AI request envelope',()=>{
+  const envelope=core.aiEnvelope('Mercator rotasını hesapla',[{role:'user',text:'Start at 40N'}]);
+  assert.equal(envelope.version,'sinbad-ai-core/1');
+  assert.equal(envelope.analysis.intent,'navigation');
+  assert.equal(envelope.history.length,1);
+  assert.ok(envelope.instructions.some(x=>x.includes('Never invent live')));
+});
+
+test('routes a question to the selected expert',async()=>{
+  const result=await core.orchestrate('CPA hesabı yap',{experts:{navigation:()=>({answer:'CPA result',sources:['navigation-engine']})}});
+  assert.equal(result.handled,true);
+  assert.equal(result.expert,'navigation');
+  assert.equal(result.answer,'CPA result');
+  assert.deepEqual(result.sources,['navigation-engine']);
+});
+
+test('falls through when a specialist cannot answer',async()=>{
+  const result=await core.orchestrate('Rota hakkında yardım',{experts:{navigation:()=>null,general:()=> 'General answer'}});
+  assert.equal(result.expert,'general');
+  assert.equal(result.answer,'General answer');
+});
