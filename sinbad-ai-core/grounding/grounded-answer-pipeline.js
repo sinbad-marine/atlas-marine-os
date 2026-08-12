@@ -5,7 +5,8 @@
     citations:load('./citation-builder.js')||root.SinbadCitationBuilder,
     confidence:load('./confidence-evaluator.js')||root.SinbadGroundingConfidenceEvaluator,
     verifier:load('../verification/claim-support-verifier.js')||root.SinbadClaimSupportVerifier,
-    planner:load('../verification/claim-planner.js')||root.SinbadClaimPlanner
+    planner:load('../verification/claim-planner.js')||root.SinbadClaimPlanner,
+    coverage:load('../verification/query-coverage-gate.js')||root.SinbadQueryCoverageGate
   });
   if(typeof module==='object'&&module.exports)module.exports=api;
   root.SinbadGroundedAnswerPipeline=api;
@@ -26,6 +27,7 @@
       const synthesisStarted=clock();
       const rawClaims=status==='GROUNDED'&&Array.isArray(input.claims)?input.claims:[];let verifications=[];
       if(status==='GROUNDED'&&!rawClaims.length){const expectedQueryHash=deps.planner&&input.planningQuery!=null?deps.planner.queryHash(input.planningQuery):null;const authenticPlan=deps.planner&&typeof deps.planner.isAuthenticPlan==='function'&&deps.planner.isAuthenticPlan(input.claimPlan)&&input.claimPlan.transactionId===String(input.transactionId||'')&&input.claimPlan.queryHash===expectedQueryHash;status=authenticPlan&&['NO_ELIGIBLE_CLAIMS','PLANNER_UNAVAILABLE'].includes(input.claimPlan.status)?'SOURCE_INSUFFICIENT':'INVALID_CLAIMS';}
+      if(status==='GROUNDED'&&input.claimPlan&&!deps.coverage.isBoundSufficient(input.claimCoverage,{transactionId:input.transactionId,query:input.planningQuery}))status=deps.coverage.isBoundResult(input.claimCoverage,{transactionId:input.transactionId,query:input.planningQuery})?'SOURCE_INSUFFICIENT':'INVALID_CLAIMS';
       if(status==='GROUNDED'){try{verifications=deps.verifier.verifyAll(rawClaims,{selected,rejected,audit,transactionId:input.transactionId||null,historical:Boolean(input.historical)});}catch(error){if(error?.code==='PROVENANCE_INCOMPLETE')status='PROVENANCE_INCOMPLETE';else throw error;}}
       const synthesisDurationMs=Math.max(0,clock()-synthesisStarted);
       const citationResult=deps.citations.build({selected,rejected,claims:rawClaims,verifications,clock});

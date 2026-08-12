@@ -11,7 +11,7 @@
   function immutableArray(value,mapper=x=>x){return Object.freeze((Array.isArray(value)?value:[]).map(mapper));}
   function result(input={}){
     return Object.freeze({
-      version:'sinbad-grounded-orchestrator/2F',transactionId:String(input.transactionId||''),
+      version:'sinbad-grounded-orchestrator/2G',transactionId:String(input.transactionId||''),
       status:STATUSES.includes(input.status)?input.status:'PIPELINE_ERROR',
       intent:input.intent||null,safety:input.safety||null,context:input.context||null,
       routing:input.routing||null,
@@ -20,6 +20,7 @@
       evidence:Object.freeze({status:input.evidence?.status||null,selected:immutableArray(input.evidence?.selected,String),rejected:immutableArray(input.evidence?.rejected,x=>Object.freeze({...x}))}),
       groundedAnswer:input.groundedAnswer||null,
       claimPlan:input.claimPlan||null,
+      claimCoverage:input.claimCoverage||null,
       citations:immutableArray(input.citations,x=>x),provenance:input.provenance||null,
       confidence:input.confidence||null,warnings:immutableArray(input.warnings,String),
       audit:immutableArray(input.audit,x=>Object.freeze({...x})),
