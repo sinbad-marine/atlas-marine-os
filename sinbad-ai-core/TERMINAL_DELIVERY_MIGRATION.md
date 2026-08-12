@@ -41,6 +41,14 @@ positive `claimLeaseMs`. Its lease recovery must be atomic/fenced so an
 ambiguous client timeout cannot create two live winners. Claim keys are internal
 and are intentionally not exported by the package API.
 
+For Supabase, apply `20260813_terminal_delivery_idempotency.sql`, create the
+store from the exported `supabase-idempotency-store` subpath with a server-side
+service-role client, and keep that credential outside every browser bundle.
+Set `claimLeaseMs` above the bounded presentation timeout. Lease takeover is
+fenced for settlement, but a crash after an external side effect can still be
+followed by a later takeover; use the transport provider's native idempotency
+key for presentation whenever it supports one.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.
@@ -69,6 +77,8 @@ a newly authorized recovery workflow when operator policy permits it.
 - Import the package root only and reject repository-relative internal imports.
 - Configure the trusted `present` function at adapter startup.
 - Configure and health-check the shared atomic idempotency store.
+- Apply the Phase 2Z migration and verify anon/authenticated RPC denial.
+- Keep the Supabase service-role client server-side only.
 - Configure content-free diagnostic/metric handling if operationally required.
 - Persist adapter-side idempotency before presentation; never retry a blocked or
   unsettled

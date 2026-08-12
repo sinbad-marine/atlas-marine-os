@@ -5,6 +5,7 @@
   "type": "commonjs",
   "main": "./adapters/trusted-terminal-delivery-adapter.js",
   "exports": {
-    ".": "./adapters/trusted-terminal-delivery-adapter.js"
+    ".": "./adapters/trusted-terminal-delivery-adapter.js",
+    "./supabase-idempotency-store": "./adapters/supabase-durable-idempotency-store.js"
   }
 }

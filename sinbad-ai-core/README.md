@@ -362,3 +362,16 @@ provide durable uniqueness across all application instances; an in-memory Set
 is valid only as a test double. Stores must declare the exact Phase 2Y store
 version, `durable: true` and a positive `claimLeaseMs`. The lease policy must
 make ambiguous claim timeouts recoverable without permitting two live winners.
+
+## Phase 2Z Supabase fenced idempotency store
+
+`@sinbad-ai/core-terminal-delivery/supabase-idempotency-store` implements the
+Phase 2Y contract over two service-role-only Postgres RPCs. Claim is one atomic
+insert-or-expired-lease-takeover and returns a database-generated UUID fencing
+token. The token stays inside the store instance and is mandatory for settle;
+stale or expired holders cannot overwrite a newer claim. The table has RLS,
+grants no access to public/anon/authenticated roles, validates 64-character
+claim keys and caps settlement JSON at 4096 bytes. Configure `claimLeaseMs`
+longer than the maximum bounded presentation operation. Since lease recovery
+can repeat an external side effect after a crashed holder, the trusted presenter
+must also use its transport's native idempotency facility where available.

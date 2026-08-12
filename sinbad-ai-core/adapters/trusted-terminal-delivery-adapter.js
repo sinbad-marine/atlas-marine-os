@@ -31,7 +31,7 @@ function create(options={}){
       const completion=gate.complete(authorization,{...context,outcome});
       if(completion.status!=='TERMINAL_COMPLETION_CONFIRMED'){diagnostic('COMPLETION_DENIED');return await settle(key,{status:'TRUSTED_TERMINAL_DELIVERY_BLOCKED',outcome:null,stage:'COMPLETION_DENIED'})?blocked():unsettled({outcome});}
       const transition=state.transition(completion,{...context,outcome});
-      if(transition.status!=='TERMINAL_STATE_APPLIED'){diagnostic('TRANSITION_DENIED');return await settle(key,{status:'TRUSTED_TERMINAL_DELIVERY_BLOCKED',outcome,stage:'TRANSITION_DENIED',completionHash:completion.completionHash})?blocked():unsettled({outcome,sourceCount:completion.sourceCount,completionHash:completion.completionHash});}
+      if(transition.status!=='TERMINAL_STATE_APPLIED'){diagnostic('TRANSITION_DENIED');return await settle(key,{status:'TRUSTED_TERMINAL_DELIVERY_BLOCKED',outcome:null,stage:'TRANSITION_DENIED',completionHash:completion.completionHash})?blocked():unsettled({outcome,sourceCount:completion.sourceCount,completionHash:completion.completionHash});}
       const output=Object.freeze({version:ADAPTER_VERSION,status:'TRUSTED_TERMINAL_DELIVERY_APPLIED',reasonCode:null,terminalState:transition.terminalState,outcome:transition.outcome,sourceCount:transition.sourceCount,completionHash:transition.completionHash,transitionHash:transition.transitionHash});
       if(!await settle(key,{status:output.status,terminalState:output.terminalState,outcome:output.outcome,transitionHash:output.transitionHash}))return unsettled(output);
       return output;

@@ -131,3 +131,13 @@ The store must also declare `version` equal to the Phase 2Y store contract,
 atomic and fenced by the store: a transport timeout may be an ambiguous winning
 claim, so the application must not simply retry presentation.
 
+## Phase 2Z Supabase store
+
+Import `@sinbad-ai/core-terminal-delivery/supabase-idempotency-store` and call
+`create({ client, claimLeaseMs })` with a server-side Supabase service-role
+client. Never construct or expose this client in the browser. Apply migration
+`20260813_terminal_delivery_idempotency.sql` first. The database issues a UUID
+lease token and accepts settle only from the current unexpired holder. Choose a
+lease longer than the bounded presentation timeout; use transport-native
+idempotency as the final protection against a crash followed by lease takeover.
+
