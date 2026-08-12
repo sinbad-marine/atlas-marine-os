@@ -3,6 +3,7 @@
   if(typeof module==='object'&&module.exports)module.exports=api;
   root.SinbadGroundedOrchestrationContract=api;
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
+  const authenticResults=new WeakSet();
   const STATUSES=Object.freeze([
     'GROUNDED_PLAN_READY','PLAN_ONLY_READY','INVALID_INPUT','LOW_CONFIDENCE','SAFETY_BLOCKED',
     'ROUTING_BLOCKED','SOURCE_INSUFFICIENT','EVIDENCE_CONFLICT','RETRIEVAL_FAILURE',
@@ -10,7 +11,7 @@
   ]);
   function immutableArray(value,mapper=x=>x){return Object.freeze((Array.isArray(value)?value:[]).map(mapper));}
   function result(input={}){
-    return Object.freeze({
+    const output=Object.freeze({
       version:'sinbad-grounded-orchestrator/2M',transactionId:String(input.transactionId||''),
       status:STATUSES.includes(input.status)?input.status:'PIPELINE_ERROR',
       intent:input.intent||null,safety:input.safety||null,context:input.context||null,
@@ -30,6 +31,8 @@
       metrics:Object.freeze({...((input.metrics&&typeof input.metrics==='object')?input.metrics:{})}),
       security:Object.freeze({planOnly:true,expertExecutionPerformed:false,navigationExecutionPerformed:false,navigationMathematicsActivated:false,freeFormClaimGeneration:false,liveOrWebRetrieval:false,publicProjectionRequired:true})
     });
+    authenticResults.add(output);return output;
   }
-  return {STATUSES,result};
+  function isAuthenticResult(value){return Boolean(value&&typeof value==='object'&&authenticResults.has(value));}
+  return {STATUSES,result,isAuthenticResult};
 });
