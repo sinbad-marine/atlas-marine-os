@@ -29,4 +29,4 @@ Codex'in paketlenmiş Node çalıştırıcısıyla:
 & 'C:\Users\ASUS\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe' tools\roundtable-review.js
 ```
 
-Araç yalnız `git diff HEAD` içeriğini gönderir. Gönderilecek diff'i önceden mutlaka inceleyin; özel anahtar, kişisel veri veya gönderilmemesi gereken içerik varsa çalıştırmayın.
+Araç `git diff HEAD` ile birlikte yalnız açıkça izin verilen metin/kod uzantılarına sahip, 100 KB altındaki izlenmeyen dosyaları gönderir. `.env`, anahtar, token, credential ve sertifika adları reddedilir; dahil edilen izlenmeyen dosyalar terminalde listelenir. Gönderilecek farkı yine de önceden mutlaka inceleyin.
