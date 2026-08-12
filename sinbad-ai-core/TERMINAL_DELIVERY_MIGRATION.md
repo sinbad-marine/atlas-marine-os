@@ -2,29 +2,37 @@
 
 ## Supported production path
 
-Production adapters must use exactly these two entry points:
+Production consumers must use exactly one package entry point:
 
-1. `delivery/terminal-completion-gate.js` → `complete(authorization, context)`
-2. `adapters/terminal-state-transition.js` → `transition(completion, context)`
+1. `adapters/trusted-terminal-delivery-adapter.js` → `create({ present })`
+   followed by `deliver(authorization)`
 
-The completion gate internally enforces Phase 2P through Phase 2U. Receipt,
-verification, closure and audit modules remain exported for isolated contract
-tests and internal composition; they are not independent terminal-state APIs.
-This restriction is currently an integration boundary, not a JavaScript module
-visibility boundary. Production import linting or adapter package exports must
-expose only the two entry points above. Directly calling an intermediate module
-can consume an authorization and deliberately makes later completion fail closed.
+The trusted adapter internally enforces Phase 2P through Phase 2W. Package
+`exports` exposes only this adapter. Receipt, verification, closure, audit,
+completion and transition modules remain repository-internal for contract tests
+and composition; they are not production APIs. A repository-relative import can
+still bypass package exports, so production lint/build rules must forbid imports
+below the package root.
 
 ## Required trusted context
 
-The adapter must generate `attemptId`, `closureId`, `auditId` and `transitionId`
-inside its trusted boundary. It must bind them to the authorization's exact
-`transactionId`, `sessionId` and `channelId`. Values received directly from a
-browser, model response, document or other untrusted input must not be used.
+Phase 2X generates `attemptId`, `closureId`, `auditId` and `transitionId`
+internally. `deliver()` accepts no context argument and binds the generated IDs
+to the authentic authorization's exact transaction, session and channel.
 
-The `outcome` must come from the trusted presentation operation and must be
-exactly `DELIVERED` or `FAILED`. It must not be inferred from model text or
-supplied by an untrusted client.
+Configure `present` once inside the trusted adapter boundary. Only an exact
+boolean `true` return becomes `DELIVERED`; false, other values and exceptions
+become a fully verified `FAILED`. No caller-supplied outcome is accepted.
+Concurrent calls for the same authorization are locked before presentation.
+Unexpected failures after presentation return `TRUSTED_TERMINAL_DELIVERY_BLOCKED`
+rather than claiming a verified failure. The optional `diagnose` hook receives
+fixed codes only and must not log response content.
+
+The presentation side effect and Core's process-local terminal record cannot be
+one distributed transaction. A post-presentation `BLOCKED` result is terminal
+for that authorization and must never retry presentation with the same object.
+The trusted transport adapter must use its own durable idempotency key and start
+a newly authorized recovery workflow when operator policy permits it.
 
 ## Breaking changes
 
@@ -44,11 +52,13 @@ supplied by an untrusted client.
 ## Rollout checklist
 
 - Remove production calls to standalone terminal Phase 2P–2U APIs.
-- Restrict production package exports/import rules to `complete()` and
-  `transition()`; keep intermediate imports test/internal-only.
-- Generate all binding identifiers inside the trusted adapter.
-- Call `complete()` immediately after the trusted presentation result exists.
-- Call `transition()` once with the same bound context plus `transitionId`.
+- Remove production calls to standalone Phase 2V and 2W APIs.
+- Import the package root only and reject repository-relative internal imports.
+- Configure the trusted `present` function at adapter startup.
+- Configure content-free diagnostic/metric handling if operationally required.
+- Persist adapter-side idempotency before presentation; never retry a blocked
+  authorization or resume from an intermediate Core object.
+- Call only `deliver(authorization)`; do not accept terminal context from clients.
 - Persist only the minimal terminal transition/audit fields required by policy.
 - Treat blocked results uniformly and never fall back to an earlier phase.
 - Run the complete SINBAD Core test suite before deployment.

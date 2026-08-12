@@ -1,0 +1,10 @@
+{
+  "name": "@sinbad-ai/core-terminal-delivery",
+  "version": "2.0.0",
+  "private": true,
+  "type": "commonjs",
+  "main": "./adapters/trusted-terminal-delivery-adapter.js",
+  "exports": {
+    ".": "./adapters/trusted-terminal-delivery-adapter.js"
+  }
+}

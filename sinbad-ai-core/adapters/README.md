@@ -99,3 +99,18 @@ It consumes one authentic Phase 2V completion and emits a minimal immutable
 success or failure transition. Reusing a completion or presenting an earlier
 chain object cannot update terminal state.
 
+## Phase 2X trusted production adapter
+
+Use the `sinbad-ai-core` package root, which exports only
+`trusted-terminal-delivery-adapter.js`. Configure `create({ present })` inside
+the trusted UI/transport adapter and call `deliver(authorization)` without a
+caller-provided context. Phase 2X generates all terminal identifiers, derives
+the outcome from the configured presenter and synchronously composes Phase
+2P–2W after presentation. False returns and presentation exceptions become a
+verified terminal failure; copies, replays and concurrent duplicate attempts
+fail closed. Direct relative imports of Phase 2P–2W are internal/test-only and
+must be rejected by production lint/build policy.
+The adapter acquires a same-process identity lock before calling `present`, so
+concurrent duplicate calls cannot repeat the presentation side effect. An
+optional `diagnose` hook receives fixed, content-free reason codes only.
+

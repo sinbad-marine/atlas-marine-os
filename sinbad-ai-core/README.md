@@ -324,3 +324,24 @@ trusted adapter boundary, never accepted directly from an untrusted client.
 completion once and maps only `DELIVERED` to `DELIVERY_SUCCEEDED` and `FAILED`
 to `DELIVERY_FAILED`. Copies, clones, Proxy wrappers, replay and target mismatch
 fail closed. No earlier phase object may update terminal adapter state.
+
+## Phase 2X trusted terminal-delivery adapter
+
+`adapters/trusted-terminal-delivery-adapter.js` is the sole package export and
+production entry point for terminal delivery. It is configured once with a
+trusted `present` function and accepts only an authentic Phase 2O authorization
+through `deliver(authorization)`. Transaction bindings come from that authentic
+authorization; attempt, closure, audit and transition identifiers are generated
+internally. Only an exact boolean `true` presentation result becomes
+`DELIVERED`; false values and exceptions complete as verified `FAILED` states.
+Callers cannot supply an outcome or terminal identifiers. Package subpath
+exports are closed; production build/lint policy must also reject repository-
+relative imports of Phase 2P–2W internals. An in-process identity lock is taken
+before presentation, so concurrent replay cannot invoke the presenter twice.
+Unexpected post-presentation chain failures return `BLOCKED`, distinct from a
+verified presentation failure, and may emit only fixed content-free diagnostic
+codes through the optional trusted `diagnose` hook.
+Because an external presentation and a process-local Core record cannot form a
+single distributed transaction, a post-presentation `BLOCKED` result is
+non-retriable for that authorization. Durable transport idempotency and any
+operator-approved recovery authorization belong to the trusted adapter.
