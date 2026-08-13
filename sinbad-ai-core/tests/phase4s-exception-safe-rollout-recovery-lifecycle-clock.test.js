@@ -45,3 +45,14 @@ test('throwing and unconvertible clocks fail closed without escaping', async () 
     assert.equal((await setup.value.issueReconciliation(authorization)).status, 'ROLLOUT_RECOVERY_DEPLOYMENT_RECONCILIATION_AUTHORIZED');
   }
 });
+
+test('coercive clock objects fail closed end to end without invoking hooks', async () => {
+  let calls = 0;
+  const malicious = { valueOf() { calls++; throw new Error('must not run'); }, toString() { calls++; throw new Error('must not run'); }, [Symbol.toPrimitive]() { calls++; throw new Error('must not run'); } };
+  const setup = create();
+  const authorization = await delayed(setup);
+  setup.setClock(malicious);
+  assert.equal(setup.value.inspect(authorization).phase, 'RETRY_CLOCK_INVALID');
+  assert.equal((await setup.value.issueReconciliation(authorization)).reasonCode, 'RECONCILIATION_RETRY_CLOCK_INVALID');
+  assert.equal(calls, 0);
+});
