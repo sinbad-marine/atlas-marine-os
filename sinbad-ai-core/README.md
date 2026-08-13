@@ -64,6 +64,8 @@ Phase 5O requires the terminal-recovery operator identity and quarantine command
 
 Phase 5P requires the Supabase idempotency lease bound, claim key, and returned lease token to be direct primitives. Accessors, descriptor traps, numeric strings, bigint, boxed/coercive values, and non-string tokens fail closed without conversion hooks.
 
+Phase 5Q snapshots durable settlement summaries from exact enumerable own data properties. Accessors, proxy traps, inherited or symbol fields, coercive values, and source mutation are rejected or isolated before the fenced settlement RPC.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.
