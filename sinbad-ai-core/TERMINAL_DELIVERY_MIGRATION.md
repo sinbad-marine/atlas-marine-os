@@ -46,6 +46,8 @@ Phase 5D requires deployment-readiness results to expose the exact decision fiel
 
 Phase 5E requires reconciliation audit-readiness decisions to expose exact own data fields. The shared snapshot is used by runtime preflight and reconciliation capability issuance, preventing getter or reason-code coercion in either path.
 
+Phase 5F requires durable reconciliation-audit callbacks to return exact own `status` and `eventHash` data fields. Getter-backed, inherited, uninspectable, or malformed results block capability issuance as `AUTHORIZATION_AUDIT_REQUIRED`.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:

@@ -42,6 +42,8 @@ Phase 5D snapshots deployment-readiness results through exact own data-property 
 
 Phase 5E applies the same exact non-coercive decision snapshot to reconciliation audit readiness. Both preflight and capability issuance reject accessors, inherited fields, descriptor traps, and non-string reason codes without invoking conversion hooks.
 
+Phase 5F snapshots durable reconciliation-audit results through exact `status` and `eventHash` own data properties. Accessors, inherited fields, descriptor traps, and malformed hashes fail closed before capability issuance.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.

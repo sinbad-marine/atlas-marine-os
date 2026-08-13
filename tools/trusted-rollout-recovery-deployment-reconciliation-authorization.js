@@ -5,13 +5,25 @@ const reconciliationModule = require('./trusted-rollout-recovery-deployment-reco
 const auditModule = require('./trusted-rollout-recovery-deployment-reconciliation-audit.js');
 const readinessModule = require('./rollout-recovery-deployment-reconciliation-audit-readiness.js');
 
-const AUTHORIZATION_VERSION = 'sinbad-rollout-recovery-deployment-reconciliation-authorization/5E-v1';
+const AUTHORIZATION_VERSION = 'sinbad-rollout-recovery-deployment-reconciliation-authorization/5F-v1';
 const HASH = /^[a-f0-9]{64}$/u;
 const PURPOSE = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/u;
 const sha256 = value => createHash('sha256').update(value, 'utf8').digest('hex');
 const canonical = value => value === null || typeof value !== 'object' ? JSON.stringify(value) : Array.isArray(value) ? `[${value.map(canonical).join(',')}]` : `{${Object.keys(value).sort().map(key => `${JSON.stringify(key)}:${canonical(value[key])}`).join(',')}}`;
 const issued = (status, reasonCode, capabilityHash = null, issuedAt = null, expiresAt = null) => Object.freeze({ version: AUTHORIZATION_VERSION, status, reasonCode, capabilityHash: HASH.test(capabilityHash || '') ? capabilityHash : null, issuedAt: Number.isSafeInteger(issuedAt) ? issuedAt : null, expiresAt: Number.isSafeInteger(expiresAt) ? expiresAt : null });
 const blocked = reasonCode => Object.freeze({ version: reconciliationModule.RECONCILIATION_VERSION, status: 'ROLLOUT_RECOVERY_DEPLOYMENT_RECONCILIATION_BLOCKED', reasonCode, authorizationHash: null });
+const AUDIT_RESULT_FIELDS = Object.freeze(['status', 'eventHash']);
+function auditResultSnapshot(value) {
+  if (!value || typeof value !== 'object') return null;
+  const output = Object.create(null);
+  for (const name of AUDIT_RESULT_FIELDS) {
+    let descriptor;
+    try { descriptor = Object.getOwnPropertyDescriptor(value, name); } catch { return null; }
+    if (!descriptor || !Object.hasOwn(descriptor, 'value')) return null;
+    output[name] = descriptor.value;
+  }
+  return Object.freeze(output);
+}
 
 function create(options = {}) {
   if (typeof options.authorize !== 'function' || typeof options.now !== 'function') throw new TypeError('Trusted authorize and clock functions are required');
@@ -53,7 +65,7 @@ function create(options = {}) {
       const auditReady = readinessModule.validDecision(ready);
       const approved = auditReady ? await allowed(request) : false;
       let auditResult;
-      try { auditResult = await audit.record(Object.freeze({ actorHash, authorizationHash, purposeHash: sha256(purpose), decision: approved ? 'AUTHORIZED' : 'DENIED', decidedAt: issuedAt })); }
+      try { auditResult = auditResultSnapshot(await audit.record(Object.freeze({ actorHash, authorizationHash, purposeHash: sha256(purpose), decision: approved ? 'AUTHORIZED' : 'DENIED', decidedAt: issuedAt }))); }
       catch { auditResult = null; }
       if (auditResult?.status !== 'RECORDED' || !HASH.test(auditResult.eventHash || '')) return issued('ROLLOUT_RECOVERY_DEPLOYMENT_RECONCILIATION_AUTHORIZATION_BLOCKED', 'AUTHORIZATION_AUDIT_REQUIRED');
       if (!auditReady) return issued('ROLLOUT_RECOVERY_DEPLOYMENT_RECONCILIATION_AUTHORIZATION_BLOCKED', typeof ready?.reasonCode === 'string' && ready.reasonCode ? ready.reasonCode : 'AUDIT_READINESS_REQUIRED');
@@ -75,4 +87,4 @@ function create(options = {}) {
   });
 }
 
-module.exports = Object.freeze({ AUTHORIZATION_VERSION, create });
+module.exports = Object.freeze({ AUTHORIZATION_VERSION, AUDIT_RESULT_FIELDS, auditResultSnapshot, create });
