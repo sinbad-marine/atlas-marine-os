@@ -409,3 +409,18 @@ service-role-only database capability RPC. Phase 3B is delivered as the forward
 Phase 2Z migration remains immutable. Operations must alert on expired claim
 age and quarantine within a documented SLA because automatic takeover is
 intentionally unavailable.
+
+## Phase 3C recovery observability
+
+`supabase-terminal-recovery.inspect({ limit, slaMs, now })` provides an explicit
+content-minimized monitoring contract. It returns `RECOVERY_HEALTHY`,
+`RECOVERY_SLA_BREACHED` or `RECOVERY_UNAVAILABLE`, plus expired count, oldest
+age and validated claim hash/timestamps. Capability denial and store failures
+can no longer masquerade as an empty healthy queue. Results and claim entries
+are immutable; response content, lease tokens and operator identity are never
+included. Alert on both unavailable and SLA-breached states.
+Malformed rows, local/DB clock skew, invalid configuration, capability denial
+and store outage have distinct content-free reason codes. `slaMs` is bounded
+between one second and seven days. `listExpired()` remains a low-level
+compatibility method but is deprecated for health monitoring because its empty
+array intentionally cannot distinguish denial from an empty queue.

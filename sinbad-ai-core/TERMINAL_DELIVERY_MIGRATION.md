@@ -65,6 +65,9 @@ Deploy this through the new `20260814_terminal_delivery_recovery.sql` forward
 migration; never edit an already-applied migration. Require a successful
 service-role database `healthCheck()` before recovery operations, and alert on
 expired-claim age against an explicit operator SLA.
+Use `inspect({ limit, slaMs })` for health/SLA monitoring. Treat
+`RECOVERY_UNAVAILABLE` and `RECOVERY_SLA_BREACHED` as distinct alerts; never use
+the legacy empty-list behavior as evidence that the recovery queue is healthy.
 
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal

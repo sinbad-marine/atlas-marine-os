@@ -170,3 +170,15 @@ Apply `20260814_terminal_delivery_recovery.sql` after the Phase 2Z migration.
 Monitor the oldest expired claim and define an operator response SLA; liveness
 is deliberately subordinate to preventing duplicate presentation.
 
+## Phase 3C recovery monitoring
+
+Use `inspect({ limit, slaMs, now })` for monitoring instead of interpreting an
+empty `listExpired()` result as health. The immutable result distinguishes
+healthy, SLA-breached and unavailable states and includes only count, oldest
+expired age and minimal claim hash/timestamps. Production callers supply a
+bounded SLA and alert on `RECOVERY_UNAVAILABLE` as an infrastructure/security
+failure, not as “zero expired claims.”
+Any malformed RPC row makes the entire inspection unavailable rather than
+shrinking the count into a false healthy result. Treat `listExpired()` as an
+operator-detail helper only; all monitors must use `inspect()`.
+

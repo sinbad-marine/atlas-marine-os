@@ -1,5 +1,7 @@
 'use strict';
 const KEY=/^[a-f0-9]{64}$/u,REASONS=new Set(['PROCESS_CRASH','SETTLEMENT_AMBIGUOUS','LEASE_EXPIRED']);
+const RECOVERY_VERSION='sinbad-terminal-recovery-observability/3C-v1';
+function report(status,reasonCode,claims=[],oldestAgeMs=null){return Object.freeze({version:RECOVERY_VERSION,status,reasonCode,expiredCount:claims.length,oldestAgeMs:Number.isInteger(oldestAgeMs)&&oldestAgeMs>=0?oldestAgeMs:null,claims:Object.freeze(claims)});}
 function create(options={}){
   if(!options.client||typeof options.client.rpc!=='function'||options.serviceRole!==true)throw new TypeError('A trusted server-side Supabase service-role client is required');
   const actorHash=String(options.actorHash||'');if(!KEY.test(actorHash))throw new TypeError('A SHA-256 operator identity is required');
@@ -8,7 +10,8 @@ function create(options={}){
   return Object.freeze({
     healthCheck:verify,
     async listExpired(limit=100){const value=Number(limit);if(!Number.isInteger(value)||value<1||value>500||!await verify())return Object.freeze([]);const {data,error}=await client.rpc('list_expired_terminal_delivery_claims',{p_limit:value});if(error||!Array.isArray(data))return Object.freeze([]);return Object.freeze(data.filter(row=>KEY.test(String(row?.claim_key||''))&&Number.isFinite(Date.parse(row?.claimed_at||''))&&Number.isFinite(Date.parse(row?.lease_expires_at||''))).map(row=>Object.freeze({claimKey:String(row.claim_key),claimedAt:String(row.claimed_at),leaseExpiresAt:String(row.lease_expires_at)})));},
+    async inspect(input={}){const limit=Number(input.limit??100),slaMs=Number(input.slaMs);let now;try{now=typeof input.now==='function'?Number(input.now()):Date.now();}catch{return report('RECOVERY_UNAVAILABLE','RECOVERY_INVALID_INSPECT_ARGS');}if(!Number.isInteger(limit)||limit<1||limit>500||!Number.isInteger(slaMs)||slaMs<1000||slaMs>604800000||!Number.isFinite(now))return report('RECOVERY_UNAVAILABLE','RECOVERY_INVALID_INSPECT_ARGS');if(!await verify())return report('RECOVERY_UNAVAILABLE','RECOVERY_CAPABILITY_DENIED');const {data,error}=await client.rpc('list_expired_terminal_delivery_claims',{p_limit:limit});if(error||!Array.isArray(data))return report('RECOVERY_UNAVAILABLE','RECOVERY_STORE_UNAVAILABLE');const claims=Object.freeze(data.filter(row=>KEY.test(String(row?.claim_key||''))&&Number.isFinite(Date.parse(row?.claimed_at||''))&&Number.isFinite(Date.parse(row?.lease_expires_at||''))).map(row=>Object.freeze({claimKey:String(row.claim_key),claimedAt:String(row.claimed_at),leaseExpiresAt:String(row.lease_expires_at)})));if(claims.length!==data.length)return report('RECOVERY_UNAVAILABLE','RECOVERY_DATA_INTEGRITY_FAILED');const expiries=claims.map(row=>Date.parse(row.leaseExpiresAt));if(expiries.some(value=>value>now))return report('RECOVERY_UNAVAILABLE','RECOVERY_CLOCK_SKEW');const oldestAgeMs=claims.length?Math.floor(now-Math.min(...expiries)):0;return oldestAgeMs>slaMs?report('RECOVERY_SLA_BREACHED','EXPIRED_CLAIM_SLA_EXCEEDED',claims,oldestAgeMs):report('RECOVERY_HEALTHY',null,claims,oldestAgeMs);},
     async quarantine(input={}){const claimKey=String(input.claimKey||''),reasonCode=String(input.reasonCode||'');if(!KEY.test(claimKey)||!REASONS.has(reasonCode)||!await verify())return false;const {data,error}=await client.rpc('quarantine_expired_terminal_delivery_claim',{p_claim_key:claimKey,p_actor_hash:actorHash,p_reason_code:reasonCode});return !error&&data===true;}
   });
 }
-module.exports=Object.freeze({create});
+module.exports=Object.freeze({RECOVERY_VERSION,create});
