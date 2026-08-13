@@ -23,7 +23,7 @@ test('reports only bounded relative retry time without absolute server clock dis
   const capability = await value.issueReconciliation(deployment);
   await value.reconcile(capability);
   const first = value.inspect(deployment);
-  assert.equal(lifecycle.LIFECYCLE_VERSION, 'sinbad-rollout-recovery-deployment-lifecycle-runtime/4V-v1');
+  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/4[VZ]-v1$/u);
   assert.equal(first.phase, 'RETRY_DELAY_ACTIVE');
   assert.equal(first.retryAfterMs, 2000);
   assert.equal('retryNotBefore' in first, false);

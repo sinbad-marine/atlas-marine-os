@@ -30,7 +30,7 @@ async function delayed(setup) {
 }
 
 test('advertises a side-effect-free inspection contract', () => {
-  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/4[R-V]-v1$/u);
+  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/4[R-VZ]-v1$/u);
 });
 
 test('future inspection cannot poison a later valid retry decision', async () => {

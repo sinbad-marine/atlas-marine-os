@@ -92,7 +92,7 @@ test('concurrent rejected execution cannot overwrite the owning unsettled outcom
 });
 
 test('requires the server trust boundary and remains outside package exports', () => {
-  assert.throws(() => lifecycle.create(), /service-role/u);
+  assert.throws(() => lifecycle.create(), /own data property|service-role/u);
   assert.throws(() => create({ maxReconciliationAttempts: 0 }), /attempt policy/u);
   assert.throws(() => create({ reconciliationRetryDelayMs: 999 }), /retry delay/u);
   assert.throws(() => create({ reconciliationRetryBackoffFactor: 1 }), /backoff policy/u);

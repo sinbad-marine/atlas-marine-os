@@ -29,5 +29,5 @@ test('last nonterminal attempt exhausts without an additional scheduling clock r
 });
 
 test('advertises terminal retry exhaustion semantics', () => {
-  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/4[UV]-v1$/u);
+  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/4[UVZ]-v1$/u);
 });

@@ -34,6 +34,8 @@ Phase 4X reads required environment fields once into a frozen null-prototype sna
 
 Phase 4Y snapshots the exact server dependency allowlist through own data-property descriptors before parsing policy or constructing the lifecycle. Accessors and inherited dependency injection are rejected without invocation.
 
+Phase 4Z enforces the same exact own-data-property snapshot inside the rollout-recovery lifecycle runtime. Every accepted runtime dependency is read once before subordinate construction, while inherited values, accessors, missing fields, and descriptor failures are rejected without invoking dependency getters.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:

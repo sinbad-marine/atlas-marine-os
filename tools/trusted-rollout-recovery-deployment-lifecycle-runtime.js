@@ -4,30 +4,44 @@ const journalAdapter = require('../sinbad-ai-core/adapters/supabase-rollout-reco
 const journaledDeploymentModule = require('./trusted-rollout-recovery-journaled-deployment.js');
 const reconciliationRuntimeModule = require('./trusted-rollout-recovery-deployment-reconciliation-runtime.js');
 
-const LIFECYCLE_VERSION = 'sinbad-rollout-recovery-deployment-lifecycle-runtime/4V-v1';
+const LIFECYCLE_VERSION = 'sinbad-rollout-recovery-deployment-lifecycle-runtime/4Z-v1';
+const DEPENDENCIES = Object.freeze(['client', 'serviceRole', 'deploymentReadiness', 'deploy', 'deploymentPurpose', 'deploymentTimeoutMs', 'resolve', 'reconciliationTimeoutMs', 'authorize', 'now', 'actorHash', 'reconciliationPurpose', 'authorizationTtlMs', 'authorizationTimeoutMs', 'auditPageSize', 'auditMaxEvents', 'maxReconciliationAttempts', 'reconciliationRetryDelayMs', 'reconciliationRetryBackoffFactor', 'maxReconciliationRetryDelayMs']);
 const HASH = /^[a-f0-9]{64}$/u;
 const blocked = reasonCode => Object.freeze({ version: LIFECYCLE_VERSION, status: 'ROLLOUT_RECOVERY_DEPLOYMENT_LIFECYCLE_BLOCKED', reasonCode });
 const snapshot = (phase, attemptsUsed = null, attemptsRemaining = null, retryAfterMs = null) => Object.freeze({ version: LIFECYCLE_VERSION, status: 'ROLLOUT_RECOVERY_DEPLOYMENT_LIFECYCLE_STATE', phase, attemptsUsed: Number.isInteger(attemptsUsed) ? attemptsUsed : null, attemptsRemaining: Number.isInteger(attemptsRemaining) ? attemptsRemaining : null, retryAfterMs: Number.isSafeInteger(retryAfterMs) && retryAfterMs >= 0 ? retryAfterMs : null });
 
+function dependencies(options) {
+  if (!options || typeof options !== 'object') throw new TypeError('Exact trusted lifecycle runtime dependencies are required');
+  const output = Object.create(null);
+  for (const name of DEPENDENCIES) {
+    let descriptor;
+    try { descriptor = Object.getOwnPropertyDescriptor(options, name); } catch { throw new TypeError(`Lifecycle runtime dependency cannot be inspected: ${name}`); }
+    if (!descriptor || !Object.hasOwn(descriptor, 'value')) throw new TypeError(`Lifecycle runtime dependency must be an own data property: ${name}`);
+    output[name] = descriptor.value;
+  }
+  if (!output.client || typeof output.client.rpc !== 'function' || output.serviceRole !== true || !output.deploymentReadiness || typeof output.deploymentReadiness.verify !== 'function' || typeof output.deploy !== 'function' || typeof output.resolve !== 'function' || typeof output.authorize !== 'function' || typeof output.now !== 'function') throw new TypeError('Exact trusted lifecycle runtime dependencies are required');
+  return Object.freeze(output);
+}
+
 function create(options = {}) {
-  if (!options.client || typeof options.client.rpc !== 'function' || options.serviceRole !== true) throw new TypeError('A trusted Supabase service-role client is required');
-  const maxAttempts = Number(options.maxReconciliationAttempts);
+  const trusted = dependencies(options);
+  const maxAttempts = Number(trusted.maxReconciliationAttempts);
   if (!Number.isInteger(maxAttempts) || maxAttempts < 1 || maxAttempts > 10) throw new TypeError('A bounded reconciliation attempt policy is required');
-  const retryDelayMs = Number(options.reconciliationRetryDelayMs);
+  const retryDelayMs = Number(trusted.reconciliationRetryDelayMs);
   if (!Number.isInteger(retryDelayMs) || retryDelayMs < 1000 || retryDelayMs > 300000) throw new TypeError('A bounded reconciliation retry delay is required');
-  const backoffFactor = Number(options.reconciliationRetryBackoffFactor);
-  const maxRetryDelayMs = Number(options.maxReconciliationRetryDelayMs);
+  const backoffFactor = Number(trusted.reconciliationRetryBackoffFactor);
+  const maxRetryDelayMs = Number(trusted.maxReconciliationRetryDelayMs);
   if (!Number.isInteger(backoffFactor) || backoffFactor < 2 || backoffFactor > 4 || !Number.isInteger(maxRetryDelayMs) || maxRetryDelayMs < retryDelayMs || maxRetryDelayMs > 300000) throw new TypeError('A bounded reconciliation backoff policy is required');
-  const deploymentJournal = journalAdapter.create(options);
-  const deployment = journaledDeploymentModule.create({ ...options, deploymentJournal });
-  const reconciliation = reconciliationRuntimeModule.create(options);
+  const deploymentJournal = journalAdapter.create(trusted);
+  const deployment = journaledDeploymentModule.create({ ...trusted, deploymentJournal });
+  const reconciliation = reconciliationRuntimeModule.create(trusted);
   const deployments = new WeakMap();
   const capabilities = new WeakMap();
   const executing = new WeakSet();
   const issuing = new WeakSet();
   const reconciling = new WeakSet();
   let lastClock = -1;
-  function clock() { try { return Number(options.now()); } catch { return NaN; } }
+  function clock() { try { return Number(trusted.now()); } catch { return NaN; } }
   function sample() { const value = clock(); if (!Number.isSafeInteger(value) || value < 0 || value < lastClock) return null; lastClock = value; return value; }
   function sampleWithHeadroom(amount) { const value = clock(); if (!Number.isSafeInteger(value) || value < 0 || value < lastClock || value > Number.MAX_SAFE_INTEGER - amount) return null; lastClock = value; return value; }
   function observe() { const value = clock(); return Number.isSafeInteger(value) && value >= 0 && value >= lastClock ? value : null; }
@@ -134,4 +148,4 @@ function create(options = {}) {
   });
 }
 
-module.exports = Object.freeze({ LIFECYCLE_VERSION, create });
+module.exports = Object.freeze({ LIFECYCLE_VERSION, DEPENDENCIES, dependencies, create });

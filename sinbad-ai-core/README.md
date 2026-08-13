@@ -30,6 +30,8 @@ Phase 4X snapshots each required environment field exactly once through its own 
 
 Phase 4Y applies the same own-data-property boundary to trusted lifecycle dependencies. Inherited, accessor-backed, missing, malformed, or uninspectable clients, readiness gates, roles, and callbacks fail at construction without invoking getters.
 
+Phase 4Z moves that exact dependency boundary into the rollout-recovery lifecycle runtime itself. Client, readiness, callback, identity, timeout, audit, and retry inputs are captured once in a frozen null-prototype snapshot before any subordinate runtime is constructed; inherited, accessor-backed, missing, or uninspectable dependencies fail closed.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.
