@@ -24,7 +24,7 @@ test('inherited accessor missing and wrong-type runtime dependencies fail closed
   Object.defineProperty(accessor, 'client', { get() { calls++; return { rpc: async () => null }; } });
   assert.throws(() => lifecycle.dependencies(accessor), /own data property/u);
   assert.equal(calls, 0);
-  for (const changed of [{ serviceRole: 'true' }, { client: {} }, { deploymentReadiness: {} }, { deploy: null }, { resolve: null }, { authorize: null }, { now: null }]) assert.throws(() => lifecycle.dependencies({ ...options(), ...changed }), /exact trusted/iu);
+  for (const changed of [{ serviceRole: 'true' }, { client: {} }, { deploymentReadiness: {} }, { deploy: null }, { resolve: null }, { authorize: null }, { now: null }]) assert.throws(() => lifecycle.dependencies({ ...options(), ...changed }), /(?:exact trusted|nested lifecycle runtime dependency)/iu);
 });
 
 test('descriptor failures are contained and unknown accessors are ignored', () => {
@@ -35,6 +35,27 @@ test('descriptor failures are contained and unknown accessors are ignored', () =
   Object.defineProperty(input, 'secret', { enumerable: true, get() { calls++; throw new Error('must not run'); } });
   assert.doesNotThrow(() => lifecycle.create(input));
   assert.equal(calls, 0);
+});
+
+test('nested runtime dependency accessors fail closed without invocation', () => {
+  for (const [parent, name] of [['client', 'rpc'], ['deploymentReadiness', 'READINESS_VERSION'], ['deploymentReadiness', 'verify']]) {
+    const input = options();
+    let calls = 0;
+    Object.defineProperty(input[parent], name, { get() { calls++; throw new Error('must not run'); } });
+    assert.throws(() => lifecycle.dependencies(input), /own data property/u);
+    assert.equal(calls, 0);
+  }
+});
+
+test('nested runtime dependency facades are detached from later slot mutation', () => {
+  const input = options();
+  const trusted = lifecycle.dependencies(input);
+  input.client.rpc = null;
+  input.deploymentReadiness.verify = null;
+  assert.equal(typeof trusted.client.rpc, 'function');
+  assert.equal(typeof trusted.deploymentReadiness.verify, 'function');
+  assert.ok(Object.isFrozen(trusted.client));
+  assert.ok(Object.isFrozen(trusted.deploymentReadiness));
 });
 
 test('each accepted runtime dependency descriptor is read exactly once', () => {

@@ -9,6 +9,12 @@ const DEPENDENCIES = Object.freeze(['client', 'serviceRole', 'deploymentReadines
 const HASH = /^[a-f0-9]{64}$/u;
 const blocked = reasonCode => Object.freeze({ version: LIFECYCLE_VERSION, status: 'ROLLOUT_RECOVERY_DEPLOYMENT_LIFECYCLE_BLOCKED', reasonCode });
 const snapshot = (phase, attemptsUsed = null, attemptsRemaining = null, retryAfterMs = null) => Object.freeze({ version: LIFECYCLE_VERSION, status: 'ROLLOUT_RECOVERY_DEPLOYMENT_LIFECYCLE_STATE', phase, attemptsUsed: Number.isInteger(attemptsUsed) ? attemptsUsed : null, attemptsRemaining: Number.isInteger(attemptsRemaining) ? attemptsRemaining : null, retryAfterMs: Number.isSafeInteger(retryAfterMs) && retryAfterMs >= 0 ? retryAfterMs : null });
+function ownData(object, name) {
+  let descriptor;
+  try { descriptor = object && typeof object === 'object' ? Object.getOwnPropertyDescriptor(object, name) : null; } catch { throw new TypeError(`Nested lifecycle runtime dependency cannot be inspected: ${name}`); }
+  if (!descriptor || !Object.hasOwn(descriptor, 'value')) throw new TypeError(`Nested lifecycle runtime dependency must be an own data property: ${name}`);
+  return descriptor.value;
+}
 
 function dependencies(options) {
   if (!options || typeof options !== 'object') throw new TypeError('Exact trusted lifecycle runtime dependencies are required');
@@ -19,7 +25,12 @@ function dependencies(options) {
     if (!descriptor || !Object.hasOwn(descriptor, 'value')) throw new TypeError(`Lifecycle runtime dependency must be an own data property: ${name}`);
     output[name] = descriptor.value;
   }
-  if (!output.client || typeof output.client.rpc !== 'function' || output.serviceRole !== true || !output.deploymentReadiness || typeof output.deploymentReadiness.verify !== 'function' || typeof output.deploy !== 'function' || typeof output.resolve !== 'function' || typeof output.authorize !== 'function' || typeof output.now !== 'function') throw new TypeError('Exact trusted lifecycle runtime dependencies are required');
+  const rpc = ownData(output.client, 'rpc');
+  const readinessVersion = ownData(output.deploymentReadiness, 'READINESS_VERSION');
+  const verify = ownData(output.deploymentReadiness, 'verify');
+  if (typeof rpc !== 'function' || output.serviceRole !== true || typeof readinessVersion !== 'string' || typeof verify !== 'function' || typeof output.deploy !== 'function' || typeof output.resolve !== 'function' || typeof output.authorize !== 'function' || typeof output.now !== 'function') throw new TypeError('Exact trusted lifecycle runtime dependencies are required');
+  output.client = Object.freeze(Object.assign(Object.create(null), { rpc: rpc.bind(output.client) }));
+  output.deploymentReadiness = Object.freeze(Object.assign(Object.create(null), { READINESS_VERSION: readinessVersion, verify: verify.bind(output.deploymentReadiness) }));
   return Object.freeze(output);
 }
 
