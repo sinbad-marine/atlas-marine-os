@@ -52,6 +52,8 @@ Phase 5I applies the same exact primitive row contract to the general rollout-re
 
 Phase 5J snapshots both audit verifiers' scan policies through own data-property descriptors. `pageSize` and `maxEvents` accept only direct safe integers; accessors, descriptor traps, numeric strings, bigint, and coercive objects fail before any RPC work.
 
+Phase 5K applies the same non-coercive boundary to authorization and reconciliation audit-readiness configuration. The verifier and bounded scan values must be direct own data properties; accessors, descriptor traps, numeric strings, bigint, and coercive objects are rejected before readiness checks run.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.

@@ -56,6 +56,8 @@ Phase 5I applies the same seven-field own primitive boundary to authorization-au
 
 Phase 5J requires authorization and reconciliation audit scans to receive direct safe-integer `pageSize` and `maxEvents` values. Missing fields use fixed defaults; accessors, proxy descriptor failures, and coercive or non-integer values fail before capability or list RPC calls.
 
+Phase 5K snapshots authorization and reconciliation audit-readiness configuration from direct own data properties. Verifier accessors, descriptor traps, numeric strings, bigint, and coercive scan limits are rejected before any readiness scan can execute.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
