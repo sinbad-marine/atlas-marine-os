@@ -38,3 +38,32 @@ test('attestation captures ttl purpose and clock before later mutation', async (
   assert.equal(originalCalls, 2);
   assert.equal(replacementCalls, 0);
 });
+
+test('attestation snapshots readiness dependencies before later mutation', async () => {
+  const calls = [];
+  const source = options();
+  source.client = { async rpc(name, args) { calls.push([name, args]); return name.startsWith('verify_') ? { data: true, error: null } : { data: [], error: null }; } };
+  const value = attestation.create(source);
+  source.client.rpc = async () => { throw new Error('must not run'); };
+  source.actorHash = 'invalid'; source.limit = 0; source.slaMs = 0; source.pageSize = 0; source.maxEvents = 0;
+  assert.equal((await value.issue()).status, 'READINESS_ATTESTED');
+  assert.deepEqual(calls.filter(([name]) => name.startsWith('list_')).map(([, args]) => args), [{ p_limit: 10 }, { p_limit: 10, p_before_id: null }]);
+});
+
+test('attestation rejects readiness dependency accessors without invocation', () => {
+  let hooks = 0;
+  for (const field of ['client', 'serviceRole', 'actorHash', 'limit', 'slaMs', 'pageSize', 'maxEvents']) {
+    const source = options();
+    Object.defineProperty(source, field, { get() { hooks++; throw new Error('must not run'); } });
+    assert.throws(() => attestation.create(source), /dependencies/u);
+  }
+  assert.equal(hooks, 0);
+});
+
+test('consume classifies a non-coercive invalid clock sample explicitly', async () => {
+  let samples = 0;
+  const value = attestation.create({ ...options(), now: () => ++samples < 3 ? 1000 : 1.5 });
+  const issued = await value.issue();
+  assert.equal(issued.status, 'READINESS_ATTESTED');
+  assert.equal(value.consume(issued).reasonCode, 'ATTESTATION_CLOCK_INVALID');
+});
