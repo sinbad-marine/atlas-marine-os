@@ -12,6 +12,8 @@ Phase 4M tracks each reconciliation capability in a second private `WeakMap`. A 
 
 Phase 4N makes the sequential retry budget explicit and mandatory with `maxReconciliationAttempts` (1–10). The budget increments only after a capability is successfully authorized and is checked before readiness scanning, audit writes, or operator callbacks.
 
+Phase 4O adds mandatory `reconciliationRetryDelayMs` (1000–300000). A nonterminal reconciliation samples the trusted monotonic clock and delays the next authorization; an early request or clock rollback is rejected before any downstream work.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:

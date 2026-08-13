@@ -9,6 +9,7 @@ const deploymentReadiness = { READINESS_VERSION: readiness.READINESS_VERSION, ve
 
 function create(overrides = {}) {
   let auditWrites = 0;
+  let time = 1000;
   const client = { async rpc(name) {
     if (name === 'begin_rollout_recovery_deployment') return { data: 'BEGUN', error: null };
     if (name === 'settle_rollout_recovery_deployment') return { data: 'SETTLED', error: null };
@@ -18,12 +19,12 @@ function create(overrides = {}) {
     if (name === 'append_rollout_recovery_deployment_reconciliation_audit') { auditWrites++; return { data: 'RECORDED', error: null }; }
     throw new Error(`Unexpected RPC: ${name}`);
   } };
-  const value = lifecycle.create({ client, serviceRole: true, deploymentReadiness, deploy: async () => 'OTHER', deploymentPurpose: 'supabase.rollout-recovery', deploymentTimeoutMs: 1000, resolve: async () => 'PENDING', reconciliationTimeoutMs: 1000, authorize: async () => true, now: () => 1000, actorHash: 'b'.repeat(64), reconciliationPurpose: 'deployment.reconciliation', authorizationTtlMs: 1000, authorizationTimeoutMs: 1000, auditPageSize: 100, auditMaxEvents: 10000, maxReconciliationAttempts: 2, ...overrides });
-  return { value, auditWrites: () => auditWrites };
+  const value = lifecycle.create({ client, serviceRole: true, deploymentReadiness, deploy: async () => 'OTHER', deploymentPurpose: 'supabase.rollout-recovery', deploymentTimeoutMs: 1000, resolve: async () => 'PENDING', reconciliationTimeoutMs: 1000, authorize: async () => true, now: () => time, actorHash: 'b'.repeat(64), reconciliationPurpose: 'deployment.reconciliation', authorizationTtlMs: 5000, authorizationTimeoutMs: 1000, auditPageSize: 100, auditMaxEvents: 10000, maxReconciliationAttempts: 2, reconciliationRetryDelayMs: 1000, ...overrides });
+  return { value, auditWrites: () => auditWrites, advance: () => { time += 1000; } };
 }
 
 test('requires and advertises an exact bounded attempt policy', () => {
-  assert.equal(lifecycle.LIFECYCLE_VERSION, 'sinbad-rollout-recovery-deployment-lifecycle-runtime/4N-v1');
+  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/4[NO]-v1$/u);
   for (const maxReconciliationAttempts of [undefined, 0, 11, 1.5]) assert.throws(() => create({ maxReconciliationAttempts }), /attempt policy/u);
 });
 
@@ -36,6 +37,7 @@ test('exhausts sequential nonterminal attempts before new audit or operator work
     const capability = await setup.value.issueReconciliation(deployment);
     assert.equal(capability.status, 'ROLLOUT_RECOVERY_DEPLOYMENT_RECONCILIATION_AUTHORIZED');
     assert.equal((await setup.value.reconcile(capability)).reasonCode, 'PROVIDER_PENDING');
+    setup.advance();
   }
   const writes = setup.auditWrites();
   assert.equal((await setup.value.issueReconciliation(deployment)).reasonCode, 'RECONCILIATION_RETRY_EXHAUSTED');

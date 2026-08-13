@@ -8,6 +8,8 @@ Phase 4M allows a fresh reconciliation capability only after the owning one-use 
 
 Phase 4N requires an explicit `maxReconciliationAttempts` policy between 1 and 10. Only successfully issued reconciliation capabilities consume the budget; once exhausted, no additional audit or operator authorization work is started.
 
+Phase 4O requires a bounded `reconciliationRetryDelayMs` between 1 and 300 seconds. Nonterminal results start a monotonic delay window; early retries and clock rollback fail closed before audit or operator work.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.
