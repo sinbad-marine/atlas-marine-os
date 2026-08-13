@@ -565,3 +565,16 @@ append function must return exact boolean `true`; denial, malformed response or
 exception blocks authorization issuance. This internal contract does not itself
 claim database durability—the deployment writer must provide it and must remain
 server-only.
+
+## Phase 3O Supabase recovery authorization audit
+
+Apply `20260817_rollout_recovery_authorization_audit.sql` to add the internal
+service-role-only authorization audit store. The database independently
+recomputes the Phase 3N event hash before insertion, rejects mismatches, enables
+RLS, revokes direct table access and rejects update, delete and truncate. Event
+hash uniqueness makes response-loss retries idempotent without duplicating an
+audit decision. The internal Supabase adapter accepts only the exact minimal
+event and treats denial, malformed RPC output, error or exception as failure.
+Pass its `append` method to the Phase 3N audit factory only in trusted server
+wiring. The subpath remains unexported until remote migration and identity
+provider integration are verified together.

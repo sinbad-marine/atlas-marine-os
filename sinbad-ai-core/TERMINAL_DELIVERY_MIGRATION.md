@@ -144,6 +144,14 @@ returning operator approval. Only exact boolean `true` confirms persistence;
 writer denial, exception or malformed output blocks capability issuance. Keep
 the writer credentials outside browser and application clients.
 
+For Phase 3O, apply `20260817_rollout_recovery_authorization_audit.sql` after
+the activation journal migration. Create the internal Supabase audit adapter
+with a service-role client and pass its `append` method into the Phase 3N audit
+factory. The database recomputes event hashes and permits only idempotent exact
+replay. Do not grant table or RPC access to `anon` or `authenticated`, and do
+not export this adapter before migration verification and operator identity
+wiring are complete.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.
