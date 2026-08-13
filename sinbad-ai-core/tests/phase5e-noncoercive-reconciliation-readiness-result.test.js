@@ -12,7 +12,7 @@ function decision() { return { version: readiness.READINESS_VERSION, status: 'RE
 function options(check) { return { deploymentJournal: { version: reconciliation.EXPECTED_JOURNAL_VERSION, durable: true, inspect: async () => ({ status: 'FOUND', state: { status: 'APPLIED' } }), settle: async () => ({ status: 'SETTLED' }) }, resolve: async () => 'APPLIED', reconciliationTimeoutMs: 1000, authorize: async () => true, authorizationAudit: { version: audit.AUDIT_VERSION, durable: true, record: async () => ({ status: 'RECORDED', eventHash: 'd'.repeat(64) }) }, auditReadiness: { version: readiness.READINESS_VERSION, check }, now: () => 1000, actorHash: 'b'.repeat(64), reconciliationPurpose: 'deployment.reconciliation', authorizationTtlMs: 1000, authorizationTimeoutMs: 1000 }; }
 
 test('advertises exact reconciliation readiness decision fields', () => {
-  assert.match(authorization.AUTHORIZATION_VERSION, /^sinbad-rollout-recovery-deployment-reconciliation-authorization\/5[EF]-v1$/u);
+  assert.equal(authorization.AUTHORIZATION_VERSION, 'sinbad-rollout-recovery-deployment-reconciliation-authorization/5F-v1');
   const value = readiness.snapshot(decision());
   assert.equal(Object.getPrototypeOf(value), null);
   assert.ok(Object.isFrozen(value));

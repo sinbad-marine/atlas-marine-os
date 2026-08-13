@@ -35,3 +35,14 @@ test('descriptor traps inherited and malformed audit results fail closed', async
     assert.equal((await value.issue(hash)).reasonCode, 'AUTHORIZATION_AUDIT_REQUIRED');
   }
 });
+
+test('coercive audit result fields fail closed without conversion hooks', async () => {
+  for (const name of authorization.AUDIT_RESULT_FIELDS) {
+    let calls = 0;
+    const coercive = { toString() { calls++; return name === 'status' ? 'RECORDED' : 'd'.repeat(64); }, valueOf() { calls++; return name === 'status' ? 'RECORDED' : 'd'.repeat(64); } };
+    const response = { status: 'RECORDED', eventHash: 'd'.repeat(64), [name]: coercive };
+    const value = authorization.create(options(async () => response));
+    assert.equal((await value.issue(hash)).reasonCode, 'AUTHORIZATION_AUDIT_REQUIRED');
+    assert.equal(calls, 0, name);
+  }
+});
