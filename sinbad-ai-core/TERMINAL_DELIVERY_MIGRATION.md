@@ -100,6 +100,12 @@ external idempotency key. Treat exception or timeout as unsettled and reconcile
 externally by hash. Never retry an ambiguous hook outcome with the same
 attestation, since it is consumed before the side effect begins.
 
+For a same-process unsettled activation, call the same adapter instance's
+`reconcile(unsettled)`. Its trusted resolve hook may only query by
+`attestationHash` and return `APPLIED`, `REJECTED` or `PENDING`; it must never
+repeat activation. After restart, use an operator/provider recovery workflow
+keyed by the hash.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.

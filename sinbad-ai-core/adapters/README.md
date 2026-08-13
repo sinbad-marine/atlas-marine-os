@@ -230,3 +230,13 @@ bounded hook timeout and the external system to deduplicate on
 the supplied `attestationHash` because a process crash can still make the
 remote side effect ambiguous.
 
+## Phase 3I activation reconciliation
+
+When a trusted resolve hook is configured, call `reconcile(value)` for an
+authentic same-process `UNSETTLED` result on
+the same adapter. The trusted resolve hook queries only by attestation hash and
+never invokes activation again. `APPLIED` becomes `RECONCILED`, `REJECTED`
+becomes failed, and `PENDING` or lookup errors preserve the unsettled value.
+After restart, reconcile directly with the provider/operator by hash.
+Without the optional hook, activation still works and reconcile is denied.
+

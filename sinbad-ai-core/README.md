@@ -484,3 +484,14 @@ outcomes are terminal failures. Exception or bounded timeout is
 `TRUSTED_ROLLOUT_ACTIVATION_UNSETTLED` because the remote outcome may be
 applied; reconcile by hash and never retry it. The hook receives only the attestation hash and should use that hash
 as the external activation provider's idempotency key.
+
+## Phase 3I activation reconciliation
+
+The adapter optionally accepts a trusted `resolve({ attestationHash })` hook and exposes
+`reconcile(unsettled)`. Resolve may return only `APPLIED`, `REJECTED` or
+`PENDING`; it queries provider state and never activates traffic. Authentic
+same-instance unsettled results reconcile once. Pending, invalid, timeout and
+exception outcomes remain unsettled. Copies, concurrent calls, other instances
+and process restarts cannot use this capability.
+Without this hook, Phase 3H activation remains compatible and reconciliation
+is denied. Resolve must authenticate provider state for the exact hash.
