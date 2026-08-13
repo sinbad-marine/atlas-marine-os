@@ -16,6 +16,8 @@ Phase 4O adds mandatory `reconciliationRetryDelayMs` (1000–300000). A nontermi
 
 Phase 4P adds mandatory `reconciliationRetryBackoffFactor` (2–4) and `maxReconciliationRetryDelayMs` (base delay through 300000). Delay growth is deterministic, capped before multiplication can overflow, and based only on successfully issued attempts.
 
+Phase 4Q exposes a frozen, content-free `inspect(authorization)` snapshot for scheduling and diagnostics. It accepts only the original same-instance deployment authorization and performs no database, audit, provider, or operator calls.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:

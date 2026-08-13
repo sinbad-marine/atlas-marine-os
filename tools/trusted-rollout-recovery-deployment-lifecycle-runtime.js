@@ -4,9 +4,10 @@ const journalAdapter = require('../sinbad-ai-core/adapters/supabase-rollout-reco
 const journaledDeploymentModule = require('./trusted-rollout-recovery-journaled-deployment.js');
 const reconciliationRuntimeModule = require('./trusted-rollout-recovery-deployment-reconciliation-runtime.js');
 
-const LIFECYCLE_VERSION = 'sinbad-rollout-recovery-deployment-lifecycle-runtime/4P-v1';
+const LIFECYCLE_VERSION = 'sinbad-rollout-recovery-deployment-lifecycle-runtime/4Q-v1';
 const HASH = /^[a-f0-9]{64}$/u;
 const blocked = reasonCode => Object.freeze({ version: LIFECYCLE_VERSION, status: 'ROLLOUT_RECOVERY_DEPLOYMENT_LIFECYCLE_BLOCKED', reasonCode });
+const snapshot = (phase, attemptsUsed = null, attemptsRemaining = null, retryNotBefore = null) => Object.freeze({ version: LIFECYCLE_VERSION, status: 'ROLLOUT_RECOVERY_DEPLOYMENT_LIFECYCLE_STATE', phase, attemptsUsed: Number.isInteger(attemptsUsed) ? attemptsUsed : null, attemptsRemaining: Number.isInteger(attemptsRemaining) ? attemptsRemaining : null, retryNotBefore: Number.isSafeInteger(retryNotBefore) ? retryNotBefore : null });
 
 function create(options = {}) {
   if (!options.client || typeof options.client.rpc !== 'function' || options.serviceRole !== true) throw new TypeError('A trusted Supabase service-role client is required');
@@ -34,7 +35,7 @@ function create(options = {}) {
     preflight: reconciliation.preflight,
     async issue(input) {
       const authorization = await deployment.issue(input);
-      if (authorization?.status === 'ROLLOUT_RECOVERY_DEPLOYMENT_AUTHORIZED' && HASH.test(authorization.authorizationHash || '')) deployments.set(authorization, { authorizationHash: authorization.authorizationHash, executed: false, unsettled: false, reconciliationIssued: false, reconciliationAttempts: 0, retryNotBefore: null });
+      if (authorization?.status === 'ROLLOUT_RECOVERY_DEPLOYMENT_AUTHORIZED' && HASH.test(authorization.authorizationHash || '')) deployments.set(authorization, { authorizationHash: authorization.authorizationHash, executed: false, unsettled: false, closed: false, reconciliationIssued: false, reconciliationRunning: false, reconciliationAttempts: 0, retryNotBefore: null });
       return authorization;
     },
     async execute(authorization) {
@@ -46,6 +47,7 @@ function create(options = {}) {
         if (ownsExecution) {
           state.executed = true;
           state.unsettled = outcome?.status === 'ROLLOUT_RECOVERY_DEPLOYMENT_UNSETTLED';
+          state.closed = !state.unsettled;
         }
         return outcome;
       } finally {
@@ -76,13 +78,15 @@ function create(options = {}) {
     async reconcile(capability) {
       const state = capabilities.get(capability);
       const ownsReconciliation = Boolean(state && !reconciling.has(capability));
-      if (ownsReconciliation) reconciling.add(capability);
+      if (ownsReconciliation) { reconciling.add(capability); state.reconciliationRunning = true; }
       try {
         const outcome = await reconciliation.reconcile(capability);
         if (ownsReconciliation) {
           const terminal = outcome?.status === 'ROLLOUT_RECOVERY_DEPLOYMENT_RECONCILED_APPLIED' || outcome?.status === 'ROLLOUT_RECOVERY_DEPLOYMENT_RECONCILED_REJECTED';
           state.unsettled = !terminal;
+          state.closed = terminal;
           state.reconciliationIssued = terminal;
+          state.reconciliationRunning = false;
           if (!terminal) {
             const now = sample();
             const delay = retryDelay(state.reconciliationAttempts);
@@ -91,8 +95,22 @@ function create(options = {}) {
         }
         return outcome;
       } finally {
-        if (ownsReconciliation) reconciling.delete(capability);
+        if (ownsReconciliation) { state.reconciliationRunning = false; reconciling.delete(capability); }
       }
+    },
+    inspect(authorization) {
+      const state = deployments.get(authorization);
+      if (!state) return snapshot('SOURCE_DENIED');
+      const used = state.reconciliationAttempts, remaining = Math.max(0, maxAttempts - used);
+      if (!state.executed) return snapshot(executing.has(authorization) ? 'EXECUTION_IN_PROGRESS' : 'EXECUTION_REQUIRED', used, remaining);
+      if (state.closed) return snapshot('CLOSED', used, remaining);
+      if (state.reconciliationRunning) return snapshot('RECONCILIATION_IN_PROGRESS', used, remaining);
+      if (state.reconciliationIssued) return snapshot('RECONCILIATION_AUTHORIZED', used, remaining);
+      if (used >= maxAttempts) return snapshot('RETRY_EXHAUSTED', used, remaining, state.retryNotBefore);
+      if (state.retryNotBefore === null) return snapshot('RETRY_READY', used, remaining);
+      const now = sample();
+      if (now === null) return snapshot('RETRY_CLOCK_INVALID', used, remaining, state.retryNotBefore);
+      return snapshot(now < state.retryNotBefore ? 'RETRY_DELAY_ACTIVE' : 'RETRY_READY', used, remaining, state.retryNotBefore);
     },
   });
 }

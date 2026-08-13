@@ -26,7 +26,7 @@ function create(overrides = {}) {
 
 test('exposes one frozen lifecycle from deployment through reconciliation', async () => {
   const { value } = create();
-  assert.deepEqual(Object.keys(value), ['version', 'preflight', 'issue', 'execute', 'issueReconciliation', 'reconcile']);
+  assert.deepEqual(Object.keys(value), ['version', 'preflight', 'issue', 'execute', 'issueReconciliation', 'reconcile', 'inspect']);
   assert.ok(Object.isFrozen(value));
   assert.equal((await value.preflight()).status, 'ROLLOUT_RECOVERY_DEPLOYMENT_RECONCILIATION_RUNTIME_READY');
 });
