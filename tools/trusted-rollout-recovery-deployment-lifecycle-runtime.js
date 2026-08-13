@@ -4,10 +4,10 @@ const journalAdapter = require('../sinbad-ai-core/adapters/supabase-rollout-reco
 const journaledDeploymentModule = require('./trusted-rollout-recovery-journaled-deployment.js');
 const reconciliationRuntimeModule = require('./trusted-rollout-recovery-deployment-reconciliation-runtime.js');
 
-const LIFECYCLE_VERSION = 'sinbad-rollout-recovery-deployment-lifecycle-runtime/4U-v1';
+const LIFECYCLE_VERSION = 'sinbad-rollout-recovery-deployment-lifecycle-runtime/4V-v1';
 const HASH = /^[a-f0-9]{64}$/u;
 const blocked = reasonCode => Object.freeze({ version: LIFECYCLE_VERSION, status: 'ROLLOUT_RECOVERY_DEPLOYMENT_LIFECYCLE_BLOCKED', reasonCode });
-const snapshot = (phase, attemptsUsed = null, attemptsRemaining = null, retryNotBefore = null) => Object.freeze({ version: LIFECYCLE_VERSION, status: 'ROLLOUT_RECOVERY_DEPLOYMENT_LIFECYCLE_STATE', phase, attemptsUsed: Number.isInteger(attemptsUsed) ? attemptsUsed : null, attemptsRemaining: Number.isInteger(attemptsRemaining) ? attemptsRemaining : null, retryNotBefore: Number.isSafeInteger(retryNotBefore) ? retryNotBefore : null });
+const snapshot = (phase, attemptsUsed = null, attemptsRemaining = null, retryAfterMs = null) => Object.freeze({ version: LIFECYCLE_VERSION, status: 'ROLLOUT_RECOVERY_DEPLOYMENT_LIFECYCLE_STATE', phase, attemptsUsed: Number.isInteger(attemptsUsed) ? attemptsUsed : null, attemptsRemaining: Number.isInteger(attemptsRemaining) ? attemptsRemaining : null, retryAfterMs: Number.isSafeInteger(retryAfterMs) && retryAfterMs >= 0 ? retryAfterMs : null });
 
 function create(options = {}) {
   if (!options.client || typeof options.client.rpc !== 'function' || options.serviceRole !== true) throw new TypeError('A trusted Supabase service-role client is required');
@@ -123,12 +123,13 @@ function create(options = {}) {
       if (state.closed) return snapshot('CLOSED', used, remaining);
       if (state.reconciliationRunning) return snapshot('RECONCILIATION_IN_PROGRESS', used, remaining);
       if (state.reconciliationIssued) return snapshot('RECONCILIATION_AUTHORIZED', used, remaining);
-      if (used >= maxAttempts) return snapshot('RETRY_EXHAUSTED', used, remaining, state.retryNotBefore);
+      if (used >= maxAttempts) return snapshot('RETRY_EXHAUSTED', used, remaining);
       if (state.retryClockPending) return snapshot('RETRY_CLOCK_PENDING', used, remaining);
       if (state.retryNotBefore === null) return snapshot('RETRY_READY', used, remaining);
       const now = observe();
-      if (now === null) return snapshot('RETRY_CLOCK_INVALID', used, remaining, state.retryNotBefore);
-      return snapshot(now < state.retryNotBefore ? 'RETRY_DELAY_ACTIVE' : 'RETRY_READY', used, remaining, state.retryNotBefore);
+      if (now === null) return snapshot('RETRY_CLOCK_INVALID', used, remaining);
+      const retryAfterMs = Math.max(0, state.retryNotBefore - now);
+      return snapshot(retryAfterMs > 0 ? 'RETRY_DELAY_ACTIVE' : 'RETRY_READY', used, remaining, retryAfterMs);
     },
   });
 }

@@ -27,7 +27,7 @@ async function unsettled(value) {
 }
 
 test('advertises the Phase 4M retry lifecycle contract', () => {
-  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/4[M-U]-v1$/u);
+  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/4[M-V]-v1$/u);
 });
 
 test('nonterminal provider outcome reopens one fresh authorized retry', async () => {

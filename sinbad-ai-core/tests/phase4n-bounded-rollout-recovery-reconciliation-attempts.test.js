@@ -24,7 +24,7 @@ function create(overrides = {}) {
 }
 
 test('requires and advertises an exact bounded attempt policy', () => {
-  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/4[N-U]-v1$/u);
+  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/4[N-V]-v1$/u);
   for (const maxReconciliationAttempts of [undefined, 0, 11, 1.5]) assert.throws(() => create({ maxReconciliationAttempts }), /attempt policy/u);
 });
 
@@ -42,7 +42,7 @@ test('exhausts sequential nonterminal attempts before new audit or operator work
   const writes = setup.auditWrites();
   const exhausted = setup.value.inspect(deployment);
   assert.equal(exhausted.phase, 'RETRY_EXHAUSTED');
-  assert.equal(exhausted.retryNotBefore, null);
+  assert.equal(exhausted.retryAfterMs, null);
   assert.equal((await setup.value.issueReconciliation(deployment)).reasonCode, 'RECONCILIATION_RETRY_EXHAUSTED');
   assert.equal(setup.auditWrites(), writes);
   assert.equal(authorizations, 2);

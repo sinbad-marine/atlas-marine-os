@@ -26,7 +26,7 @@ function create() {
 }
 
 test('advertises a recoverable retry-clock contract', () => {
-  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/4[TU]-v1$/u);
+  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/4[T-V]-v1$/u);
 });
 
 test('invalid completion clock recovers by starting a full delay at first valid decision sample', async () => {
@@ -45,7 +45,7 @@ test('invalid completion clock recovers by starting a full delay at first valid 
   assert.equal((await setup.value.issueReconciliation(authorization)).reasonCode, 'RECONCILIATION_RETRY_DELAY_ACTIVE');
   const delayed = setup.value.inspect(authorization);
   assert.equal(delayed.phase, 'RETRY_DELAY_ACTIVE');
-  assert.equal(delayed.retryNotBefore, 6000);
+  assert.equal(delayed.retryAfterMs, 1000);
   setup.setClock(5999);
   assert.equal((await setup.value.issueReconciliation(authorization)).reasonCode, 'RECONCILIATION_RETRY_DELAY_ACTIVE');
   setup.setClock(6000);
@@ -67,7 +67,7 @@ test('repeated invalid recovery samples remain fail closed without synthetic dea
     assert.equal((await setup.value.issueReconciliation(authorization)).reasonCode, 'RECONCILIATION_RETRY_CLOCK_INVALID');
     const state = setup.value.inspect(authorization);
     assert.equal(state.phase, 'RETRY_CLOCK_PENDING');
-    assert.equal(state.retryNotBefore, null);
+    assert.equal(state.retryAfterMs, null);
   }
 });
 
@@ -86,5 +86,5 @@ test('overflow recovery stays pending until a safe clock starts the full delay',
   assert.equal(setup.value.inspect(authorization).phase, 'RETRY_CLOCK_PENDING');
   setup.setClock(5000);
   assert.equal((await setup.value.issueReconciliation(authorization)).reasonCode, 'RECONCILIATION_RETRY_DELAY_ACTIVE');
-  assert.equal(setup.value.inspect(authorization).retryNotBefore, 6000);
+  assert.equal(setup.value.inspect(authorization).retryAfterMs, 1000);
 });

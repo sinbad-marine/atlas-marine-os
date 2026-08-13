@@ -26,6 +26,8 @@ Phase 4T stores `retryClockPending` when a nonterminal completion cannot obtain 
 
 Phase 4U explicitly clears retry-clock state when a nonterminal result consumes the final attempt. It takes no extra scheduling sample after the mandatory capability-verification clock read; `RETRY_EXHAUSTED` always reports a null retry boundary.
 
+Phase 4V replaces the snapshot's absolute `retryNotBefore` field with relative `retryAfterMs`. This server-only breaking contract is versioned as 4V and prevents disclosure or coupling to the trusted clock's absolute value.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:

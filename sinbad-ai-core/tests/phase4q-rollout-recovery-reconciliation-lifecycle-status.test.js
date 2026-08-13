@@ -25,13 +25,13 @@ function create() {
 }
 
 test('exposes immutable content-free same-instance state without RPC work', async () => {
-  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/4[Q-U]-v1$/u);
+  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/4[Q-V]-v1$/u);
   const setup = create();
   assert.equal(setup.value.inspect({}).phase, 'SOURCE_DENIED');
   const authorization = await setup.value.issue({});
   const calls = setup.calls();
   const state = setup.value.inspect(authorization);
-  assert.deepEqual(state, { version: lifecycle.LIFECYCLE_VERSION, status: 'ROLLOUT_RECOVERY_DEPLOYMENT_LIFECYCLE_STATE', phase: 'EXECUTION_REQUIRED', attemptsUsed: 0, attemptsRemaining: 2, retryNotBefore: null });
+  assert.deepEqual(state, { version: lifecycle.LIFECYCLE_VERSION, status: 'ROLLOUT_RECOVERY_DEPLOYMENT_LIFECYCLE_STATE', phase: 'EXECUTION_REQUIRED', attemptsUsed: 0, attemptsRemaining: 2, retryAfterMs: null });
   assert.ok(Object.isFrozen(state));
   assert.equal(setup.calls(), calls);
   for (const secret of ['authorizationHash', 'commit', 'actorHash', 'purpose']) assert.equal(secret in state, false);
@@ -51,7 +51,7 @@ test('reports authorized running delayed ready and closed transitions', async ()
   await reconciliation;
   const delayed = setup.value.inspect(authorization);
   assert.equal(delayed.phase, 'RETRY_DELAY_ACTIVE');
-  assert.equal(delayed.retryNotBefore, 2000);
+  assert.equal(delayed.retryAfterMs, 1000);
   setup.setTime(2000);
   assert.equal(setup.value.inspect(authorization).phase, 'RETRY_READY');
 });
