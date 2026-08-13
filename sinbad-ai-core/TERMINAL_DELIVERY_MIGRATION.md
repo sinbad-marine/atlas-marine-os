@@ -58,6 +58,8 @@ Phase 5J requires authorization and reconciliation audit scans to receive direct
 
 Phase 5K snapshots authorization and reconciliation audit-readiness configuration from direct own data properties. Verifier accessors, descriptor traps, numeric strings, bigint, and coercive scan limits are rejected before any readiness scan can execute.
 
+Phase 5L requires terminal-recovery audit pagination and returned audit fields to be direct primitive own data properties. Accessors, proxy descriptor failures, inherited fields, numeric strings, bigint, and coercive objects fail closed before invalid RPC calls or hash verification.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
