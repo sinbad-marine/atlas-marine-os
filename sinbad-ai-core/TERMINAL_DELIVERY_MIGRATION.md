@@ -24,6 +24,8 @@ Phase 4S wraps trusted clock invocation and numeric conversion. Exceptions, symb
 
 Phase 4T stores `retryClockPending` when a nonterminal completion cannot obtain a valid time and exposes it as `RETRY_CLOCK_PENDING`. It never writes a synthetic maximum deadline; a later valid authorization decision establishes the complete delay window before any downstream work. Exhausted attempts take precedence over pending-clock recovery.
 
+Phase 4U explicitly clears retry-clock state when a nonterminal result consumes the final attempt. It takes no extra scheduling sample after the mandatory capability-verification clock read; `RETRY_EXHAUSTED` always reports a null retry boundary.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:

@@ -4,7 +4,7 @@ const journalAdapter = require('../sinbad-ai-core/adapters/supabase-rollout-reco
 const journaledDeploymentModule = require('./trusted-rollout-recovery-journaled-deployment.js');
 const reconciliationRuntimeModule = require('./trusted-rollout-recovery-deployment-reconciliation-runtime.js');
 
-const LIFECYCLE_VERSION = 'sinbad-rollout-recovery-deployment-lifecycle-runtime/4T-v1';
+const LIFECYCLE_VERSION = 'sinbad-rollout-recovery-deployment-lifecycle-runtime/4U-v1';
 const HASH = /^[a-f0-9]{64}$/u;
 const blocked = reasonCode => Object.freeze({ version: LIFECYCLE_VERSION, status: 'ROLLOUT_RECOVERY_DEPLOYMENT_LIFECYCLE_BLOCKED', reasonCode });
 const snapshot = (phase, attemptsUsed = null, attemptsRemaining = null, retryNotBefore = null) => Object.freeze({ version: LIFECYCLE_VERSION, status: 'ROLLOUT_RECOVERY_DEPLOYMENT_LIFECYCLE_STATE', phase, attemptsUsed: Number.isInteger(attemptsUsed) ? attemptsUsed : null, attemptsRemaining: Number.isInteger(attemptsRemaining) ? attemptsRemaining : null, retryNotBefore: Number.isSafeInteger(retryNotBefore) ? retryNotBefore : null });
@@ -99,10 +99,15 @@ function create(options = {}) {
           state.reconciliationIssued = terminal;
           state.reconciliationRunning = false;
           if (!terminal) {
-            const now = sample();
-            const delay = retryDelay(state.reconciliationAttempts);
-            state.retryClockPending = now === null || now > Number.MAX_SAFE_INTEGER - delay;
-            state.retryNotBefore = state.retryClockPending ? null : now + delay;
+            if (state.reconciliationAttempts >= maxAttempts) {
+              state.retryClockPending = false;
+              state.retryNotBefore = null;
+            } else {
+              const now = sample();
+              const delay = retryDelay(state.reconciliationAttempts);
+              state.retryClockPending = now === null || now > Number.MAX_SAFE_INTEGER - delay;
+              state.retryNotBefore = state.retryClockPending ? null : now + delay;
+            }
           }
         }
         return outcome;

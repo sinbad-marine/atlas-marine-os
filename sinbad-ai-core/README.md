@@ -20,6 +20,8 @@ Phase 4S makes lifecycle clock conversion exception-safe. A throwing clock or an
 
 Phase 4T replaces synthetic infinite retry deadlines with a distinct recoverable `RETRY_CLOCK_PENDING` state. After the clock returns, the first valid decision sample starts the full configured delay and remains fail-closed for that call.
 
+Phase 4U makes retry exhaustion terminal for scheduling state. The last nonterminal attempt clears pending/deadline metadata and takes no additional retry-scheduling clock sample beyond capability verification because no later retry can be authorized.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.
