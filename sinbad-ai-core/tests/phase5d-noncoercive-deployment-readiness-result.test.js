@@ -43,3 +43,11 @@ test('object reason codes never invoke coercion hooks', async () => {
   assert.equal((await value.issue({})).reasonCode, 'DEPLOYMENT_NOT_READY');
   assert.equal(calls, 0);
 });
+
+test('blocked readiness reason strings are never reflected across the authorization boundary', async () => {
+  for (const reasonCode of ['IDENTITY_DENIED', 'FORGED_REASON', ' '.repeat(64)]) {
+    const response = { ...result(), status: 'ROLLOUT_RECOVERY_DEPLOYMENT_BLOCKED', reasonCode };
+    const value = authorization.create(options(async () => response));
+    assert.equal((await value.issue({})).reasonCode, 'DEPLOYMENT_NOT_READY');
+  }
+});

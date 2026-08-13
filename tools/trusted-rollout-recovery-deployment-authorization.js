@@ -71,7 +71,7 @@ function create(options = {}) {
       }
       ready = readinessSnapshot(ready);
       if (!ready) return authorization('ROLLOUT_RECOVERY_DEPLOYMENT_AUTHORIZATION_BLOCKED', 'DEPLOYMENT_READINESS_CONTRACT_INVALID');
-      if (ready.version !== readinessModule.READINESS_VERSION || ready.status !== 'ROLLOUT_RECOVERY_DEPLOYMENT_READY' || ready.reasonCode !== null || typeof ready.commit !== 'string' || !COMMIT.test(ready.commit)) return authorization('ROLLOUT_RECOVERY_DEPLOYMENT_AUTHORIZATION_BLOCKED', typeof ready.reasonCode === 'string' && ready.reasonCode ? ready.reasonCode : 'DEPLOYMENT_NOT_READY');
+      if (ready.version !== readinessModule.READINESS_VERSION || ready.status !== 'ROLLOUT_RECOVERY_DEPLOYMENT_READY' || ready.reasonCode !== null || typeof ready.commit !== 'string' || !COMMIT.test(ready.commit)) return authorization('ROLLOUT_RECOVERY_DEPLOYMENT_AUTHORIZATION_BLOCKED', 'DEPLOYMENT_NOT_READY');
       if (!Number.isSafeInteger(ready.eventCount) || ready.eventCount < 0 || !Number.isSafeInteger(ready.pageCount) || ready.pageCount < 1 || (ready.watermarkId !== null && (!Number.isSafeInteger(ready.watermarkId) || ready.watermarkId < 1)) || ((ready.eventCount === 0) !== (ready.watermarkId === null))) return authorization('ROLLOUT_RECOVERY_DEPLOYMENT_AUTHORIZATION_BLOCKED', 'DEPLOYMENT_READINESS_CONTRACT_INVALID');
       const issuedAt = sample();
       if (issuedAt === null || issuedAt > Number.MAX_SAFE_INTEGER - ttlMs) return authorization('ROLLOUT_RECOVERY_DEPLOYMENT_AUTHORIZATION_BLOCKED', 'AUTHORIZATION_CLOCK_INVALID');
