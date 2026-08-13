@@ -192,3 +192,13 @@ or modified data. Database triggers reject audit UPDATE and DELETE operations,
 and a unique claim key prevents a second event for the same claim. Timestamps
 are observational; the hash binds claim, actor, action and reason fields.
 
+## Phase 3E bounded audit scanning
+
+Call `scan({ pageSize, maxEvents })` from a trusted server process to validate
+successive audit pages. IDs must be globally unique and strictly descending.
+The scan returns no event array, even on failure. Alert on
+`AUDIT_SCAN_INTEGRITY_FAILED`, `AUDIT_SCAN_UNAVAILABLE` and
+`AUDIT_SCAN_INCOMPLETE`; only `AUDIT_SCAN_COMPLETE` reached the end of the
+sequence visible during that run. Keep `maxEvents` as an explicit operational
+budget.
+

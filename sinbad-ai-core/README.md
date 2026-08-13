@@ -438,3 +438,15 @@ returns `AUDIT_INTEGRITY_FAILED`; denied capability and store
 failure return `AUDIT_UNAVAILABLE`. The read RPC both checks `service_role` in
 the database and has execute permission only for that role. Never expose its
 client or returned operator hashes to a browser.
+
+## Phase 3E bounded recovery audit scan
+
+`supabase-terminal-recovery-audit.scan({ pageSize, maxEvents })` walks verified
+pages in strictly descending event order and returns only a content-free frozen
+summary. `AUDIT_SCAN_COMPLETE` requires a terminal empty page and means the
+scan reached the end of the sequence visible through that paginated run.
+Capability is rechecked before every page. Duplicate, ascending or modified events
+produce `AUDIT_SCAN_INTEGRITY_FAILED`; transport/capability failures produce
+`AUDIT_SCAN_UNAVAILABLE`. Reaching `maxEvents` on a full page is conservatively
+`AUDIT_SCAN_INCOMPLETE`, never success. The summary contains only event count,
+page count and the initial high-watermark ID.

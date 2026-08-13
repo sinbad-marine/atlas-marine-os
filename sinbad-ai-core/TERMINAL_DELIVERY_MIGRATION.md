@@ -76,6 +76,12 @@ on `AUDIT_UNAVAILABLE` and `AUDIT_INTEGRITY_FAILED`; `AUDIT_PAGE_VALID`
 verifies only the returned page, not unscanned history. Audit rows are append-only, unique per
 claim and contain no delivery content or raw operator identity.
 
+For periodic integrity checks, run
+`supabase-terminal-recovery-audit.scan({ pageSize, maxEvents })`. Require
+`AUDIT_SCAN_COMPLETE`; alert on incomplete, unavailable and integrity-failure
+states. Size `maxEvents` above expected history or intentionally treat the
+bounded result as incomplete instead of accepting a partial scan.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.
