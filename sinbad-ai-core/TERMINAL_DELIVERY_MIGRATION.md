@@ -86,6 +86,8 @@ Phase 5X requires authorization-audit append configuration and recorded event fi
 
 Phase 5Y requires trusted rollout-recovery runtime client, service-role flag, hooks, and audit bounds to be exact own data. Getter access, descriptor traps, numeric strings, bigint, coercive values, and post-construction client/hook/bound mutation fail closed or remain isolated.
 
+Phase 5Z requires runtime audit-readiness health results to contain exact own primitive fields and consistent counters. Getter access, descriptor traps, inherited/coercive fields, and invalid audit watermark invariants fail closed without reason-code conversion hooks.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
