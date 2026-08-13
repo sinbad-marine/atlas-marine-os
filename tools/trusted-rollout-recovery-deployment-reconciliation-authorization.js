@@ -5,7 +5,7 @@ const reconciliationModule = require('./trusted-rollout-recovery-deployment-reco
 const auditModule = require('./trusted-rollout-recovery-deployment-reconciliation-audit.js');
 const readinessModule = require('./rollout-recovery-deployment-reconciliation-audit-readiness.js');
 
-const AUTHORIZATION_VERSION = 'sinbad-rollout-recovery-deployment-reconciliation-authorization/4J-v1';
+const AUTHORIZATION_VERSION = 'sinbad-rollout-recovery-deployment-reconciliation-authorization/5E-v1';
 const HASH = /^[a-f0-9]{64}$/u;
 const PURPOSE = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/u;
 const sha256 = value => createHash('sha256').update(value, 'utf8').digest('hex');
@@ -49,13 +49,14 @@ function create(options = {}) {
       const request = Object.freeze({ actorHash, authorizationHash, purpose });
       let ready;
       try { ready = await readiness.check(); } catch { ready = null; }
-      const auditReady = ready?.version === readinessModule.READINESS_VERSION && ready.status === 'RECONCILIATION_AUDIT_READINESS_READY' && ready.reasonCode === null;
+      ready = readinessModule.snapshot(ready);
+      const auditReady = readinessModule.validDecision(ready);
       const approved = auditReady ? await allowed(request) : false;
       let auditResult;
       try { auditResult = await audit.record(Object.freeze({ actorHash, authorizationHash, purposeHash: sha256(purpose), decision: approved ? 'AUTHORIZED' : 'DENIED', decidedAt: issuedAt })); }
       catch { auditResult = null; }
       if (auditResult?.status !== 'RECORDED' || !HASH.test(auditResult.eventHash || '')) return issued('ROLLOUT_RECOVERY_DEPLOYMENT_RECONCILIATION_AUTHORIZATION_BLOCKED', 'AUTHORIZATION_AUDIT_REQUIRED');
-      if (!auditReady) return issued('ROLLOUT_RECOVERY_DEPLOYMENT_RECONCILIATION_AUTHORIZATION_BLOCKED', String(ready?.reasonCode || 'AUDIT_READINESS_REQUIRED'));
+      if (!auditReady) return issued('ROLLOUT_RECOVERY_DEPLOYMENT_RECONCILIATION_AUTHORIZATION_BLOCKED', typeof ready?.reasonCode === 'string' && ready.reasonCode ? ready.reasonCode : 'AUDIT_READINESS_REQUIRED');
       if (!approved) return issued('ROLLOUT_RECOVERY_DEPLOYMENT_RECONCILIATION_AUTHORIZATION_BLOCKED', 'OPERATOR_AUTHORIZATION_DENIED');
       try {
         const manifest = Object.freeze({ version: AUTHORIZATION_VERSION, actorHash, authorizationHash, purposeHash: sha256(purpose), nonceHash: sha256(randomBytes(32).toString('hex')), issuedAt, expiresAt: issuedAt + ttlMs });

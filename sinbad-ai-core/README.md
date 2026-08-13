@@ -40,6 +40,8 @@ Phase 5C seals the lifecycle clock behind a non-coercive facade. Only direct non
 
 Phase 5D snapshots deployment-readiness results through exact own data-property descriptors. Result getters, inherited fields, descriptor traps, and coercive reason codes fail closed without executing caller-controlled conversion code.
 
+Phase 5E applies the same exact non-coercive decision snapshot to reconciliation audit readiness. Both preflight and capability issuance reject accessors, inherited fields, descriptor traps, and non-string reason codes without invoking conversion hooks.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.

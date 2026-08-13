@@ -11,7 +11,7 @@ const hash = 'a'.repeat(64);
 let time;
 const journal = (overrides = {}) => ({ version: reconciliation.EXPECTED_JOURNAL_VERSION, durable: true, inspect: async () => ({ status: 'FOUND', state: { status: 'APPLIED' } }), settle: async () => ({ status: 'SETTLED' }), ...overrides });
 const authorizationAudit = (overrides = {}) => ({ version: audit.AUDIT_VERSION, durable: true, record: async () => ({ status: 'RECORDED', eventHash: 'd'.repeat(64) }), ...overrides });
-const auditReadiness = (overrides = {}) => ({ version: readiness.READINESS_VERSION, check: async () => ({ version: readiness.READINESS_VERSION, status: 'RECONCILIATION_AUDIT_READINESS_READY', reasonCode: null }), ...overrides });
+const auditReadiness = (overrides = {}) => ({ version: readiness.READINESS_VERSION, check: async () => ({ version: readiness.READINESS_VERSION, status: 'RECONCILIATION_AUDIT_READINESS_READY', reasonCode: null, eventCount: 0, pageCount: 1, watermarkId: null }), ...overrides });
 const options = (overrides = {}) => ({ deploymentJournal: journal(), resolve: async () => 'APPLIED', reconciliationTimeoutMs: 1000, authorize: async () => true, authorizationAudit: authorizationAudit(), auditReadiness: auditReadiness(), now: () => time, actorHash: 'b'.repeat(64), reconciliationPurpose: 'deployment.reconciliation', authorizationTtlMs: 1000, authorizationTimeoutMs: 1000, ...overrides });
 
 test('issues an opaque authorization and reconciles exactly once', async () => {
@@ -70,7 +70,7 @@ test('audit readiness denial is durably recorded before operator callback is ski
   time = 1000;
   let authorizations = 0;
   const events = [];
-  const value = authorization.create(options({ auditReadiness: auditReadiness({ check: async () => ({ version: readiness.READINESS_VERSION, status: 'RECONCILIATION_AUDIT_READINESS_BLOCKED', reasonCode: 'AUDIT_SCAN_LIMIT_REACHED' }) }), authorize: async () => { authorizations++; return true; }, authorizationAudit: authorizationAudit({ record: async event => { events.push(event); return { status: 'RECORDED', eventHash: 'd'.repeat(64) }; } }) }));
+  const value = authorization.create(options({ auditReadiness: auditReadiness({ check: async () => ({ version: readiness.READINESS_VERSION, status: 'RECONCILIATION_AUDIT_READINESS_BLOCKED', reasonCode: 'AUDIT_SCAN_LIMIT_REACHED', eventCount: 100, pageCount: 1, watermarkId: 100 }) }), authorize: async () => { authorizations++; return true; }, authorizationAudit: authorizationAudit({ record: async event => { events.push(event); return { status: 'RECORDED', eventHash: 'd'.repeat(64) }; } }) }));
   const result = await value.issue(hash);
   assert.equal(result.reasonCode, 'AUDIT_SCAN_LIMIT_REACHED');
   assert.equal(authorizations, 0);

@@ -6,6 +6,21 @@ const READINESS_VERSION = 'sinbad-rollout-recovery-deployment-reconciliation-aud
 const EXPECTED_VERIFIER_VERSION = 'sinbad-rollout-recovery-deployment-reconciliation-audit-verifier/4I-v1';
 if (verifierModule.VERIFIER_VERSION !== EXPECTED_VERIFIER_VERSION) throw new Error(`Unsupported verifier version: ${verifierModule.VERIFIER_VERSION}`);
 const result = (status, reasonCode, eventCount = null, pageCount = null, watermarkId = null) => Object.freeze({ version: READINESS_VERSION, status, reasonCode, eventCount: Number.isSafeInteger(eventCount) ? eventCount : null, pageCount: Number.isSafeInteger(pageCount) ? pageCount : null, watermarkId: Number.isSafeInteger(watermarkId) ? watermarkId : null });
+const DECISION_FIELDS = Object.freeze(['version', 'status', 'reasonCode', 'eventCount', 'pageCount', 'watermarkId']);
+function snapshot(value) {
+  if (!value || typeof value !== 'object') return null;
+  const output = Object.create(null);
+  for (const name of DECISION_FIELDS) {
+    let descriptor;
+    try { descriptor = Object.getOwnPropertyDescriptor(value, name); } catch { return null; }
+    if (!descriptor || !Object.hasOwn(descriptor, 'value')) return null;
+    output[name] = descriptor.value;
+  }
+  return Object.freeze(output);
+}
+function validDecision(value) {
+  return Boolean(value && value.version === READINESS_VERSION && value.status === 'RECONCILIATION_AUDIT_READINESS_READY' && value.reasonCode === null && Number.isSafeInteger(value.eventCount) && value.eventCount >= 0 && Number.isSafeInteger(value.pageCount) && value.pageCount >= 1 && (value.watermarkId === null || (Number.isSafeInteger(value.watermarkId) && value.watermarkId >= 1)) && ((value.eventCount === 0) === (value.watermarkId === null)));
+}
 
 function create(options = {}) {
   const verifier = options.auditVerifier;
@@ -25,4 +40,4 @@ function create(options = {}) {
   });
 }
 
-module.exports = Object.freeze({ READINESS_VERSION, EXPECTED_VERIFIER_VERSION, create });
+module.exports = Object.freeze({ READINESS_VERSION, EXPECTED_VERIFIER_VERSION, DECISION_FIELDS, snapshot, validDecision, create });

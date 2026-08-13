@@ -7,7 +7,7 @@ const auditModule = require('./trusted-rollout-recovery-deployment-reconciliatio
 const readinessModule = require('./rollout-recovery-deployment-reconciliation-audit-readiness.js');
 const authorizationModule = require('./trusted-rollout-recovery-deployment-reconciliation-authorization.js');
 
-const RUNTIME_VERSION = 'sinbad-rollout-recovery-deployment-reconciliation-runtime/4K-v1';
+const RUNTIME_VERSION = 'sinbad-rollout-recovery-deployment-reconciliation-runtime/5E-v1';
 const result = (status, reasonCode) => Object.freeze({ version: RUNTIME_VERSION, status, reasonCode });
 
 function create(options = {}) {
@@ -22,8 +22,8 @@ function create(options = {}) {
     version: RUNTIME_VERSION,
     async preflight() {
       let readiness;
-      try { readiness = await auditReadiness.check(); } catch { readiness = null; }
-      if (readiness?.version !== readinessModule.READINESS_VERSION || readiness.status !== 'RECONCILIATION_AUDIT_READINESS_READY' || readiness.reasonCode !== null) return result('ROLLOUT_RECOVERY_DEPLOYMENT_RECONCILIATION_RUNTIME_BLOCKED', String(readiness?.reasonCode || 'AUDIT_READINESS_REQUIRED'));
+      try { readiness = readinessModule.snapshot(await auditReadiness.check()); } catch { readiness = null; }
+      if (!readinessModule.validDecision(readiness)) return result('ROLLOUT_RECOVERY_DEPLOYMENT_RECONCILIATION_RUNTIME_BLOCKED', typeof readiness?.reasonCode === 'string' && readiness.reasonCode ? readiness.reasonCode : 'AUDIT_READINESS_REQUIRED');
       return result('ROLLOUT_RECOVERY_DEPLOYMENT_RECONCILIATION_RUNTIME_READY', null);
     },
     issue: authorization.issue,
