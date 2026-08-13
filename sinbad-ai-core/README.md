@@ -803,3 +803,16 @@ The internal Supabase adapter implements only the exact append contract and
 accepts `RECORDED` or `ALREADY_RECORDED`. The sealed migration manifest advances
 to `4H-v1` with ten ordered files. This migration and adapter remain local until
 an authorized remote rollout verifies the database contract.
+
+## Phase 4I reconciliation audit verification
+
+Apply `20260823_rollout_recovery_deployment_reconciliation_audit_verification.sql`
+after Phase 4H. It adds service-role-only descending pagination and capability
+verification without weakening the immutable audit table. The internal verifier
+recomputes every Phase 4G event hash and rejects malformed rows, invalid order,
+capability loss and storage outages.
+
+Scans require explicit page/event bounds and return only a content-free summary.
+Reaching the event limit is `AUDIT_SCAN_INCOMPLETE`, never success. The sealed
+migration manifest advances to `4I-v1` with eleven ordered files; the verifier
+remains internal until the remote migrations are applied and verified.

@@ -263,6 +263,11 @@ service-role client and pass it through the Phase 4G audit factory. Verify the
 database hash recipe, immutability triggers and client-role denial before
 exposing the reconciliation workflow.
 
+For Phase 4I, apply the `20260823` verification migration after Phase 4H and run
+the internal verifier with explicit page and event budgets. Require
+`AUDIT_SCAN_COMPLETE`. Capability loss, invalid hashes/order, storage outage and
+bounded-incomplete scans must block reconciliation workflow readiness.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.
