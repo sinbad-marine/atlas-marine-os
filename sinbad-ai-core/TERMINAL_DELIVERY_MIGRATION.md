@@ -36,6 +36,8 @@ Phase 4Y snapshots the exact server dependency allowlist through own data-proper
 
 Phase 4Z enforces the same exact own-data-property snapshot inside the rollout-recovery lifecycle runtime. Every accepted runtime dependency is read once before subordinate construction, while inherited values, accessors, missing fields, and descriptor failures are rejected without invoking dependency getters.
 
+Phase 5A requires exact primitive lifecycle identity and numeric policy values at the runtime boundary. Callers must pass canonical strings and safe integers directly; implicit object, string, boolean, bigint, infinity, or unsafe-integer coercion is rejected before subordinate construction.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:

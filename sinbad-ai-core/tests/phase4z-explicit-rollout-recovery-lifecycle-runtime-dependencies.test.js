@@ -10,7 +10,7 @@ function options() {
 }
 
 test('advertises an exact frozen runtime dependency contract', () => {
-  assert.equal(lifecycle.LIFECYCLE_VERSION, 'sinbad-rollout-recovery-deployment-lifecycle-runtime/4Z-v1');
+  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/(?:4Z|5A)-v1$/u);
   const value = lifecycle.dependencies(options());
   assert.equal(Object.getPrototypeOf(value), null);
   assert.ok(Object.isFrozen(value));

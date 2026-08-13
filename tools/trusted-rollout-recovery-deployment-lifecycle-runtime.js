@@ -4,9 +4,10 @@ const journalAdapter = require('../sinbad-ai-core/adapters/supabase-rollout-reco
 const journaledDeploymentModule = require('./trusted-rollout-recovery-journaled-deployment.js');
 const reconciliationRuntimeModule = require('./trusted-rollout-recovery-deployment-reconciliation-runtime.js');
 
-const LIFECYCLE_VERSION = 'sinbad-rollout-recovery-deployment-lifecycle-runtime/4Z-v1';
+const LIFECYCLE_VERSION = 'sinbad-rollout-recovery-deployment-lifecycle-runtime/5A-v1';
 const DEPENDENCIES = Object.freeze(['client', 'serviceRole', 'deploymentReadiness', 'deploy', 'deploymentPurpose', 'deploymentTimeoutMs', 'resolve', 'reconciliationTimeoutMs', 'authorize', 'now', 'actorHash', 'reconciliationPurpose', 'authorizationTtlMs', 'authorizationTimeoutMs', 'auditPageSize', 'auditMaxEvents', 'maxReconciliationAttempts', 'reconciliationRetryDelayMs', 'reconciliationRetryBackoffFactor', 'maxReconciliationRetryDelayMs']);
 const HASH = /^[a-f0-9]{64}$/u;
+const PURPOSE = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/u;
 const blocked = reasonCode => Object.freeze({ version: LIFECYCLE_VERSION, status: 'ROLLOUT_RECOVERY_DEPLOYMENT_LIFECYCLE_BLOCKED', reasonCode });
 const snapshot = (phase, attemptsUsed = null, attemptsRemaining = null, retryAfterMs = null) => Object.freeze({ version: LIFECYCLE_VERSION, status: 'ROLLOUT_RECOVERY_DEPLOYMENT_LIFECYCLE_STATE', phase, attemptsUsed: Number.isInteger(attemptsUsed) ? attemptsUsed : null, attemptsRemaining: Number.isInteger(attemptsRemaining) ? attemptsRemaining : null, retryAfterMs: Number.isSafeInteger(retryAfterMs) && retryAfterMs >= 0 ? retryAfterMs : null });
 function ownData(object, name) {
@@ -29,6 +30,9 @@ function dependencies(options) {
   const readinessVersion = ownData(output.deploymentReadiness, 'READINESS_VERSION');
   const verify = ownData(output.deploymentReadiness, 'verify');
   if (typeof rpc !== 'function' || output.serviceRole !== true || typeof readinessVersion !== 'string' || typeof verify !== 'function' || typeof output.deploy !== 'function' || typeof output.resolve !== 'function' || typeof output.authorize !== 'function' || typeof output.now !== 'function') throw new TypeError('Exact trusted lifecycle runtime dependencies are required');
+  if (typeof output.deploymentPurpose !== 'string' || typeof output.reconciliationPurpose !== 'string' || typeof output.actorHash !== 'string' || !PURPOSE.test(output.deploymentPurpose) || !PURPOSE.test(output.reconciliationPurpose) || !HASH.test(output.actorHash)) throw new TypeError('Exact primitive lifecycle identity policy is required');
+  const numericPolicies = Object.freeze({ deploymentTimeoutMs: 'A bounded deployment timeout policy is required', reconciliationTimeoutMs: 'A bounded reconciliation timeout policy is required', authorizationTtlMs: 'A bounded authorization TTL policy is required', authorizationTimeoutMs: 'A bounded authorization timeout policy is required', auditPageSize: 'A bounded audit page policy is required', auditMaxEvents: 'A bounded audit event policy is required', maxReconciliationAttempts: 'A bounded reconciliation attempt policy is required', reconciliationRetryDelayMs: 'A bounded reconciliation retry delay policy is required', reconciliationRetryBackoffFactor: 'A bounded reconciliation backoff policy is required', maxReconciliationRetryDelayMs: 'A bounded reconciliation backoff policy is required' });
+  for (const [name, message] of Object.entries(numericPolicies)) if (!Number.isSafeInteger(output[name])) throw new TypeError(`${message} (safe integer)`);
   output.client = Object.freeze(Object.assign(Object.create(null), { rpc: rpc.bind(output.client) }));
   output.deploymentReadiness = Object.freeze(Object.assign(Object.create(null), { READINESS_VERSION: readinessVersion, verify: verify.bind(output.deploymentReadiness) }));
   return Object.freeze(output);

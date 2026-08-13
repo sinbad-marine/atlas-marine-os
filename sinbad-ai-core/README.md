@@ -32,6 +32,8 @@ Phase 4Y applies the same own-data-property boundary to trusted lifecycle depend
 
 Phase 4Z moves that exact dependency boundary into the rollout-recovery lifecycle runtime itself. Client, readiness, callback, identity, timeout, audit, and retry inputs are captured once in a frozen null-prototype snapshot before any subordinate runtime is constructed; inherited, accessor-backed, missing, or uninspectable dependencies fail closed.
 
+Phase 5A admits lifecycle identity and numeric policy only as exact primitives before subordinate construction. Objects with coercion hooks, numeric strings, booleans, bigint values, non-finite numbers, and unsafe integers fail closed without invoking conversion code.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.
