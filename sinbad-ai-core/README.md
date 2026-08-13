@@ -1,5 +1,7 @@
 # Sinbad AI Core — Phase 1
 
+Phase 4K adds a server-only, fail-closed deployment reconciliation runtime that composes the durable Supabase journal, immutable authorization audit, verified audit-readiness scan, one-use operator authorization, and provider reconciliation behind a minimal frozen facade. It is not exported to browser consumers.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.

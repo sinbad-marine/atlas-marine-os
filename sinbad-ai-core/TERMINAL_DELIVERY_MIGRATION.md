@@ -1,5 +1,11 @@
 # Phase 2Q–2W terminal delivery migration
 
+## Phase 4K reconciliation runtime
+
+`tools/trusted-rollout-recovery-deployment-reconciliation-runtime.js` is the server-only composition boundary for deployment reconciliation. It requires an explicit Supabase service-role client and bounded audit, authorization, and reconciliation policies. The frozen facade exposes only `preflight`, `issue`, and `reconcile`.
+
+`preflight` performs a complete verified audit scan. Authorization repeats that readiness check at issuance time, durably records the decision, and produces a one-use opaque capability only after explicit operator approval. Provider or storage ambiguity remains fail-closed or unsettled. The browser application must never receive this runtime or its service-role credential.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
