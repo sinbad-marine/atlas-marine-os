@@ -30,6 +30,8 @@ Phase 4V replaces the snapshot's absolute `retryNotBefore` field with relative `
 
 Phase 4W adds `tools/create-rollout-recovery-deployment-lifecycle-from-env.js`. It accepts an explicit environment mapping, rejects missing or non-canonical values, and delegates all numeric bounds to the exact lifecycle constructor. Service-role clients and side-effect functions remain injected trusted dependencies, never environment-derived browser values.
 
+Phase 4X reads required environment fields once into a frozen null-prototype snapshot. Only own string data properties are accepted; inherited values, getters, proxy descriptor failures, and later source mutations cannot influence the parsed policy.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:

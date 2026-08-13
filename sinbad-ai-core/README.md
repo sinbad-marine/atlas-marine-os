@@ -26,6 +26,8 @@ Phase 4V minimizes lifecycle timing disclosure: `inspect` returns bounded relati
 
 Phase 4W adds a server-only fail-closed environment composition boundary. Every identity, purpose, timeout, audit bound, retry count, delay, factor, and cap is explicit and canonical; no policy defaults are inferred from missing environment values.
 
+Phase 4X snapshots each required environment field exactly once through its own data-property descriptor. Inherited values, accessors, non-string values, and descriptor failures are rejected without invoking configuration getters. Composition forwards an explicit dependency allowlist and never passes the raw environment mapping into lifecycle constructors.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.
