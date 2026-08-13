@@ -190,6 +190,11 @@ scan. Require ready only when both fingerprint and live audit readiness pass.
 Do not use database fingerprint alone as a traffic or operator-workflow health
 signal.
 
+Before applying migrations, run the Phase 3W migration release verifier from
+the repository root. Require `MIGRATION_RELEASE_VERIFIED` with eight migrations
+and the expected Phase 3U fingerprint. Never deploy after a hash mismatch and
+never repair it by silently resealing an edited historical migration.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.

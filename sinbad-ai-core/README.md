@@ -647,3 +647,13 @@ Audit outage, malformed data, hash mismatch or bounded-incomplete scanning keeps
 health blocked even when migrations are current. The content-free health result
 includes only reason, verified event/page counts and watermark; unknown values
 remain `null`.
+
+## Phase 3W sealed migration release
+
+`supabase/rollout-recovery-migration-manifest.json` seals the ordered eight-file
+rollout-recovery migration chain with LF-normalized SHA-256 hashes and the final
+Phase 3U database fingerprint. Run
+`node tools/verify-rollout-recovery-migrations.js` before deployment. The gate
+exits non-zero for unavailable/invalid manifests, ordering errors or any
+migration hash mismatch. Existing sealed migrations must never be edited; add a
+new forward migration and update the reviewed manifest instead.

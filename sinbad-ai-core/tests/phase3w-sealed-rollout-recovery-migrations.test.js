@@ -1,0 +1,6 @@
+'use strict';
+const test=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const path=require('node:path');const verifier=require('../../tools/verify-rollout-recovery-migrations.js');
+const root=path.resolve(__dirname,'../..');
+test('verifies the ordered immutable rollout recovery migration release',()=>{const result=verifier.verify(root);assert.deepEqual(result,{status:'MIGRATION_RELEASE_VERIFIED',reasonCode:null,migrationCount:8,databaseFingerprint:'sinbad-rollout-recovery-db/3U-20260820-v1'});assert.ok(Object.isFrozen(result));});
+test('detects migration tampering and manifest failures without exposing content',()=>{const normal=fs.readFileSync;const tampered=verifier.verify(root,(file,encoding)=>file.endsWith('20260816_rollout_activation_journal.sql')?`${normal(file,encoding)}\n-- tampered`:normal(file,encoding));assert.deepEqual(tampered,{status:'MIGRATION_RELEASE_BLOCKED',reasonCode:'MIGRATION_HASH_MISMATCH',migrationCount:3});const unavailable=verifier.verify(root,()=>{throw new Error('missing');});assert.equal(unavailable.reasonCode,'MANIFEST_UNAVAILABLE');assert.equal('file'in tampered,false);});
+test('normalizes CRLF and LF to the same sealed digest',()=>{assert.equal(verifier.digest('a\r\nb\r\n'),verifier.digest('a\nb\n'));});
