@@ -152,6 +152,12 @@ replay. Do not grant table or RPC access to `anon` or `authenticated`, and do
 not export this adapter before migration verification and operator identity
 wiring are complete.
 
+For Phase 3P, apply the `20260818` verification migration after `20260817` and
+run the internal verifier with bounded `pageSize` and `maxEvents`. Require
+`AUDIT_SCAN_COMPLETE`; unavailable capability, hash mismatch, invalid ordering
+and bounded-incomplete scans must block operational readiness. The verifier
+returns summaries only and must stay on the trusted server.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.

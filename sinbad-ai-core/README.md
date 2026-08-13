@@ -578,3 +578,14 @@ event and treats denial, malformed RPC output, error or exception as failure.
 Pass its `append` method to the Phase 3N audit factory only in trusted server
 wiring. The subpath remains unexported until remote migration and identity
 provider integration are verified together.
+
+## Phase 3P recovery authorization audit verification
+
+Apply `20260818_rollout_recovery_authorization_audit_verification.sql` after
+Phase 3O. It adds service-role-only capability verification and descending-ID
+pagination without weakening the immutable table. The internal verifier checks
+every event hash and field, rejects malformed or non-descending pages, rechecks
+capability on every page and enforces explicit page/event budgets. Its public
+result is content-free: status, reason, event/page counts and watermark only.
+The verifier remains unexported until the remote migrations are deployment-
+verified.
