@@ -66,6 +66,8 @@ Phase 5P requires the Supabase idempotency lease bound, claim key, and returned 
 
 Phase 5Q snapshots durable settlement summaries from exact enumerable own data properties. Accessors, proxy traps, inherited or symbol fields, coercive values, and source mutation are rejected or isolated before the fenced settlement RPC.
 
+Phase 5R snapshots terminal-recovery attestation TTL, clock, and purpose from direct own primitive data. Accessors, descriptor traps, numeric strings, bigint, boxed/coercive values, non-integer clock samples, and later policy mutation fail closed or remain isolated.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.
