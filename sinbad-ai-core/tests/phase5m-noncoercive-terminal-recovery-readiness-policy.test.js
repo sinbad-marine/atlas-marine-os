@@ -28,14 +28,31 @@ test('readiness policy rejects coercive and non-integer bounds', () => {
   assert.equal(calls, 0);
 });
 
+test('readiness policy rejects inherited missing and invalid clock fields', () => {
+  assert.throws(() => readiness.create(Object.create(base())), /bounds/u);
+  for (const field of ['limit', 'slaMs', 'pageSize', 'maxEvents']) {
+    const options = base();
+    delete options[field];
+    assert.throws(() => readiness.create(options), /bounds/u);
+  }
+  assert.throws(() => readiness.create({ ...base(), now: 1000 }), /bounds/u);
+});
+
 test('readiness captures policy primitives and clock before later mutation', async () => {
   let originalCalls = 0, replacementCalls = 0;
+  const rpcCalls = [];
   const options = base();
   options.now = () => { originalCalls++; return Date.parse('2026-08-13T00:02:00Z'); };
-  options.client = { async rpc(name) { if (name.startsWith('verify_')) return { data: true, error: null }; return { data: [], error: null }; } };
+  options.client = { async rpc(name, args) { rpcCalls.push([name, args]); if (name.startsWith('verify_')) return { data: true, error: null }; return { data: [], error: null }; } };
   const value = readiness.create(options);
-  options.limit = 0; options.pageSize = 0; options.now = () => { replacementCalls++; throw new Error('must not run'); };
+  options.limit = 0; options.slaMs = 0; options.pageSize = 0; options.maxEvents = 0; options.now = () => { replacementCalls++; throw new Error('must not run'); };
   assert.equal((await value.check()).status, 'RECOVERY_READINESS_READY');
+  assert.deepEqual(rpcCalls, [
+    ['verify_terminal_recovery_access', {}],
+    ['list_expired_terminal_delivery_claims', { p_limit: 10 }],
+    ['verify_terminal_recovery_audit_access', {}],
+    ['list_terminal_recovery_audit', { p_limit: 10, p_before_id: null }],
+  ]);
   assert.equal(originalCalls, 1);
   assert.equal(replacementCalls, 0);
 });
