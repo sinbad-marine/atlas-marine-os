@@ -106,6 +106,15 @@ For a same-process unsettled activation, call the same adapter instance's
 repeat activation. After restart, use an operator/provider recovery workflow
 keyed by the hash.
 
+Apply `20260816_rollout_activation_journal.sql` after the recovery migrations.
+It stores only attestation hash, monotonic activation state and timestamps.
+Keep its service-role client server-side. Phase 3J delivers the internal
+journal contract; do not call these RPCs from application or browser code.
+Settlement requires the caller's expected current state and reports conflicts
+without overwriting a competing terminal result. Treat `DENIED`, `CONFLICT`,
+`INVALID` and `UNAVAILABLE` as closed outcomes; never infer success or absence
+from them.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.

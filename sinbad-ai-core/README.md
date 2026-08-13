@@ -495,3 +495,16 @@ exception outcomes remain unsettled. Copies, concurrent calls, other instances
 and process restarts cannot use this capability.
 Without this hook, Phase 3H activation remains compatible and reconciliation
 is denied. Resolve must authenticate provider state for the exact hash.
+
+## Phase 3J durable rollout activation journal
+
+Apply `20260816_rollout_activation_journal.sql` to create a service-role-only,
+content-minimized journal keyed solely by attestation hash. Its monotonic states
+are `PENDING`, `UNKNOWN`, `APPLIED` and `REJECTED`. UNKNOWN may later settle to
+an exact terminal state; terminal states never reopen or switch. Terminal
+settlement uses an expected-state compare-and-set and is idempotent for safe
+response-loss retry. Calls return explicit closed outcomes such as `BEGUN`,
+`EXISTS`, `SETTLED`, `ALREADY_SETTLED`, `CONFLICT`, `ABSENT`, `DENIED` and
+`UNAVAILABLE`; transport failure is never confused with absence or denial. The
+internal Supabase journal adapter remains unexported until activation
+integration is complete.
