@@ -3,7 +3,7 @@
 const { createHash, randomBytes } = require('node:crypto');
 const readinessModule = require('./verify-rollout-recovery-deployment-readiness.js');
 
-const AUTHORIZATION_VERSION = 'sinbad-rollout-recovery-deployment-authorization/4B-v1';
+const AUTHORIZATION_VERSION = 'sinbad-rollout-recovery-deployment-authorization/5D-v1';
 const HASH = /^[a-f0-9]{64}$/u;
 const COMMIT = /^[a-f0-9]{40}$/u;
 const PURPOSE = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/u;
@@ -27,6 +27,18 @@ const outcome = (status, reasonCode, commit = null) => Object.freeze({
   reasonCode,
   commit: COMMIT.test(commit || '') ? commit : null,
 });
+const READINESS_FIELDS = Object.freeze(['version', 'status', 'reasonCode', 'commit', 'eventCount', 'pageCount', 'watermarkId']);
+function readinessSnapshot(value) {
+  if (!value || typeof value !== 'object') return null;
+  const output = Object.create(null);
+  for (const name of READINESS_FIELDS) {
+    let descriptor;
+    try { descriptor = Object.getOwnPropertyDescriptor(value, name); } catch { return null; }
+    if (!descriptor || !Object.hasOwn(descriptor, 'value')) return null;
+    output[name] = descriptor.value;
+  }
+  return Object.freeze(output);
+}
 
 function create(options = {}) {
   const readiness = options.deploymentReadiness;
@@ -57,7 +69,9 @@ function create(options = {}) {
       } catch {
         return authorization('ROLLOUT_RECOVERY_DEPLOYMENT_AUTHORIZATION_BLOCKED', 'DEPLOYMENT_READINESS_EXCEPTION');
       }
-      if (ready?.version !== readinessModule.READINESS_VERSION || ready.status !== 'ROLLOUT_RECOVERY_DEPLOYMENT_READY' || ready.reasonCode !== null || !COMMIT.test(ready.commit || '')) return authorization('ROLLOUT_RECOVERY_DEPLOYMENT_AUTHORIZATION_BLOCKED', String(ready?.reasonCode || 'DEPLOYMENT_NOT_READY'));
+      ready = readinessSnapshot(ready);
+      if (!ready) return authorization('ROLLOUT_RECOVERY_DEPLOYMENT_AUTHORIZATION_BLOCKED', 'DEPLOYMENT_READINESS_CONTRACT_INVALID');
+      if (ready.version !== readinessModule.READINESS_VERSION || ready.status !== 'ROLLOUT_RECOVERY_DEPLOYMENT_READY' || ready.reasonCode !== null || typeof ready.commit !== 'string' || !COMMIT.test(ready.commit)) return authorization('ROLLOUT_RECOVERY_DEPLOYMENT_AUTHORIZATION_BLOCKED', typeof ready.reasonCode === 'string' && ready.reasonCode ? ready.reasonCode : 'DEPLOYMENT_NOT_READY');
       if (!Number.isSafeInteger(ready.eventCount) || ready.eventCount < 0 || !Number.isSafeInteger(ready.pageCount) || ready.pageCount < 1 || (ready.watermarkId !== null && (!Number.isSafeInteger(ready.watermarkId) || ready.watermarkId < 1)) || ((ready.eventCount === 0) !== (ready.watermarkId === null))) return authorization('ROLLOUT_RECOVERY_DEPLOYMENT_AUTHORIZATION_BLOCKED', 'DEPLOYMENT_READINESS_CONTRACT_INVALID');
       const issuedAt = sample();
       if (issuedAt === null || issuedAt > Number.MAX_SAFE_INTEGER - ttlMs) return authorization('ROLLOUT_RECOVERY_DEPLOYMENT_AUTHORIZATION_BLOCKED', 'AUTHORIZATION_CLOCK_INVALID');
@@ -108,4 +122,4 @@ function create(options = {}) {
   });
 }
 
-module.exports = Object.freeze({ AUTHORIZATION_VERSION, create });
+module.exports = Object.freeze({ AUTHORIZATION_VERSION, READINESS_FIELDS, readinessSnapshot, create });

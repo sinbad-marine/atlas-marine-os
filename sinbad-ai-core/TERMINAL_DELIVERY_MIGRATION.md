@@ -42,6 +42,8 @@ Phase 5B moves all lifecycle numeric bounds and cross-field ordering into atomic
 
 Phase 5C requires `now()` to return a direct non-negative safe integer. The runtime wraps the clock once and never coerces callback results, so object conversion hooks cannot execute inside deployment or reconciliation authorization paths.
 
+Phase 5D requires deployment-readiness results to expose the exact decision fields as own data properties. Accessors, inherited fields, descriptor failures, and non-string reason codes are rejected without invocation or coercion before authorization issuance.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
