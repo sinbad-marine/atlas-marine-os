@@ -70,6 +70,8 @@ Phase 5R snapshots terminal-recovery attestation TTL, clock, and purpose from di
 
 Phase 5S snapshots the terminal-recovery readiness decision before attestation. Accessors, descriptor traps, inherited or coercive fields, malformed counters, and inconsistent empty/non-empty audit watermarks fail closed before clock or nonce work.
 
+Phase 5T snapshots terminal rollout activation timeout, hooks, and optional durable journal methods from direct own data properties. Accessors, descriptor traps, numeric strings, bigint, coercive values, and post-construction hook or journal mutation fail closed or remain isolated.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.
