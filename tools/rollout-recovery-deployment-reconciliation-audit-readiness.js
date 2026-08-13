@@ -21,6 +21,19 @@ function snapshot(value) {
 function validDecision(value) {
   return Boolean(value && value.version === READINESS_VERSION && value.status === 'RECONCILIATION_AUDIT_READINESS_READY' && value.reasonCode === null && Number.isSafeInteger(value.eventCount) && value.eventCount >= 0 && Number.isSafeInteger(value.pageCount) && value.pageCount >= 1 && (value.watermarkId === null || (Number.isSafeInteger(value.watermarkId) && value.watermarkId >= 1)) && ((value.eventCount === 0) === (value.watermarkId === null)));
 }
+function verifierSnapshot(value) {
+  if (!value || typeof value !== 'object') return null;
+  const output = Object.create(null);
+  for (const name of ['version', 'scan']) {
+    let descriptor;
+    try { descriptor = Object.getOwnPropertyDescriptor(value, name); } catch { return null; }
+    if (!descriptor || !Object.hasOwn(descriptor, 'value')) return null;
+    output[name] = descriptor.value;
+  }
+  if (output.version !== EXPECTED_VERIFIER_VERSION || typeof output.scan !== 'function') return null;
+  output.scan = output.scan.bind(value);
+  return Object.freeze(output);
+}
 function policy(options) {
   if (!options || typeof options !== 'object') return null;
   const output = Object.create(null);
@@ -30,19 +43,15 @@ function policy(options) {
     if (!descriptor || !Object.hasOwn(descriptor, 'value')) return null;
     output[name] = descriptor.value;
   }
-  if (!Number.isSafeInteger(output.pageSize) || output.pageSize < 1 || output.pageSize > 500 || !Number.isSafeInteger(output.maxEvents) || output.maxEvents < output.pageSize || output.maxEvents > 100000) return null;
+  output.auditVerifier = verifierSnapshot(output.auditVerifier);
+  if (!output.auditVerifier || !Number.isSafeInteger(output.pageSize) || output.pageSize < 1 || output.pageSize > 500 || !Number.isSafeInteger(output.maxEvents) || output.maxEvents < output.pageSize || output.maxEvents > 100000) return null;
   return Object.freeze(output);
 }
 
 function create(options = {}) {
-  let verifierDescriptor;
-  try { verifierDescriptor = options && typeof options === 'object' ? Object.getOwnPropertyDescriptor(options, 'auditVerifier') : null; }
-  catch { throw new TypeError('A bounded audit readiness scan policy is required'); }
-  if (!verifierDescriptor) throw new TypeError('A trusted auditVerifier is required');
   const value = policy(options);
-  if (!value) throw new TypeError('A bounded audit readiness scan policy is required');
+  if (!value) throw new TypeError('A trusted auditVerifier and bounded audit readiness scan policy are required');
   const { auditVerifier: verifier, pageSize, maxEvents } = value;
-  if (!verifier || verifier.version !== EXPECTED_VERIFIER_VERSION || typeof verifier.scan !== 'function') throw new TypeError('A trusted auditVerifier is required');
   return Object.freeze({
     version: READINESS_VERSION,
     async check() {
@@ -56,4 +65,4 @@ function create(options = {}) {
   });
 }
 
-module.exports = Object.freeze({ READINESS_VERSION, EXPECTED_VERIFIER_VERSION, DECISION_FIELDS, snapshot, validDecision, policy, create });
+module.exports = Object.freeze({ READINESS_VERSION, EXPECTED_VERIFIER_VERSION, DECISION_FIELDS, snapshot, validDecision, verifierSnapshot, policy, create });
