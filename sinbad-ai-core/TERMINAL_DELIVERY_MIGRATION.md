@@ -6,6 +6,8 @@
 
 `preflight` performs a complete verified audit scan. Authorization repeats that readiness check at issuance time, durably records the decision, and produces a one-use opaque capability only after explicit operator approval. Provider or storage ambiguity remains fail-closed or unsettled. The browser application must never receive this runtime or its service-role credential.
 
+Phase 4L adds `tools/trusted-rollout-recovery-deployment-lifecycle-runtime.js`. It retains the deployment authorization hash in a private `WeakMap` and releases it to the reconciliation authorization layer only after the exact same-instance deployment produces an unsettled outcome. The hash is never accepted back from caller-controlled input, and terminal or replayed deployments cannot open a reconciliation path.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
