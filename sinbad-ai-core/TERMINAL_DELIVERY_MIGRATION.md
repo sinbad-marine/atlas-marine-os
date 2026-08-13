@@ -220,6 +220,12 @@ verifier. Require `ROLLOUT_RECOVERY_DEPLOYMENT_READY`. Never replace the live
 runtime or identity checks with static configuration values, and never log the
 operator attestation.
 
+Phase 4B turns the Phase 4A decision into a purpose-bound, short-lived
+same-process deployment authorization. Pass the original object to `execute()`
+once. The authorization is consumed before the deployment side effect; an
+`UNSETTLED` timeout, exception or malformed response requires external
+reconciliation and a newly approved workflow, never replay of the same object.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.

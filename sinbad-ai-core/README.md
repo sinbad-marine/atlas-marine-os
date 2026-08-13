@@ -708,3 +708,16 @@ The operator attestation is opaque, required, never returned, and must not be
 logged or persisted by this module. The composition remains programmatic and
 unexported until deployment-specific Supabase and identity-provider wiring is
 provided; there is intentionally no unconfigured CLI success path.
+
+## Phase 4B single-use deployment authorization
+
+`tools/trusted-rollout-recovery-deployment-authorization.js` converts an exact
+Phase 4A ready result into a short-lived, opaque, same-instance authorization.
+It binds the release commit, audit counters, watermark and fixed deployment
+purpose into a randomized authorization hash. Copies, proxies, other instances,
+expiry, clock rollback and replay fail closed.
+
+`execute()` consumes the authorization before invoking the trusted deployment
+callback. Timeout, exception and malformed provider results are `UNSETTLED` and
+must never be retried with the same authorization. This module remains
+unexported and no real deployment callback is configured by the repository.
