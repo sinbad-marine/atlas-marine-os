@@ -6,10 +6,10 @@ function validSummary(value){if(!value||typeof value!=='object'||Array.isArray(v
 function create(options={}){
   if(!options.client||typeof options.client.rpc!=='function')throw new TypeError('A trusted Supabase service-role client is required');
   if(options.serviceRole!==true)throw new TypeError('Explicit server-side serviceRole confirmation is required');
-  const claimLeaseMs=Number(options.claimLeaseMs);if(!Number.isInteger(claimLeaseMs)||claimLeaseMs<1000||claimLeaseMs>900000)throw new TypeError('claimLeaseMs must be between 1000 and 900000');
+  let leaseDescriptor;try{leaseDescriptor=Object.getOwnPropertyDescriptor(options,'claimLeaseMs');}catch{throw new TypeError('claimLeaseMs must be between 1000 and 900000');}const claimLeaseMs=leaseDescriptor&&Object.hasOwn(leaseDescriptor,'value')?leaseDescriptor.value:null;if(!Number.isSafeInteger(claimLeaseMs)||claimLeaseMs<1000||claimLeaseMs>900000)throw new TypeError('claimLeaseMs must be between 1000 and 900000');
   const client=options.client,tokens=new Map();
   return Object.freeze({version:contract.STORE_VERSION,durable:true,claimLeaseMs,
-    async claim(key){if(!KEY.test(key)||tokens.has(key))return false;const {data,error}=await client.rpc('claim_terminal_delivery',{p_claim_key:key,p_lease_ms:claimLeaseMs});if(error||!UUID.test(String(data||'')))return false;tokens.set(key,String(data));return true;},
+    async claim(key){if(typeof key!=='string'||!KEY.test(key)||tokens.has(key))return false;const {data,error}=await client.rpc('claim_terminal_delivery',{p_claim_key:key,p_lease_ms:claimLeaseMs});if(error||typeof data!=='string'||!UUID.test(data))return false;tokens.set(key,data);return true;},
     async settle(key,summary){const token=tokens.get(key);if(!KEY.test(key)||!token||!validSummary(summary))return false;const {data,error}=await client.rpc('settle_terminal_delivery',{p_claim_key:key,p_lease_token:token,p_summary:summary});if(error)return false;tokens.delete(key);return data===true;}
   });
 }

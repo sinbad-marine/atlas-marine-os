@@ -66,6 +66,8 @@ Phase 5N requires terminal-recovery list/inspect bounds, clock samples, and retu
 
 Phase 5O requires terminal-recovery operator identity and quarantine `claimKey`/`reasonCode` fields to be direct own strings. Getter access, descriptor traps, inherited values, boxed strings, and coercive objects fail closed before capability or quarantine RPC calls.
 
+Phase 5P requires the Supabase idempotency `claimLeaseMs`, claim key, and returned lease token to be direct primitives. Getter access, descriptor traps, numeric strings, bigint, boxed/coercive values, and non-string tokens fail closed before unsafe claim state is retained.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
