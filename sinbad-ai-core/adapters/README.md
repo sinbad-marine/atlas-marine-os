@@ -141,3 +141,16 @@ lease token and accepts settle only from the current unexpired holder. Choose a
 lease longer than the bounded presentation timeout; use transport-native
 idempotency as the final protection against a crash followed by lease takeover.
 
+## Phase 3A reconciliation
+
+When `deliver()` returns an authentic same-process `UNSETTLED` value containing
+the full applied terminal fields, call `reconcile(value)` on the same trusted
+adapter instance. This performs a
+settle-only retry using the hidden original key, fencing token and minimal
+summary; presentation is never repeated. A successful result is `RECONCILED`
+and the value cannot be reused. Do not serialize, clone or persist the
+`UNSETTLED` object as a portable credential. After process restart, stop and use
+an explicitly audited database reconciliation procedure.
+An unsettled chain-block record is intentionally not reconcileable through this
+API because it is not an applied terminal result.
+

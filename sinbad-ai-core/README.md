@@ -375,3 +375,19 @@ claim keys and caps settlement JSON at 4096 bytes. Configure `claimLeaseMs`
 longer than the maximum bounded presentation operation. Since lease recovery
 can repeat an external side effect after a crashed holder, the trusted presenter
 must also use its transport's native idempotency facility where available.
+
+## Phase 3A settle-only reconciliation
+
+The trusted adapter now exposes `reconcile(unsettled)` for an applied terminal
+state whose durable settlement response is ambiguous. It accepts only the exact
+same-process, full-terminal-field `UNSETTLED` object created by that adapter
+instance and retries only the original fenced
+`settle(key, summary)` operation. It never calls `present`, never generates a
+new terminal chain and never exposes the claim key or lease token. A successful
+retry returns `TRUSTED_TERMINAL_DELIVERY_RECONCILED` with the already-known
+terminal fields and consumes the reconciliation credential. Copies, clones,
+Proxy wrappers, fabricated values and replay fail closed. Process restart loses
+this capability; cross-restart operator recovery requires a separate audited
+database workflow and must never repeat presentation blindly.
+Chain-block settlement failures do not receive this reconciliation capability
+and remain routed to audited operator handling.

@@ -49,6 +49,13 @@ fenced for settlement, but a crash after an external side effect can still be
 followed by a later takeover; use the transport provider's native idempotency
 key for presentation whenever it supports one.
 
+For same-process ambiguous settlement of an applied terminal state, retain the
+exact full-field `UNSETTLED` object and call `reconcile(unsettled)` on the same
+adapter instance. This retries
+settlement only; it never calls `present`. On success, persist/observe the
+`RECONCILED` result and discard the consumed object. Never reconstruct an
+`UNSETTLED` value from JSON or use this path after process restart.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.
@@ -87,4 +94,6 @@ a newly authorized recovery workflow when operator policy permits it.
 - Persist only the minimal terminal transition/audit fields required by policy.
 - Treat `BLOCKED` and `UNSETTLED` as distinct non-retriable results and never
   fall back to an earlier phase.
+- Reconcile authentic same-process `UNSETTLED` values with settle-only retry;
+  route cross-restart cases to audited operator recovery.
 - Run the complete SINBAD Core test suite before deployment.
