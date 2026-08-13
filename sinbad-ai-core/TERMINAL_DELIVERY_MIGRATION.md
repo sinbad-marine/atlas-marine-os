@@ -80,6 +80,8 @@ Phase 5U requires terminal rollout recovery timeout, resolver, diagnostics, and 
 
 Phase 5V requires rollout-recovery authorization identity, purpose, TTL, timeout, clock, and operator hook to be direct own primitive data. Getter access, descriptor traps, numeric strings, bigint, boxed/coercive values, non-integer clock samples, and post-construction policy mutation fail closed or remain isolated.
 
+Phase 5W requires rollout-recovery authorization audit and readiness dependencies to expose exact own data contracts. Getter access, descriptor traps, inherited methods, invalid versions/durability, and post-construction `record` or `check` mutation fail closed or remain isolated.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
