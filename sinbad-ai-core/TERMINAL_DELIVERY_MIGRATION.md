@@ -128,6 +128,16 @@ no activation hook and cannot repeat rollout activation. Keep it behind a
 trusted server/operator boundary; it remains unexported until that authorization
 boundary is implemented.
 
+Phase 3M adds the single-use operator authorization wrapper. Configure the
+hashed operator identity, fixed recovery purpose, explicit clock, bounded
+authorization TTL/timeout and a trusted `authorize` function. Only exact boolean
+`true` issues a capability. Pass the original capability to `recover()` once;
+never serialize or persist it. The safe wrapper remains internal until the real
+operator identity provider is connected.
+Make `authorize` a side-effect-free identity/policy decision. Late completion
+after timeout is ignored. Any downstream failure consumes the capability, so
+retry by obtaining new operator approval rather than replaying the same object.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.

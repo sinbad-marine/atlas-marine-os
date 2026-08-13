@@ -538,3 +538,18 @@ across adapter instances in one process; database CAS protects competing
 processes. Journal conflicts are reported separately from journal transport or
 settlement outages. This adapter remains
 unexported until an operator authorization boundary is added.
+
+## Phase 3M single-use rollout recovery authorization
+
+`trusted-terminal-rollout-recovery-authorization` wraps Phase 3L with exact
+trusted operator approval. `issue(attestationHash)` binds the SHA-256 operator
+identity, fixed recovery purpose, short TTL, monotonic clock and a random nonce.
+The returned object exposes only a derived authorization hash and timestamps,
+not the target attestation hash. Only the original same-instance object may call
+`recover()` once before expiry. Copies, proxies, replay, another instance, clock
+rollback, denial, non-boolean approval, timeout and exception fail closed. The
+authorization is consumed before downstream recovery begins. Phase 3L and 3M
+remain internal until deployment-specific operator authentication is wired.
+The trusted `authorize` hook must be side-effect-free; timeout or exception is a
+closed denial and any late completion is ignored. A failed downstream recovery
+deliberately burns the capability and requires fresh operator approval.
