@@ -74,6 +74,8 @@ Phase 5R requires terminal-recovery attestation TTL, clock, and purpose to be di
 
 Phase 5S requires the readiness decision consumed by terminal-recovery attestation to contain exact own primitive fields and consistent counters. Getter access, descriptor traps, inherited/coercive fields, and invalid audit watermark invariants fail closed before clock or nonce work.
 
+Phase 5T requires terminal rollout activation timeout, hooks, and optional durable journal methods to be direct own data properties. Getter access, descriptor traps, numeric strings, bigint, coercive values, and later hook or journal mutation fail closed or remain isolated.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
