@@ -24,6 +24,8 @@ Phase 4U makes retry exhaustion terminal for scheduling state. The last nontermi
 
 Phase 4V minimizes lifecycle timing disclosure: `inspect` returns bounded relative `retryAfterMs` instead of the absolute internal retry deadline. Ready state reports zero; unavailable, pending, closed, and exhausted states report null.
 
+Phase 4W adds a server-only fail-closed environment composition boundary. Every identity, purpose, timeout, audit bound, retry count, delay, factor, and cap is explicit and canonical; no policy defaults are inferred from missing environment values.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.

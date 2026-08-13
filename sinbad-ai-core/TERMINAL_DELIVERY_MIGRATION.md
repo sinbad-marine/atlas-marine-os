@@ -28,6 +28,8 @@ Phase 4U explicitly clears retry-clock state when a nonterminal result consumes 
 
 Phase 4V replaces the snapshot's absolute `retryNotBefore` field with relative `retryAfterMs`. This server-only breaking contract is versioned as 4V and prevents disclosure or coupling to the trusted clock's absolute value.
 
+Phase 4W adds `tools/create-rollout-recovery-deployment-lifecycle-from-env.js`. It accepts an explicit environment mapping, rejects missing or non-canonical values, and delegates all numeric bounds to the exact lifecycle constructor. Service-role clients and side-effect functions remain injected trusted dependencies, never environment-derived browser values.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
