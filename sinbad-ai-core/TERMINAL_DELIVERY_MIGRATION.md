@@ -185,6 +185,11 @@ longer accepts the Phase 3T boolean preflight response. Verify that startup
 returns `ROLLOUT_RECOVERY_RUNTIME_READY`; a stale deployment fingerprint means
 the migration chain is incomplete and must not be bypassed.
 
+Phase 3V startup health also performs the bounded authorization-audit integrity
+scan. Require ready only when both fingerprint and live audit readiness pass.
+Do not use database fingerprint alone as a traffic or operator-workflow health
+signal.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.

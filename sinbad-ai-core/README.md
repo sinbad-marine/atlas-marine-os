@@ -638,3 +638,12 @@ replaces the boolean preflight with the exact deployment fingerprint
 that value; legacy boolean success, stale fingerprints, denial and malformed
 responses block health, authorization and recovery. Migration and runtime
 fingerprints are locked together by a contract test.
+
+## Phase 3V integrity-aware runtime health
+
+Runtime `healthCheck()` now requires both the exact Phase 3U database
+fingerprint and a live Phase 3Q `AUTHORIZATION_AUDIT_READINESS_READY` result.
+Audit outage, malformed data, hash mismatch or bounded-incomplete scanning keeps
+health blocked even when migrations are current. The content-free health result
+includes only reason, verified event/page counts and watermark; unknown values
+remain `null`.
