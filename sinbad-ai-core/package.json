@@ -7,6 +7,7 @@
   "exports": {
     ".": "./adapters/trusted-terminal-delivery-adapter.js",
     "./supabase-idempotency-store": "./adapters/supabase-durable-idempotency-store.js",
-    "./supabase-terminal-recovery": "./adapters/supabase-terminal-recovery.js"
+    "./supabase-terminal-recovery": "./adapters/supabase-terminal-recovery.js",
+    "./supabase-terminal-recovery-audit": "./adapters/supabase-terminal-recovery-audit.js"
   }
 }

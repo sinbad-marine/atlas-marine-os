@@ -182,3 +182,13 @@ Any malformed RPC row makes the entire inspection unavailable rather than
 shrinking the count into a false healthy result. Treat `listExpired()` as an
 operator-detail helper only; all monitors must use `inspect()`.
 
+## Phase 3D recovery audit verification
+
+Use the separate server-only `supabase-terminal-recovery-audit` adapter after
+applying `20260815_terminal_recovery_audit_integrity.sql`. Its `inspect()`
+method reads only through a service-role-gated RPC and recomputes each event's
+versioned SHA-256 hash. It fails closed as `AUDIT_INTEGRITY_FAILED` for malformed
+or modified data. Database triggers reject audit UPDATE and DELETE operations,
+and a unique claim key prevents a second event for the same claim. Timestamps
+are observational; the hash binds claim, actor, action and reason fields.
+

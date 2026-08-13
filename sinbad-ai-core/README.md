@@ -424,3 +424,17 @@ and store outage have distinct content-free reason codes. `slaMs` is bounded
 between one second and seven days. `listExpired()` remains a low-level
 compatibility method but is deprecated for health monitoring because its empty
 array intentionally cannot distinguish denial from an empty queue.
+
+## Phase 3D recovery audit integrity
+
+Apply the forward `20260815_terminal_recovery_audit_integrity.sql` migration
+after Phase 3B. It adds one immutable audit event per quarantined claim and a
+SHA-256 hash over the audit version, claim hash, hashed operator identity,
+action and allowlisted reason. The server-only
+`@sinbad-ai/core-terminal-delivery/supabase-terminal-recovery-audit` adapter
+recomputes every returned event hash and returns `AUDIT_PAGE_VALID` only for
+that verified page. It does not claim unscanned history is healthy. Tampering
+returns `AUDIT_INTEGRITY_FAILED`; denied capability and store
+failure return `AUDIT_UNAVAILABLE`. The read RPC both checks `service_role` in
+the database and has execute permission only for that role. Never expose its
+client or returned operator hashes to a browser.

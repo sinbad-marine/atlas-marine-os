@@ -69,6 +69,13 @@ Use `inspect({ limit, slaMs })` for health/SLA monitoring. Treat
 `RECOVERY_UNAVAILABLE` and `RECOVERY_SLA_BREACHED` as distinct alerts; never use
 the legacy empty-list behavior as evidence that the recovery queue is healthy.
 
+Apply `20260815_terminal_recovery_audit_integrity.sql` next, without modifying
+earlier migrations. Start the server-only `supabase-terminal-recovery-audit`
+adapter with a service-role client and require `healthCheck() === true`. Alert
+on `AUDIT_UNAVAILABLE` and `AUDIT_INTEGRITY_FAILED`; `AUDIT_PAGE_VALID`
+verifies only the returned page, not unscanned history. Audit rows are append-only, unique per
+claim and contain no delivery content or raw operator identity.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.
