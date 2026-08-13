@@ -48,6 +48,8 @@ Phase 5G snapshots Supabase deployment-journal rows through exact own string dat
 
 Phase 5H snapshots Supabase reconciliation-audit rows through exact own primitive data properties. Numeric IDs/timestamps must already be safe integers and hash/decision fields must already be strings; accessors and coercive values fail integrity verification without invocation.
 
+Phase 5I applies the same exact primitive row contract to the general rollout-recovery authorization audit. Attestation audit rows cannot invoke getters or coercion hooks while being parsed or hash-verified.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.

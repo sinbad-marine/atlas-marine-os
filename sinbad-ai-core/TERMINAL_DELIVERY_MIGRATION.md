@@ -52,6 +52,8 @@ Phase 5G requires inspected deployment-journal rows to expose exact own string `
 
 Phase 5H requires reconciliation-audit rows to expose seven exact own primitive fields. IDs and decision timestamps are safe integers; hashes and decisions are strings. Getter-backed, inherited, trapped, or coercive rows fail audit integrity verification.
 
+Phase 5I applies the same seven-field own primitive boundary to authorization-audit rows. Safe integer IDs/timestamps and direct string hashes/decisions are mandatory; accessors, inheritance, descriptor failures, and coercive values fail integrity verification.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
