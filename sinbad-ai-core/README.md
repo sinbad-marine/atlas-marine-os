@@ -721,3 +721,18 @@ expiry, clock rollback and replay fail closed.
 callback. Timeout, exception and malformed provider results are `UNSETTLED` and
 must never be retried with the same authorization. This module remains
 unexported and no real deployment callback is configured by the repository.
+
+## Phase 4C durable deployment journal boundary
+
+`tools/trusted-rollout-recovery-journaled-deployment.js` composes Phase 4B with
+an exact durable deployment journal. The journal must persist `BEGUN` by the
+authorization hash before the provider callback runs. Exact provider results
+settle `PENDING` to `APPLIED` or `REJECTED`; exceptions and malformed results
+attempt `UNKNOWN` settlement. Missing begin or settlement confirmation can
+never report success.
+
+The repository defines and tests the required journal interface but does not
+provide a production persistence implementation or migration. Keep this module
+unexported until the deployment environment supplies and verifies that durable
+store. An `EXISTS` begin result requires later reconciliation and must never
+repeat the provider deployment.

@@ -226,6 +226,13 @@ once. The authorization is consumed before the deployment side effect; an
 `UNSETTLED` timeout, exception or malformed response requires external
 reconciliation and a newly approved workflow, never replay of the same object.
 
+Phase 4C requires a durable deployment journal before wiring the real provider
+callback. Persist `BEGUN` by authorization hash before the side effect and
+confirm terminal settlement afterward. Treat `EXISTS`, begin outage, settlement
+conflict and response loss as non-success. Do not activate this composition
+until a deployment-specific durable journal implementation and its migration
+have been independently verified.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.
