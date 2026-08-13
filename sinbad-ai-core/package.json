@@ -5,7 +5,8 @@
   "type": "commonjs",
   "main": "./adapters/trusted-terminal-delivery-adapter.js",
   "scripts": {
-    "verify:rollout-recovery-release": "node ../tools/verify-rollout-recovery-release.js"
+    "verify:rollout-recovery-release": "node ../tools/verify-rollout-recovery-release.js",
+    "evidence:rollout-recovery-release": "node ../tools/create-rollout-recovery-release-evidence.js"
   },
   "exports": {
     ".": "./adapters/trusted-terminal-delivery-adapter.js",

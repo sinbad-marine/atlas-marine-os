@@ -666,3 +666,17 @@ gate verifies the sealed Phase 3W migration release first and starts the complet
 Node test suite only after that succeeds. Migration failure, runner exception,
 non-zero tests or malformed runner output produce a non-zero, content-free
 blocked result.
+
+## Phase 3Y reproducible release evidence
+
+After committing the reviewed release, run
+`npm run evidence:rollout-recovery-release` from `sinbad-ai-core`. The command
+requires a clean Git worktree, captures the current commit and migration
+manifest hash, runs the complete Phase 3X gate, and confirms that the commit and
+manifest did not change while verification was running. It emits a content-free
+JSON record with the database fingerprint, test and migration counts, and a
+deterministic evidence hash. A blocked result exits non-zero.
+
+Attach the JSON to the deployment record. It contains no secret and is neither
+a signature nor deployment authorization; Supabase migration application and
+identity-provider configuration remain separately authorized external steps.

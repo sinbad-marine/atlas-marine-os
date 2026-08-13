@@ -200,6 +200,13 @@ Use the Phase 3X release command as the required local/CI quality gate. Require
 checks the migration seal before running all tests, so a compromised migration
 cannot be hidden behind an otherwise green test suite.
 
+After the reviewed changes are committed, require the Phase 3Y evidence command
+to return `RELEASE_EVIDENCE_VERIFIED` from a clean worktree. Preserve its JSON
+with the deployment record and confirm its commit before applying migrations.
+The evidence record is content-free and does not grant deployment authority.
+Any dirty worktree, changed commit/manifest, or failed Phase 3X gate blocks
+evidence creation and must not be bypassed.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.
