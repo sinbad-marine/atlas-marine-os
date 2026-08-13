@@ -763,3 +763,17 @@ unsettled. `ALREADY_SETTLED` is accepted only after inspecting the identical
 terminal state, and concurrent reconciliation for one authorization hash is
 fenced across adapter instances in the process. Keep this module behind a
 separate trusted operator authorization boundary.
+
+## Phase 4F single-use reconciliation authorization
+
+`tools/trusted-rollout-recovery-deployment-reconciliation-authorization.js`
+places Phase 4E behind a short-lived, purpose-bound operator decision. The
+authorization request contains only the actor hash, deployment authorization
+hash and fixed reconciliation purpose. Only exact boolean `true` issues an
+opaque same-instance capability.
+
+Copies, other instances, expiry, clock rollback, replay and concurrent reuse
+fail closed. The capability is consumed before reconciliation begins. This
+phase does not yet persist the operator decision audit, so the wrapper remains
+unexported and must not be treated as production-ready until a mandatory durable
+audit boundary is composed.

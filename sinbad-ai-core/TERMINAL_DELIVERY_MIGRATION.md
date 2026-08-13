@@ -245,6 +245,12 @@ never pass a deployment function. Terminal journal states require no provider
 call. Timeout, invalid response and compare-and-set conflict remain unsettled
 and must be escalated through a separately authorized operator workflow.
 
+Phase 4F provides that single-use operator boundary for reconciliation. Supply
+a hashed actor identity, fixed purpose, monotonic clock, bounded authorization
+TTL/timeout and a side-effect-free identity/policy decision. Never persist or
+reconstruct the returned capability. Durable operator-decision audit remains a
+required later boundary before production exposure.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.
