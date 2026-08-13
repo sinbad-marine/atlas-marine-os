@@ -46,6 +46,8 @@ Phase 5F snapshots durable reconciliation-audit results through exact `status` a
 
 Phase 5G snapshots Supabase deployment-journal rows through exact own string data properties. Getter-backed, inherited, uninspectable, or coercive status and timestamp fields return `UNAVAILABLE` without invoking conversion hooks.
 
+Phase 5H snapshots Supabase reconciliation-audit rows through exact own primitive data properties. Numeric IDs/timestamps must already be safe integers and hash/decision fields must already be strings; accessors and coercive values fail integrity verification without invocation.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.

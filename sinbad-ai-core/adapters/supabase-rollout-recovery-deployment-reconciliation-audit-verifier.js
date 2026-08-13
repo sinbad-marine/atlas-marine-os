@@ -5,14 +5,31 @@ const EVENT_VERSION = 'sinbad-rollout-recovery-deployment-reconciliation-audit/4
 const VERIFIER_VERSION = 'sinbad-rollout-recovery-deployment-reconciliation-audit-verifier/4I-v1';
 const HASH = /^[a-f0-9]{64}$/u;
 const DECISIONS = new Set(['AUTHORIZED', 'DENIED']);
+const ROW_FIELDS = Object.freeze(['id', 'actor_hash', 'authorization_hash', 'purpose_hash', 'decision', 'decided_at_ms', 'event_hash']);
 const digest = row => createHash('sha256').update([EVENT_VERSION, row.actorHash, row.authorizationHash, row.purposeHash, row.decision, row.decidedAt].join('\n')).digest('hex');
 const summary = (status, reasonCode, eventCount = 0, pageCount = 0, watermarkId = null) => Object.freeze({ version: VERIFIER_VERSION, status, reasonCode, eventCount, pageCount, watermarkId });
+
+function rowSnapshot(row) {
+  if (!row || typeof row !== 'object') return null;
+  const raw = Object.create(null);
+  for (const name of ROW_FIELDS) {
+    let descriptor;
+    try { descriptor = Object.getOwnPropertyDescriptor(row, name); } catch { return null; }
+    if (!descriptor || !Object.hasOwn(descriptor, 'value')) return null;
+    raw[name] = descriptor.value;
+  }
+  if (!Number.isSafeInteger(raw.id) || !Number.isSafeInteger(raw.decided_at_ms)) return null;
+  for (const name of ['actor_hash', 'authorization_hash', 'purpose_hash', 'decision', 'event_hash']) if (typeof raw[name] !== 'string') return null;
+  return Object.freeze(raw);
+}
 
 function parse(data) {
   if (!Array.isArray(data)) return null;
   const output = [];
   for (const row of data) {
-    const value = { id: Number(row?.id), actorHash: String(row?.actor_hash || ''), authorizationHash: String(row?.authorization_hash || ''), purposeHash: String(row?.purpose_hash || ''), decision: String(row?.decision || ''), decidedAt: Number(row?.decided_at_ms), eventHash: String(row?.event_hash || '') };
+    const raw = rowSnapshot(row);
+    if (!raw) return null;
+    const value = { id: raw.id, actorHash: raw.actor_hash, authorizationHash: raw.authorization_hash, purposeHash: raw.purpose_hash, decision: raw.decision, decidedAt: raw.decided_at_ms, eventHash: raw.event_hash };
     if (!Number.isSafeInteger(value.id) || value.id < 1 || !HASH.test(value.actorHash) || !HASH.test(value.authorizationHash) || !HASH.test(value.purposeHash) || !DECISIONS.has(value.decision) || !Number.isSafeInteger(value.decidedAt) || value.decidedAt < 0 || !HASH.test(value.eventHash) || digest(value) !== value.eventHash) return null;
     output.push(value);
   }
@@ -48,4 +65,4 @@ function create(options = {}) {
   });
 }
 
-module.exports = Object.freeze({ EVENT_VERSION, VERIFIER_VERSION, create });
+module.exports = Object.freeze({ EVENT_VERSION, VERIFIER_VERSION, ROW_FIELDS, rowSnapshot, parse, create });
