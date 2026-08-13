@@ -84,6 +84,8 @@ Phase 5W requires rollout-recovery authorization audit and readiness dependencie
 
 Phase 5X requires authorization-audit append configuration and recorded event fields to be exact own primitive data. Getter access, descriptor traps, inherited fields, coercive values, unsafe timestamps, and post-construction append mutation fail closed or remain isolated.
 
+Phase 5Y requires trusted rollout-recovery runtime client, service-role flag, hooks, and audit bounds to be exact own data. Getter access, descriptor traps, numeric strings, bigint, coercive values, and post-construction client/hook/bound mutation fail closed or remain isolated.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
