@@ -34,6 +34,10 @@ Phase 4Z moves that exact dependency boundary into the rollout-recovery lifecycl
 
 Phase 5A admits lifecycle identity and numeric policy only as exact primitives before subordinate construction. Objects with coercion hooks, numeric strings, booleans, bigint values, non-finite numbers, and unsafe integers fail closed without invoking conversion code.
 
+Phase 5B atomically enforces every lifecycle timeout, authorization, audit scan, retry attempt, delay, backoff, and cross-field limit during dependency admission. Invalid policy cannot reach journal, deployment, reconciliation, RPC, or operator work.
+
+Phase 5B validates every lifecycle timeout, audit scan, attempt, retry delay, and backoff range atomically at the runtime boundary. Invalid or inconsistent cross-field policy is rejected before journals, audit adapters, authorization gates, or reconciliation runtimes are constructed.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.

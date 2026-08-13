@@ -38,6 +38,8 @@ Phase 4Z enforces the same exact own-data-property snapshot inside the rollout-r
 
 Phase 5A requires exact primitive lifecycle identity and numeric policy values at the runtime boundary. Callers must pass canonical strings and safe integers directly; implicit object, string, boolean, bigint, infinity, or unsafe-integer coercion is rejected before subordinate construction.
 
+Phase 5B moves all lifecycle numeric bounds and cross-field ordering into atomic dependency admission. Existing limits are unchanged; invalid timeout, authorization, audit, attempt, delay, factor, or cap values now fail before any subordinate runtime or RPC work begins.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:

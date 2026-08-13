@@ -4,7 +4,7 @@ const journalAdapter = require('../sinbad-ai-core/adapters/supabase-rollout-reco
 const journaledDeploymentModule = require('./trusted-rollout-recovery-journaled-deployment.js');
 const reconciliationRuntimeModule = require('./trusted-rollout-recovery-deployment-reconciliation-runtime.js');
 
-const LIFECYCLE_VERSION = 'sinbad-rollout-recovery-deployment-lifecycle-runtime/5A-v1';
+const LIFECYCLE_VERSION = 'sinbad-rollout-recovery-deployment-lifecycle-runtime/5B-v1';
 const DEPENDENCIES = Object.freeze(['client', 'serviceRole', 'deploymentReadiness', 'deploy', 'deploymentPurpose', 'deploymentTimeoutMs', 'resolve', 'reconciliationTimeoutMs', 'authorize', 'now', 'actorHash', 'reconciliationPurpose', 'authorizationTtlMs', 'authorizationTimeoutMs', 'auditPageSize', 'auditMaxEvents', 'maxReconciliationAttempts', 'reconciliationRetryDelayMs', 'reconciliationRetryBackoffFactor', 'maxReconciliationRetryDelayMs']);
 const HASH = /^[a-f0-9]{64}$/u;
 const PURPOSE = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/u;
@@ -33,6 +33,11 @@ function dependencies(options) {
   if (typeof output.deploymentPurpose !== 'string' || typeof output.reconciliationPurpose !== 'string' || typeof output.actorHash !== 'string' || !PURPOSE.test(output.deploymentPurpose) || !PURPOSE.test(output.reconciliationPurpose) || !HASH.test(output.actorHash)) throw new TypeError('Exact primitive lifecycle identity policy is required');
   const numericPolicies = Object.freeze({ deploymentTimeoutMs: 'A bounded deployment timeout policy is required', reconciliationTimeoutMs: 'A bounded reconciliation timeout policy is required', authorizationTtlMs: 'A bounded authorization TTL policy is required', authorizationTimeoutMs: 'A bounded authorization timeout policy is required', auditPageSize: 'A bounded audit page policy is required', auditMaxEvents: 'A bounded audit event policy is required', maxReconciliationAttempts: 'A bounded reconciliation attempt policy is required', reconciliationRetryDelayMs: 'A bounded reconciliation retry delay policy is required', reconciliationRetryBackoffFactor: 'A bounded reconciliation backoff policy is required', maxReconciliationRetryDelayMs: 'A bounded reconciliation backoff policy is required' });
   for (const [name, message] of Object.entries(numericPolicies)) if (!Number.isSafeInteger(output[name])) throw new TypeError(`${message} (safe integer)`);
+  for (const name of ['deploymentTimeoutMs', 'reconciliationTimeoutMs', 'authorizationTtlMs', 'authorizationTimeoutMs']) if (output[name] < 1000 || output[name] > 300000) throw new TypeError(`A bounded lifecycle timeout policy is required: ${name}`);
+  if (output.auditPageSize < 1 || output.auditPageSize > 500 || output.auditMaxEvents < output.auditPageSize || output.auditMaxEvents > 100000) throw new TypeError('A bounded audit scan policy is required');
+  if (output.maxReconciliationAttempts < 1 || output.maxReconciliationAttempts > 10) throw new TypeError('A bounded reconciliation attempt policy is required');
+  if (output.reconciliationRetryDelayMs < 1000 || output.reconciliationRetryDelayMs > 300000) throw new TypeError('A bounded reconciliation retry delay policy is required');
+  if (output.reconciliationRetryBackoffFactor < 2 || output.reconciliationRetryBackoffFactor > 4 || output.maxReconciliationRetryDelayMs < output.reconciliationRetryDelayMs || output.maxReconciliationRetryDelayMs > 300000) throw new TypeError('A bounded reconciliation backoff policy is required');
   output.client = Object.freeze(Object.assign(Object.create(null), { rpc: rpc.bind(output.client) }));
   output.deploymentReadiness = Object.freeze(Object.assign(Object.create(null), { READINESS_VERSION: readinessVersion, verify: verify.bind(output.deploymentReadiness) }));
   return Object.freeze(output);
@@ -40,13 +45,10 @@ function dependencies(options) {
 
 function create(options = {}) {
   const trusted = dependencies(options);
-  const maxAttempts = Number(trusted.maxReconciliationAttempts);
-  if (!Number.isInteger(maxAttempts) || maxAttempts < 1 || maxAttempts > 10) throw new TypeError('A bounded reconciliation attempt policy is required');
-  const retryDelayMs = Number(trusted.reconciliationRetryDelayMs);
-  if (!Number.isInteger(retryDelayMs) || retryDelayMs < 1000 || retryDelayMs > 300000) throw new TypeError('A bounded reconciliation retry delay is required');
-  const backoffFactor = Number(trusted.reconciliationRetryBackoffFactor);
-  const maxRetryDelayMs = Number(trusted.maxReconciliationRetryDelayMs);
-  if (!Number.isInteger(backoffFactor) || backoffFactor < 2 || backoffFactor > 4 || !Number.isInteger(maxRetryDelayMs) || maxRetryDelayMs < retryDelayMs || maxRetryDelayMs > 300000) throw new TypeError('A bounded reconciliation backoff policy is required');
+  const maxAttempts = trusted.maxReconciliationAttempts;
+  const retryDelayMs = trusted.reconciliationRetryDelayMs;
+  const backoffFactor = trusted.reconciliationRetryBackoffFactor;
+  const maxRetryDelayMs = trusted.maxReconciliationRetryDelayMs;
   const deploymentJournal = journalAdapter.create(trusted);
   const deployment = journaledDeploymentModule.create({ ...trusted, deploymentJournal });
   const reconciliation = reconciliationRuntimeModule.create(trusted);
