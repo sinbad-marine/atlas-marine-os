@@ -72,6 +72,8 @@ Phase 5Q requires durable settlement summaries to contain only exact enumerable 
 
 Phase 5R requires terminal-recovery attestation TTL, clock, and purpose to be direct own primitive data. Getter access, descriptor traps, numeric strings, bigint, boxed/coercive values, non-integer clock samples, and post-construction policy mutation fail closed or remain isolated.
 
+Phase 5S requires the readiness decision consumed by terminal-recovery attestation to contain exact own primitive fields and consistent counters. Getter access, descriptor traps, inherited/coercive fields, and invalid audit watermark invariants fail closed before clock or nonce work.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
