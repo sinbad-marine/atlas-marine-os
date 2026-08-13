@@ -777,3 +777,16 @@ fail closed. The capability is consumed before reconciliation begins. This
 phase does not yet persist the operator decision audit, so the wrapper remains
 unexported and must not be treated as production-ready until a mandatory durable
 audit boundary is composed.
+
+## Phase 4G mandatory reconciliation authorization audit
+
+`tools/trusted-rollout-recovery-deployment-reconciliation-audit.js` defines the
+durable, content-minimized operator-decision event for Phase 4F. It contains
+only actor, deployment authorization and purpose hashes, the authorized/denied
+decision, decision time and a deterministic event hash.
+
+Phase 4F advances to wire version `4G-v1` and requires the exact durable audit
+contract. Both approval and denial must return a verified `RECORDED` result
+before the wrapper returns; audit denial, malformed output or outage produces no
+capability. The repository does not yet provide the Supabase append adapter or
+migration for this new audit stream, so the composition remains internal.

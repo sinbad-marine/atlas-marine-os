@@ -251,6 +251,12 @@ TTL/timeout and a side-effect-free identity/policy decision. Never persist or
 reconstruct the returned capability. Durable operator-decision audit remains a
 required later boundary before production exposure.
 
+Phase 4G makes the reconciliation authorization audit mandatory. Configure a
+durable append writer for the exact `4G-v1` audit event and require `RECORDED`
+before returning either approval or denial. Do not substitute the older rollout
+recovery authorization audit stream: its purpose and wire contract are distinct.
+Remote persistence wiring remains required before exposure.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.

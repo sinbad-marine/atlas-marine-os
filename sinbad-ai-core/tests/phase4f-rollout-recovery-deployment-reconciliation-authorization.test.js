@@ -4,11 +4,13 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const authorization = require('../../tools/trusted-rollout-recovery-deployment-reconciliation-authorization.js');
 const reconciliation = require('../../tools/trusted-rollout-recovery-deployment-reconciliation.js');
+const audit = require('../../tools/trusted-rollout-recovery-deployment-reconciliation-audit.js');
 
 const hash = 'a'.repeat(64);
 let time;
 const journal = (overrides = {}) => ({ version: reconciliation.EXPECTED_JOURNAL_VERSION, durable: true, inspect: async () => ({ status: 'FOUND', state: { status: 'APPLIED' } }), settle: async () => ({ status: 'SETTLED' }), ...overrides });
-const options = (overrides = {}) => ({ deploymentJournal: journal(), resolve: async () => 'APPLIED', reconciliationTimeoutMs: 1000, authorize: async () => true, now: () => time, actorHash: 'b'.repeat(64), reconciliationPurpose: 'deployment.reconciliation', authorizationTtlMs: 1000, authorizationTimeoutMs: 1000, ...overrides });
+const authorizationAudit = (overrides = {}) => ({ version: audit.AUDIT_VERSION, durable: true, record: async () => ({ status: 'RECORDED', eventHash: 'd'.repeat(64) }), ...overrides });
+const options = (overrides = {}) => ({ deploymentJournal: journal(), resolve: async () => 'APPLIED', reconciliationTimeoutMs: 1000, authorize: async () => true, authorizationAudit: authorizationAudit(), now: () => time, actorHash: 'b'.repeat(64), reconciliationPurpose: 'deployment.reconciliation', authorizationTtlMs: 1000, authorizationTimeoutMs: 1000, ...overrides });
 
 test('issues an opaque authorization and reconciles exactly once', async () => {
   time = 1000;
@@ -59,5 +61,5 @@ test('concurrent use consumes capability before reconciliation awaits', async ()
 
 test('construction requires bounded purpose-bound dependencies', () => {
   assert.throws(() => authorization.create(), /required/u);
-  for (const changed of [{ actorHash: 'bad' }, { reconciliationPurpose: '' }, { authorizationTtlMs: 999 }, { authorizationTimeoutMs: 300001 }, { now: null }]) assert.throws(() => authorization.create(options(changed)), /required|policy/u);
+  for (const changed of [{ actorHash: 'bad' }, { reconciliationPurpose: '' }, { authorizationTtlMs: 999 }, { authorizationTimeoutMs: 300001 }, { now: null }, { authorizationAudit: null }]) assert.throws(() => authorization.create(options(changed)), /required|policy|authorizationAudit/u);
 });
