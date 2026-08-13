@@ -6,7 +6,8 @@ const verifierModule=require('./supabase-rollout-recovery-authorization-audit-ve
 const readinessModule=require('./rollout-recovery-authorization-audit-readiness.js');
 const authorizationModule=require('./trusted-terminal-rollout-recovery-authorization.js');
 
-const RUNTIME_VERSION='sinbad-trusted-rollout-recovery-runtime/3T-v1';
+const RUNTIME_VERSION='sinbad-trusted-rollout-recovery-runtime/3U-v1';
+const DATABASE_FINGERPRINT='sinbad-rollout-recovery-db/3U-20260820-v1';
 const EXPECTED=Object.freeze({
   journal:'sinbad-supabase-rollout-activation-journal/3J-v1',
   auditEvent:'sinbad-trusted-rollout-recovery-authorization-audit/3N-v1',
@@ -24,7 +25,7 @@ function create(options={}){
   const base=Object.freeze({client:options.client,serviceRole:true,actorHash:options.actorHash,recoveryPurpose:options.recoveryPurpose,authorizationTtlMs:options.authorizationTtlMs,authorizationTimeoutMs:options.authorizationTimeoutMs,now:options.now,authorize:options.authorize,resolve:options.resolve,recoveryTimeoutMs:options.recoveryTimeoutMs});
   const journal=journalModule.create(base),store=storeModule.create(base),audit=auditModule.create({durable:true,append:event=>store.append(event)}),verifier=verifierModule.create(base),readiness=readinessModule.create({auditVerifier:verifier,pageSize,maxEvents}),authorization=authorizationModule.create({...base,activationJournal:journal,authorizationAudit:audit,auditReadiness:readiness});
   let verified=false,pending=null;
-  async function preflight(){if(verified)return true;if(pending)return pending;pending=(async()=>{try{const {data,error}=await options.client.rpc('verify_rollout_recovery_runtime_access',{});return !error&&data===true;}catch{return false;}})();const value=await pending;pending=null;if(value)verified=true;return value;}
+  async function preflight(){if(verified)return true;if(pending)return pending;pending=(async()=>{try{const {data,error}=await options.client.rpc('verify_rollout_recovery_runtime_access',{});return !error&&data===DATABASE_FINGERPRINT;}catch{return false;}})();const value=await pending;pending=null;if(value)verified=true;return value;}
   return Object.freeze({version:RUNTIME_VERSION,async healthCheck(){return Object.freeze({version:RUNTIME_VERSION,status:await preflight()?'ROLLOUT_RECOVERY_RUNTIME_READY':'ROLLOUT_RECOVERY_RUNTIME_BLOCKED'});},async issue(value){if(!await preflight())return Object.freeze({version:EXPECTED.authorization,status:'ROLLOUT_RECOVERY_AUTHORIZATION_BLOCKED',reasonCode:'RUNTIME_PREFLIGHT_REQUIRED',authorizationHash:null,issuedAt:null,expiresAt:null});return authorization.issue(value);},async recover(value){if(!await preflight())return Object.freeze({version:'sinbad-trusted-terminal-rollout-recovery/3L-v1',status:'ROLLOUT_RECOVERY_BLOCKED',reasonCode:'RUNTIME_PREFLIGHT_REQUIRED',attestationHash:null});return authorization.recover(value);}});
 }
-module.exports=Object.freeze({RUNTIME_VERSION,EXPECTED,create});
+module.exports=Object.freeze({RUNTIME_VERSION,DATABASE_FINGERPRINT,EXPECTED,create});

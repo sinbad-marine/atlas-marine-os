@@ -180,6 +180,11 @@ Phase 3T runtime. Require `ROLLOUT_RECOVERY_RUNTIME_READY` from `healthCheck()`
 at startup. A blocked preflight prevents both authorization and recovery; do not
 bypass it or substitute a local configuration check for the database RPC.
 
+Apply `20260820_rollout_recovery_runtime_fingerprint.sql` last. Phase 3U no
+longer accepts the Phase 3T boolean preflight response. Verify that startup
+returns `ROLLOUT_RECOVERY_RUNTIME_READY`; a stale deployment fingerprint means
+the migration chain is incomplete and must not be bypassed.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.

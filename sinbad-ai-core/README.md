@@ -629,3 +629,12 @@ under service-role authentication. The runtime advances to `3T-v1`, exposes a
 content-free `healthCheck()` and gates both `issue()` and `recover()` on the same
 preflight. Success is cached in-process; failure stays retryable but blocks all
 trusted hooks until the database contract becomes available.
+
+## Phase 3U exact recovery database fingerprint
+
+Apply `20260820_rollout_recovery_runtime_fingerprint.sql` after Phase 3T. It
+replaces the boolean preflight with the exact deployment fingerprint
+`sinbad-rollout-recovery-db/3U-20260820-v1`. The `3U-v1` runtime accepts only
+that value; legacy boolean success, stale fingerprints, denial and malformed
+responses block health, authorization and recovery. Migration and runtime
+fingerprints are locked together by a contract test.
