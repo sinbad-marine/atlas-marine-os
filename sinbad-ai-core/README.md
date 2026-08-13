@@ -74,6 +74,8 @@ Phase 5T snapshots terminal rollout activation timeout, hooks, and optional dura
 
 Phase 5U snapshots terminal rollout recovery timeout, resolver, diagnostics, and durable journal methods from direct own data properties. Accessors, descriptor traps, inherited methods, numeric strings, bigint, coercive values, and later dependency mutation fail closed or remain isolated.
 
+Phase 5V snapshots rollout-recovery authorization identity, purpose, TTL, timeout, clock, and authorize hook from direct own primitive data. Accessors, descriptor traps, numeric strings, bigint, boxed/coercive values, non-integer clock samples, and later policy mutation fail closed or remain isolated.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.

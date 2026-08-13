@@ -78,6 +78,8 @@ Phase 5T requires terminal rollout activation timeout, hooks, and optional durab
 
 Phase 5U requires terminal rollout recovery timeout, resolver, diagnostics, and durable journal methods to be direct own data properties. Getter access, descriptor traps, inherited methods, numeric strings, bigint, coercive values, and post-construction dependency mutation fail closed or remain isolated.
 
+Phase 5V requires rollout-recovery authorization identity, purpose, TTL, timeout, clock, and operator hook to be direct own primitive data. Getter access, descriptor traps, numeric strings, bigint, boxed/coercive values, non-integer clock samples, and post-construction policy mutation fail closed or remain isolated.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
