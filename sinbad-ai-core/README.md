@@ -18,6 +18,8 @@ Phase 4R separates observational clock reads from security-decision samples. Das
 
 Phase 4S makes lifecycle clock conversion exception-safe. A throwing clock or an unconvertible value is mapped to the existing fail-closed clock state instead of escaping through inspection or retry authorization.
 
+Phase 4T replaces synthetic infinite retry deadlines with a distinct recoverable `RETRY_CLOCK_PENDING` state. After the clock returns, the first valid decision sample starts the full configured delay and remains fail-closed for that call.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.

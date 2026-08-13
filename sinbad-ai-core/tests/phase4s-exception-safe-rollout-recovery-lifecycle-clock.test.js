@@ -31,7 +31,7 @@ async function delayed(setup) {
 }
 
 test('advertises an exception-safe lifecycle clock contract', () => {
-  assert.equal(lifecycle.LIFECYCLE_VERSION, 'sinbad-rollout-recovery-deployment-lifecycle-runtime/4S-v1');
+  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/4[ST]-v1$/u);
 });
 
 test('throwing and unconvertible clocks fail closed without escaping', async () => {

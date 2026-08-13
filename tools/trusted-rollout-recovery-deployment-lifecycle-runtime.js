@@ -4,7 +4,7 @@ const journalAdapter = require('../sinbad-ai-core/adapters/supabase-rollout-reco
 const journaledDeploymentModule = require('./trusted-rollout-recovery-journaled-deployment.js');
 const reconciliationRuntimeModule = require('./trusted-rollout-recovery-deployment-reconciliation-runtime.js');
 
-const LIFECYCLE_VERSION = 'sinbad-rollout-recovery-deployment-lifecycle-runtime/4S-v1';
+const LIFECYCLE_VERSION = 'sinbad-rollout-recovery-deployment-lifecycle-runtime/4T-v1';
 const HASH = /^[a-f0-9]{64}$/u;
 const blocked = reasonCode => Object.freeze({ version: LIFECYCLE_VERSION, status: 'ROLLOUT_RECOVERY_DEPLOYMENT_LIFECYCLE_BLOCKED', reasonCode });
 const snapshot = (phase, attemptsUsed = null, attemptsRemaining = null, retryNotBefore = null) => Object.freeze({ version: LIFECYCLE_VERSION, status: 'ROLLOUT_RECOVERY_DEPLOYMENT_LIFECYCLE_STATE', phase, attemptsUsed: Number.isInteger(attemptsUsed) ? attemptsUsed : null, attemptsRemaining: Number.isInteger(attemptsRemaining) ? attemptsRemaining : null, retryNotBefore: Number.isSafeInteger(retryNotBefore) ? retryNotBefore : null });
@@ -29,6 +29,7 @@ function create(options = {}) {
   let lastClock = -1;
   function clock() { try { return Number(options.now()); } catch { return NaN; } }
   function sample() { const value = clock(); if (!Number.isSafeInteger(value) || value < 0 || value < lastClock) return null; lastClock = value; return value; }
+  function sampleWithHeadroom(amount) { const value = clock(); if (!Number.isSafeInteger(value) || value < 0 || value < lastClock || value > Number.MAX_SAFE_INTEGER - amount) return null; lastClock = value; return value; }
   function observe() { const value = clock(); return Number.isSafeInteger(value) && value >= 0 && value >= lastClock ? value : null; }
   function retryDelay(attempt) { let delay = retryDelayMs; for (let index = 1; index < attempt && delay < maxRetryDelayMs; index++) delay = delay > Math.floor(maxRetryDelayMs / backoffFactor) ? maxRetryDelayMs : Math.min(maxRetryDelayMs, delay * backoffFactor); return delay; }
 
@@ -37,7 +38,7 @@ function create(options = {}) {
     preflight: reconciliation.preflight,
     async issue(input) {
       const authorization = await deployment.issue(input);
-      if (authorization?.status === 'ROLLOUT_RECOVERY_DEPLOYMENT_AUTHORIZED' && HASH.test(authorization.authorizationHash || '')) deployments.set(authorization, { authorizationHash: authorization.authorizationHash, executed: false, unsettled: false, closed: false, reconciliationIssued: false, reconciliationRunning: false, reconciliationAttempts: 0, retryNotBefore: null });
+      if (authorization?.status === 'ROLLOUT_RECOVERY_DEPLOYMENT_AUTHORIZED' && HASH.test(authorization.authorizationHash || '')) deployments.set(authorization, { authorizationHash: authorization.authorizationHash, executed: false, unsettled: false, closed: false, reconciliationIssued: false, reconciliationRunning: false, reconciliationAttempts: 0, retryNotBefore: null, retryClockPending: false });
       return authorization;
     },
     async execute(authorization) {
@@ -60,6 +61,14 @@ function create(options = {}) {
       const state = deployments.get(authorization);
       if (!state || !state.executed || !state.unsettled || state.reconciliationIssued) return blocked('RECONCILIATION_SOURCE_DENIED');
       if (state.reconciliationAttempts >= maxAttempts) return blocked('RECONCILIATION_RETRY_EXHAUSTED');
+      if (state.retryClockPending) {
+        const delay = retryDelay(state.reconciliationAttempts);
+        const now = sampleWithHeadroom(delay);
+        if (now === null) return blocked('RECONCILIATION_RETRY_CLOCK_INVALID');
+        state.retryNotBefore = now + delay;
+        state.retryClockPending = false;
+        return blocked('RECONCILIATION_RETRY_DELAY_ACTIVE');
+      }
       if (state.retryNotBefore !== null) {
         const now = sample();
         if (now === null) return blocked('RECONCILIATION_RETRY_CLOCK_INVALID');
@@ -92,7 +101,8 @@ function create(options = {}) {
           if (!terminal) {
             const now = sample();
             const delay = retryDelay(state.reconciliationAttempts);
-            state.retryNotBefore = now !== null && now <= Number.MAX_SAFE_INTEGER - delay ? now + delay : Number.MAX_SAFE_INTEGER;
+            state.retryClockPending = now === null || now > Number.MAX_SAFE_INTEGER - delay;
+            state.retryNotBefore = state.retryClockPending ? null : now + delay;
           }
         }
         return outcome;
@@ -109,6 +119,7 @@ function create(options = {}) {
       if (state.reconciliationRunning) return snapshot('RECONCILIATION_IN_PROGRESS', used, remaining);
       if (state.reconciliationIssued) return snapshot('RECONCILIATION_AUTHORIZED', used, remaining);
       if (used >= maxAttempts) return snapshot('RETRY_EXHAUSTED', used, remaining, state.retryNotBefore);
+      if (state.retryClockPending) return snapshot('RETRY_CLOCK_PENDING', used, remaining);
       if (state.retryNotBefore === null) return snapshot('RETRY_READY', used, remaining);
       const now = observe();
       if (now === null) return snapshot('RETRY_CLOCK_INVALID', used, remaining, state.retryNotBefore);

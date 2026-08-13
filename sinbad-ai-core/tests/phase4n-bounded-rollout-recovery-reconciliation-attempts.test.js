@@ -24,7 +24,7 @@ function create(overrides = {}) {
 }
 
 test('requires and advertises an exact bounded attempt policy', () => {
-  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/4[N-S]-v1$/u);
+  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/4[N-T]-v1$/u);
   for (const maxReconciliationAttempts of [undefined, 0, 11, 1.5]) assert.throws(() => create({ maxReconciliationAttempts }), /attempt policy/u);
 });
 

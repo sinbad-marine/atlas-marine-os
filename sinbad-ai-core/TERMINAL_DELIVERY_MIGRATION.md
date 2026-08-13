@@ -22,6 +22,8 @@ Phase 4R makes inspection internally side-effect-free as well: observational clo
 
 Phase 4S wraps trusted clock invocation and numeric conversion. Exceptions, symbols, and other invalid samples produce clock-invalid outcomes and do not mutate the last accepted decision sample.
 
+Phase 4T stores `retryClockPending` when a nonterminal completion cannot obtain a valid time and exposes it as `RETRY_CLOCK_PENDING`. It never writes a synthetic maximum deadline; a later valid authorization decision establishes the complete delay window before any downstream work. Exhausted attempts take precedence over pending-clock recovery.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
