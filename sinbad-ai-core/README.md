@@ -78,6 +78,8 @@ Phase 5V snapshots rollout-recovery authorization identity, purpose, TTL, timeou
 
 Phase 5W snapshots rollout-recovery authorization audit and readiness dependencies from exact own data properties. Accessors, descriptor traps, inherited methods, invalid contracts, and post-construction `record` or `check` mutation fail closed or remain isolated.
 
+Phase 5X snapshots authorization-audit append configuration and each recorded event from exact own primitive data. Accessors, descriptor traps, inherited fields, coercive values, unsafe timestamps, and post-construction append mutation fail closed or remain isolated.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.

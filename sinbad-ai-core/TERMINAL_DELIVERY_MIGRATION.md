@@ -82,6 +82,8 @@ Phase 5V requires rollout-recovery authorization identity, purpose, TTL, timeout
 
 Phase 5W requires rollout-recovery authorization audit and readiness dependencies to expose exact own data contracts. Getter access, descriptor traps, inherited methods, invalid versions/durability, and post-construction `record` or `check` mutation fail closed or remain isolated.
 
+Phase 5X requires authorization-audit append configuration and recorded event fields to be exact own primitive data. Getter access, descriptor traps, inherited fields, coercive values, unsafe timestamps, and post-construction append mutation fail closed or remain isolated.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
