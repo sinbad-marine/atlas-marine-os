@@ -76,6 +76,8 @@ Phase 5S requires the readiness decision consumed by terminal-recovery attestati
 
 Phase 5T requires terminal rollout activation timeout, hooks, and optional durable journal methods to be direct own data properties. Getter access, descriptor traps, numeric strings, bigint, coercive values, and later hook or journal mutation fail closed or remain isolated.
 
+Phase 5U requires terminal rollout recovery timeout, resolver, diagnostics, and durable journal methods to be direct own data properties. Getter access, descriptor traps, inherited methods, numeric strings, bigint, coercive values, and post-construction dependency mutation fail closed or remain isolated.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
