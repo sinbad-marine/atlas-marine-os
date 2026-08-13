@@ -76,6 +76,8 @@ Phase 5S requires the readiness decision consumed by terminal-recovery attestati
 
 Phase 5T requires terminal rollout activation timeout, hooks, and optional durable journal methods to be direct own data properties. Getter access, descriptor traps, numeric strings, bigint, coercive values, and later hook or journal mutation fail closed or remain isolated.
 
+This is an intentional server-only compatibility hardening: `activationTimeoutMs` must be a direct safe integer from 1000 through 300000, not a numeric string or coercible object. `activate` is mandatory; `resolve` and `diagnose`, when present, must be direct functions. A supplied activation journal must expose the exact trusted version, `durable: true`, and direct `begin`, `settle`, and `inspect` functions.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
