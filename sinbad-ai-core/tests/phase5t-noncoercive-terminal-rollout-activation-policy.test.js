@@ -11,9 +11,17 @@ test('activation policy rejects accessors traps strings bigint and coercion', ()
   let hooks = 0;
   const malicious = { valueOf() { hooks++; throw new Error('must not run'); }, [Symbol.toPrimitive]() { hooks++; throw new Error('must not run'); } };
   for (const changed of [{ activationTimeoutMs: malicious }, { activationTimeoutMs: '5000' }, { activationTimeoutMs: 5000n }]) assert.throws(() => activation.create({ ...options(), ...changed }), /timeout/u);
-  for (const field of ['activate', 'resolve', 'diagnose', 'activationJournal', 'activationTimeoutMs']) { const value = options(); Object.defineProperty(value, field, { get() { hooks++; throw new Error('must not run'); } }); assert.throws(() => activation.create(value), /activate|timeout|functions|journal/u); }
+  for (const field of ['activate', 'resolve', 'diagnose', 'activationJournal', 'activationTimeoutMs', 'client', 'ttlMs', 'now']) { const value = options(); Object.defineProperty(value, field, { get() { hooks++; throw new Error('must not run'); } }); assert.throws(() => activation.create(value), /activate|timeout|properties|journal/u); }
   const trapped = new Proxy(options(), { getOwnPropertyDescriptor(target, field) { if (field === 'activationTimeoutMs') throw new Error('host failure'); return Reflect.getOwnPropertyDescriptor(target, field); } });
-  assert.throws(() => activation.create(trapped), /timeout/u);
+  assert.throws(() => activation.create(trapped), /timeout|properties/u);
+  assert.equal(hooks, 0);
+});
+
+test('activation rejects malformed journal own fields without invoking accessors', () => {
+  let hooks = 0;
+  const valid = { version: activation.EXPECTED_JOURNAL_VERSION, durable: true, begin() {}, settle() {}, inspect() {} };
+  for (const journal of [{ ...valid, durable: 'true' }, { ...valid, version: 'wrong' }, { ...valid, inspect: undefined }]) assert.throws(() => activation.create({ ...options(), activationJournal: journal }), /journal/u);
+  for (const field of ['version', 'durable', 'begin', 'settle', 'inspect']) { const journal = { ...valid }; Object.defineProperty(journal, field, { get() { hooks++; throw new Error('must not run'); } }); assert.throws(() => activation.create({ ...options(), activationJournal: journal }), /journal/u); }
   assert.equal(hooks, 0);
 });
 
