@@ -115,6 +115,12 @@ without overwriting a competing terminal result. Treat `DENIED`, `CONFLICT`,
 `INVALID` and `UNAVAILABLE` as closed outcomes; never infer success or absence
 from them.
 
+For Phase 3K, pass that journal as `activationJournal` to the trusted rollout
+adapter. Activation is blocked unless the journal begins a fresh hash. Do not
+treat `EXISTS` as permission to repeat the provider side effect. Terminal
+results require durable settlement; a settlement outage remains `UNSETTLED`
+and reconciliation may query provider state but must never activate again.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.

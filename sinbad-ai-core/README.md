@@ -508,3 +508,18 @@ response-loss retry. Calls return explicit closed outcomes such as `BEGUN`,
 `UNAVAILABLE`; transport failure is never confused with absence or denial. The
 internal Supabase journal adapter remains unexported until activation
 integration is complete.
+
+## Phase 3K journaled rollout activation
+
+The trusted rollout adapter optionally accepts the exact Phase 3J
+`activationJournal`. It must durably return `BEGUN` before the activation hook
+can run. Applied, rejected and ambiguous outcomes compare-and-set the journal
+from `PENDING` to `APPLIED`, `REJECTED` or `UNKNOWN`. A denied/unavailable begin
+blocks before the side effect; failed settlement returns an unsettled result and
+never reports success. Reconciliation queries the provider without repeating
+activation and must durably settle the expected `PENDING` or `UNKNOWN` state
+before returning a terminal result. The integration remains server-only and the
+journal subpath stays unexported pending deployment wiring.
+Unsettled result capabilities and their expected-state manifests remain
+process-local; after restart, use a separate trusted operator/provider recovery
+flow keyed by hash.
