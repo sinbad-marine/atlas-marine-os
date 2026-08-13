@@ -25,7 +25,7 @@ function create() {
 }
 
 test('exposes immutable content-free same-instance state without RPC work', async () => {
-  assert.equal(lifecycle.LIFECYCLE_VERSION, 'sinbad-rollout-recovery-deployment-lifecycle-runtime/4Q-v1');
+  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/4[QR]-v1$/u);
   const setup = create();
   assert.equal(setup.value.inspect({}).phase, 'SOURCE_DENIED');
   const authorization = await setup.value.issue({});

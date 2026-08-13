@@ -18,6 +18,8 @@ Phase 4P adds mandatory `reconciliationRetryBackoffFactor` (2–4) and `maxRecon
 
 Phase 4Q exposes a frozen, content-free `inspect(authorization)` snapshot for scheduling and diagnostics. It accepts only the original same-instance deployment authorization and performs no database, audit, provider, or operator calls.
 
+Phase 4R makes inspection internally side-effect-free as well: observational clock reads validate against the last decision sample without updating it, so monitoring cannot change later retry authorization behavior.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
