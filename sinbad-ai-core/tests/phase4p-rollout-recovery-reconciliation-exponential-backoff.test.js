@@ -22,7 +22,7 @@ function create(overrides = {}) {
 }
 
 test('requires and advertises the bounded exponential backoff contract', () => {
-  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/4[P-R]-v1$/u);
+  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/4[P-S]-v1$/u);
   for (const changed of [{ reconciliationRetryBackoffFactor: 1 }, { reconciliationRetryBackoffFactor: 5 }, { maxReconciliationRetryDelayMs: 999 }, { maxReconciliationRetryDelayMs: 300001 }]) assert.throws(() => create(changed), /backoff policy/u);
 });
 

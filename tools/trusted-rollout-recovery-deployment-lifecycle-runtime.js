@@ -4,7 +4,7 @@ const journalAdapter = require('../sinbad-ai-core/adapters/supabase-rollout-reco
 const journaledDeploymentModule = require('./trusted-rollout-recovery-journaled-deployment.js');
 const reconciliationRuntimeModule = require('./trusted-rollout-recovery-deployment-reconciliation-runtime.js');
 
-const LIFECYCLE_VERSION = 'sinbad-rollout-recovery-deployment-lifecycle-runtime/4R-v1';
+const LIFECYCLE_VERSION = 'sinbad-rollout-recovery-deployment-lifecycle-runtime/4S-v1';
 const HASH = /^[a-f0-9]{64}$/u;
 const blocked = reasonCode => Object.freeze({ version: LIFECYCLE_VERSION, status: 'ROLLOUT_RECOVERY_DEPLOYMENT_LIFECYCLE_BLOCKED', reasonCode });
 const snapshot = (phase, attemptsUsed = null, attemptsRemaining = null, retryNotBefore = null) => Object.freeze({ version: LIFECYCLE_VERSION, status: 'ROLLOUT_RECOVERY_DEPLOYMENT_LIFECYCLE_STATE', phase, attemptsUsed: Number.isInteger(attemptsUsed) ? attemptsUsed : null, attemptsRemaining: Number.isInteger(attemptsRemaining) ? attemptsRemaining : null, retryNotBefore: Number.isSafeInteger(retryNotBefore) ? retryNotBefore : null });
@@ -27,8 +27,9 @@ function create(options = {}) {
   const issuing = new WeakSet();
   const reconciling = new WeakSet();
   let lastClock = -1;
-  function sample() { const value = Number(options.now()); if (!Number.isSafeInteger(value) || value < 0 || value < lastClock) return null; lastClock = value; return value; }
-  function observe() { const value = Number(options.now()); return Number.isSafeInteger(value) && value >= 0 && value >= lastClock ? value : null; }
+  function clock() { try { return Number(options.now()); } catch { return NaN; } }
+  function sample() { const value = clock(); if (!Number.isSafeInteger(value) || value < 0 || value < lastClock) return null; lastClock = value; return value; }
+  function observe() { const value = clock(); return Number.isSafeInteger(value) && value >= 0 && value >= lastClock ? value : null; }
   function retryDelay(attempt) { let delay = retryDelayMs; for (let index = 1; index < attempt && delay < maxRetryDelayMs; index++) delay = delay > Math.floor(maxRetryDelayMs / backoffFactor) ? maxRetryDelayMs : Math.min(maxRetryDelayMs, delay * backoffFactor); return delay; }
 
   return Object.freeze({

@@ -22,7 +22,7 @@ function create() {
 }
 
 test('requires and advertises the bounded retry delay contract', () => {
-  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/4[O-R]-v1$/u);
+  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/4[O-S]-v1$/u);
 });
 
 test('blocks early retry before audit and operator work then opens at boundary', async () => {

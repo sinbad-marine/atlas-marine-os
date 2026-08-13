@@ -20,6 +20,8 @@ Phase 4Q exposes a frozen, content-free `inspect(authorization)` snapshot for sc
 
 Phase 4R makes inspection internally side-effect-free as well: observational clock reads validate against the last decision sample without updating it, so monitoring cannot change later retry authorization behavior.
 
+Phase 4S wraps trusted clock invocation and numeric conversion. Exceptions, symbols, and other invalid samples produce clock-invalid outcomes and do not mutate the last accepted decision sample.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
