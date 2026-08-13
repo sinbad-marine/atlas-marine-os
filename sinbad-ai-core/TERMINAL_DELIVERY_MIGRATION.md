@@ -88,6 +88,11 @@ budget. Continue only for exact `RECOVERY_READINESS_READY`. Any blocked result
 must stop rollout; recovery failures intentionally prevent the audit scan from
 starting and no exception may be treated as readiness.
 
+For asynchronous activation in the same trusted process, wrap the gate with
+`supabase-terminal-recovery-attestation`, configure a short explicit TTL and
+consume the original object once. Do not serialize, persist or move it across
+processes; run readiness again after restart or expiry.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.

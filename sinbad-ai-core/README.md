@@ -462,3 +462,14 @@ integrity failures all return a content-free `RECOVERY_READINESS_BLOCKED`
 result. Recovery failure short-circuits before audit scanning.
 Callers must also treat any unexpected thrown exception as blocked; no crash or
 missing readiness result may default rollout to allow.
+
+## Phase 3G short-lived readiness attestation
+
+The server-only `supabase-terminal-recovery-attestation` wrapper issues a
+short-lived attestable value only after an exact ready decision. A required,
+fixed rollout purpose prevents reuse by a different activation path. It binds the
+minimal readiness result, issuance/expiry times and a random nonce into a
+SHA-256 hash. `consume()` accepts the original object once, in the same factory
+instance and before expiry. Copies, proxies, replay, clock rollback and blocked
+readiness fail closed. This is a process-local rollout handoff—not a digital
+signature, portable credential or durable deployment record.

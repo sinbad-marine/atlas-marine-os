@@ -211,3 +211,11 @@ service-role client and explicit policy bounds. Require exact
 contains only counts, oldest expired age and audit watermark metadata. RPC
 exceptions are converted to blocked reason codes.
 
+## Phase 3G readiness attestation
+
+Use `supabase-terminal-recovery-attestation` only across a short asynchronous
+boundary inside the same trusted Node process. Configure an explicit monotonic
+clock, fixed rollout purpose and TTL from one second through five minutes. Issue yields a credential only for
+exact readiness; consume is single-use and rejects expiry or clock rollback.
+Never serialize or persist it, and do not treat its hash as a signature.
+
