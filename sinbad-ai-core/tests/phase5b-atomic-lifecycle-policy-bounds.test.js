@@ -10,7 +10,7 @@ function options() {
 }
 
 test('advertises atomic lifecycle policy bounds', () => {
-  assert.equal(lifecycle.LIFECYCLE_VERSION, 'sinbad-rollout-recovery-deployment-lifecycle-runtime/5B-v1');
+  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/5[BC]-v1$/u);
   assert.doesNotThrow(() => lifecycle.dependencies(options()));
 });
 

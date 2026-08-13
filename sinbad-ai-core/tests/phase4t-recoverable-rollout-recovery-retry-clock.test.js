@@ -26,7 +26,7 @@ function create() {
 }
 
 test('advertises a recoverable retry-clock contract', () => {
-  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/(?:4[T-VZ]|5[AB])-v1$/u);
+  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/(?:4[T-VZ]|5[A-C])-v1$/u);
 });
 
 test('invalid completion clock recovers by starting a full delay at first valid decision sample', async () => {

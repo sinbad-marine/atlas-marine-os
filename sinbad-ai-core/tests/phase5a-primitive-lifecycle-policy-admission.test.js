@@ -10,7 +10,7 @@ function options() {
 }
 
 test('advertises exact primitive lifecycle policy admission', () => {
-  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/5[AB]-v1$/u);
+  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/5[A-C]-v1$/u);
   assert.doesNotThrow(() => lifecycle.create(options()));
 });
 

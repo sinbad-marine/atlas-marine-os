@@ -40,6 +40,8 @@ Phase 5A requires exact primitive lifecycle identity and numeric policy values a
 
 Phase 5B moves all lifecycle numeric bounds and cross-field ordering into atomic dependency admission. Existing limits are unchanged; invalid timeout, authorization, audit, attempt, delay, factor, or cap values now fail before any subordinate runtime or RPC work begins.
 
+Phase 5C requires `now()` to return a direct non-negative safe integer. The runtime wraps the clock once and never coerces callback results, so object conversion hooks cannot execute inside deployment or reconciliation authorization paths.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:

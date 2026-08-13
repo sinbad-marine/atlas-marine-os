@@ -4,7 +4,7 @@ const journalAdapter = require('../sinbad-ai-core/adapters/supabase-rollout-reco
 const journaledDeploymentModule = require('./trusted-rollout-recovery-journaled-deployment.js');
 const reconciliationRuntimeModule = require('./trusted-rollout-recovery-deployment-reconciliation-runtime.js');
 
-const LIFECYCLE_VERSION = 'sinbad-rollout-recovery-deployment-lifecycle-runtime/5B-v1';
+const LIFECYCLE_VERSION = 'sinbad-rollout-recovery-deployment-lifecycle-runtime/5C-v1';
 const DEPENDENCIES = Object.freeze(['client', 'serviceRole', 'deploymentReadiness', 'deploy', 'deploymentPurpose', 'deploymentTimeoutMs', 'resolve', 'reconciliationTimeoutMs', 'authorize', 'now', 'actorHash', 'reconciliationPurpose', 'authorizationTtlMs', 'authorizationTimeoutMs', 'auditPageSize', 'auditMaxEvents', 'maxReconciliationAttempts', 'reconciliationRetryDelayMs', 'reconciliationRetryBackoffFactor', 'maxReconciliationRetryDelayMs']);
 const HASH = /^[a-f0-9]{64}$/u;
 const PURPOSE = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/u;
@@ -38,6 +38,8 @@ function dependencies(options) {
   if (output.maxReconciliationAttempts < 1 || output.maxReconciliationAttempts > 10) throw new TypeError('A bounded reconciliation attempt policy is required');
   if (output.reconciliationRetryDelayMs < 1000 || output.reconciliationRetryDelayMs > 300000) throw new TypeError('A bounded reconciliation retry delay policy is required');
   if (output.reconciliationRetryBackoffFactor < 2 || output.reconciliationRetryBackoffFactor > 4 || output.maxReconciliationRetryDelayMs < output.reconciliationRetryDelayMs || output.maxReconciliationRetryDelayMs > 300000) throw new TypeError('A bounded reconciliation backoff policy is required');
+  const now = output.now;
+  output.now = () => { try { const value = now(); return Number.isSafeInteger(value) && value >= 0 ? value : NaN; } catch { return NaN; } };
   output.client = Object.freeze(Object.assign(Object.create(null), { rpc: rpc.bind(output.client) }));
   output.deploymentReadiness = Object.freeze(Object.assign(Object.create(null), { READINESS_VERSION: readinessVersion, verify: verify.bind(output.deploymentReadiness) }));
   return Object.freeze(output);
@@ -58,7 +60,7 @@ function create(options = {}) {
   const issuing = new WeakSet();
   const reconciling = new WeakSet();
   let lastClock = -1;
-  function clock() { try { return Number(trusted.now()); } catch { return NaN; } }
+  function clock() { return trusted.now(); }
   function sample() { const value = clock(); if (!Number.isSafeInteger(value) || value < 0 || value < lastClock) return null; lastClock = value; return value; }
   function sampleWithHeadroom(amount) { const value = clock(); if (!Number.isSafeInteger(value) || value < 0 || value < lastClock || value > Number.MAX_SAFE_INTEGER - amount) return null; lastClock = value; return value; }
   function observe() { const value = clock(); return Number.isSafeInteger(value) && value >= 0 && value >= lastClock ? value : null; }
