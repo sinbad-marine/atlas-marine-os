@@ -202,3 +202,12 @@ The scan returns no event array, even on failure. Alert on
 sequence visible during that run. Keep `maxEvents` as an explicit operational
 budget.
 
+## Phase 3F readiness decision
+
+Use `supabase-terminal-recovery-readiness` as the deployment or traffic gate.
+It constructs both trusted recovery adapters internally from the same
+service-role client and explicit policy bounds. Require exact
+`RECOVERY_READINESS_READY`; every other status blocks rollout. The result
+contains only counts, oldest expired age and audit watermark metadata. RPC
+exceptions are converted to blocked reason codes.
+

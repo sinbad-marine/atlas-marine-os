@@ -450,3 +450,15 @@ produce `AUDIT_SCAN_INTEGRITY_FAILED`; transport/capability failures produce
 `AUDIT_SCAN_UNAVAILABLE`. Reaching `maxEvents` on a full page is conservatively
 `AUDIT_SCAN_INCOMPLETE`, never success. The summary contains only event count,
 page count and the initial high-watermark ID.
+
+## Phase 3F recovery readiness gate
+
+Create the server-only `supabase-terminal-recovery-readiness` gate with one
+service-role client, hashed operator identity, recovery SLA and explicit audit
+scan budget. `check()` returns `RECOVERY_READINESS_READY` only after recovery
+inspection is healthy and the audit scan reaches `AUDIT_SCAN_COMPLETE`.
+Unavailable stores, rejected RPC promises, SLA breaches, incomplete scans and
+integrity failures all return a content-free `RECOVERY_READINESS_BLOCKED`
+result. Recovery failure short-circuits before audit scanning.
+Callers must also treat any unexpected thrown exception as blocked; no crash or
+missing readiness result may default rollout to allow.

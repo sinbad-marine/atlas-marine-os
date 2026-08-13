@@ -82,6 +82,12 @@ For periodic integrity checks, run
 states. Size `maxEvents` above expected history or intentionally treat the
 bounded result as incomplete instead of accepting a partial scan.
 
+Before enabling terminal delivery traffic, run the server-only
+`supabase-terminal-recovery-readiness.check()` gate with explicit SLA and scan
+budget. Continue only for exact `RECOVERY_READINESS_READY`. Any blocked result
+must stop rollout; recovery failures intentionally prevent the audit scan from
+starting and no exception may be treated as readiness.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.
