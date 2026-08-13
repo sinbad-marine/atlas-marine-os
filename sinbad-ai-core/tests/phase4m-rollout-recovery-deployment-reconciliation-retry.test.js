@@ -17,7 +17,7 @@ function create(resolve) {
     if (name === 'append_rollout_recovery_deployment_reconciliation_audit') return { data: 'RECORDED', error: null };
     throw new Error(`Unexpected RPC: ${name}`);
   } };
-  return lifecycle.create({ client, serviceRole: true, deploymentReadiness, deploy: async () => 'OTHER', deploymentPurpose: 'supabase.rollout-recovery', deploymentTimeoutMs: 1000, resolve, reconciliationTimeoutMs: 1000, authorize: async () => true, now: () => 1000, actorHash: 'b'.repeat(64), reconciliationPurpose: 'deployment.reconciliation', authorizationTtlMs: 1000, authorizationTimeoutMs: 1000, auditPageSize: 100, auditMaxEvents: 10000 });
+  return lifecycle.create({ client, serviceRole: true, deploymentReadiness, deploy: async () => 'OTHER', deploymentPurpose: 'supabase.rollout-recovery', deploymentTimeoutMs: 1000, resolve, reconciliationTimeoutMs: 1000, authorize: async () => true, now: () => 1000, actorHash: 'b'.repeat(64), reconciliationPurpose: 'deployment.reconciliation', authorizationTtlMs: 1000, authorizationTimeoutMs: 1000, auditPageSize: 100, auditMaxEvents: 10000, maxReconciliationAttempts: 3 });
 }
 
 async function unsettled(value) {
@@ -27,7 +27,7 @@ async function unsettled(value) {
 }
 
 test('advertises the Phase 4M retry lifecycle contract', () => {
-  assert.equal(lifecycle.LIFECYCLE_VERSION, 'sinbad-rollout-recovery-deployment-lifecycle-runtime/4M-v1');
+  assert.match(lifecycle.LIFECYCLE_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-runtime\/4[MN]-v1$/u);
 });
 
 test('nonterminal provider outcome reopens one fresh authorized retry', async () => {

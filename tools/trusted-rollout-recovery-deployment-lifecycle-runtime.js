@@ -4,12 +4,14 @@ const journalAdapter = require('../sinbad-ai-core/adapters/supabase-rollout-reco
 const journaledDeploymentModule = require('./trusted-rollout-recovery-journaled-deployment.js');
 const reconciliationRuntimeModule = require('./trusted-rollout-recovery-deployment-reconciliation-runtime.js');
 
-const LIFECYCLE_VERSION = 'sinbad-rollout-recovery-deployment-lifecycle-runtime/4M-v1';
+const LIFECYCLE_VERSION = 'sinbad-rollout-recovery-deployment-lifecycle-runtime/4N-v1';
 const HASH = /^[a-f0-9]{64}$/u;
 const blocked = reasonCode => Object.freeze({ version: LIFECYCLE_VERSION, status: 'ROLLOUT_RECOVERY_DEPLOYMENT_LIFECYCLE_BLOCKED', reasonCode });
 
 function create(options = {}) {
   if (!options.client || typeof options.client.rpc !== 'function' || options.serviceRole !== true) throw new TypeError('A trusted Supabase service-role client is required');
+  const maxAttempts = Number(options.maxReconciliationAttempts);
+  if (!Number.isInteger(maxAttempts) || maxAttempts < 1 || maxAttempts > 10) throw new TypeError('A bounded reconciliation attempt policy is required');
   const deploymentJournal = journalAdapter.create(options);
   const deployment = journaledDeploymentModule.create({ ...options, deploymentJournal });
   const reconciliation = reconciliationRuntimeModule.create(options);
@@ -24,7 +26,7 @@ function create(options = {}) {
     preflight: reconciliation.preflight,
     async issue(input) {
       const authorization = await deployment.issue(input);
-      if (authorization?.status === 'ROLLOUT_RECOVERY_DEPLOYMENT_AUTHORIZED' && HASH.test(authorization.authorizationHash || '')) deployments.set(authorization, { authorizationHash: authorization.authorizationHash, executed: false, unsettled: false, reconciliationIssued: false });
+      if (authorization?.status === 'ROLLOUT_RECOVERY_DEPLOYMENT_AUTHORIZED' && HASH.test(authorization.authorizationHash || '')) deployments.set(authorization, { authorizationHash: authorization.authorizationHash, executed: false, unsettled: false, reconciliationIssued: false, reconciliationAttempts: 0 });
       return authorization;
     },
     async execute(authorization) {
@@ -45,12 +47,14 @@ function create(options = {}) {
     async issueReconciliation(authorization) {
       const state = deployments.get(authorization);
       if (!state || !state.executed || !state.unsettled || state.reconciliationIssued) return blocked('RECONCILIATION_SOURCE_DENIED');
+      if (state.reconciliationAttempts >= maxAttempts) return blocked('RECONCILIATION_RETRY_EXHAUSTED');
       if (issuing.has(authorization)) return blocked('RECONCILIATION_ISSUE_IN_PROGRESS');
       issuing.add(authorization);
       try {
         const capability = await reconciliation.issue(state.authorizationHash);
         if (capability?.status === 'ROLLOUT_RECOVERY_DEPLOYMENT_RECONCILIATION_AUTHORIZED') {
           state.reconciliationIssued = true;
+          state.reconciliationAttempts++;
           capabilities.set(capability, state);
         }
         return capability;

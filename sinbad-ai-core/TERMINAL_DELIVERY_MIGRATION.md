@@ -10,6 +10,8 @@ Phase 4L adds `tools/trusted-rollout-recovery-deployment-lifecycle-runtime.js`. 
 
 Phase 4M tracks each reconciliation capability in a second private `WeakMap`. A nonterminal owning result reopens exactly one authorization path; an applied or rejected result closes the deployment source. Concurrent and copied capability calls never mutate that retry decision.
 
+Phase 4N makes the sequential retry budget explicit and mandatory with `maxReconciliationAttempts` (1–10). The budget increments only after a capability is successfully authorized and is checked before readiness scanning, audit writes, or operator callbacks.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:

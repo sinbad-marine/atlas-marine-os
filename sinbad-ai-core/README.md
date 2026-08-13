@@ -6,6 +6,8 @@ Phase 4L joins deployment and reconciliation into one server-only lifecycle. A r
 
 Phase 4M allows a fresh reconciliation capability only after the owning one-use capability returns a nonterminal result. Terminal reconciliation permanently closes the source, while copied or concurrent capability replays cannot reopen it.
 
+Phase 4N requires an explicit `maxReconciliationAttempts` policy between 1 and 10. Only successfully issued reconciliation capabilities consume the budget; once exhausted, no additional audit or operator authorization work is started.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.
