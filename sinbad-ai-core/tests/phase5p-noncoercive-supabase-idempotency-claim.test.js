@@ -6,6 +6,7 @@ const store = require('../adapters/supabase-durable-idempotency-store.js');
 
 const key = 'a'.repeat(64), token = '123e4567-e89b-12d3-a456-426614174000';
 function options(rpc) { return { serviceRole: true, claimLeaseMs: 30000, client: { rpc } }; }
+function summary() { return { status: 'TRUSTED_TERMINAL_DELIVERY_APPLIED', terminalState: 'DELIVERY_SUCCEEDED', outcome: 'DELIVERED', transitionHash: 'b'.repeat(64) }; }
 
 test('idempotency lease policy rejects accessors traps bigint strings and coercion', () => {
   let hooks = 0;
@@ -34,4 +35,21 @@ test('claim preserves exact primitive key lease and token RPC contract', async (
   const value = store.create(options(async (name, args) => { calls.push([name, args]); return { data: token, error: null }; }));
   assert.equal(await value.claim(key), true);
   assert.deepEqual(calls, [['claim_terminal_delivery', { p_claim_key: key, p_lease_ms: 30000 }]]);
+});
+
+test('settle rejects coercive keys and preserves the exact retained lease token contract', async () => {
+  let hooks = 0;
+  const calls = [];
+  const value = store.create(options(async (name, args) => {
+    calls.push([name, args]);
+    return name === 'claim_terminal_delivery' ? { data: token, error: null } : { data: true, error: null };
+  }));
+  assert.equal(await value.claim(key), true);
+  const malicious = { toString() { hooks++; throw new Error('must not run'); }, valueOf() { hooks++; throw new Error('must not run'); } };
+  assert.equal(await value.settle(malicious, summary()), false);
+  assert.equal(hooks, 0);
+  assert.equal(calls.length, 1);
+  const valueSummary = summary();
+  assert.equal(await value.settle(key, valueSummary), true);
+  assert.deepEqual(calls[1], ['settle_terminal_delivery', { p_claim_key: key, p_lease_token: token, p_summary: valueSummary }]);
 });

@@ -10,7 +10,7 @@ function create(options={}){
   const client=options.client,tokens=new Map();
   return Object.freeze({version:contract.STORE_VERSION,durable:true,claimLeaseMs,
     async claim(key){if(typeof key!=='string'||!KEY.test(key)||tokens.has(key))return false;const {data,error}=await client.rpc('claim_terminal_delivery',{p_claim_key:key,p_lease_ms:claimLeaseMs});if(error||typeof data!=='string'||!UUID.test(data))return false;tokens.set(key,data);return true;},
-    async settle(key,summary){const token=tokens.get(key);if(!KEY.test(key)||!token||!validSummary(summary))return false;const {data,error}=await client.rpc('settle_terminal_delivery',{p_claim_key:key,p_lease_token:token,p_summary:summary});if(error)return false;tokens.delete(key);return data===true;}
+    async settle(key,summary){if(typeof key!=='string')return false;const token=tokens.get(key);if(!KEY.test(key)||!token||!validSummary(summary))return false;const {data,error}=await client.rpc('settle_terminal_delivery',{p_claim_key:key,p_lease_token:token,p_summary:summary});if(error)return false;tokens.delete(key);return data===true;}
   });
 }
 module.exports=Object.freeze({create});
