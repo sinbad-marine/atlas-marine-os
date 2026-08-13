@@ -48,6 +48,8 @@ Phase 5E requires reconciliation audit-readiness decisions to expose exact own d
 
 Phase 5F requires durable reconciliation-audit callbacks to return exact own `status` and `eventHash` data fields. Getter-backed, inherited, uninspectable, or malformed results block capability issuance as `AUTHORIZATION_AUDIT_REQUIRED`.
 
+Phase 5G requires inspected deployment-journal rows to expose exact own string `status`, `started_at`, and `updated_at` fields. Accessors, inherited fields, descriptor failures, and coercive values fail closed as `UNAVAILABLE`.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
