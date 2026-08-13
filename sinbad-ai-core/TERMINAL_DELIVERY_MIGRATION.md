@@ -54,6 +54,8 @@ Phase 5H requires reconciliation-audit rows to expose seven exact own primitive 
 
 Phase 5I applies the same seven-field own primitive boundary to authorization-audit rows. Safe integer IDs/timestamps and direct string hashes/decisions are mandatory; accessors, inheritance, descriptor failures, and coercive values fail integrity verification.
 
+Phase 5J requires authorization and reconciliation audit scans to receive direct safe-integer `pageSize` and `maxEvents` values. Missing fields use fixed defaults; accessors, proxy descriptor failures, and coercive or non-integer values fail before capability or list RPC calls.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:

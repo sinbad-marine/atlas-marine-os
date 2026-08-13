@@ -50,6 +50,8 @@ Phase 5H snapshots Supabase reconciliation-audit rows through exact own primitiv
 
 Phase 5I applies the same exact primitive row contract to the general rollout-recovery authorization audit. Attestation audit rows cannot invoke getters or coercion hooks while being parsed or hash-verified.
 
+Phase 5J snapshots both audit verifiers' scan policies through own data-property descriptors. `pageSize` and `maxEvents` accept only direct safe integers; accessors, descriptor traps, numeric strings, bigint, and coercive objects fail before any RPC work.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.
