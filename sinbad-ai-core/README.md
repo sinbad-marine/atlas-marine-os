@@ -598,3 +598,12 @@ for the exact verifier version and `AUDIT_SCAN_COMPLETE`; unavailable,
 incomplete, malformed, integrity-failed and thrown scans remain blocked.
 Unknown counters stay `null` and cannot resemble a healthy empty audit. Configure
 explicit page and event budgets and keep this gate server-only.
+
+## Phase 3R audit-ready recovery authorization
+
+The recovery authorization adapter now requires the exact Phase 3Q
+`auditReadiness` gate and advances its wire version to `3R-v1`. Readiness is
+checked before the trusted operator authorization hook. Any blocked, malformed,
+thrown or version-mismatched readiness result prevents the hook from running,
+records a denied decision through the required durable audit path and issues no
+capability.

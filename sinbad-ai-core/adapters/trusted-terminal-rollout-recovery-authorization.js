@@ -2,12 +2,15 @@
 const {createHash,randomBytes}=require('node:crypto');
 const recoveryModule=require('./trusted-terminal-rollout-recovery.js');
 const auditModule=require('./trusted-rollout-recovery-authorization-audit.js');
-const AUTHORIZATION_VERSION='sinbad-trusted-terminal-rollout-recovery-authorization/3N-v1';
+const readinessModule=require('./rollout-recovery-authorization-audit-readiness.js');
+const AUTHORIZATION_VERSION='sinbad-trusted-terminal-rollout-recovery-authorization/3R-v1';
 const EXPECTED_RECOVERY_VERSION='sinbad-trusted-terminal-rollout-recovery/3L-v1';
 const EXPECTED_AUDIT_VERSION='sinbad-trusted-rollout-recovery-authorization-audit/3N-v1';
+const EXPECTED_READINESS_VERSION='sinbad-rollout-recovery-authorization-audit-readiness/3Q-v1';
 const HASH=/^[a-f0-9]{64}$/u,PURPOSE=/^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/u;
 if(recoveryModule.RECOVERY_VERSION!==EXPECTED_RECOVERY_VERSION)throw new Error(`Unsupported recovery version: ${recoveryModule.RECOVERY_VERSION}`);
 if(auditModule.AUDIT_VERSION!==EXPECTED_AUDIT_VERSION)throw new Error(`Unsupported authorization audit version: ${auditModule.AUDIT_VERSION}`);
+if(readinessModule.READINESS_VERSION!==EXPECTED_READINESS_VERSION)throw new Error(`Unsupported audit readiness version: ${readinessModule.READINESS_VERSION}`);
 function canonical(value){if(value===null||typeof value!=='object')return JSON.stringify(value);if(Array.isArray(value))return `[${value.map(canonical).join(',')}]`;return `{${Object.keys(value).sort().map(key=>`${JSON.stringify(key)}:${canonical(value[key])}`).join(',')}}`;}
 function sha256(value){return createHash('sha256').update(value,'utf8').digest('hex');}
 function result(status,reasonCode,authorizationHash=null,issuedAt=null,expiresAt=null){return Object.freeze({version:AUTHORIZATION_VERSION,status,reasonCode,authorizationHash:HASH.test(authorizationHash||'')?authorizationHash:null,issuedAt:Number.isSafeInteger(issuedAt)?issuedAt:null,expiresAt:Number.isSafeInteger(expiresAt)?expiresAt:null});}
@@ -16,14 +19,15 @@ function create(options={}){
   const rawAudit=options.authorizationAudit;
   if(!rawAudit||rawAudit.version!==EXPECTED_AUDIT_VERSION||rawAudit.durable!==true||typeof rawAudit.record!=='function')throw new TypeError('A trusted durable authorizationAudit is required');
   const audit=Object.freeze({async record(input){try{const value=await rawAudit.record(input);return value?.status==='RECORDED'&&HASH.test(value.eventHash||'')?value:Object.freeze({status:'INVALID',eventHash:null});}catch{return Object.freeze({status:'UNAVAILABLE',eventHash:null});}}});
+  const readiness=options.auditReadiness;if(!readiness||readiness.version!==EXPECTED_READINESS_VERSION||typeof readiness.check!=='function')throw new TypeError('A trusted auditReadiness gate is required');
   const actorHash=String(options.actorHash||''),purpose=String(options.recoveryPurpose||''),ttlMs=Number(options.authorizationTtlMs),timeoutMs=Number(options.authorizationTimeoutMs),clock=options.now;
   if(!HASH.test(actorHash)||!PURPOSE.test(purpose)||!Number.isInteger(ttlMs)||ttlMs<1000||ttlMs>300000||!Number.isInteger(timeoutMs)||timeoutMs<1000||timeoutMs>300000||typeof clock!=='function')throw new TypeError('A bounded purpose-bound operator authorization policy is required');
   const recovery=recoveryModule.create(options),authorize=options.authorize,authentic=new WeakSet(),consumed=new WeakSet(),manifests=new WeakMap();let lastClock=-1;
   function sample(){const value=Number(clock());if(!Number.isSafeInteger(value)||value<0||value<lastClock)return null;lastClock=value;return value;}
-  async function allowed(input){let timer;try{const timeout=Symbol('timeout'),value=await Promise.race([Promise.resolve().then(()=>authorize(input)),new Promise(done=>{timer=setTimeout(()=>done(timeout),timeoutMs);})]);return value!==timeout&&value===true;}catch{return false;}finally{if(timer!==undefined)clearTimeout(timer);}}
+  async function allowed(input){let ready;try{ready=await readiness.check();}catch{return false;}if(ready?.version!==EXPECTED_READINESS_VERSION||ready.status!=='AUTHORIZATION_AUDIT_READINESS_READY'||ready.reasonCode!==null)return false;let timer;try{const timeout=Symbol('timeout'),value=await Promise.race([Promise.resolve().then(()=>authorize(input)),new Promise(done=>{timer=setTimeout(()=>done(timeout),timeoutMs);})]);return value!==timeout&&value===true;}catch{return false;}finally{if(timer!==undefined)clearTimeout(timer);}}
   return Object.freeze({
     async issue(attestationHash){if(!HASH.test(attestationHash||''))return result('ROLLOUT_RECOVERY_AUTHORIZATION_BLOCKED','AUTHORIZATION_HASH_INVALID');const issuedAt=sample();if(issuedAt===null||issuedAt>Number.MAX_SAFE_INTEGER-ttlMs)return result('ROLLOUT_RECOVERY_AUTHORIZATION_BLOCKED','AUTHORIZATION_CLOCK_INVALID');const request=Object.freeze({actorHash,attestationHash,purpose}),approved=await allowed(request),auditResult=await audit.record(Object.freeze({actorHash,attestationHash,purposeHash:sha256(purpose),decision:approved?'AUTHORIZED':'DENIED',decidedAt:issuedAt}));if(auditResult?.status!=='RECORDED')return result('ROLLOUT_RECOVERY_AUTHORIZATION_BLOCKED','AUTHORIZATION_AUDIT_REQUIRED');if(!approved)return result('ROLLOUT_RECOVERY_AUTHORIZATION_BLOCKED','OPERATOR_AUTHORIZATION_DENIED');try{const manifest=Object.freeze({version:AUTHORIZATION_VERSION,actorHash,attestationHash,purposeHash:sha256(purpose),nonceHash:sha256(randomBytes(32).toString('hex')),issuedAt,expiresAt:issuedAt+ttlMs}),authorizationHash=sha256(canonical(manifest)),output=result('ROLLOUT_RECOVERY_AUTHORIZED',null,authorizationHash,manifest.issuedAt,manifest.expiresAt);authentic.add(output);manifests.set(output,manifest);return output;}catch{return result('ROLLOUT_RECOVERY_AUTHORIZATION_BLOCKED','AUTHORIZATION_ISSUE_FAILED');}},
     async recover(value){const manifest=manifests.get(value),now=sample();if(!authentic.has(value)||consumed.has(value)||!manifest||now===null||now<manifest.issuedAt||now>=manifest.expiresAt||manifest.actorHash!==actorHash||manifest.purposeHash!==sha256(purpose)||value.version!==AUTHORIZATION_VERSION||value.status!=='ROLLOUT_RECOVERY_AUTHORIZED'||value.reasonCode!==null||value.issuedAt!==manifest.issuedAt||value.expiresAt!==manifest.expiresAt||value.authorizationHash!==sha256(canonical(manifest)))return Object.freeze({version:EXPECTED_RECOVERY_VERSION,status:'ROLLOUT_RECOVERY_BLOCKED',reasonCode:'RECOVERY_AUTHORIZATION_DENIED',attestationHash:null});consumed.add(value);return recovery.recover(manifest.attestationHash);}
   });
 }
-module.exports=Object.freeze({AUTHORIZATION_VERSION,EXPECTED_RECOVERY_VERSION,EXPECTED_AUDIT_VERSION,create});
+module.exports=Object.freeze({AUTHORIZATION_VERSION,EXPECTED_RECOVERY_VERSION,EXPECTED_AUDIT_VERSION,EXPECTED_READINESS_VERSION,create});

@@ -163,6 +163,11 @@ Phase 3Q wraps that verifier with an explicit bounded readiness policy. Require
 workflow. Every other status blocks; never substitute missing counters with
 zero or treat an incomplete bounded scan as healthy.
 
+Phase 3R makes `auditReadiness` mandatory when constructing the recovery
+authorization adapter. Deploy the verifier, readiness gate and authorization
+adapter atomically because the authorization wire version is now `3R-v1`.
+Readiness denial occurs before the operator identity/policy hook.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.
