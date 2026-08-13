@@ -473,3 +473,14 @@ SHA-256 hash. `consume()` accepts the original object once, in the same factory
 instance and before expiry. Copies, proxies, replay, clock rollback and blocked
 readiness fail closed. This is a process-local rollout handoff—not a digital
 signature, portable credential or durable deployment record.
+
+## Phase 3H trusted rollout activation
+
+`trusted-terminal-rollout-activation` owns the Phase 3G factory and exposes
+only `issue()` plus `activate(attestation)`. Activation consumes the authentic
+attestation before invoking the trusted side-effect hook, so concurrent calls,
+copies, replay and expiry cannot invoke it twice. Strict false/non-boolean
+outcomes are terminal failures. Exception or bounded timeout is
+`TRUSTED_ROLLOUT_ACTIVATION_UNSETTLED` because the remote outcome may be
+applied; reconcile by hash and never retry it. The hook receives only the attestation hash and should use that hash
+as the external activation provider's idempotency key.

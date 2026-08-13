@@ -219,3 +219,14 @@ clock, fixed rollout purpose and TTL from one second through five minutes. Issue
 exact readiness; consume is single-use and rejects expiry or clock rollback.
 Never serialize or persist it, and do not treat its hash as a signature.
 
+## Phase 3H trusted activation adapter
+
+Use `trusted-terminal-rollout-activation` to connect the process-local
+attestation to the real rollout/traffic activation hook. The adapter consumes
+the credential before awaiting the hook and invokes the hook at most once.
+Strict false/non-boolean returns are terminal failures. Exception or timeout is
+content-free `UNSETTLED` and cannot be retried with the same value. Configure a
+bounded hook timeout and the external system to deduplicate on
+the supplied `attestationHash` because a process crash can still make the
+remote side effect ambiguous.
+

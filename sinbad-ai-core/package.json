@@ -10,6 +10,7 @@
     "./supabase-terminal-recovery": "./adapters/supabase-terminal-recovery.js",
     "./supabase-terminal-recovery-audit": "./adapters/supabase-terminal-recovery-audit.js",
     "./supabase-terminal-recovery-readiness": "./adapters/supabase-terminal-recovery-readiness.js",
-    "./supabase-terminal-recovery-attestation": "./adapters/supabase-terminal-recovery-attestation.js"
+    "./supabase-terminal-recovery-attestation": "./adapters/supabase-terminal-recovery-attestation.js",
+    "./trusted-terminal-rollout-activation": "./adapters/trusted-terminal-rollout-activation.js"
   }
 }

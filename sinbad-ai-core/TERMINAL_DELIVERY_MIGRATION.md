@@ -93,6 +93,13 @@ For asynchronous activation in the same trusted process, wrap the gate with
 consume the original object once. Do not serialize, persist or move it across
 processes; run readiness again after restart or expiry.
 
+Connect activation through `trusted-terminal-rollout-activation`, not a direct
+traffic-enable call. Require `TRUSTED_ROLLOUT_ACTIVATION_APPLIED`; blocked and
+failed outcomes stop rollout. Use the hook's `attestationHash` as the native
+external idempotency key. Treat exception or timeout as unsettled and reconcile
+externally by hash. Never retry an ambiguous hook outcome with the same
+attestation, since it is consumed before the side effect begins.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.
