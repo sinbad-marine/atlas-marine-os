@@ -816,3 +816,16 @@ Scans require explicit page/event bounds and return only a content-free summary.
 Reaching the event limit is `AUDIT_SCAN_INCOMPLETE`, never success. The sealed
 migration manifest advances to `4I-v1` with eleven ordered files; the verifier
 remains internal until the remote migrations are applied and verified.
+
+## Phase 4J reconciliation audit readiness gate
+
+`tools/rollout-recovery-deployment-reconciliation-audit-readiness.js` converts
+the Phase 4I bounded scan into one stable operational decision. Only the exact
+verifier version and a complete, internally consistent scan return
+`RECONCILIATION_AUDIT_READINESS_READY`; all other results remain blocked.
+
+Reconciliation authorization advances to `4J-v1` and requires this gate. Audit
+readiness is checked before the operator identity/policy callback. A blocked
+readiness decision skips that callback, records a durable denied decision and
+issues no capability. Deploy the Phase 4G–4J modules atomically after remote
+audit migrations have been verified.

@@ -5,12 +5,14 @@ const assert = require('node:assert/strict');
 const authorization = require('../../tools/trusted-rollout-recovery-deployment-reconciliation-authorization.js');
 const reconciliation = require('../../tools/trusted-rollout-recovery-deployment-reconciliation.js');
 const audit = require('../../tools/trusted-rollout-recovery-deployment-reconciliation-audit.js');
+const readiness = require('../../tools/rollout-recovery-deployment-reconciliation-audit-readiness.js');
 
 const hash = 'a'.repeat(64);
 let time;
 const journal = (overrides = {}) => ({ version: reconciliation.EXPECTED_JOURNAL_VERSION, durable: true, inspect: async () => ({ status: 'FOUND', state: { status: 'APPLIED' } }), settle: async () => ({ status: 'SETTLED' }), ...overrides });
 const authorizationAudit = (overrides = {}) => ({ version: audit.AUDIT_VERSION, durable: true, record: async () => ({ status: 'RECORDED', eventHash: 'd'.repeat(64) }), ...overrides });
-const options = (overrides = {}) => ({ deploymentJournal: journal(), resolve: async () => 'APPLIED', reconciliationTimeoutMs: 1000, authorize: async () => true, authorizationAudit: authorizationAudit(), now: () => time, actorHash: 'b'.repeat(64), reconciliationPurpose: 'deployment.reconciliation', authorizationTtlMs: 1000, authorizationTimeoutMs: 1000, ...overrides });
+const auditReadiness = (overrides = {}) => ({ version: readiness.READINESS_VERSION, check: async () => ({ version: readiness.READINESS_VERSION, status: 'RECONCILIATION_AUDIT_READINESS_READY', reasonCode: null }), ...overrides });
+const options = (overrides = {}) => ({ deploymentJournal: journal(), resolve: async () => 'APPLIED', reconciliationTimeoutMs: 1000, authorize: async () => true, authorizationAudit: authorizationAudit(), auditReadiness: auditReadiness(), now: () => time, actorHash: 'b'.repeat(64), reconciliationPurpose: 'deployment.reconciliation', authorizationTtlMs: 1000, authorizationTimeoutMs: 1000, ...overrides });
 
 test('issues an opaque authorization and reconciles exactly once', async () => {
   time = 1000;
@@ -61,5 +63,16 @@ test('concurrent use consumes capability before reconciliation awaits', async ()
 
 test('construction requires bounded purpose-bound dependencies', () => {
   assert.throws(() => authorization.create(), /required/u);
-  for (const changed of [{ actorHash: 'bad' }, { reconciliationPurpose: '' }, { authorizationTtlMs: 999 }, { authorizationTimeoutMs: 300001 }, { now: null }, { authorizationAudit: null }]) assert.throws(() => authorization.create(options(changed)), /required|policy|authorizationAudit/u);
+  for (const changed of [{ actorHash: 'bad' }, { reconciliationPurpose: '' }, { authorizationTtlMs: 999 }, { authorizationTimeoutMs: 300001 }, { now: null }, { authorizationAudit: null }, { auditReadiness: null }]) assert.throws(() => authorization.create(options(changed)), /required|policy|authorizationAudit|auditReadiness/u);
+});
+
+test('audit readiness denial is durably recorded before operator callback is skipped', async () => {
+  time = 1000;
+  let authorizations = 0;
+  const events = [];
+  const value = authorization.create(options({ auditReadiness: auditReadiness({ check: async () => ({ version: readiness.READINESS_VERSION, status: 'RECONCILIATION_AUDIT_READINESS_BLOCKED', reasonCode: 'AUDIT_SCAN_LIMIT_REACHED' }) }), authorize: async () => { authorizations++; return true; }, authorizationAudit: authorizationAudit({ record: async event => { events.push(event); return { status: 'RECORDED', eventHash: 'd'.repeat(64) }; } }) }));
+  const result = await value.issue(hash);
+  assert.equal(result.reasonCode, 'AUDIT_SCAN_LIMIT_REACHED');
+  assert.equal(authorizations, 0);
+  assert.equal(events[0].decision, 'DENIED');
 });

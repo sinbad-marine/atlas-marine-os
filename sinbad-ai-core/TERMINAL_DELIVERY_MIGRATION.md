@@ -268,6 +268,12 @@ the internal verifier with explicit page and event budgets. Require
 `AUDIT_SCAN_COMPLETE`. Capability loss, invalid hashes/order, storage outage and
 bounded-incomplete scans must block reconciliation workflow readiness.
 
+Phase 4J makes that bounded integrity decision mandatory for reconciliation
+authorization. Configure exact verifier version, page size and maximum events.
+Readiness denial occurs before the operator callback but still requires a
+durably recorded denied decision. Deploy authorization, audit writer, verifier
+and readiness gate as one version-coupled unit.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.
