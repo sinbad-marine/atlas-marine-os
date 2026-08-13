@@ -88,6 +88,8 @@ Phase 5Y requires trusted rollout-recovery runtime client, service-role flag, ho
 
 Phase 5Z requires runtime audit-readiness health results to contain exact own primitive fields and consistent counters. Getter access, descriptor traps, inherited/coercive fields, and invalid audit watermark invariants fail closed without reason-code conversion hooks.
 
+Phase 6A requires reconciliation audit-verifier scan results to contain exact own primitive fields and consistent counters. Getter access, descriptor traps, inherited/coercive fields, and invalid audit watermark invariants fail closed without invoking conversion hooks.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
