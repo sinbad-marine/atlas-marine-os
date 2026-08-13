@@ -523,3 +523,18 @@ journal subpath stays unexported pending deployment wiring.
 Unsettled result capabilities and their expected-state manifests remain
 process-local; after restart, use a separate trusted operator/provider recovery
 flow keyed by hash.
+
+## Phase 3L post-restart rollout recovery
+
+The server-only `trusted-terminal-rollout-recovery` adapter accepts only the
+durable activation journal, a bounded provider `resolve({ attestationHash })`
+query and an attestation hash. It has no activation hook. Existing `APPLIED` or
+`REJECTED` journal states return without provider access. `PENDING` and
+`UNKNOWN` may become terminal only after authenticated provider resolution and
+an expected-state journal compare-and-set. Missing/unavailable records,
+timeouts, exceptions, invalid provider results, conflicts and failed settlement
+remain blocked or unsettled. Concurrent recovery for the same hash is fenced
+across adapter instances in one process; database CAS protects competing
+processes. Journal conflicts are reported separately from journal transport or
+settlement outages. This adapter remains
+unexported until an operator authorization boundary is added.

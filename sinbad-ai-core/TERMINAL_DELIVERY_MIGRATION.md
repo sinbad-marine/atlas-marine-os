@@ -121,6 +121,13 @@ treat `EXISTS` as permission to repeat the provider side effect. Terminal
 results require durable settlement; a settlement outage remains `UNSETTLED`
 and reconciliation may query provider state but must never activate again.
 
+After a process restart, Phase 3L uses the internal
+`trusted-terminal-rollout-recovery` adapter. Supply the exact journal, a bounded
+provider-state resolver and the recorded attestation hash. The adapter contains
+no activation hook and cannot repeat rollout activation. Keep it behind a
+trusted server/operator boundary; it remains unexported until that authorization
+boundary is implemented.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.
