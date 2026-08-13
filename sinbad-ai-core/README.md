@@ -650,7 +650,7 @@ remain `null`.
 
 ## Phase 3W sealed migration release
 
-`supabase/rollout-recovery-migration-manifest.json` seals the ordered eight-file
+`supabase/rollout-recovery-migration-manifest.json` seals the ordered migration
 rollout-recovery migration chain with LF-normalized SHA-256 hashes and the final
 Phase 3U database fingerprint. Run
 `node tools/verify-rollout-recovery-migrations.js` before deployment. The gate
@@ -736,3 +736,16 @@ provide a production persistence implementation or migration. Keep this module
 unexported until the deployment environment supplies and verifies that durable
 store. An `EXISTS` begin result requires later reconciliation and must never
 repeat the provider deployment.
+
+## Phase 4D Supabase deployment journal
+
+Apply `20260821_rollout_recovery_deployment_journal.sql` after the Phase 3U
+fingerprint migration. It adds the service-role-only deployment journal and
+monotonic begin, settle and inspect RPCs required by Phase 4C. Direct table and
+RPC access remains revoked from `public`, `anon` and `authenticated` roles.
+
+The internal `supabase-rollout-recovery-deployment-journal` adapter exposes only
+content-free journal outcomes and implements the exact Phase 4C contract. The
+sealed migration manifest advances to `4D-v1` with nine ordered files. Neither
+the adapter nor the journaled deployment runtime is exported before remote
+migration verification and real provider wiring.

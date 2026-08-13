@@ -191,7 +191,7 @@ Do not use database fingerprint alone as a traffic or operator-workflow health
 signal.
 
 Before applying migrations, run the Phase 3W migration release verifier from
-the repository root. Require `MIGRATION_RELEASE_VERIFIED` with eight migrations
+the repository root. Require `MIGRATION_RELEASE_VERIFIED` with the manifest's migrations
 and the expected Phase 3U fingerprint. Never deploy after a hash mismatch and
 never repair it by silently resealing an edited historical migration.
 
@@ -232,6 +232,12 @@ confirm terminal settlement afterward. Treat `EXISTS`, begin outage, settlement
 conflict and response loss as non-success. Do not activate this composition
 until a deployment-specific durable journal implementation and its migration
 have been independently verified.
+
+For Phase 4D, apply `20260821_rollout_recovery_deployment_journal.sql` only
+after the earlier sealed migrations. Verify anon/authenticated RPC denial and
+construct the internal adapter with a server-side service-role client. This
+forward migration enables journaling for later deployments; it cannot journal
+its own first application and does not authorize deployment by itself.
 
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal

@@ -1,5 +1,5 @@
 {
-  "version": "sinbad-rollout-recovery-migration-release/3W-v1",
+  "version": "sinbad-rollout-recovery-migration-release/4D-v1",
   "databaseFingerprint": "sinbad-rollout-recovery-db/3U-20260820-v1",
   "normalization": "UTF8_LF",
   "migrations": [
@@ -10,6 +10,7 @@
     {"file":"20260817_rollout_recovery_authorization_audit.sql","sha256":"f73a40e93d95d9eb4837aab26255ef4b1064480084a0c2f7d4846cb881918685"},
     {"file":"20260818_rollout_recovery_authorization_audit_verification.sql","sha256":"89e6b6d1c5b4ced5e136a3612fd053572c1152461d2456d03688bca14593bd4c"},
     {"file":"20260819_rollout_recovery_runtime_preflight.sql","sha256":"04f90c312db84ae304381c66498571ffec4b16b163a0bbc09e40d55c11bd6f00"},
-    {"file":"20260820_rollout_recovery_runtime_fingerprint.sql","sha256":"ab3bab8722c67ca44c4cba545d776049309aa3a897fe23881186981ad31189e3"}
+    {"file":"20260820_rollout_recovery_runtime_fingerprint.sql","sha256":"ab3bab8722c67ca44c4cba545d776049309aa3a897fe23881186981ad31189e3"},
+    {"file":"20260821_rollout_recovery_deployment_journal.sql","sha256":"d2df3aa7a406ea9f722dc277c615ce6cabb769febb96e088b79f37ffcbadb059"}
   ]
 }
