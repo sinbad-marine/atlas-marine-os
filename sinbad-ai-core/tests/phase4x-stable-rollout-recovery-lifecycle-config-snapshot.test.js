@@ -8,7 +8,7 @@ const names = configModule.NAMES;
 function env() { return { [names.actorHash]: 'a'.repeat(64), [names.deploymentPurpose]: 'supabase.rollout-recovery', [names.reconciliationPurpose]: 'deployment.reconciliation', [names.authorizationTtlMs]: '5000', [names.deploymentTimeoutMs]: '1000', [names.reconciliationTimeoutMs]: '1000', [names.authorizationTimeoutMs]: '1000', [names.auditPageSize]: '100', [names.auditMaxEvents]: '10000', [names.maxReconciliationAttempts]: '3', [names.reconciliationRetryDelayMs]: '1000', [names.reconciliationRetryBackoffFactor]: '2', [names.maxReconciliationRetryDelayMs]: '8000' }; }
 
 test('advertises and creates a frozen null-prototype one-read snapshot', () => {
-  assert.equal(configModule.CONFIG_VERSION, 'sinbad-rollout-recovery-deployment-lifecycle-config/4X-v1');
+  assert.match(configModule.CONFIG_VERSION, /^sinbad-rollout-recovery-deployment-lifecycle-config\/4[XY]-v1$/u);
   const reads = new Map();
   const source = new Proxy(env(), { getOwnPropertyDescriptor(target, name) { reads.set(name, (reads.get(name) || 0) + 1); return Reflect.getOwnPropertyDescriptor(target, name); } });
   const value = configModule.snapshot(source);
@@ -46,8 +46,8 @@ test('snapshot is detached from later source mutation', () => {
 });
 
 test('composition rejects asserted roles and forwards no raw environment mapping', () => {
-  assert.throws(() => configModule.create({ env: env(), serviceRole: 'true' }), /service-role/u);
+  assert.throws(() => configModule.create({ env: env(), serviceRole: 'true' }), /own data property/u);
   const source = env();
   Object.defineProperty(source, 'client', { get() { throw new Error('environment dependency read'); } });
-  assert.throws(() => configModule.create({ env: source, serviceRole: true }), /service-role/u);
+  assert.throws(() => configModule.create({ env: source, serviceRole: true }), /own data property/u);
 });

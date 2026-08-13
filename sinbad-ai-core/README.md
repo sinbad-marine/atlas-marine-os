@@ -28,6 +28,8 @@ Phase 4W adds a server-only fail-closed environment composition boundary. Every 
 
 Phase 4X snapshots each required environment field exactly once through its own data-property descriptor. Inherited values, accessors, non-string values, and descriptor failures are rejected without invoking configuration getters. Composition forwards an explicit dependency allowlist and never passes the raw environment mapping into lifecycle constructors.
 
+Phase 4Y applies the same own-data-property boundary to trusted lifecycle dependencies. Inherited, accessor-backed, missing, malformed, or uninspectable clients, readiness gates, roles, and callbacks fail at construction without invoking getters.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.

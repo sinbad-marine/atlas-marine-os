@@ -33,7 +33,7 @@ test('creates the server-only lifecycle only with explicit trusted dependencies'
   const value = configModule.create(options);
   assert.deepEqual(Object.keys(value), ['version', 'preflight', 'issue', 'execute', 'issueReconciliation', 'reconcile', 'inspect']);
   assert.ok(Object.isFrozen(value));
-  assert.throws(() => configModule.create({ ...options, serviceRole: false }), /service-role/u);
+  assert.throws(() => configModule.create({ ...options, serviceRole: false }), /trusted lifecycle dependencies/u);
   assert.throws(() => configModule.create({ ...options, env: null }), /environment/u);
 });
 

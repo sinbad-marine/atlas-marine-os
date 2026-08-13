@@ -32,6 +32,8 @@ Phase 4W adds `tools/create-rollout-recovery-deployment-lifecycle-from-env.js`. 
 
 Phase 4X reads required environment fields once into a frozen null-prototype snapshot. Only own string data properties are accepted; inherited values, getters, proxy descriptor failures, and later source mutations cannot influence the parsed policy.
 
+Phase 4Y snapshots the exact server dependency allowlist through own data-property descriptors before parsing policy or constructing the lifecycle. Accessors and inherited dependency injection are rejected without invocation.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
