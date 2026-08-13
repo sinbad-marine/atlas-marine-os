@@ -680,3 +680,17 @@ deterministic evidence hash. A blocked result exits non-zero.
 Attach the JSON to the deployment record. It contains no secret and is neither
 a signature nor deployment authorization; Supabase migration application and
 identity-provider configuration remain separately authorized external steps.
+
+## Phase 3Z release evidence verification
+
+Before using a preserved Phase 3Y record, run
+`npm run verify:rollout-recovery-evidence -- <evidence.json>` from
+`sinbad-ai-core`. The verifier accepts only the exact evidence schema and
+recomputes its deterministic hash before binding it to the current clean Git
+commit and local sealed migration manifest. Modified records, additional
+fields, stale commits, manifest mismatch, dirty worktrees and unavailable Git
+all exit non-zero with a content-free reason.
+
+This check detects accidental or untrusted record mutation but is not a digital
+signature. Establish artifact provenance and deployment authorization through
+the external release system.

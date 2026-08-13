@@ -207,6 +207,12 @@ The evidence record is content-free and does not grant deployment authority.
 Any dirty worktree, changed commit/manifest, or failed Phase 3X gate blocks
 evidence creation and must not be bypassed.
 
+At deployment handoff, run the Phase 3Z verifier against the preserved evidence
+JSON from the exact checkout that will be deployed. Require
+`RELEASE_EVIDENCE_VALID`. A valid deterministic hash proves internal record
+consistency only; it is not a signer identity, approval token or substitute for
+the external release system's provenance controls.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.
