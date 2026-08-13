@@ -90,6 +90,8 @@ Phase 5Z requires runtime audit-readiness health results to contain exact own pr
 
 Phase 6A requires reconciliation audit-verifier scan results to contain exact own primitive fields and consistent counters. Getter access, descriptor traps, inherited/coercive fields, and invalid audit watermark invariants fail closed without invoking conversion hooks.
 
+Phase 6B requires authorization audit-verifier scan results to contain exact own primitive fields and consistent counters. Getter access, descriptor traps, inherited/coercive fields, and invalid audit watermark invariants fail closed without invoking conversion hooks.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:

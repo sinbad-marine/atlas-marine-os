@@ -86,6 +86,8 @@ Phase 5Z snapshots runtime audit-readiness health results from exact own primiti
 
 Phase 6A snapshots reconciliation audit-verifier scan results from exact own primitive data. Accessors, descriptor traps, inherited or coercive fields, malformed counters, and inconsistent audit watermark invariants fail closed without invoking conversion hooks.
 
+Phase 6B snapshots authorization audit-verifier scan results from exact own primitive data. Accessors, descriptor traps, inherited or coercive fields, malformed counters, and inconsistent audit watermark invariants fail closed without invoking conversion hooks.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.
