@@ -8,6 +8,19 @@ const DECISIONS = new Set(['AUTHORIZED', 'DENIED']);
 const ROW_FIELDS = Object.freeze(['id', 'actor_hash', 'authorization_hash', 'purpose_hash', 'decision', 'decided_at_ms', 'event_hash']);
 const digest = row => createHash('sha256').update([EVENT_VERSION, row.actorHash, row.authorizationHash, row.purposeHash, row.decision, row.decidedAt].join('\n')).digest('hex');
 const summary = (status, reasonCode, eventCount = 0, pageCount = 0, watermarkId = null) => Object.freeze({ version: VERIFIER_VERSION, status, reasonCode, eventCount, pageCount, watermarkId });
+function scanPolicy(input) {
+  if (!input || typeof input !== 'object') return null;
+  const output = Object.create(null);
+  for (const [name, fallback] of [['pageSize', 100], ['maxEvents', 10000]]) {
+    let descriptor;
+    try { descriptor = Object.getOwnPropertyDescriptor(input, name); } catch { return null; }
+    const value = descriptor === undefined ? fallback : Object.hasOwn(descriptor, 'value') ? descriptor.value : null;
+    if (!Number.isSafeInteger(value)) return null;
+    output[name] = value;
+  }
+  if (output.pageSize < 1 || output.pageSize > 500 || output.maxEvents < output.pageSize || output.maxEvents > 100000) return null;
+  return Object.freeze(output);
+}
 
 function rowSnapshot(row) {
   if (!row || typeof row !== 'object') return null;
@@ -43,8 +56,9 @@ function create(options = {}) {
   return Object.freeze({
     version: VERIFIER_VERSION,
     async scan(input = {}) {
-      const pageSize = Number(input.pageSize ?? 100), maxEvents = Number(input.maxEvents ?? 10000);
-      if (!Number.isInteger(pageSize) || pageSize < 1 || pageSize > 500 || !Number.isInteger(maxEvents) || maxEvents < pageSize || maxEvents > 100000) return summary('AUDIT_SCAN_UNAVAILABLE', 'AUDIT_INVALID_SCAN_ARGS');
+      const policy = scanPolicy(input);
+      if (!policy) return summary('AUDIT_SCAN_UNAVAILABLE', 'AUDIT_INVALID_SCAN_ARGS');
+      const { pageSize, maxEvents } = policy;
       let before = null, previous = Number.MAX_SAFE_INTEGER, count = 0, pages = 0, watermark = null;
       while (true) {
         if (!await capability()) return summary('AUDIT_SCAN_UNAVAILABLE', 'AUDIT_CAPABILITY_DENIED', count, pages, watermark);
@@ -65,4 +79,4 @@ function create(options = {}) {
   });
 }
 
-module.exports = Object.freeze({ EVENT_VERSION, VERIFIER_VERSION, ROW_FIELDS, rowSnapshot, parse, create });
+module.exports = Object.freeze({ EVENT_VERSION, VERIFIER_VERSION, ROW_FIELDS, rowSnapshot, parse, scanPolicy, create });
