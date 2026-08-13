@@ -19,7 +19,7 @@ function auditResultSnapshot(value) {
   for (const name of AUDIT_RESULT_FIELDS) {
     let descriptor;
     try { descriptor = Object.getOwnPropertyDescriptor(value, name); } catch { return null; }
-    if (!descriptor || !Object.hasOwn(descriptor, 'value')) return null;
+    if (!descriptor || !Object.hasOwn(descriptor, 'value') || typeof descriptor.value !== 'string') return null;
     output[name] = descriptor.value;
   }
   return Object.freeze(output);
