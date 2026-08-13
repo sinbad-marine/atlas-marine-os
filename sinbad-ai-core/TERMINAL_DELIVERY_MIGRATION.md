@@ -213,6 +213,13 @@ JSON from the exact checkout that will be deployed. Require
 consistency only; it is not a signer identity, approval token or substitute for
 the external release system's provenance controls.
 
+Phase 4A is the final composition boundary for deployment readiness. Inject the
+verified evidence record, live trusted runtime `healthCheck`, opaque operator
+identity attestation, bounded identity timeout and side-effect-free identity
+verifier. Require `ROLLOUT_RECOVERY_DEPLOYMENT_READY`. Never replace the live
+runtime or identity checks with static configuration values, and never log the
+operator attestation.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.

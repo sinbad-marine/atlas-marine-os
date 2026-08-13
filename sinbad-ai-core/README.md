@@ -694,3 +694,17 @@ all exit non-zero with a content-free reason.
 This check detects accidental or untrusted record mutation but is not a digital
 signature. Establish artifact provenance and deployment authorization through
 the external release system.
+
+## Phase 4A deployment readiness composition
+
+`tools/verify-rollout-recovery-deployment-readiness.js` composes the final
+server-side pre-deployment decision. It requires exact Phase 3Z evidence, a live
+Phase 3V runtime health function and a bounded external operator-identity
+verification function. Evidence failure stops before database access; runtime
+failure stops before identity-provider access. Only exact boolean `true` from
+the identity verifier returns `ROLLOUT_RECOVERY_DEPLOYMENT_READY`.
+
+The operator attestation is opaque, required, never returned, and must not be
+logged or persisted by this module. The composition remains programmatic and
+unexported until deployment-specific Supabase and identity-provider wiring is
+provided; there is intentionally no unconfigured CLI success path.
