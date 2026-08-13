@@ -60,6 +60,8 @@ Phase 5K snapshots authorization and reconciliation audit-readiness configuratio
 
 Phase 5L requires terminal-recovery audit pagination and returned audit fields to be direct primitive own data properties. Accessors, proxy descriptor failures, inherited fields, numeric strings, bigint, and coercive objects fail closed before invalid RPC calls or hash verification.
 
+Phase 5M requires terminal-recovery readiness bounds and the optional clock to be direct own data properties. Getter access, descriptor traps, numeric strings, bigint, coercive values, and post-construction mutation are rejected or isolated before readiness work begins.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:

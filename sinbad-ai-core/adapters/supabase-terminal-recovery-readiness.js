@@ -6,13 +6,14 @@ const RECOVERY_REASONS=new Set(['EXPIRED_CLAIM_SLA_EXCEEDED','RECOVERY_INVALID_I
 const AUDIT_REASONS=new Set(['AUDIT_INVALID_SCAN_ARGS','AUDIT_CAPABILITY_DENIED','AUDIT_STORE_UNAVAILABLE','AUDIT_EVENT_HASH_MISMATCH','AUDIT_ORDER_INVALID','AUDIT_SCAN_LIMIT_REACHED']);
 function optionalInteger(value){return Number.isInteger(value)&&value>=0?value:null;}
 function report(status,reasonCode,details={}){return Object.freeze({version:READINESS_VERSION,status,reasonCode,expiredCount:optionalInteger(details.expiredCount),oldestAgeMs:optionalInteger(details.oldestAgeMs),auditEventCount:optionalInteger(details.auditEventCount),auditPageCount:optionalInteger(details.auditPageCount),auditWatermarkId:Number.isSafeInteger(details.auditWatermarkId)&&details.auditWatermarkId>0?details.auditWatermarkId:null});}
+function policy(options){if(!options||typeof options!=='object')return null;const output=Object.create(null);for(const name of ['limit','slaMs','pageSize','maxEvents','now']){let descriptor;try{descriptor=Object.getOwnPropertyDescriptor(options,name);}catch{return null;}if(name==='now'&&descriptor===undefined){output.now=undefined;continue;}if(!descriptor||!Object.hasOwn(descriptor,'value'))return null;output[name]=descriptor.value;}if(!Number.isSafeInteger(output.limit)||output.limit<1||output.limit>500||!Number.isSafeInteger(output.slaMs)||output.slaMs<1000||output.slaMs>604800000||!Number.isSafeInteger(output.pageSize)||output.pageSize<1||output.pageSize>500||!Number.isSafeInteger(output.maxEvents)||output.maxEvents<output.pageSize||output.maxEvents>100000||(output.now!==undefined&&typeof output.now!=='function'))return null;return Object.freeze(output);}
 function create(options={}){
   if(!options.client||typeof options.client.rpc!=='function'||options.serviceRole!==true)throw new TypeError('A trusted server-side Supabase service-role client is required');
   const client=Object.freeze({rpc:options.client.rpc.bind(options.client)});
   const recovery=recoveryModule.create({client,serviceRole:true,actorHash:options.actorHash});
   const audit=auditModule.create({client,serviceRole:true});
-  const limit=Number(options.limit),slaMs=Number(options.slaMs),pageSize=Number(options.pageSize),maxEvents=Number(options.maxEvents),now=options.now;
-  if(!Number.isInteger(limit)||limit<1||limit>500||!Number.isInteger(slaMs)||slaMs<1000||slaMs>604800000||!Number.isInteger(pageSize)||pageSize<1||pageSize>500||!Number.isInteger(maxEvents)||maxEvents<pageSize||maxEvents>100000||(now!==undefined&&typeof now!=='function'))throw new TypeError('Valid recovery readiness bounds are required');
+  const value=policy(options);if(!value)throw new TypeError('Valid recovery readiness bounds are required');
+  const {limit,slaMs,pageSize,maxEvents,now}=value;
   return Object.freeze({
     async check(){
       let health,recoveryDetails;
