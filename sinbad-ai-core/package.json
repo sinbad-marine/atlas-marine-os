@@ -4,6 +4,9 @@
   "private": true,
   "type": "commonjs",
   "main": "./adapters/trusted-terminal-delivery-adapter.js",
+  "scripts": {
+    "verify:rollout-recovery-release": "node ../tools/verify-rollout-recovery-release.js"
+  },
   "exports": {
     ".": "./adapters/trusted-terminal-delivery-adapter.js",
     "./supabase-idempotency-store": "./adapters/supabase-durable-idempotency-store.js",

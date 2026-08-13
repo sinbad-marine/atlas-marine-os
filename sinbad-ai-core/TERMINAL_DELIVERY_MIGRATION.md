@@ -195,6 +195,11 @@ the repository root. Require `MIGRATION_RELEASE_VERIFIED` with eight migrations
 and the expected Phase 3U fingerprint. Never deploy after a hash mismatch and
 never repair it by silently resealing an edited historical migration.
 
+Use the Phase 3X release command as the required local/CI quality gate. Require
+`ROLLOUT_RECOVERY_RELEASE_VERIFIED` before any migration deployment. The command
+checks the migration seal before running all tests, so a compromised migration
+cannot be hidden behind an otherwise green test suite.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.

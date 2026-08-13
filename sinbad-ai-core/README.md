@@ -657,3 +657,12 @@ Phase 3U database fingerprint. Run
 exits non-zero for unavailable/invalid manifests, ordering errors or any
 migration hash mismatch. Existing sealed migrations must never be edited; add a
 new forward migration and update the reviewed manifest instead.
+
+## Phase 3X one-command release verification
+
+Run `npm run verify:rollout-recovery-release` from `sinbad-ai-core` (or invoke
+`node tools/verify-rollout-recovery-release.js` from the repository root). The
+gate verifies the sealed Phase 3W migration release first and starts the complete
+Node test suite only after that succeeds. Migration failure, runner exception,
+non-zero tests or malformed runner output produce a non-zero, content-free
+blocked result.
