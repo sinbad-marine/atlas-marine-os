@@ -391,3 +391,21 @@ this capability; cross-restart operator recovery requires a separate audited
 database workflow and must never repeat presentation blindly.
 Chain-block settlement failures do not receive this reconciliation capability
 and remain routed to audited operator handling.
+
+## Phase 3B expired-claim quarantine
+
+Expired durable claims are no longer automatically taken over. A process may
+have crashed after an external presentation, so automatic takeover could repeat
+that side effect. The Phase 3B service-role recovery adapter lists only expired
+claim keys and timestamps, then permits one fail-closed action:
+`OPERATOR_QUARANTINED`. Quarantine writes a fixed `BLOCKED` summary and an audit
+row containing only claim key, hashed operator identity, allowlisted reason and
+timestamp. It never marks a delivery successful and never calls presentation.
+The recovery module is server-only and exported as
+`@sinbad-ai/core-terminal-delivery/supabase-terminal-recovery`.
+It remains disabled until `healthCheck()` successfully executes the
+service-role-only database capability RPC. Phase 3B is delivered as the forward
+`20260814_terminal_delivery_recovery.sql` migration; the already-versioned
+Phase 2Z migration remains immutable. Operations must alert on expired claim
+age and quarantine within a documented SLA because automatic takeover is
+intentionally unavailable.

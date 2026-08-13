@@ -56,6 +56,16 @@ settlement only; it never calls `present`. On success, persist/observe the
 `RECONCILED` result and discard the consumed object. Never reconstruct an
 `UNSETTLED` value from JSON or use this path after process restart.
 
+Expired claims do not auto-reclaim in Phase 3B. After restart, a trusted
+operator must use the server-only `supabase-terminal-recovery` adapter to list
+expired claim hashes and quarantine the selected claim with a hashed actor ID
+and allowlisted reason. Quarantine is conservative: it records `BLOCKED`, never
+asserts successful delivery, and never repeats presentation.
+Deploy this through the new `20260814_terminal_delivery_recovery.sql` forward
+migration; never edit an already-applied migration. Require a successful
+service-role database `healthCheck()` before recovery operations, and alert on
+expired-claim age against an explicit operator SLA.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.
@@ -76,6 +86,8 @@ a newly authorized recovery workflow when operator policy permits it.
 - A failure after any single-use stage is non-retriable with the same
   authorization. Record a metric, create a fresh authorized attempt through the
   trusted workflow, and never resume from an intermediate object.
+- Phase 3B removes expired-lease automatic takeover. Operations must deploy the
+  recovery audit table/RPCs before relying on cross-restart quarantine.
 
 ## Rollout checklist
 
@@ -96,4 +108,6 @@ a newly authorized recovery workflow when operator policy permits it.
   fall back to an earlier phase.
 - Reconcile authentic same-process `UNSETTLED` values with settle-only retry;
   route cross-restart cases to audited operator recovery.
+- Monitor expired claims and require explicit operator quarantine; never
+  implement automatic presentation retry after lease expiry.
 - Run the complete SINBAD Core test suite before deployment.

@@ -154,3 +154,19 @@ an explicitly audited database reconciliation procedure.
 An unsettled chain-block record is intentionally not reconcileable through this
 API because it is not an applied terminal result.
 
+## Phase 3B cross-restart quarantine
+
+After a process restart, use the server-only `supabase-terminal-recovery`
+adapter with a service-role client. `listExpired(limit)` returns only validated
+claim hashes and timestamps. `quarantine({ claimKey, actorHash, reasonCode })`
+accepts a SHA-256 operator identity and one of `PROCESS_CRASH`,
+`SETTLEMENT_AMBIGUOUS` or `LEASE_EXPIRED`. It permanently prevents replay and
+creates an audit entry in the same transaction. It cannot declare `DELIVERED`
+or repeat presentation. Never expose this adapter or its service-role client to
+a browser.
+Call `healthCheck()` at startup and require exact `true` before list or
+quarantine; the adapter otherwise returns no rows and performs no mutation.
+Apply `20260814_terminal_delivery_recovery.sql` after the Phase 2Z migration.
+Monitor the oldest expired claim and define an operator response SLA; liveness
+is deliberately subordinate to preventing duplicate presentation.
+
