@@ -8,6 +8,8 @@
 
 Phase 4L adds `tools/trusted-rollout-recovery-deployment-lifecycle-runtime.js`. It retains the deployment authorization hash in a private `WeakMap` and releases it to the reconciliation authorization layer only after the exact same-instance deployment produces an unsettled outcome. The hash is never accepted back from caller-controlled input, and terminal or replayed deployments cannot open a reconciliation path.
 
+Phase 4M tracks each reconciliation capability in a second private `WeakMap`. A nonterminal owning result reopens exactly one authorization path; an applied or rejected result closes the deployment source. Concurrent and copied capability calls never mutate that retry decision.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:

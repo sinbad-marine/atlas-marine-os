@@ -4,7 +4,7 @@ const journalAdapter = require('../sinbad-ai-core/adapters/supabase-rollout-reco
 const journaledDeploymentModule = require('./trusted-rollout-recovery-journaled-deployment.js');
 const reconciliationRuntimeModule = require('./trusted-rollout-recovery-deployment-reconciliation-runtime.js');
 
-const LIFECYCLE_VERSION = 'sinbad-rollout-recovery-deployment-lifecycle-runtime/4L-v1';
+const LIFECYCLE_VERSION = 'sinbad-rollout-recovery-deployment-lifecycle-runtime/4M-v1';
 const HASH = /^[a-f0-9]{64}$/u;
 const blocked = reasonCode => Object.freeze({ version: LIFECYCLE_VERSION, status: 'ROLLOUT_RECOVERY_DEPLOYMENT_LIFECYCLE_BLOCKED', reasonCode });
 
@@ -14,8 +14,10 @@ function create(options = {}) {
   const deployment = journaledDeploymentModule.create({ ...options, deploymentJournal });
   const reconciliation = reconciliationRuntimeModule.create(options);
   const deployments = new WeakMap();
+  const capabilities = new WeakMap();
   const executing = new WeakSet();
   const issuing = new WeakSet();
+  const reconciling = new WeakSet();
 
   return Object.freeze({
     version: LIFECYCLE_VERSION,
@@ -47,11 +49,29 @@ function create(options = {}) {
       issuing.add(authorization);
       try {
         const capability = await reconciliation.issue(state.authorizationHash);
-        if (capability?.status === 'ROLLOUT_RECOVERY_DEPLOYMENT_RECONCILIATION_AUTHORIZED') state.reconciliationIssued = true;
+        if (capability?.status === 'ROLLOUT_RECOVERY_DEPLOYMENT_RECONCILIATION_AUTHORIZED') {
+          state.reconciliationIssued = true;
+          capabilities.set(capability, state);
+        }
         return capability;
       } finally { issuing.delete(authorization); }
     },
-    reconcile: reconciliation.reconcile,
+    async reconcile(capability) {
+      const state = capabilities.get(capability);
+      const ownsReconciliation = Boolean(state && !reconciling.has(capability));
+      if (ownsReconciliation) reconciling.add(capability);
+      try {
+        const outcome = await reconciliation.reconcile(capability);
+        if (ownsReconciliation) {
+          const terminal = outcome?.status === 'ROLLOUT_RECOVERY_DEPLOYMENT_RECONCILED_APPLIED' || outcome?.status === 'ROLLOUT_RECOVERY_DEPLOYMENT_RECONCILED_REJECTED';
+          state.unsettled = !terminal;
+          state.reconciliationIssued = terminal;
+        }
+        return outcome;
+      } finally {
+        if (ownsReconciliation) reconciling.delete(capability);
+      }
+    },
   });
 }
 

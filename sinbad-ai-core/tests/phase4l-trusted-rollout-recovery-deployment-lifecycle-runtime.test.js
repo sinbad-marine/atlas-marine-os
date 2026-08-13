@@ -38,6 +38,7 @@ test('reconciles only an exact same-instance unsettled deployment', async () => 
   const capability = await value.issueReconciliation(authorization);
   assert.equal(capability.status, 'ROLLOUT_RECOVERY_DEPLOYMENT_RECONCILIATION_AUTHORIZED');
   assert.equal((await value.reconcile(capability)).status, 'ROLLOUT_RECOVERY_DEPLOYMENT_RECONCILED_APPLIED');
+  assert.equal((await value.issueReconciliation(authorization)).reasonCode, 'RECONCILIATION_SOURCE_DENIED');
   assert.ok(calls.some(([name, args]) => name === 'settle_rollout_recovery_deployment' && args.p_expected_status === 'UNKNOWN' && args.p_status === 'APPLIED'));
 });
 

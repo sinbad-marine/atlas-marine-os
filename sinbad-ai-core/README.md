@@ -4,6 +4,8 @@ Phase 4K adds a server-only, fail-closed deployment reconciliation runtime that 
 
 Phase 4L joins deployment and reconciliation into one server-only lifecycle. A reconciliation capability can be requested only for the exact authorization object that the same runtime executed and observed as unsettled; copied, unexecuted, terminal, and replayed deployment sources are denied.
 
+Phase 4M allows a fresh reconciliation capability only after the owning one-use capability returns a nonterminal result. Terminal reconciliation permanently closes the source, while copied or concurrent capability replays cannot reopen it.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.
