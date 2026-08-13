@@ -68,6 +68,8 @@ Phase 5O requires terminal-recovery operator identity and quarantine `claimKey`/
 
 Phase 5P requires the Supabase idempotency `claimLeaseMs`, claim key, and returned lease token to be direct primitives. Getter access, descriptor traps, numeric strings, bigint, boxed/coercive values, and non-string tokens fail closed before unsafe claim state is retained.
 
+Phase 5Q requires durable settlement summaries to contain only exact enumerable own primitive data fields. Accessors, proxy traps, inherited or symbol fields, coercive values, and later source mutation fail closed or remain isolated before the fenced settlement RPC.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
