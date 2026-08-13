@@ -168,6 +168,13 @@ authorization adapter. Deploy the verifier, readiness gate and authorization
 adapter atomically because the authorization wire version is now `3R-v1`.
 Readiness denial occurs before the operator identity/policy hook.
 
+After applying migrations through `20260818`, Phase 3S provides the single
+server-side composition point. Supply one service-role client, hashed operator
+identity, purpose, clock, authorization/recovery timeouts, audit page/event
+budgets, side-effect-free `authorize` and provider-only `resolve`. Do not compose
+the internal adapters independently in application code or export the runtime
+until deployment verification succeeds.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.

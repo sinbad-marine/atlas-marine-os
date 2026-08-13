@@ -607,3 +607,16 @@ checked before the trusted operator authorization hook. Any blocked, malformed,
 thrown or version-mismatched readiness result prevents the hook from running,
 records a denied decision through the required durable audit path and issues no
 capability.
+
+## Phase 3S trusted rollout recovery runtime
+
+The internal `trusted-rollout-recovery-runtime` composes the Phase 3J journal,
+3O audit writer, 3P verifier, 3Q readiness gate and 3R authorization/recovery
+chain from one service-role client and one explicit bounded policy. It performs
+strict startup version checks and exposes only `issue()` and `recover()`; storage,
+verification and readiness internals are not returned. Invalid or partial
+configuration fails at construction. The runtime remains outside package exports
+until remote migrations and the real operator identity provider are verified.
+The runtime version matrix names the Phase 3N audit event contract implemented
+by the Phase 3O Supabase writer; Phase numbers and wire-contract versions are
+deliberately separate. Runtime options are allowlisted before child construction.
