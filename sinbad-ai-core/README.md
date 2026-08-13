@@ -620,3 +620,12 @@ until remote migrations and the real operator identity provider are verified.
 The runtime version matrix names the Phase 3N audit event contract implemented
 by the Phase 3O Supabase writer; Phase numbers and wire-contract versions are
 deliberately separate. Runtime options are allowlisted before child construction.
+
+## Phase 3T rollout recovery runtime preflight
+
+Apply `20260819_rollout_recovery_runtime_preflight.sql` after migrations through
+`20260818`. It verifies the two required tables and every runtime RPC signature
+under service-role authentication. The runtime advances to `3T-v1`, exposes a
+content-free `healthCheck()` and gates both `issue()` and `recover()` on the same
+preflight. Success is cached in-process; failure stays retryable but blocks all
+trusted hooks until the database contract becomes available.

@@ -175,6 +175,11 @@ budgets, side-effect-free `authorize` and provider-only `resolve`. Do not compos
 the internal adapters independently in application code or export the runtime
 until deployment verification succeeds.
 
+Apply `20260819_rollout_recovery_runtime_preflight.sql` before constructing the
+Phase 3T runtime. Require `ROLLOUT_RECOVERY_RUNTIME_READY` from `healthCheck()`
+at startup. A blocked preflight prevents both authorization and recovery; do not
+bypass it or substitute a local configuration check for the database RPC.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.
