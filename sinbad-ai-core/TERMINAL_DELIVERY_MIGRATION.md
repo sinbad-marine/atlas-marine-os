@@ -257,6 +257,12 @@ before returning either approval or denial. Do not substitute the older rollout
 recovery authorization audit stream: its purpose and wire contract are distinct.
 Remote persistence wiring remains required before exposure.
 
+For Phase 4H, apply `20260822_rollout_recovery_deployment_reconciliation_audit.sql`
+after Phase 4D. Construct the internal append adapter only with a server-side
+service-role client and pass it through the Phase 4G audit factory. Verify the
+database hash recipe, immutability triggers and client-role denial before
+exposing the reconciliation workflow.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.

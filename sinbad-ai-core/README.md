@@ -790,3 +790,16 @@ contract. Both approval and denial must return a verified `RECORDED` result
 before the wrapper returns; audit denial, malformed output or outage produces no
 capability. The repository does not yet provide the Supabase append adapter or
 migration for this new audit stream, so the composition remains internal.
+
+## Phase 4H Supabase reconciliation authorization audit
+
+Apply `20260822_rollout_recovery_deployment_reconciliation_audit.sql` after the
+deployment journal migration. It creates a separate immutable service-role-only
+audit stream and recomputes the exact Phase 4G event hash inside PostgreSQL.
+Idempotent exact replay is accepted; hash mismatch and conflicting data fail
+closed. Direct access remains revoked from client roles.
+
+The internal Supabase adapter implements only the exact append contract and
+accepts `RECORDED` or `ALREADY_RECORDED`. The sealed migration manifest advances
+to `4H-v1` with ten ordered files. This migration and adapter remain local until
+an authorized remote rollout verifies the database contract.
