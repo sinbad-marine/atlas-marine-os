@@ -30,7 +30,16 @@ for (const [name, verifier] of [['authorization', authorization], ['reconciliati
   test(`${name} scan policy rejects coercive and non-integer values`, async () => {
     let calls = 0;
     const malicious = { valueOf() { calls++; throw new Error('must not run'); }, [Symbol.toPrimitive]() { calls++; throw new Error('must not run'); } };
-    for (const changed of [{ pageSize: malicious }, { maxEvents: malicious }, { pageSize: '25' }, { maxEvents: 1n }, { pageSize: 0 }, { pageSize: 501 }, { pageSize: 100, maxEvents: 99 }]) assert.equal(verifier.scanPolicy(changed), null);
+    const invalid = [{ pageSize: malicious }, { maxEvents: malicious }, { pageSize: '25' }, { maxEvents: 1n }, { pageSize: 0 }, { pageSize: 501 }, { pageSize: 100, maxEvents: 99 }];
+    let rpcCalls = 0;
+    const value = verifier.create({ client: { async rpc() { rpcCalls++; throw new Error('must not run'); } }, serviceRole: true });
+    for (const changed of invalid) {
+      assert.equal(verifier.scanPolicy(changed), null);
+      const result = await value.scan(changed);
+      assert.equal(result.status, 'AUDIT_SCAN_UNAVAILABLE');
+      assert.equal(result.reasonCode, 'AUDIT_INVALID_SCAN_ARGS');
+    }
     assert.equal(calls, 0);
+    assert.equal(rpcCalls, 0);
   });
 }
