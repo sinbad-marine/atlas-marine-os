@@ -749,3 +749,17 @@ content-free journal outcomes and implements the exact Phase 4C contract. The
 sealed migration manifest advances to `4D-v1` with nine ordered files. Neither
 the adapter nor the journaled deployment runtime is exported before remote
 migration verification and real provider wiring.
+
+## Phase 4E side-effect-free deployment reconciliation
+
+`tools/trusted-rollout-recovery-deployment-reconciliation.js` resolves durable
+`PENDING` or `UNKNOWN` deployment records after restart without exposing any
+deployment callback. It performs one bounded provider-state query and may only
+compare-and-set the observed journal state to `APPLIED` or `REJECTED`.
+
+Existing terminal states return without provider access. Absence, outage,
+timeout, invalid provider data and settlement conflict remain blocked or
+unsettled. `ALREADY_SETTLED` is accepted only after inspecting the identical
+terminal state, and concurrent reconciliation for one authorization hash is
+fenced across adapter instances in the process. Keep this module behind a
+separate trusted operator authorization boundary.

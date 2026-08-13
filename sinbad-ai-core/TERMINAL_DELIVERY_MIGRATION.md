@@ -239,6 +239,12 @@ construct the internal adapter with a server-side service-role client. This
 forward migration enables journaling for later deployments; it cannot journal
 its own first application and does not authorize deployment by itself.
 
+Phase 4E reconciles `PENDING` and `UNKNOWN` deployment records after restart.
+Provide only a bounded, authenticated, side-effect-free provider status query;
+never pass a deployment function. Terminal journal states require no provider
+call. Timeout, invalid response and compare-and-set conflict remain unsettled
+and must be escalated through a separately authorized operator workflow.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.
