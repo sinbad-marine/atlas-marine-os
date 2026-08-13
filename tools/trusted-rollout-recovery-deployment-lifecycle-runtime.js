@@ -4,7 +4,7 @@ const journalAdapter = require('../sinbad-ai-core/adapters/supabase-rollout-reco
 const journaledDeploymentModule = require('./trusted-rollout-recovery-journaled-deployment.js');
 const reconciliationRuntimeModule = require('./trusted-rollout-recovery-deployment-reconciliation-runtime.js');
 
-const LIFECYCLE_VERSION = 'sinbad-rollout-recovery-deployment-lifecycle-runtime/4O-v1';
+const LIFECYCLE_VERSION = 'sinbad-rollout-recovery-deployment-lifecycle-runtime/4P-v1';
 const HASH = /^[a-f0-9]{64}$/u;
 const blocked = reasonCode => Object.freeze({ version: LIFECYCLE_VERSION, status: 'ROLLOUT_RECOVERY_DEPLOYMENT_LIFECYCLE_BLOCKED', reasonCode });
 
@@ -14,6 +14,9 @@ function create(options = {}) {
   if (!Number.isInteger(maxAttempts) || maxAttempts < 1 || maxAttempts > 10) throw new TypeError('A bounded reconciliation attempt policy is required');
   const retryDelayMs = Number(options.reconciliationRetryDelayMs);
   if (!Number.isInteger(retryDelayMs) || retryDelayMs < 1000 || retryDelayMs > 300000) throw new TypeError('A bounded reconciliation retry delay is required');
+  const backoffFactor = Number(options.reconciliationRetryBackoffFactor);
+  const maxRetryDelayMs = Number(options.maxReconciliationRetryDelayMs);
+  if (!Number.isInteger(backoffFactor) || backoffFactor < 2 || backoffFactor > 4 || !Number.isInteger(maxRetryDelayMs) || maxRetryDelayMs < retryDelayMs || maxRetryDelayMs > 300000) throw new TypeError('A bounded reconciliation backoff policy is required');
   const deploymentJournal = journalAdapter.create(options);
   const deployment = journaledDeploymentModule.create({ ...options, deploymentJournal });
   const reconciliation = reconciliationRuntimeModule.create(options);
@@ -24,6 +27,7 @@ function create(options = {}) {
   const reconciling = new WeakSet();
   let lastClock = -1;
   function sample() { const value = Number(options.now()); if (!Number.isSafeInteger(value) || value < 0 || value < lastClock) return null; lastClock = value; return value; }
+  function retryDelay(attempt) { let delay = retryDelayMs; for (let index = 1; index < attempt && delay < maxRetryDelayMs; index++) delay = delay > Math.floor(maxRetryDelayMs / backoffFactor) ? maxRetryDelayMs : Math.min(maxRetryDelayMs, delay * backoffFactor); return delay; }
 
   return Object.freeze({
     version: LIFECYCLE_VERSION,
@@ -81,7 +85,8 @@ function create(options = {}) {
           state.reconciliationIssued = terminal;
           if (!terminal) {
             const now = sample();
-            state.retryNotBefore = now !== null && now <= Number.MAX_SAFE_INTEGER - retryDelayMs ? now + retryDelayMs : Number.MAX_SAFE_INTEGER;
+            const delay = retryDelay(state.reconciliationAttempts);
+            state.retryNotBefore = now !== null && now <= Number.MAX_SAFE_INTEGER - delay ? now + delay : Number.MAX_SAFE_INTEGER;
           }
         }
         return outcome;

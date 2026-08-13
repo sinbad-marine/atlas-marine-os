@@ -10,6 +10,8 @@ Phase 4N requires an explicit `maxReconciliationAttempts` policy between 1 and 1
 
 Phase 4O requires a bounded `reconciliationRetryDelayMs` between 1 and 300 seconds. Nonterminal results start a monotonic delay window; early retries and clock rollback fail closed before audit or operator work.
 
+Phase 4P requires a deterministic backoff factor (2–4) and maximum retry delay. Each authorized nonterminal attempt multiplies the delay until the explicit cap, without overflow or hidden randomness.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.

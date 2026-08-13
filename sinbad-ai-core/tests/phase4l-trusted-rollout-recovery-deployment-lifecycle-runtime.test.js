@@ -20,7 +20,7 @@ function create(overrides = {}) {
     if (name === 'append_rollout_recovery_deployment_reconciliation_audit') return { data: 'RECORDED', error: null };
     throw new Error(`Unexpected RPC: ${name}`);
   } };
-  const value = lifecycle.create({ client, serviceRole: true, deploymentReadiness, deploy: async () => 'OTHER', deploymentPurpose: 'supabase.rollout-recovery', deploymentTimeoutMs: 1000, resolve: async () => 'APPLIED', reconciliationTimeoutMs: 1000, authorize: async () => true, now: () => 1000, actorHash: 'b'.repeat(64), reconciliationPurpose: 'deployment.reconciliation', authorizationTtlMs: 1000, authorizationTimeoutMs: 1000, auditPageSize: 100, auditMaxEvents: 10000, maxReconciliationAttempts: 3, reconciliationRetryDelayMs: 1000, ...overrides });
+  const value = lifecycle.create({ client, serviceRole: true, deploymentReadiness, deploy: async () => 'OTHER', deploymentPurpose: 'supabase.rollout-recovery', deploymentTimeoutMs: 1000, resolve: async () => 'APPLIED', reconciliationTimeoutMs: 1000, authorize: async () => true, now: () => 1000, actorHash: 'b'.repeat(64), reconciliationPurpose: 'deployment.reconciliation', authorizationTtlMs: 1000, authorizationTimeoutMs: 1000, auditPageSize: 100, auditMaxEvents: 10000, maxReconciliationAttempts: 3, reconciliationRetryDelayMs: 1000, reconciliationRetryBackoffFactor: 2, maxReconciliationRetryDelayMs: 8000, ...overrides });
   return { value, calls };
 }
 
@@ -95,5 +95,6 @@ test('requires the server trust boundary and remains outside package exports', (
   assert.throws(() => lifecycle.create(), /service-role/u);
   assert.throws(() => create({ maxReconciliationAttempts: 0 }), /attempt policy/u);
   assert.throws(() => create({ reconciliationRetryDelayMs: 999 }), /retry delay/u);
+  assert.throws(() => create({ reconciliationRetryBackoffFactor: 1 }), /backoff policy/u);
   assert.equal(require('../package.json').exports['./trusted-rollout-recovery-deployment-lifecycle-runtime'], undefined);
 });

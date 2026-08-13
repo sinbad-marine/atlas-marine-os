@@ -14,6 +14,8 @@ Phase 4N makes the sequential retry budget explicit and mandatory with `maxRecon
 
 Phase 4O adds mandatory `reconciliationRetryDelayMs` (1000–300000). A nonterminal reconciliation samples the trusted monotonic clock and delays the next authorization; an early request or clock rollback is rejected before any downstream work.
 
+Phase 4P adds mandatory `reconciliationRetryBackoffFactor` (2–4) and `maxReconciliationRetryDelayMs` (base delay through 300000). Delay growth is deterministic, capped before multiplication can overflow, and based only on successfully issued attempts.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
