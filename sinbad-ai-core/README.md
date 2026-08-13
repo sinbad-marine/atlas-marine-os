@@ -589,3 +589,12 @@ capability on every page and enforces explicit page/event budgets. Its public
 result is content-free: status, reason, event/page counts and watermark only.
 The verifier remains unexported until the remote migrations are deployment-
 verified.
+
+## Phase 3Q recovery authorization audit readiness
+
+The internal `rollout-recovery-authorization-audit-readiness` gate converts the
+Phase 3P bounded scan into a stable operational decision. It returns ready only
+for the exact verifier version and `AUDIT_SCAN_COMPLETE`; unavailable,
+incomplete, malformed, integrity-failed and thrown scans remain blocked.
+Unknown counters stay `null` and cannot resemble a healthy empty audit. Configure
+explicit page and event budgets and keep this gate server-only.

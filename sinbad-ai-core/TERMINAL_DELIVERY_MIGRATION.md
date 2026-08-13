@@ -158,6 +158,11 @@ run the internal verifier with bounded `pageSize` and `maxEvents`. Require
 and bounded-incomplete scans must block operational readiness. The verifier
 returns summaries only and must stay on the trusted server.
 
+Phase 3Q wraps that verifier with an explicit bounded readiness policy. Require
+`AUTHORIZATION_AUDIT_READINESS_READY` before enabling the operator recovery
+workflow. Every other status blocks; never substitute missing counters with
+zero or treat an incomplete bounded scan as healthy.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.
