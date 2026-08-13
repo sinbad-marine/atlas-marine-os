@@ -56,6 +56,8 @@ Phase 5K applies the same non-coercive boundary to authorization and reconciliat
 
 Phase 5L hardens terminal-recovery audit pagination and database rows with direct own-data snapshots. Accessors, descriptor traps, inherited fields, numeric strings, bigint, and coercive objects are rejected without executing conversion hooks or issuing invalid pagination RPCs.
 
+Phase 5M snapshots terminal-recovery readiness bounds and its optional clock from direct own data properties. Accessors, descriptor traps, numeric strings, bigint, coercive objects, and later policy mutation cannot alter an admitted readiness check.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.
