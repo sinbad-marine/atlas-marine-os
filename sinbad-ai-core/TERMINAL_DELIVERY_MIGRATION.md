@@ -138,6 +138,12 @@ Make `authorize` a side-effect-free identity/policy decision. Late completion
 after timeout is ignored. Any downstream failure consumes the capability, so
 retry by obtaining new operator approval rather than replaying the same object.
 
+Phase 3N requires a trusted durable `authorizationAudit` created with a
+server-side `append(event)` writer. Persist the minimal immutable event before
+returning operator approval. Only exact boolean `true` confirms persistence;
+writer denial, exception or malformed output blocks capability issuance. Keep
+the writer credentials outside browser and application clients.
+
 The presentation side effect and Core's process-local terminal record cannot be
 one distributed transaction. A post-presentation `UNSETTLED` result is terminal
 for that authorization and must never retry presentation with the same object.

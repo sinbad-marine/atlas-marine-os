@@ -553,3 +553,15 @@ remain internal until deployment-specific operator authentication is wired.
 The trusted `authorize` hook must be side-effect-free; timeout or exception is a
 closed denial and any late completion is ignored. A failed downstream recovery
 deliberately burns the capability and requires fresh operator approval.
+
+## Phase 3N durable recovery authorization audit
+
+Phase 3N intentionally breaks the Phase 3M construction contract and advances
+the authorization wire version to `3N-v1`. It requires an exact versioned
+`authorizationAudit` before construction. Every approved or denied operator decision produces a frozen,
+content-minimized event containing only version, actor hash, attestation hash,
+purpose hash, decision, decision time and deterministic event hash. The durable
+append function must return exact boolean `true`; denial, malformed response or
+exception blocks authorization issuance. This internal contract does not itself
+claim database durability—the deployment writer must provide it and must remain
+server-only.
