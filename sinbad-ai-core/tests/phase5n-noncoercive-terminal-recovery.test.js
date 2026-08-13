@@ -6,6 +6,21 @@ const recovery = require('../adapters/supabase-terminal-recovery.js');
 
 const actorHash = 'b'.repeat(64);
 function create(rpc) { return recovery.create({ serviceRole: true, actorHash, client: { rpc } }); }
+function validClaim(overrides = {}) { return { claim_key: 'a'.repeat(64), claimed_at: '2026-08-13T00:00:00Z', lease_expires_at: '2026-08-13T00:01:00Z', ...overrides }; }
+
+test('recovery list and inspect preserve safe defaults and valid claim rows', async () => {
+  const calls = [];
+  const value = create(async (name, args) => {
+    calls.push([name, args]);
+    return name === 'verify_terminal_recovery_access' ? { data: true, error: null } : { data: [validClaim()], error: null };
+  });
+  assert.deepEqual(await value.listExpired(undefined), [{ claimKey: 'a'.repeat(64), claimedAt: '2026-08-13T00:00:00Z', leaseExpiresAt: '2026-08-13T00:01:00Z' }]);
+  assert.deepEqual(calls[1], ['list_expired_terminal_delivery_claims', { p_limit: 100 }]);
+  const inspected = await value.inspect({ slaMs: 30000, now: () => Date.parse('2026-08-13T00:02:00Z') });
+  assert.equal(inspected.status, 'RECOVERY_SLA_BREACHED');
+  assert.equal(inspected.expiredCount, 1);
+  assert.equal(inspected.oldestAgeMs, 60000);
+});
 
 test('recovery limits and inspect policy reject coercion accessors and traps before RPC', async () => {
   let hooks = 0, rpcCalls = 0;
@@ -29,7 +44,7 @@ test('recovery clock rejects coercive results without conversion hooks', async (
 });
 
 test('recovery claim rows reject accessors traps inherited and coercive fields', async () => {
-  const base = { claim_key: 'a'.repeat(64), claimed_at: '2026-08-13T00:00:00Z', lease_expires_at: '2026-08-13T00:01:00Z' };
+  const base = validClaim();
   let hooks = 0;
   const malicious = { toString() { hooks++; throw new Error('must not run'); }, valueOf() { hooks++; throw new Error('must not run'); } };
   const rows = [Object.create(base), new Proxy(base, { getOwnPropertyDescriptor() { throw new Error('host failure'); } }), { ...base, claim_key: malicious }];
@@ -38,4 +53,10 @@ test('recovery claim rows reject accessors traps inherited and coercive fields',
   const value = create(async name => name === 'verify_terminal_recovery_access' ? { data: true, error: null } : { data: [accessor], error: null });
   assert.equal((await value.inspect({ slaMs: 30000, now: () => Date.parse('2026-08-13T00:02:00Z') })).reasonCode, 'RECOVERY_DATA_INTEGRITY_FAILED');
   assert.equal(hooks, 0);
+});
+
+test('recovery listing fails closed instead of returning a partial valid inventory', async () => {
+  const bad = { ...validClaim(), claim_key: 'invalid' };
+  const value = create(async name => name === 'verify_terminal_recovery_access' ? { data: true, error: null } : { data: [validClaim(), bad], error: null });
+  assert.deepEqual(await value.listExpired(10), []);
 });
