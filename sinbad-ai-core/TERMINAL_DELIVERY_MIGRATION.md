@@ -104,6 +104,8 @@ Phase 6F is a breaking runtime-policy revision (`6F-v1`): every standalone recon
 
 Phase 6G requires reconciliation audit adapter configuration and append events to use exact own data. The client RPC method is captured at construction, and each valid event becomes one frozen primitive RPC payload; accessors, inherited fields, coercive timestamps, and validation-to-use mutation are rejected or isolated.
 
+Phase 6H requires reconciliation audit verifier configuration, RPC response envelopes, and audit-page array indices to be exact own data. Supabase success responses must contain own `data` and `error: null` fields. Capability/list accessors, inherited or sparse response fields, descriptor traps, and post-response mutation fail closed; verifier RPC arguments are immutable.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
