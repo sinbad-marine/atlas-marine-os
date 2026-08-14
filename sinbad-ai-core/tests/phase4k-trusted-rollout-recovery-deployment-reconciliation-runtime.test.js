@@ -56,6 +56,13 @@ test('invalid trust boundary and unbounded policy fail at construction', () => {
   assert.throws(() => create({ serviceRole: false }), /service-role/u);
   assert.throws(() => create({ auditPageSize: 0 }), /scan policy/u);
   assert.throws(() => create({ reconciliationTimeoutMs: 999 }), /timeout/u);
+  assert.throws(() => create({ reconciliationTimeoutMs: '1000' }), /timeout/u);
+  assert.throws(() => create({ reconciliationTimeoutMs: 1000n }), /timeout/u);
+  let reads = 0;
+  const hostile = { client: { rpc() {} }, serviceRole: true, reconciliationTimeoutMs: 1000 };
+  Object.defineProperty(hostile, 'reconciliationTimeoutMs', { get() { reads++; throw new Error('must not run'); } });
+  assert.throws(() => runtime.create(hostile), /timeout/u);
+  assert.equal(reads, 0);
 });
 
 test('server-only runtime remains outside browser package exports', () => {

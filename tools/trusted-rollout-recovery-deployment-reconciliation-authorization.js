@@ -24,29 +24,51 @@ function auditResultSnapshot(value) {
   }
   return Object.freeze(output);
 }
+function dependencySnapshot(value, fields, validate) {
+  if (!value || typeof value !== 'object') return null;
+  const output = Object.create(null);
+  for (const name of fields) {
+    let descriptor;
+    try { descriptor = Object.getOwnPropertyDescriptor(value, name); } catch { return null; }
+    if (!descriptor || !Object.hasOwn(descriptor, 'value')) return null;
+    output[name] = descriptor.value;
+  }
+  if (!validate(output)) return null;
+  for (const name of fields) if (typeof output[name] === 'function') { const fn = output[name]; output[name] = (...args) => Reflect.apply(fn, output, args); }
+  return Object.freeze(output);
+}
+function policy(options) {
+  if (!options || typeof options !== 'object') return null;
+  const output = Object.create(null);
+  for (const name of ['deploymentJournal', 'resolve', 'diagnose', 'reconciliationTimeoutMs', 'authorize', 'authorizationAudit', 'auditReadiness', 'now', 'actorHash', 'reconciliationPurpose', 'authorizationTtlMs', 'authorizationTimeoutMs']) {
+    let descriptor;
+    try { descriptor = Object.getOwnPropertyDescriptor(options, name); } catch { return null; }
+    if (name === 'diagnose' && (descriptor === undefined || (Object.hasOwn(descriptor, 'value') && descriptor.value === undefined))) { output[name] = undefined; continue; }
+    if (!descriptor || !Object.hasOwn(descriptor, 'value')) return null;
+    output[name] = descriptor.value;
+  }
+  output.authorizationAudit = dependencySnapshot(output.authorizationAudit, ['version', 'durable', 'record'], value => value.version === auditModule.AUDIT_VERSION && value.durable === true && typeof value.record === 'function');
+  output.auditReadiness = dependencySnapshot(output.auditReadiness, ['version', 'check'], value => value.version === readinessModule.READINESS_VERSION && typeof value.check === 'function');
+  output.deploymentJournal = dependencySnapshot(output.deploymentJournal, ['version', 'durable', 'inspect', 'settle'], value => value.version === reconciliationModule.EXPECTED_JOURNAL_VERSION && value.durable === true && typeof value.inspect === 'function' && typeof value.settle === 'function');
+  if (!output.authorizationAudit || !output.auditReadiness || !output.deploymentJournal || typeof output.resolve !== 'function' || (output.diagnose !== undefined && typeof output.diagnose !== 'function') || !Number.isSafeInteger(output.reconciliationTimeoutMs) || output.reconciliationTimeoutMs < 1000 || output.reconciliationTimeoutMs > 300000 || typeof output.authorize !== 'function' || typeof output.now !== 'function' || typeof output.actorHash !== 'string' || !HASH.test(output.actorHash) || typeof output.reconciliationPurpose !== 'string' || !PURPOSE.test(output.reconciliationPurpose) || !Number.isSafeInteger(output.authorizationTtlMs) || output.authorizationTtlMs < 1000 || output.authorizationTtlMs > 300000 || !Number.isSafeInteger(output.authorizationTimeoutMs) || output.authorizationTimeoutMs < 1000 || output.authorizationTimeoutMs > 300000) return null;
+  return Object.freeze(output);
+}
 
 function create(options = {}) {
-  if (typeof options.authorize !== 'function' || typeof options.now !== 'function') throw new TypeError('Trusted authorize and clock functions are required');
-  const audit = options.authorizationAudit;
-  if (!audit || audit.version !== auditModule.AUDIT_VERSION || audit.durable !== true || typeof audit.record !== 'function') throw new TypeError('A trusted durable authorizationAudit is required');
-  const readiness = options.auditReadiness;
-  if (!readiness || readiness.version !== readinessModule.READINESS_VERSION || typeof readiness.check !== 'function') throw new TypeError('A trusted auditReadiness gate is required');
-  const actorHash = String(options.actorHash || '');
-  const purpose = String(options.reconciliationPurpose || '');
-  const ttlMs = Number(options.authorizationTtlMs);
-  const timeoutMs = Number(options.authorizationTimeoutMs);
-  if (!HASH.test(actorHash) || !PURPOSE.test(purpose) || !Number.isInteger(ttlMs) || ttlMs < 1000 || ttlMs > 300000 || !Number.isInteger(timeoutMs) || timeoutMs < 1000 || timeoutMs > 300000) throw new TypeError('A bounded purpose-bound operator authorization policy is required');
-  const reconciliation = reconciliationModule.create(options);
+  const admitted = policy(options);
+  if (!admitted) throw new TypeError('Trusted bounded reconciliation authorization dependencies are required');
+  const audit = admitted.authorizationAudit, readiness = admitted.auditReadiness, actorHash = admitted.actorHash, purpose = admitted.reconciliationPurpose, ttlMs = admitted.authorizationTtlMs, timeoutMs = admitted.authorizationTimeoutMs, clock = admitted.now, authorize = admitted.authorize;
+  const reconciliation = reconciliationModule.create(Object.freeze({ deploymentJournal: admitted.deploymentJournal, resolve: admitted.resolve, diagnose: admitted.diagnose, reconciliationTimeoutMs: admitted.reconciliationTimeoutMs }));
   const authentic = new WeakSet();
   const consumed = new WeakSet();
   const manifests = new WeakMap();
   let lastClock = -1;
-  function sample() { const value = Number(options.now()); if (!Number.isSafeInteger(value) || value < 0 || value < lastClock) return null; lastClock = value; return value; }
+  function sample() { let value; try { value = clock(); } catch { return null; } if (!Number.isSafeInteger(value) || value < 0 || value < lastClock) return null; lastClock = value; return value; }
   async function allowed(input) {
     let timer;
     try {
       const timeout = Symbol('timeout');
-      const value = await Promise.race([Promise.resolve().then(() => options.authorize(input)), new Promise(resolve => { timer = setTimeout(() => resolve(timeout), timeoutMs); })]);
+      const value = await Promise.race([Promise.resolve().then(() => authorize(input)), new Promise(resolve => { timer = setTimeout(() => resolve(timeout), timeoutMs); })]);
       return value !== timeout && value === true;
     } catch { return false; }
     finally { if (timer !== undefined) clearTimeout(timer); }

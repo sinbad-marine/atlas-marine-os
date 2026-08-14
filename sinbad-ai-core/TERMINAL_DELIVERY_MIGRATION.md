@@ -98,6 +98,8 @@ Phase 6C incorporates Claude/Grok round-table reconciliation. Authorization read
 
 Phase 6D requires reconciliation authorization-audit configuration and event fields to be exact own primitive data. Getter access, descriptor traps, inherited fields, coercive values, unsafe timestamps, and post-construction append mutation fail closed without invoking conversion hooks.
 
+Phase 6E requires reconciliation authorization identity, purpose, timing, hooks, audit/readiness dependencies, and nested recovery inputs to be exact own data. Getter access, descriptor traps, numeric strings, bigint, coercive values, and post-construction dependency mutation fail closed or remain isolated.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:

@@ -12,6 +12,10 @@ const result = (status, reasonCode) => Object.freeze({ version: RUNTIME_VERSION,
 
 function create(options = {}) {
   if (!options.client || typeof options.client.rpc !== 'function' || options.serviceRole !== true) throw new TypeError('A trusted Supabase service-role client is required');
+  let timeoutDescriptor;
+  try { timeoutDescriptor = Object.getOwnPropertyDescriptor(options, 'reconciliationTimeoutMs'); } catch {}
+  const timeoutMs = timeoutDescriptor && Object.hasOwn(timeoutDescriptor, 'value') ? timeoutDescriptor.value : null;
+  if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1000 || timeoutMs > 300000) throw new TypeError('A bounded reconciliation timeout is required');
   const deploymentJournal = journalAdapter.create(options);
   const auditStore = auditAdapter.create(options);
   const auditVerifier = verifierAdapter.create(options);
