@@ -96,6 +96,8 @@ Phase 6B requires authorization audit-verifier scan results to contain exact own
 
 Phase 6C incorporates Claude/Grok round-table reconciliation. Authorization readiness decisions, runtime identity/timing/recovery fields, and nested recovery dependencies must be captured before use; readiness producers expose only allowlisted verifier reason codes.
 
+Phase 6D requires reconciliation authorization-audit configuration and event fields to be exact own primitive data. Getter access, descriptor traps, inherited fields, coercive values, unsafe timestamps, and post-construction append mutation fail closed without invoking conversion hooks.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:

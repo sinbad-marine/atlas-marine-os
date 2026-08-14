@@ -90,6 +90,8 @@ Phase 6B snapshots authorization audit-verifier scan results from exact own prim
 
 Phase 6C incorporates Claude/Grok round-table reconciliation. Authorization readiness decisions, runtime identity/timing/recovery fields, and nested recovery dependencies are snapshotted before use; readiness producers expose only allowlisted verifier reason codes.
 
+Phase 6D snapshots reconciliation authorization-audit configuration and event fields from exact own primitive data. Accessors, descriptor traps, inherited fields, coercive values, unsafe timestamps, and later append mutation fail closed without invoking conversion hooks.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.
