@@ -102,6 +102,8 @@ Phase 6E requires reconciliation authorization identity, purpose, timing, hooks,
 
 Phase 6F is a breaking runtime-policy revision (`6F-v1`): every standalone reconciliation runtime dependency and the Supabase client's RPC method must be supplied as exact own data before adapter composition. Accessors, inherited fields, coercive identity/timing/scan values, and post-construction option or RPC replacement are rejected or isolated; callers using prototype or getter-backed configuration must materialize a plain own-data bag.
 
+Phase 6G requires reconciliation audit adapter configuration and append events to use exact own data. The client RPC method is captured at construction, and each valid event becomes one frozen primitive RPC payload; accessors, inherited fields, coercive timestamps, and validation-to-use mutation are rejected or isolated.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
