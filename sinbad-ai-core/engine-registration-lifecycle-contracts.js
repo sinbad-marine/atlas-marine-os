@@ -8,7 +8,7 @@ const STATES = new Set(['UNREGISTERED', 'CANDIDATE', 'QUARANTINED', 'REVOKED']);
 const ACTIONS = new Set(['REQUEST_REGISTRATION', 'REQUEST_QUARANTINE', 'REQUEST_REVOCATION']);
 
 function blocked(reasonCode, gaps) {
-  return Object.freeze({ version: VERSION, status: 'ENGINE_REGISTRATION_LIFECYCLE_BLOCKED', reasonCode, transitionApplied: false, registered: false, revoked: false, activationAllowed: false, resultingState: null, assuranceGaps: Object.freeze([...gaps]) });
+  return Object.freeze({ version: VERSION, status: 'ENGINE_REGISTRATION_LIFECYCLE_BLOCKED', reasonCode, transitionApplied: false, registrationVerified: false, revocationVerified: false, activationAllowed: false, resultingState: null, assuranceGaps: Object.freeze([...gaps]) });
 }
 
 function exact(input) {
@@ -28,6 +28,7 @@ function assessTransition(input) {
     if (value.currentState === 'REVOKED') return blocked('ENGINE_REVOCATION_TERMINAL', ['DURABLE_REVOCATION_MUST_NOT_BE_REVERSED']);
     if (value.requestedAction === 'REQUEST_REVOCATION') return blocked('ENGINE_REVOCATION_PERSISTENCE_REQUIRED', ['DURABLE_REVOCATION_RECEIPT_REQUIRED', 'READ_BACK_INTEGRITY_VERIFICATION_REQUIRED']);
     if (value.requestedAction === 'REQUEST_QUARANTINE') return blocked('ENGINE_QUARANTINE_PERSISTENCE_REQUIRED', ['DURABLE_QUARANTINE_RECEIPT_REQUIRED', 'READ_BACK_INTEGRITY_VERIFICATION_REQUIRED']);
+    if (value.currentState === 'QUARANTINED') return blocked('ENGINE_QUARANTINE_CLEARANCE_REQUIRED', ['DURABLE_QUARANTINE_CLEARANCE_RECEIPT_REQUIRED', 'INDEPENDENT_CLEARANCE_VERIFICATION_REQUIRED']);
     return blocked('ENGINE_REGISTRATION_EXTERNAL_AUTHORITY_REQUIRED', ['AUTHENTICATED_REGISTRAR_REQUIRED', 'POLICY_AUDIT_VALIDATION_REQUIRED', 'VALIDATION_HARNESS_VERIFICATION_REQUIRED', 'REVOCATION_CHECK_REQUIRED', 'DURABLE_REGISTRATION_RECEIPT_REQUIRED']);
   } catch (_error) {
     return blocked('ENGINE_REGISTRATION_ASSESSOR_FAULT', ['LIFECYCLE_ASSESSOR_FAULT']);

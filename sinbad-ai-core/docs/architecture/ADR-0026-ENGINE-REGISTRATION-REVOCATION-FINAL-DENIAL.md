@@ -10,6 +10,8 @@ Registration, quarantine, and revocation requests are exact, non-coercive assess
 
 A separate final gate accepts only format-checked receipt labels and always denies activation. Receipt accumulation cannot produce registration, readiness, loading, execution, an allowed mode, or activation. Authenticity, cross-binding, revocation status, and explicit activation authority remain unverified.
 
+Outputs never publish `registered: false` or `revoked: false`, because an unchecked negative could be misread as verified state. They expose only `registrationVerified: false` and `revocationVerified: false`. A caller-claimed `REVOKED` state remains terminal for transition assessment but is not promoted into verified revocation evidence.
+
 No registry writer, durable store, state mutator, loader, executor, activator, network/filesystem/process operation, credential access, or physical-control surface is introduced.
 
 ## Consequences

@@ -6,7 +6,7 @@ const ID = /^[a-z][a-z0-9-]{2,63}$/u;
 const HASH = /^[a-f0-9]{64}$/u;
 
 function denied(reasonCode, gaps) {
-  return Object.freeze({ version: VERSION, status: 'ENGINE_ACTIVATION_DENIED', reasonCode, registered: false, revoked: false, ready: false, loadAllowed: false, executeAllowed: false, activationAllowed: false, allowedModes: Object.freeze([]), assuranceGaps: Object.freeze([...gaps]) });
+  return Object.freeze({ version: VERSION, status: 'ENGINE_ACTIVATION_DENIED', reasonCode, registrationVerified: false, revocationVerified: false, ready: false, loadAllowed: false, executeAllowed: false, activationAllowed: false, allowedModes: Object.freeze([]), assuranceGaps: Object.freeze([...gaps]) });
 }
 
 function assess(input) {
