@@ -94,6 +94,8 @@ Phase 6D snapshots reconciliation authorization-audit configuration and event fi
 
 Phase 6E snapshots reconciliation authorization identity, purpose, timing, hooks, audit/readiness dependencies, and nested recovery inputs from exact own data. Accessors, descriptor traps, numeric strings, bigint, coercive values, and later dependency mutation fail closed or remain isolated.
 
+Phase 6F snapshots the standalone reconciliation runtime's complete outer dependency bag and own RPC method before composing adapters. Its journal, audit, and verifier adapters receive a documented minimal frozen client façade because their only client capability is RPC. Accessors, inherited fields, coercive scan/timeout values, and later option or RPC replacement fail closed or remain isolated.
+
 Sinbad AI Core is the decision and coordination layer of Atlas Marine OS. It
 does not implement navigation mathematics. Existing expert engines remain
 independent and are called through adapters.
