@@ -20,6 +20,9 @@ This baseline classifies obligations from the Core Charter. A checked item requi
 
 ## Interfaces to stabilize now
 
+- Universal A-O engine-port manifests, module isolation, validation harnesses, policy/audit integration, and explicit activation decisions. ADR-0016 supplies only an inert exact manifest and deny-only assessment; loading and execution remain absent and blocked.
+- The legacy `experts` contract still accepts execution callbacks and is not yet composed behind ADR-0016. Until a compatibility-preserving migration removes or gates that dual path, engine registration/loading/execution is activation-blocking and the new manifest assessment is not an execution authority.
+
 - Versioned `VesselState`, `OperationalEnvelope`, `CommandIntent`, `SafetyDecision`, `ControlExecutionReceipt`, and `HazardAndIncident` schemas.
 - Identity, time, units, provenance, confidence, authorization, idempotency, ordering, signature, revision, and compatibility envelopes.
 - Read-only example adapters for navigation, stability, weather, PMS, training, and management engines.

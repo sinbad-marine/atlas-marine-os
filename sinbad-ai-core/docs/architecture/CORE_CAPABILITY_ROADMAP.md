@@ -15,6 +15,9 @@ No level advances without representative simulation, hardware-in-the-loop testin
 
 ## Near-term core roadmap
 
+- Preserve the real Core baseline and complete the product/client/module separation inventory in [CORE_ARCHITECTURE_INVENTORY_2026-08-14.md](./CORE_ARCHITECTURE_INVENTORY_2026-08-14.md).
+- Establish the universal A-O Engine Port Manifest and deny-only activation boundary before adding specialized engines. Port O is the first external expert-engine program; it receives no direct Core or production write authority.
+
 - Complete Architecture Gate 0 models and evidence plumbing.
 - Stabilize the six vendor-neutral conceptual contract schemas without actuator authority.
 - Establish threat/hazard registers, feature gates, environment isolation, and activation records.
