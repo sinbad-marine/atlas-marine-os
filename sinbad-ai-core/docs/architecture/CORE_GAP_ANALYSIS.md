@@ -43,6 +43,10 @@ ADR-0027 through ADR-0035 establish a private, inert and deny-only Stability fou
 
 Activation-blocking gaps remain: authenticated approved source custody, real engineering calculations, independent reproduction, rule applicability, intact/damage stability criteria, longitudinal strength, benchmark and validation evidence, durable append-only audit/read-back, signatures, trusted identity/time, class/flag/vessel-specific approval, approved test conditions, failure/offline/backup validation, authorized loading-computer runtime, publication and operational release. No gap in this list is implicitly deferred or accepted.
 
+## Pedagogy and animation foundation
+
+ADR-0036 adds private, inert learning-profile, lesson-state, pedagogy-decision and animation-intent candidates. Knowledge grounding remains confined to pedagogy; animation carries presentation commitments only and is structurally forbidden from claiming knowledge authority or requesting identity recognition, biometric capture or live capture. Consent/isolation verification, grounded-content binding, qualified pedagogy review, adaptive-learning logic, competency assessment, renderer isolation, synthetic-media disclosure enforcement, persistence, capture and product workflows remain activation-blocking.
+
 ## Future separate certified program
 
 - VCASK runtime and safety lifecycle;
