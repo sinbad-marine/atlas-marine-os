@@ -1,7 +1,7 @@
 'use strict';
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {selectedReviewers,validateReviewerKeys,assertSafeDiff}=require('../tools/roundtable-review.js');
+const {selectedReviewers,validateReviewerKeys,assertSafeDiff,reviewRange}=require('../tools/roundtable-review.js');
 
 test('requires an explicit reviewer selection',()=>{
   assert.throws(()=>selectedReviewers({}),/ROUNDTABLE_REVIEWERS/);
@@ -54,4 +54,10 @@ test('refuses long values assigned to credential-like names',()=>{
 
 test('allows environment variable names placeholders and removed secrets',()=>{
   assert.doesNotThrow(()=>assertSafeDiff(['diff --git a/x b/x','+const key=process.env.GROK_API_KEY;','+GROK_API_KEY=<set-in-user-environment>','-sk','-ant-aaaaaaaaaaaaaaaaaaaaaaaa'].join('\n')));
+});
+
+test('accepts only explicit bounded commit review ranges',()=>{
+  assert.equal(reviewRange({}),null);
+  assert.equal(reviewRange({ROUNDTABLE_RANGE:'4c719af^..4c719af'}),'4c719af^..4c719af');
+  for(const value of ['HEAD','..HEAD','HEAD..','HEAD...main','--output=x..HEAD','HEAD..main;whoami'])assert.throws(()=>reviewRange({ROUNDTABLE_RANGE:value}),/explicit base\.\.head/u);
 });

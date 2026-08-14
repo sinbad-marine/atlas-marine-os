@@ -8,12 +8,18 @@ const profile = (overrides = {}) => ({ version: isolation.VERSION, profileId: 'i
 
 test('a strict inert profile remains activation-blocked pending real enforcement', () => {
   const result = isolation.assessProfile(profile());
+  assert.equal(result.version, isolation.VERSION);
+  assert.equal(result.status, 'ENGINE_ISOLATION_ACTIVATION_BLOCKED');
   assert.equal(result.reasonCode, 'ENGINE_ISOLATION_ENFORCEMENT_UNVERIFIED');
+  assert.equal(result.profileId, 'isolated-content-engine');
+  assert.equal(result.engineId, 'design-engine');
   assert.equal(result.isolationVerified, false);
   assert.equal(result.loadAllowed, false);
   assert.equal(result.executeAllowed, false);
   assert.equal(result.activationAllowed, false);
-  assert.ok(result.assuranceGaps.length > 0);
+  assert.deepEqual(result.assuranceGaps, ['OS_CONTAINER_ENFORCEMENT_UNVERIFIED', 'RESOURCE_LIMIT_ENFORCEMENT_UNVERIFIED', 'ESCAPE_RESISTANCE_UNVERIFIED', 'INDEPENDENT_ISOLATION_TEST_REQUIRED']);
+  assert.ok(Object.isFrozen(result));
+  assert.ok(Object.isFrozen(result.assuranceGaps));
 });
 
 test('rejects every declared authority and unsafe runtime feature', () => {
@@ -30,10 +36,13 @@ test('hostile shapes fail closed without invoking accessors or coercion', () => 
   const accessor = profile();
   Object.defineProperty(accessor, 'engineId', { enumerable: true, get() { reads += 1; return 'design-engine'; } });
   const coercive = { toString() { reads += 1; return 'NONE'; } };
-  for (const value of [null, {}, [], { ...profile(), extra: true }, accessor, profile({ networkAccess: coercive })]) {
+  const symbolic = profile(); symbolic[Symbol('extra')] = true;
+  const missing = profile(); delete missing.engineId;
+  for (const value of [null, {}, [], Object.assign(Object.create(null), profile()), { ...profile(), extra: true }, symbolic, missing, profile({ version: 'wrong' }), profile({ profileId: 'BAD' }), profile({ engineId: 'x' }), accessor, profile({ networkAccess: coercive })]) {
     const result = isolation.assessProfile(value);
     assert.match(result.status, /BLOCKED$/u);
     assert.equal(result.activationAllowed, false);
+    assert.notEqual(result.reasonCode, 'ENGINE_ISOLATION_ENFORCEMENT_UNVERIFIED');
   }
   assert.equal(reads, 0);
 });
