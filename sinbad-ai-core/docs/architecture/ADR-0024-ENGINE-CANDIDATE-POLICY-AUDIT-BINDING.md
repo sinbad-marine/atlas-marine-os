@@ -12,6 +12,8 @@ Even a structurally complete binding remains blocked pending policy authenticity
 
 The module contains no audit writer/store, signature verifier, policy resolver, clock, identity provider, registration, loader, executor, or activation surface.
 
+Caller-provided `engineId` is validated only to constrain the binding input and is never echoed as authenticated output. A future trusted catalog/verifier receipt must supply identity binding independently.
+
 ## Consequences
 
 Future durable adapters and independent verifiers gain a versioned binding envelope without allowing evidence accumulation to activate an engine. Real durable storage, read-back integrity scans, trusted identities/time, revocation, and explicit activation decisions remain blocking.

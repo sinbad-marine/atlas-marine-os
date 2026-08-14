@@ -10,7 +10,7 @@ test('complete hash commitments remain blocked pending external verification', (
   const result = contracts.assessBinding(binding());
   assert.equal(result.status, 'ENGINE_CANDIDATE_POLICY_AUDIT_BLOCKED');
   assert.equal(result.reasonCode, 'ENGINE_CANDIDATE_POLICY_AUDIT_EXTERNAL_VERIFICATION_REQUIRED');
-  assert.equal(result.engineId, 'design-engine');
+  assert.equal(result.engineId, null);
   assert.equal(result.policyBindingVerified, false);
   assert.equal(result.durableAuditVerified, false);
   assert.equal(result.revocationVerified, false);
@@ -25,6 +25,8 @@ test('cannot self-assert verified signatures attestation audit or revocation', (
     assert.equal(result.reasonCode, 'ENGINE_CANDIDATE_UNVERIFIED_AUTHORITY_CLAIM');
     assert.equal(result.activationAllowed, false);
   }
+  const multiple = contracts.assessBinding(binding({ policySignaturesVerified: true, durableAuditVerified: true }));
+  assert.deepEqual(multiple.assuranceGaps, ['POLICYSIGNATURESVERIFIED_MUST_REMAIN_FALSE', 'DURABLEAUDITVERIFIED_MUST_REMAIN_FALSE']);
 });
 
 test('rejects malformed hashes exact-shape violations and coercion without invoking accessors', () => {
@@ -32,7 +34,8 @@ test('rejects malformed hashes exact-shape violations and coercion without invok
   const accessor = binding(); Object.defineProperty(accessor, 'engineId', { enumerable: true, get() { reads += 1; return 'design-engine'; } });
   const coercive = { toString() { reads += 1; return 'a'.repeat(64); } };
   const symbol = binding(); symbol[Symbol('extra')] = true;
-  for (const value of [null, {}, [], { ...binding(), extra: true }, symbol, accessor, binding({ candidateEvidenceHash: 'bad' }), binding({ auditReceiptHash: coercive }), binding({ engineId: 'BAD' })]) {
+  const missing = binding(); delete missing.engineId;
+  for (const value of [null, {}, [], Object.assign(Object.create(null), binding()), { ...binding(), extra: true }, symbol, missing, accessor, binding({ version: 'wrong' }), binding({ candidateEvidenceHash: 'bad' }), binding({ auditReceiptHash: coercive }), binding({ engineId: 'BAD' }), binding({ revocationChecked: 0 }), binding({ durableAuditVerified: 'false' })]) {
     const result = contracts.assessBinding(value);
     assert.match(result.status, /BLOCKED$/u);
     assert.equal(result.activationAllowed, false);
@@ -49,4 +52,5 @@ test('all results and gaps are immutable and module exposes no audit writer or v
     assert.equal(result.ready || result.activationAllowed || result.policyBindingVerified || result.durableAuditVerified || result.revocationVerified, false);
   }
   assert.deepEqual(Object.keys(contracts), ['VERSION', 'assessBinding']);
+  assert.ok(Object.isFrozen(contracts));
 });

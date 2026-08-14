@@ -10,7 +10,7 @@ function blocked(reasonCode, engineId = null, gaps = ['POLICY_AUDIT_BINDING_VALI
     version: VERSION,
     status: 'ENGINE_CANDIDATE_POLICY_AUDIT_BLOCKED',
     reasonCode,
-    engineId,
+    engineId: null,
     policyBindingVerified: false,
     durableAuditVerified: false,
     revocationVerified: false,
@@ -33,12 +33,10 @@ function assessBinding(input) {
   try {
     const value = exact(input);
     if (!value || value.version !== VERSION || !ID.test(value.engineId)) return blocked('ENGINE_CANDIDATE_POLICY_AUDIT_BINDING_INVALID');
-    for (const field of ['candidateEvidenceHash', 'provenancePolicyHash', 'licensePolicyHash', 'isolationProfileHash', 'auditReceiptHash']) {
-      if (typeof value[field] !== 'string' || !HASH.test(value[field])) return blocked('ENGINE_CANDIDATE_POLICY_AUDIT_BINDING_INVALID', value.engineId);
-    }
-    for (const field of ['policySignaturesVerified', 'isolationAttestationVerified', 'durableAuditVerified', 'revocationChecked']) {
-      if (value[field] !== false) return blocked('ENGINE_CANDIDATE_UNVERIFIED_AUTHORITY_CLAIM', value.engineId, [`${field.toUpperCase()}_MUST_REMAIN_FALSE`]);
-    }
+    const invalidHashes = ['candidateEvidenceHash', 'provenancePolicyHash', 'licensePolicyHash', 'isolationProfileHash', 'auditReceiptHash'].filter(field => typeof value[field] !== 'string' || !HASH.test(value[field]));
+    if (invalidHashes.length) return blocked('ENGINE_CANDIDATE_POLICY_AUDIT_BINDING_INVALID', null, invalidHashes.map(field => `${field.toUpperCase()}_INVALID`));
+    const authorityClaims = ['policySignaturesVerified', 'isolationAttestationVerified', 'durableAuditVerified', 'revocationChecked'].filter(field => value[field] !== false);
+    if (authorityClaims.length) return blocked('ENGINE_CANDIDATE_UNVERIFIED_AUTHORITY_CLAIM', null, authorityClaims.map(field => `${field.toUpperCase()}_MUST_REMAIN_FALSE`));
     return blocked('ENGINE_CANDIDATE_POLICY_AUDIT_EXTERNAL_VERIFICATION_REQUIRED', value.engineId, [
       'POLICY_SIGNATURE_VERIFICATION_REQUIRED',
       'POLICY_APPLICABILITY_VERIFICATION_REQUIRED',
