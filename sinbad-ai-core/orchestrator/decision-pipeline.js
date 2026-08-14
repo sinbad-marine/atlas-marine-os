@@ -5,12 +5,16 @@
     intent:load('../intent-engine.js')||root.SinbadIntentEngine,
     safety:load('../safety-engine.js')||root.SinbadSafetyEngine,
     boundary:load('../memory/evidence-boundary.js')||root.SinbadMemoryEvidenceBoundary,
-    audit:load('./audit-log.js')||root.SinbadAuditLog
+    audit:load('./audit-log.js')||root.SinbadAuditLog,
+    routerContract:load('../experts/expert-router.js')||root.SinbadExpertRouter
   });
   if(typeof module==='object'&&module.exports)module.exports=api;
   root.SinbadDecisionPipeline=api;
 })(typeof globalThis!=='undefined'?globalThis:this,function(deps){
   const RETRIEVAL_INTENTS=new Set(['passage','publication','document']);
+  function validRoutingPlan(routing){
+    return Boolean(deps.routerContract&&typeof deps.routerContract.isTrustedPlan==='function'&&deps.routerContract.isTrustedPlan(routing)&&Object.isFrozen(routing)&&routing.planVersion==='sinbad-expert-route-plan/2-v1'&&routing.routable===false&&typeof routing.planningRoutable==='boolean'&&routing.executionAllowed===false&&Array.isArray(routing.routes)&&Object.isFrozen(routing.routes)&&routing.routes.every(route=>route&&Object.isFrozen(route)&&typeof route.expertId==='string'&&!Object.values(route).some(value=>typeof value==='function'))&&Array.isArray(routing.gaps)&&Object.isFrozen(routing.gaps)&&routing.gaps.every(gap=>gap&&Object.isFrozen(gap)&&typeof gap.reason==='string'&&!Object.values(gap).some(value=>typeof value==='function'))&&Array.isArray(routing.executionBlockedReasons)&&Object.isFrozen(routing.executionBlockedReasons)&&routing.executionBlockedReasons.length>0&&routing.executionBlockedReasons.at(-1)==='ENGINE_PORT_GATE_REQUIRED'&&routing.executionBlockedReason===routing.executionBlockedReasons[0]);
+  }
   function create(options={}){
     const router=options.router;
     if(!router||typeof router.plan!=='function')throw new TypeError('expert router is required');
@@ -19,9 +23,9 @@
 
     function final(status,request,analysis,safety,routing,evidence,permission,audit,error=null){
       return Object.freeze({
-        version:'sinbad-decision-pipeline/1',status,request,analysis,safety,routing,evidence,permission,
+        version:'sinbad-decision-pipeline/2',status,request,analysis,safety,routing,evidence,permission,
         error:error?Object.freeze({...error}):null,audit:audit.snapshot(),
-        integration:Object.freeze({expertExecutionPrepared:status==='READY_FOR_EXPERT_EXECUTION',expertExecutionPerformed:false})
+        integration:Object.freeze({expertExecutionPrepared:false,expertExecutionPerformed:false})
       });
     }
     function stoppedPermission(reason){return Object.freeze({allowed:false,reason:String(reason),mode:'STOP'});}
@@ -53,7 +57,11 @@
         audit.append('context','memory-manager','passed','CONTEXT_PARTITIONED',{session:memorySnapshot.session.length,persistent:memorySnapshot.persistent.length,operational:memorySnapshot.operational.length,preferences:memorySnapshot.preferences.length});
 
         const routing=router.plan({analysis,safety,context:{...request.context,memory:memorySnapshot},requiredIntents:input.requiredIntents});
-        audit.append('routing','expert-router',routing.executionAllowed?'passed':'stopped',routing.gaps.length?routing.gaps.map(g=>g.reason).join(','):'EXPERTS_SELECTED',{routes:routing.routes.map(r=>r.expertId),gaps:routing.gaps});
+        if(!validRoutingPlan(routing)){
+          audit.append('routing','expert-router','stopped','ROUTING_CONTRACT_REJECTED',{planVersion:routing.planVersion||null});
+          return final('ROUTING_BLOCKED',request,analysis,safety,null,null,stoppedPermission('ROUTING_CONTRACT_REJECTED'),audit,{code:'ROUTING_CONTRACT_REJECTED',message:'Unknown or execution-capable routing contracts are rejected.'});
+        }
+        audit.append('routing','expert-router',routing.gaps.length?'stopped':'planned',routing.gaps.length?routing.gaps.map(g=>g.reason).join(','):'EXPERT_PLAN_ONLY',{routes:routing.routes.map(r=>r.expertId),gaps:routing.gaps});
         if(!routing.routes.length||routing.gaps.length){
           const code=routing.gaps[0]?.reason||'EXPERT_NOT_AVAILABLE';
           return final('ROUTING_BLOCKED',request,analysis,safety,routing,null,stoppedPermission(code),audit,{code,message:'Required expertise is unavailable or below confidence threshold.'});
@@ -69,9 +77,9 @@
         }
 
         const permission=planPermission();
-        audit.append('permission','decision-pipeline','passed','ALL_GATES_PASSED',{mode:permission.mode});
-        audit.append('result','result-contract','ready','READY_FOR_EXPERT_EXECUTION',{executionPerformed:false});
-        return final('READY_FOR_EXPERT_EXECUTION',request,analysis,safety,routing,evidence,permission,audit);
+        audit.append('permission','decision-pipeline','passed','PLAN_GATES_PASSED',{mode:permission.mode});
+        audit.append('result','result-contract','ready','PLAN_ONLY_READY',{executionPerformed:false});
+        return final('PLAN_ONLY_READY',request,analysis,safety,routing,evidence,permission,audit);
       }catch(error){
         audit.append('error','decision-pipeline','stopped','PIPELINE_ERROR',{name:error?.name||'Error'});
         return final('PIPELINE_ERROR',null,null,null,null,null,stoppedPermission('PIPELINE_ERROR'),audit,{code:'PIPELINE_ERROR',message:String(error?.message||error)});
