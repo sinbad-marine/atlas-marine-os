@@ -4,6 +4,8 @@ The permanent long-term mission, future vessel-control capability envelope, and 
 
 Binding implementation governance is recorded in [Core Activation Gates](./docs/architecture/CORE_ACTIVATION_GATES.md), [ADR-0001: VCASK](./docs/architecture/ADR-0001-VCASK-CONTROL-BOUNDARY.md), the [Capability Roadmap](./docs/architecture/CORE_CAPABILITY_ROADMAP.md), the [Gap Analysis](./docs/architecture/CORE_GAP_ANALYSIS.md), and the preliminary [Control Threat and Hazard Model](./docs/architecture/CONTROL_THREAT_HAZARD_MODEL.md).
 
+The inert, default-off MetOcean, celestial, and PNT contract foundation is governed by [ADR-0002](./docs/architecture/ADR-0002-METOCEAN-CELESTIAL-PNT-FOUNDATION.md). It provides schemas and validation only; it does not provide sensor drivers, forecasts, sight reduction, accepted navigation solutions, or vessel control.
+
 Phase 4K adds a server-only, fail-closed deployment reconciliation runtime that composes the durable Supabase journal, immutable authorization audit, verified audit-readiness scan, one-use operator authorization, and provider reconciliation behind a minimal frozen facade. It is not exported to browser consumers.
 
 Phase 4L joins deployment and reconciliation into one server-only lifecycle. A reconciliation capability can be requested only for the exact authorization object that the same runtime executed and observed as unsettled; copied, unexecuted, terminal, and replayed deployment sources are denied.
