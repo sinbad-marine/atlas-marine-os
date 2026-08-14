@@ -8,6 +8,7 @@ if (verifierModule.VERIFIER_VERSION !== EXPECTED_VERIFIER_VERSION) throw new Err
 const result = (status, reasonCode, eventCount = null, pageCount = null, watermarkId = null) => Object.freeze({ version: READINESS_VERSION, status, reasonCode, eventCount: Number.isSafeInteger(eventCount) ? eventCount : null, pageCount: Number.isSafeInteger(pageCount) ? pageCount : null, watermarkId: Number.isSafeInteger(watermarkId) ? watermarkId : null });
 const DECISION_FIELDS = Object.freeze(['version', 'status', 'reasonCode', 'eventCount', 'pageCount', 'watermarkId']);
 const SCAN_FIELDS = Object.freeze(['version', 'status', 'reasonCode', 'eventCount', 'pageCount', 'watermarkId']);
+const SCAN_REASONS = Object.freeze(new Set(['AUDIT_INVALID_SCAN_ARGS', 'AUDIT_CAPABILITY_DENIED', 'AUDIT_STORE_UNAVAILABLE', 'AUDIT_EVENT_HASH_MISMATCH', 'AUDIT_ORDER_INVALID', 'AUDIT_SCAN_LIMIT_REACHED']));
 function snapshot(value) {
   if (!value || typeof value !== 'object') return null;
   const output = Object.create(null);
@@ -75,11 +76,11 @@ function create(options = {}) {
       try { scan = scanSnapshot(await verifier.scan({ pageSize, maxEvents })); }
       catch { return result('RECONCILIATION_AUDIT_READINESS_BLOCKED', 'AUDIT_SCAN_EXCEPTION'); }
       if (!scan) return result('RECONCILIATION_AUDIT_READINESS_BLOCKED', 'AUDIT_SCAN_CONTRACT_INVALID');
-      if (scan.status !== 'AUDIT_SCAN_COMPLETE' || scan.reasonCode !== null) return result('RECONCILIATION_AUDIT_READINESS_BLOCKED', scan.reasonCode || 'AUDIT_SCAN_NOT_COMPLETE', scan.eventCount, scan.pageCount, scan.watermarkId);
+      if (scan.status !== 'AUDIT_SCAN_COMPLETE' || scan.reasonCode !== null) return result('RECONCILIATION_AUDIT_READINESS_BLOCKED', SCAN_REASONS.has(scan.reasonCode) ? scan.reasonCode : 'AUDIT_SCAN_NOT_COMPLETE', scan.eventCount, scan.pageCount, scan.watermarkId);
       if (!Number.isSafeInteger(scan.eventCount) || scan.eventCount < 0 || !Number.isSafeInteger(scan.pageCount) || scan.pageCount < 1 || (scan.watermarkId !== null && (!Number.isSafeInteger(scan.watermarkId) || scan.watermarkId < 1)) || ((scan.eventCount === 0) !== (scan.watermarkId === null))) return result('RECONCILIATION_AUDIT_READINESS_BLOCKED', 'AUDIT_SCAN_CONTRACT_INVALID');
       return result('RECONCILIATION_AUDIT_READINESS_READY', null, scan.eventCount, scan.pageCount, scan.watermarkId);
     },
   });
 }
 
-module.exports = Object.freeze({ READINESS_VERSION, EXPECTED_VERIFIER_VERSION, DECISION_FIELDS, SCAN_FIELDS, snapshot, validDecision, scanSnapshot, verifierSnapshot, policy, create });
+module.exports = Object.freeze({ READINESS_VERSION, EXPECTED_VERIFIER_VERSION, DECISION_FIELDS, SCAN_FIELDS, SCAN_REASONS, snapshot, validDecision, scanSnapshot, verifierSnapshot, policy, create });

@@ -94,6 +94,8 @@ Phase 6A requires reconciliation audit-verifier scan results to contain exact ow
 
 Phase 6B requires authorization audit-verifier scan results to contain exact own primitive fields and consistent counters. Getter access, descriptor traps, inherited/coercive fields, and invalid audit watermark invariants fail closed without invoking conversion hooks.
 
+Phase 6C incorporates Claude/Grok round-table reconciliation. Authorization readiness decisions, runtime identity/timing/recovery fields, and nested recovery dependencies must be captured before use; readiness producers expose only allowlisted verifier reason codes.
+
 ## Supported production path
 
 Production consumers must use exactly one package entry point:
