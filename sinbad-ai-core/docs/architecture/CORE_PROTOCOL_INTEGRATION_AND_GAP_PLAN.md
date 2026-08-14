@@ -58,7 +58,7 @@ An explicit emergency voice-destruction request or high-confidence prohibited/co
 ## Safe implementation order
 
 1. Truth/safe-stop/execution-state and versioned task-memory contracts. **Current: Runtime Foundations 1–3 (ADR-0009/0010/0011), NOT PRODUCTION READY / BLOCKED; truth/stop, consent/conflict/one-time/action requests, and unverified store/deny-only authorization/pending-audit evidence candidates are inert. No writer, signer, verifier, durable append, or action authority exists and the blocker remains open.**
-2. Sensitive-data classification, consent/retention/export/delete and isolation gates.
+2. Sensitive-data classification, consent/retention/export/delete and isolation gates. **Current: Foundation 1 (ADR-0012), NOT PRODUCTION READY / BLOCKED; classification/policy/action/isolation candidates are inert and no export, deletion, erasure, consent verification, or durable audit capability exists.**
 3. Engineering artifact/unit/coordinate/provenance and DRAFT-only contracts.
 4. Calculation-chain/V&V state machine with independent-check and uncertainty evidence.
 5. Digital-twin layer identity and scan provenance without geometry generation.
