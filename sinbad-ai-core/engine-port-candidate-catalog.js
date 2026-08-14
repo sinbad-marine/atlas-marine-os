@@ -3,13 +3,14 @@
 const contracts = require('./engine-port-contracts.js');
 const VERSION = 'sinbad-engine-port-candidate-catalog/1-v1';
 const MAX_ENTRIES = 256;
+const authenticEntries = new WeakSet();
 
 function safeGaps(value) {
-  return Object.freeze(Array.isArray(value) ? value.filter(gap => typeof gap === 'string') : ['ASSESSMENT_SHAPE_INVALID']);
+  return Object.freeze(Array.isArray(value) ? [...new Set(value.filter(gap => typeof gap === 'string'))].sort() : ['ASSESSMENT_SHAPE_INVALID']);
 }
 
 function snapshot(assessment) {
-  return Object.freeze({
+  const entry = Object.freeze({
     catalogVersion: VERSION,
     manifestVersion: assessment.version,
     engineId: assessment.engineId,
@@ -21,6 +22,12 @@ function snapshot(assessment) {
     reasonCode: assessment.reasonCode,
     assuranceGaps: safeGaps(assessment.assuranceGaps)
   });
+  authenticEntries.add(entry);
+  return entry;
+}
+
+function isAuthenticEntry(value) {
+  return value !== null && typeof value === 'object' && authenticEntries.has(value);
 }
 
 function rejected(reasonCode, assuranceGaps, identity = {}) {
@@ -75,4 +82,4 @@ function create() {
   return Object.freeze({ consider, get, list });
 }
 
-module.exports = Object.freeze({ VERSION, create });
+module.exports = Object.freeze({ VERSION, create, isAuthenticEntry });

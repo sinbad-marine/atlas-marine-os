@@ -76,9 +76,17 @@ test('lists deterministic immutable blocked snapshots only', () => {
 });
 
 test('exports no loader executor activator or removal surface', () => {
-  assert.deepEqual(Object.keys(catalogModule), ['VERSION', 'create']);
+  assert.deepEqual(Object.keys(catalogModule), ['VERSION', 'create', 'isAuthenticEntry']);
   assert.deepEqual(Object.keys(catalogModule.create()), ['consider', 'get', 'list']);
   assert.ok(Object.isFrozen(catalogModule));
+});
+
+test('recognizes only same-process catalog entries', () => {
+  const entry = catalogModule.create().consider(manifest('design-engine'));
+  assert.equal(catalogModule.isAuthenticEntry(entry), true);
+  assert.equal(catalogModule.isAuthenticEntry({ ...entry }), false);
+  assert.equal(catalogModule.isAuthenticEntry(structuredClone(entry)), false);
+  assert.equal(catalogModule.isAuthenticEntry(null), false);
 });
 
 test('fails closed at the bounded process-local catalog capacity', () => {
