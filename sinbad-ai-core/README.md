@@ -14,6 +14,8 @@ The inert offline-first synchronization foundation is governed by [ADR-0005](./d
 
 The inert governance foundation is governed by [ADR-0006](./docs/architecture/ADR-0006-GOVERNANCE-EVIDENCE-APPROVAL-FOUNDATION.md). It represents scoped draft rules, unverified evidence, pending approvals, and revision candidates without issuing signatures, approvals, compliance findings, or official authority.
 
+The inert access-control foundation is governed by [ADR-0007](./docs/architecture/ADR-0007-ACCESS-CONTROL-ISOLATION-FOUNDATION.md). It binds tenant, vessel, principal, device, resource, action, purpose, and time while always denying access until authenticated RBAC/ABAC enforcement and audit exist.
+
 Phase 4K adds a server-only, fail-closed deployment reconciliation runtime that composes the durable Supabase journal, immutable authorization audit, verified audit-readiness scan, one-use operator authorization, and provider reconciliation behind a minimal frozen facade. It is not exported to browser consumers.
 
 Phase 4L joins deployment and reconciliation into one server-only lifecycle. A reconciliation capability can be requested only for the exact authorization object that the same runtime executed and observed as unsettled; copied, unexecuted, terminal, and replayed deployment sources are denied.
