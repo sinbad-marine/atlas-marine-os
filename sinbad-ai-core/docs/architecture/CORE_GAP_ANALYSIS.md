@@ -31,6 +31,8 @@ Schema stabilization does not authorize actuator code or imply class/flag approv
 
 The v1 inert contracts, one Observation golden vector, official-warning hash binding, and default-off capability registry are present. Remaining activation-blocking gaps include device trust and calibration lifecycle, controlled unit/quantity registry, official-warning signature verification and precedence engine, time-authority model, evidence store integration, PNT duplicate/replay tracking, multi-source fusion/integrity algorithms, ODD/capability authorization integration, edge-adapter sandboxing, and golden vectors for every remaining contract type. None is an accepted deferral; live sensors and accepted navigation solutions remain blocked.
 
+ADR-0003 now supplies inert candidate contracts for device identity, calibration, time authority, evidence references, and warning verification. Positive trust issuance, certificate-chain validation, revocation/status services, secure-clock discipline, evidence-store verification, and contract binding into observations remain activation-blocking.
+
 ## Future separate certified program
 
 - VCASK runtime and safety lifecycle;

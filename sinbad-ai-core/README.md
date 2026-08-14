@@ -6,6 +6,8 @@ Binding implementation governance is recorded in [Core Activation Gates](./docs/
 
 The inert, default-off MetOcean, celestial, and PNT contract foundation is governed by [ADR-0002](./docs/architecture/ADR-0002-METOCEAN-CELESTIAL-PNT-FOUNDATION.md). It provides schemas and validation only; it does not provide sensor drivers, forecasts, sight reduction, accepted navigation solutions, or vessel control.
 
+The common inert sensor trust-chain contracts are governed by [ADR-0003](./docs/architecture/ADR-0003-SENSOR-TRUST-CHAIN.md). They cannot issue trusted/verified/valid device, calibration, time, or official-warning authority.
+
 Phase 4K adds a server-only, fail-closed deployment reconciliation runtime that composes the durable Supabase journal, immutable authorization audit, verified audit-readiness scan, one-use operator authorization, and provider reconciliation behind a minimal frozen facade. It is not exported to browser consumers.
 
 Phase 4L joins deployment and reconciliation into one server-only lifecycle. A reconciliation capability can be requested only for the exact authorization object that the same runtime executed and observed as unsettled; copied, unexecuted, terminal, and replayed deployment sources are denied.
