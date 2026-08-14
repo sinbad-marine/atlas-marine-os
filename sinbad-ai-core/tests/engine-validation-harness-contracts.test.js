@@ -18,11 +18,9 @@ test('a clean claimed result remains blocked pending independent verification', 
 });
 
 test('rejects inconsistent dirty empty and adversarial-free test claims', () => {
-  for (const changed of [{ totalTests: 0, passedTests: 0, adversarialCases: 0 }, { passedTests: 19 }, { passedTests: 19, failedTests: 1 }, { passedTests: 19, skippedTests: 1 }, { adversarialCases: 0 }]) {
-    const assessed = validation.assessResult(result(changed));
-    assert.notEqual(assessed.reasonCode, 'ENGINE_VALIDATION_EXTERNAL_VERIFICATION_REQUIRED');
-    assert.equal(assessed.activationAllowed, false);
-  }
+  for (const changed of [{ totalTests: 0, passedTests: 0, adversarialCases: 0 }, { passedTests: 19 }, { adversarialCases: 0 }, { totalTests: 1, passedTests: 1, adversarialCases: 2 }]) assert.equal(validation.assessResult(result(changed)).reasonCode, 'ENGINE_VALIDATION_RESULT_INCONSISTENT');
+  for (const changed of [{ passedTests: 19, failedTests: 1 }, { passedTests: 19, skippedTests: 1 }]) assert.equal(validation.assessResult(result(changed)).reasonCode, 'ENGINE_VALIDATION_TESTS_NOT_CLEAN');
+  assert.equal(validation.assessResult(result({ totalTests: 1000001, passedTests: 1000001 })).reasonCode, 'ENGINE_VALIDATION_RESULT_INVALID');
 });
 
 test('caller cannot self-assert isolation or independent verification', () => {
@@ -36,7 +34,8 @@ test('hostile exact-shape hash count and accessor inputs fail closed without coe
   const accessor = result(); Object.defineProperty(accessor, 'engineId', { enumerable: true, get() { reads += 1; return 'design-engine'; } });
   const coercive = { toString() { reads += 1; return 'a'.repeat(64); } };
   const symbolic = result(); symbolic[Symbol('extra')] = true;
-  for (const value of [null, {}, [], Object.assign(Object.create(null), result()), { ...result(), extra: true }, symbolic, accessor, result({ version: 'wrong' }), result({ testPlanHash: coercive }), result({ totalTests: NaN }), result({ adversarialCases: 1.5 })]) {
+  const nonEnumerable = result(); Object.defineProperty(nonEnumerable, 'engineId', { value: 'design-engine', enumerable: false });
+  for (const value of [null, {}, [], Object.assign(Object.create(null), result()), { ...result(), extra: true }, symbolic, nonEnumerable, accessor, result({ version: 'wrong' }), result({ testPlanHash: coercive }), result({ totalTests: NaN }), result({ adversarialCases: 1.5 })]) {
     const assessed = validation.assessResult(value);
     assert.match(assessed.status, /BLOCKED$/u);
     assert.equal(assessed.activationAllowed, false);

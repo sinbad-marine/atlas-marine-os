@@ -6,7 +6,7 @@ Accepted as an inert, externally-unverified validation-result foundation.
 
 ## Decision
 
-Define exact commitments for a validation plan, fixture set, result bundle, and coverage evidence together with bounded balanced test counts and at least one adversarial case. Failed or skipped tests prevent a clean candidate claim. Caller-provided isolation and independent-verification flags must remain `false`; only future verifier-produced attestations may establish those facts.
+Define exact commitments for a validation plan, fixture set, result bundle, and coverage evidence together with bounded, arithmetically consistent test counts and at least one adversarial case. The adversarial count cannot exceed total tests. Counts are informational declarations and do not establish a sufficient pass ratio, adversarial share, or profile-specific coverage threshold; those remain external policy decisions. Failed or skipped tests prevent a clean candidate claim. Caller-provided isolation and independent-verification flags must remain `false`; only future verifier-produced attestations may establish those facts.
 
 Even a clean claimed suite remains activation-blocked pending verified isolation execution, independent result verification, signed result bundles, adversarial coverage review, and reproducibility evidence. Hashes and counts are untrusted declarations, not proof.
 
