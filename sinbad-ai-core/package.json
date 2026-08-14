@@ -1,6 +1,7 @@
 {
   "name": "@sinbad-ai/core-terminal-delivery",
   "version": "2.0.0",
+  "description": "Legacy trusted terminal-delivery adapter surface; not the universal Sinbad Core public API.",
   "private": true,
   "type": "commonjs",
   "main": "./adapters/trusted-terminal-delivery-adapter.js",
@@ -11,11 +12,18 @@
   },
   "exports": {
     ".": "./adapters/trusted-terminal-delivery-adapter.js",
+    "./legacy-terminal-delivery": "./adapters/trusted-terminal-delivery-adapter.js",
     "./supabase-idempotency-store": "./adapters/supabase-durable-idempotency-store.js",
     "./supabase-terminal-recovery": "./adapters/supabase-terminal-recovery.js",
     "./supabase-terminal-recovery-audit": "./adapters/supabase-terminal-recovery-audit.js",
     "./supabase-terminal-recovery-readiness": "./adapters/supabase-terminal-recovery-readiness.js",
     "./supabase-terminal-recovery-attestation": "./adapters/supabase-terminal-recovery-attestation.js",
     "./trusted-terminal-rollout-activation": "./adapters/trusted-terminal-rollout-activation.js"
+  },
+  "sinbadSurface": {
+    "classification": "LEGACY_DELIVERY_ADAPTER",
+    "universalCorePublicApi": false,
+    "deprecatedForNewCoreConsumers": true,
+    "replacement": "NOT_YET_PUBLISHED"
   }
 }
