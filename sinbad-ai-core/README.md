@@ -8,6 +8,8 @@ The inert, default-off MetOcean, celestial, and PNT contract foundation is gover
 
 The common inert sensor trust-chain contracts are governed by [ADR-0003](./docs/architecture/ADR-0003-SENSOR-TRUST-CHAIN.md). They cannot issue trusted/verified/valid device, calibration, time, or official-warning authority.
 
+The Architecture Gate 0 identity foundation is governed by [ADR-0004](./docs/architecture/ADR-0004-CORE-ASSET-IDENTITY-AND-VESSEL-PROFILE.md). It canonically represents the company-to-equipment hierarchy and draft/superseded vessel profiles without minting active identity, approval, compliance, or operational authority.
+
 Phase 4K adds a server-only, fail-closed deployment reconciliation runtime that composes the durable Supabase journal, immutable authorization audit, verified audit-readiness scan, one-use operator authorization, and provider reconciliation behind a minimal frozen facade. It is not exported to browser consumers.
 
 Phase 4L joins deployment and reconciliation into one server-only lifecycle. A reconciliation capability can be requested only for the exact authorization object that the same runtime executed and observed as unsettled; copied, unexecuted, terminal, and replayed deployment sources are denied.

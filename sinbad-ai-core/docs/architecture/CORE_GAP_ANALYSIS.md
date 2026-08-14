@@ -7,8 +7,8 @@ This baseline classifies obligations from the Core Charter. A checked item requi
 | Capability | Current evidence | Owner | Closure condition | Activation blocking |
 |---|---|---|---|---|
 | Trust-boundary snapshots, fail-closed authorization, audit, reconciliation | Phase 6H tests and release evidence | Core security owner | All in-scope adapters reviewed and evidenced | YES |
-| Immutable organization/fleet/vessel/equipment identity model | No complete evidence package identified | Core architecture owner | Gate 0 model and isolation evidence | YES |
-| Versioned vessel profile and applicability context | No complete evidence package identified | Maritime domain owner | Gate 0 profiles and rule tests | YES |
+| Immutable organization/fleet/vessel/equipment identity model | ADR-0004 inert canonical contract foundation; persistence and isolation evidence open | Core architecture owner | Gate 0 model and isolation evidence | YES |
+| Versioned vessel profile and applicability context | ADR-0004 inert draft/superseded profile foundation; approval and rule integration open | Maritime domain owner | Gate 0 profiles and rule tests | YES |
 | Offline-first store, conflict and sync policy | No complete evidence package identified | Data/sync owner | Disconnection and convergence evidence | YES |
 | Tenant/vessel isolation and RBAC/ABAC/device identity | Partial security primitives | Security owner | Isolation and escalation test evidence | YES |
 | Shared rule/evidence/approval/revision model | Partial audit/evidence primitives | Core architecture owner | Integrated model and profile tests | YES |
