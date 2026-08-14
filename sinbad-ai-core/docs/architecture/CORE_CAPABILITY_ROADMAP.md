@@ -25,3 +25,7 @@ No level advances without representative simulation, hardware-in-the-loop testin
 ## Separate future certified program
 
 VCASK implementation, command arbitration, verified control functions, actuator integration, shore-control operation, supervised autonomy, minimum-risk manoeuvres, and real-vessel trials belong to a separately authorized and independently assured safety program.
+
+## Binding protocol workstreams
+
+Truth/safe-stop/task memory, engineering/digital twin/Stability Booklet/Load Master, real-time training, voice consent, and emergency voice destruction follow [CORE_PROTOCOL_INTEGRATION_AND_GAP_PLAN.md](./CORE_PROTOCOL_INTEGRATION_AND_GAP_PLAN.md). Near-term work is inert contracts, state machines, privacy/security boundaries, and adversarial tests; live solvers, capture, voice synthesis/deletion, official approval, navigation, and control remain gated.

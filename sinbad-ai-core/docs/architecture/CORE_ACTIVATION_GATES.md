@@ -40,3 +40,7 @@ Release activation additionally requires:
 Each gate result must state `PASS` or `BLOCKED`, evidence hashes, reviewer identities, decision time, scope, unresolved risks, and activation authority. Missing evidence is `BLOCKED`; it is never interpreted as not applicable without an approved ADR.
 
 External publication, sensitive-data transfer, financial commitment, formal compliance submission, or real safety-critical activation requires separate owner authorization.
+
+## Binding protocol gates
+
+[CORE_PROTOCOL_INTEGRATION_AND_GAP_PLAN.md](./CORE_PROTOCOL_INTEGRATION_AND_GAP_PLAN.md) adds mandatory evidence for truth/safe-stop; task-profile consent/version/revoke/delete; engineering unit/coordinate/provenance and `DRAFT`/`VERIFIED`/`VALIDATED` separation; independent calculation and V&V; Stability Booklet/Load Master approval boundaries; pedagogy/animation authority separation; voice consent/disclosure/anti-impersonation; and emergency voice deletion stop, cryptographic erasure, replica/provider/backup confirmation, restore-negative tests, non-reconstructive tamper-evident reporting, and `PARTIAL_DELETION` honesty. Documentation alone satisfies none of these gates.

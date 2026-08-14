@@ -47,3 +47,7 @@ ADR-0003 now supplies inert candidate contracts for device identity, calibration
 Any deferred mandatory item must record owner, rationale, target closure date, evidence link, and `ACTIVATION_BLOCKING: YES|NO`. Until a gate records verified closure or approved risk acceptance, every item marked blocking remains blocking.
 
 Rows above are open gaps, not accepted deferrals. They have no invented closure date and remain activation-blocking. A dated deferral requires a separate authorized risk-acceptance record.
+
+## Binding protocol expansion
+
+[CORE_PROTOCOL_INTEGRATION_AND_GAP_PLAN.md](./CORE_PROTOCOL_INTEGRATION_AND_GAP_PLAN.md) adds open blockers for truth/safe-stop, consented task memory, engineering V&V, scan/digital-twin provenance, Stability Booklet/Load Master, pedagogy/animation separation, sensitive learning/ship/person data, voice consent/revocation, and emergency deletion evidence. These are requirements, not completed capabilities.
