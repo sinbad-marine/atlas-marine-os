@@ -11,7 +11,7 @@ This baseline classifies obligations from the Core Charter. A checked item requi
 | Versioned vessel profile and applicability context | ADR-0004 inert draft/superseded profile foundation; approval and rule integration open | Maritime domain owner | Gate 0 profiles and rule tests | YES |
 | Offline-first store, conflict and sync policy | ADR-0005 inert mutation/envelope/conflict contracts and replay/order gate; durable store and convergence evidence open | Data/sync owner | Disconnection and convergence evidence | YES |
 | Tenant/vessel isolation and RBAC/ABAC/device identity | Partial security primitives | Security owner | Isolation and escalation test evidence | YES |
-| Shared rule/evidence/approval/revision model | Partial audit/evidence primitives | Core architecture owner | Integrated model and profile tests | YES |
+| Shared rule/evidence/approval/revision model | ADR-0006 inert scoped contracts and always-blocked approval gate; trusted issuers, signatures and applicability integration open | Core architecture owner | Integrated model and profile tests | YES |
 | Backup plus clean restore and measured RPO/RTO | No release-gate evidence identified | Operations owner | Clean restore evidence and measured targets | YES |
 | Signed update, rollback/forward recovery, degraded mode | Partial rollout recovery evidence | Release owner | System-wide update/recovery evidence | YES |
 | Log/metric/trace/security/sync observability | No complete evidence package identified | Operations/security owner | Release-gate observability evidence | YES |

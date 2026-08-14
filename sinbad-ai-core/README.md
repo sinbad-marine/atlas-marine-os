@@ -12,6 +12,8 @@ The Architecture Gate 0 identity foundation is governed by [ADR-0004](./docs/arc
 
 The inert offline-first synchronization foundation is governed by [ADR-0005](./docs/architecture/ADR-0005-OFFLINE-FIRST-SYNC-FOUNDATION.md). It classifies queued mutations, pending envelopes, conflicts, replay, and ordering gaps without storing, transmitting, merging, accepting, or applying data.
 
+The inert governance foundation is governed by [ADR-0006](./docs/architecture/ADR-0006-GOVERNANCE-EVIDENCE-APPROVAL-FOUNDATION.md). It represents scoped draft rules, unverified evidence, pending approvals, and revision candidates without issuing signatures, approvals, compliance findings, or official authority.
+
 Phase 4K adds a server-only, fail-closed deployment reconciliation runtime that composes the durable Supabase journal, immutable authorization audit, verified audit-readiness scan, one-use operator authorization, and provider reconciliation behind a minimal frozen facade. It is not exported to browser consumers.
 
 Phase 4L joins deployment and reconciliation into one server-only lifecycle. A reconciliation capability can be requested only for the exact authorization object that the same runtime executed and observed as unsettled; copied, unexecuted, terminal, and replayed deployment sources are denied.
