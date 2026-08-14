@@ -35,7 +35,7 @@ Required next separation is a generic, versioned Engine Port Manifest and deny-o
 
 ## Stability Data Package decision
 
-The Stability Data Package remains valid and aligned with engineering artifacts, independent V&V, digital-twin provenance, vessel profile, and governance foundations. It does not conflict with the universal Core goal if it is implemented as a future maritime-engine module behind the generic port boundary. It is paused as the immediate next implementation until the common port manifest, registry, validation, isolation, and activation-denial backbone exists. No existing stability work is deleted.
+The Stability Data Package remains valid and aligned with engineering artifacts, independent V&V, digital-twin provenance, vessel profile, and governance foundations. The prerequisite generic port manifest, registry, validation, isolation and activation-denial backbone was completed as an inert boundary. Stability Foundation v1 was subsequently implemented in ADR-0027 through ADR-0035 as private DRAFT/unverified contracts, integrity/evidence/custody composition and a terminal release/activation denial. It remains a future maritime-engine foundation behind the generic port boundary, not an approved Stability Booklet, Load Master, solver or operational capability.
 
 ## Source traceability
 
@@ -43,4 +43,3 @@ The Stability Data Package remains valid and aligned with engineering artifacts,
 - `SINBAD_CORE_MOTOR_PORTLARI_UYGULAMA_YOL_HARITASI.md`: SHA-256 `6817B047270452235DBFCDA552A83DEFAC0DCFB2A14714CB2B3DA7265D74FF13`
 - `SINBAD_TEMEL_POLITIKA.md`: SHA-256 `34E7FC7C2E5E52676EBEECCD7C7F9ADD8396AE8A22087E2999D04A2E16E5AEFA`
 - `SINBAD_CORE_FAZ0_ILK_MIMARI_INCELEME_2026-08-14.md`: SHA-256 `FE9104172260712F22948E2E2BC60BA1250011D014A48679C5B1E8FD2A7C2EA1`
-

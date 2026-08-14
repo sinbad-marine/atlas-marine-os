@@ -37,6 +37,12 @@ The v1 inert contracts, one Observation golden vector, official-warning hash bin
 
 ADR-0003 now supplies inert candidate contracts for device identity, calibration, time authority, evidence references, and warning verification. Positive trust issuance, certificate-chain validation, revocation/status services, secure-clock discipline, evidence-store verification, and contract binding into observations remain activation-blocking.
 
+## Stability Foundation v1
+
+ADR-0027 through ADR-0035 establish a private, inert and deny-only Stability foundation: DRAFT data packages; typed lightship/tank/compartment/hydrostatics/cross-curves sources; test/loading conditions; unverified reference and independent-check records; criteria/uncertainty candidates; full graph integrity composition; ephemeral evidence and initial custody candidates; and a terminal denial for publication, Stability Booklet use, loading-computer use and operational activation. The terminal boundary is evidenced by 1086 passing repository tests at commit `eb178a1` and Claude/Grok diff review. This closes the planned interface-foundation item only.
+
+Activation-blocking gaps remain: authenticated approved source custody, real engineering calculations, independent reproduction, rule applicability, intact/damage stability criteria, longitudinal strength, benchmark and validation evidence, durable append-only audit/read-back, signatures, trusted identity/time, class/flag/vessel-specific approval, approved test conditions, failure/offline/backup validation, authorized loading-computer runtime, publication and operational release. No gap in this list is implicitly deferred or accepted.
+
 ## Future separate certified program
 
 - VCASK runtime and safety lifecycle;
@@ -54,4 +60,4 @@ Rows above are open gaps, not accepted deferrals. They have no invented closure 
 
 ## Binding protocol expansion
 
-[CORE_PROTOCOL_INTEGRATION_AND_GAP_PLAN.md](./CORE_PROTOCOL_INTEGRATION_AND_GAP_PLAN.md) adds open blockers for truth/safe-stop, consented task memory, engineering V&V, scan/digital-twin provenance, Stability Booklet/Load Master, pedagogy/animation separation, sensitive learning/ship/person data, voice consent/revocation, and emergency deletion evidence. These are requirements, not completed capabilities.
+[CORE_PROTOCOL_INTEGRATION_AND_GAP_PLAN.md](./CORE_PROTOCOL_INTEGRATION_AND_GAP_PLAN.md) adds open blockers for truth/safe-stop, consented task memory, engineering V&V, scan/digital-twin provenance, operational Stability Booklet/Load Master, pedagogy/animation separation, sensitive learning/ship/person data, voice consent/revocation, and emergency deletion evidence. Stability Foundation v1 closes only inert interface and terminal-denial groundwork; operational requirements remain open.

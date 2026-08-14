@@ -7,6 +7,7 @@ const test = require('node:test');
 
 const packageRoot = path.resolve(__dirname, '..');
 const manifest = require('../package.json');
+const LEGACY_EXPORTS = Object.freeze(['.', './legacy-terminal-delivery', './supabase-idempotency-store', './supabase-terminal-recovery', './supabase-terminal-recovery-audit', './supabase-terminal-recovery-readiness', './supabase-terminal-recovery-attestation', './trusted-terminal-rollout-activation']);
 
 test('classifies the package root as a legacy adapter without breaking compatibility', () => {
   assert.deepEqual(manifest.sinbadSurface, {
@@ -22,9 +23,12 @@ test('classifies the package root as a legacy adapter without breaking compatibi
 });
 
 test('does not publish universal Core contracts through the legacy package surface', () => {
-  for (const subpath of ['./experts', './orchestrator', './memory', './retrieval', './grounding', './library']) {
+  assert.deepEqual(Object.keys(manifest.exports).sort(), [...LEGACY_EXPORTS].sort());
+  for (const subpath of ['./experts', './orchestrator', './memory', './retrieval', './grounding', './library', './stability-data-package-contracts', './stability-source-record-contracts', './stability-condition-contracts', './stability-reference-verification-contracts', './stability-criteria-uncertainty-contracts', './stability-foundation-integrity', './stability-foundation-evidence', './stability-evidence-custody', './stability-terminal-denial']) {
     assert.equal(Object.hasOwn(manifest.exports, subpath), false, `${subpath} must remain unpublished`);
   }
+  const rootEntry = require('../');
+  assert.equal(Object.keys(rootEntry).some(key => /stability|booklet|loading.?computer/iu.test(key)), false);
 });
 
 test('universal Core layers do not import the legacy terminal-delivery surface', () => {
