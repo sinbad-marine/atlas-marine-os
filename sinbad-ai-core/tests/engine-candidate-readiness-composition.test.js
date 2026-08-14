@@ -16,7 +16,8 @@ test('complete inert inputs still require external assurance and explicit activa
   assert.equal(result.loadAllowed, false);
   assert.equal(result.executeAllowed, false);
   assert.equal(result.activationAllowed, false);
-  assert.equal(result.assuranceGaps.includes('EXPLICIT_ACTIVATION_DECISION_REQUIRED'), true);
+  for (const gap of ['ACTIVATION_DECISION_MISSING', 'DURABLE_AUDIT_REQUIRED', 'EXPLICIT_ACTIVATION_DECISION_REQUIRED', 'OS_CONTAINER_ENFORCEMENT_UNVERIFIED']) assert.equal(result.assuranceGaps.includes(gap), true);
+  assert.deepEqual(result.assuranceGaps, [...result.assuranceGaps].sort());
 });
 
 test('manifest isolation and identity failures remain distinctly blocked', () => {
@@ -29,12 +30,16 @@ test('hostile composition roots fail closed without invoking accessors', () => {
   let reads = 0;
   const accessor = { isolationProfile: profile() };
   Object.defineProperty(accessor, 'manifest', { enumerable: true, get() { reads += 1; return manifest(); } });
-  for (const value of [null, {}, [], { manifest: manifest(), isolationProfile: profile(), extra: true }, accessor]) {
+  const hostileProxy = new Proxy({}, { getPrototypeOf() { throw new Error('trap'); } });
+  const nestedAccessor = manifest(); Object.defineProperty(nestedAccessor, 'engineId', { enumerable: true, get() { reads += 1; return 'design-engine'; } });
+  for (const value of [null, {}, [], { manifest: manifest(), isolationProfile: profile(), extra: true }, accessor, hostileProxy, { manifest: nestedAccessor, isolationProfile: profile() }]) {
     const result = readiness.assess(value);
     assert.match(result.status, /BLOCKED$/u);
     assert.equal(result.activationAllowed, false);
   }
   assert.equal(reads, 0);
+  assert.equal(readiness.assess({}).reasonCode, 'ENGINE_CANDIDATE_COMPOSITION_INVALID');
+  assert.equal(readiness.assess(hostileProxy).reasonCode, 'ENGINE_CANDIDATE_COMPOSITION_FAULT');
 });
 
 test('every output is immutable deny-only and no execution surface is exported', () => {

@@ -8,6 +8,8 @@ Accepted as an inert, always-blocked composition boundary.
 
 Compose the ADR-0016 manifest assessment, ADR-0020 nominal candidate catalog, ADR-0021 process-local evidence, and ADR-0022 isolation declaration through one exact, accessor-safe input. Reject manifest, evidence, isolation, and engine-identity failures distinctly. Even a complete inert chain returns `ready: false`, `loadAllowed: false`, `executeAllowed: false`, and `activationAllowed: false` with durable-audit and explicit-activation gaps.
 
+Dependency faults, Proxy traps, and malformed/empty assurance-gap collections produce fixed non-empty blockers and never escape as exceptions. Nested manifests and profiles remain subject to their respective exact non-coercive assessors.
+
 This composition performs no loading, execution, registration, persistence, network, filesystem, process, credential, or physical-control operation. It does not turn process-local evidence or an isolation declaration into external assurance.
 
 ## Consequences

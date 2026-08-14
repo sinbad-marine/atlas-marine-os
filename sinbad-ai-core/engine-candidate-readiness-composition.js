@@ -5,6 +5,13 @@ const evidenceModule = require('./engine-port-candidate-decision-evidence.js');
 const isolationModule = require('./engine-isolation-profile-contracts.js');
 const VERSION = 'sinbad-engine-candidate-readiness-composition/1-v1';
 
+function normalizeGaps(gaps) {
+  if (!Array.isArray(gaps) || gaps.length === 0) return ['MALFORMED_ASSURANCE_GAPS'];
+  const strings = gaps.filter(gap => typeof gap === 'string' && gap.length > 0);
+  if (strings.length !== gaps.length) strings.push('MALFORMED_ASSURANCE_GAPS');
+  return [...new Set(strings)].sort();
+}
+
 function blocked(reasonCode, gaps) {
   return Object.freeze({
     version: VERSION,
@@ -14,7 +21,7 @@ function blocked(reasonCode, gaps) {
     loadAllowed: false,
     executeAllowed: false,
     activationAllowed: false,
-    assuranceGaps: Object.freeze([...new Set(gaps.filter(gap => typeof gap === 'string'))].sort())
+    assuranceGaps: Object.freeze(normalizeGaps(gaps))
   });
 }
 
@@ -28,26 +35,30 @@ function exactInput(input) {
 }
 
 function assess(input) {
-  const value = exactInput(input);
-  if (!value) return blocked('ENGINE_CANDIDATE_COMPOSITION_INVALID', ['EXACT_COMPOSITION_INPUT_REQUIRED']);
-  const catalogEntry = catalogModule.create().consider(value.manifest);
-  if (!catalogModule.isAuthenticEntry(catalogEntry)) return blocked('ENGINE_CANDIDATE_MANIFEST_REJECTED', catalogEntry.assuranceGaps || ['CATALOG_ENTRY_REQUIRED']);
-  const sealed = evidenceModule.seal(catalogEntry);
-  const verified = evidenceModule.verify(sealed);
-  if (verified.status !== 'ENGINE_PORT_CANDIDATE_EVIDENCE_VERIFIED_BLOCKED' || verified.activationAllowed !== false) {
-    return blocked('ENGINE_CANDIDATE_EVIDENCE_REJECTED', ['AUTHENTIC_CANDIDATE_EVIDENCE_REQUIRED']);
+  try {
+    const value = exactInput(input);
+    if (!value) return blocked('ENGINE_CANDIDATE_COMPOSITION_INVALID', ['EXACT_COMPOSITION_INPUT_REQUIRED']);
+    const catalogEntry = catalogModule.create().consider(value.manifest);
+    if (!catalogModule.isAuthenticEntry(catalogEntry)) return blocked('ENGINE_CANDIDATE_MANIFEST_REJECTED', catalogEntry?.assuranceGaps);
+    const sealed = evidenceModule.seal(catalogEntry);
+    const verified = evidenceModule.verify(sealed);
+    if (verified.status !== 'ENGINE_PORT_CANDIDATE_EVIDENCE_VERIFIED_BLOCKED' || verified.activationAllowed !== false) {
+      return blocked('ENGINE_CANDIDATE_EVIDENCE_REJECTED', ['AUTHENTIC_CANDIDATE_EVIDENCE_REQUIRED']);
+    }
+    const isolation = isolationModule.assessProfile(value.isolationProfile);
+    if (isolation.engineId !== catalogEntry.engineId) return blocked('ENGINE_CANDIDATE_ISOLATION_IDENTITY_MISMATCH', ['ENGINE_ID_BINDING_REQUIRED']);
+    if (isolation.reasonCode !== 'ENGINE_ISOLATION_ENFORCEMENT_UNVERIFIED' || isolation.isolationVerified !== false || isolation.activationAllowed !== false) {
+      return blocked('ENGINE_CANDIDATE_ISOLATION_REJECTED', isolation.assuranceGaps);
+    }
+    return blocked('ENGINE_CANDIDATE_EXTERNAL_ASSURANCE_REQUIRED', [
+      ...normalizeGaps(catalogEntry.assuranceGaps),
+      ...normalizeGaps(isolation.assuranceGaps),
+      'DURABLE_AUDIT_REQUIRED',
+      'EXPLICIT_ACTIVATION_DECISION_REQUIRED'
+    ]);
+  } catch (_error) {
+    return blocked('ENGINE_CANDIDATE_COMPOSITION_FAULT', ['DEPENDENCY_OR_INPUT_FAULT']);
   }
-  const isolation = isolationModule.assessProfile(value.isolationProfile);
-  if (isolation.engineId !== catalogEntry.engineId) return blocked('ENGINE_CANDIDATE_ISOLATION_IDENTITY_MISMATCH', ['ENGINE_ID_BINDING_REQUIRED']);
-  if (isolation.reasonCode !== 'ENGINE_ISOLATION_ENFORCEMENT_UNVERIFIED' || isolation.isolationVerified !== false || isolation.activationAllowed !== false) {
-    return blocked('ENGINE_CANDIDATE_ISOLATION_REJECTED', isolation.assuranceGaps || ['SAFE_ISOLATION_PROFILE_REQUIRED']);
-  }
-  return blocked('ENGINE_CANDIDATE_EXTERNAL_ASSURANCE_REQUIRED', [
-    ...catalogEntry.assuranceGaps,
-    ...isolation.assuranceGaps,
-    'DURABLE_AUDIT_REQUIRED',
-    'EXPLICIT_ACTIVATION_DECISION_REQUIRED'
-  ]);
 }
 
 module.exports = Object.freeze({ VERSION, assess });
