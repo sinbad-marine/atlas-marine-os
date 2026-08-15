@@ -8,4 +8,6 @@ Contract v1 accepts only READ_ONLY declarations for every port; blocked assessme
 
 Validation-harness candidates keep test-plan, fixture-set, result-bundle, and coverage-evidence commitments pairwise distinct. A single artifact hash cannot satisfy multiple independent validation roles; all accepted-shape candidates remain blocked pending external isolation, signature, independent verification, adversarial review, and reproducibility evidence.
 
+Candidate policy-audit bindings likewise separate candidate evidence, provenance policy, license policy, isolation profile, and audit receipt commitments. Registration lifecycle requests separate candidate evidence, actor binding, and audit binding commitments. Role collisions fail closed before any external verification or lifecycle decision.
+
 Zabit Akademisi and other products consume Core; they do not define it. Existing terminal-delivery exports remain compatible legacy adapter surfaces, and existing expert routing is not a module-trust or activation boundary.

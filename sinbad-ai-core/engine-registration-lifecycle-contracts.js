@@ -24,7 +24,9 @@ function assessTransition(input) {
   try {
     const value = exact(input);
     if (!value || value.version !== VERSION || !ID.test(value.engineId) || !STATES.has(value.currentState) || !ACTIONS.has(value.requestedAction)) return blocked('ENGINE_REGISTRATION_REQUEST_INVALID', ['EXACT_LIFECYCLE_REQUEST_REQUIRED']);
-    for (const field of ['candidateEvidenceHash', 'actorBindingHash', 'auditBindingHash']) if (typeof value[field] !== 'string' || !HASH.test(value[field])) return blocked('ENGINE_REGISTRATION_REQUEST_INVALID', [`${field.toUpperCase()}_INVALID`]);
+    const bindingHashes = ['candidateEvidenceHash', 'actorBindingHash', 'auditBindingHash'].map(field => value[field]);
+    for (const [index, field] of ['candidateEvidenceHash', 'actorBindingHash', 'auditBindingHash'].entries()) if (typeof bindingHashes[index] !== 'string' || !HASH.test(bindingHashes[index])) return blocked('ENGINE_REGISTRATION_REQUEST_INVALID', [`${field.toUpperCase()}_INVALID`]);
+    if (new Set(bindingHashes).size !== bindingHashes.length) return blocked('ENGINE_REGISTRATION_BINDING_ROLE_COLLISION', ['DISTINCT_CANDIDATE_ACTOR_AND_AUDIT_BINDINGS_REQUIRED']);
     if (value.currentState === 'REVOKED') return blocked('ENGINE_REVOCATION_TERMINAL', ['DURABLE_REVOCATION_MUST_NOT_BE_REVERSED']);
     if (value.requestedAction === 'REQUEST_REVOCATION') return blocked('ENGINE_REVOCATION_PERSISTENCE_REQUIRED', ['DURABLE_REVOCATION_RECEIPT_REQUIRED', 'READ_BACK_INTEGRITY_VERIFICATION_REQUIRED']);
     if (value.requestedAction === 'REQUEST_QUARANTINE') return blocked('ENGINE_QUARANTINE_PERSISTENCE_REQUIRED', ['DURABLE_QUARANTINE_RECEIPT_REQUIRED', 'READ_BACK_INTEGRITY_VERIFICATION_REQUIRED']);

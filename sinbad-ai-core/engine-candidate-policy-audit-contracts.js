@@ -35,6 +35,8 @@ function assessBinding(input) {
     if (!value || value.version !== VERSION || !ID.test(value.engineId)) return blocked('ENGINE_CANDIDATE_POLICY_AUDIT_BINDING_INVALID');
     const invalidHashes = ['candidateEvidenceHash', 'provenancePolicyHash', 'licensePolicyHash', 'isolationProfileHash', 'auditReceiptHash'].filter(field => typeof value[field] !== 'string' || !HASH.test(value[field]));
     if (invalidHashes.length) return blocked('ENGINE_CANDIDATE_POLICY_AUDIT_BINDING_INVALID', null, invalidHashes.map(field => `${field.toUpperCase()}_INVALID`));
+    const commitmentHashes = ['candidateEvidenceHash', 'provenancePolicyHash', 'licensePolicyHash', 'isolationProfileHash', 'auditReceiptHash'].map(field => value[field]);
+    if (new Set(commitmentHashes).size !== commitmentHashes.length) return blocked('ENGINE_CANDIDATE_POLICY_AUDIT_ROLE_COLLISION', null, ['DISTINCT_CANDIDATE_PROVENANCE_LICENSE_ISOLATION_AND_AUDIT_COMMITMENTS_REQUIRED']);
     const authorityClaims = ['policySignaturesVerified', 'isolationAttestationVerified', 'durableAuditVerified', 'revocationChecked'].filter(field => value[field] !== false);
     if (authorityClaims.length) return blocked('ENGINE_CANDIDATE_UNVERIFIED_AUTHORITY_CLAIM', null, authorityClaims.map(field => `${field.toUpperCase()}_MUST_REMAIN_FALSE`));
     return blocked('ENGINE_CANDIDATE_POLICY_AUDIT_EXTERNAL_VERIFICATION_REQUIRED', value.engineId, [

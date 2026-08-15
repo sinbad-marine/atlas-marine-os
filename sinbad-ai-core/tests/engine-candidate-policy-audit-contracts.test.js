@@ -29,6 +29,15 @@ test('cannot self-assert verified signatures attestation audit or revocation', (
   assert.deepEqual(multiple.assuranceGaps, ['POLICYSIGNATURESVERIFIED_MUST_REMAIN_FALSE', 'DURABLEAUDITVERIFIED_MUST_REMAIN_FALSE']);
 });
 
+test('candidate policy isolation and audit commitments must be pairwise distinct', () => {
+  for (const changed of [{ provenancePolicyHash: 'a'.repeat(64) }, { licensePolicyHash: 'b'.repeat(64) }, { isolationProfileHash: 'c'.repeat(64) }, { auditReceiptHash: 'd'.repeat(64) }]) {
+    const result = contracts.assessBinding(binding(changed));
+    assert.equal(result.reasonCode, 'ENGINE_CANDIDATE_POLICY_AUDIT_ROLE_COLLISION');
+    assert.deepEqual(result.assuranceGaps, ['DISTINCT_CANDIDATE_PROVENANCE_LICENSE_ISOLATION_AND_AUDIT_COMMITMENTS_REQUIRED']);
+    assert.equal(result.activationAllowed, false);
+  }
+});
+
 test('rejects malformed hashes exact-shape violations and coercion without invoking accessors', () => {
   let reads = 0;
   const accessor = binding(); Object.defineProperty(accessor, 'engineId', { enumerable: true, get() { reads += 1; return 'design-engine'; } });
