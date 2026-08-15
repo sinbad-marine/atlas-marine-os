@@ -2,7 +2,7 @@
 
 These gates are binding acceptance policy. A green test run alone does not authorize production activation or a compliance claim.
 
-The current machine-readable gate is `core-activation-gate.js`. It intentionally returns `CORE_ACTIVATION_BLOCKED` for every capability level and environment while binding blockers remain. It contains no activation or execution function.
+The current machine-readable gate is `core-activation-gate.js`. It accepts only an exact own-data `{ level, environment }` request envelope and rejects accessors, inherited fields, extras, symbols, arrays, and non-plain objects. It intentionally returns `CORE_ACTIVATION_BLOCKED` for every capability level and environment while binding blockers remain. It contains no activation or execution function.
 
 ## Architecture Gate 0
 
