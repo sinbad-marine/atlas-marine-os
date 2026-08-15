@@ -59,6 +59,8 @@ Pedagogy Foundation v1 now closes only the ADR-0036–0040 private interface and
 
 ADR-0041 begins Voice Foundation 1 with inert consent, synthetic-disclosure and narrow use-intent candidates. Owner identity, consent authenticity/revocation, watermark/provenance enforcement, anti-impersonation, synthesis/playback and emergency deletion remain activation-blocking.
 
+ADR-0042 adds the deny-only Voice Foundation 2 lifecycle boundary: emergency and high-confidence abuse triggers require a generation stop and target terminal `EMERGENCY_REVOKED`; serious uncertainty targets `QUARANTINED`. No state transition or deletion is applied. Persistent revocation, provider/replica/cache/backup inventory, cryptographic erasure, restore-negative evidence, tamper-evident incident reporting and honest `PARTIAL_DELETION` remain activation-blocking.
+
 ## Future separate certified program
 
 - VCASK runtime and safety lifecycle;
