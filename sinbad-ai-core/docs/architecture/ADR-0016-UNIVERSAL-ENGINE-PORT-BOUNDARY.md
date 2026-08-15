@@ -10,4 +10,6 @@ Validation-harness candidates keep test-plan, fixture-set, result-bundle, and co
 
 Candidate policy-audit bindings likewise separate candidate evidence, provenance policy, license policy, isolation profile, and audit receipt commitments. Registration lifecycle requests separate candidate evidence, actor binding, and audit binding commitments. Role collisions fail closed before any external verification or lifecycle decision.
 
+The permanent final denial gate also requires pairwise-distinct registration, revocation-status, policy-audit, validation, and isolation receipt hashes. Receipt shape and distinctness never create readiness: authenticity, cross-binding, current revocation status, and an explicit activation authority remain absent and activation remains denied.
+
 Zabit Akademisi and other products consume Core; they do not define it. Existing terminal-delivery exports remain compatible legacy adapter surfaces, and existing expert routing is not a module-trust or activation boundary.
