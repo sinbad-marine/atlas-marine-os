@@ -5,6 +5,8 @@
 
 ## Decision
 
+Independent calibration, provenance, evidence, scope, product, sight, correction, covariance, ephemeris, source-set, solution, operational-envelope, and authorization roles use pairwise-distinct hash commitments within each record. A single artifact cannot impersonate multiple observation or PNT integrity roles.
+
 Use one vendor-neutral observation foundation with exact versioned contracts for device/channel identity, observation class (`RAW`, `CORRECTED`, `DERIVED`, `EXTERNAL`), unit, exact time and uncertainty, calibration, provenance, quality, uncertainty, and evidence references. Binary camera material remains outside core records and is linked by content-addressed evidence reference.
 
 MetOcean observations and forecast products remain distinct. `ExternalWeatherProduct` represents forecasts, nowcasts, or official warnings; it never masquerades as an observation. Official hazards require matching immutable product and scope hashes within the product validity window and retain priority/provenance rather than being overwritten by derived data. The current binding is explicitly `UNVERIFIED`: hash/scope/time matching is not issuer authentication, and live use remains blocked until signature/certificate verification exists.
