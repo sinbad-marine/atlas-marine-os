@@ -49,6 +49,8 @@ ADR-0036 adds private, inert learning-profile, lesson-state, pedagogy-decision a
 
 ADR-0037 composes that chain with the existing `LEARNING` sensitive-data descriptor, retention-policy, isolation-context and truth-claim candidates. It rejects scope, purpose, resource, reference and time-window mismatches, but deliberately treats a complete candidate graph as non-authoritative. Consent verification, source currency/applicability, independent truth checking, qualified human review and renderer assurance remain open activation blockers.
 
+ADR-0038 reuses the task-memory `ConsentCandidate` and binds its learner owner, profile/revision, purpose, explicit learning scope and validity window to the pedagogy graph. This closes only referential integrity: informed-consent verification, authenticated identity, durable/revocable storage, conflict handling, regression evidence and audit remain activation-blocking.
+
 ## Future separate certified program
 
 - VCASK runtime and safety lifecycle;
