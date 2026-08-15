@@ -51,6 +51,8 @@ ADR-0037 composes that chain with the existing `LEARNING` sensitive-data descrip
 
 ADR-0038 reuses the task-memory `ConsentCandidate` and binds its learner owner, profile/revision, purpose, explicit learning scope and validity window to the pedagogy graph. This closes only referential integrity: informed-consent verification, authenticated identity, durable/revocable storage, conflict handling, regression evidence and audit remain activation-blocking.
 
+ADR-0039 binds the learning profile and lesson progress to existing unverified governance evidence and a pending unsigned human-review request. It cannot mark competency, lesson completion, examination success or certification. Qualified reviewer identity, assessment policy, provenance verification, signature authorization, durable audit and independent oversight remain activation-blocking.
+
 ## Future separate certified program
 
 - VCASK runtime and safety lifecycle;
