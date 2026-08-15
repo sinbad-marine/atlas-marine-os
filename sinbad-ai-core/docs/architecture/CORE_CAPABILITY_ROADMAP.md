@@ -39,3 +39,5 @@ Voice Foundation 1 starts at ADR-0041 with private deny-only consent, disclosure
 Voice Foundation 2 continues at ADR-0042 with private deny-only revocation, quarantine and emergency-stop decisions. It records only required target states and never persists a transition or performs deletion; generation and all voice runtime authority remain unavailable.
 
 Voice Foundation 3 continues at ADR-0043 with a private eight-class deletion manifest and unverified evidence candidates. Complete candidate coverage remains `PARTIAL_DELETION`; inventory scanning, erasure, provider calls, key destruction, restore tests and completion authority remain unavailable.
+
+Voice Foundation 4 continues at ADR-0044 with a private content-minimized incident hash-chain candidate. Hash integrity is local mutation detection only; signing, durable append, identity/time verification, retention approval and deletion completion remain unavailable.

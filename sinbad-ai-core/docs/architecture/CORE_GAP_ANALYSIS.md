@@ -63,6 +63,8 @@ ADR-0042 adds the deny-only Voice Foundation 2 lifecycle boundary: emergency and
 
 ADR-0043 adds Voice Foundation 3 draft manifest and unverified evidence candidates across eight mandatory voice-asset classes. A complete candidate inventory still reports `PARTIAL_DELETION`; no erasure, provider deletion, key destruction, restore-negative result or completion is verified. Real inventory discovery, destructive orchestration, independent restore-negative testing, durable audit and non-reconstructive incident reporting remain activation-blocking.
 
+ADR-0044 adds a content-minimized Voice Foundation 4 incident hash-chain candidate. Local canonical hashing detects mutation but proves neither authenticity nor durable append, and direct identity/voice content is excluded. External signing, trusted actor/time, append-only custody, non-reconstruction review and retention authorization remain activation-blocking.
+
 ## Future separate certified program
 
 - VCASK runtime and safety lifecycle;
