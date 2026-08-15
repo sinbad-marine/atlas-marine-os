@@ -6,7 +6,7 @@ Accepted as an inert, deny-only Stability Foundation contract.
 
 ## Decision
 
-Represent a versioned `StabilityReferenceResultCandidate` and `IndependentStabilityCheckCandidate`. The host binds the exact tenant, vessel, Stability Package, test condition, reference-result identity, input-set commitment and trusted upper time bound. The check must use a different checker, method, method version, input commitment and result commitment from the reference result.
+Represent a versioned `StabilityReferenceResultCandidate` and `IndependentStabilityCheckCandidate`. The host binds the exact tenant, vessel, Stability Package, test condition, reference-result identity, input-set commitment and trusted upper time bound. The check must use a different checker, method, method version, input commitment, result commitment, and evidence reference from the reference result.
 
 Both records can only be `UNVERIFIED` or explicitly `REJECTED`. Distinct checker, method, version and hash strings are only format-checked separation commitments; renamed, recycled or colliding identities are not proof of independence. Structurally complete records do not prove source authenticity, correct calculations, criteria satisfaction, uncertainty treatment, independent reproduction, class/flag acceptance or approval. Evaluation therefore always returns `STABILITY_REFERENCE_VERIFICATION_BLOCKED` and never grants calculation, approval or activation.
 
