@@ -28,6 +28,8 @@ No level advances without representative simulation, hardware-in-the-loop testin
 
 User Data Portability Foundation 1 begins at ADR-0046 with a private open-format draft manifest and unverified round-trip evidence candidate. No real data access, export/import, redaction, publication or verified portability claim exists.
 
+Backup & Restore Evidence Foundation 1 begins at ADR-0047 with private draft backup-set and unverified clean-restore/RPO/RTO candidates. No backup, restore, disaster-recovery, release or activation operation exists; Load Master remains outside and frozen.
+
 ## Separate future certified program
 
 VCASK implementation, command arbitration, verified control functions, actuator integration, shore-control operation, supervised autonomy, minimum-risk manoeuvres, and real-vessel trials belong to a separately authorized and independently assured safety program.
