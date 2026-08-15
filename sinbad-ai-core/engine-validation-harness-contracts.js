@@ -32,7 +32,9 @@ function assessResult(input) {
   try {
     const value = exact(input);
     if (!value || value.version !== VERSION || !ID.test(value.engineId) || !ID.test(value.validationProfile) || !SEMVER.test(value.suiteVersion)) return blocked('ENGINE_VALIDATION_RESULT_INVALID');
-    for (const field of ['testPlanHash', 'fixtureSetHash', 'resultBundleHash', 'coverageEvidenceHash']) if (typeof value[field] !== 'string' || !HASH.test(value[field])) return blocked('ENGINE_VALIDATION_RESULT_INVALID', [`${field.toUpperCase()}_INVALID`]);
+    const evidenceHashes = ['testPlanHash', 'fixtureSetHash', 'resultBundleHash', 'coverageEvidenceHash'].map(field => value[field]);
+    for (const [index, field] of ['testPlanHash', 'fixtureSetHash', 'resultBundleHash', 'coverageEvidenceHash'].entries()) if (typeof evidenceHashes[index] !== 'string' || !HASH.test(evidenceHashes[index])) return blocked('ENGINE_VALIDATION_RESULT_INVALID', [`${field.toUpperCase()}_INVALID`]);
+    if (new Set(evidenceHashes).size !== evidenceHashes.length) return blocked('ENGINE_VALIDATION_EVIDENCE_ROLE_COLLISION', ['DISTINCT_TEST_PLAN_FIXTURE_RESULT_AND_COVERAGE_COMMITMENTS_REQUIRED']);
     for (const field of ['totalTests', 'passedTests', 'failedTests', 'skippedTests', 'adversarialCases']) if (!Number.isSafeInteger(value[field]) || value[field] < 0 || value[field] > 1000000) return blocked('ENGINE_VALIDATION_RESULT_INVALID', [`${field.toUpperCase()}_INVALID`]);
     if (value.totalTests < 1 || value.adversarialCases < 1 || value.adversarialCases > value.totalTests || value.passedTests + value.failedTests + value.skippedTests !== value.totalTests) return blocked('ENGINE_VALIDATION_RESULT_INCONSISTENT', ['NONEMPTY_ARITHMETICALLY_CONSISTENT_TEST_COUNTS_REQUIRED']);
     if (value.failedTests !== 0 || value.skippedTests !== 0) return blocked('ENGINE_VALIDATION_TESTS_NOT_CLEAN', ['ZERO_FAILED_AND_SKIPPED_TESTS_REQUIRED']);

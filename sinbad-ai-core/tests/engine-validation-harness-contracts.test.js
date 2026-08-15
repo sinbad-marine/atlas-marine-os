@@ -29,6 +29,15 @@ test('caller cannot self-assert isolation or independent verification', () => {
   }
 });
 
+test('test plan fixture result and coverage commitments must be pairwise distinct', () => {
+  for (const changed of [{ fixtureSetHash: 'a'.repeat(64) }, { resultBundleHash: 'b'.repeat(64) }, { coverageEvidenceHash: 'c'.repeat(64) }]) {
+    const assessed = validation.assessResult(result(changed));
+    assert.equal(assessed.reasonCode, 'ENGINE_VALIDATION_EVIDENCE_ROLE_COLLISION');
+    assert.deepEqual(assessed.assuranceGaps, ['DISTINCT_TEST_PLAN_FIXTURE_RESULT_AND_COVERAGE_COMMITMENTS_REQUIRED']);
+    assert.equal(assessed.activationAllowed, false);
+  }
+});
+
 test('hostile exact-shape hash count and accessor inputs fail closed without coercion', () => {
   let reads = 0;
   const accessor = result(); Object.defineProperty(accessor, 'engineId', { enumerable: true, get() { reads += 1; return 'design-engine'; } });
