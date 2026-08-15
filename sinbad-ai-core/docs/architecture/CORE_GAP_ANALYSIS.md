@@ -15,7 +15,7 @@ This baseline classifies obligations from the Core Charter. A checked item requi
 | Backup plus clean restore and measured RPO/RTO | No release-gate evidence identified | Operations owner | Clean restore evidence and measured targets | YES |
 | Signed update, rollback/forward recovery, degraded mode | Partial rollout recovery evidence | Release owner | System-wide update/recovery evidence | YES |
 | Log/metric/trace/security/sync observability | No complete evidence package identified | Operations/security owner | Release-gate observability evidence | YES |
-| User-data export and portability contract | No complete evidence package identified | Data owner | Documented export plus round-trip tests | YES |
+| User-data export and portability contract | ADR-0046 private draft manifest and unverified round-trip candidates; no exporter/importer or verified evidence | Data owner | Documented export plus independently verified round-trip tests | YES |
 | Threat model, hazard register, data classification, system context | Preliminary control model only | Safety/security owners | Approved system-wide records | YES |
 
 ## Interfaces to stabilize now

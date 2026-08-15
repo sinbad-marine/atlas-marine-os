@@ -26,6 +26,8 @@ No level advances without representative simulation, hardware-in-the-loop testin
 - Mature the inert MetOcean/Celestial/PNT contracts through controlled registries, evidence integration, official-warning verification, and read-only edge-adapter examples before any live solution authority.
 - Prove offline-first, synchronization, migration/recovery, restore, observability, and data-export behavior.
 
+User Data Portability Foundation 1 begins at ADR-0046 with a private open-format draft manifest and unverified round-trip evidence candidate. No real data access, export/import, redaction, publication or verified portability claim exists.
+
 ## Separate future certified program
 
 VCASK implementation, command arbitration, verified control functions, actuator integration, shore-control operation, supervised autonomy, minimum-risk manoeuvres, and real-vessel trials belong to a separately authorized and independently assured safety program.
