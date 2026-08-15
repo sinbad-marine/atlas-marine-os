@@ -14,6 +14,8 @@ Create a separate deterministic and certifiable Vessel Control & Autonomy Safety
 
 Master/local authority, independent emergency stop, and certified safety systems retain highest priority. Remote or autonomous commands cannot override them. Remote command admission requires authenticated human/machine identity, role, vessel, operation envelope, expiry, integrity, replay protection, and dual approval where required.
 
+Independent constraint, approval, actor, nonce, command-scope, time-authority, parameter, envelope, intent, kernel, decision, and equipment roles use pairwise-distinct hash commitments within their records. A single artifact cannot impersonate multiple control-admission, safety-decision, or execution-receipt roles.
+
 Loss of link, excessive latency, replay, spoofing/jamming, sensor disagreement, cyber incident, invalid time, or insufficient evidence enters an approved degraded or minimum-risk condition. Irreversible actions such as firefighting-agent discharge require vessel/cargo/occupancy-aware independent safety logic and required human approval; general AI cannot initiate them alone.
 
 Training/simulation, shore-control, HIL/test, and real-vessel environments are cryptographically and network isolated. Every intent, authorization, envelope decision, approval, transmission, acceptance/rejection, execution, and result is append-only audited.
