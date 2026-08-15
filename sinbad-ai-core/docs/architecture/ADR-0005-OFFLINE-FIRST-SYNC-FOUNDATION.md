@@ -6,7 +6,7 @@
 
 Represent locally queued mutations, synchronization envelopes, and unresolved conflict candidates with exact versioned contracts. Every record is explicitly tenant-, vessel-, device-, entity-, sequence-, revision-, time-, provenance-, and idempotency-scoped.
 
-Ingress classification requires an exact expected tenant, vessel, sender device, next sequence, and prior batch scope. It fails closed on scope mismatch, duplicates/replays, sequence gaps, rejected envelopes, batches above 256 mutations, malformed values, accessors, coercion, and unknown fields. Even the exact next sequence returns only `SYNC_INGRESS_PENDING_VERIFICATION`; it is never accepted or applied without a future authenticated store, authorization decision, integrity proof, and durable audit.
+Ingress classification requires an exact expected tenant, vessel, sender device, mutation-set reference, next sequence, trusted upper time bound, and prior batch scope. It fails closed on scope mismatch, mutation-set retargeting, future-dated envelopes, duplicates/replays, sequence gaps, rejected envelopes, batches above 256 mutations, malformed values, accessors, coercion, and unknown fields. Even the exact next sequence returns only `SYNC_INGRESS_PENDING_VERIFICATION`; it is never accepted or applied without a future authenticated store, authorization decision, integrity proof, and durable audit.
 
 The foundation cannot emit `APPLIED`, `ACCEPTED`, `SYNCHRONIZED`, `RESOLVED`, or `MERGED`. It contains no database, filesystem, transport, network, automatic merge, clock-authority, or activation implementation. References are opaque and non-authoritative.
 
