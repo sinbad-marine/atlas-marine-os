@@ -57,6 +57,8 @@ ADR-0040 binds animation intent to external synthetic-presentation evidence and 
 
 Pedagogy Foundation v1 now closes only the ADR-0036–0040 private interface and terminal-denial groundwork. It remains not production ready; no evidence accumulation in v1 can unlock adaptive instruction, rendering, recognition, capture, certification or activation.
 
+ADR-0041 begins Voice Foundation 1 with inert consent, synthetic-disclosure and narrow use-intent candidates. Owner identity, consent authenticity/revocation, watermark/provenance enforcement, anti-impersonation, synthesis/playback and emergency deletion remain activation-blocking.
+
 ## Future separate certified program
 
 - VCASK runtime and safety lifecycle;
