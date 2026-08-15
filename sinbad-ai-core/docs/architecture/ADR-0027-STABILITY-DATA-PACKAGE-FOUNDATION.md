@@ -6,7 +6,7 @@ Accepted as a DRAFT-only, inert maritime-engine input foundation.
 
 ## Decision
 
-Define a tenant/vessel-scoped Stability Data Package that binds a vessel profile, geometry, lightship, tank plan, compartment plan, hydrostatics, cross-curves, provenance-set and content commitments. Packages are revisioned and `DRAFT` only. Evaluation always blocks approval, verification, validation, calculations, loading-computer use, and activation pending approved references, provenance, independent calculation/V&V, and class/flag review.
+Define a tenant/vessel-scoped Stability Data Package that binds a vessel profile, geometry, lightship, tank plan, compartment plan, hydrostatics, cross-curves, provenance-set and content commitments. The provenance-set and package-content hashes must be distinct so one commitment cannot impersonate both roles. Packages are revisioned and `DRAFT` only. Evaluation always blocks approval, verification, validation, calculations, loading-computer use, and activation pending approved references, provenance, independent calculation/V&V, and class/flag review.
 
 All hashes are format-checked, untrusted labels. Their presence proves neither canonical-byte integrity nor provenance custody and cannot be used for authorization. `createdAt` is an unverified draft timestamp and cannot drive audit/order decisions until a trusted-time and revision-graph verifier exists. Identifiers are structured values and must never be concatenated into paths, cache keys, or authority scopes without separate encoding and scope validation.
 
