@@ -14,7 +14,7 @@ This baseline classifies obligations from the Core Charter. A checked item requi
 | Shared rule/evidence/approval/revision model | ADR-0006 inert scoped contracts and always-blocked approval gate; trusted issuers, signatures and applicability integration open | Core architecture owner | Integrated model and profile tests | YES |
 | Backup plus clean restore and measured RPO/RTO | ADR-0047 private draft backup and unverified clean-restore/RPO/RTO candidates; no real backup or verified restore | Operations owner | Independently verified clean restore evidence and measured targets | YES |
 | Signed update, rollback/forward recovery, degraded mode | Partial rollout recovery evidence | Release owner | System-wide update/recovery evidence | YES |
-| Log/metric/trace/security/sync observability | No complete evidence package identified | Operations/security owner | Release-gate observability evidence | YES |
+| Log/metric/trace/security/sync observability | ADR-0048 private five-signal window and unverified pipeline candidates; no collector or verified release evidence | Operations/security owner | Independently verified release-gate observability evidence | YES |
 | User-data export and portability contract | ADR-0046 private draft manifest and unverified round-trip candidates; no exporter/importer or verified evidence | Data owner | Documented export plus independently verified round-trip tests | YES |
 | Threat model, hazard register, data classification, system context | Preliminary control model only | Safety/security owners | Approved system-wide records | YES |
 
