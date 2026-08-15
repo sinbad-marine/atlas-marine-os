@@ -10,6 +10,6 @@ The current package cannot emit `TRUSTED`, calibration `VALID`, time `VALID`, or
 
 Camera and other binary material is never embedded in core records. `EvidenceReference` carries immutable content hash and metadata while storage remains an external adapter concern.
 
-Hash fields are SHA-256-shaped opaque identifiers in this foundation. They are not authenticated claims, and domain-separated hashing remains an explicit future trust-issuer requirement.
+Hash fields are SHA-256-shaped opaque identifiers in this foundation. Independent roles within device identity, calibration, evidence metadata, and official-warning verification must use pairwise-distinct commitments so one artifact cannot impersonate several trust-chain components. They are still not authenticated claims, and domain-separated hashing remains an explicit future trust-issuer requirement.
 
 `SENSOR_TRUST` is contract-only in capability registry version `sinbad-marine-capability-registry/2-v1`. Physical device drivers, vendor protocols, and live sensor admission remain blocked and belong to future sandboxed edge adapters/plugins.
