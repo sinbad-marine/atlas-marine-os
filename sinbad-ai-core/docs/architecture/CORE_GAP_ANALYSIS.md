@@ -53,6 +53,8 @@ ADR-0038 reuses the task-memory `ConsentCandidate` and binds its learner owner, 
 
 ADR-0039 binds the learning profile and lesson progress to existing unverified governance evidence and a pending unsigned human-review request. It cannot mark competency, lesson completion, examination success or certification. Qualified reviewer identity, assessment policy, provenance verification, signature authorization, durable audit and independent oversight remain activation-blocking.
 
+ADR-0040 binds animation intent to external synthetic-presentation evidence and a strict inert renderer isolation profile. It does not verify disclosure/provenance/license custody or OS/container enforcement and cannot render, capture, recognize or activate anything.
+
 ## Future separate certified program
 
 - VCASK runtime and safety lifecycle;
