@@ -47,6 +47,8 @@ Activation-blocking gaps remain: authenticated approved source custody, real eng
 
 ADR-0036 adds private, inert learning-profile, lesson-state, pedagogy-decision and animation-intent candidates. Knowledge grounding remains confined to pedagogy; animation carries presentation commitments only and is structurally forbidden from claiming knowledge authority or requesting identity recognition, biometric capture or live capture. Consent/isolation verification, grounded-content binding, qualified pedagogy review, adaptive-learning logic, competency assessment, renderer isolation, synthetic-media disclosure enforcement, persistence, capture and product workflows remain activation-blocking.
 
+ADR-0037 composes that chain with the existing `LEARNING` sensitive-data descriptor, retention-policy, isolation-context and truth-claim candidates. It rejects scope, purpose, resource, reference and time-window mismatches, but deliberately treats a complete candidate graph as non-authoritative. Consent verification, source currency/applicability, independent truth checking, qualified human review and renderer assurance remain open activation blockers.
+
 ## Future separate certified program
 
 - VCASK runtime and safety lifecycle;

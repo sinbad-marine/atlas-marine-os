@@ -22,6 +22,7 @@ No level advances without representative simulation, hardware-in-the-loop testin
 - Stabilize the six vendor-neutral conceptual contract schemas without actuator authority.
 - Establish threat/hazard registers, feature gates, environment isolation, and activation records.
 - Add example read-only adapters for future navigation, stability, weather, PMS, training, and management contexts.
+- Continue the inert pedagogy workstream from ADR-0036/0037: the learning/animation boundary and its sensitive-data/truth composition exist, while consent verification, scoped truth custody, adaptive instruction, competency authority and rendering remain blocked.
 - Mature the inert MetOcean/Celestial/PNT contracts through controlled registries, evidence integration, official-warning verification, and read-only edge-adapter examples before any live solution authority.
 - Prove offline-first, synchronization, migration/recovery, restore, observability, and data-export behavior.
 
