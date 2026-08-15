@@ -5,7 +5,7 @@
 
 ## Decision
 
-Represent sensitive-data descriptors, draft retention policies, pending user data-action requests, and unverified tenant/vessel/person isolation contexts with exact versioned contracts. Bind every action to the same tenant, vessel, optional person, resource, policy, classification, domain, purpose, and provisional time scope.
+Represent sensitive-data descriptors, draft retention policies, pending user data-action requests, and unverified tenant/vessel/person isolation contexts with exact versioned contracts. Bind every action to the same tenant, vessel, optional person, resource, policy, classification, domain, purpose, and provisional time scope. The host must select the exact descriptor, retention policy, action request, isolation context, and requested action; a coherent candidate graph cannot be substituted for another selected request.
 
 The only descriptor state is `CANDIDATE`, policy state `DRAFT`, request state `PENDING`, and isolation state `UNVERIFIED`. Export remains blocked until portable-format, authorization, redaction, consent, and durable-audit evidence exist. Delete remains blocked until a deletion manifest covers live data, replicas, providers, caches and recoverable backups and restore-negative evidence proves the data cannot be reconstructed. No action may claim completion from a request or candidate record.
 
