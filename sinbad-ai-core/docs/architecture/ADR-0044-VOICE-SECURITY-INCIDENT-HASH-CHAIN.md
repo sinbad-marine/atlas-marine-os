@@ -6,7 +6,7 @@ Accepted as a private, inert, deny-only Voice Foundation 4.
 
 ## Decision
 
-Retain only an exact content-minimized incident candidate: opaque incident identity, externally prepared scope commitment, lifecycle-request/manifest/deletion-assessment hashes, bounded trigger class, honest `PARTIAL_DELETION`, sequence, predecessor hash and time. Direct tenant, person and voice-profile identifiers, voice text, media, embeddings and provider payloads are absent. Canonical SHA-256 binds each field and predecessor for deterministic local tamper detection.
+Retain only an exact content-minimized incident candidate: opaque incident identity, externally prepared scope commitment, lifecycle-request/manifest/deletion-assessment hashes, bounded trigger class, honest `PARTIAL_DELETION`, sequence, predecessor hash and time. Scope, lifecycle request, deletion manifest, deletion assessment and any predecessor use pairwise-distinct commitments so one artifact cannot impersonate several incident-chain roles. Direct tenant, person and voice-profile identifiers, voice text, media, embeddings and provider payloads are absent. Canonical SHA-256 binds each field and predecessor for deterministic local tamper detection.
 
 Hash integrity is not authenticity or durable append evidence. Even an intact candidate remains blocked with all verification, retention, deletion-completion and activation flags false until external signature, trusted time, authenticated actor, append-only durability, non-reconstruction review and retention authorization exist.
 
