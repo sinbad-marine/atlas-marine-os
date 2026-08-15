@@ -41,3 +41,5 @@ Voice Foundation 2 continues at ADR-0042 with private deny-only revocation, quar
 Voice Foundation 3 continues at ADR-0043 with a private eight-class deletion manifest and unverified evidence candidates. Complete candidate coverage remains `PARTIAL_DELETION`; inventory scanning, erasure, provider calls, key destruction, restore tests and completion authority remain unavailable.
 
 Voice Foundation 4 continues at ADR-0044 with a private content-minimized incident hash-chain candidate. Hash integrity is local mutation detection only; signing, durable append, identity/time verification, retention approval and deletion completion remain unavailable.
+
+Voice Foundation v1 closes at ADR-0045 with terminal denial of every declared capture, cloning, synthesis, playback, identity use, retention, deletion-completion, restore/veto and activation capability. Closure is private inert regression coverage, not production readiness or voice/deletion assurance.

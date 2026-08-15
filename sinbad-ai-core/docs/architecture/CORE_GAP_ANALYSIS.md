@@ -65,6 +65,8 @@ ADR-0043 adds Voice Foundation 3 draft manifest and unverified evidence candidat
 
 ADR-0044 adds a content-minimized Voice Foundation 4 incident hash-chain candidate. Local canonical hashing detects mutation but proves neither authenticity nor durable append, and direct identity/voice content is excluded. External signing, trusted actor/time, append-only custody, non-reconstruction review and retention authorization remain activation-blocking.
 
+ADR-0045 closes Voice Foundation v1 only at the private inert interface and terminal-denial level. Every voice runtime, destructive completion, retention and restore/veto capability is final-denied for v1. The closure is not production readiness or independent assurance; all external identity, consent, isolation, anti-impersonation, erasure, restore-negative, audit and legal/privacy blockers remain open.
+
 ## Future separate certified program
 
 - VCASK runtime and safety lifecycle;
