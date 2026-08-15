@@ -6,7 +6,7 @@ Accepted as DRAFT-only inert condition foundations.
 
 ## Decision
 
-Define Stability Test Conditions for reference, departure, arrival, intermediate and damage-case inputs, plus Loading Condition Candidates binding cargo, tank, consumable, density/temperature correction, ballast sequence and voyage-state commitments. Tenant/vessel/package/condition identity must match.
+Define Stability Test Conditions for reference, departure, arrival, intermediate and damage-case inputs, plus Loading Condition Candidates binding cargo, tank, consumable, density/temperature correction, ballast sequence and voyage-state commitments. Cargo, tank-state and consumable set hashes must be pairwise distinct so one dataset cannot impersonate multiple loading-input roles. Tenant/vessel/package/condition identity must match.
 
 The host supplies an exact expected Stability Package identity; candidate-to-condition equality alone is insufficient. Canonical field order is part of each versioned wire contract and must not change without a version bump.
 
