@@ -37,7 +37,7 @@ Release activation additionally requires:
 
 ## Decision record
 
-Each gate result must state `PASS` or `BLOCKED`, evidence hashes, reviewer identities, decision time, scope, unresolved risks, and activation authority. Missing evidence is `BLOCKED`; it is never interpreted as not applicable without an approved ADR.
+Each gate result must state `PASS` or `BLOCKED`, evidence hashes, reviewer identities, decision time, scope, unresolved risks, and activation authority. Compatibility and security-review evidence use distinct commitments; one artifact cannot silently satisfy both roles. Missing evidence is `BLOCKED`; it is never interpreted as not applicable without an approved ADR.
 
 External publication, sensitive-data transfer, financial commitment, formal compliance submission, or real safety-critical activation requires separate owner authorization.
 

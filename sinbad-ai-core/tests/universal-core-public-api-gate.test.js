@@ -34,6 +34,13 @@ test('a structurally complete request remains publication-blocked', () => {
   assert.equal(result.assuranceGaps.includes('EXPLICIT_RELEASE_DECISION_NOT_VERIFIED'), true);
 });
 
+test('compatibility and security review require distinct evidence commitments', () => {
+  const result = gate.assessPublicationRequest(request({ securityReviewEvidenceHash: 'a'.repeat(64) }));
+  assert.equal(result.reasonCode, 'UNIVERSAL_CORE_PUBLIC_API_REQUEST_INVALID');
+  assert.deepEqual(result.assuranceGaps, ['BINDING_RELEASE_EVIDENCE_REQUIRED']);
+  assert.equal(result.publishAllowed, false);
+});
+
 test('invalid hostile and accessor inputs fail closed without invoking accessors', () => {
   let reads = 0;
   const accessor = request();

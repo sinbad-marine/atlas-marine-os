@@ -54,6 +54,7 @@ function assessPublicationRequest(candidate) {
     candidate.contractVersion !== CONTRACT_VERSION ||
     !HASH.test(candidate.compatibilityEvidenceHash) ||
     !HASH.test(candidate.securityReviewEvidenceHash) ||
+    candidate.compatibilityEvidenceHash === candidate.securityReviewEvidenceHash ||
     !DECISION_ID.test(candidate.releaseDecisionId)
   ) {
     return blocked('UNIVERSAL_CORE_PUBLIC_API_REQUEST_INVALID', ['BINDING_RELEASE_EVIDENCE_REQUIRED']);
