@@ -61,6 +61,8 @@ ADR-0041 begins Voice Foundation 1 with inert consent, synthetic-disclosure and 
 
 ADR-0042 adds the deny-only Voice Foundation 2 lifecycle boundary: emergency and high-confidence abuse triggers require a generation stop and target terminal `EMERGENCY_REVOKED`; serious uncertainty targets `QUARANTINED`. No state transition or deletion is applied. Persistent revocation, provider/replica/cache/backup inventory, cryptographic erasure, restore-negative evidence, tamper-evident incident reporting and honest `PARTIAL_DELETION` remain activation-blocking.
 
+ADR-0043 adds Voice Foundation 3 draft manifest and unverified evidence candidates across eight mandatory voice-asset classes. A complete candidate inventory still reports `PARTIAL_DELETION`; no erasure, provider deletion, key destruction, restore-negative result or completion is verified. Real inventory discovery, destructive orchestration, independent restore-negative testing, durable audit and non-reconstructive incident reporting remain activation-blocking.
+
 ## Future separate certified program
 
 - VCASK runtime and safety lifecycle;

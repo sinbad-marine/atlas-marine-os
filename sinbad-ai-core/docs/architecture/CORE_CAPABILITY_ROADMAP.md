@@ -37,3 +37,5 @@ Truth/safe-stop/task memory, engineering/digital twin/Stability Booklet/Load Mas
 Voice Foundation 1 starts at ADR-0041 with private deny-only consent, disclosure and narrow use-intent candidates. Voice capture, cloning, synthesis, playback, identity use and deletion remain unavailable.
 
 Voice Foundation 2 continues at ADR-0042 with private deny-only revocation, quarantine and emergency-stop decisions. It records only required target states and never persists a transition or performs deletion; generation and all voice runtime authority remain unavailable.
+
+Voice Foundation 3 continues at ADR-0043 with a private eight-class deletion manifest and unverified evidence candidates. Complete candidate coverage remains `PARTIAL_DELETION`; inventory scanning, erasure, provider calls, key destruction, restore tests and completion authority remain unavailable.
