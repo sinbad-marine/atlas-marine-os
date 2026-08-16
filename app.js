@@ -285,10 +285,14 @@ function setSinbadVoiceUI(){
 }
 function speakSinbad(text){
   if(!sinbadState.voiceEnabled||!('speechSynthesis'in window)){sinbadAwaitingAnswer=false;scheduleSinbadListening();return;}
+  const voices=speechSynthesis.getVoices();
+  if(!voices.length){
+    speechSynthesis.onvoiceschanged=()=>{speechSynthesis.onvoiceschanged=null;speakSinbad(text);};
+    return;
+  }
   if(sinbadIsListening)sinbadRecognition?.stop();
   speechSynthesis.cancel();
   const utterance=new SpeechSynthesisUtterance(String(text).replace(/[•*_#]/g,' '));
-  const voices=speechSynthesis.getVoices();
   const languageRoot=sinbadState.language.split('-')[0];
   utterance.voice=voices.find(v=>v.lang.toLowerCase()===sinbadState.language.toLowerCase())||voices.find(v=>v.lang.toLowerCase().startsWith(languageRoot))||voices.find(v=>/^en[-_]/i.test(v.lang))||null;
   utterance.lang=utterance.voice?.lang||sinbadState.language;utterance.rate=.96;utterance.pitch=.92;
