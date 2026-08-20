@@ -4,6 +4,18 @@ Adapters translate Atlas Marine OS, local Bridge AI and cloud AI data into the
 stable contracts defined by `contracts.js`. Adapters must not contain expert
 navigation mathematics or silently remove safety warnings.
 
+## Installed navigation engine boundary
+
+`installed-navigation-engine.js` is the lazy loader for the vendored,
+versioned engine in `../engines/navigation`. Reading loader metadata does not
+load or execute navigation mathematics. `navigation-engine-adapter.js` denies
+execution by default and requires an explicit, unexpired authorization whose
+operation allowlist includes the requested function. Unsupported, unauthorized
+or expired requests fail closed before the engine is loaded. This boundary is
+not imported by the Core orchestrator, so its `PLAN_ONLY` contract remains
+unchanged. Outputs remain decision support subject to onboard verification and
+human authority.
+
 ## Phase 2N public delivery boundary
 
 `public-response-adapter.js` is the only adapter intended to convert a Phase 2M

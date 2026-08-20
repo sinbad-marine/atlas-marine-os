@@ -1,0 +1,29 @@
+{
+  "case_id": "GEOGRAPHICLIB-WGS84-INVERSE-001",
+  "topic": "wgs84-inverse",
+  "source_title": "GeographicLib API — inverse geodesic example",
+  "source_url_or_reference": "https://geographiclib.sourceforge.io/html/python/code.html",
+  "source_date_or_edition": "GeographicLib 2.1 documentation",
+  "inputs": {
+    "lat1": -41.32,
+    "lon1": 174.81,
+    "lat2": 40.96,
+    "lon2": -5.5
+  },
+  "expected": {
+    "distanceMeters": 19959679.26735382,
+    "initialCourseDegrees": 161.06766998615882,
+    "finalCourseDegrees": 18.825195123248392
+  },
+  "tolerance": {
+    "distanceMeters": 0.001,
+    "courseDegrees": 0.000000001
+  },
+  "units": {
+    "coordinates": "degree",
+    "distance": "meter",
+    "course": "degree"
+  },
+  "sign_convention": "Latitude north positive; longitude east positive; forward azimuth clockwise from true north",
+  "notes": "Official published example used as a golden authority fixture."
+}
