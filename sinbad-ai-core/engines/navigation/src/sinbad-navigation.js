@@ -1150,16 +1150,19 @@
 
   function parseDrQuestion(question) {
     const text = normalizeText(question);
-    if (!/\b(dr|dead reckoning|parakete|mevki|pozisyon)\b/.test(text)) return null;
+    if (!/\b(dr|dead reckoning|parakete|mevki(?:inden)?|pozisyon)\b/.test(text)) return null;
 
     const lat = parseCoordinate(text, "lat");
     const lon = parseCoordinate(text, "lon");
     const speedMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:knot|knots|kt|kts|deniz mili\s*(?:\/|per|saatte)|nm\s*\/\s*h)/);
     const hourMatch = text.match(/(\d+(?:\.\d+)?)\s*(?:saat|hour|hours|stunde|stunden)/);
     const minuteMatches = [...text.matchAll(/(\d+(?:\.\d+)?)\s*(?:dakika|minute|minutes|minuten|min)\b/g)];
-    // Coordinate minutes normally appear before the voyage duration. Choosing
-    // the final minute expression prevents "43° 15 dakika N" becoming 15 min.
-    const minuteMatch = minuteMatches.at(-1) || null;
+    // Coordinate minutes must never become voyage time. When hours are
+    // present, only a minute expression after the hour belongs to duration.
+    // A minute-only duration must carry an explicit temporal cue.
+    const minuteMatch = hourMatch
+      ? minuteMatches.find(match=>match.index>hourMatch.index)
+      : minuteMatches.find(match=>/(?:sonra|boyunca|süre|sure|duration)/.test(text.slice(match.index,match.index+50)));
     const coursePatterns = [
       /(?:rota|course|kurs|hakiki rota)\s*(?:is|=|:)?\s*(\d{1,3}(?:\.\d+)?)\s*(?:°|derece|deg)?/,
       /(\d{1,3}(?:\.\d+)?)\s*°\s*t\b/

@@ -32,10 +32,39 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&
 
 document.querySelectorAll('[data-open]').forEach(x=>x.onclick=()=>openWorkspace(x.dataset.open));
 document.querySelectorAll('.close').forEach(x=>x.onclick=closeWorkspaces);
-function openWorkspace(id){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');$(id).scrollIntoView({behavior:'smooth'});renderAll();if(id==='enc-viewer')initEncViewer()}
+function openWorkspace(id){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');$(id).scrollIntoView({behavior:'smooth'});renderAll();if(id==='enc-viewer')initEncViewer();if(id==='navigation-plot')initNavigationPlot()}
 function closeWorkspaces(){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));scrollTo({top:0,behavior:'smooth'})}
 
 let encMap=null,encChartLayer=null,encBathymetryLayer=null,encSeamarkLayer=null;
+let navigationPlotMap=null,navigationPlotSource=null,navigationPlotRoute=null;
+function plotCoordinate(value,axis){return window.SinbadNavigation?.formatCoordinate?.(value,axis)||Number(value).toFixed(5)}
+function renderNavigationPlot(){
+  if(!navigationPlotMap||!navigationPlotRoute)return;
+  const route=navigationPlotRoute,start=ol.proj.fromLonLat([route.start.lon,route.start.lat]),end=ol.proj.fromLonLat([route.end.lon,route.end.lat]);
+  const line=new ol.Feature({geometry:new ol.geom.LineString(route.points.map(point=>ol.proj.fromLonLat(point))),kind:'route'});
+  const startFeature=new ol.Feature({geometry:new ol.geom.Point(start),kind:'start',label:'Başlangıç'}),endFeature=new ol.Feature({geometry:new ol.geom.Point(end),kind:'end',label:'Varış'});
+  navigationPlotSource.clear();navigationPlotSource.addFeatures([line,startFeature,endFeature]);
+  navigationPlotMap.getView().fit(line.getGeometry().getExtent(),{padding:[80,80,80,80],maxZoom:9,duration:650});
+  $('navigationPlotSummary').textContent=`SEYİR HESABI\n\nBaşlangıç\n${plotCoordinate(route.start.lat,'lat')}, ${plotCoordinate(route.start.lon,'lon')}\n\nVarış\n${plotCoordinate(route.end.lat,'lat')}, ${plotCoordinate(route.end.lon,'lon')}\n\nRota: ${route.course.toFixed(1)}°T\nSürat: ${route.speedKnots.toFixed(2)} kn\nSüre: ${route.hours.toFixed(2)} saat\nMesafe: ${route.distanceNm.toFixed(2)} NM\nYöntem: Sabit kerteriz hattı (rhumb line)\n\n⚠ Eğitim ve karar desteğidir. Resmî harita değildir.`;
+}
+function initNavigationPlot(){
+  if(!window.ol){$('navigationPlotSummary').textContent='Harita kütüphanesi yüklenemedi.';return;}
+  if(!navigationPlotMap){
+    navigationPlotSource=new ol.source.Vector();
+    const vector=new ol.layer.Vector({source:navigationPlotSource,style:feature=>feature.get('kind')==='route'
+      ?new ol.style.Style({stroke:new ol.style.Stroke({color:'#ffcf66',width:4})})
+      :new ol.style.Style({image:new ol.style.Circle({radius:8,fill:new ol.style.Fill({color:feature.get('kind')==='start'?'#55d6be':'#ff6b6b'}),stroke:new ol.style.Stroke({color:'#fff',width:2})}),text:new ol.style.Text({text:feature.get('label'),offsetY:-18,fill:new ol.style.Fill({color:'#fff'}),stroke:new ol.style.Stroke({color:'#071723',width:4})})})});
+    navigationPlotMap=new ol.Map({target:'navigationPlotMap',layers:[new ol.layer.Tile({source:new ol.source.OSM()}),vector],view:new ol.View({center:ol.proj.fromLonLat([18,36]),zoom:5,minZoom:2,maxZoom:18})});
+    navigationPlotMap.addControl(new ol.control.ScaleLine({units:'nautical'}));
+  }
+  setTimeout(()=>{navigationPlotMap.updateSize();renderNavigationPlot()},80);
+}
+function prepareNavigationPlotFromConversation(){
+  const route=window.SinbadRouteVisualizer?.routeFromConversation?.(sinbadState.messages,window.SinbadNavigation);
+  if(!route)return {ok:false,message:'Çizilecek hesaplanmış bir seyir rotası bulamadım. Başlangıç mevkii, rota, sürat ve süreyi yazın.'};
+  if(route.status!=='READY')return {ok:false,message:`Harita çizimi için eksik bilgiler: ${route.missing.join(', ')}.`};
+  navigationPlotRoute=route;openWorkspace('navigation-plot');return {ok:true,message:'Seyir çizim sayfasını açtım. Başlangıç, varış ve rota hattı etkileşimli harita üzerinde gösteriliyor.'};
+}
 function initEncViewer(){
   if(encMap){setTimeout(()=>encMap.updateSize(),80);return;}
   const status=$('encMapStatus');
@@ -708,6 +737,10 @@ async function sendToSinbad(text){
   }
   addSinbadMessage('user',q);
   $('sinbadInput').value='';
+  if(window.SinbadRouteVisualizer?.isPlotRequest?.(q)){
+    const plotted=prepareNavigationPlotFromConversation();
+    addSinbadMessage('sinbad',plotted.message);speakSinbad(plotted.message);return;
+  }
   $('sinbadThinking').classList.remove('hidden');
   setTimeout(async()=>{
     const answer=await sinbadLocalAnswer(q);
@@ -720,6 +753,7 @@ $('sendSinbad').addEventListener('click',()=>{window.speechSynthesis?.resume();s
 $('sinbadInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendToSinbad($('sinbadInput').value)}});
 document.querySelectorAll('.sinbad-prompt').forEach(b=>b.addEventListener('click',()=>sendToSinbad(b.textContent)));
 $('sinbadFloat').addEventListener('click',()=>openWorkspace('sinbad'));
+$('backToSinbad')?.addEventListener('click',()=>openWorkspace('sinbad'));
 $('toggleSinbadVoice')?.addEventListener('click',()=>{sinbadState.voiceEnabled=!sinbadState.voiceEnabled;localStorage.setItem('atlas_sinbad_voice',sinbadState.voiceEnabled?'on':'off');setSinbadVoiceUI();if(!sinbadState.voiceEnabled)stopSinbadVoice();});
 $('stopSinbadVoice')?.addEventListener('click',stopSinbadVoice);
 $('startSinbadListening')?.addEventListener('click',startSinbadListening);

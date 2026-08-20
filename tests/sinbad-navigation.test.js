@@ -37,6 +37,11 @@ test("answers an explicit Turkish DR calculation", () => {
   assert.match(response, /009\u00B0/);
 });
 
+test("does not count coordinate minutes as voyage minutes",()=>{
+  const parsed=nav.parseDrQuestion("26 derece 10 dakika kuzey 013 derece 15 dakika batı mevkiinden rota 294 derece, 5 saat sonra");
+  assert.equal(parsed.hours,5);
+});
+
 test("computes current set and drift", () => {
   const result = nav.currentResult(0, 10, 90, 5);
   assert.ok(Math.abs(result.set - 26.565) < 0.01);

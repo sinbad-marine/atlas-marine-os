@@ -545,6 +545,17 @@
   </div>
 </section>
 
+<section id="navigation-plot" class="workspace">
+  <div class="workspace-head">
+    <div><div class="eyebrow">SINBAD NAVIGATION ENGINE</div><h2>Seyir Çizim Sayfası</h2><p>Hesaplanan eğitim rotasının etkileşimli harita görünümü.</p></div>
+    <div class="action-row"><button type="button" class="btn" id="backToSinbad">Sinbad’a dön</button><button class="btn close">Kapat</button></div>
+  </div>
+  <div class="navigation-plot-grid">
+    <div class="enc-map-shell"><div id="navigationPlotMap" role="application" aria-label="Hesaplanan seyir rotası haritası"></div><div class="enc-map-status ready">Eğitim çizimidir — resmî seyir haritası değildir.</div></div>
+    <aside id="navigationPlotSummary" class="navigation-plot-summary">Henüz çizilecek bir seyir hesabı yok.</aside>
+  </div>
+</section>
+
 
 
 
@@ -786,6 +797,7 @@
 <script src="https://cdn.jsdelivr.net/npm/ol@10.6.1/dist/ol.js"></script>
   <script src="./sinbad-navigation.js?v=8209"></script>
   <script src="./sinbad-navigation-assistant.js?v=8209"></script>
+  <script src="./sinbad-route-visualizer.js?v=8209"></script>
   <script src="./app.js?v=8209"></script>
 </body>
 </html>

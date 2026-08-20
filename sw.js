@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.9-navigation-assistant-clone-race-fix';
+const CACHE='sinbad-marine-v8.20.9-navigation-map';
 const ASSETS=[
   './',
   './index.html',
@@ -11,6 +11,7 @@ const ASSETS=[
   './sinbad-core.js',
   './sinbad-navigation.js',
   './sinbad-navigation-assistant.js',
+  './sinbad-route-visualizer.js',
   './sinbad-training-data.js',
   './sinbad-academy.js',
   './manifest.webmanifest',
