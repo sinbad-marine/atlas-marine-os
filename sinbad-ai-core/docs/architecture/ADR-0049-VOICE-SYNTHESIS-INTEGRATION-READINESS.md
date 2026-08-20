@@ -10,7 +10,7 @@ The current browser application uses `SpeechSynthesisUtterance` and has no XTTS 
 
 ## Decision
 
-Introduce a private v2a readiness candidate that binds request, tenant, person, voice profile, consent, disclosure, purpose, language, authorized user, reference-audio hash, model hash, config hash, text hash, trusted time and bounded latency/text policy. The contract accepts identifiers and hashes only. It never accepts a client filesystem path, raw audio, speaker index, embedding, conditioning latent or provider credential.
+Introduce a private v2a readiness candidate that binds request, tenant, person, voice profile, consent, disclosure, purpose, language, authorized user, reference-audio hash, model hash, config hash, text hash, trusted time and bounded latency/text policy. The assessor compares every claimed principal, consent, disclosure, purpose, language, artifact hash and bounded policy value with an independently supplied trusted expectation; candidate self-assertion is insufficient. The contract accepts identifiers and hashes only. It never accepts a client filesystem path, raw audio, speaker index, embedding, conditioning latent or provider credential.
 
 The assessor remains terminally blocked. Complete metadata cannot authorize profile resolution, conditioning cache, synthesis, playback or activation. A later positive runtime requires authenticated owner identity and consent, durable revocation, server-controlled `voiceProfileRef` resolution, WAV format/hash validation, model/config custody, disclosure/watermark/provenance, bounded queue/timeout/cancellation, temporary-output erasure, independent threat/privacy review and an explicit release decision.
 

@@ -75,7 +75,14 @@ function assess(input) {
     activationAllowed: false
   });
   try {
-    const expectedFields = ['expectedTenantId', 'expectedPersonId', 'expectedVoiceProfileRef', 'expectedNow', 'request'];
+    const expectedFields = [
+      'expectedTenantId', 'expectedPersonId', 'expectedVoiceProfileRef',
+      'expectedConsentRef', 'expectedDisclosureRef', 'expectedPurposeRef',
+      'expectedLanguageRef', 'expectedAuthorizedUserRef',
+      'expectedReferenceAudioHash', 'expectedModelHash', 'expectedConfigHash',
+      'expectedTextHash', 'expectedFirstByteTimeoutMs', 'expectedMaxTextLength',
+      'expectedNow', 'request'
+    ];
     if (!input || typeof input !== 'object' || Array.isArray(input) ||
         Object.getPrototypeOf(input) !== Object.prototype || Object.getOwnPropertySymbols(input).length) {
       return blocked('REQUEST_INVALID');
@@ -85,8 +92,22 @@ function assess(input) {
     if (names.length !== expectedFields.length || expectedFields.some(field =>
       !names.includes(field) || !descriptors[field] || !Object.hasOwn(descriptors[field], 'value') ||
       !descriptors[field].enumerable)) return blocked('REQUEST_INVALID');
-    if (!id(descriptors.expectedTenantId.value) || !id(descriptors.expectedPersonId.value) ||
-        !id(descriptors.expectedVoiceProfileRef.value) || !time(descriptors.expectedNow.value)) {
+    for (const field of ['expectedTenantId', 'expectedPersonId', 'expectedVoiceProfileRef',
+      'expectedConsentRef', 'expectedDisclosureRef', 'expectedPurposeRef',
+      'expectedLanguageRef', 'expectedAuthorizedUserRef']) {
+      if (!id(descriptors[field].value)) return blocked('REQUEST_INVALID');
+    }
+    for (const field of ['expectedReferenceAudioHash', 'expectedModelHash',
+      'expectedConfigHash', 'expectedTextHash']) {
+      if (!hash(descriptors[field].value)) return blocked('REQUEST_INVALID');
+    }
+    if (!Number.isSafeInteger(descriptors.expectedFirstByteTimeoutMs.value) ||
+        descriptors.expectedFirstByteTimeoutMs.value < 1000 ||
+        descriptors.expectedFirstByteTimeoutMs.value > 120000 ||
+        !Number.isSafeInteger(descriptors.expectedMaxTextLength.value) ||
+        descriptors.expectedMaxTextLength.value < 1 ||
+        descriptors.expectedMaxTextLength.value > 4000 ||
+        !time(descriptors.expectedNow.value)) {
       return blocked('REQUEST_INVALID');
     }
     const request = snapshot(descriptors.request.value);
@@ -95,6 +116,25 @@ function assess(input) {
         request.personId !== descriptors.expectedPersonId.value ||
         request.voiceProfileRef !== descriptors.expectedVoiceProfileRef.value) {
       return blocked('VOICE_PROFILE_SCOPE_MISMATCH', request);
+    }
+    if (request.consentRef !== descriptors.expectedConsentRef.value ||
+        request.authorizedUserRef !== descriptors.expectedAuthorizedUserRef.value) {
+      return blocked('CONSENT_PRINCIPAL_BINDING_MISMATCH', request);
+    }
+    if (request.disclosureRef !== descriptors.expectedDisclosureRef.value ||
+        request.purposeRef !== descriptors.expectedPurposeRef.value ||
+        request.languageRef !== descriptors.expectedLanguageRef.value) {
+      return blocked('DISCLOSURE_PURPOSE_LANGUAGE_BINDING_MISMATCH', request);
+    }
+    if (request.referenceAudioHash !== descriptors.expectedReferenceAudioHash.value ||
+        request.modelHash !== descriptors.expectedModelHash.value ||
+        request.configHash !== descriptors.expectedConfigHash.value ||
+        request.textHash !== descriptors.expectedTextHash.value) {
+      return blocked('SYNTHESIS_ARTIFACT_BINDING_MISMATCH', request);
+    }
+    if (request.firstByteTimeoutMs !== descriptors.expectedFirstByteTimeoutMs.value ||
+        request.maxTextLength !== descriptors.expectedMaxTextLength.value) {
+      return blocked('SYNTHESIS_POLICY_BINDING_MISMATCH', request);
     }
     if (request.requestedAt > descriptors.expectedNow.value || request.expiresAt <= descriptors.expectedNow.value) {
       return blocked('REQUEST_TIME_INVALID', request);
