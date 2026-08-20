@@ -9,6 +9,7 @@ const worker=fs.readFileSync(path.join(root,'sw.js'),'utf8');
 const deployGuide=fs.readFileSync(path.join(root,'UPLOAD_ALL_FILES_TR.md'),'utf8');
 const edgeGuide=fs.readFileSync(path.join(root,'supabase/functions/sinbad-answer/README_TR.md'),'utf8');
 const ignore=fs.readFileSync(path.join(root,'.gitignore'),'utf8');
+const readme=fs.readFileSync(path.join(root,'README.md'),'utf8');
 
 test('visible release, Core and app assets share one live version',()=>{
   const visible=html.match(/<div class="version">● v(\d+)\.(\d+)\.(\d+)<\/div>/);
@@ -30,4 +31,12 @@ test('release guide preserves fail-closed Edge-before-web deployment order',()=>
 test('generated voice and Supabase temporary artifacts stay outside Git',()=>{
   assert.match(ignore,/^\.codex-live-voice-test\.wav$/m);
   assert.match(ignore,/^supabase\/\.temp\/$/m);
+});
+
+test('primary README reports the current Core gate without production overclaim',()=>{
+  assert.match(readme,/Sinbad Marine v8\.20\.8/);
+  assert.match(readme,/DECISION_SUPPORT_ONLY/);
+  assert.match(readme,/PLAN_ONLY/);
+  assert.match(readme,/not certified ECDIS\/ECS/);
+  assert.doesNotMatch(readme,/Captain Sinbad live AI\s*\n- Crew cloud synchronization/);
 });
