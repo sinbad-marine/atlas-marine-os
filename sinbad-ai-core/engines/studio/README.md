@@ -73,3 +73,12 @@ uses deterministic bounded templates; it is not itself a local language model.
 Grok, Gemini and Claude cannot operate offline, and any future local-model or
 explicit online-review adapter remains a separate product and authorization
 decision.
+
+## Pro 0.2 foundation
+
+`local-model-protocol.js` begins the Pro boundary without installing or calling
+a model. It accepts only explicit HTTP loopback endpoints on an allowlisted API
+path, validates bounded model identity and prompt fields, and normalizes common
+local-provider response shapes as untrusted `DATA_ONLY` drafts. The module has
+no transport, shell, installer or downloader. A real localhost connection must
+remain behind a later explicit authorization and timeout boundary.
