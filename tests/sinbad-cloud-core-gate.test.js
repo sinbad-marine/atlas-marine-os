@@ -2,6 +2,7 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
+const {spawnSync}=require('node:child_process');
 
 const root=path.resolve(__dirname,'..');
 const edge=fs.readFileSync(path.join(root,'supabase/functions/sinbad-answer/index.ts'),'utf8');
@@ -31,4 +32,10 @@ test('normal and consented web responses are both checked by the client Core gat
 test('cloud answers cannot claim execution authority',()=>{
   assert.match(edge,/const decisionSupport = \{ coreDecision, permission: 'DECISION_SUPPORT_ONLY', executionPerformed: false \}/);
   assert.ok((edge.match(/\.\.\.decisionSupport/g)||[]).length>=4);
+});
+
+test('cloud Core gate Edge function passes executable TypeScript syntax checking',()=>{
+  const edgePath=path.join(root,'supabase/functions/sinbad-answer/index.ts');
+  const checked=spawnSync(process.execPath,['--experimental-strip-types','--check',edgePath],{encoding:'utf8'});
+  assert.equal(checked.status,0,checked.stderr||checked.stdout);
 });
