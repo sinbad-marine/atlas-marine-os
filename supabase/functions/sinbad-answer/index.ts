@@ -1,5 +1,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
-import { CORE_GATE_VERSION, normalizeCoreQuestion, serverCoreDecision, validateCoreEnvelope } from './core-decision.mjs';
+import './core-decision.js';
+
+const { CORE_GATE_VERSION, normalizeCoreQuestion, serverCoreDecision, validateCoreEnvelope } = (globalThis as any).SinbadCoreDecision;
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',

@@ -7,6 +7,7 @@ const ASSETS=[
   './pilot-data.js',
   './route-data.js',
   './official-publications.js',
+  './supabase/functions/sinbad-answer/core-decision.js',
   './sinbad-core.js',
   './sinbad-training-data.js',
   './sinbad-academy.js',

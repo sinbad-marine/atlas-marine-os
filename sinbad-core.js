@@ -1,8 +1,10 @@
 (function(root,factory){
-  const api=factory();
+  const policy=typeof module==='object'&&module.exports?require('./supabase/functions/sinbad-answer/core-decision.js'):root.SinbadCoreDecision;
+  const api=factory(policy);
   if(typeof module==='object'&&module.exports)module.exports=api;
   root.SinbadCore=api;
-})(typeof globalThis!=='undefined'?globalThis:this,function(){
+})(typeof globalThis!=='undefined'?globalThis:this,function(policy){
+  if(!policy)throw new Error('Sinbad Core decision policy is required');
   const STOP=new Set(['bir','ve','ile','icin','için','the','and','for','from','route','rota','plan','plani','planı','hazirla','hazırla']);
   const clean=value=>String(value||'').toLocaleLowerCase('tr-TR').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9çğıöşü\s-]/gi,' ');
   function terms(value){return [...new Set(clean(value).split(/\s+/).filter(x=>x.length>2&&!STOP.has(x)))];}
@@ -51,20 +53,8 @@
     lines.push('','SAFETY GATES');plan.warnings.forEach(w=>lines.push(`⚠ ${w}`));return lines.join('\n');
   }
 
-  const INTENTS=[
-    ['emergency',/(mayday|pan[ -]?pan|sos|acil|yangın|yangin|su alıyor|su aliyor|çatışma|catisma|karaya otur|adam denize|man overboard|distress)/i],
-    ['navigation',/(rota|seyir|navigasyon|navigation|course|kerteriz|bearing|mevki|position|cpa|tcpa|akıntı|akinti|current|gelgit|tide|rüzgâr|ruzgar|wind|mesafe|distance|eta|pusula|compass)/i],
-    ['passage',/(passage|sefer plan|seyir plan|berth.to.berth|checklist|yakıt plan|yakit plan|port of refuge)/i],
-    ['publication',/(yayın|yayin|publication|solas|marpol|colreg|notice to mariners|sailing directions|pilot book|almanac|almanak)/i],
-    ['training',/(eğitim|egitim|öğret|ogret|quiz|sınav|sinav|ders|academy|training|explain|açıkla|acikla)/i],
-    ['crew',/(mürettebat|murettebat|crew|sertifika|certificate|stcw|medical|passport|visa|kontrat|contract)/i],
-    ['vessel',/(gemi|tekne|vessel|fleet|filo|draft|su çekimi|su cekimi|makine|engine)/i],
-    ['document',/(belge|doküman|dokuman|document|dosya|file|chart|harita|library|kütüphane|kutuphane)/i]
-  ];
-  const LIVE_DATA=/(şimdi|simdi|güncel|guncel|bugün|bugun|yarın|yarin|hava|weather|navtex|msi|notice to mariners|liman açık|liman acik|traffic|ais)/i;
-  const OPERATIONAL=/(hesapla|calculate|tutulacak rota|course to steer|uygula|execute|başlat|baslat|değiştir|degistir|manevra|approach|yanaş|yanas)/i;
   const EXPERT_MODE='DECISION_SUPPORT_ONLY';
-  const CORE_GATE_VERSION='1.0.0';
+  const CORE_GATE_VERSION=policy.CORE_GATE_VERSION;
   const ALLOWED_EXPERT_FIELDS=new Set(['answer','sources','warnings']);
 
   function detectLanguage(value){
@@ -77,19 +67,10 @@
   }
 
   function analyzeQuery(query){
-    const text=String(query||'').trim().slice(0,6000);
-    const matches=INTENTS.filter(([,pattern])=>pattern.test(text)).map(([intent])=>intent);
-    const intent=matches[0]||'general';
-    const emergency=intent==='emergency';
-    const operational=OPERATIONAL.test(text);
-    const needsLiveData=LIVE_DATA.test(text);
-    const risk=emergency?'critical':operational&&intent==='navigation'?'high':needsLiveData?'medium':'low';
-    const confidence=intent==='general'?0.35:matches.length===1?0.9:0.72;
+    const decision=policy.analyzeCore(query);
+    const confidence=decision.intent==='general'?0.35:decision.secondaryIntents.length===0?0.9:0.72;
     return {
-      query:text,language:detectLanguage(text),intent,secondaryIntents:matches.slice(1),confidence,risk,
-      emergency,operational,needsLiveData,
-      requiresHumanApproval:emergency||risk==='high',
-      requiresIndependentVerification:emergency||intent==='navigation'||intent==='passage'||needsLiveData
+      ...decision,language:detectLanguage(decision.query),confidence
     };
   }
 

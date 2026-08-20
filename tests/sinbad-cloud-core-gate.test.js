@@ -2,13 +2,15 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
-const {pathToFileURL}=require('node:url');
 const {spawnSync}=require('node:child_process');
 const browserCore=require('../sinbad-core.js');
+const edgeCore=require('../supabase/functions/sinbad-answer/core-decision.js');
 
 const root=path.resolve(__dirname,'..');
 const edge=fs.readFileSync(path.join(root,'supabase/functions/sinbad-answer/index.ts'),'utf8');
 const app=fs.readFileSync(path.join(root,'app.js'),'utf8');
+const facade=fs.readFileSync(path.join(root,'sinbad-core.js'),'utf8');
+const policy=fs.readFileSync(path.join(root,'supabase/functions/sinbad-answer/core-decision.js'),'utf8');
 
 test('cloud AI rejects a missing or inconsistent Core safety envelope before provider use',()=>{
   const validation=edge.indexOf("if (!validateCoreEnvelope(coreEnvelope, question))");
@@ -20,7 +22,6 @@ test('cloud AI rejects a missing or inconsistent Core safety envelope before pro
 });
 
 test('browser and Edge Core decisions remain identical for golden safety queries',async()=>{
-  const edgeCore=await import(pathToFileURL(path.join(root,'supabase/functions/sinbad-answer/core-decision.mjs')).href);
   const queries=['Mayday, gemi su alıyor','Akıntıya göre tutulacak rotayı hesapla','Bugün AIS traffic ve hava nasıl?','Passage checklist hazırla','  CPA hesabı yap  ','x'.repeat(7000)];
   for(const query of queries){
     const browser=browserCore.analyzeQuery(query),server=edgeCore.serverCoreDecision(query);
@@ -29,6 +30,14 @@ test('browser and Edge Core decisions remain identical for golden safety queries
       requiresHumanApproval:browser.requiresHumanApproval,requiresIndependentVerification:browser.requiresIndependentVerification
     },query.slice(0,80));
   }
+});
+
+test('browser and Edge load one canonical safety classifier source',()=>{
+  assert.match(policy,/const INTENTS=/);
+  assert.doesNotMatch(facade,/mayday\|pan/);
+  assert.doesNotMatch(edge,/mayday\|pan/);
+  assert.match(edge,/import '\.\/core-decision\.js'/);
+  assert.match(facade,/require\('\.\/supabase\/functions\/sinbad-answer\/core-decision\.js'\)/);
 });
 
 test('normal and consented web AI requests both carry a Core envelope',()=>{
