@@ -1540,7 +1540,8 @@ async function performSinbadWebSearch(){
   $('sinbadThinking').classList.remove('hidden');
   try{
     const history=sinbadState.messages.slice(-12).map(message=>({role:message.role==='sinbad'?'assistant':'user',content:message.text}));
-    const {data,error}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language:sinbadState.language,allowWebSearch:true,history}});if(error)throw error;
+    const coreEnvelope=window.SinbadCore?.aiEnvelope?.(question,history);
+    const {data,error}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language:sinbadState.language,allowWebSearch:true,history,coreEnvelope}});if(error)throw error;
     const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];const answer=`${copy.result}:\n\n${data?.answer||'No reliable web result was found.'}`;
     addSinbadMessage('sinbad',answer);speakSinbadInstant(answer);
   }catch(error){addSinbadMessage('sinbad',`Web search failed: ${error.message||error}`);}finally{$('sinbadThinking').classList.add('hidden');}

@@ -27,6 +27,31 @@ const extractText = (response: any) => response?.output_text || response?.output
   .join('\n') || '';
 
 const needsFreshData = (question: string) => /(bugün|yarın|şimdi|güncel|son notice|hava|rüzgâr|rüzgar|forecast|weather|navtex|msi|liman açık|port open|current|latest|today|tomorrow)/iu.test(question);
+const emergencyIntent = (question: string) => /(mayday|pan[ -]?pan|sos|acil|yangın|yangin|su alıyor|su aliyor|çatışma|catisma|karaya otur|adam denize|man overboard|distress)/iu.test(question);
+const navigationIntent = (question: string) => /(rota|seyir|navigasyon|navigation|course|kerteriz|bearing|mevki|position|cpa|tcpa|akıntı|akinti|current|gelgit|tide|rüzgâr|ruzgar|wind|mesafe|distance|eta|pusula|compass)/iu.test(question);
+const operationalIntent = (question: string) => /(hesapla|calculate|tutulacak rota|course to steer|uygula|execute|başlat|baslat|değiştir|degistir|manevra|approach|yanaş|yanas)/iu.test(question);
+
+const serverCoreDecision = (question: string) => {
+  const emergency = emergencyIntent(question);
+  const navigation = navigationIntent(question);
+  const operational = operationalIntent(question);
+  const fresh = needsFreshData(question);
+  const risk = emergency ? 'critical' : operational && navigation ? 'high' : fresh ? 'medium' : 'low';
+  return {
+    emergency,
+    operational,
+    needsLiveData: fresh,
+    risk,
+    requiresHumanApproval: emergency || risk === 'high',
+    requiresIndependentVerification: emergency || navigation || fresh
+  };
+};
+
+const validateCoreEnvelope = (envelope: any, question: string) => {
+  if (!envelope || envelope.version !== 'sinbad-ai-core/1' || envelope.analysis?.query !== question) return false;
+  const expected = serverCoreDecision(question);
+  return Object.entries(expected).every(([key, value]) => envelope.analysis?.[key] === value);
+};
 
 Deno.serve(async req => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
@@ -50,11 +75,15 @@ Deno.serve(async req => {
     const question = String(body.question || '').trim().slice(0, 6000);
     const language = String(body.language || 'tr-TR').slice(0, 12);
     const allowWebSearch = body.allowWebSearch === true;
+    const coreEnvelope = body.coreEnvelope;
     const history = Array.isArray(body.history) ? body.history.slice(-10).map((item: any) => ({
       role: item?.role === 'assistant' || item?.role === 'sinbad' ? 'assistant' : 'user',
       content: String(item?.content || item?.text || '').slice(0, 2500)
     })).filter((item: any) => item.content) : [];
     if (!workspaceId || !question) return json({ error: 'workspaceId and question are required' }, 400);
+    if (!validateCoreEnvelope(coreEnvelope, question)) return json({ error: 'Core safety envelope missing or inconsistent', code: 'CORE_GATE_BLOCKED' }, 400);
+    const coreDecision = serverCoreDecision(question);
+    const decisionSupport = { coreDecision, permission: 'DECISION_SUPPORT_ONLY', executionPerformed: false };
 
     const { data: membership } = await db.from('workspace_members')
       .select('role,is_active')
@@ -84,16 +113,18 @@ Deno.serve(async req => {
       if (unique.length) return json({
         answer: `OpenAI bağlantısı henüz etkin değil. Kütüphanede bulduğum ilgili kaynaklar:\n\n${context}\n\nKritik seyir kararlarını güncel ve resmî kaynaklardan doğrulayın.`,
         sources,
-        mode: 'retrieval-only'
+        mode: 'retrieval-only',
+        ...decisionSupport
       });
       return json({
         answer: 'Sinbad’ın AI bağlantısı henüz etkinleştirilmemiş. Kütüphanede de bu soruyla eşleşen bir kaynak bulamadım.',
-        mode: 'configuration-required'
+        mode: 'configuration-required',
+        ...decisionSupport
       });
     }
 
     if (!allowWebSearch && needsFreshData(question) && !unique.length) {
-      return json({ needsWebPermission: true, mode: 'web-permission-required' });
+      return json({ needsWebPermission: true, mode: 'web-permission-required', ...decisionSupport });
     }
 
     const system = `You are Captain Sinbad, Atlas Marine OS's capable, warm and practical marine assistant. Reply naturally in ${language}; do not answer with fragments or artificially short phrases. Use conversation history to understand follow-up questions. Be concise for simple questions and detailed when the task needs it.
@@ -129,7 +160,7 @@ If web search results are available, cite them using the citations supplied by t
     if (!response.ok) return json({ error: 'AI provider request failed', providerStatus: response.status, providerCode: payload?.error?.code || null }, 502);
     const answer = extractText(payload);
     if (!answer) return json({ error: 'AI provider returned no answer' }, 502);
-    return json({ answer, sources, mode: allowWebSearch ? 'web-assisted' : unique.length ? 'private-rag' : 'general-ai' });
+    return json({ answer, sources, mode: allowWebSearch ? 'web-assisted' : unique.length ? 'private-rag' : 'general-ai', ...decisionSupport });
   } catch (error) {
     return json({ error: error instanceof Error ? error.message : 'Unexpected error' }, 500);
   }
