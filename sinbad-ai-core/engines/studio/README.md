@@ -168,3 +168,9 @@ package installation, host/Core writes, merge, deployment or publication.
 `studio-pro-04-acceptance-manifest.js` freezes that narrow completion meaning.
 The real Docker integration test is opt-in because it depends on installed host
 infrastructure; all policy and adversarial contract tests remain offline.
+
+`guided-docker-test-session.js` presents the exact verified test list, pinned
+image and immutable isolation policy before requesting one bound approval. It
+then runs that exact test set once and returns bounded evidence or a concrete
+fail-closed next action. It does not alter the existing draft and preview
+sessions, which remain non-executing.
