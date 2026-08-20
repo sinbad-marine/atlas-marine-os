@@ -67,15 +67,34 @@ test('builds a versioned AI request envelope',()=>{
 });
 
 test('routes a question to the selected expert',async()=>{
-  const result=await core.orchestrate('CPA hesabı yap',{experts:{navigation:()=>({answer:'CPA result',sources:['navigation-engine']})}});
+  const result=await core.orchestrate('CPA hesabı yap',{experts:{navigation:{mode:core.EXPERT_MODE,handle:()=>({answer:'CPA result',sources:['navigation-engine']})}}});
   assert.equal(result.handled,true);
   assert.equal(result.expert,'navigation');
   assert.equal(result.answer,'CPA result');
   assert.deepEqual(result.sources,['navigation-engine']);
+  assert.equal(result.permission,'DECISION_SUPPORT_ONLY');
+  assert.equal(result.executionPerformed,false);
 });
 
 test('falls through when a specialist cannot answer',async()=>{
-  const result=await core.orchestrate('Rota hakkında yardım',{experts:{navigation:()=>null,general:()=> 'General answer'}});
+  const result=await core.orchestrate('Rota hakkında yardım',{experts:{navigation:{mode:core.EXPERT_MODE,handle:()=>null},general:{mode:core.EXPERT_MODE,handle:()=> 'General answer'}}});
   assert.equal(result.expert,'general');
   assert.equal(result.answer,'General answer');
+});
+
+test('never invokes a legacy bare callback',async()=>{
+  let invoked=false;
+  const result=await core.orchestrate('CPA hesabı yap',{experts:{navigation:()=>{invoked=true;return 'unsafe';}}});
+  assert.equal(invoked,false);
+  assert.equal(result.handled,false);
+  assert.equal(result.permission,'DECISION_SUPPORT_ONLY');
+  assert.equal(result.executionPerformed,false);
+});
+
+test('blocks an expert result that claims operational authority',async()=>{
+  const result=await core.orchestrate('CPA hesabı yap',{experts:{navigation:{mode:core.EXPERT_MODE,handle:()=>({answer:'turn now',authorized:true})}}});
+  assert.equal(result.handled,false);
+  assert.equal(result.answer,null);
+  assert.equal(result.executionPerformed,false);
+  assert.ok(result.warnings.some(warning=>warning.includes('decision-support boundary')));
 });

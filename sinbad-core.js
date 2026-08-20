@@ -63,6 +63,8 @@
   ];
   const LIVE_DATA=/(şimdi|simdi|güncel|guncel|bugün|bugun|yarın|yarin|hava|weather|navtex|msi|notice to mariners|liman açık|liman acik|traffic|ais)/i;
   const OPERATIONAL=/(hesapla|calculate|tutulacak rota|course to steer|uygula|execute|başlat|baslat|değiştir|degistir|manevra|approach|yanaş|yanas)/i;
+  const EXPERT_MODE='DECISION_SUPPORT_ONLY';
+  const UNSAFE_EXPERT_FIELDS=new Set(['actuatorCommand','commandIntent','controlExecution','executionReceipt','approved','authorized']);
 
   function detectLanguage(value){
     const text=String(value||'');
@@ -125,14 +127,18 @@
     const experts=options.experts||{};
     const order=[analysis.intent,...analysis.secondaryIntents,'general'];
     for(const name of [...new Set(order)]){
-      if(typeof experts[name]!=='function')continue;
-      const result=await experts[name](question,{analysis,history:conversationContext(options.history),context:options.context||{}});
+      const adapter=experts[name];
+      if(!adapter||adapter.mode!==EXPERT_MODE||typeof adapter.handle!=='function')continue;
+      const result=await adapter.handle(question,{analysis,history:conversationContext(options.history),context:options.context||{}});
       if(result==null||result==='')continue;
       const payload=typeof result==='string'?{answer:result}:result;
-      return {handled:true,expert:name,...analysis,...payload,warnings:[...safetyGuidance(analysis),...(payload.warnings||[])]};
+      if(!payload||typeof payload!=='object'||[...UNSAFE_EXPERT_FIELDS].some(field=>Object.prototype.hasOwnProperty.call(payload,field))){
+        return {handled:false,expert:null,...analysis,answer:null,warnings:[...safetyGuidance(analysis),'Expert output was blocked because it crossed the decision-support boundary.'],permission:EXPERT_MODE,executionPerformed:false};
+      }
+      return {handled:true,expert:name,...analysis,...payload,warnings:[...safetyGuidance(analysis),...(payload.warnings||[])],permission:EXPERT_MODE,executionPerformed:false};
     }
-    return {handled:false,expert:null,...analysis,answer:null,warnings:safetyGuidance(analysis)};
+    return {handled:false,expert:null,...analysis,answer:null,warnings:safetyGuidance(analysis),permission:EXPERT_MODE,executionPerformed:false};
   }
 
-  return {terms,searchPublications,passagePlan,formatPlan,detectLanguage,analyzeQuery,conversationContext,safetyGuidance,aiEnvelope,orchestrate};
+  return {EXPERT_MODE,terms,searchPublications,passagePlan,formatPlan,detectLanguage,analyzeQuery,conversationContext,safetyGuidance,aiEnvelope,orchestrate};
 });

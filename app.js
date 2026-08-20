@@ -598,10 +598,10 @@ async function sinbadLocalAnswer(query){
   const coreResult=await window.SinbadCore?.orchestrate?.(query,{
     history:sinbadState.messages,
     experts:{
-      emergency:()=>language==='tr-TR'
+      emergency:{mode:window.SinbadCore.EXPERT_MODE,handle:()=>language==='tr-TR'
         ? 'ACÄ°L DURUM: Ä°nsan komutasÄ±nÄ± ve geminin onaylÄ± acil durum prosedÃ¼rlerini derhal devreye alÄ±n. Uygunsa MAYDAY/PAN-PAN Ã§aÄŸrÄ±sÄ± yapÄ±n, mevkiyi ve tehlikenin niteliÄŸini bildirin; Sinbad yalnÄ±zca karar desteÄŸidir.'
-        : 'EMERGENCY: Activate human command and the vessel approved emergency procedures immediately. When appropriate transmit MAYDAY/PAN-PAN with position and nature of distress; Sinbad is decision support only.',
-      navigation:()=>window.SinbadNavigation?.answer?.(query,language)
+        : 'EMERGENCY: Activate human command and the vessel approved emergency procedures immediately. When appropriate transmit MAYDAY/PAN-PAN with position and nature of distress; Sinbad is decision support only.'},
+      navigation:{mode:window.SinbadCore.EXPERT_MODE,handle:()=>window.SinbadNavigation?.answer?.(query,language)}
     }
   });
   if(coreResult?.handled)return coreResult.answer;
