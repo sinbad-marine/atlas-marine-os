@@ -61,6 +61,7 @@ test('normalizes bounded conversation context',()=>{
 test('builds a versioned AI request envelope',()=>{
   const envelope=core.aiEnvelope('Mercator rotasını hesapla',[{role:'user',text:'Start at 40N'}]);
   assert.equal(envelope.version,'sinbad-ai-core/1');
+  assert.equal(envelope.gateVersion,'1.0.0');
   assert.equal(envelope.analysis.intent,'navigation');
   assert.equal(envelope.history.length,1);
   assert.ok(envelope.instructions.some(x=>x.includes('Never invent live')));
@@ -97,4 +98,16 @@ test('blocks an expert result that claims operational authority',async()=>{
   assert.equal(result.answer,null);
   assert.equal(result.executionPerformed,false);
   assert.ok(result.warnings.some(warning=>warning.includes('decision-support boundary')));
+});
+
+test('blocks every expert payload field outside the decision-support allowlist',async()=>{
+  for(const field of ['authorization','execute','commandSent','nested']){
+    const result=await core.orchestrate('CPA hesabı yap',{experts:{navigation:{mode:core.EXPERT_MODE,handle:()=>({answer:'unsafe',[field]:{authorized:true}})}}});
+    assert.equal(result.handled,false,field);
+  }
+});
+
+test('normalizes Core gate questions before analysis and envelope binding',()=>{
+  assert.equal(core.aiEnvelope('  CPA hesabı yap  ').analysis.query,'CPA hesabı yap');
+  assert.equal(core.aiEnvelope('x'.repeat(7000)).analysis.query.length,6000);
 });

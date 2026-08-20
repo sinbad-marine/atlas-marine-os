@@ -16,6 +16,7 @@ test('visible release, Core and app assets share one live version',()=>{
   assert.ok(visible);
   const assetVersion=`${visible[1]}${visible[2].padStart(2,'0')}${visible[3]}`;
   assert.match(html,new RegExp(`sinbad-core\\.js\\?v=${assetVersion}`));
+  assert.match(html,new RegExp(`sinbad-navigation\\.js\\?v=${assetVersion}`));
   assert.match(html,new RegExp(`app\\.js\\?v=${assetVersion}`));
   assert.match(worker,new RegExp(`sinbad-marine-v${visible[1]}\\.${visible[2]}\\.${visible[3]}-`));
 });

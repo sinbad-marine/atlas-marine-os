@@ -64,7 +64,8 @@
   const LIVE_DATA=/(şimdi|simdi|güncel|guncel|bugün|bugun|yarın|yarin|hava|weather|navtex|msi|notice to mariners|liman açık|liman acik|traffic|ais)/i;
   const OPERATIONAL=/(hesapla|calculate|tutulacak rota|course to steer|uygula|execute|başlat|baslat|değiştir|degistir|manevra|approach|yanaş|yanas)/i;
   const EXPERT_MODE='DECISION_SUPPORT_ONLY';
-  const UNSAFE_EXPERT_FIELDS=new Set(['actuatorCommand','commandIntent','controlExecution','executionReceipt','approved','authorized']);
+  const CORE_GATE_VERSION='1.0.0';
+  const ALLOWED_EXPERT_FIELDS=new Set(['answer','sources','warnings']);
 
   function detectLanguage(value){
     const text=String(value||'');
@@ -76,7 +77,7 @@
   }
 
   function analyzeQuery(query){
-    const text=String(query||'').trim();
+    const text=String(query||'').trim().slice(0,6000);
     const matches=INTENTS.filter(([,pattern])=>pattern.test(text)).map(([intent])=>intent);
     const intent=matches[0]||'general';
     const emergency=intent==='emergency';
@@ -111,7 +112,7 @@
   function aiEnvelope(question,messages=[]){
     const analysis=analyzeQuery(question);
     return {
-      version:'sinbad-ai-core/1',analysis,history:conversationContext(messages),
+      version:'sinbad-ai-core/1',gateVersion:CORE_GATE_VERSION,analysis,history:conversationContext(messages),
       safety:safetyGuidance(analysis),
       instructions:[
         'Separate verified facts, calculations, assumptions and recommendations.',
@@ -132,7 +133,7 @@
       const result=await adapter.handle(question,{analysis,history:conversationContext(options.history),context:options.context||{}});
       if(result==null||result==='')continue;
       const payload=typeof result==='string'?{answer:result}:result;
-      if(!payload||typeof payload!=='object'||[...UNSAFE_EXPERT_FIELDS].some(field=>Object.prototype.hasOwnProperty.call(payload,field))){
+      if(!payload||typeof payload!=='object'||Object.keys(payload).some(field=>!ALLOWED_EXPERT_FIELDS.has(field))){
         return {handled:false,expert:null,...analysis,answer:null,warnings:[...safetyGuidance(analysis),'Expert output was blocked because it crossed the decision-support boundary.'],permission:EXPERT_MODE,executionPerformed:false};
       }
       return {handled:true,expert:name,...analysis,...payload,warnings:[...safetyGuidance(analysis),...(payload.warnings||[])],permission:EXPERT_MODE,executionPerformed:false};
@@ -140,5 +141,5 @@
     return {handled:false,expert:null,...analysis,answer:null,warnings:safetyGuidance(analysis),permission:EXPERT_MODE,executionPerformed:false};
   }
 
-  return {EXPERT_MODE,terms,searchPublications,passagePlan,formatPlan,detectLanguage,analyzeQuery,conversationContext,safetyGuidance,aiEnvelope,orchestrate};
+  return {EXPERT_MODE,CORE_GATE_VERSION,terms,searchPublications,passagePlan,formatPlan,detectLanguage,analyzeQuery,conversationContext,safetyGuidance,aiEnvelope,orchestrate};
 });

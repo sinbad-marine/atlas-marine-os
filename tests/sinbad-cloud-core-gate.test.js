@@ -2,7 +2,9 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
+const {pathToFileURL}=require('node:url');
 const {spawnSync}=require('node:child_process');
+const browserCore=require('../sinbad-core.js');
 
 const root=path.resolve(__dirname,'..');
 const edge=fs.readFileSync(path.join(root,'supabase/functions/sinbad-answer/index.ts'),'utf8');
@@ -15,6 +17,18 @@ test('cloud AI rejects a missing or inconsistent Core safety envelope before pro
   assert.ok(provider>validation);
   assert.match(edge,/CORE_GATE_BLOCKED/);
   assert.match(edge,/serverCoreDecision\(question\)/);
+});
+
+test('browser and Edge Core decisions remain identical for golden safety queries',async()=>{
+  const edgeCore=await import(pathToFileURL(path.join(root,'supabase/functions/sinbad-answer/core-decision.mjs')).href);
+  const queries=['Mayday, gemi su alıyor','Akıntıya göre tutulacak rotayı hesapla','Bugün AIS traffic ve hava nasıl?','Passage checklist hazırla','  CPA hesabı yap  ','x'.repeat(7000)];
+  for(const query of queries){
+    const browser=browserCore.analyzeQuery(query),server=edgeCore.serverCoreDecision(query);
+    assert.deepEqual(server,{
+      emergency:browser.emergency,operational:browser.operational,needsLiveData:browser.needsLiveData,risk:browser.risk,
+      requiresHumanApproval:browser.requiresHumanApproval,requiresIndependentVerification:browser.requiresIndependentVerification
+    },query.slice(0,80));
+  }
 });
 
 test('normal and consented web AI requests both carry a Core envelope',()=>{
@@ -30,8 +44,15 @@ test('normal and consented web responses are both checked by the client Core gat
 });
 
 test('cloud answers cannot claim execution authority',()=>{
-  assert.match(edge,/const decisionSupport = \{ coreDecision, permission: 'DECISION_SUPPORT_ONLY', executionPerformed: false \}/);
+  assert.match(edge,/const decisionSupport = \{ coreGateVersion: CORE_GATE_VERSION, coreDecision, permission: 'DECISION_SUPPORT_ONLY', executionPerformed: false \}/);
   assert.ok((edge.match(/\.\.\.decisionSupport/g)||[]).length>=4);
+});
+
+test('high and critical risk stop before the cloud model provider',()=>{
+  const block=edge.indexOf("if (coreDecision.emergency || coreDecision.risk === 'high')");
+  const provider=edge.indexOf("fetch('https://api.openai.com/v1/responses'");
+  assert.ok(block>=0&&provider>block);
+  assert.match(edge,/mode: 'core-safety-blocked'/);
 });
 
 test('cloud Core gate Edge function passes executable TypeScript syntax checking',()=>{

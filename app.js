@@ -598,10 +598,10 @@ async function sinbadLocalAnswer(query){
   const coreResult=await window.SinbadCore?.orchestrate?.(query,{
     history:sinbadState.messages,
     experts:{
-      emergency:{mode:window.SinbadCore.EXPERT_MODE,handle:()=>language==='tr-TR'
+      emergency:{mode:window.SinbadCore?.EXPERT_MODE,handle:()=>language==='tr-TR'
         ? 'ACÄ°L DURUM: Ä°nsan komutasÄ±nÄ± ve geminin onaylÄ± acil durum prosedÃ¼rlerini derhal devreye alÄ±n. Uygunsa MAYDAY/PAN-PAN Ã§aÄŸrÄ±sÄ± yapÄ±n, mevkiyi ve tehlikenin niteliÄŸini bildirin; Sinbad yalnÄ±zca karar desteÄŸidir.'
         : 'EMERGENCY: Activate human command and the vessel approved emergency procedures immediately. When appropriate transmit MAYDAY/PAN-PAN with position and nature of distress; Sinbad is decision support only.'},
-      navigation:{mode:window.SinbadCore.EXPERT_MODE,handle:()=>window.SinbadNavigation?.answer?.(query,language)}
+      navigation:{mode:window.SinbadCore?.EXPERT_MODE,handle:()=>window.SinbadNavigation?.answer?.(query,language)}
     }
   });
   if(coreResult?.handled)return coreResult.answer;
@@ -1501,7 +1501,7 @@ async function saveDocumentKnowledge(documentId,file,text,bucket){
   return {classification,chunks:chunks.length};
 }
 function cloudAnswerPassesCoreGate(data,envelope){
-  if(!data||data.permission!=='DECISION_SUPPORT_ONLY'||data.executionPerformed!==false||!data.coreDecision||!envelope?.analysis)return false;
+  if(!data||data.coreGateVersion!==window.SinbadCore?.CORE_GATE_VERSION||data.coreGateVersion!==envelope?.gateVersion||data.permission!=='DECISION_SUPPORT_ONLY'||data.executionPerformed!==false||!data.coreDecision||!envelope?.analysis)return false;
   const expected=envelope.analysis,actual=data.coreDecision;
   return ['emergency','operational','needsLiveData','risk','requiresHumanApproval','requiresIndependentVerification']
     .every(field=>actual[field]===expected[field]);

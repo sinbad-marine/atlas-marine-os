@@ -1,4 +1,5 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
+import { CORE_GATE_VERSION, normalizeCoreQuestion, serverCoreDecision, validateCoreEnvelope } from './core-decision.mjs';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -26,32 +27,7 @@ const extractText = (response: any) => response?.output_text || response?.output
   .map((part: any) => part.text)
   .join('\n') || '';
 
-const needsFreshData = (question: string) => /(bugün|yarın|şimdi|güncel|son notice|hava|rüzgâr|rüzgar|forecast|weather|navtex|msi|liman açık|port open|current|latest|today|tomorrow)/iu.test(question);
-const emergencyIntent = (question: string) => /(mayday|pan[ -]?pan|sos|acil|yangın|yangin|su alıyor|su aliyor|çatışma|catisma|karaya otur|adam denize|man overboard|distress)/iu.test(question);
-const navigationIntent = (question: string) => /(rota|seyir|navigasyon|navigation|course|kerteriz|bearing|mevki|position|cpa|tcpa|akıntı|akinti|current|gelgit|tide|rüzgâr|ruzgar|wind|mesafe|distance|eta|pusula|compass)/iu.test(question);
-const operationalIntent = (question: string) => /(hesapla|calculate|tutulacak rota|course to steer|uygula|execute|başlat|baslat|değiştir|degistir|manevra|approach|yanaş|yanas)/iu.test(question);
-
-const serverCoreDecision = (question: string) => {
-  const emergency = emergencyIntent(question);
-  const navigation = navigationIntent(question);
-  const operational = operationalIntent(question);
-  const fresh = needsFreshData(question);
-  const risk = emergency ? 'critical' : operational && navigation ? 'high' : fresh ? 'medium' : 'low';
-  return {
-    emergency,
-    operational,
-    needsLiveData: fresh,
-    risk,
-    requiresHumanApproval: emergency || risk === 'high',
-    requiresIndependentVerification: emergency || navigation || fresh
-  };
-};
-
-const validateCoreEnvelope = (envelope: any, question: string) => {
-  if (!envelope || envelope.version !== 'sinbad-ai-core/1' || envelope.analysis?.query !== question) return false;
-  const expected = serverCoreDecision(question);
-  return Object.entries(expected).every(([key, value]) => envelope.analysis?.[key] === value);
-};
+const needsFreshData = (question: string) => serverCoreDecision(question).needsLiveData;
 
 Deno.serve(async req => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
@@ -72,7 +48,7 @@ Deno.serve(async req => {
 
     const body = await req.json();
     const workspaceId = String(body.workspaceId || '');
-    const question = String(body.question || '').trim().slice(0, 6000);
+    const question = normalizeCoreQuestion(body.question);
     const language = String(body.language || 'tr-TR').slice(0, 12);
     const allowWebSearch = body.allowWebSearch === true;
     const coreEnvelope = body.coreEnvelope;
@@ -83,7 +59,7 @@ Deno.serve(async req => {
     if (!workspaceId || !question) return json({ error: 'workspaceId and question are required' }, 400);
     if (!validateCoreEnvelope(coreEnvelope, question)) return json({ error: 'Core safety envelope missing or inconsistent', code: 'CORE_GATE_BLOCKED' }, 400);
     const coreDecision = serverCoreDecision(question);
-    const decisionSupport = { coreDecision, permission: 'DECISION_SUPPORT_ONLY', executionPerformed: false };
+    const decisionSupport = { coreGateVersion: CORE_GATE_VERSION, coreDecision, permission: 'DECISION_SUPPORT_ONLY', executionPerformed: false };
 
     const { data: membership } = await db.from('workspace_members')
       .select('role,is_active')
@@ -121,6 +97,13 @@ Deno.serve(async req => {
         mode: 'configuration-required',
         ...decisionSupport
       });
+    }
+
+    if (coreDecision.emergency || coreDecision.risk === 'high') {
+      const answer = coreDecision.emergency
+        ? 'Acil durumda insan komutasını ve geminin onaylı acil durum prosedürlerini derhal uygulayın. Sinbad bu istek için bulut modeli çalıştırmadı.'
+        : 'Bu yüksek riskli seyir isteği için bulut modeli çalıştırılmadı. Doğrulanmış girdilerle yerel hesaplama yapın ve sonucu kaptan, güncel resmî kaynaklar ve bağımsız yöntemle doğrulayın.';
+      return json({ answer, sources, mode: 'core-safety-blocked', ...decisionSupport });
     }
 
     if (!allowWebSearch && needsFreshData(question) && !unique.length) {
