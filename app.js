@@ -1,16 +1,16 @@
-﻿
+
 
 const $=id=>document.getElementById(id);
-const APP_LANGUAGES=[['tr-TR','TÃ¼rkÃ§e'],['en-US','English'],['ru-RU','Ğ ÑƒÑÑĞºĞ¸Ğ¹'],['fr-FR','FranÃ§ais'],['de-DE','Deutsch'],['ar-SA','Ø§Ù„Ø¹Ø±Ø¨ÙŠØ©'],['es-ES','EspaÃ±ol'],['it-IT','Italiano']];
+const APP_LANGUAGES=[['tr-TR','Türkçe'],['en-US','English'],['ru-RU','Русский'],['fr-FR','Français'],['de-DE','Deutsch'],['ar-SA','العربية'],['es-ES','Español'],['it-IT','Italiano']];
 const APP_I18N={
- 'tr-TR':{gatewayTitle:'Sinbad Marine ÅŸu anda geliÅŸtiriliyor.',gatewayText:'GÃ¼venli denizcilik zekÃ¢sÄ± ve yat operasyon platformumuz kullanÄ±ma hazÄ±rlanÄ±yor.',signIn:'Ãœye GiriÅŸi',createAccount:'Hesap OluÅŸtur',checkCloud:'Bulut BaÄŸlantÄ±sÄ±nÄ± Kontrol Et',heroTitle:'Tek KÃ¶prÃ¼. TÃ¼m Operasyonlar.'},
+ 'tr-TR':{gatewayTitle:'Sinbad Marine şu anda geliştiriliyor.',gatewayText:'Güvenli denizcilik zekâsı ve yat operasyon platformumuz kullanıma hazırlanıyor.',signIn:'Üye Girişi',createAccount:'Hesap Oluştur',checkCloud:'Bulut Bağlantısını Kontrol Et',heroTitle:'Tek Köprü. Tüm Operasyonlar.'},
  'en-US':{gatewayTitle:'Sinbad Marine is currently under development.',gatewayText:'Our secure marine intelligence and yacht operations platform is being prepared for launch.',signIn:'Member Sign In',createAccount:'Create Account',checkCloud:'Check Cloud Connection',heroTitle:'One Bridge. Every Operation.'},
- 'ru-RU':{gatewayTitle:'Sinbad Marine Ğ½Ğ°Ñ…Ğ¾Ğ´Ğ¸Ñ‚ÑÑ Ğ² Ñ€Ğ°Ğ·Ñ€Ğ°Ğ±Ğ¾Ñ‚ĞºĞµ.',gatewayText:'ĞĞ°ÑˆĞ° Ğ·Ğ°Ñ‰Ğ¸Ñ‰Ñ‘Ğ½Ğ½Ğ°Ñ Ğ¿Ğ»Ğ°Ñ‚Ñ„Ğ¾Ñ€Ğ¼Ğ° Ğ¼Ğ¾Ñ€ÑĞºĞ¾Ğ¹ Ğ°Ğ½Ğ°Ğ»Ğ¸Ñ‚Ğ¸ĞºĞ¸ Ğ¸ ÑƒĞ¿Ñ€Ğ°Ğ²Ğ»ĞµĞ½Ğ¸Ñ ÑÑ…Ñ‚Ğ¾Ğ¹ Ğ³Ğ¾Ñ‚Ğ¾Ğ²Ğ¸Ñ‚ÑÑ Ğº Ğ·Ğ°Ğ¿ÑƒÑĞºÑƒ.',signIn:'Ğ’Ğ¾Ğ¹Ñ‚Ğ¸',createAccount:'Ğ¡Ğ¾Ğ·Ğ´Ğ°Ñ‚ÑŒ Ğ°ĞºĞºĞ°ÑƒĞ½Ñ‚',checkCloud:'ĞŸÑ€Ğ¾Ğ²ĞµÑ€Ğ¸Ñ‚ÑŒ Ğ¾Ğ±Ğ»Ğ°ĞºĞ¾',heroTitle:'ĞĞ´Ğ¸Ğ½ Ğ¼Ğ¾ÑÑ‚Ğ¸Ğº. Ğ’ÑĞµ Ğ¾Ğ¿ĞµÑ€Ğ°Ñ†Ğ¸Ğ¸.'},
- 'fr-FR':{gatewayTitle:'Sinbad Marine est en cours de dÃ©veloppement.',gatewayText:'Notre plateforme sÃ©curisÃ©e de renseignement maritime et de gestion de yacht est en prÃ©paration.',signIn:'Connexion membre',createAccount:'CrÃ©er un compte',checkCloud:'Tester le cloud',heroTitle:'Une passerelle. Toutes les opÃ©rations.'},
- 'de-DE':{gatewayTitle:'Sinbad Marine wird derzeit entwickelt.',gatewayText:'Unsere sichere Plattform fÃ¼r maritime Informationen und Yachtbetrieb wird vorbereitet.',signIn:'Mitglieder-Login',createAccount:'Konto erstellen',checkCloud:'Cloud prÃ¼fen',heroTitle:'Eine BrÃ¼cke. Alle AblÃ¤ufe.'},
- 'ar-SA':{gatewayTitle:'ÙŠØ¬Ø±ÙŠ Ø­Ø§Ù„ÙŠÙ‹Ø§ ØªØ·ÙˆÙŠØ± Sinbad Marine.',gatewayText:'ÙŠØªÙ… Ø¥Ø¹Ø¯Ø§Ø¯ Ù…Ù†ØµØªÙ†Ø§ Ø§Ù„Ø¢Ù…Ù†Ø© Ù„Ù„Ù…Ø¹Ù„ÙˆÙ…Ø§Øª Ø§Ù„Ø¨Ø­Ø±ÙŠØ© ÙˆØ¹Ù…Ù„ÙŠØ§Øª Ø§Ù„ÙŠØ®ÙˆØª Ù„Ù„Ø¥Ø·Ù„Ø§Ù‚.',signIn:'Ø¯Ø®ÙˆÙ„ Ø§Ù„Ø£Ø¹Ø¶Ø§Ø¡',createAccount:'Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨',checkCloud:'ÙØ­Øµ Ø§Ù„Ø§ØªØµØ§Ù„ Ø§Ù„Ø³Ø­Ø§Ø¨ÙŠ',heroTitle:'Ø¬Ø³Ø± ÙˆØ§Ø­Ø¯. ÙƒÙ„ Ø§Ù„Ø¹Ù…Ù„ÙŠØ§Øª.'},
- 'es-ES':{gatewayTitle:'Sinbad Marine estÃ¡ actualmente en desarrollo.',gatewayText:'Nuestra plataforma segura de inteligencia marÃ­tima y operaciones de yates se estÃ¡ preparando.',signIn:'Acceso de miembros',createAccount:'Crear cuenta',checkCloud:'Comprobar la nube',heroTitle:'Un puente. Todas las operaciones.'},
- 'it-IT':{gatewayTitle:'Sinbad Marine Ã¨ attualmente in fase di sviluppo.',gatewayText:'La nostra piattaforma sicura per intelligence marittima e gestione yacht Ã¨ in preparazione.',signIn:'Accesso membri',createAccount:'Crea account',checkCloud:'Controlla il cloud',heroTitle:'Un ponte. Tutte le operazioni.'}
+ 'ru-RU':{gatewayTitle:'Sinbad Marine находится в разработке.',gatewayText:'Наша защищённая платформа морской аналитики и управления яхтой готовится к запуску.',signIn:'Войти',createAccount:'Создать аккаунт',checkCloud:'Проверить облако',heroTitle:'Один мостик. Все операции.'},
+ 'fr-FR':{gatewayTitle:'Sinbad Marine est en cours de développement.',gatewayText:'Notre plateforme sécurisée de renseignement maritime et de gestion de yacht est en préparation.',signIn:'Connexion membre',createAccount:'Créer un compte',checkCloud:'Tester le cloud',heroTitle:'Une passerelle. Toutes les opérations.'},
+ 'de-DE':{gatewayTitle:'Sinbad Marine wird derzeit entwickelt.',gatewayText:'Unsere sichere Plattform für maritime Informationen und Yachtbetrieb wird vorbereitet.',signIn:'Mitglieder-Login',createAccount:'Konto erstellen',checkCloud:'Cloud prüfen',heroTitle:'Eine Brücke. Alle Abläufe.'},
+ 'ar-SA':{gatewayTitle:'يجري حاليًا تطوير Sinbad Marine.',gatewayText:'يتم إعداد منصتنا الآمنة للمعلومات البحرية وعمليات اليخوت للإطلاق.',signIn:'دخول الأعضاء',createAccount:'إنشاء حساب',checkCloud:'فحص الاتصال السحابي',heroTitle:'جسر واحد. كل العمليات.'},
+ 'es-ES':{gatewayTitle:'Sinbad Marine está actualmente en desarrollo.',gatewayText:'Nuestra plataforma segura de inteligencia marítima y operaciones de yates se está preparando.',signIn:'Acceso de miembros',createAccount:'Crear cuenta',checkCloud:'Comprobar la nube',heroTitle:'Un puente. Todas las operaciones.'},
+ 'it-IT':{gatewayTitle:'Sinbad Marine è attualmente in fase di sviluppo.',gatewayText:'La nostra piattaforma sicura per intelligence marittima e gestione yacht è in preparazione.',signIn:'Accesso membri',createAccount:'Crea account',checkCloud:'Controlla il cloud',heroTitle:'Un ponte. Tutte le operazioni.'}
 };
 let appLanguage=localStorage.getItem('atlas_app_language')||'tr-TR';
 function applyAppLanguage(language){
@@ -47,7 +47,7 @@ function initEncViewer(){
   });
   let loaded=false;
   chartSource.on('tileloadend',()=>{if(!loaded){loaded=true;status.textContent='Official NOAA ENC layer connected.';status.classList.add('ready')}});
-  chartSource.on('tileloaderror',()=>{if(!loaded){status.textContent='NOAA ENC layer is temporarily unavailable. Use â€œOpen NOAA Viewerâ€ or try again shortly.';status.classList.add('error')}});
+  chartSource.on('tileloaderror',()=>{if(!loaded){status.textContent='NOAA ENC layer is temporarily unavailable. Use “Open NOAA Viewer” or try again shortly.';status.classList.add('error')}});
   encChartLayer=new ol.layer.Tile({source:chartSource,zIndex:2});
   encBathymetryLayer=new ol.layer.Tile({
     source:new ol.source.TileWMS({url:'https://ows.emodnet-bathymetry.eu/wms',params:{LAYERS:'emodnet:mean_multicolour',TILED:true,FORMAT:'image/png',TRANSPARENT:false,VERSION:'1.3.0'},crossOrigin:'anonymous'}),
@@ -77,7 +77,7 @@ function initEncViewer(){
   calculateSafetyDepth();
   $('encUseLocation').addEventListener('click',()=>{
     if(!navigator.geolocation){status.textContent='Location is not supported on this device.';return;}
-    status.textContent='Reading your positionâ€¦';status.classList.remove('error','ready');
+    status.textContent='Reading your position…';status.classList.remove('error','ready');
     navigator.geolocation.getCurrentPosition(pos=>{
       encMap.getView().animate({center:ol.proj.fromLonLat([pos.coords.longitude,pos.coords.latitude]),zoom:12,duration:800});
       status.textContent='Map centered on your current position.';status.classList.add('ready');
@@ -164,7 +164,7 @@ if($('uploadDocs')) $('uploadDocs').onclick=async()=>{
    done++;
   }
   input.value='';
-  status.textContent=`âœ“ ${done} file(s) saved locally.`;
+  status.textContent=`✓ ${done} file(s) saved locally.`;
   await renderDocuments();
   await renderSummary();
  }catch(error){
@@ -194,7 +194,7 @@ async function renderDocuments(){
  $('documentList').innerHTML=filtered.length?filtered.map(fileRow).join(''):'<div class="empty">No matching files.</div>';
  renderFolderViews(rows);
 }
-function fileRow(x){return `<div class="file-row"><div><div class="file-name">${esc(x.name)}</div><div class="file-meta">${esc(x.folder)} â€¢ ${esc(x.tags||'No tags')}</div></div><div>${esc(x.type||'Unknown')}</div><div>${formatBytes(x.size)}</div><div>${new Date(x.created).toLocaleDateString()}</div><div class="file-actions"><button class="btn" onclick="previewFile(${x.id})">Open</button><button class="btn" onclick="downloadFile(${x.id})">Download</button><button class="btn" onclick="printFile(${x.id})">Print</button><button class="btn" onclick="shareFile(${x.id})">Share</button><button class="btn" onclick="renameFile(${x.id})">Rename</button><button class="btn danger" onclick="removeFile(${x.id})">Delete</button></div></div>`}
+function fileRow(x){return `<div class="file-row"><div><div class="file-name">${esc(x.name)}</div><div class="file-meta">${esc(x.folder)} • ${esc(x.tags||'No tags')}</div></div><div>${esc(x.type||'Unknown')}</div><div>${formatBytes(x.size)}</div><div>${new Date(x.created).toLocaleDateString()}</div><div class="file-actions"><button class="btn" onclick="previewFile(${x.id})">Open</button><button class="btn" onclick="downloadFile(${x.id})">Download</button><button class="btn" onclick="printFile(${x.id})">Print</button><button class="btn" onclick="shareFile(${x.id})">Share</button><button class="btn" onclick="renameFile(${x.id})">Rename</button><button class="btn danger" onclick="removeFile(${x.id})">Delete</button></div></div>`}
 async function getFile(id){return new Promise((res,rej)=>{const r=txStore().get(id);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function previewFile(id){const x=await getFile(id),url=URL.createObjectURL(x.blob);window.open(url,'_blank')}
 async function downloadFile(id){const x=await getFile(id),url=URL.createObjectURL(x.blob),a=document.createElement('a');a.href=url;a.download=x.name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
@@ -206,7 +206,7 @@ function formatBytes(n){if(n<1024)return n+' B';if(n<1048576)return (n/1024).toF
 async function renderFolderViews(rows){$('publicationList').innerHTML=(rows.filter(x=>x.folder==='Nautical Publications').map(fileRow).join('')||'<div class="empty">No publications uploaded.</div>');$('chartList').innerHTML=(rows.filter(x=>x.folder==='Nautical Charts').map(fileRow).join('')||'<div class="empty">No charts uploaded.</div>')}
 
 
-$('knowledgeSearchBtn').onclick=async()=>{const q=$('knowledgeQuery').value.toLowerCase().trim(),rows=await dbAll();const out=rows.filter(x=>!q||`${x.name} ${x.folder} ${x.tags} ${x.text}`.toLowerCase().includes(q));$('knowledgeResults').innerHTML=out.length?out.map(x=>`<article class="record"><h3>${esc(x.name)}</h3><div class="muted">${esc(x.folder)} â€¢ ${esc(x.tags)}</div><p>${esc((x.text||'No extracted text available.').slice(0,500))}</p><button class="btn" onclick="previewFile(${x.id})">Open Source</button></article>`).join(''):'<div class="empty">No matching knowledge found.</div>'}
+$('knowledgeSearchBtn').onclick=async()=>{const q=$('knowledgeQuery').value.toLowerCase().trim(),rows=await dbAll();const out=rows.filter(x=>!q||`${x.name} ${x.folder} ${x.tags} ${x.text}`.toLowerCase().includes(q));$('knowledgeResults').innerHTML=out.length?out.map(x=>`<article class="record"><h3>${esc(x.name)}</h3><div class="muted">${esc(x.folder)} • ${esc(x.tags)}</div><p>${esc((x.text||'No extracted text available.').slice(0,500))}</p><button class="btn" onclick="previewFile(${x.id})">Open Source</button></article>`).join(''):'<div class="empty">No matching knowledge found.</div>'}
 
 
 function setupDocumentFilters(){
@@ -217,15 +217,15 @@ function setupDocumentFilters(){
 
 
 function setupPilot(){[...new Set(PILOT_DATA.map(x=>x.country))].sort().forEach(x=>$('countryFilter').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`));[...new Set(PILOT_DATA.map(x=>x.type))].sort().forEach(x=>$('typeFilter').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`))}
-function renderPilot(){const q=$('pilotSearch').value.toLowerCase(),c=$('countryFilter').value,t=$('typeFilter').value;const rows=PILOT_DATA.filter(x=>(!c||x.country===c)&&(!t||x.type===t)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));$('pilotGrid').innerHTML=rows.map(x=>`<article class="record"><h3>${esc(x.name)}</h3><div class="muted">${esc(x.country)} â€¢ ${esc(x.region)}</div><p>${esc(x.approach)}</p><p class="warning">${esc(x.captainNote)}</p></article>`).join('')}
+function renderPilot(){const q=$('pilotSearch').value.toLowerCase(),c=$('countryFilter').value,t=$('typeFilter').value;const rows=PILOT_DATA.filter(x=>(!c||x.country===c)&&(!t||x.type===t)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));$('pilotGrid').innerHTML=rows.map(x=>`<article class="record"><h3>${esc(x.name)}</h3><div class="muted">${esc(x.country)} • ${esc(x.region)}</div><p>${esc(x.approach)}</p><p class="warning">${esc(x.captainNote)}</p></article>`).join('')}
 function setupRoutes(){[...new Set(ROUTE_DATA.map(x=>x.type))].forEach(x=>$('routeType').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`));[...new Set(ROUTE_DATA.map(x=>x.status))].forEach(x=>$('routeStatus').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`))}
-function renderRoutes(){const q=$('routeSearch').value.toLowerCase(),t=$('routeType').value,s=$('routeStatus').value;const rows=ROUTE_DATA.filter(x=>(!t||x.type===t)&&(!s||x.status===s)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));$('routeGrid').innerHTML=rows.map(x=>`<article class="record"><h3>${esc(x.title)}</h3><div class="muted">${esc(x.type)} â€¢ ${esc(x.status)}</div><p>${x.stops.map(esc).join(' â†’ ')}</p></article>`).join('')}
+function renderRoutes(){const q=$('routeSearch').value.toLowerCase(),t=$('routeType').value,s=$('routeStatus').value;const rows=ROUTE_DATA.filter(x=>(!t||x.type===t)&&(!s||x.status===s)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));$('routeGrid').innerHTML=rows.map(x=>`<article class="record"><h3>${esc(x.title)}</h3><div class="muted">${esc(x.type)} • ${esc(x.status)}</div><p>${x.stops.map(esc).join(' → ')}</p></article>`).join('')}
 
 
 $('saveVessel').onclick=()=>{const a=get('atlas_fleet');a.unshift({name:$('vName').value,type:$('vType').value,flag:$('vFlag').value,loa:$('vLoa').value,beam:$('vBeam').value,draft:$('vDraft').value,cruise:$('vCruise').value,fuel:$('vFuel').value,water:$('vWater').value,notes:$('vNotes').value});set('atlas_fleet',a);renderFleet()}
-function renderFleet(){const a=get('atlas_fleet');$('fleetList').innerHTML=a.map(v=>`<article class="record"><h3>${esc(v.name)}</h3><p>${esc(v.type)} â€¢ ${esc(v.flag)} â€¢ Draft ${esc(v.draft)} m</p></article>`).join('')||'<div class="empty">No vessel records.</div>'}
+function renderFleet(){const a=get('atlas_fleet');$('fleetList').innerHTML=a.map(v=>`<article class="record"><h3>${esc(v.name)}</h3><p>${esc(v.type)} • ${esc(v.flag)} • Draft ${esc(v.draft)} m</p></article>`).join('')||'<div class="empty">No vessel records.</div>'}
 $('saveCrew').onclick=()=>{const a=get('atlas_crew');a.unshift({name:$('crewName').value,rank:$('crewRank').value,nationality:$('crewNationality').value,passport:$('crewPassport').value,medical:$('crewMedical').value,stcw:$('crewStcw').value,visa:$('crewVisa').value,contract:$('crewContract').value,contact:$('crewContact').value,notes:$('crewNotes').value});set('atlas_crew',a);renderCrew()}
-function renderCrew(){const a=get('atlas_crew');$('crewList').innerHTML=a.map(c=>`<article class="record"><h3>${esc(c.name)}</h3><p>${esc(c.rank)} â€¢ ${esc(c.nationality)}</p></article>`).join('')||'<div class="empty">No crew records.</div>'}
+function renderCrew(){const a=get('atlas_crew');$('crewList').innerHTML=a.map(c=>`<article class="record"><h3>${esc(c.name)}</h3><p>${esc(c.rank)} • ${esc(c.nationality)}</p></article>`).join('')||'<div class="empty">No crew records.</div>'}
 
 
 async function renderSummary(){const rows=await dbAll();$('sumFiles').textContent=rows.length;$('sumPubs').textContent=rows.filter(x=>x.folder==='Nautical Publications').length;$('sumCharts').textContent=rows.filter(x=>x.folder==='Nautical Charts').length;$('sumStorage').textContent=(rows.reduce((a,x)=>a+x.size,0)/1048576).toFixed(1)+' MB'}
@@ -261,26 +261,26 @@ const sinbadState = {
 let pendingSinbadWebQuestion='';
 const SINBAD_WEB_SEARCH_ENABLED=false;
 const SINBAD_WEB_TEXT={
- 'tr-TR':{ask:'Atlas Cloud hafÄ±zamda bu soruya yetecek bilgi yok. Herkese aÃ§Ä±k web kaynaklarÄ±nda arama yapmama izin veriyor musunuz?',result:'Web arama sonucu',denied:'Web aramasÄ± yapÄ±lmadÄ±.'},
+ 'tr-TR':{ask:'Atlas Cloud hafızamda bu soruya yetecek bilgi yok. Herkese açık web kaynaklarında arama yapmama izin veriyor musunuz?',result:'Web arama sonucu',denied:'Web araması yapılmadı.'},
  'en-US':{ask:'My Atlas Cloud memory does not contain enough information. May I search public web sources?',result:'Web search result',denied:'The web search was not performed.'},
- 'ru-RU':{ask:'Ğ’ Atlas Cloud Ğ½ĞµĞ´Ğ¾ÑÑ‚Ğ°Ñ‚Ğ¾Ñ‡Ğ½Ğ¾ Ğ¸Ğ½Ñ„Ğ¾Ñ€Ğ¼Ğ°Ñ†Ğ¸Ğ¸. Ğ Ğ°Ğ·Ñ€ĞµÑˆĞ¸Ñ‚ÑŒ Ğ¿Ğ¾Ğ¸ÑĞº Ğ² Ğ¾Ñ‚ĞºÑ€Ñ‹Ñ‚Ñ‹Ñ… Ğ¸ÑÑ‚Ğ¾Ñ‡Ğ½Ğ¸ĞºĞ°Ñ…?',result:'Ğ ĞµĞ·ÑƒĞ»ÑŒÑ‚Ğ°Ñ‚ Ğ²ĞµĞ±-Ğ¿Ğ¾Ğ¸ÑĞºĞ°',denied:'Ğ’ĞµĞ±-Ğ¿Ğ¾Ğ¸ÑĞº Ğ½Ğµ Ğ²Ñ‹Ğ¿Ğ¾Ğ»Ğ½ĞµĞ½.'},
- 'fr-FR':{ask:'Atlas Cloud ne contient pas assez dâ€™informations. Autorisez-vous une recherche sur le web public ?',result:'RÃ©sultat de recherche web',denied:'La recherche web nâ€™a pas Ã©tÃ© effectuÃ©e.'},
- 'de-DE':{ask:'Atlas Cloud enthÃ¤lt nicht genÃ¼gend Informationen. Darf ich im Ã¶ffentlichen Web suchen?',result:'Web-Suchergebnis',denied:'Die Websuche wurde nicht durchgefÃ¼hrt.'},
- 'ar-SA':{ask:'Ù„Ø§ ØªØ­ØªÙˆÙŠ Ø°Ø§ÙƒØ±Ø© Atlas Cloud Ø¹Ù„Ù‰ Ù…Ø¹Ù„ÙˆÙ…Ø§Øª ÙƒØ§ÙÙŠØ©. Ù‡Ù„ ØªØ³Ù…Ø­ Ù„ÙŠ Ø¨Ø§Ù„Ø¨Ø­Ø« ÙÙŠ Ø§Ù„ÙˆÙŠØ¨ Ø§Ù„Ø¹Ø§Ù…ØŸ',result:'Ù†ØªÙŠØ¬Ø© Ø¨Ø­Ø« Ø§Ù„ÙˆÙŠØ¨',denied:'Ù„Ù… ÙŠØªÙ… Ø¥Ø¬Ø±Ø§Ø¡ Ø¨Ø­Ø« Ø¹Ù„Ù‰ Ø§Ù„ÙˆÙŠØ¨.'},
- 'es-ES':{ask:'Atlas Cloud no contiene suficiente informaciÃ³n. Â¿Permite buscar en la web pÃºblica?',result:'Resultado de bÃºsqueda web',denied:'No se realizÃ³ la bÃºsqueda web.'},
- 'it-IT':{ask:'Atlas Cloud non contiene informazioni sufficienti. Autorizza la ricerca sul web pubblico?',result:'Risultato della ricerca web',denied:'La ricerca web non Ã¨ stata eseguita.'}
+ 'ru-RU':{ask:'В Atlas Cloud недостаточно информации. Разрешить поиск в открытых источниках?',result:'Результат веб-поиска',denied:'Веб-поиск не выполнен.'},
+ 'fr-FR':{ask:'Atlas Cloud ne contient pas assez d’informations. Autorisez-vous une recherche sur le web public ?',result:'Résultat de recherche web',denied:'La recherche web n’a pas été effectuée.'},
+ 'de-DE':{ask:'Atlas Cloud enthält nicht genügend Informationen. Darf ich im öffentlichen Web suchen?',result:'Web-Suchergebnis',denied:'Die Websuche wurde nicht durchgeführt.'},
+ 'ar-SA':{ask:'لا تحتوي ذاكرة Atlas Cloud على معلومات كافية. هل تسمح لي بالبحث في الويب العام؟',result:'نتيجة بحث الويب',denied:'لم يتم إجراء بحث على الويب.'},
+ 'es-ES':{ask:'Atlas Cloud no contiene suficiente información. ¿Permite buscar en la web pública?',result:'Resultado de búsqueda web',denied:'No se realizó la búsqueda web.'},
+ 'it-IT':{ask:'Atlas Cloud non contiene informazioni sufficienti. Autorizza la ricerca sul web pubblico?',result:'Risultato della ricerca web',denied:'La ricerca web non è stata eseguita.'}
 };
 function requestSinbadWebPermission(question){
   if(!SINBAD_WEB_SEARCH_ENABLED){
     pendingSinbadWebQuestion='';$('sinbadWebConsent')?.classList.add('hidden');
-    return {'tr-TR':'Sinbad yalnÄ±zca onaylÄ± Atlas Cloud denizcilik kÃ¼tÃ¼phanesini kullanÄ±yor. Bu konu iÃ§in yeterli kaynak yok; ilgili kitabÄ± veya belgeyi kÃ¼tÃ¼phaneye yÃ¼kleyin.','en-US':'Sinbad uses only the approved Atlas Cloud marine library. There is not enough material for this topic; upload the relevant book or document.','ru-RU':'Ğ¡Ğ¸Ğ½Ğ±Ğ°Ğ´ Ğ¸ÑĞ¿Ğ¾Ğ»ÑŒĞ·ÑƒĞµÑ‚ Ñ‚Ğ¾Ğ»ÑŒĞºĞ¾ ÑƒÑ‚Ğ²ĞµÑ€Ğ¶Ğ´Ñ‘Ğ½Ğ½ÑƒÑ Ğ¼Ğ¾Ñ€ÑĞºÑƒÑ Ğ±Ğ¸Ğ±Ğ»Ğ¸Ğ¾Ñ‚ĞµĞºÑƒ Atlas Cloud. Ğ—Ğ°Ğ³Ñ€ÑƒĞ·Ğ¸Ñ‚Ğµ ÑĞ¾Ğ¾Ñ‚Ğ²ĞµÑ‚ÑÑ‚Ğ²ÑƒÑÑ‰ÑƒÑ ĞºĞ½Ğ¸Ğ³Ñƒ Ğ¸Ğ»Ğ¸ Ğ´Ğ¾ĞºÑƒĞ¼ĞµĞ½Ñ‚.','fr-FR':'Sinbad utilise uniquement la bibliothÃ¨que maritime Atlas Cloud approuvÃ©e. Chargez le livre ou document correspondant.','de-DE':'Sinbad verwendet nur die freigegebene Atlas-Cloud-Seefahrtsbibliothek. Laden Sie das passende Buch oder Dokument hoch.','ar-SA':'ÙŠØ³ØªØ®Ø¯Ù… Ø³Ù†Ø¯Ø¨Ø§Ø¯ Ù…ÙƒØªØ¨Ø© Atlas Cloud Ø§Ù„Ø¨Ø­Ø±ÙŠØ© Ø§Ù„Ù…Ø¹ØªÙ…Ø¯Ø© ÙÙ‚Ø·. Ø­Ù…Ù‘Ù„ Ø§Ù„ÙƒØªØ§Ø¨ Ø£Ùˆ Ø§Ù„ÙˆØ«ÙŠÙ‚Ø© Ø°Ø§Øª Ø§Ù„ØµÙ„Ø©.','es-ES':'Sinbad usa Ãºnicamente la biblioteca marÃ­tima aprobada de Atlas Cloud. Cargue el libro o documento correspondiente.','it-IT':'Sinbad utilizza solo la biblioteca marittima Atlas Cloud approvata. Carichi il libro o documento pertinente.'}[sinbadState.language]||'Sinbad uses only the approved Atlas Cloud marine library. Upload the relevant source.';
+    return {'tr-TR':'Sinbad yalnızca onaylı Atlas Cloud denizcilik kütüphanesini kullanıyor. Bu konu için yeterli kaynak yok; ilgili kitabı veya belgeyi kütüphaneye yükleyin.','en-US':'Sinbad uses only the approved Atlas Cloud marine library. There is not enough material for this topic; upload the relevant book or document.','ru-RU':'Синбад использует только утверждённую морскую библиотеку Atlas Cloud. Загрузите соответствующую книгу или документ.','fr-FR':'Sinbad utilise uniquement la bibliothèque maritime Atlas Cloud approuvée. Chargez le livre ou document correspondant.','de-DE':'Sinbad verwendet nur die freigegebene Atlas-Cloud-Seefahrtsbibliothek. Laden Sie das passende Buch oder Dokument hoch.','ar-SA':'يستخدم سندباد مكتبة Atlas Cloud البحرية المعتمدة فقط. حمّل الكتاب أو الوثيقة ذات الصلة.','es-ES':'Sinbad usa únicamente la biblioteca marítima aprobada de Atlas Cloud. Cargue el libro o documento correspondiente.','it-IT':'Sinbad utilizza solo la biblioteca marittima Atlas Cloud approvata. Carichi il libro o documento pertinente.'}[sinbadState.language]||'Sinbad uses only the approved Atlas Cloud marine library. Upload the relevant source.';
   }
   pendingSinbadWebQuestion=question;const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];$('sinbadWebConsentText').textContent=copy.ask;$('sinbadWebConsent').classList.remove('hidden');return copy.ask;
 }
 
 function setSinbadVoiceUI(){
   const button=$('toggleSinbadVoice');if(!button)return;
-  button.textContent=sinbadState.voiceEnabled?'ğŸ”Š Voice: On':'ğŸ”‡ Voice: Off';
+  button.textContent=sinbadState.voiceEnabled?'🔊 Voice: On':'🔇 Voice: Off';
   button.setAttribute('aria-pressed',String(sinbadState.voiceEnabled));
 }
 const SINBAD_ENGLISH_WORDS=new Set(['the','a','an','and','or','for','with','is','are','you','your','this','that','can','will','please','from','have','has','not','use','using','check','safety','route','chart','course','wind','weather','forecast','notice','mariners','waypoint','knots','bearing','captain','system','online','offline','welcome','update','report','status','warning','alert','engine','fuel','crew','port','starboard','bridge','log','logbook','signal','emergency','distress','mayday','over','out','copy','roger','standby','ahead','astern','anchor','depart','arrival','eta','etd']);
@@ -393,17 +393,17 @@ let sinbadWakeActive=false;
 let sinbadAwaitingAnswer=false;
 let sinbadRestartTimer=null;
 const SINBAD_SPEECH_TEXT={
- 'tr-TR':{listen:'Dinliyorumâ€¦ KonuÅŸabilirsiniz.',ready:'ğŸ™ï¸ Sinbadâ€™a KonuÅŸ',stop:'â¹ Dinlemeyi Durdur',heard:'Sizi duydum. Sorunuz gÃ¶nderiliyorâ€¦',unsupported:'Bu tarayÄ±cÄ± sesli soru Ã¶zelliÄŸini desteklemiyor. iPhone/iPadâ€™de gÃ¼ncel Safari, Androidâ€™de gÃ¼ncel Chrome kullanÄ±n.',denied:'Mikrofon izni verilmedi. TarayÄ±cÄ± adres Ã§ubuÄŸundaki izinlerden mikrofonu aÃ§Ä±n.',test:'Ses aÃ§Ä±k Kaptan. Sizi dinlemeye hazÄ±rÄ±m.'},
- 'en-US':{listen:'Listeningâ€¦ You may speak.',ready:'ğŸ™ï¸ Speak to Sinbad',stop:'â¹ Stop listening',heard:'I heard you. Sending your questionâ€¦',unsupported:'This browser does not support voice questions. Use current Safari on iPhone/iPad or current Chrome on Android.',denied:'Microphone permission was not granted. Enable it in the browser site permissions.',test:'Voice is on, Captain. I am ready to listen.'},
- 'ru-RU':{listen:'Ğ¡Ğ»ÑƒÑˆĞ°Ñâ€¦ Ğ“Ğ¾Ğ²Ğ¾Ñ€Ğ¸Ñ‚Ğµ.',ready:'ğŸ™ï¸ Ğ“Ğ¾Ğ²Ğ¾Ñ€Ğ¸Ñ‚ÑŒ Ñ Ğ¡Ğ¸Ğ½Ğ±Ğ°Ğ´Ğ¾Ğ¼',stop:'â¹ ĞÑÑ‚Ğ°Ğ½Ğ¾Ğ²Ğ¸Ñ‚ÑŒ',heard:'Ğ¯ Ğ²Ğ°Ñ ÑƒÑĞ»Ñ‹ÑˆĞ°Ğ». ĞÑ‚Ğ¿Ñ€Ğ°Ğ²Ğ»ÑÑ Ğ²Ğ¾Ğ¿Ñ€Ğ¾Ñâ€¦',unsupported:'Ğ­Ñ‚Ğ¾Ñ‚ Ğ±Ñ€Ğ°ÑƒĞ·ĞµÑ€ Ğ½Ğµ Ğ¿Ğ¾Ğ´Ğ´ĞµÑ€Ğ¶Ğ¸Ğ²Ğ°ĞµÑ‚ Ğ³Ğ¾Ğ»Ğ¾ÑĞ¾Ğ²Ñ‹Ğµ Ğ²Ğ¾Ğ¿Ñ€Ğ¾ÑÑ‹.',denied:'ĞĞµÑ‚ Ñ€Ğ°Ğ·Ñ€ĞµÑˆĞµĞ½Ğ¸Ñ Ğ½Ğ° Ğ¼Ğ¸ĞºÑ€Ğ¾Ñ„Ğ¾Ğ½.',test:'Ğ“Ğ¾Ğ»Ğ¾Ñ Ğ²ĞºĞ»ÑÑ‡Ñ‘Ğ½, ĞºĞ°Ğ¿Ğ¸Ñ‚Ğ°Ğ½. Ğ¯ Ğ³Ğ¾Ñ‚Ğ¾Ğ² ÑĞ»ÑƒÑˆĞ°Ñ‚ÑŒ.'},
- 'fr-FR':{listen:'Je vous Ã©couteâ€¦ Parlez.',ready:'ğŸ™ï¸ Parler Ã  Sinbad',stop:'â¹ ArrÃªter',heard:'Je vous ai entendu. Envoi de la questionâ€¦',unsupported:'Ce navigateur ne prend pas en charge les questions vocales.',denied:'Lâ€™autorisation du microphone est refusÃ©e.',test:'La voix est active, Capitaine. Je vous Ã©coute.'},
- 'de-DE':{listen:'Ich hÃ¶re zuâ€¦ Sprechen Sie.',ready:'ğŸ™ï¸ Mit Sinbad sprechen',stop:'â¹ ZuhÃ¶ren beenden',heard:'Ich habe Sie gehÃ¶rt. Die Frage wird gesendetâ€¦',unsupported:'Dieser Browser unterstÃ¼tzt keine Sprachfragen.',denied:'Die Mikrofonberechtigung wurde nicht erteilt.',test:'Die Stimme ist aktiv, KapitÃ¤n. Ich hÃ¶re zu.'},
- 'ar-SA':{listen:'Ø£Ù†Ø§ Ø£Ø³ØªÙ…Ø¹â€¦ ØªÙƒÙ„Ù‘Ù… Ø§Ù„Ø¢Ù†.',ready:'ğŸ™ï¸ ØªØ­Ø¯Ø« Ø¥Ù„Ù‰ Ø³Ù†Ø¯Ø¨Ø§Ø¯',stop:'â¹ Ø¥ÙŠÙ‚Ø§Ù Ø§Ù„Ø§Ø³ØªÙ…Ø§Ø¹',heard:'Ø³Ù…Ø¹ØªÙƒ. ÙŠØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ø³Ø¤Ø§Ù„â€¦',unsupported:'Ù‡Ø°Ø§ Ø§Ù„Ù…ØªØµÙØ­ Ù„Ø§ ÙŠØ¯Ø¹Ù… Ø§Ù„Ø£Ø³Ø¦Ù„Ø© Ø§Ù„ØµÙˆØªÙŠØ©.',denied:'Ù„Ù… ÙŠØªÙ… Ø§Ù„Ø³Ù…Ø§Ø­ Ø¨Ø§Ø³ØªØ®Ø¯Ø§Ù… Ø§Ù„Ù…ÙŠÙƒØ±ÙˆÙÙˆÙ†.',test:'Ø§Ù„ØµÙˆØª ÙŠØ¹Ù…Ù„ Ø£ÙŠÙ‡Ø§ Ø§Ù„Ù‚Ø¨Ø·Ø§Ù†. Ø£Ù†Ø§ Ù…Ø³ØªØ¹Ø¯ Ù„Ù„Ø§Ø³ØªÙ…Ø§Ø¹.'},
- 'es-ES':{listen:'Escuchandoâ€¦ Puede hablar.',ready:'ğŸ™ï¸ Hablar con Sinbad',stop:'â¹ Dejar de escuchar',heard:'Le he oÃ­do. Enviando la preguntaâ€¦',unsupported:'Este navegador no admite preguntas de voz.',denied:'No se concediÃ³ permiso para el micrÃ³fono.',test:'La voz estÃ¡ activa, CapitÃ¡n. Estoy listo para escuchar.'},
- 'it-IT':{listen:'Ti ascoltoâ€¦ Puoi parlare.',ready:'ğŸ™ï¸ Parla con Sinbad',stop:'â¹ Ferma ascolto',heard:'Ti ho sentito. Invio della domandaâ€¦',unsupported:'Questo browser non supporta le domande vocali.',denied:'Il permesso del microfono non Ã¨ stato concesso.',test:'La voce Ã¨ attiva, Capitano. Sono pronto ad ascoltare.'}
+ 'tr-TR':{listen:'Dinliyorum… Konuşabilirsiniz.',ready:'🎙️ Sinbad’a Konuş',stop:'⏹ Dinlemeyi Durdur',heard:'Sizi duydum. Sorunuz gönderiliyor…',unsupported:'Bu tarayıcı sesli soru özelliğini desteklemiyor. iPhone/iPad’de güncel Safari, Android’de güncel Chrome kullanın.',denied:'Mikrofon izni verilmedi. Tarayıcı adres çubuğundaki izinlerden mikrofonu açın.',test:'Ses açık Kaptan. Sizi dinlemeye hazırım.'},
+ 'en-US':{listen:'Listening… You may speak.',ready:'🎙️ Speak to Sinbad',stop:'⏹ Stop listening',heard:'I heard you. Sending your question…',unsupported:'This browser does not support voice questions. Use current Safari on iPhone/iPad or current Chrome on Android.',denied:'Microphone permission was not granted. Enable it in the browser site permissions.',test:'Voice is on, Captain. I am ready to listen.'},
+ 'ru-RU':{listen:'Слушаю… Говорите.',ready:'🎙️ Говорить с Синбадом',stop:'⏹ Остановить',heard:'Я вас услышал. Отправляю вопрос…',unsupported:'Этот браузер не поддерживает голосовые вопросы.',denied:'Нет разрешения на микрофон.',test:'Голос включён, капитан. Я готов слушать.'},
+ 'fr-FR':{listen:'Je vous écoute… Parlez.',ready:'🎙️ Parler à Sinbad',stop:'⏹ Arrêter',heard:'Je vous ai entendu. Envoi de la question…',unsupported:'Ce navigateur ne prend pas en charge les questions vocales.',denied:'L’autorisation du microphone est refusée.',test:'La voix est active, Capitaine. Je vous écoute.'},
+ 'de-DE':{listen:'Ich höre zu… Sprechen Sie.',ready:'🎙️ Mit Sinbad sprechen',stop:'⏹ Zuhören beenden',heard:'Ich habe Sie gehört. Die Frage wird gesendet…',unsupported:'Dieser Browser unterstützt keine Sprachfragen.',denied:'Die Mikrofonberechtigung wurde nicht erteilt.',test:'Die Stimme ist aktiv, Kapitän. Ich höre zu.'},
+ 'ar-SA':{listen:'أنا أستمع… تكلّم الآن.',ready:'🎙️ تحدث إلى سندباد',stop:'⏹ إيقاف الاستماع',heard:'سمعتك. يتم إرسال السؤال…',unsupported:'هذا المتصفح لا يدعم الأسئلة الصوتية.',denied:'لم يتم السماح باستخدام الميكروفون.',test:'الصوت يعمل أيها القبطان. أنا مستعد للاستماع.'},
+ 'es-ES':{listen:'Escuchando… Puede hablar.',ready:'🎙️ Hablar con Sinbad',stop:'⏹ Dejar de escuchar',heard:'Le he oído. Enviando la pregunta…',unsupported:'Este navegador no admite preguntas de voz.',denied:'No se concedió permiso para el micrófono.',test:'La voz está activa, Capitán. Estoy listo para escuchar.'},
+ 'it-IT':{listen:'Ti ascolto… Puoi parlare.',ready:'🎙️ Parla con Sinbad',stop:'⏹ Ferma ascolto',heard:'Ti ho sentito. Invio della domanda…',unsupported:'Questo browser non supporta le domande vocali.',denied:'Il permesso del microfono non è stato concesso.',test:'La voce è attiva, Capitano. Sono pronto ad ascoltare.'}
 };
 function speechCopy(){return SINBAD_SPEECH_TEXT[sinbadState.language]||SINBAD_SPEECH_TEXT['en-US'];}
-function handsFreeMessage(){return {'tr-TR':'Eller serbest aÃ§Ä±k â€” â€œHey Sinbadâ€ deyin.','en-US':'Hands-free active â€” say â€œHey Sinbadâ€.','ru-RU':'Ğ ĞµĞ¶Ğ¸Ğ¼ Ğ±ĞµĞ· Ñ€ÑƒĞº Ğ²ĞºĞ»ÑÑ‡Ñ‘Ğ½ â€” ÑĞºĞ°Ğ¶Ğ¸Ñ‚Ğµ Â«Hey SinbadÂ».','fr-FR':'Mode mains libres actif â€” dites Â«Hey SinbadÂ».','de-DE':'Freisprechen aktiv â€” sagen Sie â€Hey Sinbadâ€œ.','ar-SA':'ÙˆØ¶Ø¹ Ø§Ù„ØªØ­Ø¯Ø« Ø§Ù„Ø­Ø± Ù†Ø´Ø· â€” Ù‚Ù„ Â«Hey SinbadÂ».','es-ES':'Modo manos libres activo â€” diga Â«Hey SinbadÂ».','it-IT':'ModalitÃ  vivavoce attiva â€” dica Â«Hey SinbadÂ».'}[sinbadState.language]||'Hands-free active â€” say â€œHey Sinbadâ€.';}
+function handsFreeMessage(){return {'tr-TR':'Eller serbest açık — “Hey Sinbad” deyin.','en-US':'Hands-free active — say “Hey Sinbad”.','ru-RU':'Режим без рук включён — скажите «Hey Sinbad».','fr-FR':'Mode mains libres actif — dites «Hey Sinbad».','de-DE':'Freisprechen aktiv — sagen Sie „Hey Sinbad“.','ar-SA':'وضع التحدث الحر نشط — قل «Hey Sinbad».','es-ES':'Modo manos libres activo — diga «Hey Sinbad».','it-IT':'Modalità vivavoce attiva — dica «Hey Sinbad».'}[sinbadState.language]||'Hands-free active — say “Hey Sinbad”.';}
 function setListeningUI(message='',visible=false){
   const button=$('startSinbadListening'),status=$('sinbadListeningStatus');if(!button||!status)return;
   button.textContent=sinbadHandsFreeEnabled?speechCopy().stop:speechCopy().ready;button.setAttribute('aria-pressed',String(sinbadHandsFreeEnabled));
@@ -425,7 +425,7 @@ function beginSinbadRecognition(){
   sinbadRecognition.onerror=event=>{sinbadIsListening=false;if(event.error==='not-allowed'||event.error==='service-not-allowed'){sinbadHandsFreeEnabled=false;setListeningUI(speechCopy().denied,true);return;}if(!['no-speech','aborted'].includes(event.error))setListeningUI(`Microphone: ${event.error}`,true);};
   sinbadRecognition.onend=()=>{
     sinbadIsListening=false;const heard=finalTranscript.trim();
-    const wakeMatch=heard.match(/(?:hey|hei|hej|ÑĞ¹|ÙŠØ§)?\s*(?:sinbad|sindbad|simbad)/iu);
+    const wakeMatch=heard.match(/(?:hey|hei|hej|эй|يا)?\s*(?:sinbad|sindbad|simbad)/iu);
     let command='';
     if(wakeMatch){sinbadWakeActive=true;command=heard.slice((wakeMatch.index||0)+wakeMatch[0].length).replace(/^[,.:;!?\s-]+/,'').trim();}
     else if(sinbadWakeActive)command=heard;
@@ -465,7 +465,7 @@ function addSinbadMessage(role,text){
 }
 function renderOfficialSources(){
   const box=$('officialSourceList');if(!box||typeof OFFICIAL_PUBLICATIONS==='undefined')return;
-  box.innerHTML=OFFICIAL_PUBLICATIONS.map(source=>`<article class="source-card"><strong>${esc(source.title)}</strong><br><small>${esc(source.authority)} â€¢ ${esc(source.edition)} â€¢ ${esc(source.status)}</small><p>${esc(source.notes)}</p><a href="${esc(source.url)}" target="_blank" rel="noopener noreferrer">Open official source</a></article>`).join('');
+  box.innerHTML=OFFICIAL_PUBLICATIONS.map(source=>`<article class="source-card"><strong>${esc(source.title)}</strong><br><small>${esc(source.authority)} • ${esc(source.edition)} • ${esc(source.status)}</small><p>${esc(source.notes)}</p><a href="${esc(source.url)}" target="_blank" rel="noopener noreferrer">Open official source</a></article>`).join('');
 }
 function currentPassageInput(){
   const fleet=get('atlas_fleet'),vessel=fleet[0]||{};
@@ -507,7 +507,7 @@ function validBridgeWaypoints(){
 }
 function buildBridgeGpx(){
   const points=validBridgeWaypoints(),name=bridgeRouteName(),created=new Date().toISOString();
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Sinbad Marine ECS" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">\n  <metadata><name>${bridgeXml(name)}</name><time>${created}</time><desc>Planning draft. Verify against current official charts and Notices to Mariners.</desc></metadata>\n  ${points.map(point=>`<wpt lat="${point.lat.toFixed(6)}" lon="${point.lon.toFixed(6)}"><name>${bridgeXml(point.name)}</name></wpt>`).join('\n  ')}\n  <rte><name>${bridgeXml(name)}</name><desc>Sinbad planning route â€” captain approval required.</desc>\n    ${points.map(point=>`<rtept lat="${point.lat.toFixed(6)}" lon="${point.lon.toFixed(6)}"><name>${bridgeXml(point.name)}</name></rtept>`).join('\n    ')}\n  </rte>\n</gpx>\n`;
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Sinbad Marine ECS" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">\n  <metadata><name>${bridgeXml(name)}</name><time>${created}</time><desc>Planning draft. Verify against current official charts and Notices to Mariners.</desc></metadata>\n  ${points.map(point=>`<wpt lat="${point.lat.toFixed(6)}" lon="${point.lon.toFixed(6)}"><name>${bridgeXml(point.name)}</name></wpt>`).join('\n  ')}\n  <rte><name>${bridgeXml(name)}</name><desc>Sinbad planning route — captain approval required.</desc>\n    ${points.map(point=>`<rtept lat="${point.lat.toFixed(6)}" lon="${point.lon.toFixed(6)}"><name>${bridgeXml(point.name)}</name></rtept>`).join('\n    ')}\n  </rte>\n</gpx>\n`;
 }
 function safeBridgeFilename(){return `${bridgeRouteName().replace(/[^a-z0-9_-]+/gi,'-').replace(/^-|-$/g,'')||'sinbad-route'}.gpx`;}
 function downloadBridgeGpx(){
@@ -521,7 +521,7 @@ async function sendBridgeGpx(){
 }
 async function checkBridgeStatus(){
   const badge=$('bridgeStatus');if(!badge)return;
-  try{const response=await fetch(`${SINBAD_BRIDGE_URL}/status`,{cache:'no-store'});if(!response.ok)throw new Error();const status=await response.json();const indexed=status.library?.chunks??status.library?.count??0;badge.textContent=`Bridge online Â· ${status.routes} route(s) Â· ${indexed} memory chunk(s)`;badge.className='bridge-status online';}
+  try{const response=await fetch(`${SINBAD_BRIDGE_URL}/status`,{cache:'no-store'});if(!response.ok)throw new Error();const status=await response.json();const indexed=status.library?.chunks??status.library?.count??0;badge.textContent=`Bridge online · ${status.routes} route(s) · ${indexed} memory chunk(s)`;badge.className='bridge-status online';}
   catch(error){badge.textContent='Bridge offline';badge.className='bridge-status offline';}
 }
 async function sinbadBridgeJson(path,options={}){
@@ -531,7 +531,7 @@ async function sinbadBridgeJson(path,options={}){
 }
 async function syncSinbadOfflineMemory(){
   const button=$('syncSinbadMemory'),status=$('sinbadMemoryStatus');
-  if(button)button.disabled=true;if(status)status.textContent='Preparing offline memoryâ€¦';
+  if(button)button.disabled=true;if(status)status.textContent='Preparing offline memory…';
   let documents=0,errors=0;
   try{
     await sinbadBridgeJson('/status');
@@ -547,14 +547,14 @@ async function syncSinbadOfflineMemory(){
         if(error)throw error;const parts=[doc.summary,...(data||[]).map(item=>item.content)].filter(Boolean);if(!parts.length)continue;
         await sinbadBridgeJson('/library/ingest',{method:'POST',body:JSON.stringify({title:doc.title||`Atlas document ${doc.id}`,text:parts.join('\n\n'),sourceUrl:`atlas-cloud://document-knowledge/${doc.id}`,kind:doc.classification||'publication'})});documents++;
       }catch(error){console.warn('Offline memory document skipped',doc.id,error);errors++;}
-      if(status)status.textContent=`Reading libraryâ€¦ ${documents}/${knowledge.length}`;
+      if(status)status.textContent=`Reading library… ${documents}/${knowledge.length}`;
     }
     const catalogue=(typeof OFFICIAL_PUBLICATIONS==='undefined'?[]:OFFICIAL_PUBLICATIONS).map(source=>[
       `Title: ${source.title}`,`Authority: ${source.authority}`,`Edition: ${source.edition}`,`Region: ${source.region}`,`Type: ${source.type}`,`Access: ${source.access}`,`Status: ${source.status}`,`URL: ${source.url}`,`Local file: ${source.localFile||''}`,`Notes: ${source.notes||''}`
     ].join('\n')).join('\n\n---\n\n');
     if(catalogue){await sinbadBridgeJson('/library/ingest',{method:'POST',body:JSON.stringify({title:'Approved official source catalogue',text:catalogue,sourceUrl:'atlas://official-publications',kind:'official-source-catalogue'})});documents++;}
     const result=await sinbadBridgeJson('/library/reindex',{method:'POST',body:'{}'});const total=result.chunks??result.count??0;
-    if(status)status.textContent=`Offline memory ready Â· ${documents} documents Â· ${total} chunks${errors?` Â· ${errors} skipped`:''}`;checkBridgeStatus();
+    if(status)status.textContent=`Offline memory ready · ${documents} documents · ${total} chunks${errors?` · ${errors} skipped`:''}`;checkBridgeStatus();
   }catch(error){console.error(error);if(status)status.textContent=`Sync failed: ${error.message}`;}
   finally{if(button)button.disabled=false;}
 }
@@ -567,7 +567,7 @@ async function importBridgeGpxFile(file){
   }catch(error){$('bridgeMessage').textContent=error.message;}
 }
 function academyTrainingQuery(query){
-  return /(chart|harita|nautical|hydrograph|hidrograf|tide|gelgit|current|akÄ±ntÄ±|akinti|set\b|drift|colreg|rule of the road|seyir kural|light|shape|sound signal|enc\b|ecdis|electronic navigation|weather|hava|visibility|gÃ¶rÃ¼ÅŸ|goruÅŸ|course|bearing|kerteriz|compass|pusula|navigation|navigasyon|seyir eÄŸitim|seyir egitim)/iu.test(query);
+  return /(chart|harita|nautical|hydrograph|hidrograf|tide|gelgit|current|akıntı|akinti|set\b|drift|colreg|rule of the road|seyir kural|light|shape|sound signal|enc\b|ecdis|electronic navigation|weather|hava|visibility|görüş|goruş|course|bearing|kerteriz|compass|pusula|navigation|navigasyon|seyir eğitim|seyir egitim)/iu.test(query);
 }
 function academyOfflineAnswer(query){
   if(!academyTrainingQuery(query)||!window.SinbadAcademy||!window.SINBAD_TRAINING_DATA)return null;
@@ -577,14 +577,14 @@ function renderAcademyLesson(){
   const category=$('academyModule')?.value,lesson=window.SinbadAcademy?.lesson(category,window.SINBAD_TRAINING_DATA),output=$('academyOutput');
   if(!lesson||!output)return;
   const progress=JSON.parse(localStorage.getItem('sinbad_academy_progress')||'{}');progress[category]={openedAt:new Date().toISOString(),status:'studying'};localStorage.setItem('sinbad_academy_progress',JSON.stringify(progress));
-  output.textContent=`${lesson.title}\n\nLearning objectives\n${lesson.objectives.map(x=>'â€¢ '+x).join('\n')}\n\nPractice\n${lesson.practice}\n\nOfficial offline sources\n${lesson.sources.map((x,i)=>`[S${i+1}] ${x.title} â€” ${x.authority}`).join('\n')||'No matching offline source.'}\n\nâš  Training only. Operational decisions require current official information and captain approval.`;
+  output.textContent=`${lesson.title}\n\nLearning objectives\n${lesson.objectives.map(x=>'• '+x).join('\n')}\n\nPractice\n${lesson.practice}\n\nOfficial offline sources\n${lesson.sources.map((x,i)=>`[S${i+1}] ${x.title} — ${x.authority}`).join('\n')||'No matching offline source.'}\n\n⚠ Training only. Operational decisions require current official information and captain approval.`;
 }
 function renderAcademyQuiz(){
   const category=$('academyModule')?.value,items=window.SinbadAcademy?.quiz(category)||[],output=$('academyOutput');if(!items.length||!output)return;
   const item=items[Math.floor(Math.random()*items.length)];output.replaceChildren();
   const title=document.createElement('strong');title.textContent=item.q;output.append(title);
   const choices=document.createElement('div');choices.className='academy-choices';
-  item.choices.forEach((choice,index)=>{const button=document.createElement('button');button.type='button';button.className='btn';button.textContent=choice;button.addEventListener('click',()=>{[...choices.children].forEach(x=>x.disabled=true);button.classList.add(index===item.answer?'primary':'danger');const result=document.createElement('p');result.textContent=`${index===item.answer?'âœ“ Correct':'âœ— Review'} â€” ${item.explanation} [${item.source}]`;output.append(result);if(index===item.answer){const progress=JSON.parse(localStorage.getItem('sinbad_academy_progress')||'{}');progress[category]={completedAt:new Date().toISOString(),status:'practised'};localStorage.setItem('sinbad_academy_progress',JSON.stringify(progress));}});choices.append(button);});
+  item.choices.forEach((choice,index)=>{const button=document.createElement('button');button.type='button';button.className='btn';button.textContent=choice;button.addEventListener('click',()=>{[...choices.children].forEach(x=>x.disabled=true);button.classList.add(index===item.answer?'primary':'danger');const result=document.createElement('p');result.textContent=`${index===item.answer?'✓ Correct':'✗ Review'} — ${item.explanation} [${item.source}]`;output.append(result);if(index===item.answer){const progress=JSON.parse(localStorage.getItem('sinbad_academy_progress')||'{}');progress[category]={completedAt:new Date().toISOString(),status:'practised'};localStorage.setItem('sinbad_academy_progress',JSON.stringify(progress));}});choices.append(button);});
   output.append(choices);const source=document.createElement('small');source.className='academy-source';source.textContent=`Official source: ${item.source}`;output.append(source);
 }
 async function sinbadLocalAnswer(query){
@@ -594,14 +594,14 @@ async function sinbadLocalAnswer(query){
     history:sinbadState.messages,
     experts:{
       emergency:{mode:window.SinbadCore?.EXPERT_MODE,handle:()=>language==='tr-TR'
-        ? 'ACÄ°L DURUM: Ä°nsan komutasÄ±nÄ± ve geminin onaylÄ± acil durum prosedÃ¼rlerini derhal devreye alÄ±n. Uygunsa MAYDAY/PAN-PAN Ã§aÄŸrÄ±sÄ± yapÄ±n, mevkiyi ve tehlikenin niteliÄŸini bildirin; Sinbad yalnÄ±zca karar desteÄŸidir.'
+        ? 'ACİL DURUM: İnsan komutasını ve geminin onaylı acil durum prosedürlerini derhal devreye alın. Uygunsa MAYDAY/PAN-PAN çağrısı yapın, mevkiyi ve tehlikenin niteliğini bildirin; Sinbad yalnızca karar desteğidir.'
         : 'EMERGENCY: Activate human command and the vessel approved emergency procedures immediately. When appropriate transmit MAYDAY/PAN-PAN with position and nature of distress; Sinbad is decision support only.'},
       navigation:{mode:window.SinbadCore?.EXPERT_MODE,handle:()=>window.SinbadNavigation?.answer?.(query,language)}
     }
   });
   if(coreResult?.handled)return coreResult.answer;
-  const greetings={'tr-TR':'Merhaba Kaptan. Sinbad aktif. Rotalar, denizcilik yayÄ±nlarÄ±, belgeler, haritalar ve tekne operasyonlarÄ± hakkÄ±nda bana soru sorabilirsiniz.','en-US':'Hello Captain. Sinbad is active. Ask me about routes, marine publications, documents, charts, or yacht operations.','ru-RU':'Ğ—Ğ´Ñ€Ğ°Ğ²ÑÑ‚Ğ²ÑƒĞ¹Ñ‚Ğµ, ĞºĞ°Ğ¿Ğ¸Ñ‚Ğ°Ğ½. Ğ¡Ğ¸Ğ½Ğ±Ğ°Ğ´ Ğ°ĞºÑ‚Ğ¸Ğ²ĞµĞ½. Ğ¡Ğ¿Ñ€Ğ¾ÑĞ¸Ñ‚Ğµ Ğ¼ĞµĞ½Ñ Ğ¾ Ğ¼Ğ°Ñ€ÑˆÑ€ÑƒÑ‚Ğ°Ñ…, Ğ¼Ğ¾Ñ€ÑĞºĞ¸Ñ… Ğ¸Ğ·Ğ´Ğ°Ğ½Ğ¸ÑÑ…, Ğ´Ğ¾ĞºÑƒĞ¼ĞµĞ½Ñ‚Ğ°Ñ…, ĞºĞ°Ñ€Ñ‚Ğ°Ñ… Ğ¸Ğ»Ğ¸ ÑĞºÑĞ¿Ğ»ÑƒĞ°Ñ‚Ğ°Ñ†Ğ¸Ğ¸ ÑÑ…Ñ‚Ñ‹.','fr-FR':'Bonjour Capitaine. Sinbad est actif. Interrogez-moi sur les routes, publications maritimes, documents, cartes ou opÃ©rations du yacht.','de-DE':'Hallo KapitÃ¤n. Sinbad ist aktiv. Fragen Sie mich zu Routen, nautischen Publikationen, Dokumenten, Karten oder Yachtbetrieb.','ar-SA':'Ù…Ø±Ø­Ø¨Ø§Ù‹ Ø£ÙŠÙ‡Ø§ Ø§Ù„Ù‚Ø¨Ø·Ø§Ù†. Ø³Ù†Ø¯Ø¨Ø§Ø¯ Ù†Ø´Ø·. Ø§Ø³Ø£Ù„Ù†ÙŠ Ø¹Ù† Ø§Ù„Ù…Ø³Ø§Ø±Ø§Øª Ø£Ùˆ Ø§Ù„Ù…Ù†Ø´ÙˆØ±Ø§Øª Ø§Ù„Ø¨Ø­Ø±ÙŠØ© Ø£Ùˆ Ø§Ù„ÙˆØ«Ø§Ø¦Ù‚ Ø£Ùˆ Ø§Ù„Ø®Ø±Ø§Ø¦Ø· Ø£Ùˆ Ø¹Ù…Ù„ÙŠØ§Øª Ø§Ù„ÙŠØ®Øª.','es-ES':'Hola CapitÃ¡n. Sinbad estÃ¡ activo. PregÃºnteme sobre rutas, publicaciones marÃ­timas, documentos, cartas u operaciones del yate.','it-IT':'Salve Capitano. Sinbad Ã¨ attivo. Mi chieda informazioni su rotte, pubblicazioni nautiche, documenti, carte o operazioni dello yacht.'};
-  if(/^(slm|selam|merhaba|hello|hi|hey|Ğ¿Ñ€Ğ¸Ğ²ĞµÑ‚|Ğ·Ğ´Ñ€Ğ°Ğ²|bonjour|salut|hallo|guten|Ù…Ø±Ø­Ø¨Ø§|Ø§Ù„Ø³Ù„Ø§Ù…|hola|buen|ciao|salve)[!. ]*$/iu.test(q))return greetings[language]||greetings['en-US'];
+  const greetings={'tr-TR':'Merhaba Kaptan. Sinbad aktif. Rotalar, denizcilik yayınları, belgeler, haritalar ve tekne operasyonları hakkında bana soru sorabilirsiniz.','en-US':'Hello Captain. Sinbad is active. Ask me about routes, marine publications, documents, charts, or yacht operations.','ru-RU':'Здравствуйте, капитан. Синбад активен. Спросите меня о маршрутах, морских изданиях, документах, картах или эксплуатации яхты.','fr-FR':'Bonjour Capitaine. Sinbad est actif. Interrogez-moi sur les routes, publications maritimes, documents, cartes ou opérations du yacht.','de-DE':'Hallo Kapitän. Sinbad ist aktiv. Fragen Sie mich zu Routen, nautischen Publikationen, Dokumenten, Karten oder Yachtbetrieb.','ar-SA':'مرحباً أيها القبطان. سندباد نشط. اسألني عن المسارات أو المنشورات البحرية أو الوثائق أو الخرائط أو عمليات اليخت.','es-ES':'Hola Capitán. Sinbad está activo. Pregúnteme sobre rutas, publicaciones marítimas, documentos, cartas u operaciones del yate.','it-IT':'Salve Capitano. Sinbad è attivo. Mi chieda informazioni su rotte, pubblicazioni nautiche, documenti, carte o operazioni dello yacht.'};
+  if(/^(slm|selam|merhaba|hello|hi|hey|привет|здрав|bonjour|salut|hallo|guten|مرحبا|السلام|hola|buen|ciao|salve)[!. ]*$/iu.test(q))return greetings[language]||greetings['en-US'];
   // At sea, avoid waiting for an unreachable cloud request. When the browser
   // reports that it is offline, ask the local Ollama brain first.
   const offlineFirst=navigator.onLine===false;
@@ -629,7 +629,7 @@ async function sinbadLocalAnswer(query){
     const alerts=[];
     crew.forEach(c=>[['Passport',c.passport],['Medical',c.medical],['STCW',c.stcw],['Visa',c.visa],['Contract',c.contract]].forEach(([type,date])=>{
       if(!date)return; const days=Math.ceil((new Date(date+'T00:00:00')-new Date())/86400000);
-      if(days<=90) alerts.push(`${c.name || 'Crew member'} â€” ${type}: ${days<0?'expired '+Math.abs(days)+' days ago':days+' days remaining'}`);
+      if(days<=90) alerts.push(`${c.name || 'Crew member'} — ${type}: ${days<0?'expired '+Math.abs(days)+' days ago':days+' days remaining'}`);
     }));
     return alerts.length ? `I found these crew alerts:\n\n${alerts.join('\n')}` : 'I found no crew items expiring within 90 days.';
   }
@@ -637,49 +637,49 @@ async function sinbadLocalAnswer(query){
 
   if(q.includes('chart')){
     const charts=files.filter(x=>x.folder==='Nautical Charts');
-    return charts.length ? `You currently have ${charts.length} nautical chart file(s):\n\n${charts.slice(0,10).map(x=>'â€¢ '+x.name).join('\n')}` : 'No nautical charts are stored on this device yet.';
+    return charts.length ? `You currently have ${charts.length} nautical chart file(s):\n\n${charts.slice(0,10).map(x=>'• '+x.name).join('\n')}` : 'No nautical charts are stored on this device yet.';
   }
 
 
   if(q.includes('publication') || q.includes('solas') || q.includes('marpol')){
     const pubs=files.filter(x=>x.folder==='Nautical Publications' || `${x.name} ${x.tags}`.toLowerCase().includes(q));
-    return pubs.length ? `I found ${pubs.length} relevant publication file(s):\n\n${pubs.slice(0,10).map(x=>'â€¢ '+x.name).join('\n')}` : 'I could not find a matching nautical publication in the local library. Upload it to Nautical Publications and add descriptive tags.';
+    return pubs.length ? `I found ${pubs.length} relevant publication file(s):\n\n${pubs.slice(0,10).map(x=>'• '+x.name).join('\n')}` : 'I could not find a matching nautical publication in the local library. Upload it to Nautical Publications and add descriptive tags.';
   }
 
 
   if(q.includes('fleet') || q.includes('vessel')){
-    return fleet.length ? `Fleet records:\n\n${fleet.map(v=>`â€¢ ${v.name || 'Unnamed vessel'} â€” ${v.type || 'type not entered'}, draft ${v.draft || 'â€”'} m`).join('\n')}` : 'No vessel has been added to Fleet Manager yet.';
+    return fleet.length ? `Fleet records:\n\n${fleet.map(v=>`• ${v.name || 'Unnamed vessel'} — ${v.type || 'type not entered'}, draft ${v.draft || '—'} m`).join('\n')}` : 'No vessel has been added to Fleet Manager yet.';
   }
 
 
   if(fileMatches.length || pilotMatches.length || routeMatches.length){
     const parts=[];
-    if(fileMatches.length)parts.push('Files:\n'+fileMatches.map(x=>'â€¢ '+x.name+' ['+x.folder+']').join('\n'));
-    if(pilotMatches.length)parts.push('Pilot Library:\n'+pilotMatches.map(x=>'â€¢ '+x.name+' â€” '+x.country).join('\n'));
-    if(routeMatches.length)parts.push('Routes:\n'+routeMatches.map(x=>'â€¢ '+x.title).join('\n'));
+    if(fileMatches.length)parts.push('Files:\n'+fileMatches.map(x=>'• '+x.name+' ['+x.folder+']').join('\n'));
+    if(pilotMatches.length)parts.push('Pilot Library:\n'+pilotMatches.map(x=>'• '+x.name+' — '+x.country).join('\n'));
+    if(routeMatches.length)parts.push('Routes:\n'+routeMatches.map(x=>'• '+x.title).join('\n'));
     return `I found the following Atlas Marine records:\n\n${parts.join('\n\n')}`;
   }
 
 
   if(q.includes('passage') || q.includes('checklist')){
-    return 'Passage planning checklist:\n\nâ€¢ Confirm vessel particulars and draft\nâ€¢ Review official charts and notices\nâ€¢ Verify weather and sea state\nâ€¢ Calculate distance, ETA and fuel reserve\nâ€¢ Confirm ports of refuge and alternates\nâ€¢ Check customs, immigration and pilotage\nâ€¢ Complete bridge team briefing\nâ€¢ Save the approved passage in Route Library';
+    return 'Passage planning checklist:\n\n• Confirm vessel particulars and draft\n• Review official charts and notices\n• Verify weather and sea state\n• Calculate distance, ETA and fuel reserve\n• Confirm ports of refuge and alternates\n• Check customs, immigration and pilotage\n• Complete bridge team briefing\n• Save the approved passage in Route Library';
   }
 
 
-  const noMatch={'tr-TR':'Atlas Marine verilerinde gÃ¼Ã§lÃ¼ bir eÅŸleÅŸme bulamadÄ±m. Ä°lgili kitabÄ± veya belgeyi Atlas Cloud kitaplÄ±ÄŸÄ±na yÃ¼kleyin ya da sorunuzu daha ayrÄ±ntÄ±lÄ± yazÄ±n.','en-US':'I did not find a strong match in Atlas Marine data. Upload the relevant book or document to the Atlas Cloud library, or ask a more specific question.','ru-RU':'Ğ¯ Ğ½Ğµ Ğ½Ğ°ÑˆÑ‘Ğ» Ñ‚Ğ¾Ñ‡Ğ½Ğ¾Ğ³Ğ¾ ÑĞ¾Ğ²Ğ¿Ğ°Ğ´ĞµĞ½Ğ¸Ñ Ğ² Ğ´Ğ°Ğ½Ğ½Ñ‹Ñ… Atlas Marine. Ğ—Ğ°Ğ³Ñ€ÑƒĞ·Ğ¸Ñ‚Ğµ Ğ½ÑƒĞ¶Ğ½ÑƒÑ ĞºĞ½Ğ¸Ğ³Ñƒ Ğ¸Ğ»Ğ¸ Ğ´Ğ¾ĞºÑƒĞ¼ĞµĞ½Ñ‚ Ğ² Atlas Cloud Ğ»Ğ¸Ğ±Ğ¾ ÑƒÑ‚Ğ¾Ñ‡Ğ½Ğ¸Ñ‚Ğµ Ğ²Ğ¾Ğ¿Ñ€Ğ¾Ñ.','fr-FR':'Je nâ€™ai pas trouvÃ© de correspondance prÃ©cise dans Atlas Marine. Chargez le livre ou document dans Atlas Cloud ou prÃ©cisez votre question.','de-DE':'Ich habe keine eindeutige Ãœbereinstimmung gefunden. Laden Sie das Buch oder Dokument in Atlas Cloud hoch oder stellen Sie eine genauere Frage.','ar-SA':'Ù„Ù… Ø£Ø¬Ø¯ ØªØ·Ø§Ø¨Ù‚Ø§Ù‹ ÙˆØ§Ø¶Ø­Ø§Ù‹ ÙÙŠ Ø¨ÙŠØ§Ù†Ø§Øª Atlas Marine. Ø­Ù…Ù‘Ù„ Ø§Ù„ÙƒØªØ§Ø¨ Ø£Ùˆ Ø§Ù„ÙˆØ«ÙŠÙ‚Ø© Ø¥Ù„Ù‰ Ù…ÙƒØªØ¨Ø© Atlas Cloud Ø£Ùˆ Ø§Ø·Ø±Ø­ Ø³Ø¤Ø§Ù„Ø§Ù‹ Ø£ÙƒØ«Ø± ØªØ­Ø¯ÙŠØ¯Ø§Ù‹.','es-ES':'No encontrÃ© una coincidencia clara en Atlas Marine. Cargue el libro o documento en Atlas Cloud o formule una pregunta mÃ¡s especÃ­fica.','it-IT':'Non ho trovato una corrispondenza chiara in Atlas Marine. Carichi il libro o documento in Atlas Cloud oppure formuli una domanda piÃ¹ specifica.'};
+  const noMatch={'tr-TR':'Atlas Marine verilerinde güçlü bir eşleşme bulamadım. İlgili kitabı veya belgeyi Atlas Cloud kitaplığına yükleyin ya da sorunuzu daha ayrıntılı yazın.','en-US':'I did not find a strong match in Atlas Marine data. Upload the relevant book or document to the Atlas Cloud library, or ask a more specific question.','ru-RU':'Я не нашёл точного совпадения в данных Atlas Marine. Загрузите нужную книгу или документ в Atlas Cloud либо уточните вопрос.','fr-FR':'Je n’ai pas trouvé de correspondance précise dans Atlas Marine. Chargez le livre ou document dans Atlas Cloud ou précisez votre question.','de-DE':'Ich habe keine eindeutige Übereinstimmung gefunden. Laden Sie das Buch oder Dokument in Atlas Cloud hoch oder stellen Sie eine genauere Frage.','ar-SA':'لم أجد تطابقاً واضحاً في بيانات Atlas Marine. حمّل الكتاب أو الوثيقة إلى مكتبة Atlas Cloud أو اطرح سؤالاً أكثر تحديداً.','es-ES':'No encontré una coincidencia clara en Atlas Marine. Cargue el libro o documento en Atlas Cloud o formule una pregunta más específica.','it-IT':'Non ho trovato una corrispondenza chiara in Atlas Marine. Carichi il libro o documento in Atlas Cloud oppure formuli una domanda più specifica.'};
   return noMatch[language]||noMatch['en-US'];
 }
 async function sinbadOfflineAiAnswer(question){
   const status=$('sinbadKnowledgeStatus');
   try{
-    if(status)status.textContent='Connecting to Sinbad offline brainâ€¦';
+    if(status)status.textContent='Connecting to Sinbad offline brain…';
     const history=sinbadState.messages.slice(-12,-1).map(message=>({role:message.role==='sinbad'?'assistant':'user',content:message.text}));
     const coreEnvelope=window.SinbadCore?.aiEnvelope?.(question,history);
     const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/chat`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question,language:sinbadState.language||appLanguage,history,coreEnvelope})});
     if(!response.ok)throw new Error(`Offline brain returned ${response.status}`);
     const data=await response.json();
     if(!data?.answer)return null;
-    if(status)status.textContent=`Sinbad offline AI active Â· ${data.model||'local model'}`;
+    if(status)status.textContent=`Sinbad offline AI active · ${data.model||'local model'}`;
     return data.answer;
   }catch(error){
     console.warn('Sinbad offline AI unavailable',error);
@@ -689,10 +689,10 @@ async function sinbadOfflineAiAnswer(question){
 }
 async function sendToSinbad(text){
   const q=(text||'').trim(); if(!q)return;
-  if(pendingSinbadWebQuestion&&/^(izin ver|evet|ara|webde ara|allow|yes|search|Ñ€Ğ°Ğ·Ñ€ĞµÑˆĞ°Ñ|Ğ´Ğ°|autoriser|oui|erlauben|ja|Ø§Ø³Ù…Ø­|Ù†Ø¹Ù…|permitir|sÃ­|consenti|sÃ¬)[.! ]*$/iu.test(q)){
+  if(pendingSinbadWebQuestion&&/^(izin ver|evet|ara|webde ara|allow|yes|search|разрешаю|да|autoriser|oui|erlauben|ja|اسمح|نعم|permitir|sí|consenti|sì)[.! ]*$/iu.test(q)){
     addSinbadMessage('user',q);$('sinbadInput').value='';await performSinbadWebSearch();return;
   }
-  if(pendingSinbadWebQuestion&&/^(izin verme|hayÄ±r|arama|no|do not search|Ğ½ĞµÑ‚|non|nein|Ù„Ø§|hayÄ±r|no buscar|non cercare)[.! ]*$/iu.test(q)){
+  if(pendingSinbadWebQuestion&&/^(izin verme|hayır|arama|no|do not search|нет|non|nein|لا|hayır|no buscar|non cercare)[.! ]*$/iu.test(q)){
     pendingSinbadWebQuestion='';$('sinbadWebConsent').classList.add('hidden');const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];addSinbadMessage('user',q);addSinbadMessage('sinbad',copy.denied);sinbadAwaitingAnswer=false;speakSinbad(copy.denied);return;
   }
   addSinbadMessage('user',q);
@@ -747,7 +747,7 @@ renderAll = async function(){
 
 
 // ============================================================
-// ATLAS MARINE OS v7.0 â€” CLOUD-FIRST EXPERIENCE
+// ATLAS MARINE OS v7.0 — CLOUD-FIRST EXPERIENCE
 // ============================================================
 function formatBytes(bytes=0){
   if(!bytes)return '0 MB';
@@ -765,18 +765,18 @@ function setSetupProgress(){
   if(dot)dot.classList.toggle('online',ready);
   if(title)title.textContent=ready?'Atlas Cloud connected':'Atlas Cloud is not connected';
   if(sub)sub.textContent=ready
-    ? `${cloudSession.user.email} â€¢ Workspace ready`
+    ? `${cloudSession.user.email} • Workspace ready`
     : connected
       ? (signedIn?'Select your Atlas workspace.':'Sign in to continue.')
       : 'Open Cloud Setup & Security to connect this device.';
   if(guard){
-    guard.textContent=ready?'âœ“ Atlas Cloud ready. Files will be stored privately in your selected workspace.':'Connect, sign in and select a workspace before uploading files.';
+    guard.textContent=ready?'✓ Atlas Cloud ready. Files will be stored privately in your selected workspace.':'Connect, sign in and select a workspace before uploading files.';
     guard.classList.toggle('ready',ready);
   }
 }
 async function refreshCloudSummary(){
   if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId){
-    ['sumFiles','sumPubs','sumCharts','sumStorage'].forEach(id=>{if($(id))$(id).textContent='â€”'});
+    ['sumFiles','sumPubs','sumCharts','sumStorage'].forEach(id=>{if($(id))$(id).textContent='—'});
     return;
   }
   const {data,error}=await cloudClient.from('documents')
@@ -920,7 +920,7 @@ function showAuthPanel(panel='signin'){
   Object.entries(panels).forEach(([name,element])=>{if(element)element.hidden=name!==panel;});
   const copy={
     signin:['Member Sign In','Sign in to open your authorized Sinbad Marine workspace.'],
-    registration:['Create Sinbad Marine Account','Register with your email address. Private workspace access still requires an invitation or Captain Varol Ã‡olakâ€™s approval.'],
+    registration:['Create Sinbad Marine Account','Register with your email address. Private workspace access still requires an invitation or Captain Varol Çolak’s approval.'],
     invite:['Complete Your Invitation','Your invitation is verified. Set your password to enter the workspace assigned to you.'],
     recovery:['Recover Member Access','Request the 8-digit code sent by Sinbad Marine, then choose a new password.']
   }[panel];
@@ -998,7 +998,7 @@ function initCloudClient(){
 async function diagnosePublicCloudConnection(){
   const output=$('publicCloudDiagnostic');
   const {url,key}=getCloudConfig();
-  output.textContent='Checking the secure Atlas Cloud connectionâ€¦';
+  output.textContent='Checking the secure Atlas Cloud connection…';
   output.className='auth-message';
   if(!url || !key){
     output.textContent='Cloud configuration is missing.';
@@ -1032,7 +1032,7 @@ function updateCloudStatus(error=''){
   $('cloudAiStatus').textContent=cloudClient && cloudSession?.user ? 'Cloud ready' : 'Local mode';
   $('supabaseUrlInput').value=cfg.url;
   $('supabaseKeyInput').value=cfg.key;
-  $('cloudUserInfo').textContent=cloudSession?.user ? `Signed in as ${cloudSession.user.email} â€¢ User ID: ${cloudSession.user.id}` : 'No active cloud session.';
+  $('cloudUserInfo').textContent=cloudSession?.user ? `Signed in as ${cloudSession.user.email} • User ID: ${cloudSession.user.id}` : 'No active cloud session.';
   setSetupProgress();
 }
 async function restoreCloudSession(){
@@ -1058,7 +1058,7 @@ async function saveCloudConfig(){
 async function testCloudConnection(){
   if(!cloudClient){alert('Save the connection first.');return;}
   const {error}=await cloudClient.from('workspaces').select('id').limit(1);
-  $('cloudConnectionStatus').textContent=error ? 'Connected â€¢ login required' : 'Connected';
+  $('cloudConnectionStatus').textContent=error ? 'Connected • login required' : 'Connected';
   alert(error ? `Supabase reached. ${error.message}` : 'Atlas Cloud connection successful.');
 }
 async function cloudSignIn(){
@@ -1079,14 +1079,14 @@ async function cloudSignOut(){
 }
 
 async function gatewaySignIn(){
-  setAuthMessage('Signing inâ€¦');
+  setAuthMessage('Signing in…');
   if(!cloudClient){setAuthMessage('Atlas Cloud connection is not ready. Open Cloud Setup & Security and save the Project URL again.','error');return;}
   const email=$('gatewayEmail').value.trim();
   const password=$('gatewayPassword').value;
   try{
     const {data,error}=await cloudClient.auth.signInWithPassword({email,password});
     if(error){
-      const hint=/invalid login credentials/i.test(error.message||'')?'Email or password is incorrect. Use the same email shown when the password was created, or choose â€œI forgot my passwordâ€.':friendlyAuthError(error);
+      const hint=/invalid login credentials/i.test(error.message||'')?'Email or password is incorrect. Use the same email shown when the password was created, or choose “I forgot my password”.':friendlyAuthError(error);
       setAuthMessage(hint,'error');return;
     }
     cloudSession=data.session;
@@ -1097,7 +1097,7 @@ async function gatewaySignIn(){
     await loadWorkspaces();
   }catch(error){
     const message=/Unexpected token|valid JSON|Failed to fetch|NetworkError/i.test(String(error?.message||error))
-      ? 'Atlas Cloud could not be reached. Close this window and use â€œCheck Cloud Connectionâ€ to see the exact connection result.'
+      ? 'Atlas Cloud could not be reached. Close this window and use “Check Cloud Connection” to see the exact connection result.'
       : (error?.message||'Sign in failed. Please try again.');
     setAuthMessage(message,'error');
   }
@@ -1112,7 +1112,7 @@ async function createAccount(){
   if(!email){setAuthMessage('Enter your email address.','error');return;}
   if(!passwordPolicyStatus(password).valid){setAuthMessage(passwordPolicyMessage(),'error');return;}
   if(password!==confirmPassword){setAuthMessage('Passwords do not match.','error');return;}
-  setAuthMessage('Creating your accountâ€¦');
+  setAuthMessage('Creating your account…');
   // Use the Site URL configured in Supabase. A per-request redirect URL can
   // trigger a DOM pattern error in some Outlook/iOS embedded browsers.
   const {data,error}=await cloudClient.auth.signUp({
@@ -1145,7 +1145,7 @@ async function completeInviteAccount(){
     if(!passwordPolicyStatus(password).valid){setAuthMessage(passwordPolicyMessage(),'error');return;}
     if(password!==confirmPassword){setAuthMessage('Passwords do not match.','error');return;}
 
-    setAuthMessage('Checking your invitation sessionâ€¦');
+    setAuthMessage('Checking your invitation session…');
     const {data:sessionData,error:sessionError}=await cloudClient.auth.getSession();
     if(sessionError)throw sessionError;
     const activeSession=sessionData?.session||cloudSession;
@@ -1157,11 +1157,11 @@ async function completeInviteAccount(){
 
     // Password and profile metadata are updated separately. Some browsers
     // reject the combined invitation payload with a DOM pattern error.
-    setAuthMessage('Creating your secure passwordâ€¦');
+    setAuthMessage('Creating your secure password…');
     const {data:passwordData,error:passwordError}=await cloudClient.auth.updateUser({password});
     if(passwordError)throw passwordError;
 
-    setAuthMessage('Saving your captain profileâ€¦');
+    setAuthMessage('Saving your captain profile…');
     const {data:profileData,error:profileError}=await cloudClient.auth.updateUser({
       data:{display_name:name,sinbad_account_ready:true}
     });
@@ -1170,7 +1170,7 @@ async function completeInviteAccount(){
     cloudSession={...activeSession,user:finalUser};
     pendingInviteSetup=false;
     sessionStorage.removeItem('sinbad_pending_invite_setup');
-    setAuthMessage('Account completed. Opening secure sign inÃ¢â‚¬Â¦','success');
+    setAuthMessage('Account completed. Opening secure sign in…','success');
 
     // Re-authenticate with the newly assigned password before completing the
     // invitation. This proves that the password is permanent, not session-only.
@@ -1198,7 +1198,7 @@ async function requestRecoveryCode(){
   if(!cloudClient){setAuthMessage('Atlas Cloud connection is not configured.','error');return;}
   const email=$('recoveryEmail').value.trim();
   if(!email){setAuthMessage('Enter your email address.','error');return;}
-  setAuthMessage('Sending recovery codeâ€¦');
+  setAuthMessage('Sending recovery code…');
   const redirectTo=`${location.origin}${location.pathname}`;
   const {error}=await cloudClient.auth.resetPasswordForEmail(email,{redirectTo});
   if(error){setAuthMessage(error.message,'error');return;}
@@ -1214,7 +1214,7 @@ async function completeRecovery(){
   if(token.length<6||token.length>10){setAuthMessage('Enter the newest recovery code exactly as shown in the email.','error');return;}
   if(!passwordPolicyStatus(password).valid){setAuthMessage(passwordPolicyMessage(),'error');return;}
   if(password!==confirmation){setAuthMessage('Passwords do not match.','error');return;}
-  setAuthMessage('Verifying codeâ€¦');
+  setAuthMessage('Verifying code…');
   const {error:verifyError}=await cloudClient.auth.verifyOtp({email,token,type:'recovery'});
   if(verifyError){setAuthMessage(`Code verification failed: ${friendlyAuthError(verifyError)}`,'error');return;}
   const {error:updateError}=await cloudClient.auth.updateUser({password,data:{sinbad_account_ready:true}});
@@ -1237,7 +1237,7 @@ async function loadWorkspaces(){
   else if(data?.length){selectedWorkspaceId=data[0].id;$('workspaceSelect').value=selectedWorkspaceId;}
   localStorage.setItem('atlas_selected_workspace',selectedWorkspaceId);
   const selected=(data||[]).find(w=>w.id===selectedWorkspaceId);
-  $('workspaceDetails').textContent=selected ? `${selected.name} â€¢ ${selected.id}` : 'No workspace selected.';
+  $('workspaceDetails').textContent=selected ? `${selected.name} • ${selected.id}` : 'No workspace selected.';
   updateCloudStatus();
   await refreshCloudSummary();
   await loadCurrentWorkspaceRole();
@@ -1296,7 +1296,7 @@ let settingsMembers=[];
 function refreshAccountSettingsSummary(){
   const user=cloudSession?.user, summary=$('settingsAccountSummary');
   if(!summary)return;
-  summary.textContent=user?`${user.email} â€¢ ${currentWorkspaceRole||'no workspace role'} â€¢ User ID: ${user.id}`:'No active account.';
+  summary.textContent=user?`${user.email} • ${currentWorkspaceRole||'no workspace role'} • User ID: ${user.id}`:'No active account.';
   if(user&&$('settingsDisplayName'))$('settingsDisplayName').value=user.user_metadata?.display_name||'';
 }
 async function saveAccountProfile(){
@@ -1330,7 +1330,7 @@ async function invokeMemberAdmin(action,payload={}){
 async function sendMemberInvite(){
   const email=$('memberInviteEmail').value.trim(), role=$('memberInviteRole').value, note=$('memberInviteNote').value.trim();
   if(!/^\S+@\S+\.\S+$/.test(email)){$('memberInviteStatus').textContent='Enter a valid email address.';return;}
-  $('memberInviteStatus').textContent='Preparing secure invitationâ€¦';
+  $('memberInviteStatus').textContent='Preparing secure invitation…';
   try{await invokeMemberAdmin('invite',{email,role,note,redirectTo:`${location.origin}${location.pathname}?type=invite`});$('memberInviteStatus').textContent=`Invitation sent to ${email}.`;$('memberInviteEmail').value='';$('memberInviteNote').value='';await loadAdminAudit();}
   catch(error){$('memberInviteStatus').textContent=`Invitation failed: ${error.message}`;}
 }
@@ -1338,7 +1338,7 @@ function renderSettingsMembers(){
   const list=$('settingsMemberList');if(!list)return;
   const query=$('settingsMemberSearch').value.trim().toLowerCase(), filter=$('settingsMemberFilter').value;
   const rows=settingsMembers.filter(member=>(!query||`${member.user_id} ${member.role}`.toLowerCase().includes(query))&&(filter==='all'||(filter==='active'&&member.is_active)||(filter==='blocked'&&!member.is_active)||(filter==='developer'&&member.role==='developer')));
-  list.innerHTML=rows.length?rows.map(member=>`<div class="settings-member ${member.is_active?'':'blocked'}"><div><strong>${cloudEsc(member.user_id)}</strong><small>${member.is_active?'Active':'Suspended'} â€¢ Joined ${cloudEsc(member.joined_at||'')}</small></div><select class="settings-role" data-user="${cloudEsc(member.user_id)}" aria-label="Role for ${cloudEsc(member.user_id)}">${SETTINGS_ROLES.map(role=>`<option value="${role}" ${member.role===role?'selected':''}>${role}</option>`).join('')}</select><div class="settings-member-actions"><button class="btn settings-save-role" data-user="${cloudEsc(member.user_id)}">Save role</button><button class="btn ${member.is_active?'danger':''} settings-toggle-member" data-user="${cloudEsc(member.user_id)}" data-active="${member.is_active}">${member.is_active?'Suspend':'Restore'}</button></div></div>`).join(''):'No matching members.';
+  list.innerHTML=rows.length?rows.map(member=>`<div class="settings-member ${member.is_active?'':'blocked'}"><div><strong>${cloudEsc(member.user_id)}</strong><small>${member.is_active?'Active':'Suspended'} • Joined ${cloudEsc(member.joined_at||'')}</small></div><select class="settings-role" data-user="${cloudEsc(member.user_id)}" aria-label="Role for ${cloudEsc(member.user_id)}">${SETTINGS_ROLES.map(role=>`<option value="${role}" ${member.role===role?'selected':''}>${role}</option>`).join('')}</select><div class="settings-member-actions"><button class="btn settings-save-role" data-user="${cloudEsc(member.user_id)}">Save role</button><button class="btn ${member.is_active?'danger':''} settings-toggle-member" data-user="${cloudEsc(member.user_id)}" data-active="${member.is_active}">${member.is_active?'Suspend':'Restore'}</button></div></div>`).join(''):'No matching members.';
 }
 async function loadSettingsMembers(){
   if(!roleCanManageMembers()||!selectedWorkspaceId){settingsMembers=[];renderSettingsMembers();return;}
@@ -1357,7 +1357,7 @@ async function toggleSettingsMember(userId,isActive){
 async function loadAdminAudit(){
   const list=$('adminAuditList');if(!list||!roleCanManageMembers())return;
   const {data,error}=await cloudClient.from('member_admin_audit').select('action,target_user_id,target_email,details,created_at').eq('workspace_id',selectedWorkspaceId).order('created_at',{ascending:false}).limit(50);
-  list.innerHTML=error?cloudEsc(error.message):(data?.length?data.map(event=>`<div class="audit-event"><strong>${cloudEsc(event.action)}</strong><small>${cloudEsc(event.target_email||event.target_user_id||'workspace')} â€¢ ${cloudEsc(event.created_at)}${event.details?` â€¢ ${cloudEsc(JSON.stringify(event.details))}`:''}</small></div>`).join(''):'No administrative events recorded.');
+  list.innerHTML=error?cloudEsc(error.message):(data?.length?data.map(event=>`<div class="audit-event"><strong>${cloudEsc(event.action)}</strong><small>${cloudEsc(event.target_email||event.target_user_id||'workspace')} • ${cloudEsc(event.created_at)}${event.details?` • ${cloudEsc(JSON.stringify(event.details))}`:''}</small></div>`).join(''):'No administrative events recorded.');
 }
 async function loadMembers(){
   if(!selectedWorkspaceId || !cloudClient)return;
@@ -1375,7 +1375,7 @@ async function loadMembers(){
           <button class="btn save-member-role" data-user="${cloudEsc(m.user_id)}">Save role</button>
         `:`<span class="member-role-readonly" aria-label="Current role">${cloudEsc(m.role)}</span>`}
       </div>
-      <small>${m.is_active?'Active':'Inactive'} â€¢ Joined ${cloudEsc(m.joined_at||'')}</small>
+      <small>${m.is_active?'Active':'Inactive'} • Joined ${cloudEsc(m.joined_at||'')}</small>
     </div>`).join('') : 'No members found.');
 }
 
@@ -1401,7 +1401,7 @@ async function submitLibraryFiles(){
     completed++;
   }
   $('submissionFiles').value='';$('submissionDescription').value='';
-  $('submissionUploadStatus').textContent=`âœ“ ${completed}/${files.length} source file(s) submitted for Owner review and security scan.`;
+  $('submissionUploadStatus').textContent=`✓ ${completed}/${files.length} source file(s) submitted for Owner review and security scan.`;
   await loadSubmissions();
 }
 
@@ -1415,7 +1415,7 @@ async function loadSubmissions(){
   list.innerHTML=data?.length?data.map(s=>`
     <article class="submission-card">
       <h4>${cloudEsc(s.title||s.original_filename)}</h4>
-      <p>${cloudEsc(s.intended_library)} â€¢ ${formatBytes(s.file_size_bytes||0)} â€¢ ${cloudEsc(s.status)}<br>${cloudEsc(s.description||'No description')}<br><small>${cloudEsc(s.created_at)}</small></p>
+      <p>${cloudEsc(s.intended_library)} • ${formatBytes(s.file_size_bytes||0)} • ${cloudEsc(s.status)}<br>${cloudEsc(s.description||'No description')}<br><small>${cloudEsc(s.created_at)}</small></p>
       ${roleCanManageLibrary()?`<div class="submission-actions">
         <button class="btn submission-open" data-path="${cloudEsc(s.object_path)}">Inspect original</button>
         <button class="btn primary submission-approve" data-id="${s.id}">Approve pending scan</button>
@@ -1447,11 +1447,11 @@ async function loadAiJobs(){
 }
 async function runSecurityCheck(){
   const cfg=getCloudConfig(), checks=[];
-  checks.push(cfg.url&&cfg.key?'âœ“ Cloud configuration present':'âœ— Cloud configuration missing');
-  checks.push(cloudSession?.user?'âœ“ Authenticated session':'âœ— Not signed in');
-  checks.push(selectedWorkspaceId?'âœ“ Workspace selected':'âœ— Workspace not selected');
-  checks.push(!/secret|service_role/i.test(cfg.key)?'âœ“ No obvious server secret stored':'âœ— Dangerous key detected');
-  $('securityCheckResult').textContent=checks.join(' â€¢ ');
+  checks.push(cfg.url&&cfg.key?'✓ Cloud configuration present':'✗ Cloud configuration missing');
+  checks.push(cloudSession?.user?'✓ Authenticated session':'✗ Not signed in');
+  checks.push(selectedWorkspaceId?'✓ Workspace selected':'✗ Workspace not selected');
+  checks.push(!/secret|service_role/i.test(cfg.key)?'✓ No obvious server secret stored':'✗ Dangerous key detected');
+  $('securityCheckResult').textContent=checks.join(' • ');
 }
 const KNOWLEDGE_CHUNK_SIZE=12000;
 function classifyDocument(name,text,bucket){
@@ -1473,7 +1473,7 @@ async function extractDocumentText(file,onProgress=()=>{}){
     pdfjs.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs';
     const pdf=await pdfjs.getDocument({data:await file.arrayBuffer()}).promise,pages=[];
     for(let pageNo=1;pageNo<=pdf.numPages;pageNo++){
-      onProgress(`Reading PDF page ${pageNo}/${pdf.numPages}â€¦`);
+      onProgress(`Reading PDF page ${pageNo}/${pdf.numPages}…`);
       const content=await (await pdf.getPage(pageNo)).getTextContent();pages.push(`[Page ${pageNo}]\n${content.items.map(item=>item.str).join(' ')}`);
       if(pages.reduce((n,p)=>n+p.length,0)>=4000000)break;
     }
@@ -1488,7 +1488,7 @@ async function extractDocumentText(file,onProgress=()=>{}){
 }
 async function saveDocumentKnowledge(documentId,file,text,bucket){
   const classification=classifyDocument(file.name,text,bucket),summary=text.replace(/\s+/g,' ').trim().slice(0,1200)||`${file.name} contains no machine-readable text.`;
-  const {data:knowledge,error}=await cloudClient.from('document_knowledge').upsert({workspace_id:selectedWorkspaceId,document_id:documentId,title:file.name,classification,summary,language:/[Ã§ÄŸÄ±Ã¶ÅŸÃ¼]/i.test(text.slice(0,50000))?'tr':'en',source_mime_type:file.type||null,character_count:text.length,index_status:text?'ready':'metadata_only',indexed_by:cloudSession.user.id,indexed_at:new Date().toISOString()},{onConflict:'workspace_id,document_id'}).select('id').single();
+  const {data:knowledge,error}=await cloudClient.from('document_knowledge').upsert({workspace_id:selectedWorkspaceId,document_id:documentId,title:file.name,classification,summary,language:/[çğıöşü]/i.test(text.slice(0,50000))?'tr':'en',source_mime_type:file.type||null,character_count:text.length,index_status:text?'ready':'metadata_only',indexed_by:cloudSession.user.id,indexed_at:new Date().toISOString()},{onConflict:'workspace_id,document_id'}).select('id').single();
   if(error)throw error;
   await cloudClient.from('document_knowledge_chunks').delete().eq('knowledge_id',knowledge.id);
   const chunks=[];for(let i=0;i<text.length;i+=KNOWLEDGE_CHUNK_SIZE)chunks.push({knowledge_id:knowledge.id,chunk_index:chunks.length,content:text.slice(i,i+KNOWLEDGE_CHUNK_SIZE)});
@@ -1502,41 +1502,41 @@ function cloudAnswerPassesCoreGate(data,envelope){
 }
 async function sinbadCloudKnowledgeAnswer(question){
   if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId)return null;
-  const status=$('sinbadKnowledgeStatus');if(status)status.textContent='Searching Atlas Cloudâ€¦';
+  const status=$('sinbadKnowledgeStatus');if(status)status.textContent='Searching Atlas Cloud…';
   try{
     const language=sinbadState.language||appLanguage;
     const history=sinbadState.messages.slice(-12,-1).map(message=>({role:message.role==='sinbad'?'assistant':'user',content:message.text}));
     const coreEnvelope=window.SinbadCore?.aiEnvelope?.(question,history);
     const invocation=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language,coreEnvelope}});
     const aiError=invocation.error;let trustedAiData=invocation.data;
-    if(aiError){trustedAiData=null;if(status)status.textContent='Atlas Cloud AI unavailable Â· searching private archive';}
-    else if(!cloudAnswerPassesCoreGate(trustedAiData,coreEnvelope)){trustedAiData=null;if(status)status.textContent='Atlas Cloud Core gate blocked AI Â· searching private archive';}
+    if(aiError){trustedAiData=null;if(status)status.textContent='Atlas Cloud AI unavailable · searching private archive';}
+    else if(!cloudAnswerPassesCoreGate(trustedAiData,coreEnvelope)){trustedAiData=null;if(status)status.textContent='Atlas Cloud Core gate blocked AI · searching private archive';}
     if(trustedAiData?.answer){
       const answer=String(trustedAiData.answer).trim();
       // Older cloud deployments can return a polite "no source found" notice
       // as if it were a complete AI answer. Treat those notices as a miss so
       // the installed Ollama brain gets an opportunity to answer instead.
-      const cloudMiss=/yeterli kaynak bulunamad[Ä±i]|eÅŸleÅŸen bir kaynak bulamad[Ä±i]|AI baÄŸlantÄ±sÄ± henÃ¼z etkin|not enough (?:material|source)|no matching (?:knowledge|source)|keine ausreichende quelle|keine passende quelle/i.test(answer);
+      const cloudMiss=/yeterli kaynak bulunamad[ıi]|eşleşen bir kaynak bulamad[ıi]|AI bağlantısı henüz etkin|not enough (?:material|source)|no matching (?:knowledge|source)|keine ausreichende quelle|keine passende quelle/i.test(answer);
       const normalizedAnswer=answer.toLocaleLowerCase('tr-TR')
-        .replace(/[Ä±Ä°]/g,'i').replace(/[ÅŸÅ]/g,'s').replace(/[ÄŸÄ]/g,'g')
-        .replace(/[Ã¼Ãœ]/g,'u').replace(/[Ã¶Ã–]/g,'o').replace(/[Ã§Ã‡]/g,'c')
+        .replace(/[ıİ]/g,'i').replace(/[şŞ]/g,'s').replace(/[ğĞ]/g,'g')
+        .replace(/[üÜ]/g,'u').replace(/[öÖ]/g,'o').replace(/[çÇ]/g,'c')
         .normalize('NFKD').replace(/[\u0300-\u036f]/g,'');
       const cloudMissFallback=normalizedAnswer.includes('yeterli kaynak yok')
         || normalizedAnswer.includes('yeterli kaynak bulunamadi')
         || normalizedAnswer.includes('yalnizca onayli atlas cloud')
         || normalizedAnswer.includes('kitabi veya belgeyi kutuphaneye yukleyin');
       if(!cloudMiss&&!cloudMissFallback){if(status)status.textContent='Atlas Cloud AI active';return answer;}
-      if(status)status.textContent='Atlas Cloud has no answer Â· trying offline brain';
+      if(status)status.textContent='Atlas Cloud has no answer · trying offline brain';
     }
-    if(trustedAiData?.needsWebPermission){if(status)status.textContent='Atlas Cloud has no answer Â· trying offline brain';return null;}
-    const terms=question.toLocaleLowerCase(language).normalize('NFKD').replace(/[^a-z0-9Ã§ÄŸÄ±Ã¶ÅŸÃ¼Ğ°-ÑÑ‘Ø¡-ÙŠ ]/gi,' ').split(/\s+/).filter(x=>x.length>2).slice(0,8);if(!terms.length)return null;
+    if(trustedAiData?.needsWebPermission){if(status)status.textContent='Atlas Cloud has no answer · trying offline brain';return null;}
+    const terms=question.toLocaleLowerCase(language).normalize('NFKD').replace(/[^a-z0-9çğıöşüа-яёء-ي ]/gi,' ').split(/\s+/).filter(x=>x.length>2).slice(0,8);if(!terms.length)return null;
     const {data,error}=await cloudClient.from('document_knowledge_chunks').select('content,chunk_index,document_knowledge!inner(title,classification,workspace_id)').eq('document_knowledge.workspace_id',selectedWorkspaceId).ilike('content',`%${terms[0]}%`).limit(12);
-    if(error)throw error;if(!data?.length){if(status)status.textContent='Atlas Cloud has no answer Â· trying offline brain';return null;}
+    if(error)throw error;if(!data?.length){if(status)status.textContent='Atlas Cloud has no answer · trying offline brain';return null;}
     const ranked=data.map(row=>({row,score:terms.reduce((n,t)=>n+(row.content.toLocaleLowerCase(language).includes(t)?1:0),0)})).sort((a,b)=>b.score-a.score).slice(0,4);
-    const excerpts=ranked.map(({row})=>{const lower=row.content.toLocaleLowerCase(language),positions=terms.map(t=>lower.indexOf(t)).filter(n=>n>=0),at=positions.length?Math.min(...positions):0;return `â€¢ ${row.document_knowledge.title} [${row.document_knowledge.classification}]\n${row.content.slice(Math.max(0,at-180),at+650).replace(/\s+/g,' ').trim()}`;});
+    const excerpts=ranked.map(({row})=>{const lower=row.content.toLocaleLowerCase(language),positions=terms.map(t=>lower.indexOf(t)).filter(n=>n>=0),at=positions.length?Math.min(...positions):0;return `• ${row.document_knowledge.title} [${row.document_knowledge.classification}]\n${row.content.slice(Math.max(0,at-180),at+650).replace(/\s+/g,' ').trim()}`;});
     if(status)status.textContent='Classified cloud archive active';
     return `Relevant classified Atlas Cloud passages:\n\n${excerpts.join('\n\n')}\n\nVerify critical navigation and safety decisions against the original publication.`;
-  }catch(error){console.warn('Sinbad cloud knowledge unavailable',error);if(status)status.textContent='Atlas Cloud unavailable Â· trying offline brain';return null;}
+  }catch(error){console.warn('Sinbad cloud knowledge unavailable',error);if(status)status.textContent='Atlas Cloud unavailable · trying offline brain';return null;}
 }
 async function performSinbadWebSearch(){
   const question=pendingSinbadWebQuestion;if(!question)return;$('sinbadWebConsent').classList.add('hidden');pendingSinbadWebQuestion='';
@@ -1574,8 +1574,8 @@ async function uploadCloudFiles(){
     try{await saveDocumentKnowledge(documentRow.id,file,extractedText,bucket);}catch(error){failures.push(`${file.name}: uploaded; knowledge indexing needs setup (${error.message})`);}
     completed++;
   }
-  $('cloudUploadProgress').textContent=`âœ“ ${completed}/${files.length} file(s) uploaded to Atlas Cloud.`; await loadCloudFiles(); await refreshCloudSummary();
-  if(failures.length)$('cloudUploadProgress').textContent+=`\nâš  ${failures.join('\nâš  ')}`;
+  $('cloudUploadProgress').textContent=`✓ ${completed}/${files.length} file(s) uploaded to Atlas Cloud.`; await loadCloudFiles(); await refreshCloudSummary();
+  if(failures.length)$('cloudUploadProgress').textContent+=`\n⚠ ${failures.join('\n⚠ ')}`;
   $('cloudFileInput').value='';
 }
 async function loadCloudFiles(){
@@ -1586,7 +1586,7 @@ async function loadCloudFiles(){
   $('cloudFileList').innerHTML=data?.length ? data.map(d=>`
     <article class="cloud-file-card">
       <h4>${cloudEsc(d.title||d.original_filename)}</h4>
-      <small>${cloudEsc(d.bucket_id)} â€¢ ${Math.round((d.file_size_bytes||0)/1024)} KB<br>${cloudEsc(d.status)} â€¢ ${cloudEsc(d.classification)}</small>
+      <small>${cloudEsc(d.bucket_id)} • ${Math.round((d.file_size_bytes||0)/1024)} KB<br>${cloudEsc(d.status)} • ${cloudEsc(d.classification)}</small>
       <div class="cloud-file-actions">
         <button class="btn cloud-open-file" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}" data-name="${cloudEsc(d.original_filename)}">${d.bucket_id==='nautical-charts'?'View ENC':'Open'}</button>
         <button class="btn cloud-download-file" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}" data-name="${cloudEsc(d.original_filename)}">Download</button>
@@ -1702,7 +1702,7 @@ function renderPosition(position){
   const {latitude,longitude,accuracy}=position.coords;
   $('locationLatitude').textContent=latitude.toFixed(6);
   $('locationLongitude').textContent=longitude.toFixed(6);
-  $('locationAccuracy').textContent=`Â± ${Math.round(accuracy)} m`;
+  $('locationAccuracy').textContent=`± ${Math.round(accuracy)} m`;
   $('locationTimestamp').textContent=new Date(position.timestamp).toLocaleString();
   $('copyCurrentCoordinates').disabled=false;
   setPermissionBanner('locationPermissionBanner','Location permission granted. Position remains private unless you explicitly attach it to media.','allowed');
@@ -1724,7 +1724,7 @@ function locationOptions(){
 
 function getCurrentLocation(){
   if(!navigator.geolocation){handleLocationError({message:'This browser does not support location services.'});return;}
-  setPermissionBanner('locationPermissionBanner','Waiting for location permissionâ€¦');
+  setPermissionBanner('locationPermissionBanner','Waiting for location permission…');
   navigator.geolocation.getCurrentPosition(renderPosition,handleLocationError,locationOptions());
 }
 
@@ -1861,7 +1861,7 @@ function renderPendingMedia(){
   gallery.innerHTML=pendingMedia.map((item,index)=>`
     <article class="captured-media-card">
       ${item.type.startsWith('video/')?`<video src="${item.url}" controls playsinline></video>`:`<img src="${item.url}" alt="Captured media preview">`}
-      <button class="captured-media-remove" type="button" data-media-index="${index}" aria-label="Remove">Ã—</button>
+      <button class="captured-media-remove" type="button" data-media-index="${index}" aria-label="Remove">×</button>
       <small>${cloudEsc(item.name)}<br>${Math.round(item.blob.size/1024)} KB</small>
     </article>`).join('');
   $('uploadCapturedMedia').disabled=!pendingMedia.length;
@@ -1909,7 +1909,7 @@ async function uploadCapturedMedia(){
     $('mediaArchiveNote').value='';
     renderPendingMedia();
   }
-  $('mediaUploadStatus').textContent=`âœ“ ${completed}/${items.length} item(s) saved in the private passage-media archive.`;
+  $('mediaUploadStatus').textContent=`✓ ${completed}/${items.length} item(s) saved in the private passage-media archive.`;
   await refreshCloudSummary();
 }
 
@@ -1951,7 +1951,7 @@ function updateLogClock(){
   if($('logUtcClock'))$('logUtcClock').textContent=now.toISOString().replace('T',' ').slice(0,19)+' UTC';
   if($('logPositionPreview')){
     const c=currentGeoPosition?.coords;
-    $('logPositionPreview').textContent=c?`${c.latitude.toFixed(6)}, ${c.longitude.toFixed(6)} (Â±${Math.round(c.accuracy)} m)`:'Position not available';
+    $('logPositionPreview').textContent=c?`${c.latitude.toFixed(6)}, ${c.longitude.toFixed(6)} (±${Math.round(c.accuracy)} m)`:'Position not available';
   }
 }
 
@@ -1967,19 +1967,19 @@ function saveLogDraft(text=$('logDraftText')?.value.trim(),source='typed'){
   });
   persistLogDrafts();
   $('logDraftText').value='';
-  $('logComposeStatus').textContent='âœ“ Draft log entry saved. Review it before transfer to the official logbook.';
+  $('logComposeStatus').textContent='✓ Draft log entry saved. Review it before transfer to the official logbook.';
   pendingLogAudio=null;
 }
 
 function renderLogDrafts(){
   const list=$('logDraftList'); if(!list)return;
-  $('logArchiveSummary').textContent=`${logDrafts.length} entries â€¢ ${logDrafts.filter(x=>x.status==='draft').length} awaiting review`;
+  $('logArchiveSummary').textContent=`${logDrafts.length} entries • ${logDrafts.filter(x=>x.status==='draft').length} awaiting review`;
   if(!logDrafts.length){list.innerHTML='<div class="notice">No draft entries yet.</div>';return;}
   list.innerHTML=logDrafts.map(item=>{
-    const pos=item.position?`${item.position.latitude}, ${item.position.longitude} Â±${item.position.accuracy_m} m`:'No position';
+    const pos=item.position?`${item.position.latitude}, ${item.position.longitude} ±${item.position.accuracy_m} m`:'No position';
     return `<article class="log-entry ${cloudEsc(item.status)}">
       <div><div class="log-entry-head"><time>${cloudEsc(new Date(item.utc_iso).toLocaleString())}</time><span class="log-badge">${cloudEsc(item.category)}</span><span class="log-badge">${cloudEsc(item.status)}</span><span class="log-badge">${cloudEsc(item.source)}</span></div>
-      <p>${cloudEsc(item.text)}</p><div class="log-entry-meta">UTC ${cloudEsc(item.utc_iso)} â€¢ ${cloudEsc(pos)}${item.audio_name?` â€¢ Audio: ${cloudEsc(item.audio_name)}`:''}</div></div>
+      <p>${cloudEsc(item.text)}</p><div class="log-entry-meta">UTC ${cloudEsc(item.utc_iso)} • ${cloudEsc(pos)}${item.audio_name?` • Audio: ${cloudEsc(item.audio_name)}`:''}</div></div>
       <div class="log-entry-actions">
         <button class="btn" data-log-action="edit" data-log-id="${item.id}">Edit</button>
         <button class="btn" data-log-action="review" data-log-id="${item.id}">Review</button>
@@ -2033,16 +2033,16 @@ function processVoicePhrase(phrase){
   const clean=phrase.trim();
   $('voiceTranscript').textContent=clean||'No speech detected.';
   const normalized=clean.toLocaleLowerCase('tr-TR');
-  const command=normalized.match(/\b(?:sinbad|simbad)\s+(?:log|jurnal|gÃ¼nlÃ¼k)\b[,:;\s-]*(.*)$/i);
+  const command=normalized.match(/\b(?:sinbad|simbad)\s+(?:log|jurnal|günlük)\b[,:;\s-]*(.*)$/i);
   if(command){
     const entry=(command[1]||'').trim();
-    if(entry){$('logDraftText').value=entry;saveLogDraft(entry,'voice-command');waitingForLogText=false;voiceStatus('Draft saved','Say â€œSinbad Logâ€ for another entry.','listening');if(!voiceWatchEnabled)try{voiceRecognition?.stop();}catch(_){}}
+    if(entry){$('logDraftText').value=entry;saveLogDraft(entry,'voice-command');waitingForLogText=false;voiceStatus('Draft saved','Say “Sinbad Log” for another entry.','listening');if(!voiceWatchEnabled)try{voiceRecognition?.stop();}catch(_){}}
     else{waitingForLogText=true;voiceStatus('Sinbad is listening for the log entry','Speak the operational detail now.','capturing');}
     return;
   }
   if(waitingForLogText && clean){
     $('logDraftText').value=clean;saveLogDraft(clean,'voice-command');waitingForLogText=false;
-    voiceStatus('Draft saved','Say â€œSinbad Logâ€ for another entry.','listening');
+    voiceStatus('Draft saved','Say “Sinbad Log” for another entry.','listening');
     if(!voiceWatchEnabled)try{voiceRecognition?.stop();}catch(_){}
   }
 }
@@ -2080,7 +2080,7 @@ function startVoiceWatch(pushOnly=false){
   waitingForLogText=pushOnly;
   try{voiceRecognition.start();}catch(_){}
   $('startVoiceWatch').disabled=!pushOnly;$('stopVoiceWatch').disabled=pushOnly;
-  voiceStatus(pushOnly?'Push to Talk is listening':'Sinbad Voice Watch is active',pushOnly?'Speak your log entry now.':'Say â€œSinbad Logâ€ followed by the entry.','listening');
+  voiceStatus(pushOnly?'Push to Talk is listening':'Sinbad Voice Watch is active',pushOnly?'Speak your log entry now.':'Say “Sinbad Log” followed by the entry.','listening');
 }
 
 function stopVoiceWatch(){
@@ -2103,12 +2103,12 @@ async function startLogAudio(){
       const name=`sinbad-log-audio-${new Date().toISOString().replace(/[:.]/g,'-')}.${ext}`;
       const url=URL.createObjectURL(blob);pendingLogAudio={blob,name,url};
       const link=document.createElement('a');link.href=url;link.download=name;link.textContent='Download recorded audio';
-      $('logComposeStatus').innerHTML='âœ“ Audio note ready. Save the draft text, and keep this file: ';
+      $('logComposeStatus').innerHTML='✓ Audio note ready. Save the draft text, and keep this file: ';
       $('logComposeStatus').append(link);
       logAudioStream?.getTracks().forEach(t=>t.stop());logAudioStream=null;logAudioRecorder=null;
     };
     logAudioRecorder.start(1000);$('recordLogAudio').disabled=true;$('stopLogAudio').disabled=false;
-    $('logComposeStatus').textContent='â— Recording audio locally. Press Stop Audio when finished.';
+    $('logComposeStatus').textContent='● Recording audio locally. Press Stop Audio when finished.';
   }catch(error){$('logComposeStatus').textContent=`Microphone could not be opened: ${error.message}`;}
 }
 
@@ -2129,7 +2129,7 @@ async function startEmergencyRecord(){
     const video=$('cameraPreview');video.srcObject=cameraStream;await video.play();video.classList.add('active');
     $('cameraPlaceholder').hidden=true;cameraButtons(true);
     startVideoRecording();
-    setPermissionBanner('cameraPermissionBanner','â— EMERGENCY EVIDENCE RECORDING â€” audio and video are being recorded visibly. Press Stop Recording to finish.','denied');
+    setPermissionBanner('cameraPermissionBanner','● EMERGENCY EVIDENCE RECORDING — audio and video are being recorded visibly. Press Stop Recording to finish.','denied');
   }catch(error){
     setPermissionBanner('cameraPermissionBanner',`Emergency recording could not start: ${error.message}`,'denied');
   }
