@@ -334,7 +334,7 @@ function speakSinbadFallback(text){
   if(!sinbadState.voiceEnabled||!('speechSynthesis'in window)){sinbadAwaitingAnswer=false;scheduleSinbadListening();return;}
   const voices=speechSynthesis.getVoices();
   if(!voices.length){
-    speechSynthesis.onvoiceschanged=()=>{speechSynthesis.onvoiceschanged=null;speakSinbad(text);};
+    speechSynthesis.onvoiceschanged=()=>{speechSynthesis.onvoiceschanged=null;speakSinbadFallback(text);};
     return;
   }
   if(sinbadIsListening)sinbadRecognition?.stop();
@@ -385,6 +385,11 @@ async function speakSinbad(text,onVoiceReady){
     console.warn('Sinbad XTTS unavailable; using browser voice',error);
     announce();stopSinbadVoice();speakSinbadFallback(cleanText);
   }finally{clearTimeout(timeout);}
+}
+function speakSinbadInstant(text){
+  const status=$('sinbadKnowledgeStatus');
+  if(status)status.textContent='Sinbad anlık ses aktif · XTTS kalite modu ses testinde kullanılabilir';
+  speakSinbadFallback(text);
 }
 let sinbadRecognition=null;
 let sinbadIsListening=false;
@@ -693,17 +698,16 @@ async function sendToSinbad(text){
     addSinbadMessage('user',q);$('sinbadInput').value='';await performSinbadWebSearch();return;
   }
   if(pendingSinbadWebQuestion&&/^(izin verme|hayÄ±r|arama|no|do not search|Ğ½ĞµÑ‚|non|nein|Ù„Ø§|hayÄ±r|no buscar|non cercare)[.! ]*$/iu.test(q)){
-    pendingSinbadWebQuestion='';$('sinbadWebConsent').classList.add('hidden');const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];addSinbadMessage('user',q);addSinbadMessage('sinbad',copy.denied);sinbadAwaitingAnswer=false;speakSinbad(copy.denied);return;
+    pendingSinbadWebQuestion='';$('sinbadWebConsent').classList.add('hidden');const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];addSinbadMessage('user',q);addSinbadMessage('sinbad',copy.denied);sinbadAwaitingAnswer=false;speakSinbadInstant(copy.denied);return;
   }
   addSinbadMessage('user',q);
   $('sinbadInput').value='';
   $('sinbadThinking').classList.remove('hidden');
   setTimeout(async()=>{
     const answer=await sinbadLocalAnswer(q);
-    if(!sinbadState.voiceEnabled){$('sinbadThinking').classList.add('hidden');addSinbadMessage('sinbad',answer);speakSinbad(answer);return;}
-    const status=$('sinbadKnowledgeStatus');
-    if(status)status.textContent='Yanıt hazır · Sinbad sesi hazırlanıyor…';
-    speakSinbad(answer,()=>{$('sinbadThinking').classList.add('hidden');addSinbadMessage('sinbad',answer);});
+    $('sinbadThinking').classList.add('hidden');
+    addSinbadMessage('sinbad',answer);
+    speakSinbadInstant(answer);
   },650);
 }
 $('sendSinbad').addEventListener('click',()=>{window.speechSynthesis?.resume();sendToSinbad($('sinbadInput').value);});
@@ -1538,7 +1542,7 @@ async function performSinbadWebSearch(){
     const history=sinbadState.messages.slice(-12).map(message=>({role:message.role==='sinbad'?'assistant':'user',content:message.text}));
     const {data,error}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language:sinbadState.language,allowWebSearch:true,history}});if(error)throw error;
     const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];const answer=`${copy.result}:\n\n${data?.answer||'No reliable web result was found.'}`;
-    addSinbadMessage('sinbad',answer);speakSinbad(answer);
+    addSinbadMessage('sinbad',answer);speakSinbadInstant(answer);
   }catch(error){addSinbadMessage('sinbad',`Web search failed: ${error.message||error}`);}finally{$('sinbadThinking').classList.add('hidden');}
 }
 async function uploadCloudFiles(){
