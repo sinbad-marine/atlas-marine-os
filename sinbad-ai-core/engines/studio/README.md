@@ -149,3 +149,22 @@ and the original workspace is never modified or deleted.
 scope and the observed host sandbox gap. Pro 0.3 means authenticated read-only
 proposal review plus atomic no-delete derived revisions; it does not mean code
 execution, automatic merge, Core modification or publication.
+
+## Pro 0.4 verified test sandbox
+
+`docker-sandbox-test-runner.js` permits only test files already bound to an
+authentic persisted-workspace report. A short-lived, single-use human approval
+is tied to that exact manifest; the complete file set and every hash are checked
+again immediately before launch. The runner creates no general command or shell
+surface.
+
+`node-docker-cli-launcher.js` accepts only process-local authentic launch
+requests from that runner. The pinned Node image runs without networking, with
+a read-only root filesystem and host mount, all capabilities dropped, privilege
+escalation denied, a non-root user, bounded CPU/RAM/PIDs/output/time and forced
+container cleanup on timeout. This does not enable web or animation scripts,
+package installation, host/Core writes, merge, deployment or publication.
+
+`studio-pro-04-acceptance-manifest.js` freezes that narrow completion meaning.
+The real Docker integration test is opt-in because it depends on installed host
+infrastructure; all policy and adversarial contract tests remain offline.
