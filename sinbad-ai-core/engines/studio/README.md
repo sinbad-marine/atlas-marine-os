@@ -130,3 +130,11 @@ the real local runtime probe observed on 2026-08-21. The runtime observation is
 explicitly non-portable. It also records the remaining activation blocker:
 generated code cannot execute until a sandbox capable of denying network access
 is available; Node's current host permission flags alone are insufficient.
+
+## Pro 0.3 review foundation
+
+`model-proposal-diff-planner.js` compares an authentic verified workspace with
+an authentic model proposal after rechecking the exact persisted file set and
+hashes. It emits only `CREATE`, `UPDATE`, `UNCHANGED` and `PRESERVE`; deletion is
+always denied. The result is a read-only human-review plan and exposes no patch,
+write, execution, network or publication capability.
