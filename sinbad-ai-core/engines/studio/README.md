@@ -37,3 +37,11 @@ active HTML/SVG/CSS content, and rejects command/runtime capabilities. A clean
 bundle receives an immutable per-file SHA-256 manifest and a process-local
 authentic static-preview report. The report is evidence for a later gate; it is
 not permission to run, publish or connect the generated project.
+
+`persisted-workspace-verifier.js` re-verifies a written sandbox project against
+that process-local static report. It requires the exact expected file set and
+matching byte counts and SHA-256 hashes, and rejects redirected roots, symbolic
+links, junctions and special filesystem entries. It only reads files: it does
+not render or execute generated content, write changes, access a network or
+grant preview/publish authority. A clean result is evidence for a later,
+scriptless local-preview packaging gate.
