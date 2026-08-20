@@ -8,6 +8,7 @@ const VERSION='0.1.0';
 const MODE='PERSISTED_WORKSPACE_VERIFY_ONLY';
 const SLUG=/^[a-z0-9][a-z0-9-]{0,47}$/u;
 const verifiedReports=new WeakSet();
+const verifiedRoots=new WeakMap();
 const freeze=value=>{if(value&&typeof value==='object'&&!Object.isFrozen(value)){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 const sha256=value=>crypto.createHash('sha256').update(value).digest('hex');
 
@@ -53,7 +54,7 @@ function create(options={}){
         files.push(Object.freeze({path:relative,bytes:content.length,sha256:item.sha256}));
       }
       const result=freeze({version:VERSION,mode:MODE,status:'PERSISTED_WORKSPACE_VERIFIED',projectSlug:report.projectSlug,manifestHash:report.manifestHash,files:Object.freeze(files),io:{filesystemRead:true,filesystemWrite:false,network:false,commands:false,render:false},nextGate:'SCRIPTLESS_LOCAL_PREVIEW_PACKAGE'});
-      verifiedReports.add(result);return result;
+      verifiedReports.add(result);verifiedRoots.set(result,path.resolve(projectRoot));return result;
     }catch(error){
       if(error&&error.verificationCode)return blocked(error.verificationCode,error.message);
       if(error&&error.code==='ENOENT')return blocked('WORKSPACE_OR_PROJECT_MISSING');
@@ -64,4 +65,5 @@ function create(options={}){
 }
 
 const isAuthenticReport=value=>Boolean(value&&verifiedReports.has(value));
-module.exports=freeze({VERSION,MODE,create,isAuthenticReport});
+const isReportFor=(value,projectRoot)=>Boolean(value&&verifiedReports.has(value)&&verifiedRoots.get(value)===path.resolve(String(projectRoot||'')));
+module.exports=freeze({VERSION,MODE,create,isAuthenticReport,isReportFor});

@@ -45,3 +45,9 @@ links, junctions and special filesystem entries. It only reads files: it does
 not render or execute generated content, write changes, access a network or
 grant preview/publish authority. A clean result is evidence for a later,
 scriptless local-preview packaging gate.
+
+`scriptless-preview-packager.js` rechecks every selected persisted file against
+the bound verification report, excludes JavaScript, removes HTML script tags,
+and injects a restrictive offline Content Security Policy. It returns a new
+immutable package in memory only. It neither writes nor opens the preview and
+does not expose execution, rendering, network, deployment or publish methods.
