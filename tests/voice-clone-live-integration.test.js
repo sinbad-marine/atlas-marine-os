@@ -43,5 +43,5 @@ test('frontend plays cloned wav with timeout and browser fallback',()=>{
   assert.match(app,/addSinbadMessage\('sinbad',answer\);\s*speakSinbadInstant\(answer\)/);
   assert.doesNotMatch(app,/speakSinbad\(answer,/);
   assert.doesNotMatch(app,/onvoiceschanged=.*speakSinbad\(text\)/);
-  assert.match(serviceWorker,/sinbad-marine-v8\.20\.7-instant-voice/);
+  assert.match(serviceWorker,/sinbad-marine-v8\.20\.8-core-gate/);
 });
