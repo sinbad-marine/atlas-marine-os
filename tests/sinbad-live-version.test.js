@@ -26,6 +26,11 @@ test('visible release, Core and app assets share one live version',()=>{
   assert.match(worker,/\.\/sinbad-navigation\.js/);
   assert.match(worker,/\.\/sinbad-navigation-assistant\.js/);
   assert.match(worker,/\.\/sinbad-route-visualizer\.js/);
+  assert.match(html,/\.\/vendor\/ol-10\.6\.1\.css/);
+  assert.match(html,/\.\/vendor\/ol-10\.6\.1\.js/);
+  assert.doesNotMatch(html,/cdn\.jsdelivr\.net\/npm\/ol@/);
+  assert.match(worker,/\.\/vendor\/land-110m\.json/);
+  assert.equal(fs.existsSync(path.join(root,'vendor','land-110m.json')),true);
 });
 
 test('release guide preserves fail-closed Edge-before-web deployment order',()=>{

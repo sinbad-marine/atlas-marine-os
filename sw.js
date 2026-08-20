@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.9-navigation-map-r2';
+const CACHE='sinbad-marine-v8.20.9-offline-map-r3';
 const ASSETS=[
   './',
   './index.html',
@@ -14,6 +14,9 @@ const ASSETS=[
   './sinbad-route-visualizer.js',
   './sinbad-training-data.js',
   './sinbad-academy.js',
+  './vendor/ol-10.6.1.js',
+  './vendor/ol-10.6.1.css',
+  './vendor/land-110m.json',
   './manifest.webmanifest',
   './icon-192.png',
   './icon-512.png'

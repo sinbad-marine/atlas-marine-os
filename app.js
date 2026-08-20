@@ -50,11 +50,17 @@ function renderNavigationPlot(){
 function initNavigationPlot(){
   if(!window.ol){$('navigationPlotSummary').textContent='Harita kütüphanesi yüklenemedi.';return;}
   if(!navigationPlotMap){
+    const status=$('navigationPlotStatus');
+    const offlineLandSource=new ol.source.Vector({url:'./vendor/land-110m.json',format:new ol.format.TopoJSON(),overlaps:false});
+    offlineLandSource.on('featuresloadend',()=>{status.textContent='Offline dünya katmanı hazır · OSM ayrıntıları internet bağlantısı varsa gösterilir.';status.classList.add('ready')});
+    offlineLandSource.on('featuresloaderror',()=>{status.textContent='Offline dünya katmanı yüklenemedi.';status.classList.add('error')});
+    const offlineOcean=new ol.layer.Vector({source:offlineLandSource,style:new ol.style.Style({fill:new ol.style.Fill({color:'#173b46'}),stroke:new ol.style.Stroke({color:'#6e9ca4',width:.7})}),zIndex:0});
+    const onlineOsm=new ol.layer.Tile({source:new ol.source.OSM(),opacity:.88,zIndex:1});
     navigationPlotSource=new ol.source.Vector();
-    const vector=new ol.layer.Vector({source:navigationPlotSource,style:feature=>feature.get('kind')==='route'
+    const vector=new ol.layer.Vector({source:navigationPlotSource,zIndex:2,style:feature=>feature.get('kind')==='route'
       ?new ol.style.Style({stroke:new ol.style.Stroke({color:'#ffcf66',width:4})})
       :new ol.style.Style({image:new ol.style.Circle({radius:8,fill:new ol.style.Fill({color:feature.get('kind')==='start'?'#55d6be':'#ff6b6b'}),stroke:new ol.style.Stroke({color:'#fff',width:2})}),text:new ol.style.Text({text:feature.get('label'),offsetY:-18,fill:new ol.style.Fill({color:'#fff'}),stroke:new ol.style.Stroke({color:'#071723',width:4})})})});
-    navigationPlotMap=new ol.Map({target:'navigationPlotMap',layers:[new ol.layer.Tile({source:new ol.source.OSM()}),vector],view:new ol.View({center:ol.proj.fromLonLat([18,36]),zoom:5,minZoom:2,maxZoom:18})});
+    navigationPlotMap=new ol.Map({target:'navigationPlotMap',layers:[offlineOcean,onlineOsm,vector],view:new ol.View({center:ol.proj.fromLonLat([18,36]),zoom:5,minZoom:2,maxZoom:18})});
     navigationPlotMap.addControl(new ol.control.ScaleLine({units:'nautical'}));
   }
   setTimeout(()=>{navigationPlotMap.updateSize();renderNavigationPlot()},80);
