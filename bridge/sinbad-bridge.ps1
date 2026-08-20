@@ -423,8 +423,22 @@ try {
         $target = Join-Path $routeRoot $filename
         [IO.File]::WriteAllText($target, [string]$payload.gpx, [Text.UTF8Encoding]::new($false))
         if ([string]::IsNullOrWhiteSpace($OpenCpnExecutable) -or -not (Test-Path -LiteralPath $OpenCpnExecutable)) { throw 'OPENCPN_NOT_INSTALLED' }
-        Start-Process -FilePath $OpenCpnExecutable -ArgumentList ('"{0}"' -f $target.Replace('"',''))
-        Write-HttpResponse $stream 201 'Created' (Json @{ ok=$true; opened=$true; filename=$filename; path=$target; application='OpenCPN' }); continue
+        $openCpnProcess = Get-Process -Name 'opencpn' -ErrorAction SilentlyContinue | Select-Object -First 1
+        if (-not $openCpnProcess) {
+          # OpenCPN for Windows does not support importing a positional GPX
+          # argument. Launch it normally; passing $target here can crash it.
+          $openCpnProcess = Start-Process -FilePath $OpenCpnExecutable -PassThru
+        }
+        Write-HttpResponse $stream 201 'Created' (Json @{
+          ok=$true
+          opened=$true
+          imported=$false
+          importRequired=$true
+          filename=$filename
+          path=$target
+          application='OpenCPN'
+          message='OpenCPN started safely. Import the saved GPX using Route & Mark Manager.'
+        }); continue
       }
       Write-HttpResponse $stream 404 'Not Found' (Json @{ error='Not found' })
     } catch {

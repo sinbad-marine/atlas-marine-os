@@ -74,7 +74,9 @@ async function openCalculatedRouteInOpenCpn(route,downloadOnFailure=false){
   try{
     const response=await fetch(`${SINBAD_BRIDGE_URL}/routes/open`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({filename:'sinbad-calculated-route.gpx',name:'Sinbad calculated DR route',gpx})});
     if(!response.ok)throw new Error(`Bridge returned ${response.status}`);
-    return {ok:true,message:'Rotayı OpenCPN’ye aktardım ve OpenCPN haritasını açtım. Başlangıç ile hesaplanan DR varış mevkii rota olarak gösteriliyor.'};
+    const result=await response.json();
+    if(result.importRequired)return {ok:true,message:`OpenCPN’yi güvenli biçimde açtım ve GPX rotasını kaydettim: ${result.path}. OpenCPN’de Route & Mark Manager → Import GPX ile bu dosyayı seçin. Otomatik aktarım için güvenli REST eşleştirmesi ayrıca kurulacak.`};
+    return {ok:true,message:'Rotayı OpenCPN’ye aktardım. Başlangıç ile hesaplanan DR varış mevkii rota olarak gösteriliyor.'};
   }catch(error){
     if(downloadOnFailure){
       downloadCalculatedRouteGpx(route);
