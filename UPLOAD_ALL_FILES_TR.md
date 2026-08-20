@@ -1,8 +1,8 @@
-# Sinbad Marine v8.20.8 — Core Gate Yayın Sırası
+# Sinbad Marine v8.20.9 — Core Gate Yayın Sırası
 
 Bu paket Captain Sinbad'ın yerel uzman, bulut AI ve web-arama yollarını
 `DECISION_SUPPORT_ONLY` Core güvenlik kapısına bağlar. Uygulama, Core asset'i
-ve service-worker cache anahtarı aynı `v8.20.8` sürümünü taşır.
+ve service-worker cache anahtarı aynı `v8.20.9` sürümünü taşır.
 
 GitHub deposunun ana dizinine bu paketteki bütün dosyaları birlikte yükleyin ve
 mevcut dosyaların değiştirilmesine izin verin. Klasör oluşturmayın.
@@ -18,7 +18,7 @@ adresleri veya query-string sürümleri yayın kanıtı sayılmaz.
 3. Geçerli isteğin `permission: DECISION_SUPPORT_ONLY` ve
    `executionPerformed: false` döndürdüğünü doğrulayın.
 4. Bundan sonra GitHub Pages statik paketini yayınlayın.
-5. Eski service worker'ı kapatıp yeniden açarak ekranda `v8.20.8` görüldüğünü
+5. Eski service worker'ı kapatıp yeniden açarak ekranda `v8.20.9` görüldüğünü
    doğrulayın.
 
 Statik web paketi Edge Function'dan önce yayınlanırsa istemci eski Edge
