@@ -16,6 +16,12 @@ test('sends one explicitly authorized bounded loopback request through injected 
   await assert.rejects(gateway.send(draftRequest,auth),/NOT_AUTHORIZED/);
 });
 
+test('binds deterministic bounded JSON generation controls for artifact sessions',async()=>{
+  let body;const gateway=gatewayModule.create({clock:()=>1000,transport:async input=>{body=JSON.parse(input.body);return {statusCode:200,body:'{"response":"{}"}'};}});
+  const draftRequest=protocol.createRequest({endpoint:'http://127.0.0.1:11434/api/generate',model:'local-coder',instruction:'JSON',responseFormat:'json'}),auth=gateway.authorize(draftRequest,approval);await gateway.send(draftRequest,auth);
+  assert.deepEqual({stream:body.stream,think:body.think,format:body.format,temperature:body.options.temperature,num_predict:body.options.num_predict},{stream:false,think:false,format:'json',temperature:0,num_predict:1024});
+});
+
 test('rejects copied requests forged grants cross-request replay and expired authorization',async()=>{
   const transport=async()=>({statusCode:200,body:'{"response":"draft"}'}),gateway=gatewayModule.create({clock:()=>1000,transport}),first=request(),second=request();
   assert.throws(()=>gateway.authorize({...first},approval),/authentic/);

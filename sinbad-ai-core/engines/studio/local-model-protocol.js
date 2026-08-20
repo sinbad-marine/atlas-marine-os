@@ -19,11 +19,12 @@ function validateEndpoint(input){
 }
 
 function createRequest(input={}){
-  const endpoint=validateEndpoint(input.endpoint),model=clean(input.model),instruction=clean(input.instruction),context=clean(input.context);
+  const endpoint=validateEndpoint(input.endpoint),model=clean(input.model),instruction=clean(input.instruction),context=clean(input.context),responseFormat=input.responseFormat===undefined?'text':String(input.responseFormat);
   if(!MODEL_ID.test(model))throw new TypeError('LOCAL_MODEL_ID_INVALID');
   if(!instruction)throw new TypeError('LOCAL_MODEL_INSTRUCTION_REQUIRED');
+  if(!['text','json'].includes(responseFormat))throw new TypeError('LOCAL_MODEL_RESPONSE_FORMAT_INVALID');
   if(Buffer.byteLength(instruction,'utf8')>MAX_PROMPT_BYTES||Buffer.byteLength(context,'utf8')>MAX_PROMPT_BYTES)throw new RangeError('LOCAL_MODEL_PROMPT_TOO_LARGE');
-  const request=freeze({version:VERSION,mode:MODE,status:'LOCAL_MODEL_REQUEST_READY',endpoint,model,instruction,context,systemBoundary:'Return a draft only. Do not claim execution, publication, network access, Core modification, or approval.',limits:{maxPromptBytes:MAX_PROMPT_BYTES,maxResponseBytes:MAX_RESPONSE_BYTES},io:{performed:false,network:false,commands:false},nextGate:'EXPLICIT_LOOPBACK_TRANSPORT_AUTHORIZATION'});
+  const request=freeze({version:VERSION,mode:MODE,status:'LOCAL_MODEL_REQUEST_READY',endpoint,model,instruction,context,responseFormat,systemBoundary:'Return a draft only. Do not claim execution, publication, network access, Core modification, or approval.',limits:{maxPromptBytes:MAX_PROMPT_BYTES,maxResponseBytes:MAX_RESPONSE_BYTES},io:{performed:false,network:false,commands:false},nextGate:'EXPLICIT_LOOPBACK_TRANSPORT_AUTHORIZATION'});
   requests.add(request);return request;
 }
 

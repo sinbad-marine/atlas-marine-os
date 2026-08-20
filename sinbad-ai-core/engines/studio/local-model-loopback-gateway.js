@@ -4,7 +4,7 @@ const protocol=require('./local-model-protocol.js');
 const VERSION='0.2.0';
 const MODE='AUTHORIZED_LOOPBACK_MODEL_GATEWAY';
 const MAX_TTL_MS=2*60*1000;
-const MAX_TIMEOUT_MS=30*1000;
+const MAX_TIMEOUT_MS=60*1000;
 const MAX_WIRE_BYTES=protocol.MAX_RESPONSE_BYTES+8192;
 const ID=/^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$/u;
 const drafts=new WeakSet();
@@ -34,7 +34,7 @@ function create(options={}){
     if(!protocol.isAuthenticRequest(request))throw new Error('LOCAL_MODEL_REQUEST_INVALID');
     if(typeof transport!=='function')throw new Error('LOOPBACK_TRANSPORT_NOT_CONFIGURED');
     const endpoint=protocol.validateEndpoint(request.endpoint),controller=new AbortController();
-    const body=endpoint.includes('/api/generate')?{model:request.model,prompt:`${request.systemBoundary}\n\n${request.context}\n\n${request.instruction}`,stream:false}:{model:request.model,messages:[{role:'system',content:request.systemBoundary},{role:'user',content:`${request.context}\n\n${request.instruction}`}]};
+    const body=endpoint.includes('/api/generate')?{model:request.model,prompt:`${request.systemBoundary}\n\n${request.context}\n\n${request.instruction}`,stream:false,think:false,options:{temperature:0,num_predict:1024},...(request.responseFormat==='json'?{format:'json'}:{})}:{model:request.model,messages:[{role:'system',content:request.systemBoundary},{role:'user',content:`${request.context}\n\n${request.instruction}`}],temperature:0,max_tokens:1024,...(request.responseFormat==='json'?{response_format:{type:'json_object'}}:{})};
     let timer;
     try{
       const timeout=new Promise((_,reject)=>{timer=setTimeout(()=>{controller.abort();reject(new Error('LOOPBACK_MODEL_TIMEOUT'));},authorization.timeoutMs);});

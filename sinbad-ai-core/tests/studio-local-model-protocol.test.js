@@ -32,6 +32,7 @@ test('rejects invalid model IDs empty prompts and oversized prompt inputs',()=>{
   assert.throws(()=>protocol.createRequest({endpoint:'http://localhost:11434/api/generate',model:'../ bad',instruction:'x'}),/MODEL_ID/);
   assert.throws(()=>protocol.createRequest({endpoint:'http://localhost:11434/api/generate',model:'local',instruction:''}),/INSTRUCTION/);
   assert.throws(()=>protocol.createRequest({endpoint:'http://localhost:11434/api/generate',model:'local',instruction:'x'.repeat(protocol.MAX_PROMPT_BYTES+1)}),/TOO_LARGE/);
+  assert.throws(()=>protocol.createRequest({endpoint:'http://localhost:11434/api/generate',model:'local',instruction:'x',responseFormat:'xml'}),/RESPONSE_FORMAT/);
 });
 
 test('protocol exposes no transport shell model installer or downloader',()=>{

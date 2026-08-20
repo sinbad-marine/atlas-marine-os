@@ -114,3 +114,8 @@ machine. Model-call approval and proposal-write approval remain separate; an
 invalid input, transport failure or policy violation produces a concrete safe
 next action. A successful session ends at isolated, untrusted proposal storage
 for human review—not execution, merge, Core modification or publication.
+
+For local artifact sessions the protocol requests provider JSON mode, disables
+supported reasoning traces, fixes temperature to zero and bounds generation to
+1024 tokens. The authorization timeout remains finite (maximum 60 seconds) so
+CPU-only local runtimes can complete without creating an unbounded wait.
