@@ -14,3 +14,10 @@ Future implementation adapters must live outside this module and must preserve
 the `SANDBOX_ONLY`, `NO_CORE_WRITE`, `NO_PRODUCTION_WRITE`, `NO_NETWORK`,
 `NO_SECRETS`, `NO_PUBLISH` and `HUMAN_REVIEW_REQUIRED` constraints unless a
 separate, explicit and auditable authorization boundary grants one exact action.
+
+`virtual-artifact-compiler.js` is the next inert boundary. It can compile a
+valid Studio plan into bounded, immutable web, software and SVG/storyboard
+artifacts held only in memory. Artifact paths are fixed by the compiler, user
+text is escaped at markup boundaries, and the result explicitly reports that
+filesystem, network and command I/O did not occur. Persisting these virtual
+artifacts requires a future, separate sandbox-write authorization gate.
