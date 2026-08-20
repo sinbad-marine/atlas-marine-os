@@ -1,7 +1,11 @@
 param(
   [int]$Port = 31983,
   [string]$ExchangeRoot = '',
-  [string]$AiModel = 'qwen3:14b'
+  [string]$AiModel = 'qwen3:14b',
+  [string]$XttsExecutable = '',
+  [string]$XttsModelPath = '',
+  [string]$XttsConfigPath = '',
+  [string]$XttsSpeakerWav = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -11,9 +15,17 @@ $routeRoot = Join-Path $bridgeRoot 'Routes'
 $libraryRoot = Join-Path $bridgeRoot 'Library'
 $importRoot = Join-Path $libraryRoot 'Imported'
 $indexPath = Join-Path $libraryRoot '.sinbad-index.json'
+$userProfileRoot = [Environment]::GetFolderPath('UserProfile')
+if ([string]::IsNullOrWhiteSpace($XttsExecutable)) { $XttsExecutable = Join-Path $userProfileRoot 'AppData\Local\Programs\Python\Python311\Scripts\tts.exe' }
+if ([string]::IsNullOrWhiteSpace($XttsModelPath)) { $XttsModelPath = Join-Path $userProfileRoot 'xtts_v2_model' }
+if ([string]::IsNullOrWhiteSpace($XttsConfigPath)) { $XttsConfigPath = Join-Path $XttsModelPath 'config.json' }
+if ([string]::IsNullOrWhiteSpace($XttsSpeakerWav)) { $XttsSpeakerWav = Join-Path $userProfileRoot 'yasemin_sesi.wav' }
+$voiceTempRoot = Join-Path $bridgeRoot 'Voice\Temp'
+$script:XttsBusy = $false
 New-Item -ItemType Directory -Force -Path $routeRoot | Out-Null
 New-Item -ItemType Directory -Force -Path $libraryRoot | Out-Null
 New-Item -ItemType Directory -Force -Path $importRoot | Out-Null
+New-Item -ItemType Directory -Force -Path $voiceTempRoot | Out-Null
 
 $listener = [Net.Sockets.TcpListener]::new([Net.IPAddress]::Loopback, $Port)
 $listener.Start()
@@ -21,6 +33,7 @@ Write-Host "Sinbad Bridge is online: http://127.0.0.1:$Port" -ForegroundColor Gr
 Write-Host "GPX exchange folder: $routeRoot"
 Write-Host "Offline library folder: $libraryRoot"
 Write-Host "Offline AI model: $AiModel"
+Write-Host "XTTS voice clone: $((Test-Path -LiteralPath $XttsExecutable) -and (Test-Path -LiteralPath $XttsModelPath) -and (Test-Path -LiteralPath $XttsConfigPath) -and (Test-Path -LiteralPath $XttsSpeakerWav))"
 Write-Host 'Keep this window open while using the Bridge. Press Ctrl+C to stop.'
 
 function Invoke-LocalJsonGet([string]$uri) {
@@ -87,6 +100,33 @@ function Write-HttpResponse($stream, [int]$status, [string]$statusText, [string]
   }
 }
 
+function Write-HttpBytes($stream, [int]$status, [string]$statusText, [byte[]]$bodyBytes, [string]$contentType) {
+  $headers = @(
+    "HTTP/1.1 $status $statusText"
+    "Content-Type: $contentType"
+    "Content-Length: $($bodyBytes.Length)"
+    'Access-Control-Allow-Origin: https://sinbad-marine.github.io'
+    'Access-Control-Allow-Methods: GET, POST, OPTIONS'
+    'Access-Control-Allow-Headers: Content-Type'
+    'Access-Control-Allow-Private-Network: true'
+    'Cache-Control: no-store'
+    'X-Content-Type-Options: nosniff'
+    'Connection: close'
+    ''
+    ''
+  ) -join "`r`n"
+  $headerBytes = [Text.Encoding]::ASCII.GetBytes($headers)
+  try {
+    $stream.Write($headerBytes, 0, $headerBytes.Length)
+    $stream.Write($bodyBytes, 0, $bodyBytes.Length)
+    $stream.Flush()
+  } catch [IO.IOException] {
+    # The browser may close during batch synthesis.
+  } catch [ObjectDisposedException] {
+    # The client disconnected.
+  }
+}
+
 function Json($value) { return ($value | ConvertTo-Json -Depth 8 -Compress) }
 
 function Get-OllamaStatus {
@@ -96,6 +136,67 @@ function Get-OllamaStatus {
     return @{ online=$true; model=$AiModel; installed=($models -contains $AiModel); models=$models }
   } catch {
     return @{ online=$false; model=$AiModel; installed=$false; models=@() }
+  }
+}
+
+function Get-XttsStatus {
+  $ready = (Test-Path -LiteralPath $XttsExecutable -PathType Leaf) -and
+    (Test-Path -LiteralPath $XttsModelPath -PathType Container) -and
+    (Test-Path -LiteralPath $XttsConfigPath -PathType Leaf) -and
+    (Test-Path -LiteralPath $XttsSpeakerWav -PathType Leaf)
+  return @{ online=$ready; engine='coqui-xtts-v2'; profile='owner-local'; language='tr'; busy=[bool]$script:XttsBusy; latencyClass='batch' }
+}
+
+function Invoke-XttsVoice($payload) {
+  if ($script:XttsBusy) { throw 'XTTS_BUSY' }
+  $status = Get-XttsStatus
+  if (-not $status.online) { throw 'XTTS_NOT_CONFIGURED' }
+  $text = [string]$payload.text
+  if ([string]::IsNullOrWhiteSpace($text)) { throw 'XTTS_TEXT_REQUIRED' }
+  $text = [regex]::Replace($text, '[\x00-\x08\x0B\x0C\x0E-\x1F]', '').Trim()
+  if ($text.Length -gt 800) { throw 'XTTS_TEXT_TOO_LONG' }
+  $requestedLanguage = [string]$payload.language
+  $language = switch -Regex ($requestedLanguage) {
+    '^tr' { 'tr'; break }
+    '^en' { 'en'; break }
+    '^de' { 'de'; break }
+    '^fr' { 'fr'; break }
+    '^es' { 'es'; break }
+    '^it' { 'it'; break }
+    default { 'tr' }
+  }
+  $outputPath = Join-Path $voiceTempRoot "$([guid]::NewGuid().ToString('N')).wav"
+  $diagnosticPath = "$outputPath.log"
+  $script:XttsBusy = $true
+  try {
+    $arguments = @(
+      '--text', $text,
+      '--model_path', $XttsModelPath,
+      '--config_path', $XttsConfigPath,
+      '--language_idx', $language,
+      '--speaker_wav', $XttsSpeakerWav,
+      '--out_path', $outputPath
+    )
+    $previousErrorAction = $ErrorActionPreference
+    try {
+      $ErrorActionPreference = 'Continue'
+      & $XttsExecutable @arguments 2> $diagnosticPath | Out-Null
+      $exitCode = $LASTEXITCODE
+    } finally {
+      $ErrorActionPreference = $previousErrorAction
+    }
+    $diagnostic = if (Test-Path -LiteralPath $diagnosticPath) { Get-Content -LiteralPath $diagnosticPath -Raw } else { '' }
+    if ($exitCode -ne 0 -or -not (Test-Path -LiteralPath $outputPath -PathType Leaf)) {
+      throw "XTTS_FAILED: $($diagnostic.Substring(0, [Math]::Min(500, $diagnostic.Length)))"
+    }
+    $audio = [IO.File]::ReadAllBytes($outputPath)
+    if ($audio.Length -lt 44 -or [Text.Encoding]::ASCII.GetString($audio, 0, 4) -ne 'RIFF' -or
+        [Text.Encoding]::ASCII.GetString($audio, 8, 4) -ne 'WAVE') { throw 'XTTS_INVALID_WAV' }
+    return $audio
+  } finally {
+    $script:XttsBusy = $false
+    Remove-Item -LiteralPath $outputPath -Force -ErrorAction SilentlyContinue
+    Remove-Item -LiteralPath $diagnosticPath -Force -ErrorAction SilentlyContinue
   }
 }
 
@@ -155,7 +256,7 @@ function Update-LibraryIndex {
         }
       } catch { $skipped.Add("$($_.Name): $($_.Exception.Message)") }
     }
-  $script:LibraryIndex = [pscustomobject]@{ version=1; builtAt=[DateTime]::UtcNow.ToString('o'); documents=@($documents); skipped=@($skipped) }
+  $script:LibraryIndex = [pscustomobject]@{ version=1; builtAt=[DateTime]::UtcNow.ToString('o'); documents=$documents.ToArray(); skipped=$skipped.ToArray() }
   [IO.File]::WriteAllText($indexPath, ($script:LibraryIndex | ConvertTo-Json -Depth 8), [Text.UTF8Encoding]::new($false))
   return Get-LibraryStatus
 }
@@ -271,6 +372,17 @@ try {
       }
       if ($method -eq 'GET' -and $path -eq '/ai/status') {
         Write-HttpResponse $stream 200 'OK' (Json (Get-OllamaStatus)); continue
+      }
+      if ($method -eq 'GET' -and $path -eq '/ai/tts/status') {
+        Write-HttpResponse $stream 200 'OK' (Json (Get-XttsStatus)); continue
+      }
+      if ($method -eq 'POST' -and $path -eq '/ai/tts') {
+        if ($contentLength -gt 8192) { throw 'XTTS_REQUEST_TOO_LARGE' }
+        $origin = if ($headers.ContainsKey('origin')) { [string]$headers['origin'] } else { '' }
+        if ($origin -and $origin -ne 'https://sinbad-marine.github.io') { throw 'XTTS_ORIGIN_DENIED' }
+        $payload = $body | ConvertFrom-Json
+        $audio = Invoke-XttsVoice $payload
+        Write-HttpBytes $stream 200 'OK' $audio 'audio/wav'; continue
       }
       if ($method -eq 'POST' -and $path -eq '/ai/chat') {
         $payload = $body | ConvertFrom-Json
