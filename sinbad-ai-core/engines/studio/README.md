@@ -65,3 +65,11 @@ and preview-write approvals at the correct stages, and reports a concrete next
 action when input, policy or integrity blocks progress. It never weakens the
 underlying process-local authenticity boundaries and still exposes no command,
 browser-open, model/network, Core-write or publishing capability.
+
+`studio-acceptance-manifest.js` freezes the finite Studio 0.1 acceptance scope.
+It distinguishes implemented offline draft/verification/preview capabilities
+from prohibited actions and honest limitations. In particular, this foundation
+uses deterministic bounded templates; it is not itself a local language model.
+Grok, Gemini and Claude cannot operate offline, and any future local-model or
+explicit online-review adapter remains a separate product and authorization
+decision.
