@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.9-core-gate-clone-conversation';
+const CACHE='sinbad-marine-v8.20.9-core-gate-clone-race-fix';
 const ASSETS=[
   './',
   './index.html',

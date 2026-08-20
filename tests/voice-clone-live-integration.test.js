@@ -29,11 +29,15 @@ test('bridge bounds requests, serializes synthesis and erases temporary output',
   assert.match(bridge,/documents=\$documents\.ToArray\(\)/);
 });
 
-test('frontend plays cloned wav with timeout and browser fallback',()=>{
+test('frontend plays only the latest cloned wav and fails closed',()=>{
   assert.match(app,/new AbortController\(\)/);
   assert.match(app,/120000/);
   assert.match(app,/new Audio\(sinbadVoiceObjectUrl\)/);
-  assert.match(app,/speakSinbadFallback\(cleanText\)/);
+  assert.doesNotMatch(app,/speakSinbadFallback\(cleanText\)/);
+  assert.match(app,/sinbadVoiceAbort!==controller/);
+  assert.match(app,/AbortError.*!timedOut/);
+  assert.match(app,/standard voice disabled/);
+  assert.match(app,/standart sese ge.ilmedi/);
   assert.match(app,/URL\.revokeObjectURL/);
   assert.match(app,/speakSinbad\(text,onVoiceReady\)/);
   assert.match(app,/preservesPitch=false/);
@@ -42,5 +46,5 @@ test('frontend plays cloned wav with timeout and browser fallback',()=>{
   assert.match(app,/addSinbadMessage\('sinbad',answer\);\s*speakSinbad\(answer\)/);
   assert.doesNotMatch(app,/speakSinbad\(answer,/);
   assert.doesNotMatch(app,/onvoiceschanged=.*speakSinbad\(text\)/);
-  assert.match(serviceWorker,/sinbad-marine-v8\.20\.9-core-gate-clone-conversation/);
+  assert.match(serviceWorker,/sinbad-marine-v8\.20\.9-core-gate-clone-race-fix/);
 });

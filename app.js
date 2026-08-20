@@ -364,26 +364,37 @@ async function speakSinbad(text,onVoiceReady){
   if(!cleanText){finishSinbadVoice();return;}
   const status=$('sinbadKnowledgeStatus');
   const controller=new AbortController();sinbadVoiceAbort=controller;
-  const timeout=setTimeout(()=>controller.abort(),120000);
+  let timedOut=false;
+  const timeout=setTimeout(()=>{timedOut=true;controller.abort();},120000);
   try{
     if(status)status.textContent='Sinbad ses klonu haz\u0131rlan\u0131yor\u2026';
     const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/tts`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:cleanText,language:sinbadState.language}),signal:controller.signal});
     if(!response.ok)throw new Error(`XTTS returned ${response.status}`);
     const blob=await response.blob();
     if(!blob.size)throw new Error('XTTS returned empty audio');
+    if(sinbadVoiceAbort!==controller)return;
     sinbadVoiceObjectUrl=URL.createObjectURL(blob);
-    sinbadVoiceAudio=new Audio(sinbadVoiceObjectUrl);
-    sinbadVoiceAudio.preservesPitch=false;
-    sinbadVoiceAudio.playbackRate=1.04;
-    sinbadVoiceAudio.volume=.92;
-    sinbadVoiceAudio.onended=finishSinbadVoice;
-    sinbadVoiceAudio.onerror=()=>{announce();stopSinbadVoice();speakSinbadFallback(cleanText);};
-    if(status)status.textContent='Sinbad XTTS ses klonu aktif';
+    const audio=new Audio(sinbadVoiceObjectUrl);sinbadVoiceAudio=audio;
+    audio.preservesPitch=false;
+    audio.playbackRate=1.04;
+    audio.volume=.92;
+    audio.onended=()=>{if(sinbadVoiceAudio===audio)finishSinbadVoice();};
+    audio.onerror=()=>{
+      if(sinbadVoiceAudio!==audio)return;
+      announce();stopSinbadVoice();
+      if(status)status.textContent='XTTS klon sesi oynatılamadı · standart sese geçilmedi';
+      sinbadAwaitingAnswer=false;scheduleSinbadListening();
+    };
+    if(status)status.textContent='Sinbad XTTS klon sesi aktif · owner-local';
     announce();
-    await sinbadVoiceAudio.play();
+    await audio.play();
   }catch(error){
-    console.warn('Sinbad XTTS unavailable; using browser voice',error);
-    announce();stopSinbadVoice();speakSinbadFallback(cleanText);
+    if(sinbadVoiceAbort!==controller)return;
+    if(error?.name==='AbortError'&&!timedOut)return;
+    console.warn('Sinbad XTTS clone unavailable; standard voice disabled',error);
+    announce();stopSinbadVoice();
+    if(status)status.textContent=timedOut?'XTTS klon sesi zaman aşımına uğradı · standart sese geçilmedi':'XTTS klon sesi üretilemedi · standart sese geçilmedi';
+    sinbadAwaitingAnswer=false;scheduleSinbadListening();
   }finally{clearTimeout(timeout);}
 }
 let sinbadRecognition=null;
