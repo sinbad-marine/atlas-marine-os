@@ -412,6 +412,39 @@ function speakSinbadFallback(text){
   };
   speakNext();
 }
+function splitSinbadCloneChunks(text,maxLength=220){
+  const sentences=String(text).match(/[^.!?…]+[.!?…]?/gu)||[String(text)];
+  const chunks=[];
+  for(const sentence of sentences){
+    const clean=sentence.trim();if(!clean)continue;
+    if(clean.length<=maxLength){chunks.push(clean);continue;}
+    let chunk='';
+    for(const word of clean.split(/\s+/)){
+      if(chunk&&`${chunk} ${word}`.length>maxLength){chunks.push(chunk);chunk=word;}
+      else chunk=chunk?`${chunk} ${word}`:word;
+    }
+    if(chunk)chunks.push(chunk);
+  }
+  return chunks;
+}
+function playSinbadCloneBlob(blob,controller){
+  return new Promise((resolve,reject)=>{
+    if(sinbadVoiceObjectUrl)URL.revokeObjectURL(sinbadVoiceObjectUrl);
+    const objectUrl=URL.createObjectURL(blob);
+    sinbadVoiceObjectUrl=objectUrl;
+    const audio=new Audio(objectUrl);sinbadVoiceAudio=audio;
+    audio.preservesPitch=false;audio.playbackRate=1.04;audio.volume=.92;
+    const cleanup=()=>{
+      if(sinbadVoiceAudio===audio)sinbadVoiceAudio=null;
+      URL.revokeObjectURL(objectUrl);
+      if(sinbadVoiceObjectUrl===objectUrl)sinbadVoiceObjectUrl='';
+    };
+    audio.onended=()=>{cleanup();resolve();};
+    audio.onerror=()=>{cleanup();reject(new Error('XTTS cloned audio playback failed'));};
+    controller.signal.addEventListener('abort',()=>{audio.pause();audio.src='';cleanup();resolve();},{once:true});
+    audio.play().catch(error=>{cleanup();reject(error);});
+  });
+}
 async function speakSinbad(text,onVoiceReady){
   let announced=false;
   const announce=()=>{if(!announced){announced=true;onVoiceReady?.();}};
@@ -420,32 +453,33 @@ async function speakSinbad(text,onVoiceReady){
   stopSinbadVoice();
   const cleanText=String(text).replace(/[\u2022*_#]/g,' ').trim();
   if(!cleanText){finishSinbadVoice();return;}
+  const chunks=splitSinbadCloneChunks(cleanText);
   const status=$('sinbadKnowledgeStatus');
   const controller=new AbortController();sinbadVoiceAbort=controller;
   let timedOut=false;
-  const timeout=setTimeout(()=>{timedOut=true;controller.abort();},120000);
+  const loadChunk=async index=>{
+    const timeout=setTimeout(()=>{timedOut=true;controller.abort();},150000);
+    try{
+      const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/tts`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:chunks[index],language:sinbadState.language}),signal:controller.signal});
+      if(!response.ok)throw new Error(`XTTS returned ${response.status}: ${await response.text()}`);
+      const blob=await response.blob();
+      if(!blob.size)throw new Error('XTTS returned empty audio');
+      return blob;
+    }finally{clearTimeout(timeout);}
+  };
   try{
-    if(status)status.textContent='Sinbad ses klonu haz\u0131rlan\u0131yor\u2026';
-    const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/tts`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:cleanText,language:sinbadState.language}),signal:controller.signal});
-    if(!response.ok)throw new Error(`XTTS returned ${response.status}`);
-    const blob=await response.blob();
-    if(!blob.size)throw new Error('XTTS returned empty audio');
-    if(sinbadVoiceAbort!==controller)return;
-    sinbadVoiceObjectUrl=URL.createObjectURL(blob);
-    const audio=new Audio(sinbadVoiceObjectUrl);sinbadVoiceAudio=audio;
-    audio.preservesPitch=false;
-    audio.playbackRate=1.04;
-    audio.volume=.92;
-    audio.onended=()=>{if(sinbadVoiceAudio===audio)finishSinbadVoice();};
-    audio.onerror=()=>{
-      if(sinbadVoiceAudio!==audio)return;
-      announce();stopSinbadVoice();
-      if(status)status.textContent='XTTS klon sesi oynatılamadı · standart sese geçilmedi';
-      sinbadAwaitingAnswer=false;scheduleSinbadListening();
-    };
-    if(status)status.textContent='Sinbad XTTS klon sesi aktif · owner-local';
-    announce();
-    await audio.play();
+    let pendingChunk=loadChunk(0);
+    for(let index=0;index<chunks.length;index++){
+      if(sinbadVoiceAbort!==controller)return;
+      if(status)status.textContent=`Yasemin klon sesi hazırlanıyor · ${index+1}/${chunks.length}`;
+      const blob=await pendingChunk;
+      if(sinbadVoiceAbort!==controller)return;
+      pendingChunk=index+1<chunks.length?loadChunk(index+1):null;
+      if(status)status.textContent=`Yasemin XTTS klon sesi aktif · ${index+1}/${chunks.length}`;
+      announce();
+      await playSinbadCloneBlob(blob,controller);
+    }
+    if(sinbadVoiceAbort===controller)finishSinbadVoice();
   }catch(error){
     if(sinbadVoiceAbort!==controller)return;
     if(error?.name==='AbortError'&&!timedOut)return;
@@ -453,7 +487,7 @@ async function speakSinbad(text,onVoiceReady){
     announce();stopSinbadVoice();
     if(status)status.textContent=timedOut?'XTTS klon sesi zaman aşımına uğradı · standart sese geçilmedi':'XTTS klon sesi üretilemedi · standart sese geçilmedi';
     sinbadAwaitingAnswer=false;scheduleSinbadListening();
-  }finally{clearTimeout(timeout);}
+  }
 }
 let sinbadRecognition=null;
 let sinbadIsListening=false;
@@ -774,8 +808,7 @@ async function sendToSinbad(text){
   setTimeout(async()=>{
     const answer=await sinbadLocalAnswer(q);
     $('sinbadThinking').classList.add('hidden');
-    addSinbadMessage('sinbad',answer);
-    speakSinbad(answer);
+    speakSinbad(answer,()=>addSinbadMessage('sinbad',answer));
   },650);
 }
 $('sendSinbad').addEventListener('click',()=>{window.speechSynthesis?.resume();sendToSinbad($('sinbadInput').value);});
@@ -1621,7 +1654,7 @@ async function performSinbadWebSearch(){
     const {data,error}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language:sinbadState.language,allowWebSearch:true,coreEnvelope}});if(error)throw error;
     if(!cloudAnswerPassesCoreGate(data,coreEnvelope))throw new Error('Core safety gate rejected the cloud response');
     const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];const answer=`${copy.result}:\n\n${data?.answer||'No reliable web result was found.'}`;
-    addSinbadMessage('sinbad',answer);speakSinbad(answer);
+    speakSinbad(answer,()=>addSinbadMessage('sinbad',answer));
   }catch(error){addSinbadMessage('sinbad',`Web search failed: ${error.message||error}`);}finally{$('sinbadThinking').classList.add('hidden');}
 }
 async function uploadCloudFiles(){
