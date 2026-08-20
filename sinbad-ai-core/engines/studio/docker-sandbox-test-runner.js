@@ -16,6 +16,8 @@ function create(options={}){
   const workspaceRoot=path.join(approvedBase,'studio-workspaces');
   const clock=typeof options.clock==='function'?options.clock:Date.now;
   const launch=typeof options.launch==='function'?options.launch:null;
+  const timeoutMs=Math.max(10,Math.min(30000,Number(options.timeoutMs)||30000));
+  const maxOutputBytes=Math.max(1024,Math.min(131072,Number(options.maxOutputBytes)||131072));
   const grants=new WeakMap(),grantObjects=new WeakSet();
 
   function authorize(report,input={}){
@@ -48,9 +50,9 @@ function create(options={}){
     await revalidate(grant);
     const containerName=`sinbad-studio-${sha256(Buffer.from(authorization.nonce)).slice(0,16)}`;
     const args=Object.freeze(['run','--rm','--name',containerName,'--network','none','--read-only','--cap-drop','ALL','--security-opt','no-new-privileges','--pids-limit','64','--memory','256m','--cpus','1','--user','65532:65532','--tmpfs','/tmp:rw,noexec,nosuid,size=32m','--mount',`type=bind,source=${grant.projectRoot},target=/workspace,readonly`,'--workdir','/workspace',IMAGE,'node','--test',...grant.tests]);
-    const launchRequest=freeze({version:VERSION,mode:MODE,args,containerName,timeoutMs:30000,maxOutputBytes:131072});launchRequests.add(launchRequest);
+    const launchRequest=freeze({version:VERSION,mode:MODE,args,containerName,timeoutMs,maxOutputBytes});launchRequests.add(launchRequest);
     const outcome=await launch(launchRequest);
-    const exitCode=Number(outcome&&outcome.exitCode),timedOut=Boolean(outcome&&outcome.timedOut),output=String(outcome&&outcome.output||'').slice(0,131072);
+    const exitCode=Number(outcome&&outcome.exitCode),timedOut=Boolean(outcome&&outcome.timedOut),output=Buffer.from(String(outcome&&outcome.output||''),'utf8').subarray(0,maxOutputBytes).toString('utf8');
     return freeze({version:VERSION,mode:MODE,status:!timedOut&&exitCode===0?'SANDBOX_TESTS_PASSED':'SANDBOX_TESTS_FAILED',projectSlug:report.projectSlug,image:IMAGE,tests:grant.tests,exitCode:Number.isInteger(exitCode)?exitCode:null,timedOut,output,policy:{network:'NONE',rootFilesystem:'READ_ONLY',hostMount:'READ_ONLY',capabilities:'DROP_ALL',privilegeEscalation:'DENY',user:'65532:65532',memory:'256m',cpus:1,pids:64},writes:{host:false,core:false,production:false},publishPerformed:false});
   }
   return freeze({VERSION,MODE,IMAGE,authorize,run});

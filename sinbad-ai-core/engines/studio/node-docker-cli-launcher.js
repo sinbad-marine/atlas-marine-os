@@ -11,13 +11,13 @@ function create(options={}){
   async function launch(request){
     if(!runner.isAuthenticLaunchRequest(request))throw new Error('AUTHENTIC_DOCKER_LAUNCH_REQUEST_REQUIRED');
     return new Promise((resolve,reject)=>{
-      let output='',settled=false,timedOut=false;
+      const chunks=[];let outputBytes=0,settled=false,timedOut=false;
       const child=spawn(dockerPath,[...request.args],{shell:false,windowsHide:true,stdio:['ignore','pipe','pipe']});
-      const append=chunk=>{if(Buffer.byteLength(output,'utf8')<request.maxOutputBytes)output=(output+String(chunk)).slice(0,request.maxOutputBytes);};
+      const append=chunk=>{const bytes=Buffer.isBuffer(chunk)?chunk:Buffer.from(String(chunk),'utf8'),remaining=request.maxOutputBytes-outputBytes;if(remaining<=0)return;const accepted=bytes.subarray(0,remaining);chunks.push(accepted);outputBytes+=accepted.length;};
       child.stdout?.on('data',append);child.stderr?.on('data',append);
       const timer=setTimeout(()=>{timedOut=true;child.kill('SIGKILL');const cleanup=spawn(dockerPath,['rm','-f',request.containerName],{shell:false,windowsHide:true,stdio:'ignore'});cleanup.once?.('error',()=>{});},request.timeoutMs);
       child.once('error',error=>{if(settled)return;settled=true;clearTimeout(timer);reject(Object.assign(new Error('DOCKER_LAUNCH_FAILED'),{cause:error}));});
-      child.once('close',code=>{if(settled)return;settled=true;clearTimeout(timer);resolve(freeze({exitCode:Number.isInteger(code)?code:null,timedOut,output}));});
+      child.once('close',code=>{if(settled)return;settled=true;clearTimeout(timer);resolve(freeze({exitCode:Number.isInteger(code)?code:null,timedOut,output:Buffer.concat(chunks,outputBytes).toString('utf8')}));});
     });
   }
   return freeze({VERSION,MODE,dockerPath,launch});

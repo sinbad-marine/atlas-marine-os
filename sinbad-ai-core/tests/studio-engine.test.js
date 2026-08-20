@@ -22,6 +22,12 @@ test('asks focused questions when the request has no Studio domain',()=>{
   assert.ok(result.questions.length>=2);
 });
 
+test('recognizes Turkish yazılım requests as software work',()=>{
+  const result=studio.plan({instruction:'Çevrimdışı bir yazılım motoru hazırla',audience:'owner',acceptanceCriteria:'tests'});
+  assert.equal(result.status,'STUDIO_PLAN_READY');
+  assert.deepEqual(result.domains,['software']);
+});
+
 test('normalizes hostile controls and bounds instruction length',()=>{
   const result=studio.plan({instruction:`web\u200Bsite\u0000 ${'x'.repeat(20000)}`});
   assert.equal(result.instruction.length,studio.MAX_INSTRUCTION_LENGTH);
