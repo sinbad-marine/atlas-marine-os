@@ -14,8 +14,9 @@
     ['vessel',/(gemi|tekne|vessel|fleet|filo|draft|su çekimi|su cekimi|makine|engine)/i],
     ['document',/(belge|doküman|dokuman|document|dosya|file|chart|harita|library|kütüphane|kutuphane)/i]
   ];
-  const LIVE_DATA=/(şimdi|simdi|güncel|guncel|bugün|bugun|yarın|yarin|today|tomorrow|latest|forecast|hava|weather|rüzgâr|rüzgar|navtex|msi|son notice|notice to mariners|liman açık|liman acik|port open|traffic|ais|current)/i;
+  const LIVE_DATA=/(şimdi|simdi|güncel|guncel|bugün|bugun|yarın|yarin|\btoday\b|\btomorrow\b|\blatest\b|\bforecast\b|hava|weather|rüzgâr|rüzgar|navtex|msi|son notice|notice to mariners|liman açık|liman acik|port open|traffic|ais|\bcurrent (?:weather|conditions|notice|traffic|status)\b)/i;
   const OPERATIONAL=/(hesapla|calculate|tutulacak rota|course to steer|uygula|execute|başlat|baslat|değiştir|degistir|manevra|approach|yanaş|yanas)/i;
+  const UNSAFE_ANSWER_CLAIM=/(executionPerformed\s*[:=]\s*true|authori[sz]ed\s*[:=]\s*true|command (?:was )?sent|actuator (?:was )?executed)/i;
 
   const normalizeCoreQuestion=value=>String(value||'').normalize('NFKC').replace(/[\u200B-\u200D\u2060\uFEFF]/gu,'').trim().slice(0,6000);
   const normalizeCoreHistory=(value,limit=10)=>(Array.isArray(value)?value:[]).slice(-Math.max(1,Math.min(12,Number(limit)||10))).map(item=>({
@@ -38,5 +39,6 @@
     const expected=serverCoreDecision(question);
     return Object.entries(expected).every(([key,result])=>envelope.analysis?.[key]===result);
   }
-  return {CORE_GATE_VERSION,normalizeCoreQuestion,normalizeCoreHistory,analyzeCore,serverCoreDecision,validateCoreEnvelope};
+  const answerIsSafe=value=>typeof value==='string'&&Boolean(value.trim())&&!UNSAFE_ANSWER_CLAIM.test(value);
+  return {CORE_GATE_VERSION,normalizeCoreQuestion,normalizeCoreHistory,analyzeCore,serverCoreDecision,validateCoreEnvelope,answerIsSafe};
 });

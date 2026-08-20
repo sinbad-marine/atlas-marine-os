@@ -2,6 +2,7 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
+const {spawnSync}=require('node:child_process');
 
 const tool=fs.readFileSync(path.resolve(__dirname,'../tools/roundtable-review.js'),'utf8');
 
@@ -21,4 +22,10 @@ test('round table supports Claude and Grok while keeping Gemini opt-in',()=>{
 test('round table fails rather than truncating an oversized review diff',()=>{
   assert.match(tool,/Review diff exceeds/);
   assert.doesNotMatch(tool,/DIFF TRUNCATED/);
+});
+
+test('round table rejects HEAD as a misleading empty base range',()=>{
+  const result=spawnSync(process.execPath,['tools/roundtable-review.js'],{cwd:path.resolve(__dirname,'..'),encoding:'utf8',env:{...process.env,ROUNDTABLE_BASE_REF:'HEAD',ROUNDTABLE_REVIEWERS:'claude'}});
+  assert.notEqual(result.status,0);
+  assert.match(result.stderr,/ROUNDTABLE_BASE_REF is invalid/);
 });

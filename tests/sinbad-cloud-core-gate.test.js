@@ -81,6 +81,19 @@ test('cloud answers cannot claim execution authority',()=>{
   assert.ok((edge.match(/\.\.\.decisionSupport/g)||[]).length>=4);
 });
 
+test('provider answer is checked by the canonical authority-claim filter',()=>{
+  const extract=edge.indexOf('const answer = extractText(payload)');
+  const safety=edge.indexOf('if (!answerIsSafe(answer))',extract);
+  const success=edge.indexOf('return json({ answer, sources',safety);
+  assert.ok(extract>=0&&safety>extract&&success>safety);
+  assert.match(edge,/UNSAFE_PROVIDER_ANSWER/);
+});
+
+test('high-risk block is localized and carries the trusted decision shape',()=>{
+  assert.match(edge,/language\.toLowerCase\(\)\.startsWith\('en'\)/);
+  assert.match(edge,/sources: \[\], mode: 'core-safety-blocked', \.\.\.decisionSupport/);
+});
+
 test('high and critical risk stop before the cloud model provider',()=>{
   const block=edge.indexOf("if (coreDecision.emergency || coreDecision.risk === 'high')");
   const retrieval=edge.indexOf('const rows: any[] = []');

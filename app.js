@@ -1502,7 +1502,8 @@ async function saveDocumentKnowledge(documentId,file,text,bucket){
 }
 function cloudAnswerPassesCoreGate(data,envelope){
   const decision=data?.coreDecision;
-  return Boolean(data&&data.coreGateVersion===window.SinbadCore?.CORE_GATE_VERSION&&data.coreGateVersion===envelope?.gateVersion&&data.permission==='DECISION_SUPPORT_ONLY'&&data.executionPerformed===false&&decision&&['low','medium','high','critical'].includes(decision.risk)&&['emergency','operational','needsLiveData','requiresHumanApproval','requiresIndependentVerification'].every(field=>typeof decision[field]==='boolean'));
+  const expected=envelope?.analysis;
+  return Boolean(data&&data.coreGateVersion===window.SinbadCore?.CORE_GATE_VERSION&&data.coreGateVersion===envelope?.gateVersion&&data.permission==='DECISION_SUPPORT_ONLY'&&data.executionPerformed===false&&decision&&expected&&['low','medium','high','critical'].includes(decision.risk)&&decision.risk===expected.risk&&['emergency','operational','needsLiveData','requiresHumanApproval','requiresIndependentVerification'].every(field=>typeof decision[field]==='boolean'&&decision[field]===expected[field]));
 }
 async function sinbadCloudKnowledgeAnswer(question){
   if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId)return null;
@@ -1513,7 +1514,7 @@ async function sinbadCloudKnowledgeAnswer(question){
     const coreEnvelope=window.SinbadCore?.aiEnvelope?.(question,history);
     const {data:aiData,error:aiError}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language,coreEnvelope}});
     if(aiError){if(status)status.textContent='Atlas Cloud AI unavailable Â· searching private archive';}
-    else if(!cloudAnswerPassesCoreGate(aiData,coreEnvelope)){if(status)status.textContent='Atlas Cloud Core gate blocked the response';return null;}
+    else if(!cloudAnswerPassesCoreGate(aiData,coreEnvelope)){if(status)status.textContent='Atlas Cloud Core gate blocked AI Â· searching private archive';}
     else if(aiData?.answer){
       const answer=String(aiData.answer).trim();
       // Older cloud deployments can return a polite "no source found" notice

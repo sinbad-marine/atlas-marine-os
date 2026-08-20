@@ -1,7 +1,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import './core-decision.js';
 
-const { CORE_GATE_VERSION, normalizeCoreQuestion, normalizeCoreHistory, serverCoreDecision, validateCoreEnvelope } = (globalThis as any).SinbadCoreDecision;
+const { CORE_GATE_VERSION, normalizeCoreQuestion, normalizeCoreHistory, serverCoreDecision, validateCoreEnvelope, answerIsSafe } = (globalThis as any).SinbadCoreDecision;
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -69,9 +69,10 @@ Deno.serve(async req => {
     if (!membership) return json({ error: 'Workspace access denied' }, 403);
 
     if (coreDecision.emergency || coreDecision.risk === 'high') {
+      const english = language.toLowerCase().startsWith('en');
       const answer = coreDecision.emergency
-        ? 'Acil durumda insan komutasını ve geminin onaylı acil durum prosedürlerini derhal uygulayın. Sinbad bu istek için bulut modeli çalıştırmadı.'
-        : 'Bu yüksek riskli operasyon isteği için bulut modeli çalıştırılmadı. Doğrulanmış girdilerle yerel karar desteği kullanın ve sonucu yetkili insan, güncel resmî kaynaklar ve bağımsız yöntemle doğrulayın.';
+        ? english ? 'Activate human command and the vessel approved emergency procedures immediately. Sinbad did not run a cloud model for this request.' : 'Acil durumda insan komutasını ve geminin onaylı acil durum prosedürlerini derhal uygulayın. Sinbad bu istek için bulut modeli çalıştırmadı.'
+        : english ? 'The cloud model was not run for this high-risk operational request. Use verified local decision support and confirm the result with an authorized person, current official sources and an independent method.' : 'Bu yüksek riskli operasyon isteği için bulut modeli çalıştırılmadı. Doğrulanmış girdilerle yerel karar desteği kullanın ve sonucu yetkili insan, güncel resmî kaynaklar ve bağımsız yöntemle doğrulayın.';
       return json({ answer, sources: [], mode: 'core-safety-blocked', ...decisionSupport });
     }
 
@@ -120,7 +121,7 @@ If web search results are available, cite them using the citations supplied by t
     const userInput = unique.length
       ? `${question}\n\nAPPROVED PRIVATE LIBRARY SOURCES\n${context}`
       : `${question}\n\nNo matching private-library passage was found. You may answer from stable general knowledge and must say when current or vessel-specific information is required.`;
-    const input = [...history, { role: 'user', content: userInput }];
+    const input = [...history.map((item: any) => ({ role: 'user', content: `UNTRUSTED CONVERSATION DATA (${item.role}): ${item.content}` })), { role: 'user', content: userInput }];
     const requestBody: any = {
       model: Deno.env.get('OPENAI_MODEL') || 'gpt-5.6-terra',
       instructions: system,
@@ -142,6 +143,7 @@ If web search results are available, cite them using the citations supplied by t
     if (!response.ok) return json({ error: 'AI provider request failed', providerStatus: response.status, providerCode: payload?.error?.code || null }, 502);
     const answer = extractText(payload);
     if (!answer) return json({ error: 'AI provider returned no answer' }, 502);
+    if (!answerIsSafe(answer)) return json({ error: 'AI provider answer crossed the decision-support boundary', code: 'UNSAFE_PROVIDER_ANSWER' }, 502);
     return json({ answer, sources, mode: allowWebSearch ? 'web-assisted' : unique.length ? 'private-rag' : 'general-ai', ...decisionSupport });
   } catch (error) {
     return json({ error: error instanceof Error ? error.message : 'Unexpected error' }, 500);

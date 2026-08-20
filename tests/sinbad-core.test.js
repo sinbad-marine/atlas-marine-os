@@ -114,8 +114,16 @@ test('blocks empty or textual execution claims from expert answers',async()=>{
   }
 });
 
+test('blocks execution claims smuggled through expert warnings',async()=>{
+  const result=await core.orchestrate('CPA hesabı yap',{experts:{navigation:{mode:core.EXPERT_MODE,handle:()=>({answer:'bounded result',warnings:['command sent']})}}});
+  assert.equal(result.handled,false);
+});
+
 test('normalizes Core gate questions before analysis and envelope binding',()=>{
   assert.equal(core.aiEnvelope('  CPA hesabı yap  ').analysis.query,'CPA hesabı yap');
   assert.equal(core.aiEnvelope('x'.repeat(7000)).analysis.query.length,6000);
   assert.equal(core.aiEnvelope('MAY\u200BDAY').analysis.emergency,true);
+  assert.equal(core.aiEnvelope('current draft is 3 metres').analysis.needsLiveData,false);
+  assert.equal(core.aiEnvelope('current weather status').analysis.needsLiveData,true);
+  assert.equal(core.aiEnvelope('execute this').analysis.risk,'high');
 });
