@@ -354,8 +354,10 @@ function speakSinbadFallback(text){
   };
   speakNext();
 }
-async function speakSinbad(text){
-  if(!sinbadState.voiceEnabled){sinbadAwaitingAnswer=false;scheduleSinbadListening();return;}
+async function speakSinbad(text,onVoiceReady){
+  let announced=false;
+  const announce=()=>{if(!announced){announced=true;onVoiceReady?.();}};
+  if(!sinbadState.voiceEnabled){announce();sinbadAwaitingAnswer=false;scheduleSinbadListening();return;}
   if(sinbadIsListening)sinbadRecognition?.stop();
   stopSinbadVoice();
   const cleanText=String(text).replace(/[\u2022*_#]/g,' ').trim();
@@ -371,13 +373,17 @@ async function speakSinbad(text){
     if(!blob.size)throw new Error('XTTS returned empty audio');
     sinbadVoiceObjectUrl=URL.createObjectURL(blob);
     sinbadVoiceAudio=new Audio(sinbadVoiceObjectUrl);
+    sinbadVoiceAudio.preservesPitch=false;
+    sinbadVoiceAudio.playbackRate=1.04;
+    sinbadVoiceAudio.volume=.92;
     sinbadVoiceAudio.onended=finishSinbadVoice;
-    sinbadVoiceAudio.onerror=()=>{stopSinbadVoice();speakSinbadFallback(cleanText);};
+    sinbadVoiceAudio.onerror=()=>{announce();stopSinbadVoice();speakSinbadFallback(cleanText);};
     if(status)status.textContent='Sinbad XTTS ses klonu aktif';
+    announce();
     await sinbadVoiceAudio.play();
   }catch(error){
     console.warn('Sinbad XTTS unavailable; using browser voice',error);
-    stopSinbadVoice();speakSinbadFallback(cleanText);
+    announce();stopSinbadVoice();speakSinbadFallback(cleanText);
   }finally{clearTimeout(timeout);}
 }
 let sinbadRecognition=null;
@@ -694,8 +700,10 @@ async function sendToSinbad(text){
   $('sinbadThinking').classList.remove('hidden');
   setTimeout(async()=>{
     const answer=await sinbadLocalAnswer(q);
-    $('sinbadThinking').classList.add('hidden');
-    addSinbadMessage('sinbad',answer);speakSinbad(answer);
+    if(!sinbadState.voiceEnabled){$('sinbadThinking').classList.add('hidden');addSinbadMessage('sinbad',answer);speakSinbad(answer);return;}
+    const status=$('sinbadKnowledgeStatus');
+    if(status)status.textContent='Yanıt hazır · Sinbad sesi hazırlanıyor…';
+    speakSinbad(answer,()=>{$('sinbadThinking').classList.add('hidden');addSinbadMessage('sinbad',answer);});
   },650);
 }
 $('sendSinbad').addEventListener('click',()=>{window.speechSynthesis?.resume();sendToSinbad($('sinbadInput').value);});
