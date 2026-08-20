@@ -144,3 +144,8 @@ new atomic project beneath `studio-revisions/`. Before copying it reruns the
 read-only planner and rehashes every source file. Existing files absent from the
 proposal are preserved, proposed files may update only the derived staging tree,
 and the original workspace is never modified or deleted.
+
+`studio-pro-03-acceptance-manifest.js` freezes this finite Pro 0.3 completion
+scope and the observed host sandbox gap. Pro 0.3 means authenticated read-only
+proposal review plus atomic no-delete derived revisions; it does not mean code
+execution, automatic merge, Core modification or publication.
