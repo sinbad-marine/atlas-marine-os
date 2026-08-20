@@ -8,7 +8,7 @@
 <link rel="manifest" href="./manifest.webmanifest?v=8161">
 <link rel="apple-touch-icon" href="./icon-192.png?v=8155">
 <link rel="stylesheet" href="./styles.css?v=8190">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@10.6.1/ol.css">
+<link rel="stylesheet" href="./vendor/ol-10.6.1.css">
 </head>
 <body class="auth-pending">
 <section id="publicGateway" class="public-gateway" aria-live="polite">
@@ -551,7 +551,7 @@
     <div class="action-row"><button type="button" class="btn" id="backToSinbad">Sinbad’a dön</button><button class="btn close">Kapat</button></div>
   </div>
   <div class="navigation-plot-grid">
-    <div class="enc-map-shell"><div id="navigationPlotMap" role="application" aria-label="Hesaplanan seyir rotası haritası"></div><div class="enc-map-status ready">Eğitim çizimidir — resmî seyir haritası değildir.</div></div>
+    <div class="enc-map-shell"><div id="navigationPlotMap" role="application" aria-label="Hesaplanan seyir rotası haritası"></div><div id="navigationPlotStatus" class="enc-map-status ready">Yerel offline dünya katmanı hazırlanıyor.</div></div>
     <aside id="navigationPlotSummary" class="navigation-plot-summary">Henüz çizilecek bir seyir hesabı yok.</aside>
   </div>
 </section>
@@ -794,7 +794,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.9.0/mammoth.browser.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/ol@10.6.1/dist/ol.js"></script>
+<script src="./vendor/ol-10.6.1.js"></script>
   <script src="./sinbad-navigation.js?v=8209"></script>
   <script src="./sinbad-navigation-assistant.js?v=8209"></script>
   <script src="./sinbad-route-visualizer.js?v=8209"></script>
