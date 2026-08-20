@@ -28,6 +28,8 @@ if ([string]::IsNullOrWhiteSpace($OpenCpnExecutable)) {
   ) | Where-Object { $_ -and (Test-Path -LiteralPath $_) } | Select-Object -First 1
 }
 $voiceTempRoot = Join-Path $bridgeRoot 'Voice\Temp'
+$openCpnConfigPath = Join-Path $env:ProgramData 'opencpn\opencpn.ini'
+$openCpnRestClientPath = Join-Path $PSScriptRoot 'opencpn-rest-client.js'
 $script:XttsBusy = $false
 New-Item -ItemType Directory -Force -Path $routeRoot | Out-Null
 New-Item -ItemType Directory -Force -Path $libraryRoot | Out-Null
@@ -135,6 +137,43 @@ function Write-HttpBytes($stream, [int]$status, [string]$statusText, [byte[]]$bo
 }
 
 function Json($value) { return ($value | ConvertTo-Json -Depth 8 -Compress) }
+
+function Get-OpenCpnRestKey {
+  if (-not (Test-Path -LiteralPath $openCpnConfigPath -PathType Leaf)) { return '' }
+  $match = [regex]::Match([IO.File]::ReadAllText($openCpnConfigPath), '(?m)^ServerKeys=.*(?:^|;)SINBAD-BRIDGE:([^;\r\n]+)')
+  if (-not $match.Success) { $match = [regex]::Match([IO.File]::ReadAllText($openCpnConfigPath), '(?m)^ServerKeys=SINBAD-BRIDGE:([^;\r\n]+)') }
+  if ($match.Success) { return $match.Groups[1].Value.Trim() }
+  return ''
+}
+
+function Send-RouteToOpenCpn([string]$gpx) {
+  $key = Get-OpenCpnRestKey
+  if ([string]::IsNullOrWhiteSpace($key)) { return @{ imported=$false; reason='OPENCPN_PAIRING_REQUIRED' } }
+  if (-not (Test-Path -LiteralPath $openCpnRestClientPath -PathType Leaf)) { return @{ imported=$false; reason='OPENCPN_REST_CLIENT_MISSING' } }
+  $node = Get-Command node.exe -ErrorAction SilentlyContinue
+  if (-not $node) { return @{ imported=$false; reason='NODE_NOT_INSTALLED' } }
+  $info = [Diagnostics.ProcessStartInfo]::new()
+  $info.FileName = $node.Source
+  $info.Arguments = ('"{0}"' -f $openCpnRestClientPath.Replace('"',''))
+  $info.UseShellExecute = $false
+  $info.CreateNoWindow = $true
+  $info.RedirectStandardInput = $true
+  $info.RedirectStandardOutput = $true
+  $info.RedirectStandardError = $true
+  $process = [Diagnostics.Process]::Start($info)
+  $process.StandardInput.Write((Json @{ action='upload'; key=$key; gpx=$gpx }))
+  $process.StandardInput.Close()
+  $output = $process.StandardOutput.ReadToEnd()
+  $errorText = $process.StandardError.ReadToEnd()
+  $process.WaitForExit()
+  if ($process.ExitCode -ne 0) { return @{ imported=$false; reason='OPENCPN_REST_FAILED'; detail=$errorText } }
+  try {
+    $wire = $output | ConvertFrom-Json
+    $result = ([string]$wire.body | ConvertFrom-Json)
+    if ([int]$wire.statusCode -eq 200 -and [int]$result.result -eq 0) { return @{ imported=$true; reason='OK' } }
+    return @{ imported=$false; reason='OPENCPN_REJECTED'; result=$result.result }
+  } catch { return @{ imported=$false; reason='OPENCPN_INVALID_RESPONSE' } }
+}
 
 function Get-OllamaStatus {
   try {
@@ -428,16 +467,19 @@ try {
           # OpenCPN for Windows does not support importing a positional GPX
           # argument. Launch it normally; passing $target here can crash it.
           $openCpnProcess = Start-Process -FilePath $OpenCpnExecutable -PassThru
+          Start-Sleep -Seconds 5
         }
+        $transfer = Send-RouteToOpenCpn ([string]$payload.gpx)
         Write-HttpResponse $stream 201 'Created' (Json @{
           ok=$true
           opened=$true
-          imported=$false
-          importRequired=$true
+          imported=[bool]$transfer.imported
+          importRequired=(-not [bool]$transfer.imported)
+          transferReason=$transfer.reason
           filename=$filename
           path=$target
           application='OpenCPN'
-          message='OpenCPN started safely. Import the saved GPX using Route & Mark Manager.'
+          message=$(if ($transfer.imported) { 'The route was transferred to OpenCPN and activated.' } else { 'OpenCPN started safely. Import the saved GPX using Route & Mark Manager.' })
         }); continue
       }
       Write-HttpResponse $stream 404 'Not Found' (Json @{ error='Not found' })
