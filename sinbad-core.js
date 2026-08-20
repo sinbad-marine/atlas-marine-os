@@ -111,7 +111,9 @@
       const result=await adapter.handle(question,{analysis,history:conversationContext(options.history),context:options.context||{}});
       if(result==null||result==='')continue;
       const payload=typeof result==='string'?{answer:result}:result;
-      if(!payload||typeof payload!=='object'||Object.keys(payload).some(field=>!ALLOWED_EXPERT_FIELDS.has(field))||!policy.answerIsSafe(payload.answer)||('sources'in payload&&!Array.isArray(payload.sources))||('warnings'in payload&&(!Array.isArray(payload.warnings)||payload.warnings.some(warning=>!policy.answerIsSafe(String(warning)))))){
+      let safePayload=false;
+      try{safePayload=Boolean(payload&&typeof payload==='object'&&typeof policy.answerIsSafe==='function'&&!Object.keys(payload).some(field=>!ALLOWED_EXPERT_FIELDS.has(field))&&policy.answerIsSafe(payload.answer)&&(!('sources'in payload)||Array.isArray(payload.sources))&&(!('warnings'in payload)||(Array.isArray(payload.warnings)&&!payload.warnings.some(warning=>!policy.answerIsSafe(String(warning))))));}catch(_){safePayload=false;}
+      if(!safePayload){
         return {handled:false,expert:null,...analysis,answer:null,warnings:[...safetyGuidance(analysis),'Expert output was blocked because it crossed the decision-support boundary.'],permission:EXPERT_MODE,executionPerformed:false};
       }
       return {handled:true,expert:name,...analysis,...payload,warnings:[...safetyGuidance(analysis),...(payload.warnings||[])],permission:EXPERT_MODE,executionPerformed:false};

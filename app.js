@@ -1502,8 +1502,8 @@ async function saveDocumentKnowledge(documentId,file,text,bucket){
 }
 function cloudAnswerPassesCoreGate(data,envelope){
   const decision=data?.coreDecision;
-  const expected=envelope?.analysis;
-  return Boolean(data&&data.coreGateVersion===window.SinbadCore?.CORE_GATE_VERSION&&data.coreGateVersion===envelope?.gateVersion&&data.permission==='DECISION_SUPPORT_ONLY'&&data.executionPerformed===false&&decision&&expected&&['low','medium','high','critical'].includes(decision.risk)&&decision.risk===expected.risk&&['emergency','operational','needsLiveData','requiresHumanApproval','requiresIndependentVerification'].every(field=>typeof decision[field]==='boolean'&&decision[field]===expected[field]));
+  const expected=envelope?.analysis,answerSafe=data?.answer==null||window.SinbadCoreDecision?.answerIsSafe?.(String(data.answer))===true;
+  return Boolean(data&&answerSafe&&data.coreGateVersion===window.SinbadCore?.CORE_GATE_VERSION&&data.coreGateVersion===envelope?.gateVersion&&data.permission==='DECISION_SUPPORT_ONLY'&&data.executionPerformed===false&&decision&&expected&&['low','medium','high','critical'].includes(decision.risk)&&decision.risk===expected.risk&&['emergency','operational','needsLiveData','requiresHumanApproval','requiresIndependentVerification'].every(field=>typeof decision[field]==='boolean'&&decision[field]===expected[field]));
 }
 async function sinbadCloudKnowledgeAnswer(question){
   if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId)return null;
@@ -1512,11 +1512,12 @@ async function sinbadCloudKnowledgeAnswer(question){
     const language=sinbadState.language||appLanguage;
     const history=sinbadState.messages.slice(-12,-1).map(message=>({role:message.role==='sinbad'?'assistant':'user',content:message.text}));
     const coreEnvelope=window.SinbadCore?.aiEnvelope?.(question,history);
-    const {data:aiData,error:aiError}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language,coreEnvelope}});
-    if(aiError){if(status)status.textContent='Atlas Cloud AI unavailable Â· searching private archive';}
-    else if(!cloudAnswerPassesCoreGate(aiData,coreEnvelope)){if(status)status.textContent='Atlas Cloud Core gate blocked AI Â· searching private archive';}
-    else if(aiData?.answer){
-      const answer=String(aiData.answer).trim();
+    const invocation=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language,coreEnvelope}});
+    const aiError=invocation.error;let trustedAiData=invocation.data;
+    if(aiError){trustedAiData=null;if(status)status.textContent='Atlas Cloud AI unavailable Â· searching private archive';}
+    else if(!cloudAnswerPassesCoreGate(trustedAiData,coreEnvelope)){trustedAiData=null;if(status)status.textContent='Atlas Cloud Core gate blocked AI Â· searching private archive';}
+    if(trustedAiData?.answer){
+      const answer=String(trustedAiData.answer).trim();
       // Older cloud deployments can return a polite "no source found" notice
       // as if it were a complete AI answer. Treat those notices as a miss so
       // the installed Ollama brain gets an opportunity to answer instead.
@@ -1532,7 +1533,7 @@ async function sinbadCloudKnowledgeAnswer(question){
       if(!cloudMiss&&!cloudMissFallback){if(status)status.textContent='Atlas Cloud AI active';return answer;}
       if(status)status.textContent='Atlas Cloud has no answer Â· trying offline brain';
     }
-    if(!aiError&&aiData?.needsWebPermission){if(status)status.textContent='Atlas Cloud has no answer Â· trying offline brain';return null;}
+    if(trustedAiData?.needsWebPermission){if(status)status.textContent='Atlas Cloud has no answer Â· trying offline brain';return null;}
     const terms=question.toLocaleLowerCase(language).normalize('NFKD').replace(/[^a-z0-9Ã§ÄŸÄ±Ã¶ÅŸÃ¼Ğ°-ÑÑ‘Ø¡-ÙŠ ]/gi,' ').split(/\s+/).filter(x=>x.length>2).slice(0,8);if(!terms.length)return null;
     const {data,error}=await cloudClient.from('document_knowledge_chunks').select('content,chunk_index,document_knowledge!inner(title,classification,workspace_id)').eq('document_knowledge.workspace_id',selectedWorkspaceId).ilike('content',`%${terms[0]}%`).limit(12);
     if(error)throw error;if(!data?.length){if(status)status.textContent='Atlas Cloud has no answer Â· trying offline brain';return null;}

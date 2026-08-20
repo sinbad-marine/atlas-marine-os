@@ -125,5 +125,6 @@ test('normalizes Core gate questions before analysis and envelope binding',()=>{
   assert.equal(core.aiEnvelope('MAY\u200BDAY').analysis.emergency,true);
   assert.equal(core.aiEnvelope('current draft is 3 metres').analysis.needsLiveData,false);
   assert.equal(core.aiEnvelope('current weather status').analysis.needsLiveData,true);
+  assert.equal(core.aiEnvelope('live currents').analysis.needsLiveData,true);
   assert.equal(core.aiEnvelope('execute this').analysis.risk,'high');
 });

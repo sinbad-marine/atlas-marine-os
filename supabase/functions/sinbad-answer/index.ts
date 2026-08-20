@@ -68,7 +68,7 @@ Deno.serve(async req => {
       .maybeSingle();
     if (!membership) return json({ error: 'Workspace access denied' }, 403);
 
-    if (coreDecision.emergency || coreDecision.risk === 'high') {
+    if (coreDecision.emergency || coreDecision.risk === 'high' || coreDecision.risk === 'critical') {
       const english = language.toLowerCase().startsWith('en');
       const answer = coreDecision.emergency
         ? english ? 'Activate human command and the vessel approved emergency procedures immediately. Sinbad did not run a cloud model for this request.' : 'Acil durumda insan komutasını ve geminin onaylı acil durum prosedürlerini derhal uygulayın. Sinbad bu istek için bulut modeli çalıştırmadı.'
@@ -121,7 +121,7 @@ If web search results are available, cite them using the citations supplied by t
     const userInput = unique.length
       ? `${question}\n\nAPPROVED PRIVATE LIBRARY SOURCES\n${context}`
       : `${question}\n\nNo matching private-library passage was found. You may answer from stable general knowledge and must say when current or vessel-specific information is required.`;
-    const input = [...history.map((item: any) => ({ role: 'user', content: `UNTRUSTED CONVERSATION DATA (${item.role}): ${item.content}` })), { role: 'user', content: userInput }];
+    const input = [...history.map((item: any) => ({ role: 'user', content: `UNTRUSTED PRIOR CONVERSATION DATA: ${item.content}` })), { role: 'user', content: userInput }];
     const requestBody: any = {
       model: Deno.env.get('OPENAI_MODEL') || 'gpt-5.6-terra',
       instructions: system,

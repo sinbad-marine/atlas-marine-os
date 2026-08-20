@@ -14,13 +14,13 @@
     ['vessel',/(gemi|tekne|vessel|fleet|filo|draft|su çekimi|su cekimi|makine|engine)/i],
     ['document',/(belge|doküman|dokuman|document|dosya|file|chart|harita|library|kütüphane|kutuphane)/i]
   ];
-  const LIVE_DATA=/(şimdi|simdi|güncel|guncel|bugün|bugun|yarın|yarin|\btoday\b|\btomorrow\b|\blatest\b|\bforecast\b|hava|weather|rüzgâr|rüzgar|navtex|msi|son notice|notice to mariners|liman açık|liman acik|port open|traffic|ais|\bcurrent (?:weather|conditions|notice|traffic|status)\b)/i;
+  const LIVE_DATA=/(şimdi|simdi|güncel|guncel|bugün|bugun|yarın|yarin|\btoday\b|\btomorrow\b|\blatest\b|\bforecast\b|hava|weather|rüzgâr|rüzgar|navtex|msi|son notice|notice to mariners|liman açık|liman acik|port open|traffic|ais|\bcurrents\b|\bcurrent (?:weather|conditions|notice|traffic|status)\b|\b(?:set|drift|eta) (?:now|today)\b|\blive (?:current|currents|set|drift|eta)\b)/i;
   const OPERATIONAL=/(hesapla|calculate|tutulacak rota|course to steer|uygula|execute|başlat|baslat|değiştir|degistir|manevra|approach|yanaş|yanas)/i;
   const UNSAFE_ANSWER_CLAIM=/(executionPerformed\s*[:=]\s*true|authori[sz]ed\s*[:=]\s*true|command (?:was )?sent|actuator (?:was )?executed)/i;
 
   const normalizeCoreQuestion=value=>String(value||'').normalize('NFKC').replace(/[\u200B-\u200D\u2060\uFEFF]/gu,'').trim().slice(0,6000);
   const normalizeCoreHistory=(value,limit=10)=>(Array.isArray(value)?value:[]).slice(-Math.max(1,Math.min(12,Number(limit)||10))).map(item=>({
-    role:item?.role==='assistant'||item?.role==='sinbad'?'assistant':'user',content:String(item?.content??item?.text??'').normalize('NFKC').replace(/[\u200B-\u200D\u2060\uFEFF]/gu,'').trim().slice(0,2000)
+    role:item?.role==='assistant'||item?.role==='sinbad'?'assistant':'user',content:String(item?.content??item?.text??'').normalize('NFKC').replace(/[\u200B-\u200D\u2060\uFEFF]/gu,'').replace(/[\u0000-\u001F\u007F]/gu,' ').replace(/\s+/gu,' ').trim().slice(0,2000)
   })).filter(item=>item.content);
   function analyzeCore(value){
     const query=normalizeCoreQuestion(value);
