@@ -1500,6 +1500,12 @@ async function saveDocumentKnowledge(documentId,file,text,bucket){
   for(let i=0;i<chunks.length;i+=50){const {error:chunkError}=await cloudClient.from('document_knowledge_chunks').insert(chunks.slice(i,i+50));if(chunkError)throw chunkError;}
   return {classification,chunks:chunks.length};
 }
+function cloudAnswerPassesCoreGate(data,envelope){
+  if(!data||data.permission!=='DECISION_SUPPORT_ONLY'||data.executionPerformed!==false||!data.coreDecision||!envelope?.analysis)return false;
+  const expected=envelope.analysis,actual=data.coreDecision;
+  return ['emergency','operational','needsLiveData','risk','requiresHumanApproval','requiresIndependentVerification']
+    .every(field=>actual[field]===expected[field]);
+}
 async function sinbadCloudKnowledgeAnswer(question){
   if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId)return null;
   const status=$('sinbadKnowledgeStatus');if(status)status.textContent='Searching Atlas Cloudâ€¦';
@@ -1508,6 +1514,7 @@ async function sinbadCloudKnowledgeAnswer(question){
     const history=sinbadState.messages.slice(-12,-1).map(message=>({role:message.role==='sinbad'?'assistant':'user',content:message.text}));
     const coreEnvelope=window.SinbadCore?.aiEnvelope?.(question,history);
     const {data:aiData,error:aiError}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language,history,coreEnvelope}});
+    if(!aiError&&!cloudAnswerPassesCoreGate(aiData,coreEnvelope)){if(status)status.textContent='Atlas Cloud Core gate blocked the response';return null;}
     if(!aiError&&aiData?.answer){
       const answer=String(aiData.answer).trim();
       // Older cloud deployments can return a polite "no source found" notice
@@ -1542,6 +1549,7 @@ async function performSinbadWebSearch(){
     const history=sinbadState.messages.slice(-12).map(message=>({role:message.role==='sinbad'?'assistant':'user',content:message.text}));
     const coreEnvelope=window.SinbadCore?.aiEnvelope?.(question,history);
     const {data,error}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language:sinbadState.language,allowWebSearch:true,history,coreEnvelope}});if(error)throw error;
+    if(!cloudAnswerPassesCoreGate(data,coreEnvelope))throw new Error('Core safety gate rejected the cloud response');
     const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];const answer=`${copy.result}:\n\n${data?.answer||'No reliable web result was found.'}`;
     addSinbadMessage('sinbad',answer);speakSinbadInstant(answer);
   }catch(error){addSinbadMessage('sinbad',`Web search failed: ${error.message||error}`);}finally{$('sinbadThinking').classList.add('hidden');}

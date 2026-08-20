@@ -21,6 +21,13 @@ test('normal and consented web AI requests both carry a Core envelope',()=>{
   assert.equal(invocations.length,2);
 });
 
+test('normal and consented web responses are both checked by the client Core gate',()=>{
+  assert.match(app,/function cloudAnswerPassesCoreGate\(data,envelope\)/);
+  assert.ok((app.match(/cloudAnswerPassesCoreGate\(/g)||[]).length>=3);
+  assert.match(app,/data\.permission!=='DECISION_SUPPORT_ONLY'/);
+  assert.match(app,/data\.executionPerformed!==false/);
+});
+
 test('cloud answers cannot claim execution authority',()=>{
   assert.match(edge,/const decisionSupport = \{ coreDecision, permission: 'DECISION_SUPPORT_ONLY', executionPerformed: false \}/);
   assert.ok((edge.match(/\.\.\.decisionSupport/g)||[]).length>=4);
