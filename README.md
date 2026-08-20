@@ -23,8 +23,10 @@ Every local expert adapter is `DECISION_SUPPORT_ONLY`; legacy bare callbacks
 are not invoked. Expert output that claims authorization, control execution or
 an actuator command is blocked. Cloud and consented-web AI requests carry a
 Core safety envelope. The Edge Function independently recomputes the decision
-before calling the provider, and the browser verifies the returned decision
-before displaying an answer.
+before calling the provider. That server-side recomputation is the authoritative
+security boundary. The browser also verifies the returned decision before
+displaying an answer as defense-in-depth and stale-deployment protection; a
+modified client is not a trusted enforcement point.
 
 The hardened `sinbad-ai-core/` evidence pipeline remains `PLAN_ONLY`. It
 provides deterministic trusted-library, provenance, verification, citation,

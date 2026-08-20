@@ -52,6 +52,21 @@ test('normal and consented web responses are both checked by the client Core gat
   assert.match(app,/data\.executionPerformed!==false/);
 });
 
+test('cloud transport errors stop before response gate or answer use',()=>{
+  const invocation=app.indexOf("functions.invoke('sinbad-answer'");
+  const errorStop=app.indexOf('if(aiError)',invocation);
+  const gate=app.indexOf('if(!cloudAnswerPassesCoreGate(aiData,coreEnvelope))',invocation);
+  const answer=app.indexOf('if(aiData?.answer)',invocation);
+  assert.ok(invocation>=0&&errorStop>invocation&&gate>errorStop&&answer>gate);
+});
+
+test('Edge uses only its recomputed decision after envelope validation',()=>{
+  const validation=edge.indexOf('validateCoreEnvelope(coreEnvelope, question)');
+  const recompute=edge.indexOf('const coreDecision = serverCoreDecision(question)',validation);
+  assert.ok(validation>=0&&recompute>validation);
+  assert.doesNotMatch(edge.slice(recompute),/coreEnvelope\.analysis|body\.coreEnvelope\.analysis/);
+});
+
 test('cloud answers cannot claim execution authority',()=>{
   assert.match(edge,/const decisionSupport = \{ coreGateVersion: CORE_GATE_VERSION, coreDecision, permission: 'DECISION_SUPPORT_ONLY', executionPerformed: false \}/);
   assert.ok((edge.match(/\.\.\.decisionSupport/g)||[]).length>=4);
