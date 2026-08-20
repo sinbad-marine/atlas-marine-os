@@ -65,10 +65,26 @@ function initNavigationPlot(){
   }
   setTimeout(()=>{navigationPlotMap.updateSize();renderNavigationPlot()},80);
 }
-function prepareNavigationPlotFromConversation(){
+function downloadCalculatedRouteGpx(route){
+  const gpx=window.SinbadRouteVisualizer.toGpx(route,{name:'Sinbad calculated DR route'}),url=URL.createObjectURL(new Blob([gpx],{type:'application/gpx+xml'}));
+  const link=document.createElement('a');link.href=url;link.download='sinbad-calculated-route.gpx';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+async function openCalculatedRouteInOpenCpn(route){
+  const gpx=window.SinbadRouteVisualizer.toGpx(route,{name:'Sinbad calculated DR route'});
+  try{
+    const response=await fetch(`${SINBAD_BRIDGE_URL}/routes/open`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({filename:'sinbad-calculated-route.gpx',name:'Sinbad calculated DR route',gpx})});
+    if(!response.ok)throw new Error(`Bridge returned ${response.status}`);
+    return {ok:true,message:'Rotayı OpenCPN’ye aktardım ve OpenCPN haritasını açtım. Başlangıç ile hesaplanan DR varış mevkii rota olarak gösteriliyor.'};
+  }catch(error){
+    downloadCalculatedRouteGpx(route);
+    return {ok:true,message:'OpenCPN yerel köprüsüne ulaşılamadı. GPX rota dosyasını indirdim; dosyayı OpenCPN ile açabilirsiniz.'};
+  }
+}
+async function prepareNavigationPlotFromConversation(requestText=''){
   const route=window.SinbadRouteVisualizer?.routeFromConversation?.(sinbadState.messages,window.SinbadNavigation);
   if(!route)return {ok:false,message:'Çizilecek hesaplanmış bir seyir rotası bulamadım. Başlangıç mevkii, rota, sürat ve süreyi yazın.'};
   if(route.status!=='READY')return {ok:false,message:`Harita çizimi için eksik bilgiler: ${route.missing.join(', ')}.`};
+  if(window.SinbadRouteVisualizer?.isOpenCpnRequest?.(requestText))return openCalculatedRouteInOpenCpn(route);
   navigationPlotRoute=route;openWorkspace('navigation-plot');return {ok:true,message:'Seyir çizim sayfasını açtım. Başlangıç, varış ve rota hattı etkileşimli harita üzerinde gösteriliyor.'};
 }
 function initEncViewer(){
@@ -744,7 +760,7 @@ async function sendToSinbad(text){
   addSinbadMessage('user',q);
   $('sinbadInput').value='';
   if(window.SinbadRouteVisualizer?.isPlotRequest?.(q)){
-    const plotted=prepareNavigationPlotFromConversation();
+    const plotted=await prepareNavigationPlotFromConversation(q);
     addSinbadMessage('sinbad',plotted.message);speakSinbad(plotted.message);return;
   }
   $('sinbadThinking').classList.remove('hidden');

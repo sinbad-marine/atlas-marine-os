@@ -6,6 +6,7 @@ const fs=require('node:fs');
 const bridge=fs.readFileSync('bridge/sinbad-bridge.ps1','utf8');
 const app=fs.readFileSync('app.js','utf8');
 const serviceWorker=fs.readFileSync('sw.js','utf8');
+const visualizer=fs.readFileSync('sinbad-route-visualizer.js','utf8');
 
 test('voice clone uses a loopback bridge endpoint and never accepts a client reference path',()=>{
   assert.match(bridge,/127\.0\.0\.1/);
@@ -47,4 +48,14 @@ test('frontend plays only the latest cloned wav and fails closed',()=>{
   assert.doesNotMatch(app,/speakSinbad\(answer,/);
   assert.doesNotMatch(app,/onvoiceschanged=.*speakSinbad\(text\)/);
   assert.match(serviceWorker,/sinbad-marine-v8\.20\.9-offline-map/);
+});
+
+test('OpenCPN-first route transfer is bounded to the verified local bridge',()=>{
+  assert.match(app,/SINBAD_BRIDGE_URL}\/routes\/open/);
+  assert.match(app,/isOpenCpnRequest/);
+  assert.match(visualizer,/function toGpx/);
+  assert.match(bridge,/OPENCPN_ORIGIN_DENIED/);
+  assert.match(bridge,/GPX_REQUEST_TOO_LARGE/);
+  assert.match(bridge,/Start-Process -FilePath \$OpenCpnExecutable/);
+  assert.match(bridge,/OPENCPN_NOT_INSTALLED/);
 });
