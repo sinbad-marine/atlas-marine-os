@@ -22,7 +22,7 @@
       : "(doğu|dogu|batı|bati|east|west|ost|e|w)";
     // JavaScript's word boundary is ASCII-only and misses names ending in
     // Turkish characters such as the dotless ı in "batı".
-    const match = source.match(new RegExp("(\\d{1,3})(?:\\s*(?:°|derece|deg))?\\s*(\\d{1,2}(?:\\.\\d+)?)?\\s*(?:['′]|dakika|min)?\\s*(\\d{1,2}(?:\\.\\d+)?)?\\s*(?:[\\\"″]|saniye|sec)?\\s*" + direction + "(?=\\s|$|[.,;:])", "i"));
+    const match = source.match(new RegExp("(\\d{1,3})(?:\\s*(?:°|derece|deg))?\\s*(\\d{1,2}(?:\\.\\d+)?)?\\s*(?:['′]|dakika|min)?\\s*(\\d{1,2}(?:\\.\\d+)?)?\\s*(?:[\\\"″]|saniye|sec)?\\s*" + direction + "(?=\\s|$|[-–—.,;:])", "i"));
     if (!match) return null;
 
     const degrees = Number(match[1]);
@@ -1150,7 +1150,7 @@
 
   function parseDrQuestion(question) {
     const text = normalizeText(question);
-    if (!/\b(dr|dead reckoning|parakete|mevki(?:inden)?|pozisyon)\b/.test(text)) return null;
+    if (!/\b(dr|dead reckoning|parakete|mevki(?:den|nden|inden)?|pozisyon(?:dan|undan)?)\b/.test(text)) return null;
 
     const lat = parseCoordinate(text, "lat");
     const lon = parseCoordinate(text, "lon");
@@ -1165,6 +1165,7 @@
       : minuteMatches.find(match=>/(?:sonra|boyunca|süre|sure|duration)/.test(text.slice(match.index,match.index+50)));
     const coursePatterns = [
       /(?:rota|course|kurs|hakiki rota)\s*(?:is|=|:)?\s*(\d{1,3}(?:\.\d+)?)\s*(?:°|derece|deg)?/,
+      /(\d{1,3}(?:\.\d+)?)\s*(?:°|derece|deg)\s*(?:rotasıyla|rotasiyla|rotayla|rotasında|rotasinda|course|kurs)/,
       /(\d{1,3}(?:\.\d+)?)\s*°\s*t\b/
     ];
     let course = null;

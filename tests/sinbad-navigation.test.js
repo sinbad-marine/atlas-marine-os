@@ -37,6 +37,16 @@ test("answers an explicit Turkish DR calculation", () => {
   assert.match(response, /009\u00B0/);
 });
 
+test("parses a natural Turkish DR request with hemisphere separator and suffixed position", () => {
+  const parsed=nav.parseDrQuestion("26 derece 10 dakika N- 13 derece 15 dakika W pozisyonundan 294 derece rotasıyla 22 knot hız ile seyir yapan bir geminin 5 saat sonundaki pozisyonu nedir. haritada göster");
+  assert.ok(parsed);
+  assert.equal(parsed.lat,26+10/60);
+  assert.equal(parsed.lon,-(13+15/60));
+  assert.equal(parsed.course,294);
+  assert.equal(parsed.speed,22);
+  assert.equal(parsed.hours,5);
+});
+
 test("does not count coordinate minutes as voyage minutes",()=>{
   const parsed=nav.parseDrQuestion("26 derece 10 dakika kuzey 013 derece 15 dakika batı mevkiinden rota 294 derece, 5 saat sonra");
   assert.equal(parsed.hours,5);
