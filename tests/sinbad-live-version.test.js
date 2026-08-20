@@ -32,7 +32,7 @@ test('release guide preserves fail-closed Edge-before-web deployment order',()=>
 });
 
 test('generated voice and Supabase temporary artifacts stay outside Git',()=>{
-  assert.match(ignore,/^\.codex-live-voice-test\.wav$/m);
+  assert.match(ignore,/^\.codex-\*\.wav$/m);
   assert.match(ignore,/^supabase\/\.temp\/$/m);
 });
 
