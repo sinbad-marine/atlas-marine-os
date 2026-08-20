@@ -46,5 +46,5 @@ test('frontend plays only the latest cloned wav and fails closed',()=>{
   assert.match(app,/addSinbadMessage\('sinbad',answer\);\s*speakSinbad\(answer\)/);
   assert.doesNotMatch(app,/speakSinbad\(answer,/);
   assert.doesNotMatch(app,/onvoiceschanged=.*speakSinbad\(text\)/);
-  assert.match(serviceWorker,/sinbad-marine-v8\.20\.9-clone-race-fix/);
+  assert.match(serviceWorker,/sinbad-marine-v8\.20\.8-core-gate-clone-race-fix/);
 });

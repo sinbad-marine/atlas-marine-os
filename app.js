@@ -604,10 +604,10 @@ async function sinbadLocalAnswer(query){
   const coreResult=await window.SinbadCore?.orchestrate?.(query,{
     history:sinbadState.messages,
     experts:{
-      emergency:()=>language==='tr-TR'
+      emergency:{mode:window.SinbadCore?.EXPERT_MODE,handle:()=>language==='tr-TR'
         ? 'ACÄ°L DURUM: Ä°nsan komutasÄ±nÄ± ve geminin onaylÄ± acil durum prosedÃ¼rlerini derhal devreye alÄ±n. Uygunsa MAYDAY/PAN-PAN Ã§aÄŸrÄ±sÄ± yapÄ±n, mevkiyi ve tehlikenin niteliÄŸini bildirin; Sinbad yalnÄ±zca karar desteÄŸidir.'
-        : 'EMERGENCY: Activate human command and the vessel approved emergency procedures immediately. When appropriate transmit MAYDAY/PAN-PAN with position and nature of distress; Sinbad is decision support only.',
-      navigation:()=>window.SinbadNavigation?.answer?.(query,language)
+        : 'EMERGENCY: Activate human command and the vessel approved emergency procedures immediately. When appropriate transmit MAYDAY/PAN-PAN with position and nature of distress; Sinbad is decision support only.'},
+      navigation:{mode:window.SinbadCore?.EXPERT_MODE,handle:()=>window.SinbadNavigation?.answer?.(query,language)}
     }
   });
   if(coreResult?.handled)return coreResult.answer;
@@ -1506,6 +1506,11 @@ async function saveDocumentKnowledge(documentId,file,text,bucket){
   for(let i=0;i<chunks.length;i+=50){const {error:chunkError}=await cloudClient.from('document_knowledge_chunks').insert(chunks.slice(i,i+50));if(chunkError)throw chunkError;}
   return {classification,chunks:chunks.length};
 }
+function cloudAnswerPassesCoreGate(data,envelope){
+  const decision=data?.coreDecision;
+  const expected=envelope?.analysis,answerSafe=data?.answer==null||window.SinbadCoreDecision?.answerIsSafe?.(String(data.answer))===true;
+  return Boolean(data&&answerSafe&&data.coreGateVersion===window.SinbadCore?.CORE_GATE_VERSION&&data.coreGateVersion===envelope?.gateVersion&&data.permission==='DECISION_SUPPORT_ONLY'&&data.executionPerformed===false&&decision&&expected&&['low','medium','high','critical'].includes(decision.risk)&&decision.risk===expected.risk&&['emergency','operational','needsLiveData','requiresHumanApproval','requiresIndependentVerification'].every(field=>typeof decision[field]==='boolean'&&decision[field]===expected[field]));
+}
 async function sinbadCloudKnowledgeAnswer(question){
   if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId)return null;
   const status=$('sinbadKnowledgeStatus');if(status)status.textContent='Searching Atlas Cloudâ€¦';
@@ -1513,9 +1518,12 @@ async function sinbadCloudKnowledgeAnswer(question){
     const language=sinbadState.language||appLanguage;
     const history=sinbadState.messages.slice(-12,-1).map(message=>({role:message.role==='sinbad'?'assistant':'user',content:message.text}));
     const coreEnvelope=window.SinbadCore?.aiEnvelope?.(question,history);
-    const {data:aiData,error:aiError}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language,history,coreEnvelope}});
-    if(!aiError&&aiData?.answer){
-      const answer=String(aiData.answer).trim();
+    const invocation=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language,coreEnvelope}});
+    const aiError=invocation.error;let trustedAiData=invocation.data;
+    if(aiError){trustedAiData=null;if(status)status.textContent='Atlas Cloud AI unavailable Â· searching private archive';}
+    else if(!cloudAnswerPassesCoreGate(trustedAiData,coreEnvelope)){trustedAiData=null;if(status)status.textContent='Atlas Cloud Core gate blocked AI Â· searching private archive';}
+    if(trustedAiData?.answer){
+      const answer=String(trustedAiData.answer).trim();
       // Older cloud deployments can return a polite "no source found" notice
       // as if it were a complete AI answer. Treat those notices as a miss so
       // the installed Ollama brain gets an opportunity to answer instead.
@@ -1531,7 +1539,7 @@ async function sinbadCloudKnowledgeAnswer(question){
       if(!cloudMiss&&!cloudMissFallback){if(status)status.textContent='Atlas Cloud AI active';return answer;}
       if(status)status.textContent='Atlas Cloud has no answer Â· trying offline brain';
     }
-    if(!aiError&&aiData?.needsWebPermission){if(status)status.textContent='Atlas Cloud has no answer Â· trying offline brain';return null;}
+    if(trustedAiData?.needsWebPermission){if(status)status.textContent='Atlas Cloud has no answer Â· trying offline brain';return null;}
     const terms=question.toLocaleLowerCase(language).normalize('NFKD').replace(/[^a-z0-9Ã§ÄŸÄ±Ã¶ÅŸÃ¼Ğ°-ÑÑ‘Ø¡-ÙŠ ]/gi,' ').split(/\s+/).filter(x=>x.length>2).slice(0,8);if(!terms.length)return null;
     const {data,error}=await cloudClient.from('document_knowledge_chunks').select('content,chunk_index,document_knowledge!inner(title,classification,workspace_id)').eq('document_knowledge.workspace_id',selectedWorkspaceId).ilike('content',`%${terms[0]}%`).limit(12);
     if(error)throw error;if(!data?.length){if(status)status.textContent='Atlas Cloud has no answer Â· trying offline brain';return null;}
@@ -1546,7 +1554,9 @@ async function performSinbadWebSearch(){
   $('sinbadThinking').classList.remove('hidden');
   try{
     const history=sinbadState.messages.slice(-12).map(message=>({role:message.role==='sinbad'?'assistant':'user',content:message.text}));
-    const {data,error}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language:sinbadState.language,allowWebSearch:true,history}});if(error)throw error;
+    const coreEnvelope=window.SinbadCore?.aiEnvelope?.(question,history);
+    const {data,error}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language:sinbadState.language,allowWebSearch:true,coreEnvelope}});if(error)throw error;
+    if(!cloudAnswerPassesCoreGate(data,coreEnvelope))throw new Error('Core safety gate rejected the cloud response');
     const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];const answer=`${copy.result}:\n\n${data?.answer||'No reliable web result was found.'}`;
     addSinbadMessage('sinbad',answer);speakSinbad(answer);
   }catch(error){addSinbadMessage('sinbad',`Web search failed: ${error.message||error}`);}finally{$('sinbadThinking').classList.add('hidden');}

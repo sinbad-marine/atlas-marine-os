@@ -61,21 +61,70 @@ test('normalizes bounded conversation context',()=>{
 test('builds a versioned AI request envelope',()=>{
   const envelope=core.aiEnvelope('Mercator rotasını hesapla',[{role:'user',text:'Start at 40N'}]);
   assert.equal(envelope.version,'sinbad-ai-core/1');
+  assert.equal(envelope.gateVersion,'1.1.0');
   assert.equal(envelope.analysis.intent,'navigation');
   assert.equal(envelope.history.length,1);
   assert.ok(envelope.instructions.some(x=>x.includes('Never invent live')));
 });
 
 test('routes a question to the selected expert',async()=>{
-  const result=await core.orchestrate('CPA hesabı yap',{experts:{navigation:()=>({answer:'CPA result',sources:['navigation-engine']})}});
+  const result=await core.orchestrate('CPA hesabı yap',{experts:{navigation:{mode:core.EXPERT_MODE,handle:()=>({answer:'CPA result',sources:['navigation-engine']})}}});
   assert.equal(result.handled,true);
   assert.equal(result.expert,'navigation');
   assert.equal(result.answer,'CPA result');
   assert.deepEqual(result.sources,['navigation-engine']);
+  assert.equal(result.permission,'DECISION_SUPPORT_ONLY');
+  assert.equal(result.executionPerformed,false);
 });
 
 test('falls through when a specialist cannot answer',async()=>{
-  const result=await core.orchestrate('Rota hakkında yardım',{experts:{navigation:()=>null,general:()=> 'General answer'}});
+  const result=await core.orchestrate('Rota hakkında yardım',{experts:{navigation:{mode:core.EXPERT_MODE,handle:()=>null},general:{mode:core.EXPERT_MODE,handle:()=> 'General answer'}}});
   assert.equal(result.expert,'general');
   assert.equal(result.answer,'General answer');
+});
+
+test('never invokes a legacy bare callback',async()=>{
+  let invoked=false;
+  const result=await core.orchestrate('CPA hesabı yap',{experts:{navigation:()=>{invoked=true;return 'unsafe';}}});
+  assert.equal(invoked,false);
+  assert.equal(result.handled,false);
+  assert.equal(result.permission,'DECISION_SUPPORT_ONLY');
+  assert.equal(result.executionPerformed,false);
+});
+
+test('blocks an expert result that claims operational authority',async()=>{
+  const result=await core.orchestrate('CPA hesabı yap',{experts:{navigation:{mode:core.EXPERT_MODE,handle:()=>({answer:'turn now',authorized:true})}}});
+  assert.equal(result.handled,false);
+  assert.equal(result.answer,null);
+  assert.equal(result.executionPerformed,false);
+  assert.ok(result.warnings.some(warning=>warning.includes('decision-support boundary')));
+});
+
+test('blocks every expert payload field outside the decision-support allowlist',async()=>{
+  for(const field of ['authorization','execute','commandSent','nested']){
+    const result=await core.orchestrate('CPA hesabı yap',{experts:{navigation:{mode:core.EXPERT_MODE,handle:()=>({answer:'unsafe',[field]:{authorized:true}})}}});
+    assert.equal(result.handled,false,field);
+  }
+});
+
+test('blocks empty or textual execution claims from expert answers',async()=>{
+  for(const answer of ['', 'command sent', 'executionPerformed: true']){
+    const result=await core.orchestrate('CPA hesabı yap',{experts:{navigation:{mode:core.EXPERT_MODE,handle:()=>({answer})}}});
+    assert.equal(result.handled,false,answer);
+  }
+});
+
+test('blocks execution claims smuggled through expert warnings',async()=>{
+  const result=await core.orchestrate('CPA hesabı yap',{experts:{navigation:{mode:core.EXPERT_MODE,handle:()=>({answer:'bounded result',warnings:['command sent']})}}});
+  assert.equal(result.handled,false);
+});
+
+test('normalizes Core gate questions before analysis and envelope binding',()=>{
+  assert.equal(core.aiEnvelope('  CPA hesabı yap  ').analysis.query,'CPA hesabı yap');
+  assert.equal(core.aiEnvelope('x'.repeat(7000)).analysis.query.length,6000);
+  assert.equal(core.aiEnvelope('MAY\u200BDAY').analysis.emergency,true);
+  assert.equal(core.aiEnvelope('current draft is 3 metres').analysis.needsLiveData,false);
+  assert.equal(core.aiEnvelope('current weather status').analysis.needsLiveData,true);
+  assert.equal(core.aiEnvelope('live currents').analysis.needsLiveData,true);
+  assert.equal(core.aiEnvelope('execute this').analysis.risk,'high');
 });

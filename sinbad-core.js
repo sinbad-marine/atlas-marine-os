@@ -1,8 +1,10 @@
 (function(root,factory){
-  const api=factory();
+  const policy=typeof module==='object'&&module.exports?require('./supabase/functions/sinbad-answer/core-decision.js'):root.SinbadCoreDecision;
+  const api=factory(policy);
   if(typeof module==='object'&&module.exports)module.exports=api;
   root.SinbadCore=api;
-})(typeof globalThis!=='undefined'?globalThis:this,function(){
+})(typeof globalThis!=='undefined'?globalThis:this,function(policy){
+  if(!policy)throw new Error('Sinbad Core decision policy is required');
   const STOP=new Set(['bir','ve','ile','icin','için','the','and','for','from','route','rota','plan','plani','planı','hazirla','hazırla']);
   const clean=value=>String(value||'').toLocaleLowerCase('tr-TR').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9çğıöşü\s-]/gi,' ');
   function terms(value){return [...new Set(clean(value).split(/\s+/).filter(x=>x.length>2&&!STOP.has(x)))];}
@@ -51,18 +53,9 @@
     lines.push('','SAFETY GATES');plan.warnings.forEach(w=>lines.push(`⚠ ${w}`));return lines.join('\n');
   }
 
-  const INTENTS=[
-    ['emergency',/(mayday|pan[ -]?pan|sos|acil|yangın|yangin|su alıyor|su aliyor|çatışma|catisma|karaya otur|adam denize|man overboard|distress)/i],
-    ['navigation',/(rota|seyir|navigasyon|navigation|course|kerteriz|bearing|mevki|position|cpa|tcpa|akıntı|akinti|current|gelgit|tide|rüzgâr|ruzgar|wind|mesafe|distance|eta|pusula|compass)/i],
-    ['passage',/(passage|sefer plan|seyir plan|berth.to.berth|checklist|yakıt plan|yakit plan|port of refuge)/i],
-    ['publication',/(yayın|yayin|publication|solas|marpol|colreg|notice to mariners|sailing directions|pilot book|almanac|almanak)/i],
-    ['training',/(eğitim|egitim|öğret|ogret|quiz|sınav|sinav|ders|academy|training|explain|açıkla|acikla)/i],
-    ['crew',/(mürettebat|murettebat|crew|sertifika|certificate|stcw|medical|passport|visa|kontrat|contract)/i],
-    ['vessel',/(gemi|tekne|vessel|fleet|filo|draft|su çekimi|su cekimi|makine|engine)/i],
-    ['document',/(belge|doküman|dokuman|document|dosya|file|chart|harita|library|kütüphane|kutuphane)/i]
-  ];
-  const LIVE_DATA=/(şimdi|simdi|güncel|guncel|bugün|bugun|yarın|yarin|hava|weather|navtex|msi|notice to mariners|liman açık|liman acik|traffic|ais)/i;
-  const OPERATIONAL=/(hesapla|calculate|tutulacak rota|course to steer|uygula|execute|başlat|baslat|değiştir|degistir|manevra|approach|yanaş|yanas)/i;
+  const EXPERT_MODE='DECISION_SUPPORT_ONLY';
+  const CORE_GATE_VERSION=policy.CORE_GATE_VERSION;
+  const ALLOWED_EXPERT_FIELDS=new Set(['answer','sources','warnings']);
 
   function detectLanguage(value){
     const text=String(value||'');
@@ -74,27 +67,15 @@
   }
 
   function analyzeQuery(query){
-    const text=String(query||'').trim();
-    const matches=INTENTS.filter(([,pattern])=>pattern.test(text)).map(([intent])=>intent);
-    const intent=matches[0]||'general';
-    const emergency=intent==='emergency';
-    const operational=OPERATIONAL.test(text);
-    const needsLiveData=LIVE_DATA.test(text);
-    const risk=emergency?'critical':operational&&intent==='navigation'?'high':needsLiveData?'medium':'low';
-    const confidence=intent==='general'?0.35:matches.length===1?0.9:0.72;
+    const decision=policy.analyzeCore(query);
+    const confidence=decision.intent==='general'?0.35:decision.secondaryIntents.length===0?0.9:0.72;
     return {
-      query:text,language:detectLanguage(text),intent,secondaryIntents:matches.slice(1),confidence,risk,
-      emergency,operational,needsLiveData,
-      requiresHumanApproval:emergency||risk==='high',
-      requiresIndependentVerification:emergency||intent==='navigation'||intent==='passage'||needsLiveData
+      ...decision,language:detectLanguage(decision.query),confidence
     };
   }
 
   function conversationContext(messages,limit=12){
-    return (Array.isArray(messages)?messages:[]).slice(-Math.max(1,limit)).map(message=>({
-      role:message?.role==='assistant'||message?.role==='sinbad'?'assistant':'user',
-      content:String(message?.content??message?.text??'').trim().slice(0,2000)
-    })).filter(message=>message.content);
+    return policy.normalizeCoreHistory(messages,limit);
   }
 
   function safetyGuidance(analysis){
@@ -109,7 +90,7 @@
   function aiEnvelope(question,messages=[]){
     const analysis=analyzeQuery(question);
     return {
-      version:'sinbad-ai-core/1',analysis,history:conversationContext(messages),
+      version:'sinbad-ai-core/1',gateVersion:CORE_GATE_VERSION,analysis,history:conversationContext(messages),
       safety:safetyGuidance(analysis),
       instructions:[
         'Separate verified facts, calculations, assumptions and recommendations.',
@@ -125,14 +106,20 @@
     const experts=options.experts||{};
     const order=[analysis.intent,...analysis.secondaryIntents,'general'];
     for(const name of [...new Set(order)]){
-      if(typeof experts[name]!=='function')continue;
-      const result=await experts[name](question,{analysis,history:conversationContext(options.history),context:options.context||{}});
+      const adapter=experts[name];
+      if(!adapter||adapter.mode!==EXPERT_MODE||typeof adapter.handle!=='function')continue;
+      const result=await adapter.handle(question,{analysis,history:conversationContext(options.history),context:options.context||{}});
       if(result==null||result==='')continue;
       const payload=typeof result==='string'?{answer:result}:result;
-      return {handled:true,expert:name,...analysis,...payload,warnings:[...safetyGuidance(analysis),...(payload.warnings||[])]};
+      let safePayload=false;
+      try{safePayload=Boolean(payload&&typeof payload==='object'&&typeof policy.answerIsSafe==='function'&&!Object.keys(payload).some(field=>!ALLOWED_EXPERT_FIELDS.has(field))&&policy.answerIsSafe(payload.answer)&&(!('sources'in payload)||Array.isArray(payload.sources))&&(!('warnings'in payload)||(Array.isArray(payload.warnings)&&!payload.warnings.some(warning=>!policy.answerIsSafe(String(warning))))));}catch(_){safePayload=false;}
+      if(!safePayload){
+        return {handled:false,expert:null,...analysis,answer:null,warnings:[...safetyGuidance(analysis),'Expert output was blocked because it crossed the decision-support boundary.'],permission:EXPERT_MODE,executionPerformed:false};
+      }
+      return {handled:true,expert:name,...analysis,...payload,warnings:[...safetyGuidance(analysis),...(payload.warnings||[])],permission:EXPERT_MODE,executionPerformed:false};
     }
-    return {handled:false,expert:null,...analysis,answer:null,warnings:safetyGuidance(analysis)};
+    return {handled:false,expert:null,...analysis,answer:null,warnings:safetyGuidance(analysis),permission:EXPERT_MODE,executionPerformed:false};
   }
 
-  return {terms,searchPublications,passagePlan,formatPlan,detectLanguage,analyzeQuery,conversationContext,safetyGuidance,aiEnvelope,orchestrate};
+  return {EXPERT_MODE,CORE_GATE_VERSION,terms,searchPublications,passagePlan,formatPlan,detectLanguage,analyzeQuery,conversationContext,safetyGuidance,aiEnvelope,orchestrate};
 });

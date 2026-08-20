@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.9-clone-race-fix';
+const CACHE='sinbad-marine-v8.20.8-core-gate-clone-race-fix';
 const ASSETS=[
   './',
   './index.html',
@@ -7,6 +7,7 @@ const ASSETS=[
   './pilot-data.js',
   './route-data.js',
   './official-publications.js',
+  './supabase/functions/sinbad-answer/core-decision.js',
   './sinbad-core.js',
   './sinbad-training-data.js',
   './sinbad-academy.js',

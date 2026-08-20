@@ -1,57 +1,67 @@
-# Atlas Marine OS v8.0 — Professional Rebuild
+# Sinbad Marine v8.20.8
 
-This is a clean Sprint 1 rebuild. It is not a patch over the previous application.
+Sinbad Marine is an offline-capable maritime decision-support and private
+workspace application. Captain Sinbad combines deterministic local marine
+calculations, an optional owner-local Ollama/XTTS bridge, approved private
+Atlas Cloud knowledge, and an optional server-side AI provider.
 
-## Verified Sprint 1 scope
+## Verified runtime capabilities
 
-- Professional responsive dashboard
-- Supabase Project URL + publishable key connection
-- Supabase Authentication sign-in/sign-out
-- Authorized workspace selection
-- Private cloud file upload
-- Documents metadata insertion
-- Cloud file listing
-- Private signed-file opening
-- File download
-- File rename
-- File deletion
-- Cloud document counters
-- Nautical Publications bucket shortcut
-- Nautical Charts bucket shortcut
-- Route library preservation
+- deterministic marine intent, risk and human-approval classification;
+- bounded navigation calculations and draft passage planning;
+- local official-training retrieval with citations;
+- local Ollama chat and owner-local XTTS voice with browser fallback;
+- authenticated Supabase workspace, member, document and private-media flows;
+- private document text extraction, indexing and workspace-scoped retrieval;
+- explicit-consent web-assisted answers through the `sinbad-answer` Edge Function;
+- GPX import/export and local OpenCPN route exchange;
+- permission-based position, camera and draft logbook capture.
 
-## Intentionally not active yet
+## Core safety boundary
 
-- Captain Sinbad live AI
-- Crew cloud synchronization
-- AI document indexing
-- Admin user invitation
-- Automated security scanning
+Every local expert adapter is `DECISION_SUPPORT_ONLY`; legacy bare callbacks
+are not invoked. Expert output that claims authorization, control execution or
+an actuator command is blocked. Cloud and consented-web AI requests carry a
+Core safety envelope. The Edge Function independently recomputes the decision
+before calling the provider. That server-side recomputation is the authoritative
+security boundary. The browser also verifies the returned decision before
+displaying an answer as defense-in-depth and stale-deployment protection; a
+modified client is not a trusted enforcement point.
 
-These are deferred until Sprint 1 passes live testing.
+The hardened `sinbad-ai-core/` evidence pipeline remains `PLAN_ONLY`. It
+provides deterministic trusted-library, provenance, verification, citation,
+release and single-use delivery contracts without executing experts or
+activating navigation mathematics.
 
-## Installation
+## Explicit limits
 
-Upload all files from the ZIP to the root of the GitHub repository and replace the current files.
+Sinbad Marine is not certified ECDIS/ECS, a loading computer, a class/flag
+approval system, or a vessel-control/autonomy system. It cannot command
+actuators, approve a passage, replace official corrected charts/publications,
+or override the master and responsible human operator. Current weather, MSI,
+Notices to Mariners, traffic, port status and vessel-specific facts require
+current authoritative sources and independent verification.
 
-After GitHub Pages deploys:
+## Verification
 
-1. Close all old Atlas Marine OS tabs.
-2. Open the site again.
-3. Confirm `v8.0` in the top-right corner.
-4. Open **Atlas Cloud**.
-5. Enter the Supabase Project URL and publishable key.
-6. Sign in.
-7. Select the workspace.
-8. Test with one small PDF first.
+Run the complete Node regression suite from the repository root:
 
-## Security
+```powershell
+node --test sinbad-ai-core/tests/*.test.js tests/*.test.js
+```
 
-Never enter:
+The v8.20.8 Core-gate checkpoint passes 406 tests. Re-run the suite for every
+change; the recorded count is evidence for this checkpoint, not a permanent
+claim about future revisions.
 
-- Supabase secret key
-- service-role key
-- database password
-- OpenAI API key
+## Release order
 
-The browser app uses only the publishable key. Supabase RLS enforces access.
+Deploy the Supabase `sinbad-answer` Edge Function before publishing the static
+GitHub Pages package. Then verify `CORE_GATE_BLOCKED` for a missing or altered
+Core envelope and verify `DECISION_SUPPORT_ONLY` on a valid response. See
+`UPLOAD_ALL_FILES_TR.md` and `supabase/functions/sinbad-answer/README_TR.md`.
+
+Never place a Supabase service-role key, database password or AI-provider key
+in the browser bundle or Git repository. Only a Supabase publishable/anon key
+belongs in the web application; RLS and server-side membership checks enforce
+workspace access.
