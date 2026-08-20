@@ -108,3 +108,9 @@ It atomically creates a new, never-overwritten project under
 `studio-proposals/`, rechecks every artifact hash, and adds a non-executable
 evidence marker that labels the material untrusted and not publishable. It does
 not merge into `studio-workspaces`, open, execute, connect or publish anything.
+
+`guided-pro-model-session.js` composes the Pro boundaries into a finite state
+machine. Model-call approval and proposal-write approval remain separate; an
+invalid input, transport failure or policy violation produces a concrete safe
+next action. A successful session ends at isolated, untrusted proposal storage
+for human review—not execution, merge, Core modification or publication.
