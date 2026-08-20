@@ -82,3 +82,10 @@ path, validates bounded model identity and prompt fields, and normalizes common
 local-provider response shapes as untrusted `DATA_ONLY` drafts. The module has
 no transport, shell, installer or downloader. A real localhost connection must
 remain behind a later explicit authorization and timeout boundary.
+
+`local-model-loopback-gateway.js` implements that next boundary without bundling
+a network client. An injected transport can be invoked once only after a short-
+lived authorization bound to one authentic request, endpoint and model. The
+gateway enforces timeout, HTTP/JSON and wire-size checks, consumes authorization
+before transport, and marks every result untrusted `DATA_ONLY`. It cannot reach
+a remote host because the authenticated protocol request is loopback-only.

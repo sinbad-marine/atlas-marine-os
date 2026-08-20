@@ -37,3 +37,9 @@ test('rejects invalid model IDs empty prompts and oversized prompt inputs',()=>{
 test('protocol exposes no transport shell model installer or downloader',()=>{
   for(const field of ['fetch','connect','send','run','execute','install','download','spawn'])assert.equal(field in protocol,false);
 });
+
+test('copied or merely frozen request shapes cannot cross the response trust boundary',()=>{
+  const request=protocol.createRequest({endpoint:'http://localhost:11434/api/generate',model:'local',instruction:'Taslak'});
+  assert.equal(protocol.isAuthenticRequest(request),true);assert.equal(protocol.isAuthenticRequest({...request}),false);
+  assert.throws(()=>protocol.parseResponse(Object.freeze({...request}),{response:'taslak'}),/AUTHENTIC_REQUEST/);
+});
