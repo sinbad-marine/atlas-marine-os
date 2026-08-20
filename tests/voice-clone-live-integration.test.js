@@ -57,6 +57,8 @@ test('OpenCPN-first route transfer is bounded to the verified local bridge',()=>
   assert.match(visualizer,/function toGpx/);
   assert.match(bridge,/OPENCPN_ORIGIN_DENIED/);
   assert.match(bridge,/GPX_REQUEST_TOO_LARGE/);
+  assert.doesNotMatch(bridge,/Start-Process\s+-FilePath\s+\$OpenCpnExecutable\s+-ArgumentList/);
+  assert.match(bridge,/importRequired=\$true/);
   assert.match(bridge,/Start-Process -FilePath \$OpenCpnExecutable/);
   assert.match(bridge,/OPENCPN_NOT_INSTALLED/);
 });
