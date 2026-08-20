@@ -29,3 +29,17 @@ test('reports missing inputs without inventing a route',()=>{
   assert.ok(route.missing.includes('lat'));
   assert.ok(route.missing.includes('speed'));
 });
+
+test('plots a complete natural Turkish DR request in one message',()=>{
+  const route=visualizer.routeFromConversation([{
+    role:'user',
+    text:'26 derece 10 dakika N- 13 derece 15 dakika W pozisyonundan 294 derece rotasıyla 22 knot hız ile seyir yapan bir geminin 5 saat sonundaki pozisyonu nedir. haritada göster'
+  }],globalThis.SinbadNavigation);
+  assert.equal(route.status,'READY');
+  assert.equal(route.distanceNm,110);
+  assert.equal(route.course,294);
+  assert.equal(route.speedKnots,22);
+  assert.equal(route.hours,5);
+  assert.ok(Math.abs(route.end.lat-26.9124)<0.003);
+  assert.ok(Math.abs(route.end.lon+15.128)<0.02);
+});

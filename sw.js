@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.9-navigation-map';
+const CACHE='sinbad-marine-v8.20.9-navigation-map-r2';
 const ASSETS=[
   './',
   './index.html',
