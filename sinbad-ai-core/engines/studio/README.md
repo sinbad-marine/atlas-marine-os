@@ -90,6 +90,12 @@ gateway enforces timeout, HTTP/JSON and wire-size checks, consumes authorization
 before transport, and marks every result untrusted `DATA_ONLY`. It cannot reach
 a remote host because the authenticated protocol request is loopback-only.
 
+`node-loopback-http-transport.js` is the concrete Node transport for that gate.
+It revalidates the endpoint, canonicalizes `localhost` to the numeric loopback
+address, permits only bounded POST JSON, honors abort signals, requires a JSON
+response and stops reading at the caller's byte limit. It does not follow
+redirects and exposes no generic remote client, shell, installer or publisher.
+
 `local-model-artifact-validator.js` treats the returned model text as hostile
 until it passes an exact JSON schema, bounded artifact count/bytes, fixed domain
 roots, duplicate/traversal rejection and the same static artifact policy used by
