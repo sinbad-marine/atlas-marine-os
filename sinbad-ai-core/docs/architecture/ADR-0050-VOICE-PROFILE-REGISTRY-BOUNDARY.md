@@ -10,7 +10,7 @@ XTTS requires a server-controlled reference WAV, while the browser must never se
 
 ## Decision
 
-Represent an exact candidate profile containing opaque identifiers, SHA-256 commitments and the fixed `WAV_PCM_S16LE_MONO_22050` format label. Paths, raw media, embeddings, conditioning latents and speaker indexes are structurally absent. The assessor compares every claim with independently supplied trusted expectations and remains terminally blocked even when all values match.
+Represent an exact candidate profile containing opaque identifiers, SHA-256 commitments and the fixed `WAV_PCM_S16LE_MONO_22050` format label. Paths, raw media, embeddings, conditioning latents and speaker indexes are structurally absent. The assessor compares every claim with independently supplied trusted expectations and remains terminally blocked even when all values match. Failed scope, authorization, artifact, epoch or time checks echo neither the candidate profile identifier nor its reference-audio hash; only a fully matched but still-blocked result may retain those commitments for local correlation.
 
 ## Consequences
 

@@ -105,23 +105,23 @@ function assess(input) {
     if (profile.profileId !== descriptors.expectedProfileId.value ||
         profile.tenantId !== descriptors.expectedTenantId.value ||
         profile.personId !== descriptors.expectedPersonId.value) {
-      return blocked('VOICE_PROFILE_SCOPE_MISMATCH', profile);
+      return blocked('VOICE_PROFILE_SCOPE_MISMATCH');
     }
     if (profile.consentRef !== descriptors.expectedConsentRef.value ||
         profile.authorizedUserRef !== descriptors.expectedAuthorizedUserRef.value ||
         profile.languageRef !== descriptors.expectedLanguageRef.value) {
-      return blocked('VOICE_PROFILE_AUTHORIZATION_BINDING_MISMATCH', profile);
+      return blocked('VOICE_PROFILE_AUTHORIZATION_BINDING_MISMATCH');
     }
     if (profile.referenceAudioHash !== descriptors.expectedReferenceAudioHash.value ||
         profile.modelHash !== descriptors.expectedModelHash.value ||
         profile.configHash !== descriptors.expectedConfigHash.value) {
-      return blocked('VOICE_PROFILE_ARTIFACT_BINDING_MISMATCH', profile);
+      return blocked('VOICE_PROFILE_ARTIFACT_BINDING_MISMATCH');
     }
     if (profile.revocationEpoch !== descriptors.expectedRevocationEpoch.value) {
-      return blocked('VOICE_PROFILE_REVOCATION_EPOCH_MISMATCH', profile);
+      return blocked('VOICE_PROFILE_REVOCATION_EPOCH_MISMATCH');
     }
     if (profile.createdAt > descriptors.expectedNow.value || profile.expiresAt <= descriptors.expectedNow.value) {
-      return blocked('VOICE_PROFILE_TIME_INVALID', profile);
+      return blocked('VOICE_PROFILE_TIME_INVALID');
     }
     return blocked('SERVER_PROFILE_CUSTODY_CONSENT_REVOCATION_AND_RELEASE_ASSURANCE_REQUIRED', profile);
   } catch {

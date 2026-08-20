@@ -22,12 +22,18 @@ test('canonically snapshots only the fixed hash-addressed profile shape', () => 
   const value = c.snapshot(profile());
   assert.ok(value && Object.isFrozen(value));
   assert.deepEqual(Object.keys(value), c.FIELDS);
-  assert.deepEqual(c.deserialize(c.serialize(value)), value);
+  const wire = c.serialize(value);
+  assert.deepEqual(c.deserialize(wire), value);
+  assert.equal(c.deserialize(JSON.stringify(profile(), null, 2)), null);
+  assert.equal(c.deserialize(JSON.stringify(Object.fromEntries([...Object.entries(profile())].reverse()))), null);
+  assert.equal(c.deserialize(`${wire} `), null);
+  assert.equal(c.deserialize(wire.replace('"profileId":"voice-1"', '"profileId":"other","profileId":"voice-1"')), null);
   assert.equal(Object.keys(value).some(key => /path|bytes|embedding|latent|speaker.?idx/iu.test(key)), false);
 });
 
 test('rejects paths raw media unsupported formats and authority-shaped extras', () => {
-  for (const value of [profile({ referenceFormat: 'MP3' }), profile({ referenceAudioHash: 'C:\\voice.wav' }),
+  for (const value of [profile({ version: 'other' }), profile({ referenceFormat: 'MP3' }),
+    profile({ status: 'ACTIVE' }), profile({ referenceAudioHash: 'C:\\voice.wav' }),
     { ...profile(), referencePath: 'C:\\voice.wav' }, { ...profile(), audioBytes: 'AAAA' },
     { ...profile(), speakerIdx: 'speaker-1' }, { ...profile(), approved: true }]) {
     assert.equal(c.snapshot(value), null);
@@ -57,7 +63,33 @@ test('binds scope authorization artifacts revocation epoch and trusted time', ()
     ['expectedConfigHash', h('d'), 'VOICE_PROFILE_ARTIFACT_BINDING_MISMATCH'],
     ['expectedRevocationEpoch', 4, 'VOICE_PROFILE_REVOCATION_EPOCH_MISMATCH'],
     ['expectedNow', 999, 'VOICE_PROFILE_TIME_INVALID'], ['expectedNow', 61000, 'VOICE_PROFILE_TIME_INVALID']
-  ]) assert.equal(c.assess(request({ [field]: value })).reasonCode, reason, field);
+  ]) {
+    const result = c.assess(request({ [field]: value }));
+    assert.equal(result.reasonCode, reason, field);
+    assert.equal(result.profileId, null, `${field} profileId`);
+    assert.equal(result.referenceAudioHash, null, `${field} referenceAudioHash`);
+    for (const [name, enabled] of Object.entries(result)) {
+      if (/Resolved$|Disclosed$|Verified$|Allowed$/u.test(name)) assert.equal(enabled, false, `${field} ${name}`);
+    }
+    assert.ok(Object.isFrozen(result));
+  }
+});
+
+test('rejects hostile request descriptors without reading accessors or echoing candidate material', () => {
+  let reads = 0;
+  const getter = request();
+  Object.defineProperty(getter, 'expectedReferenceAudioHash', { enumerable: true, get() { reads++; return h('a'); } });
+  const hidden = request();
+  Object.defineProperty(hidden, 'expectedModelHash', { value: h('b'), enumerable: false });
+  for (const value of [null, {}, [], getter, hidden, Object.assign(Object.create(null), request()),
+    Object.assign(Object.create({ inherited: true }), request()), { ...request(), extra: true },
+    { ...request(), [Symbol('x')]: true }, request({ expectedRevocationEpoch: '3' })]) {
+    const result = c.assess(value);
+    assert.equal(result.reasonCode, 'REQUEST_INVALID');
+    assert.equal(result.profileId, null);
+    assert.equal(result.referenceAudioHash, null);
+  }
+  assert.equal(reads, 0);
 });
 
 test('a complete profile remains unresolved and grants no capability or path', () => {
@@ -74,6 +106,7 @@ test('a complete profile remains unresolved and grants no capability or path', (
 test('module is private and exposes no resolver storage upload or runtime operation', () => {
   assert.deepEqual(Object.keys(c), ['VERSION', 'REFERENCE_FORMAT', 'FIELDS', 'snapshot', 'serialize', 'deserialize', 'assess']);
   const exports = require('../package.json').exports;
+  assert.ok(exports && typeof exports === 'object' && !Array.isArray(exports));
   assert.equal(Object.hasOwn(exports, './voice-profile-registry-contracts'), false);
   assert.equal(Object.values(exports).some(value => String(value).includes('voice-profile-registry-contracts')), false);
   for (const key of Object.keys(c)) assert.doesNotMatch(key, /resolve|store|upload|spawn|synth|play|activate|approve/iu);
