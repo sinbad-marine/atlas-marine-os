@@ -53,6 +53,7 @@ test('frontend plays only the latest cloned wav and fails closed',()=>{
 test('OpenCPN-first route transfer is bounded to the verified local bridge',()=>{
   assert.match(app,/SINBAD_BRIDGE_URL}\/routes\/open/);
   assert.match(app,/isOpenCpnRequest/);
+  assert.match(app,/openCalculatedRouteInOpenCpn\(route,explicitOpenCpn\)/);
   assert.match(visualizer,/function toGpx/);
   assert.match(bridge,/OPENCPN_ORIGIN_DENIED/);
   assert.match(bridge,/GPX_REQUEST_TOO_LARGE/);
