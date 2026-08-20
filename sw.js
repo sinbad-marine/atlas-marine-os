@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.4-persistent-memory';
+const CACHE='sinbad-marine-v8.20.5-voice-clone';
 const ASSETS=[
   './',
   './index.html',

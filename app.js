@@ -315,7 +315,22 @@ function pickVoiceForLang(voices,lang){
   const root=lang.split('-')[0];
   return voices.find(v=>v.lang.toLowerCase()===lang.toLowerCase())||voices.find(v=>v.lang.toLowerCase().startsWith(root))||voices.find(v=>/^en[-_]/i.test(v.lang))||null;
 }
-function speakSinbad(text){
+let sinbadVoiceAudio=null;
+let sinbadVoiceObjectUrl='';
+let sinbadVoiceAbort=null;
+function finishSinbadVoice(){
+  if(sinbadVoiceObjectUrl)URL.revokeObjectURL(sinbadVoiceObjectUrl);
+  sinbadVoiceObjectUrl='';sinbadVoiceAudio=null;sinbadVoiceAbort=null;
+  sinbadAwaitingAnswer=false;scheduleSinbadListening();
+}
+function stopSinbadVoice(){
+  sinbadVoiceAbort?.abort();sinbadVoiceAbort=null;
+  if(sinbadVoiceAudio){sinbadVoiceAudio.pause();sinbadVoiceAudio.src='';}
+  if(sinbadVoiceObjectUrl)URL.revokeObjectURL(sinbadVoiceObjectUrl);
+  sinbadVoiceObjectUrl='';sinbadVoiceAudio=null;
+  window.speechSynthesis?.cancel();
+}
+function speakSinbadFallback(text){
   if(!sinbadState.voiceEnabled||!('speechSynthesis'in window)){sinbadAwaitingAnswer=false;scheduleSinbadListening();return;}
   const voices=speechSynthesis.getVoices();
   if(!voices.length){
@@ -338,6 +353,32 @@ function speakSinbad(text){
     speechSynthesis.speak(utterance);
   };
   speakNext();
+}
+async function speakSinbad(text){
+  if(!sinbadState.voiceEnabled){sinbadAwaitingAnswer=false;scheduleSinbadListening();return;}
+  if(sinbadIsListening)sinbadRecognition?.stop();
+  stopSinbadVoice();
+  const cleanText=String(text).replace(/[\u2022*_#]/g,' ').trim();
+  if(!cleanText){finishSinbadVoice();return;}
+  const status=$('sinbadKnowledgeStatus');
+  const controller=new AbortController();sinbadVoiceAbort=controller;
+  const timeout=setTimeout(()=>controller.abort(),120000);
+  try{
+    if(status)status.textContent='Sinbad ses klonu haz\u0131rlan\u0131yor\u2026';
+    const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/tts`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:cleanText,language:sinbadState.language}),signal:controller.signal});
+    if(!response.ok)throw new Error(`XTTS returned ${response.status}`);
+    const blob=await response.blob();
+    if(!blob.size)throw new Error('XTTS returned empty audio');
+    sinbadVoiceObjectUrl=URL.createObjectURL(blob);
+    sinbadVoiceAudio=new Audio(sinbadVoiceObjectUrl);
+    sinbadVoiceAudio.onended=finishSinbadVoice;
+    sinbadVoiceAudio.onerror=()=>{stopSinbadVoice();speakSinbadFallback(cleanText);};
+    if(status)status.textContent='Sinbad XTTS ses klonu aktif';
+    await sinbadVoiceAudio.play();
+  }catch(error){
+    console.warn('Sinbad XTTS unavailable; using browser voice',error);
+    stopSinbadVoice();speakSinbadFallback(cleanText);
+  }finally{clearTimeout(timeout);}
 }
 let sinbadRecognition=null;
 let sinbadIsListening=false;
@@ -364,7 +405,7 @@ function setListeningUI(message='',visible=false){
 }
 function scheduleSinbadListening(delay=500){
   clearTimeout(sinbadRestartTimer);
-  if(!sinbadHandsFreeEnabled||sinbadAwaitingAnswer||window.speechSynthesis?.speaking)return;
+  if(!sinbadHandsFreeEnabled||sinbadAwaitingAnswer||window.speechSynthesis?.speaking||(sinbadVoiceAudio&&!sinbadVoiceAudio.paused))return;
   sinbadRestartTimer=setTimeout(beginSinbadRecognition,delay);
 }
 function beginSinbadRecognition(){
@@ -661,12 +702,12 @@ $('sendSinbad').addEventListener('click',()=>{window.speechSynthesis?.resume();s
 $('sinbadInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendToSinbad($('sinbadInput').value)}});
 document.querySelectorAll('.sinbad-prompt').forEach(b=>b.addEventListener('click',()=>sendToSinbad(b.textContent)));
 $('sinbadFloat').addEventListener('click',()=>openWorkspace('sinbad'));
-$('toggleSinbadVoice')?.addEventListener('click',()=>{sinbadState.voiceEnabled=!sinbadState.voiceEnabled;localStorage.setItem('atlas_sinbad_voice',sinbadState.voiceEnabled?'on':'off');setSinbadVoiceUI();if(!sinbadState.voiceEnabled)window.speechSynthesis?.cancel();});
-$('stopSinbadVoice')?.addEventListener('click',()=>window.speechSynthesis?.cancel());
+$('toggleSinbadVoice')?.addEventListener('click',()=>{sinbadState.voiceEnabled=!sinbadState.voiceEnabled;localStorage.setItem('atlas_sinbad_voice',sinbadState.voiceEnabled?'on':'off');setSinbadVoiceUI();if(!sinbadState.voiceEnabled)stopSinbadVoice();});
+$('stopSinbadVoice')?.addEventListener('click',stopSinbadVoice);
 $('startSinbadListening')?.addEventListener('click',startSinbadListening);
 $('testSinbadVoice')?.addEventListener('click',()=>{sinbadState.voiceEnabled=true;localStorage.setItem('atlas_sinbad_voice','on');setSinbadVoiceUI();speakSinbad(speechCopy().test);});
 $('sinbadLanguage').value=sinbadState.language;
-$('sinbadLanguage')?.addEventListener('change',e=>{sinbadState.language=e.target.value;localStorage.setItem('atlas_sinbad_language',e.target.value);window.speechSynthesis?.cancel();if(sinbadIsListening)sinbadRecognition?.stop();setListeningUI();});
+$('sinbadLanguage')?.addEventListener('change',e=>{sinbadState.language=e.target.value;localStorage.setItem('atlas_sinbad_language',e.target.value);stopSinbadVoice();if(sinbadIsListening)sinbadRecognition?.stop();setListeningUI();});
 $('allowSinbadWebSearch')?.addEventListener('click',performSinbadWebSearch);
 $('denySinbadWebSearch')?.addEventListener('click',()=>{pendingSinbadWebQuestion='';$('sinbadWebConsent').classList.add('hidden');const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];addSinbadMessage('sinbad',copy.denied);});
 $('createPassagePlan')?.addEventListener('click',createPassagePlanDraft);
