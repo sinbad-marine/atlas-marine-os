@@ -35,5 +35,10 @@ test('frontend plays cloned wav with timeout and browser fallback',()=>{
   assert.match(app,/new Audio\(sinbadVoiceObjectUrl\)/);
   assert.match(app,/speakSinbadFallback\(cleanText\)/);
   assert.match(app,/URL\.revokeObjectURL/);
-  assert.match(serviceWorker,/sinbad-marine-v8\.20\.5-voice-clone/);
+  assert.match(app,/speakSinbad\(text,onVoiceReady\)/);
+  assert.match(app,/Yan.t haz.r . Sinbad sesi haz.rlan.yor/);
+  assert.match(app,/preservesPitch=false/);
+  assert.match(app,/playbackRate=1\.04/);
+  assert.match(app,/volume=\.92/);
+  assert.match(serviceWorker,/sinbad-marine-v8\.20\.6-voice-timing-tone/);
 });
