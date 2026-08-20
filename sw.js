@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.9-navigation-assistant';
+const CACHE='sinbad-marine-v8.20.9-navigation-assistant-clone-race-fix';
 const ASSETS=[
   './',
   './index.html',
