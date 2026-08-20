@@ -29,6 +29,12 @@ Bridge, yalnız `127.0.0.1` üzerinde çalışan `/ai/tts` endpointiyle yerel XT
 - `%USERPROFILE%\xtts_v2_model`
 - `%USERPROFILE%\xtts_v2_model\config.json`
 - `%USERPROFILE%\yasemin_sesi.wav`
-- `%USERPROFILE%\AppData\Local\Programs\Python\Python311\Scripts\tts.exe`
+- `%USERPROFILE%\AppData\Local\Programs\Python\Python311\python.exe`
 
-Tarayıcı referans ses yolu gönderemez ve referans ses hiçbir ağ servisine yüklenmez. Aynı anda yalnız bir sentez çalışır, metin 800 karakterle sınırlıdır ve geçici WAV yanıt okunduktan sonra silinir. XTTS kullanılamazsa uygulama otomatik olarak tarayıcı sesine döner. CPU üzerinde ilk yanıt yaklaşık 12–15 saniye sürebilir.
+Sinbad'a özel `%LOCALAPPDATA%\Sinbad\xtts-venv\Scripts\python.exe` mevcutsa Bridge önce bu izole ortamı kullanır; yoksa sistem Python'una döner.
+
+Bridge açılırken `xtts-worker.py` yalnız `127.0.0.1:31984` üzerinde kalıcı olarak başlatılır. Model bir kez belleğe alınır; Yasemin referansının `gpt_cond_latent` ve `speaker_embedding` değerleri de bir kez hesaplanıp RAM'de tutulur. Referans WAV tarayıcıya verilmez, hiçbir ağ servisine yüklenmez ve yalnız sunucu tarafında okunur.
+
+Web uygulaması uzun yanıtı en fazla 220 karakterlik cümle parçalarına ayırır. İlk parça oynarken sıradaki parça arka planda hazırlanır; yanıt metni de ilk klon ses hazır olduğunda gösterilir. Worker istek başına en fazla 240 karakter kabul eder ve aynı anda yalnız bir sentez çalıştırır. XTTS hazır değilse veya hata verirse güvenli biçimde sessiz kalır; tarayıcının standart sesine geri dönmez.
+
+İlk Bridge açılışında model ve ses profili yüklenirken bekleme olur. Sonraki cümleler kalıcı model ve önbellekteki Yasemin profiliyle üretilir. Mevcut PyTorch kurulumu CPU tabanlı olduğundan gerçek gecikme donanıma ve cümle uzunluğuna bağlıdır; arayüz bu sırada hazırlık durumunu gösterir.
