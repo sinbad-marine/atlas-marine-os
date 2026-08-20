@@ -21,3 +21,11 @@ artifacts held only in memory. Artifact paths are fixed by the compiler, user
 text is escaped at markup boundaries, and the result explicitly reports that
 filesystem, network and command I/O did not occur. Persisting these virtual
 artifacts requires a future, separate sandbox-write authorization gate.
+
+`sandbox-writer.js` supplies that narrow gate. It accepts only authentic,
+process-local virtual bundles and a short-lived, single-use authorization bound
+to one bundle. It creates a new project atomically beneath the exact
+`studio-workspaces/` root, rejects redirected roots and existing targets, and
+never overwrites. It exposes no command, network, Core, production or publish
+capability. Authorization is consumed before I/O so a failed or raced attempt
+cannot be replayed.

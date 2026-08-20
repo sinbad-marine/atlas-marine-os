@@ -37,6 +37,13 @@ test('approval and clarification requests produce no artifacts',()=>{
 });
 
 test('compiler exports no writer runner publisher or network adapter',()=>{
-  assert.deepEqual(Object.keys(compiler).sort(),['MAX_ARTIFACTS','MAX_TOTAL_BYTES','MODE','VERSION','compile']);
+  assert.deepEqual(Object.keys(compiler).sort(),['MAX_ARTIFACTS','MAX_TOTAL_BYTES','MODE','VERSION','compile','isAuthenticBundle']);
   for(const field of ['write','run','execute','publish','deploy','fetch'])assert.equal(field in compiler,false);
+});
+
+test('bundle authenticity is process-local and cannot be copied',()=>{
+  const bundle=compiler.compile(request);
+  assert.equal(compiler.isAuthenticBundle(bundle),true);
+  assert.equal(compiler.isAuthenticBundle({...bundle}),false);
+  assert.equal(compiler.isAuthenticBundle(JSON.parse(JSON.stringify(bundle))),false);
 });

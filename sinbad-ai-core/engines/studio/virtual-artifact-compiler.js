@@ -10,6 +10,7 @@
   const MODE='VIRTUAL_ONLY';
   const MAX_ARTIFACTS=16;
   const MAX_TOTAL_BYTES=262144;
+  const authenticBundles=new WeakSet();
   const freeze=value=>{if(value&&typeof value==='object'&&!Object.isFrozen(value)){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
   const html=value=>String(value).replace(/[&<>"']/gu,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const json=value=>JSON.stringify(value,null,2)+'\n';
@@ -42,7 +43,9 @@
     const artifacts=plan.domains.flatMap(domain=>domain==='web'?webArtifacts(plan):domain==='software'?softwareArtifacts(plan):animationArtifacts(plan));
     const totalBytes=artifacts.reduce((sum,item)=>sum+item.bytes,0);
     if(artifacts.length>MAX_ARTIFACTS||totalBytes>MAX_TOTAL_BYTES)return freeze({version:VERSION,mode:MODE,status:'VIRTUAL_ARTIFACTS_BLOCKED',plan,artifacts:[],reason:'ARTIFACT_LIMIT_EXCEEDED',io:{filesystem:false,network:false,commands:false}});
-    return freeze({version:VERSION,mode:MODE,status:'VIRTUAL_ARTIFACTS_READY',plan,artifacts,totalBytes,io:{filesystem:false,network:false,commands:false},nextGate:'EXPLICIT_SANDBOX_WRITE_AUTHORIZATION'});
+    const bundle=freeze({version:VERSION,mode:MODE,status:'VIRTUAL_ARTIFACTS_READY',plan,artifacts,totalBytes,io:{filesystem:false,network:false,commands:false},nextGate:'EXPLICIT_SANDBOX_WRITE_AUTHORIZATION'});
+    authenticBundles.add(bundle);return bundle;
   }
-  return freeze({VERSION,MODE,MAX_ARTIFACTS,MAX_TOTAL_BYTES,compile});
+  const isAuthenticBundle=value=>Boolean(value&&authenticBundles.has(value));
+  return freeze({VERSION,MODE,MAX_ARTIFACTS,MAX_TOTAL_BYTES,compile,isAuthenticBundle});
 });
