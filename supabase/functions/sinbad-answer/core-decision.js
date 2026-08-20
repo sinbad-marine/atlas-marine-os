@@ -6,7 +6,7 @@
   const CORE_GATE_VERSION='1.1.0';
   const INTENTS=[
     ['emergency',/(mayday|pan[ -]?pan|sos|acil|yangın|yangin|su alıyor|su aliyor|çatışma|catisma|karaya otur|adam denize|man overboard|distress)/i],
-    ['navigation',/(rota|seyir|navigasyon|navigation|course|kerteriz|bearing|mevki|position|cpa|tcpa|akıntı|akinti|current|gelgit|tide|rüzgâr|ruzgar|wind|mesafe|distance|eta|pusula|compass)/i],
+    ['navigation',/(rota|seyir|navigasyon|navigation|course|kerteriz|bearing|mevki|position|cpa|tcpa|akıntı|akinti|current|gelgit|tide|rüzgâr|ruzgar|wind|mesafe|distance|deniz mili|nautical mile|\bknot\b|\bkn\b|hız|hiz|speed|süre|sure|duration|eta|pusula|compass)/i],
     ['passage',/(passage|sefer plan|seyir plan|berth.to.berth|checklist|yakıt plan|yakit plan|port of refuge)/i],
     ['publication',/(yayın|yayin|publication|solas|marpol|colreg|notice to mariners|sailing directions|pilot book|almanac|almanak)/i],
     ['training',/(eğitim|egitim|öğret|ogret|quiz|sınav|sinav|ders|academy|training|explain|açıkla|acikla)/i],

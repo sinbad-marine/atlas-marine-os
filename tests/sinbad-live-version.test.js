@@ -18,9 +18,12 @@ test('visible release, Core and app assets share one live version',()=>{
   assert.match(html,new RegExp(`sinbad-core\\.js\\?v=${assetVersion}`));
   assert.match(html,new RegExp(`core-decision\\.js\\?v=${assetVersion}`));
   assert.match(html,new RegExp(`sinbad-navigation\\.js\\?v=${assetVersion}`));
+  assert.match(html,new RegExp(`sinbad-navigation-assistant\\.js\\?v=${assetVersion}`));
   assert.match(html,new RegExp(`app\\.js\\?v=${assetVersion}`));
   assert.match(worker,new RegExp(`sinbad-marine-v${visible[1]}\\.${visible[2]}\\.${visible[3]}-`));
   assert.match(worker,/supabase\/functions\/sinbad-answer\/core-decision\.js/);
+  assert.match(worker,/\.\/sinbad-navigation\.js/);
+  assert.match(worker,/\.\/sinbad-navigation-assistant\.js/);
 });
 
 test('release guide preserves fail-closed Edge-before-web deployment order',()=>{

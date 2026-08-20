@@ -596,7 +596,7 @@ async function sinbadLocalAnswer(query){
       emergency:{mode:window.SinbadCore?.EXPERT_MODE,handle:()=>language==='tr-TR'
         ? 'ACİL DURUM: İnsan komutasını ve geminin onaylı acil durum prosedürlerini derhal devreye alın. Uygunsa MAYDAY/PAN-PAN çağrısı yapın, mevkiyi ve tehlikenin niteliğini bildirin; Sinbad yalnızca karar desteğidir.'
         : 'EMERGENCY: Activate human command and the vessel approved emergency procedures immediately. When appropriate transmit MAYDAY/PAN-PAN with position and nature of distress; Sinbad is decision support only.'},
-      navigation:{mode:window.SinbadCore?.EXPERT_MODE,handle:()=>window.SinbadNavigation?.answer?.(query,language)}
+      navigation:window.SinbadNavigationAssistant?.createExpert?.({engine:window.SinbadNavigation,language})
     }
   });
   if(coreResult?.handled)return coreResult.answer;

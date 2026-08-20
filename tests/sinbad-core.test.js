@@ -77,6 +77,12 @@ test('routes a question to the selected expert',async()=>{
   assert.equal(result.executionPerformed,false);
 });
 
+test('classifies a natural speed-time classroom problem as navigation',()=>{
+  const result=core.analyzeQuery('15 knot hızla 2 saatte kaç deniz mili giderim?');
+  assert.equal(result.intent,'navigation');
+  assert.equal(result.requiresIndependentVerification,true);
+});
+
 test('falls through when a specialist cannot answer',async()=>{
   const result=await core.orchestrate('Rota hakkında yardım',{experts:{navigation:{mode:core.EXPERT_MODE,handle:()=>null},general:{mode:core.EXPERT_MODE,handle:()=> 'General answer'}}});
   assert.equal(result.expert,'general');

@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.9-core-gate-clone-conversation';
+const CACHE='sinbad-marine-v8.20.9-navigation-assistant';
 const ASSETS=[
   './',
   './index.html',
@@ -9,6 +9,8 @@ const ASSETS=[
   './official-publications.js',
   './supabase/functions/sinbad-answer/core-decision.js',
   './sinbad-core.js',
+  './sinbad-navigation.js',
+  './sinbad-navigation-assistant.js',
   './sinbad-training-data.js',
   './sinbad-academy.js',
   './manifest.webmanifest',
