@@ -8,7 +8,7 @@
     rule('navigation',80,/(?:\brota(?:y[ıiuü]|s[ıi]|n[ıi]|dan|ya)?(?=\s|$|[.,;:!?])|seyir|navigasyon|navigation|\bcourse\b|kerteriz|bearing|mevki|position|\bcpa\b|\btcpa\b|ak[ıi]nt[ıi]|current|gelgit|\btide\b|r[üu]zg[aâ]r|\bwind\b|pusula|compass|mercator|traverse)/giu),
     rule('passage',70,/(?:passage|sefer plan[ıi]|seyir plan[ıi]|berth[ -]?to[ -]?berth|yak[ıi]t plan[ıi]|port of refuge)/giu),
     rule('publication',60,/(?:yay[ıi]n|publication|\bsolas\b|\bmarpol\b|\bcolreg\b|notice to mariners|sailing directions|pilot book|almanak|almanac)/giu),
-    rule('training',50,/(?:e[ğg]itim|[öo][ğg]ret|\bquiz\b|s[ıi]nav|\bders\b|academy|training|a[çc][ıi]kla|explain)/giu),
+    rule('training',50,/(?:e[ğg]itim|[öo][ğg]ret|\bquiz\b|s[ıi]nav|\bders\b|training|a[çc][ıi]kla|explain)/giu),
     rule('crew',45,/(?:m[üu]rettebat|\bcrew\b|sertifika|certificate|\bstcw\b|medical|passport|\bvisa\b|kontrat|contract)/giu),
     rule('vessel',40,/(?:\bgemi\b|\btekne\b|\bvessel\b|\bfleet\b|\bfilo\b|draft|su [çc]ekimi|makine|engine)/giu),
     rule('document',35,/(?:\bbelge\b|dok[üu]man|document|\bdosya\b|\bfile\b|\bchart\b|harita|library|k[üu]t[üu]phane)/giu)

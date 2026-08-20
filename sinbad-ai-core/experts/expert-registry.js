@@ -14,8 +14,9 @@
     function unregister(id){return experts.delete(String(id));}
     function get(id){return experts.get(String(id))||null;}
     function list(){return Object.freeze([...experts.values()].sort((a,b)=>b.priority-a.priority||a.id.localeCompare(b.id)));}
-    function candidates(intent,request={}){
-      return Object.freeze(list().filter(expert=>expert.intents.includes(intent)&&(!expert.canHandle||expert.canHandle(request)!==false)));
+    function candidates(intent,_request={}){
+      if(_request&&typeof _request==='object'&&Object.hasOwn(_request,'canHandle'))throw new TypeError('legacy canHandle request gates are forbidden');
+      return Object.freeze(list().filter(expert=>expert.intents.includes(intent)));
     }
     return Object.freeze({register,unregister,get,list,candidates});
   }

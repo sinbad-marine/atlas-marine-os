@@ -1,0 +1,23 @@
+{
+  "version": "sinbad-core-protocol-requirements/1-v1",
+  "status": "REQUIREMENTS_RECORDED_IMPLEMENTATION_BLOCKED",
+  "executable": false,
+  "grantsAuthority": false,
+  "sourceCustody": "EXTERNAL_USER_OWNED_REVIEWED_2026-08-14",
+  "sourceHashes": {
+    "SINBAD_TEMEL_POLITIKA.md": "BC0EBCDE2F9A5A6DFF7E8338937CD4D22DE75D1C57C775EDFEC817DF98FF6C9A",
+    "SINBAD_CORE_DOGRULUK_DURMA_VE_KALICI_GOREV_HAFIZASI_PROTOKOLU.md": "467D7EB34692294A5BC7A6E5D688DC9ABD8485FE6ABE2716EF9AC843B77AB066",
+    "SINBAD_GEMI_INSA_TASARIM_TARAMA_VE_DIJITAL_IKIZ_PROTOKOLU.md": "560DE89BC60A955D3E3B324F2FB548D374BA5DD0376BE7133BE62608912DFCF2",
+    "SINBAD_GERCEK_ZAMANLI_DIJITAL_EGITMEN_VE_SANAL_SINIF_PROTOKOLU.md": "9FC879C6C38169B5BF9C3DC4F7B0287CE50F2D440C466004D35B47B857F7B8FA"
+  },
+  "blockers": [
+    {"id":"PROTO-TRUTH-STOP-MEMORY","activationBlocking":true,"evidenceStatus":"MISSING"},
+    {"id":"PROTO-PRIVACY-ISOLATION","activationBlocking":true,"evidenceStatus":"MISSING"},
+    {"id":"PROTO-ENGINEERING-VV","activationBlocking":true,"evidenceStatus":"MISSING"},
+    {"id":"PROTO-DIGITAL-TWIN","activationBlocking":true,"evidenceStatus":"MISSING"},
+    {"id":"PROTO-STABILITY-LOADMASTER","activationBlocking":true,"evidenceStatus":"MISSING"},
+    {"id":"PROTO-TRAINER-PEDAGOGY","activationBlocking":true,"evidenceStatus":"MISSING"},
+    {"id":"PROTO-VOICE-CONSENT","activationBlocking":true,"evidenceStatus":"MISSING"},
+    {"id":"PROTO-VOICE-EMERGENCY-DELETION","activationBlocking":true,"evidenceStatus":"MISSING"}
+  ]
+}
