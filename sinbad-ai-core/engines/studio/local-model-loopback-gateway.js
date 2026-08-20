@@ -7,6 +7,7 @@ const MAX_TTL_MS=2*60*1000;
 const MAX_TIMEOUT_MS=30*1000;
 const MAX_WIRE_BYTES=protocol.MAX_RESPONSE_BYTES+8192;
 const ID=/^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$/u;
+const drafts=new WeakSet();
 const freeze=value=>{if(value&&typeof value==='object'&&!Object.isFrozen(value)){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 
 function create(options={}){
@@ -44,10 +45,12 @@ function create(options={}){
       if(wire.length>MAX_WIRE_BYTES)throw new Error('LOOPBACK_MODEL_WIRE_RESPONSE_TOO_LARGE');
       let payload;try{payload=JSON.parse(wire.toString('utf8'));}catch(_){throw new Error('LOOPBACK_MODEL_JSON_INVALID');}
       const draft=protocol.parseResponse(request,payload);
-      return freeze({version:VERSION,mode:MODE,status:'LOCAL_MODEL_DRAFT_RECEIVED_UNTRUSTED',model:draft.model,text:draft.text,authority:'DATA_ONLY',claims:draft.claims,io:{performed:true,network:'LOOPBACK_ONLY',commands:false},nextGate:draft.nextGate});
+      const result=freeze({version:VERSION,mode:MODE,status:'LOCAL_MODEL_DRAFT_RECEIVED_UNTRUSTED',model:draft.model,text:draft.text,authority:'DATA_ONLY',claims:draft.claims,io:{performed:true,network:'LOOPBACK_ONLY',commands:false},nextGate:draft.nextGate});
+      drafts.add(result);return result;
     }finally{if(timer)clearTimeout(timer);}
   }
   return freeze({VERSION,MODE,authorize,send});
 }
 
-module.exports=freeze({VERSION,MODE,MAX_TTL_MS,MAX_TIMEOUT_MS,MAX_WIRE_BYTES,create});
+const isAuthenticDraft=value=>Boolean(value&&drafts.has(value));
+module.exports=freeze({VERSION,MODE,MAX_TTL_MS,MAX_TIMEOUT_MS,MAX_WIRE_BYTES,create,isAuthenticDraft});

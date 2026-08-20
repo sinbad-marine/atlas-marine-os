@@ -89,3 +89,10 @@ lived authorization bound to one authentic request, endpoint and model. The
 gateway enforces timeout, HTTP/JSON and wire-size checks, consumes authorization
 before transport, and marks every result untrusted `DATA_ONLY`. It cannot reach
 a remote host because the authenticated protocol request is loopback-only.
+
+`local-model-artifact-validator.js` treats the returned model text as hostile
+until it passes an exact JSON schema, bounded artifact count/bytes, fixed domain
+roots, duplicate/traversal rejection and the same static artifact policy used by
+the deterministic Studio compiler. A clean proposal remains explicitly
+untrusted `DATA_ONLY`, stays in memory, and cannot be written without another
+separate authorization boundary.
