@@ -58,3 +58,10 @@ package and one manifest. The writer atomically creates a new project beneath
 the exact `studio-previews/` root, refuses overwrite and redirected roots, and
 rechecks all artifact hashes before writing. It never opens a browser, renders,
 executes, connects or publishes the preview.
+
+`guided-studio-session.js` joins the gates into one finite offline workflow. It
+guides the caller from a brief to a verified draft, requests the exact sandbox
+and preview-write approvals at the correct stages, and reports a concrete next
+action when input, policy or integrity blocks progress. It never weakens the
+underlying process-local authenticity boundaries and still exposes no command,
+browser-open, model/network, Core-write or publishing capability.
