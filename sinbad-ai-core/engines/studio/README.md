@@ -96,3 +96,9 @@ roots, duplicate/traversal rejection and the same static artifact policy used by
 the deterministic Studio compiler. A clean proposal remains explicitly
 untrusted `DATA_ONLY`, stays in memory, and cannot be written without another
 separate authorization boundary.
+
+`local-model-proposal-writer.js` provides that isolated authorization boundary.
+It atomically creates a new, never-overwritten project under
+`studio-proposals/`, rechecks every artifact hash, and adds a non-executable
+evidence marker that labels the material untrusted and not publishable. It does
+not merge into `studio-workspaces`, open, execute, connect or publish anything.
