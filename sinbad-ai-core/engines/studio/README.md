@@ -138,3 +138,9 @@ an authentic model proposal after rechecking the exact persisted file set and
 hashes. It emits only `CREATE`, `UPDATE`, `UNCHANGED` and `PRESERVE`; deletion is
 always denied. The result is a read-only human-review plan and exposes no patch,
 write, execution, network or publication capability.
+
+`model-proposal-revision-writer.js` can materialize an approved diff only as a
+new atomic project beneath `studio-revisions/`. Before copying it reruns the
+read-only planner and rehashes every source file. Existing files absent from the
+proposal are preserved, proposed files may update only the derived staging tree,
+and the original workspace is never modified or deleted.

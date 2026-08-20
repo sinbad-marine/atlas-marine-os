@@ -8,6 +8,7 @@ const modelValidator=require('./local-model-artifact-validator.js');
 const VERSION='0.3.0';
 const MODE='MODEL_PROPOSAL_DIFF_PLAN_ONLY';
 const plans=new WeakSet();
+const planBindings=new WeakMap();
 const freeze=value=>{if(value&&typeof value==='object'&&!Object.isFrozen(value)){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 const sha256=value=>crypto.createHash('sha256').update(value).digest('hex');
 const blocked=(reason,detail='')=>freeze({version:VERSION,mode:MODE,status:'MODEL_PROPOSAL_DIFF_BLOCKED',reason,detail:String(detail),changes:[],io:{filesystemRead:true,filesystemWrite:false,network:false,commands:false}});
@@ -34,10 +35,11 @@ function create(options={}){
       changes.sort((a,b)=>a.path.localeCompare(b.path));
       const summary=freeze({create:changes.filter(x=>x.action==='CREATE').length,update:changes.filter(x=>x.action==='UPDATE').length,unchanged:changes.filter(x=>x.action==='UNCHANGED').length,preserve:changes.filter(x=>x.action==='PRESERVE').length,delete:0});
       const result=freeze({version:VERSION,mode:MODE,status:'MODEL_PROPOSAL_DIFF_READY',projectSlug:report.projectSlug,workspaceManifestHash:report.manifestHash,proposalManifestHash:proposal.manifestHash,changes:Object.freeze(changes),summary,deletionPolicy:'DENY',authority:'PLAN_ONLY',io:{filesystemRead:true,filesystemWrite:false,network:false,commands:false},nextGate:'HUMAN_REVIEW_BEFORE_ANY_PATCH_AUTHORIZATION'});
-      plans.add(result);return result;
+      plans.add(result);planBindings.set(result,{report,proposal,projectRoot});return result;
     }catch(error){if(error&&error.reviewCode)return blocked(error.reviewCode,error.message);if(error&&error.code==='ENOENT')return blocked('WORKSPACE_MISSING');return blocked('DIFF_PLANNING_FAILED',error&&error.code?error.code:'UNKNOWN');}
   }
   return freeze({VERSION,MODE,workspaceRoot,plan});
 }
 const isAuthenticPlan=value=>Boolean(value&&plans.has(value));
-module.exports=freeze({VERSION,MODE,create,isAuthenticPlan});
+const isPlanFor=(value,report,proposal,projectRoot)=>Boolean(value&&plans.has(value)&&planBindings.get(value)?.report===report&&planBindings.get(value)?.proposal===proposal&&planBindings.get(value)?.projectRoot===path.resolve(String(projectRoot||'')));
+module.exports=freeze({VERSION,MODE,create,isAuthenticPlan,isPlanFor});
