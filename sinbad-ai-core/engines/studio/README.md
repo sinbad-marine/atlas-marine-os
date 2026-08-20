@@ -51,3 +51,10 @@ the bound verification report, excludes JavaScript, removes HTML script tags,
 and injects a restrictive offline Content Security Policy. It returns a new
 immutable package in memory only. It neither writes nor opens the preview and
 does not expose execution, rendering, network, deployment or publish methods.
+
+`scriptless-preview-writer.js` is the separate persistence boundary for that
+package. A short-lived, single-use authorization is bound to one authentic
+package and one manifest. The writer atomically creates a new project beneath
+the exact `studio-previews/` root, refuses overwrite and redirected roots, and
+rechecks all artifact hashes before writing. It never opens a browser, renders,
+executes, connects or publishes the preview.
