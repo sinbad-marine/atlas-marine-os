@@ -386,11 +386,6 @@ async function speakSinbad(text,onVoiceReady){
     announce();stopSinbadVoice();speakSinbadFallback(cleanText);
   }finally{clearTimeout(timeout);}
 }
-function speakSinbadInstant(text){
-  const status=$('sinbadKnowledgeStatus');
-  if(status)status.textContent='Sinbad anlık ses aktif · XTTS kalite modu ses testinde kullanılabilir';
-  speakSinbadFallback(text);
-}
 let sinbadRecognition=null;
 let sinbadIsListening=false;
 let sinbadHandsFreeEnabled=false;
@@ -698,7 +693,7 @@ async function sendToSinbad(text){
     addSinbadMessage('user',q);$('sinbadInput').value='';await performSinbadWebSearch();return;
   }
   if(pendingSinbadWebQuestion&&/^(izin verme|hayÄ±r|arama|no|do not search|Ğ½ĞµÑ‚|non|nein|Ù„Ø§|hayÄ±r|no buscar|non cercare)[.! ]*$/iu.test(q)){
-    pendingSinbadWebQuestion='';$('sinbadWebConsent').classList.add('hidden');const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];addSinbadMessage('user',q);addSinbadMessage('sinbad',copy.denied);sinbadAwaitingAnswer=false;speakSinbadInstant(copy.denied);return;
+    pendingSinbadWebQuestion='';$('sinbadWebConsent').classList.add('hidden');const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];addSinbadMessage('user',q);addSinbadMessage('sinbad',copy.denied);sinbadAwaitingAnswer=false;speakSinbad(copy.denied);return;
   }
   addSinbadMessage('user',q);
   $('sinbadInput').value='';
@@ -707,7 +702,7 @@ async function sendToSinbad(text){
     const answer=await sinbadLocalAnswer(q);
     $('sinbadThinking').classList.add('hidden');
     addSinbadMessage('sinbad',answer);
-    speakSinbadInstant(answer);
+    speakSinbad(answer);
   },650);
 }
 $('sendSinbad').addEventListener('click',()=>{window.speechSynthesis?.resume();sendToSinbad($('sinbadInput').value);});
@@ -1542,7 +1537,7 @@ async function performSinbadWebSearch(){
     const history=sinbadState.messages.slice(-12).map(message=>({role:message.role==='sinbad'?'assistant':'user',content:message.text}));
     const {data,error}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language:sinbadState.language,allowWebSearch:true,history}});if(error)throw error;
     const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];const answer=`${copy.result}:\n\n${data?.answer||'No reliable web result was found.'}`;
-    addSinbadMessage('sinbad',answer);speakSinbadInstant(answer);
+    addSinbadMessage('sinbad',answer);speakSinbad(answer);
   }catch(error){addSinbadMessage('sinbad',`Web search failed: ${error.message||error}`);}finally{$('sinbadThinking').classList.add('hidden');}
 }
 async function uploadCloudFiles(){
