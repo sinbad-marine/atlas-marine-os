@@ -5,7 +5,8 @@ param(
   [string]$XttsExecutable = '',
   [string]$XttsModelPath = '',
   [string]$XttsConfigPath = '',
-  [string]$XttsSpeakerWav = ''
+  [string]$XttsSpeakerWav = '',
+  [string]$OpenCpnExecutable = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -20,6 +21,12 @@ if ([string]::IsNullOrWhiteSpace($XttsExecutable)) { $XttsExecutable = Join-Path
 if ([string]::IsNullOrWhiteSpace($XttsModelPath)) { $XttsModelPath = Join-Path $userProfileRoot 'xtts_v2_model' }
 if ([string]::IsNullOrWhiteSpace($XttsConfigPath)) { $XttsConfigPath = Join-Path $XttsModelPath 'config.json' }
 if ([string]::IsNullOrWhiteSpace($XttsSpeakerWav)) { $XttsSpeakerWav = Join-Path $userProfileRoot 'yasemin_sesi.wav' }
+if ([string]::IsNullOrWhiteSpace($OpenCpnExecutable)) {
+  $OpenCpnExecutable = @(
+    (Join-Path ${env:ProgramFiles(x86)} 'OpenCPN\opencpn.exe'),
+    (Join-Path $env:ProgramFiles 'OpenCPN\opencpn.exe')
+  ) | Where-Object { $_ -and (Test-Path -LiteralPath $_) } | Select-Object -First 1
+}
 $voiceTempRoot = Join-Path $bridgeRoot 'Voice\Temp'
 $script:XttsBusy = $false
 New-Item -ItemType Directory -Force -Path $routeRoot | Out-Null
@@ -402,6 +409,22 @@ try {
         $target = Join-Path $routeRoot $filename
         [IO.File]::WriteAllText($target, [string]$payload.gpx, [Text.UTF8Encoding]::new($false))
         Write-HttpResponse $stream 201 'Created' (Json @{ ok=$true; filename=$filename; path=$target }); continue
+      }
+      if ($method -eq 'POST' -and $path -eq '/routes/open') {
+        if ($contentLength -gt 2097152) { throw 'GPX_REQUEST_TOO_LARGE' }
+        $origin = if ($headers.ContainsKey('origin')) { [string]$headers['origin'] } else { '' }
+        if ($origin -and $origin -ne 'https://sinbad-marine.github.io') { throw 'OPENCPN_ORIGIN_DENIED' }
+        $payload = $body | ConvertFrom-Json
+        if ([string]::IsNullOrWhiteSpace($payload.gpx) -or $payload.gpx -notmatch '<gpx' -or $payload.gpx -notmatch '<rte') { throw 'A GPX route is required.' }
+        $filename = [IO.Path]::GetFileName([string]$payload.filename)
+        $filename = [regex]::Replace($filename, '[^a-zA-Z0-9._-]', '-')
+        if (-not $filename.EndsWith('.gpx', [StringComparison]::OrdinalIgnoreCase)) { $filename += '.gpx' }
+        if ([string]::IsNullOrWhiteSpace($filename)) { $filename = 'sinbad-route.gpx' }
+        $target = Join-Path $routeRoot $filename
+        [IO.File]::WriteAllText($target, [string]$payload.gpx, [Text.UTF8Encoding]::new($false))
+        if ([string]::IsNullOrWhiteSpace($OpenCpnExecutable) -or -not (Test-Path -LiteralPath $OpenCpnExecutable)) { throw 'OPENCPN_NOT_INSTALLED' }
+        Start-Process -FilePath $OpenCpnExecutable -ArgumentList ('"{0}"' -f $target.Replace('"',''))
+        Write-HttpResponse $stream 201 'Created' (Json @{ ok=$true; opened=$true; filename=$filename; path=$target; application='OpenCPN' }); continue
       }
       Write-HttpResponse $stream 404 'Not Found' (Json @{ error='Not found' })
     } catch {
