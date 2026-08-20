@@ -22,7 +22,7 @@ test('cloud AI rejects a missing or inconsistent Core safety envelope before pro
 });
 
 test('browser and Edge Core decisions remain identical for golden safety queries',async()=>{
-  const queries=['Mayday, gemi su alıyor','Akıntıya göre tutulacak rotayı hesapla','Bugün AIS traffic ve hava nasıl?','Passage checklist hazırla','  CPA hesabı yap  ','x'.repeat(7000)];
+  const queries=['Mayday, gemi su alıyor','MAY\u200BDAY','Akıntıya göre tutulacak rotayı hesapla','Bugün AIS traffic ve hava nasıl?','latest forecast','port open today','son notice','current conditions','Passage checklist hazırla','execute this','başlat','  CPA hesabı yap  ','x'.repeat(7000)];
   for(const query of queries){
     const browser=browserCore.analyzeQuery(query),server=edgeCore.serverCoreDecision(query);
     assert.deepEqual(server,{
@@ -48,16 +48,25 @@ test('normal and consented web AI requests both carry a Core envelope',()=>{
 test('normal and consented web responses are both checked by the client Core gate',()=>{
   assert.match(app,/function cloudAnswerPassesCoreGate\(data,envelope\)/);
   assert.ok((app.match(/cloudAnswerPassesCoreGate\(/g)||[]).length>=3);
-  assert.match(app,/data\.permission!=='DECISION_SUPPORT_ONLY'/);
-  assert.match(app,/data\.executionPerformed!==false/);
+  assert.match(app,/data\.permission==='DECISION_SUPPORT_ONLY'/);
+  assert.match(app,/data\.executionPerformed===false/);
 });
 
-test('cloud transport errors stop before response gate or answer use',()=>{
+test('cloud transport errors skip AI data but preserve private archive retrieval',()=>{
   const invocation=app.indexOf("functions.invoke('sinbad-answer'");
   const errorStop=app.indexOf('if(aiError)',invocation);
-  const gate=app.indexOf('if(!cloudAnswerPassesCoreGate(aiData,coreEnvelope))',invocation);
-  const answer=app.indexOf('if(aiData?.answer)',invocation);
-  assert.ok(invocation>=0&&errorStop>invocation&&gate>errorStop&&answer>gate);
+  const gate=app.indexOf('else if(!cloudAnswerPassesCoreGate(aiData,coreEnvelope))',invocation);
+  const answer=app.indexOf('else if(aiData?.answer)',invocation);
+  const privateRetrieval=app.indexOf("cloudClient.from('document_knowledge_chunks')",invocation);
+  assert.ok(invocation>=0&&errorStop>invocation&&gate>errorStop&&answer>gate&&privateRetrieval>answer);
+});
+
+test('model history is normalized only from the Core envelope',()=>{
+  assert.match(edge,/normalizeCoreHistory\(coreEnvelope\?\.history, 10\)/);
+  assert.doesNotMatch(edge,/body\.history/);
+  const invocations=[...app.matchAll(/functions\.invoke\('sinbad-answer',[\s\S]{0,260}?body:\{([^}]*)\}/g)];
+  assert.equal(invocations.length,2);
+  for(const invocation of invocations)assert.doesNotMatch(invocation[1],/\bhistory\b/);
 });
 
 test('Edge uses only its recomputed decision after envelope validation',()=>{
@@ -74,8 +83,10 @@ test('cloud answers cannot claim execution authority',()=>{
 
 test('high and critical risk stop before the cloud model provider',()=>{
   const block=edge.indexOf("if (coreDecision.emergency || coreDecision.risk === 'high')");
+  const retrieval=edge.indexOf('const rows: any[] = []');
+  const keyFallback=edge.indexOf('if (!openaiKey)');
   const provider=edge.indexOf("fetch('https://api.openai.com/v1/responses'");
-  assert.ok(block>=0&&provider>block);
+  assert.ok(block>=0&&retrieval>block&&keyFallback>block&&provider>block);
   assert.match(edge,/mode: 'core-safety-blocked'/);
 });
 

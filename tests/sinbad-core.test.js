@@ -61,7 +61,7 @@ test('normalizes bounded conversation context',()=>{
 test('builds a versioned AI request envelope',()=>{
   const envelope=core.aiEnvelope('Mercator rotasını hesapla',[{role:'user',text:'Start at 40N'}]);
   assert.equal(envelope.version,'sinbad-ai-core/1');
-  assert.equal(envelope.gateVersion,'1.0.0');
+  assert.equal(envelope.gateVersion,'1.1.0');
   assert.equal(envelope.analysis.intent,'navigation');
   assert.equal(envelope.history.length,1);
   assert.ok(envelope.instructions.some(x=>x.includes('Never invent live')));
@@ -107,7 +107,15 @@ test('blocks every expert payload field outside the decision-support allowlist',
   }
 });
 
+test('blocks empty or textual execution claims from expert answers',async()=>{
+  for(const answer of ['', 'command sent', 'executionPerformed: true']){
+    const result=await core.orchestrate('CPA hesabı yap',{experts:{navigation:{mode:core.EXPERT_MODE,handle:()=>({answer})}}});
+    assert.equal(result.handled,false,answer);
+  }
+});
+
 test('normalizes Core gate questions before analysis and envelope binding',()=>{
   assert.equal(core.aiEnvelope('  CPA hesabı yap  ').analysis.query,'CPA hesabı yap');
   assert.equal(core.aiEnvelope('x'.repeat(7000)).analysis.query.length,6000);
+  assert.equal(core.aiEnvelope('MAY\u200BDAY').analysis.emergency,true);
 });

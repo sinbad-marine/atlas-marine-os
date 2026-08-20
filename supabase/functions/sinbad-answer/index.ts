@@ -1,7 +1,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import './core-decision.js';
 
-const { CORE_GATE_VERSION, normalizeCoreQuestion, serverCoreDecision, validateCoreEnvelope } = (globalThis as any).SinbadCoreDecision;
+const { CORE_GATE_VERSION, normalizeCoreQuestion, normalizeCoreHistory, serverCoreDecision, validateCoreEnvelope } = (globalThis as any).SinbadCoreDecision;
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -54,10 +54,7 @@ Deno.serve(async req => {
     const language = String(body.language || 'tr-TR').slice(0, 12);
     const allowWebSearch = body.allowWebSearch === true;
     const coreEnvelope = body.coreEnvelope;
-    const history = Array.isArray(body.history) ? body.history.slice(-10).map((item: any) => ({
-      role: item?.role === 'assistant' || item?.role === 'sinbad' ? 'assistant' : 'user',
-      content: String(item?.content || item?.text || '').slice(0, 2500)
-    })).filter((item: any) => item.content) : [];
+    const history = normalizeCoreHistory(coreEnvelope?.history, 10);
     if (!workspaceId || !question) return json({ error: 'workspaceId and question are required' }, 400);
     if (!validateCoreEnvelope(coreEnvelope, question)) return json({ error: 'Core safety envelope missing or inconsistent', code: 'CORE_GATE_BLOCKED' }, 400);
     const coreDecision = serverCoreDecision(question);
@@ -70,6 +67,13 @@ Deno.serve(async req => {
       .eq('is_active', true)
       .maybeSingle();
     if (!membership) return json({ error: 'Workspace access denied' }, 403);
+
+    if (coreDecision.emergency || coreDecision.risk === 'high') {
+      const answer = coreDecision.emergency
+        ? 'Acil durumda insan komutasını ve geminin onaylı acil durum prosedürlerini derhal uygulayın. Sinbad bu istek için bulut modeli çalıştırmadı.'
+        : 'Bu yüksek riskli operasyon isteği için bulut modeli çalıştırılmadı. Doğrulanmış girdilerle yerel karar desteği kullanın ve sonucu yetkili insan, güncel resmî kaynaklar ve bağımsız yöntemle doğrulayın.';
+      return json({ answer, sources: [], mode: 'core-safety-blocked', ...decisionSupport });
+    }
 
     const rows: any[] = [];
     for (const term of words(question).slice(0, 5)) {
@@ -99,13 +103,6 @@ Deno.serve(async req => {
         mode: 'configuration-required',
         ...decisionSupport
       });
-    }
-
-    if (coreDecision.emergency || coreDecision.risk === 'high') {
-      const answer = coreDecision.emergency
-        ? 'Acil durumda insan komutasını ve geminin onaylı acil durum prosedürlerini derhal uygulayın. Sinbad bu istek için bulut modeli çalıştırmadı.'
-        : 'Bu yüksek riskli seyir isteği için bulut modeli çalıştırılmadı. Doğrulanmış girdilerle yerel hesaplama yapın ve sonucu kaptan, güncel resmî kaynaklar ve bağımsız yöntemle doğrulayın.';
-      return json({ answer, sources, mode: 'core-safety-blocked', ...decisionSupport });
     }
 
     if (!allowWebSearch && needsFreshData(question) && !unique.length) {

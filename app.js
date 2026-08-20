@@ -1501,10 +1501,8 @@ async function saveDocumentKnowledge(documentId,file,text,bucket){
   return {classification,chunks:chunks.length};
 }
 function cloudAnswerPassesCoreGate(data,envelope){
-  if(!data||data.coreGateVersion!==window.SinbadCore?.CORE_GATE_VERSION||data.coreGateVersion!==envelope?.gateVersion||data.permission!=='DECISION_SUPPORT_ONLY'||data.executionPerformed!==false||!data.coreDecision||!envelope?.analysis)return false;
-  const expected=envelope.analysis,actual=data.coreDecision;
-  return ['emergency','operational','needsLiveData','risk','requiresHumanApproval','requiresIndependentVerification']
-    .every(field=>actual[field]===expected[field]);
+  const decision=data?.coreDecision;
+  return Boolean(data&&data.coreGateVersion===window.SinbadCore?.CORE_GATE_VERSION&&data.coreGateVersion===envelope?.gateVersion&&data.permission==='DECISION_SUPPORT_ONLY'&&data.executionPerformed===false&&decision&&['low','medium','high','critical'].includes(decision.risk)&&['emergency','operational','needsLiveData','requiresHumanApproval','requiresIndependentVerification'].every(field=>typeof decision[field]==='boolean'));
 }
 async function sinbadCloudKnowledgeAnswer(question){
   if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId)return null;
@@ -1513,10 +1511,10 @@ async function sinbadCloudKnowledgeAnswer(question){
     const language=sinbadState.language||appLanguage;
     const history=sinbadState.messages.slice(-12,-1).map(message=>({role:message.role==='sinbad'?'assistant':'user',content:message.text}));
     const coreEnvelope=window.SinbadCore?.aiEnvelope?.(question,history);
-    const {data:aiData,error:aiError}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language,history,coreEnvelope}});
-    if(aiError){if(status)status.textContent='Atlas Cloud unavailable Â· trying offline brain';return null;}
-    if(!cloudAnswerPassesCoreGate(aiData,coreEnvelope)){if(status)status.textContent='Atlas Cloud Core gate blocked the response';return null;}
-    if(aiData?.answer){
+    const {data:aiData,error:aiError}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language,coreEnvelope}});
+    if(aiError){if(status)status.textContent='Atlas Cloud AI unavailable Â· searching private archive';}
+    else if(!cloudAnswerPassesCoreGate(aiData,coreEnvelope)){if(status)status.textContent='Atlas Cloud Core gate blocked the response';return null;}
+    else if(aiData?.answer){
       const answer=String(aiData.answer).trim();
       // Older cloud deployments can return a polite "no source found" notice
       // as if it were a complete AI answer. Treat those notices as a miss so
@@ -1533,7 +1531,7 @@ async function sinbadCloudKnowledgeAnswer(question){
       if(!cloudMiss&&!cloudMissFallback){if(status)status.textContent='Atlas Cloud AI active';return answer;}
       if(status)status.textContent='Atlas Cloud has no answer Â· trying offline brain';
     }
-    if(aiData?.needsWebPermission){if(status)status.textContent='Atlas Cloud has no answer Â· trying offline brain';return null;}
+    if(!aiError&&aiData?.needsWebPermission){if(status)status.textContent='Atlas Cloud has no answer Â· trying offline brain';return null;}
     const terms=question.toLocaleLowerCase(language).normalize('NFKD').replace(/[^a-z0-9Ã§ÄŸÄ±Ã¶ÅŸÃ¼Ğ°-ÑÑ‘Ø¡-ÙŠ ]/gi,' ').split(/\s+/).filter(x=>x.length>2).slice(0,8);if(!terms.length)return null;
     const {data,error}=await cloudClient.from('document_knowledge_chunks').select('content,chunk_index,document_knowledge!inner(title,classification,workspace_id)').eq('document_knowledge.workspace_id',selectedWorkspaceId).ilike('content',`%${terms[0]}%`).limit(12);
     if(error)throw error;if(!data?.length){if(status)status.textContent='Atlas Cloud has no answer Â· trying offline brain';return null;}
@@ -1549,7 +1547,7 @@ async function performSinbadWebSearch(){
   try{
     const history=sinbadState.messages.slice(-12).map(message=>({role:message.role==='sinbad'?'assistant':'user',content:message.text}));
     const coreEnvelope=window.SinbadCore?.aiEnvelope?.(question,history);
-    const {data,error}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language:sinbadState.language,allowWebSearch:true,history,coreEnvelope}});if(error)throw error;
+    const {data,error}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language:sinbadState.language,allowWebSearch:true,coreEnvelope}});if(error)throw error;
     if(!cloudAnswerPassesCoreGate(data,coreEnvelope))throw new Error('Core safety gate rejected the cloud response');
     const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];const answer=`${copy.result}:\n\n${data?.answer||'No reliable web result was found.'}`;
     addSinbadMessage('sinbad',answer);speakSinbadInstant(answer);

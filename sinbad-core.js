@@ -56,6 +56,7 @@
   const EXPERT_MODE='DECISION_SUPPORT_ONLY';
   const CORE_GATE_VERSION=policy.CORE_GATE_VERSION;
   const ALLOWED_EXPERT_FIELDS=new Set(['answer','sources','warnings']);
+  const UNSAFE_ANSWER_CLAIM=/(executionPerformed\s*[:=]\s*true|authori[sz]ed\s*[:=]\s*true|command (?:was )?sent|actuator (?:was )?executed)/i;
 
   function detectLanguage(value){
     const text=String(value||'');
@@ -75,10 +76,7 @@
   }
 
   function conversationContext(messages,limit=12){
-    return (Array.isArray(messages)?messages:[]).slice(-Math.max(1,limit)).map(message=>({
-      role:message?.role==='assistant'||message?.role==='sinbad'?'assistant':'user',
-      content:String(message?.content??message?.text??'').trim().slice(0,2000)
-    })).filter(message=>message.content);
+    return policy.normalizeCoreHistory(messages,limit);
   }
 
   function safetyGuidance(analysis){
@@ -114,7 +112,7 @@
       const result=await adapter.handle(question,{analysis,history:conversationContext(options.history),context:options.context||{}});
       if(result==null||result==='')continue;
       const payload=typeof result==='string'?{answer:result}:result;
-      if(!payload||typeof payload!=='object'||Object.keys(payload).some(field=>!ALLOWED_EXPERT_FIELDS.has(field))){
+      if(!payload||typeof payload!=='object'||Object.keys(payload).some(field=>!ALLOWED_EXPERT_FIELDS.has(field))||typeof payload.answer!=='string'||!payload.answer.trim()||UNSAFE_ANSWER_CLAIM.test(payload.answer)||('sources'in payload&&!Array.isArray(payload.sources))||('warnings'in payload&&!Array.isArray(payload.warnings))){
         return {handled:false,expert:null,...analysis,answer:null,warnings:[...safetyGuidance(analysis),'Expert output was blocked because it crossed the decision-support boundary.'],permission:EXPERT_MODE,executionPerformed:false};
       }
       return {handled:true,expert:name,...analysis,...payload,warnings:[...safetyGuidance(analysis),...(payload.warnings||[])],permission:EXPERT_MODE,executionPerformed:false};
