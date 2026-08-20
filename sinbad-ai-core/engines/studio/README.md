@@ -29,3 +29,11 @@ to one bundle. It creates a new project atomically beneath the exact
 never overwrites. It exposes no command, network, Core, production or publish
 capability. Authorization is consumed before I/O so a failed or raced attempt
 cannot be replayed.
+
+`static-artifact-verifier.js` validates authentic virtual bundles without
+rendering or executing them. It enforces extension/media-type agreement,
+parses JSON and JavaScript syntax, blocks external network references and
+active HTML/SVG/CSS content, and rejects command/runtime capabilities. A clean
+bundle receives an immutable per-file SHA-256 manifest and a process-local
+authentic static-preview report. The report is evidence for a later gate; it is
+not permission to run, publish or connect the generated project.
