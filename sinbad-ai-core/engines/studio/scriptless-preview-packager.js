@@ -3,6 +3,7 @@ const crypto=require('node:crypto');
 const fsp=require('node:fs').promises;
 const path=require('node:path');
 const persistedVerifier=require('./persisted-workspace-verifier.js');
+const modelValidator=require('./local-model-artifact-validator.js');
 
 const VERSION='0.1.0';
 const MODE='SCRIPTLESS_PREVIEW_MEMORY_ONLY';
@@ -51,7 +52,22 @@ function create(options={}){
       return blocked('PREVIEW_PACKAGING_FAILED',error&&error.code?error.code:'UNKNOWN');
     }
   }
-  return freeze({VERSION,MODE,workspaceRoot,packagePreview});
+  function packageModelProposal(proposal){
+    if(!modelValidator.isAuthenticProposal(proposal)||proposal.status!=='LOCAL_MODEL_ARTIFACT_PROPOSAL_VERIFIED_UNTRUSTED')return blocked('AUTHENTIC_MODEL_PROPOSAL_REQUIRED');
+    const artifacts=[];
+    for(const item of proposal.artifacts){
+      const extension=path.posix.extname(item.path).toLowerCase();if(!ALLOWED.has(extension))continue;
+      if(Buffer.byteLength(item.content,'utf8')!==item.bytes||sha256(Buffer.from(item.content,'utf8'))!==proposal.manifest.find(record=>record.path===item.path)?.sha256)return blocked('MODEL_PROPOSAL_CHANGED',item.path);
+      const content=extension==='.html'?sanitizeHtml(item.content):item.content;
+      if(extension==='.html'&&(/<script\b/iu.test(content)||/\son[a-z]+\s*=|javascript\s*:/iu.test(content)))return blocked('SCRIPTLESS_POLICY_VIOLATION',item.path);
+      const output=Buffer.from(content,'utf8');artifacts.push(Object.freeze({path:item.path,bytes:output.length,sha256:sha256(output),content}));
+    }
+    artifacts.sort((a,b)=>a.path.localeCompare(b.path));if(!artifacts.length)return blocked('NO_SCRIPTLESS_ARTIFACTS');
+    const manifest=artifacts.map(({path,bytes,sha256})=>Object.freeze({path,bytes,sha256}));
+    const result=freeze({version:VERSION,mode:MODE,status:'SCRIPTLESS_PREVIEW_PACKAGE_READY',projectSlug:proposal.projectSlug,sourceManifestHash:proposal.manifestHash,sourceKind:'UNTRUSTED_LOCAL_MODEL_PROPOSAL',manifestHash:sha256(Buffer.from(JSON.stringify(manifest),'utf8')),artifacts:Object.freeze(artifacts),excludedExtensions:Object.freeze(['.js']),io:{filesystemRead:false,filesystemWrite:false,network:false,commands:false,render:false},nextGate:'EXPLICIT_LOCAL_PREVIEW_WRITE_AUTHORIZATION'});
+    packages.add(result);return result;
+  }
+  return freeze({VERSION,MODE,workspaceRoot,packagePreview,packageModelProposal});
 }
 
 const isAuthenticPackage=value=>Boolean(value&&packages.has(value));

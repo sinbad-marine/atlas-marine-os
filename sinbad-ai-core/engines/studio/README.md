@@ -119,3 +119,14 @@ For local artifact sessions the protocol requests provider JSON mode, disables
 supported reasoning traces, fixes temperature to zero and bounds generation to
 1024 tokens. The authorization timeout remains finite (maximum 60 seconds) so
 CPU-only local runtimes can complete without creating an unbounded wait.
+
+Verified local-model proposals can also enter the existing scriptless preview
+packager. JavaScript is excluded, HTML receives the offline CSP, and a third
+single-use authorization is required before `studio-previews/` is created. The
+guided Pro session never opens that preview automatically.
+
+`studio-pro-acceptance-manifest.js` freezes the Pro 0.2 completion meaning and
+the real local runtime probe observed on 2026-08-21. The runtime observation is
+explicitly non-portable. It also records the remaining activation blocker:
+generated code cannot execute until a sandbox capable of denying network access
+is available; Node's current host permission flags alone are insufficient.
