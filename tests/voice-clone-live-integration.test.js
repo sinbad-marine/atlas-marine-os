@@ -4,6 +4,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 
 const bridge=fs.readFileSync('bridge/sinbad-bridge.ps1','utf8');
+const openCpnClient=fs.readFileSync('bridge/opencpn-rest-client.js','utf8');
 const app=fs.readFileSync('app.js','utf8');
 const serviceWorker=fs.readFileSync('sw.js','utf8');
 const visualizer=fs.readFileSync('sinbad-route-visualizer.js','utf8');
@@ -58,7 +59,11 @@ test('OpenCPN-first route transfer is bounded to the verified local bridge',()=>
   assert.match(bridge,/OPENCPN_ORIGIN_DENIED/);
   assert.match(bridge,/GPX_REQUEST_TOO_LARGE/);
   assert.doesNotMatch(bridge,/Start-Process\s+-FilePath\s+\$OpenCpnExecutable\s+-ArgumentList/);
-  assert.match(bridge,/importRequired=\$true/);
+  assert.match(bridge,/Send-RouteToOpenCpn/);
+  assert.match(bridge,/importRequired=\(-not \[bool\]\$transfer\.imported\)/);
   assert.match(bridge,/Start-Process -FilePath \$OpenCpnExecutable/);
   assert.match(bridge,/OPENCPN_NOT_INSTALLED/);
+  assert.match(openCpnClient,/\/api\/rx_object/);
+  assert.match(openCpnClient,/activate:'1'/);
+  assert.match(openCpnClient,/rejectUnauthorized:false/);
 });
