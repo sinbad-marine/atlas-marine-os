@@ -95,7 +95,7 @@ test('speaking only starts on the real audio "playing" event, never on fetch/ann
 });
 
 test('lip-sync analyser is best-effort and never blocks or silences audio playback on failure',()=>{
-  const fn=app.slice(app.indexOf('function startSinbadLipSyncAnalyser'),app.indexOf('function startSinbadLipSyncAnalyser')+2400);
+  const fn=app.slice(app.indexOf('async function startSinbadLipSyncAnalyser'),app.indexOf('let sinbadAvatarImageGeneration'));
   assert.match(fn,/try\{/);
   assert.match(fn,/\}catch\(error\)\{/);
   assert.match(fn,/console\.warn\('Sinbad lip-sync analyser unavailable; using CSS fallback',error\)/);
@@ -115,8 +115,9 @@ test('voice-disabled toggles with the real voice switch, and startup state match
   assert.match(app,/setSinbadAssistantState\(sinbadState\.voiceEnabled\?'idle':'voice-disabled'\);/);
 });
 
-test('audio ended/aborted returns to idle only when voice is still enabled, not to a stale state',()=>{
-  assert.match(app,/if\(sinbadState\.voiceEnabled\)setSinbadAssistantState\('idle'\);\s*\n\s*scheduleSinbadListening\(\);/);
+test('audio ended/aborted always resolves the avatar state (idle if voice is still enabled, voice-disabled otherwise) via the single idempotent finishSinbadVoice path, never a stale state',()=>{
+  const fn=app.slice(app.indexOf('function finishSinbadVoice'),app.indexOf('function stopSinbadVoice'));
+  assert.match(fn,/setSinbadAssistantState\(forceState\|\|\(sinbadState\.voiceEnabled\?'idle':'voice-disabled'\)\);\s*\n\s*scheduleSinbadListening\(\);/);
 });
 
 test('an aborted/superseded XTTS request cannot corrupt the animation state',()=>{
@@ -176,15 +177,14 @@ test('warning never uses a red alarm colour, and error stays calm (no urgent/fas
   assert.doesNotMatch(css,/warning[^{]*\{[^}]*background:var\(--danger\)/);
 });
 
-test('service worker cache version was bumped for this change and precaches the Academy pack for offline use',()=>{
+test('service worker cache version was bumped for this change and precaches the real bound-state Academy assets for offline use (hero-portrait excluded - see the round-table fix test)',()=>{
   const sw=fs.readFileSync('sw.js','utf8');
-  assert.match(sw,/const CACHE='sinbad-marine-v8\.20\.9-captain-sinbad-academy-pack-v1';/);
+  assert.match(sw,/const CACHE='sinbad-marine-v8\.20\.9-captain-sinbad-roundtable-fixes-v1';/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-idle-master\.png'/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-listening\.png'/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-thinking\.png'/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-speaking\.png'/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-board-teaching\.png'/);
-  assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-hero-portrait\.png'/);
 });
 
 test('mobile: the status line spans the full row instead of colliding with the avatar column',()=>{
@@ -236,8 +236,8 @@ test('when no suitable voice is found, the app skips audio entirely and stays in
   assert.match(fn,/utterance\.voice=voice;\s*\n\s*utterance\.lang=voice\.lang;/);
 });
 
-test('when the browser reports zero voices at all, a bounded timeout falls back to text mode instead of hanging forever waiting for onvoiceschanged',()=>{
-  const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function speakSinbadStandard')+1200);
+test('when the browser reports zero voices at all, a bounded timeout falls back to text mode (warning, auto-clearing) instead of hanging forever waiting for onvoiceschanged',()=>{
+  const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function splitSinbadCloneChunks'));
   const zeroVoiceBranch=fn.slice(fn.indexOf('if(!voices.length){'),fn.indexOf('if(sinbadIsListening)'));
   assert.match(zeroVoiceBranch,/setTimeout\(\(\)=>\{/);
   assert.match(zeroVoiceBranch,/1500/);
@@ -245,26 +245,28 @@ test('when the browser reports zero voices at all, a bounded timeout falls back 
   assert.match(zeroVoiceBranch,/announce\(\);/); // text answer is still delivered even with zero voices
   assert.match(zeroVoiceBranch,/clearTimeout\(voiceWaitTimer\);/); // a real voiceschanged event cancels the fallback timer
   assert.match(zeroVoiceBranch,/let settled=false;/);
-  // a spurious onvoiceschanged firing with a still-empty list must not reset/cancel the fallback timer forever
-  assert.match(zeroVoiceBranch,/if\(settled\|\|!speechSynthesis\.getVoices\(\)\.length\)return;/);
-  // the avatar must never stay stuck in preparing-voice: it moves to voice-disabled
-  assert.match(zeroVoiceBranch,/setSinbadAssistantState\('voice-disabled'\);/);
+  // a spurious voiceschanged firing with a still-empty list must not settle the wait
+  assert.match(zeroVoiceBranch,/settled\|\|!speechSynthesis\.getVoices\(\)\.length\)return;/);
+  // the avatar must never stay stuck in preparing-voice: it resolves via the
+  // single idempotent finishSinbadVoice path, to warning (not voice-disabled -
+  // this is a transient per-turn hiccup, not the user's persistent preference)
+  assert.match(zeroVoiceBranch,/finishSinbadVoice\('warning'\);/);
 });
 
 test('acceptance regression: the avatar never stays in preparing-voice forever when no suitable tr-TR voice exists among a real voice list',()=>{
-  const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function speakSinbadXttsClone'));
+  const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function splitSinbadCloneChunks'));
   assert.match(fn,/let anyVoiceQueued=false;/);
   assert.match(fn,/anyVoiceQueued=true;/);
   const terminalBranch=fn.slice(fn.indexOf('if(index>=runs.length){'),fn.indexOf('const run=runs[index++];'));
-  assert.match(terminalBranch,/finishSinbadVoice\(\);/);
   assert.match(terminalBranch,/if\(!anyVoiceQueued\)\{/);
   assert.match(terminalBranch,/Uygun Türkçe ses bulunamadı · metin modunda devam ediliyor/);
-  assert.match(terminalBranch,/setSinbadAssistantState\('voice-disabled'\);/);
+  assert.match(terminalBranch,/finishSinbadVoice\('warning'\);/);
+  assert.match(terminalBranch,/finishSinbadVoice\(\);/); // the anyVoiceQueued branch resolves via the default (idle/voice-disabled) outcome
 });
 
-test('speaking (standard provider) starts only on the real utterance onstart event, never when merely queued',()=>{
-  const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function speakSinbadXttsClone'));
-  assert.match(fn,/utterance\.onstart=\(\)=>\{announce\(\);setSinbadAssistantState\('speaking'\);\};/);
+test('speaking (standard provider) starts only on the real utterance onstart event, never when merely queued, and a superseded (stale) call cannot flip state either',()=>{
+  const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function splitSinbadCloneChunks'));
+  assert.match(fn,/utterance\.onstart=\(\)=>\{if\(myGeneration!==sinbadStandardSpeechGeneration\)return;announce\(\);setSinbadAssistantState\('speaking'\);\};/);
   assert.match(fn,/setSinbadAssistantState\('preparing-voice'\);/);
   // preparing-voice must be set before speechSynthesis.speak() is ever called
   const preparingIdx=fn.indexOf("setSinbadAssistantState('preparing-voice')");
@@ -272,9 +274,9 @@ test('speaking (standard provider) starts only on the real utterance onstart eve
   assert.ok(preparingIdx>0&&preparingIdx<speakCallIdx);
 });
 
-test('onboundary drives a real per-word cue (not a fabricated continuous loop), onend advances/finishes cleanly',()=>{
-  const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function speakSinbadXttsClone'));
-  assert.match(fn,/utterance\.onboundary=sinbadStandardVoiceTick;/);
+test('onboundary drives a real per-word cue (not a fabricated continuous loop, and never for a superseded call), onend advances/finishes cleanly',()=>{
+  const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function splitSinbadCloneChunks'));
+  assert.match(fn,/utterance\.onboundary=\(\)=>\{if\(myGeneration===sinbadStandardSpeechGeneration\)sinbadStandardVoiceTick\(\);\};/);
   assert.match(fn,/utterance\.onend=speakNext;/);
   assert.match(app,/function sinbadStandardVoiceTick\(\)\{/);
   assert.match(css,/\.sinbad-avatar\.sinbad-voice-tick \.sinbad-avatar-img\{transform:scale\(1\.018\)/);
@@ -334,4 +336,102 @@ test('default voice provider is standard at the source level (window-property re
   assert.ok(declIdx>0);
   // must be declared before the dispatcher that reads it
   assert.ok(declIdx<app.indexOf('function speakSinbad(text,onVoiceReady){'));
+});
+
+// ---- Round-table review fixes (verified findings only) ----
+
+test('round-table fix: finishSinbadVoice is the single idempotent end-of-turn path and always resolves the avatar state (never skips the transition when voice is off)',()=>{
+  const fn=app.slice(app.indexOf('function finishSinbadVoice'),app.indexOf('function stopSinbadVoice'));
+  assert.match(fn,/function finishSinbadVoice\(forceState\)\{/);
+  // must be an unconditional call, not `if(sinbadState.voiceEnabled)setSinbadAssistantState(...)`
+  assert.match(fn,/setSinbadAssistantState\(forceState\|\|\(sinbadState\.voiceEnabled\?'idle':'voice-disabled'\)\);/);
+  assert.doesNotMatch(fn,/if\(sinbadState\.voiceEnabled\)setSinbadAssistantState/);
+});
+
+test('round-table fix: every early-return in speakSinbadStandard and speakSinbadXttsClone routes through finishSinbadVoice instead of leaving the avatar stuck in thinking/preparing-voice',()=>{
+  const standardFn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function splitSinbadCloneChunks'));
+  const cloneFn=app.slice(app.indexOf('async function speakSinbadXttsClone'),app.indexOf('// Provider switch:'));
+  // the old scattered `sinbadAwaitingAnswer=false;scheduleSinbadListening();` pattern must be gone
+  assert.doesNotMatch(standardFn,/announce\(\);sinbadAwaitingAnswer=false;scheduleSinbadListening\(\);return;/);
+  assert.doesNotMatch(cloneFn,/announce\(\);sinbadAwaitingAnswer=false;scheduleSinbadListening\(\);return;/);
+  assert.match(standardFn,/if\(!sinbadState\.voiceEnabled\|\|!\('speechSynthesis'in window\)\)\{announce\(\);finishSinbadVoice\(\);return;\}/);
+  assert.match(cloneFn,/if\(!sinbadState\.voiceEnabled\)\{announce\(\);finishSinbadVoice\(\);return;\}/);
+});
+
+test('round-table fix: a transient "no suitable voice this turn" resolves to the warning state (auto-clears), never voice-disabled, so it never misrepresents the user\'s persistent voice preference',()=>{
+  const standardFn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function splitSinbadCloneChunks'));
+  assert.match(standardFn,/finishSinbadVoice\('warning'\);/);
+  // the zero-voices timeout branch and the per-run "nobody had a voice" branch
+  // must both use the warning outcome, not force voice-disabled directly
+  const zeroVoiceBranch=standardFn.slice(standardFn.indexOf('if(!voices.length){'),standardFn.indexOf('if(sinbadIsListening)'));
+  assert.doesNotMatch(zeroVoiceBranch,/setSinbadAssistantState\('voice-disabled'\)/);
+  assert.match(zeroVoiceBranch,/finishSinbadVoice\('warning'\);/);
+  const terminalBranch=standardFn.slice(standardFn.indexOf('if(index>=runs.length){'),standardFn.indexOf('const run=runs[index++];'));
+  assert.doesNotMatch(terminalBranch,/setSinbadAssistantState\('voice-disabled'\)/);
+  assert.match(terminalBranch,/finishSinbadVoice\('warning'\);/);
+});
+
+test('round-table fix: voiceschanged uses addEventListener/removeEventListener with a per-call generation token, not a single-slot onvoiceschanged property that a newer call could overwrite or a stale call could still fire',()=>{
+  const standardFn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function splitSinbadCloneChunks'));
+  assert.doesNotMatch(standardFn,/speechSynthesis\.onvoiceschanged=/);
+  assert.match(standardFn,/speechSynthesis\.addEventListener\('voiceschanged',onVoicesChanged\);/);
+  assert.match(standardFn,/speechSynthesis\.removeEventListener\('voiceschanged',onVoicesChanged\);/);
+  assert.match(app,/let sinbadStandardSpeechGeneration=0;/);
+  assert.match(standardFn,/const myGeneration=\+\+sinbadStandardSpeechGeneration;/);
+  // timeout, success (voiceschanged fires with a real list), and the
+  // per-utterance onstart/onboundary/onerror paths must all check the token
+  assert.match(standardFn,/if\(myGeneration!==sinbadStandardSpeechGeneration\|\|settled\)return;/);
+  assert.match(standardFn,/if\(myGeneration!==sinbadStandardSpeechGeneration\|\|settled\|\|!speechSynthesis\.getVoices\(\)\.length\)return;/);
+  assert.match(standardFn,/if\(myGeneration!==sinbadStandardSpeechGeneration\)return; \/\/ a newer speak request has taken over/);
+  assert.match(standardFn,/utterance\.onstart=\(\)=>\{if\(myGeneration!==sinbadStandardSpeechGeneration\)return;announce\(\);setSinbadAssistantState\('speaking'\);\};/);
+  assert.match(standardFn,/utterance\.onboundary=\(\)=>\{if\(myGeneration===sinbadStandardSpeechGeneration\)sinbadStandardVoiceTick\(\);\};/);
+  assert.match(standardFn,/utterance\.onerror=\(\)=>\{\s*\n\s*if\(myGeneration!==sinbadStandardSpeechGeneration\)return;/);
+});
+
+test('round-table fix: startSinbadLipSyncAnalyser awaits AudioContext.resume() and never taps the <audio> element (which would reroute/silence its output) unless the context is confirmed running',()=>{
+  assert.match(app,/async function startSinbadLipSyncAnalyser\(audio\)\{/);
+  const fn=app.slice(app.indexOf('async function startSinbadLipSyncAnalyser'),app.indexOf('let sinbadAvatarImageGeneration'));
+  assert.match(fn,/await sinbadLipSyncAudioContext\.resume\(\);/);
+  assert.match(fn,/if\(sinbadLipSyncAudioContext\.state!=='running'\)return;/);
+  // the bail-out must come before any MediaElementSource is created
+  const bailIdx=fn.indexOf("state!=='running')return;");
+  const tapIdx=fn.indexOf('createMediaElementSource(audio)');
+  assert.ok(bailIdx>0&&tapIdx>bailIdx);
+});
+
+test('round-table fix: stopSinbadLipSyncAnalyser disconnects the previous source/analyser nodes instead of just cancelling the RAF loop, so repeated speech turns cannot leak Web Audio nodes onto the shared context',()=>{
+  const fn=app.slice(app.indexOf('function stopSinbadLipSyncAnalyser'),app.indexOf('async function startSinbadLipSyncAnalyser'));
+  assert.match(fn,/sinbadLipSyncSource\.disconnect\(\);/);
+  assert.match(fn,/sinbadLipSyncAnalyser\.disconnect\(\);/);
+  assert.match(fn,/sinbadLipSyncSource=null;sinbadLipSyncAnalyser=null;/);
+  // the setSinbadAssistantState caller must no longer null the analyser ref
+  // itself before calling stop - that pre-nulling is exactly what defeated
+  // the disconnect cleanup above.
+  assert.doesNotMatch(app,/sinbadLipSyncAnalyser=null;stopSinbadLipSyncAnalyser\(\);/);
+  assert.match(app,/if\(next!=='speaking'\)stopSinbadLipSyncAnalyser\(\);/);
+});
+
+test('round-table fix: the avatar image swap uses a generation token so a slow/stale image load from a superseded state change can never flip opacity back on',()=>{
+  assert.match(app,/let sinbadAvatarImageGeneration=0;/);
+  const fn=app.slice(app.indexOf('function setSinbadAssistantState'),app.indexOf('function setSinbadAssistantState')+1400);
+  assert.match(fn,/const generation=\+\+sinbadAvatarImageGeneration;/);
+  assert.match(fn,/img\.onload=\(\)=>\{if\(generation===sinbadAvatarImageGeneration\)img\.style\.opacity='1';\};/);
+});
+
+test('round-table: SpeechRecognition error/abort paths verified - onend (which the Web Speech spec guarantees fires after error/abort) already resets the avatar out of listening, so no fix was needed here',()=>{
+  const fn=app.slice(app.indexOf('function beginSinbadRecognition'),app.indexOf('function beginSinbadRecognition')+2200);
+  assert.match(fn,/sinbadRecognition\.onerror=event=>\{sinbadIsListening=false;/);
+  assert.match(fn,/if\(sinbadAssistantState==='listening'\)setSinbadAssistantState\('idle'\);/);
+});
+
+test('round-table fix: the unused hero-portrait asset is no longer force-downloaded into the offline precache (it is only referenced by the service worker, never by any real UI element)',()=>{
+  const sw=fs.readFileSync('sw.js','utf8');
+  assert.doesNotMatch(sw,/captain-sinbad-hero-portrait\.png/);
+  assert.doesNotMatch(app,/hero-portrait/);
+  assert.doesNotMatch(html,/hero-portrait/);
+  assert.doesNotMatch(css,/hero-portrait/);
+});
+
+test('round-table: TTS text normalization verified - the same message text rendered into the chat DOM is HTML-escaped via esc(), and SpeechSynthesisUtterance.text is not an HTML/markup sink, so no concrete injection path exists and no new escaping was added',()=>{
+  assert.match(app,/\$\{m\.role==='user'\?'Captain':'Captain Sinbad'\}<\/span>\s*\n\s*\$\{esc\(m\.text\)\}/);
 });

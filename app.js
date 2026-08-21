@@ -390,13 +390,33 @@ let sinbadLipSyncAudioContext=null,sinbadLipSyncAnalyser=null,sinbadLipSyncSourc
 function stopSinbadLipSyncAnalyser(){
   if(sinbadLipSyncRaf)cancelAnimationFrame(sinbadLipSyncRaf);
   sinbadLipSyncRaf=null;
+  // Disconnect the previous turn's graph nodes explicitly - a Web Audio node
+  // stays wired into the context (and reachable from `destination`) until
+  // disconnected, regardless of whether any JS reference to it remains, so
+  // skipping this across repeated speech turns leaks nodes on the shared
+  // long-lived AudioContext.
+  if(sinbadLipSyncSource){try{sinbadLipSyncSource.disconnect();}catch(_){/* already disconnected */}}
+  if(sinbadLipSyncAnalyser){try{sinbadLipSyncAnalyser.disconnect();}catch(_){/* already disconnected */}}
+  sinbadLipSyncSource=null;sinbadLipSyncAnalyser=null;
   sinbadAssistantElements().forEach(el=>el.style.removeProperty('--sinbad-voice-amp'));
 }
-function startSinbadLipSyncAnalyser(audio){
+async function startSinbadLipSyncAnalyser(audio){
+  // Never run two graphs/RAF loops at once, and never leak the previous
+  // turn's source/analyser nodes into this one.
+  stopSinbadLipSyncAnalyser();
   try{
     const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
     if(!sinbadLipSyncAudioContext)sinbadLipSyncAudioContext=new AC();
-    if(sinbadLipSyncAudioContext.state==='suspended')sinbadLipSyncAudioContext.resume();
+    if(sinbadLipSyncAudioContext.state==='suspended')await sinbadLipSyncAudioContext.resume();
+    // If resume() did not actually bring the context to 'running' (blocked by
+    // an autoplay policy, browser quirk, etc.) do NOT tap the <audio>
+    // element: creating a MediaElementSource unconditionally reroutes ALL of
+    // the element's output through the (possibly still-suspended) Web Audio
+    // graph, which can silence real playback while the UI still says
+    // "speaking". Bail out here and stay on the CSS-only lip-sync fallback -
+    // audio keeps playing through its normal, untouched element path.
+    if(sinbadLipSyncAudioContext.state!=='running')return;
+    if(audio.paused||audio.ended)return; // playback already moved on while we awaited resume()
     const source=sinbadLipSyncAudioContext.createMediaElementSource(audio);
     const analyser=sinbadLipSyncAudioContext.createAnalyser();
     analyser.fftSize=256;
@@ -425,6 +445,7 @@ function startSinbadLipSyncAnalyser(audio){
     console.warn('Sinbad lip-sync analyser unavailable; using CSS fallback',error);
   }
 }
+let sinbadAvatarImageGeneration=0;
 function setSinbadAssistantState(state,detail={}){
   const next=SINBAD_ASSISTANT_STATES.includes(state)?state:'idle';
   const changed=next!==sinbadAssistantState;
@@ -433,17 +454,21 @@ function setSinbadAssistantState(state,detail={}){
   clearSinbadAssistantTimers();
   const asset=SINBAD_STATE_ASSET[next]||SINBAD_STATE_ASSET.idle;
   const src=SINBAD_AVATAR_ASSET_BASE+asset;
+  // A generation token so a slow/stale image load from an earlier state
+  // change can never reveal itself (via opacity) once a newer state change
+  // has already superseded it.
+  const generation=++sinbadAvatarImageGeneration;
   sinbadAssistantElements().forEach(el=>{
     el.dataset.state=next;
     const img=el.querySelector('.sinbad-avatar-img');
     if(img&&!img.src.endsWith(asset)){
       img.style.opacity='0';
-      img.onload=()=>{img.style.opacity='1';};
+      img.onload=()=>{if(generation===sinbadAvatarImageGeneration)img.style.opacity='1';};
       img.src=src;
     }
   });
   if('reducedMotion' in (detail||{}))document.documentElement.classList.toggle('sinbad-force-reduced-motion',detail.reducedMotion===true);
-  if(next!=='speaking'){sinbadLipSyncAnalyser=null;stopSinbadLipSyncAnalyser();}
+  if(next!=='speaking')stopSinbadLipSyncAnalyser();
   const copy=SINBAD_ASSISTANT_STATE_LABELS[sinbadState.language]||SINBAD_ASSISTANT_STATE_LABELS['en-US'];
   const label=$('sinbadAvatarStatus');
   if(label&&changed)label.textContent=copy[next]||next;
@@ -519,11 +544,17 @@ function pickSinbadTurkishVoice(voices){
 let sinbadVoiceAudio=null;
 let sinbadVoiceObjectUrl='';
 let sinbadVoiceAbort=null;
-function finishSinbadVoice(){
+// The single idempotent end-of-turn path for both voice providers. Always
+// resolves the avatar out of thinking/preparing-voice/speaking - never
+// leaves it stuck on an early return, error, or timeout. `forceState` lets a
+// caller pick a specific transient outcome (e.g. 'warning' for "no suitable
+// voice this turn"); otherwise it falls back to the real persistent voice
+// preference so a transient hiccup never misrepresents that preference.
+function finishSinbadVoice(forceState){
   if(sinbadVoiceObjectUrl)URL.revokeObjectURL(sinbadVoiceObjectUrl);
   sinbadVoiceObjectUrl='';sinbadVoiceAudio=null;sinbadVoiceAbort=null;
   sinbadAwaitingAnswer=false;
-  if(sinbadState.voiceEnabled)setSinbadAssistantState('idle');
+  setSinbadAssistantState(forceState||(sinbadState.voiceEnabled?'idle':'voice-disabled'));
   scheduleSinbadListening();
 }
 function stopSinbadVoice(){
@@ -545,48 +576,61 @@ function sinbadStandardVoiceTick(){
 // functional below as an optional provider for later - not deleted, not
 // wired as default. Both providers are called through speakSinbad() below,
 // which is the single entry point every existing call site already uses.
+// Bumped once per call so a stale earlier call (still waiting on a timer or
+// a 'voiceschanged' event) can recognize a newer call has taken over and
+// stop touching shared state/UI - never let an old request finish over a
+// newer one.
+let sinbadStandardSpeechGeneration=0;
 function speakSinbadStandard(text,onVoiceReady){
+  const myGeneration=++sinbadStandardSpeechGeneration;
   let announced=false;
   const announce=()=>{if(!announced){announced=true;onVoiceReady?.();}};
   const status=$('sinbadKnowledgeStatus');
-  if(!sinbadState.voiceEnabled||!('speechSynthesis'in window)){announce();sinbadAwaitingAnswer=false;scheduleSinbadListening();return;}
+  if(!sinbadState.voiceEnabled||!('speechSynthesis'in window)){announce();finishSinbadVoice();return;}
   const voices=speechSynthesis.getVoices();
   if(!voices.length){
     let settled=false;
-    const voiceWaitTimer=setTimeout(()=>{
-      if(settled)return;
-      settled=true;
-      speechSynthesis.onvoiceschanged=null;
-      if(status)status.textContent='Uygun Türkçe ses bulunamadı · metin modunda devam ediliyor';
-      setSinbadAssistantState('voice-disabled');
-      announce();
-      sinbadAwaitingAnswer=false;
-      scheduleSinbadListening();
-    },1500);
-    speechSynthesis.onvoiceschanged=()=>{
-      if(settled||!speechSynthesis.getVoices().length)return; // ignore spurious empty-list events
+    let voiceWaitTimer;
+    const onVoicesChanged=()=>{
+      if(myGeneration!==sinbadStandardSpeechGeneration||settled||!speechSynthesis.getVoices().length)return; // stale call or still-empty list
       settled=true;
       clearTimeout(voiceWaitTimer);
-      speechSynthesis.onvoiceschanged=null;
+      speechSynthesis.removeEventListener('voiceschanged',onVoicesChanged);
       speakSinbadStandard(text,onVoiceReady);
     };
+    voiceWaitTimer=setTimeout(()=>{
+      if(myGeneration!==sinbadStandardSpeechGeneration||settled)return;
+      settled=true;
+      speechSynthesis.removeEventListener('voiceschanged',onVoicesChanged);
+      // No suitable voice for this turn - a transient work-status, not a
+      // change to the user's persistent voice preference, so this resolves
+      // to 'warning' (auto-clears) rather than 'voice-disabled'.
+      if(status)status.textContent='Uygun Türkçe ses bulunamadı · metin modunda devam ediliyor';
+      announce();
+      finishSinbadVoice('warning');
+    },1500);
+    speechSynthesis.addEventListener('voiceschanged',onVoicesChanged);
     return;
   }
   if(sinbadIsListening)sinbadRecognition?.stop();
   speechSynthesis.cancel();
   setSinbadAssistantState('preparing-voice');
-  const cleanText=String(text).replace(/[\u2022*_#]/g,' ').trim();
+  const cleanText=String(text).replace(/[•*_#]/g,' ').trim();
   if(!cleanText){announce();finishSinbadVoice();return;}
   const runs=splitSpeechByLanguage(cleanText,sinbadState.language);
   let index=0;
   let anyVoiceQueued=false;
   const speakNext=()=>{
+    if(myGeneration!==sinbadStandardSpeechGeneration)return; // a newer speak request has taken over
     if(index>=runs.length){
-      finishSinbadVoice();
       if(!anyVoiceQueued){
         if(status)status.textContent='Uygun Türkçe ses bulunamadı · metin modunda devam ediliyor';
-        setSinbadAssistantState('voice-disabled');
-      }else if(status)status.textContent='';
+        announce();
+        finishSinbadVoice('warning');
+      }else{
+        if(status)status.textContent='';
+        finishSinbadVoice();
+      }
       return;
     }
     const run=runs[index++];
@@ -607,10 +651,11 @@ function speakSinbadStandard(text,onVoiceReady){
     utterance.rate=SINBAD_VOICE_PROFILE.rate;utterance.pitch=SINBAD_VOICE_PROFILE.pitch;utterance.volume=SINBAD_VOICE_PROFILE.volume;
     // Only the real 'speaking has actually started' signal flips the avatar -
     // never the moment we merely queued/prepared the utterance.
-    utterance.onstart=()=>{announce();setSinbadAssistantState('speaking');};
-    utterance.onboundary=sinbadStandardVoiceTick;
+    utterance.onstart=()=>{if(myGeneration!==sinbadStandardSpeechGeneration)return;announce();setSinbadAssistantState('speaking');};
+    utterance.onboundary=()=>{if(myGeneration===sinbadStandardSpeechGeneration)sinbadStandardVoiceTick();};
     utterance.onend=speakNext;
     utterance.onerror=()=>{
+      if(myGeneration!==sinbadStandardSpeechGeneration)return;
       if(status)status.textContent='Standart ses okunamadı';
       speakNext();
     };
@@ -666,7 +711,7 @@ function playSinbadCloneBlob(blob,controller){
 async function speakSinbadXttsClone(text,onVoiceReady){
   let announced=false;
   const announce=()=>{if(!announced){announced=true;onVoiceReady?.();}};
-  if(!sinbadState.voiceEnabled){announce();sinbadAwaitingAnswer=false;scheduleSinbadListening();return;}
+  if(!sinbadState.voiceEnabled){announce();finishSinbadVoice();return;}
   if(sinbadIsListening)sinbadRecognition?.stop();
   stopSinbadVoice();
   const cleanText=String(text).replace(/[•*_#]/g,' ').trim();

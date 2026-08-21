@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.9-captain-sinbad-academy-pack-v1';
+const CACHE='sinbad-marine-v8.20.9-captain-sinbad-roundtable-fixes-v1';
 const ASSETS=[
   './',
   './index.html',
@@ -24,8 +24,7 @@ const ASSETS=[
   './assets/captain-sinbad/captain-sinbad-listening.png',
   './assets/captain-sinbad/captain-sinbad-thinking.png',
   './assets/captain-sinbad/captain-sinbad-speaking.png',
-  './assets/captain-sinbad/captain-sinbad-board-teaching.png',
-  './assets/captain-sinbad/captain-sinbad-hero-portrait.png'
+  './assets/captain-sinbad/captain-sinbad-board-teaching.png'
 ];
 
 self.addEventListener('install',event=>{
