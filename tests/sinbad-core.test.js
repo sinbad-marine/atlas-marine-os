@@ -43,6 +43,12 @@ test('raises a critical safety gate for distress language',()=>{
   assert.ok(core.safetyGuidance(result).some(x=>x.includes('Immediate danger')));
 });
 
+test('does not mistake a named-source GMDSS training question for a live emergency',()=>{
+  const result=core.analyzeQuery('GMDSS Handbook AMSA 2018 kaynağına göre distress alert hangi temel bilgileri içermelidir? Kaynak başlığını yaz.');
+  assert.equal(result.emergency,false);
+  assert.notEqual(result.risk,'critical');
+});
+
 test('flags questions that require current live data',()=>{
   const result=core.analyzeQuery('Bugün liman açık mı ve hava nasıl?');
   assert.equal(result.needsLiveData,true);
@@ -61,7 +67,7 @@ test('normalizes bounded conversation context',()=>{
 test('builds a versioned AI request envelope',()=>{
   const envelope=core.aiEnvelope('Mercator rotasını hesapla',[{role:'user',text:'Start at 40N'}]);
   assert.equal(envelope.version,'sinbad-ai-core/1');
-  assert.equal(envelope.gateVersion,'1.1.0');
+  assert.equal(envelope.gateVersion,'1.1.1');
   assert.equal(envelope.analysis.intent,'navigation');
   assert.equal(envelope.history.length,1);
   assert.ok(envelope.instructions.some(x=>x.includes('Never invent live')));

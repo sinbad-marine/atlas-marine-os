@@ -3,9 +3,11 @@
   if(typeof module==='object'&&module.exports)module.exports=api;
   root.SinbadCoreDecision=api;
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
-  const CORE_GATE_VERSION='1.1.0';
+  const CORE_GATE_VERSION='1.1.1';
+  const EMERGENCY_SIGNAL=/(mayday|pan[ -]?pan|sos|acil|yangın|yangin|su alıyor|su aliyor|çatışma|catisma|karaya otur|adam denize|man overboard|distress)/i;
+  const NAMED_SOURCE_QUESTION=/(kaynağ[ıi]na göre|kaynak başlığ|according to|source title|publication|handbook|kılavuz|kilavuz|manual)/i;
   const INTENTS=[
-    ['emergency',/(mayday|pan[ -]?pan|sos|acil|yangın|yangin|su alıyor|su aliyor|çatışma|catisma|karaya otur|adam denize|man overboard|distress)/i],
+    ['emergency',EMERGENCY_SIGNAL],
     ['navigation',/(rota|seyir|navigasyon|navigation|course|kerteriz|bearing|mevki|position|cpa|tcpa|akıntı|akinti|current|gelgit|tide|rüzgâr|ruzgar|wind|mesafe|distance|deniz mili|nautical mile|\bknot\b|\bkn\b|hız|hiz|speed|süre|sure|duration|eta|pusula|compass)/i],
     ['passage',/(passage|sefer plan|seyir plan|berth.to.berth|checklist|yakıt plan|yakit plan|port of refuge)/i],
     ['publication',/(yayın|yayin|publication|solas|marpol|colreg|notice to mariners|sailing directions|pilot book|almanac|almanak)/i],
@@ -24,7 +26,8 @@
   })).filter(item=>item.content);
   function analyzeCore(value){
     const query=normalizeCoreQuestion(value);
-    const matches=INTENTS.filter(([,pattern])=>pattern.test(query)).map(([intent])=>intent);
+    const namedSourceQuestion=NAMED_SOURCE_QUESTION.test(query);
+    const matches=INTENTS.filter(([intent,pattern])=>pattern.test(query)&&!(intent==='emergency'&&namedSourceQuestion)).map(([intent])=>intent);
     const intent=matches[0]||'general',emergency=intent==='emergency',operational=OPERATIONAL.test(query),needsLiveData=LIVE_DATA.test(query);
     const risk=emergency?'critical':operational?'high':needsLiveData?'medium':'low';
     return {query,intent,secondaryIntents:matches.slice(1),emergency,operational,needsLiveData,risk,requiresHumanApproval:emergency||risk==='high',requiresIndependentVerification:emergency||intent==='navigation'||intent==='passage'||needsLiveData};
