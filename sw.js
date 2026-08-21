@@ -17,6 +17,9 @@ const ASSETS=[
   './vendor/ol-10.6.1.js',
   './vendor/ol-10.6.1.css',
   './vendor/land-110m.json',
+  './vendor/supabase-2.112.3.js',
+  './vendor/mammoth-1.12.1.min.js',
+  './vendor/tesseract-5.1.1.min.js',
   './manifest.webmanifest',
   './icon-192.png',
   './icon-512.png'

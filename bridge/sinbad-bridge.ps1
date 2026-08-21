@@ -18,6 +18,8 @@ $libraryRoot = Join-Path $bridgeRoot 'Library'
 $importRoot = Join-Path $libraryRoot 'Imported'
 $indexPath = Join-Path $libraryRoot '.sinbad-index.json'
 $userProfileRoot = [Environment]::GetFolderPath('UserProfile')
+if ([string]::IsNullOrWhiteSpace($userProfileRoot)) { $userProfileRoot = [Environment]::GetEnvironmentVariable('USERPROFILE') }
+if ([string]::IsNullOrWhiteSpace($userProfileRoot)) { throw 'SINBAD_USER_PROFILE_UNAVAILABLE' }
 if ([string]::IsNullOrWhiteSpace($XttsExecutable)) { $XttsExecutable = Join-Path $userProfileRoot 'AppData\Local\Programs\Python\Python311\Scripts\tts.exe' }
 if ([string]::IsNullOrWhiteSpace($XttsModelPath)) { $XttsModelPath = Join-Path $userProfileRoot 'xtts_v2_model' }
 if ([string]::IsNullOrWhiteSpace($XttsConfigPath)) { $XttsConfigPath = Join-Path $XttsModelPath 'config.json' }
@@ -139,6 +141,26 @@ function Write-HttpBytes($stream, [int]$status, [string]$statusText, [byte[]]$bo
     # The browser may close during batch synthesis.
   } catch [ObjectDisposedException] {
     # The client disconnected.
+  }
+}
+
+function Get-StudioCapabilityStatus {
+  $dockerPath = Join-Path $env:ProgramFiles 'Docker\Docker\resources\bin\docker.exe'
+  $dockerInstalled = Test-Path -LiteralPath $dockerPath
+  $dockerRunning = [bool](Get-Process -Name 'com.docker.backend' -ErrorAction SilentlyContinue | Select-Object -First 1)
+  $wslInstalled = Test-Path -LiteralPath (Join-Path $env:SystemRoot 'System32\wsl.exe')
+  $studioManifest = Join-Path $PSScriptRoot '..\sinbad-ai-core\engines\studio\studio-pro-04-acceptance-manifest.js'
+  $coreInstalled = Test-Path -LiteralPath $studioManifest
+  $ready = $dockerInstalled -and $dockerRunning -and $wslInstalled -and $coreInstalled
+  return @{
+    status = if ($ready) { 'READY_FOR_APPROVAL_GATED_TESTS' } else { 'STUDIO_RUNTIME_INCOMPLETE' }
+    studioVersion = '0.4.3'
+    docker = @{ installed=$dockerInstalled; processRunning=$dockerRunning }
+    wsl = @{ installed=$wslInstalled }
+    core = @{ installed=$coreInstalled }
+    allowed = @('VERIFIED_SOFTWARE_TESTS_ONLY','READ_ONLY_EVIDENCE_VERIFICATION')
+    prohibited = @('GENERAL_COMMAND_EXECUTION','NETWORK_ACCESS','HOST_OR_CORE_WRITE','AUTOMATIC_MERGE','LIVE_PUBLISH')
+    approval = 'EXACT_SINGLE_USE_APPROVAL_REQUIRED'
   }
 }
 
@@ -428,6 +450,7 @@ try {
         Write-HttpResponse $stream 200 'OK' (Json @{ name='Sinbad Bridge'; version='0.3.0'; routes=$count; exchangeFolder=$routeRoot; libraryFolder=$libraryRoot; library=(Get-LibraryStatus); ai=(Get-OllamaStatus) }); continue
       }
       if ($method -eq 'GET' -and $path -eq '/library/status') { Write-HttpResponse $stream 200 'OK' (Json (Get-LibraryStatus)); continue }
+      if ($method -eq 'GET' -and $path -eq '/studio/status') { Write-HttpResponse $stream 200 'OK' (Json (Get-StudioCapabilityStatus)); continue }
       if ($method -eq 'POST' -and $path -eq '/library/reindex') { Write-HttpResponse $stream 200 'OK' (Json (Update-LibraryIndex)); continue }
       if ($method -eq 'POST' -and $path -eq '/library/ingest') {
         $payload = $body | ConvertFrom-Json

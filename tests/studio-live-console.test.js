@@ -1,0 +1,7 @@
+const test=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const html=fs.readFileSync('index.html','utf8'),app=fs.readFileSync('app.js','utf8'),bridge=fs.readFileSync('bridge/sinbad-bridge.ps1','utf8');
+test('live app exposes an honest read-only Studio capability console',()=>{for(const id of ['studio-console','studioStatusTitle','studioStatusDetail','refreshStudioStatus','studioBoundaryText'])assert.match(html,new RegExp(`id=["']${id}["']`));assert.match(html,/Software tests only/u);assert.match(html,/does not expose a browser-to-Docker execution endpoint/u);});
+test('console reads only the loopback Studio status endpoint and has no execution request',()=>{assert.equal(app.includes('${SINBAD_BRIDGE_URL}/studio/status'),true);assert.match(app,/No remote fallback was used/u);assert.doesNotMatch(app,/studio\/(?:run|execute|test)/u);assert.match(bridge,/GET'.*\/studio\/status/su);assert.doesNotMatch(bridge,/POST'.*\/studio\/(?:run|execute|test)/su);});
+test('Bridge status reports exact bounded capabilities without reading project content',()=>{assert.match(bridge,/READY_FOR_APPROVAL_GATED_TESTS/u);for(const boundary of ['VERIFIED_SOFTWARE_TESTS_ONLY','GENERAL_COMMAND_EXECUTION','NETWORK_ACCESS','HOST_OR_CORE_WRITE','LIVE_PUBLISH'])assert.match(bridge,new RegExp(boundary));assert.doesNotMatch(bridge,/Get-Content[^\n]+studio-workspaces/iu);assert.match(bridge,/SINBAD_USER_PROFILE_UNAVAILABLE/u);});

@@ -1,0 +1,12 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+  - package-ecosystem: npm
+    directory: /sinbad-ai-core/engines/navigation
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5

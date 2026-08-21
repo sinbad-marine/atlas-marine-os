@@ -32,7 +32,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&
 
 document.querySelectorAll('[data-open]').forEach(x=>x.onclick=()=>openWorkspace(x.dataset.open));
 document.querySelectorAll('.close').forEach(x=>x.onclick=closeWorkspaces);
-function openWorkspace(id){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');$(id).scrollIntoView({behavior:'smooth'});renderAll();if(id==='enc-viewer')initEncViewer();if(id==='navigation-plot')initNavigationPlot()}
+function openWorkspace(id){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');$(id).scrollIntoView({behavior:'smooth'});renderAll();if(id==='enc-viewer')initEncViewer();if(id==='navigation-plot')initNavigationPlot();if(id==='studio-console')refreshStudioCapability()}
 function closeWorkspaces(){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));scrollTo({top:0,behavior:'smooth'})}
 
 let encMap=null,encChartLayer=null,encBathymetryLayer=null,encSeamarkLayer=null;
@@ -389,11 +389,11 @@ function stopSinbadVoice(){
   window.speechSynthesis?.cancel();
 }
 function speakSinbadFallback(text){
-  if(!sinbadState.voiceEnabled||!('speechSynthesis'in window)){sinbadAwaitingAnswer=false;scheduleSinbadListening();return;}
-  const voices=speechSynthesis.getVoices();
+  if(!sinbadState.voiceEnabled||!('speechSynthesis'in window)){sinbadAwaitingAnswer=false;scheduleSinbadListening();return false;}
+  const voices=speechSynthesis.getVoices().filter(voice=>voice.localService===true);
   if(!voices.length){
     speechSynthesis.onvoiceschanged=()=>{speechSynthesis.onvoiceschanged=null;speakSinbadFallback(text);};
-    return;
+    return false;
   }
   if(sinbadIsListening)sinbadRecognition?.stop();
   speechSynthesis.cancel();
@@ -411,6 +411,7 @@ function speakSinbadFallback(text){
     speechSynthesis.speak(utterance);
   };
   speakNext();
+  return true;
 }
 function splitSinbadCloneChunks(text,maxLength=220){
   const sentences=String(text).match(/[^.!?…]+[.!?…]?/gu)||[String(text)];
@@ -483,9 +484,10 @@ async function speakSinbad(text,onVoiceReady){
   }catch(error){
     if(sinbadVoiceAbort!==controller)return;
     if(error?.name==='AbortError'&&!timedOut)return;
-    console.warn('Sinbad XTTS clone unavailable; standard voice disabled',error);
+    console.info('Sinbad XTTS clone unavailable; checking local device voice',error?.message||error);
     announce();stopSinbadVoice();
-    if(status)status.textContent=timedOut?'XTTS klon sesi zaman aşımına uğradı · standart sese geçilmedi':'XTTS klon sesi üretilemedi · standart sese geçilmedi';
+    const fallback=speakSinbadFallback(cleanText);
+    if(status)status.textContent=fallback?(timedOut?'XTTS zaman aşımı · cihaz içi standart ses aktif':'XTTS kullanılamıyor · cihaz içi standart ses aktif'):(timedOut?'XTTS zaman aşımı · güvenilir cihaz içi ses bulunamadı':'XTTS kullanılamıyor · güvenilir cihaz içi ses bulunamadı');
     sinbadAwaitingAnswer=false;scheduleSinbadListening();
   }
 }
@@ -586,6 +588,18 @@ async function copyPassagePlanDraft(){
   await navigator.clipboard.writeText(text);$('copyPassagePlan').textContent='Copied';setTimeout(()=>$('copyPassagePlan').textContent='Copy draft',1200);
 }
 const SINBAD_BRIDGE_URL='http://127.0.0.1:31983';
+async function refreshStudioCapability(){
+ const dot=$('studioStatusDot'),title=$('studioStatusTitle'),detail=$('studioStatusDetail'),boundary=$('studioBoundaryText');
+ if(!dot||!title||!detail)return;
+ dot.classList.remove('online');title.textContent='Checking local Studio runtime…';detail.textContent='Reading capability status from Sinbad Bridge.';
+ try{
+  const response=await fetch(`${SINBAD_BRIDGE_URL}/studio/status`,{cache:'no-store'});if(!response.ok)throw new Error(`Bridge returned ${response.status}`);const status=await response.json(),ready=status.status==='READY_FOR_APPROVAL_GATED_TESTS';
+  dot.classList.toggle('online',ready);title.textContent=ready?`Studio ${status.studioVersion} ready`:`Studio ${status.studioVersion||''} runtime incomplete`;
+  detail.textContent=`Docker installed: ${status.docker?.installed?'yes':'no'} · Docker running: ${status.docker?.processRunning?'yes':'no'} · WSL installed: ${status.wsl?.installed?'yes':'no'} · Core installed: ${status.core?.installed?'yes':'no'}`;
+  if(boundary)boundary.textContent=`Allowed: ${(status.allowed||[]).join(', ')}. Prohibited: ${(status.prohibited||[]).join(', ')}. Approval: ${status.approval||'required'}.`;
+ }catch(_){title.textContent='Local Studio service offline';detail.textContent='Start Sinbad Bridge on this Windows computer, then refresh. No remote fallback was used.';}
+}
+$('refreshStudioStatus')?.addEventListener('click',refreshStudioCapability);
 let bridgeWaypoints=[];
 function bridgeXml(value){return String(value??'').replace(/[<>&"']/g,ch=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&apos;'}[ch]));}
 function bridgeRouteName(){

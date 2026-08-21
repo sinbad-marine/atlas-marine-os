@@ -2,3 +2,8 @@
 .codex-*.wav
 supabase/.temp/
 node_modules/
+.release/
+.release-test-*/
+playwright-report/
+test-results/
+debug.log
