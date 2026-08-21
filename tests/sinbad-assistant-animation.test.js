@@ -60,7 +60,16 @@ test('all six Academy assets were copied byte-identical from the source pack (no
 
 test('avatar image swap preloads all unique state assets and preserves aspect/alpha via CSS object-fit (no cropping tool run)',()=>{
   assert.match(app,/function preloadSinbadAvatarAssets\(\)\{/);
-  assert.match(css,/\.sinbad-avatar-img\{position:absolute;inset:0;width:100%;height:100%;object-fit:cover/);
+  assert.match(css,/\.sinbad-avatar-img\{position:absolute;inset:0;width:100%;height:100%;object-fit:contain/);
+  // the normal large-avatar card crops close (chest/belt-up) so the face,
+  // eyes, mouth and hand gesture stay legible at card size - a tiny full-body
+  // figure reads as blank. Full body is reserved for the board-teaching /
+  // Academy scene, which overrides back to object-fit:contain on a taller card.
+  assert.match(css,/\.sinbad-avatar\.large \.sinbad-avatar-img\{object-fit:cover/);
+  assert.match(css,/\.sinbad-avatar\.large\[data-state="board-teaching"\] \.sinbad-avatar-img\{object-fit:contain/);
+  assert.match(css,/\.sinbad-avatar\.large\[data-state="board-teaching"\]\{height:258px\}/);
+  // the small floating avatar (illegible at full-body scale) also crops to a head shot.
+  assert.match(css,/\.sinbad-avatar\.small \.sinbad-avatar-img\{object-fit:cover/);
 });
 
 test('SpeechRecognition onstart drives listening, not a fake button-press state',()=>{
@@ -179,7 +188,7 @@ test('service worker cache version was bumped for this change and precaches the 
 });
 
 test('mobile: the status line spans the full row instead of colliding with the avatar column',()=>{
-  assert.match(css,/@media\(max-width:800px\)\{\.sinbad-layout\{grid-template-columns:1fr\}\.sinbad-profile\{[^}]*\}\.sinbad-avatar\.large\{width:105px;height:130px\}\.sinbad-capabilities,\.sinbad-status-line\{grid-column:1\/-1\}/);
+  assert.match(css,/@media\(max-width:800px\)\{\.sinbad-layout\{grid-template-columns:1fr\}\.sinbad-profile\{[^}]*\}\.sinbad-avatar\.large\{width:110px;height:86px\}\.sinbad-avatar\.large\[data-state="board-teaching"\]\{height:165px\}\.sinbad-capabilities,\.sinbad-status-line\{grid-column:1\/-1\}/);
 });
 
 test('board-teaching state exists with real art wired, but is not fabricated a fake trigger (no board UI exists yet in this pass)',()=>{
@@ -213,7 +222,7 @@ test('the standard provider prefers a tr-TR voice via a dedicated selector, neve
 });
 
 test('when no suitable voice is found, the app skips audio entirely and stays in text mode - never a mismatched-language fallback voice',()=>{
-  const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function speakSinbadStandard')+3000);
+  const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function speakSinbadXttsClone'));
   assert.match(fn,/if\(!voice\)\{/);
   assert.match(fn,/bulunamad/); // "bulunamadı" (not found) - status text surfaces the gap
   // no SpeechSynthesisUtterance is constructed on the no-voice branch: it
@@ -227,8 +236,34 @@ test('when no suitable voice is found, the app skips audio entirely and stays in
   assert.match(fn,/utterance\.voice=voice;\s*\n\s*utterance\.lang=voice\.lang;/);
 });
 
+test('when the browser reports zero voices at all, a bounded timeout falls back to text mode instead of hanging forever waiting for onvoiceschanged',()=>{
+  const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function speakSinbadStandard')+1200);
+  const zeroVoiceBranch=fn.slice(fn.indexOf('if(!voices.length){'),fn.indexOf('if(sinbadIsListening)'));
+  assert.match(zeroVoiceBranch,/setTimeout\(\(\)=>\{/);
+  assert.match(zeroVoiceBranch,/1500/);
+  assert.match(zeroVoiceBranch,/bulunamad/); // status text surfaces the gap instead of hanging silently
+  assert.match(zeroVoiceBranch,/announce\(\);/); // text answer is still delivered even with zero voices
+  assert.match(zeroVoiceBranch,/clearTimeout\(voiceWaitTimer\);/); // a real voiceschanged event cancels the fallback timer
+  assert.match(zeroVoiceBranch,/let settled=false;/);
+  // a spurious onvoiceschanged firing with a still-empty list must not reset/cancel the fallback timer forever
+  assert.match(zeroVoiceBranch,/if\(settled\|\|!speechSynthesis\.getVoices\(\)\.length\)return;/);
+  // the avatar must never stay stuck in preparing-voice: it moves to voice-disabled
+  assert.match(zeroVoiceBranch,/setSinbadAssistantState\('voice-disabled'\);/);
+});
+
+test('acceptance regression: the avatar never stays in preparing-voice forever when no suitable tr-TR voice exists among a real voice list',()=>{
+  const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function speakSinbadXttsClone'));
+  assert.match(fn,/let anyVoiceQueued=false;/);
+  assert.match(fn,/anyVoiceQueued=true;/);
+  const terminalBranch=fn.slice(fn.indexOf('if(index>=runs.length){'),fn.indexOf('const run=runs[index++];'));
+  assert.match(terminalBranch,/finishSinbadVoice\(\);/);
+  assert.match(terminalBranch,/if\(!anyVoiceQueued\)\{/);
+  assert.match(terminalBranch,/Uygun Türkçe ses bulunamadı · metin modunda devam ediliyor/);
+  assert.match(terminalBranch,/setSinbadAssistantState\('voice-disabled'\);/);
+});
+
 test('speaking (standard provider) starts only on the real utterance onstart event, never when merely queued',()=>{
-  const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function speakSinbadStandard')+3000);
+  const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function speakSinbadXttsClone'));
   assert.match(fn,/utterance\.onstart=\(\)=>\{announce\(\);setSinbadAssistantState\('speaking'\);\};/);
   assert.match(fn,/setSinbadAssistantState\('preparing-voice'\);/);
   // preparing-voice must be set before speechSynthesis.speak() is ever called
@@ -238,7 +273,7 @@ test('speaking (standard provider) starts only on the real utterance onstart eve
 });
 
 test('onboundary drives a real per-word cue (not a fabricated continuous loop), onend advances/finishes cleanly',()=>{
-  const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function speakSinbadStandard')+3000);
+  const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function speakSinbadXttsClone'));
   assert.match(fn,/utterance\.onboundary=sinbadStandardVoiceTick;/);
   assert.match(fn,/utterance\.onend=speakNext;/);
   assert.match(app,/function sinbadStandardVoiceTick\(\)\{/);
@@ -246,7 +281,7 @@ test('onboundary drives a real per-word cue (not a fabricated continuous loop), 
 });
 
 test('a standard-provider error never falls back to a fake state and still lets the conversation continue',()=>{
-  const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function speakSinbadStandard')+3000);
+  const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function speakSinbadXttsClone'));
   assert.match(fn,/utterance\.onerror=\(\)=>\{/);
   assert.match(fn,/speakNext\(\);/);
 });
@@ -255,4 +290,48 @@ test('no "Yasemin" branding appears in any user-visible status text (comments ar
   const uiStrings=app.match(/textContent=`[^`]*`|textContent='[^']*'/g)||[];
   const leaked=uiStrings.filter(s=>/yasemin/i.test(s));
   assert.deepEqual(leaked,[],`found Yasemin branding in UI-facing text: ${JSON.stringify(leaked)}`);
+});
+
+// ---- Acceptance-test follow-up: confirm the standard provider genuinely
+// never touches the Bridge/XTTS network surface, and that the pre-existing,
+// unrelated Bridge status poll (Route/OpenCPN panel) is correctly left alone
+// rather than incorrectly coupled to voice provider choice. ----
+
+test('speakSinbadStandard makes zero references to the Bridge URL or fetch - it is pure Web Speech API, no network calls',()=>{
+  const start=app.indexOf('function speakSinbadStandard');
+  const end=app.indexOf('\nfunction splitSinbadCloneChunks');
+  const fn=app.slice(start,end);
+  assert.doesNotMatch(fn,/fetch\(/);
+  assert.doesNotMatch(fn,/SINBAD_BRIDGE_URL/);
+  assert.match(fn,/speechSynthesis\.speak\(utterance\)/);
+});
+
+test('only speakSinbadXttsClone ever calls the /ai/tts endpoint - standard provider cannot reach it by construction',()=>{
+  const occurrences=[...app.matchAll(/\/ai\/tts/g)];
+  assert.ok(occurrences.length>=1);
+  for(const m of occurrences){
+    const before=app.slice(0,m.index);
+    const lastXttsFn=before.lastIndexOf('async function speakSinbadXttsClone');
+    const lastStandardFn=before.lastIndexOf('function speakSinbadStandard(');
+    assert.ok(lastXttsFn>lastStandardFn,'/ai/tts reference found outside speakSinbadXttsClone');
+  }
+});
+
+test('the pre-existing Bridge status poll (Route/OpenCPN panel badge) is intentionally independent of voice provider - documented, not silently coupled',()=>{
+  // This interval predates the voice-architecture work and serves the
+  // Passage Plan Studio "Bridge online / N routes / N memory chunks" badge,
+  // unrelated to TTS. Confirmed still present and NOT gated behind
+  // sinbadVoiceProvider - coupling it to voice choice would break Bridge/
+  // OpenCPN route transfer for standard-voice users, per explicit product
+  // decision (asked and confirmed - see docs/handoff for this session).
+  assert.match(app,/setInterval\(checkBridgeStatus,30000\)/);
+  const intervalLine=app.slice(app.indexOf('setInterval(checkBridgeStatus'),app.indexOf('setInterval(checkBridgeStatus')+60);
+  assert.doesNotMatch(intervalLine,/sinbadVoiceProvider/);
+});
+
+test('default voice provider is standard at the source level (window-property reads are unreliable for a `let`-scoped variable, so this checks source text, not runtime window.sinbadVoiceProvider)',()=>{
+  const declIdx=app.indexOf("let sinbadVoiceProvider='standard';");
+  assert.ok(declIdx>0);
+  // must be declared before the dispatcher that reads it
+  assert.ok(declIdx<app.indexOf('function speakSinbad(text,onVoiceReady){'));
 });

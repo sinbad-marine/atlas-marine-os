@@ -33,7 +33,8 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
 .sinbad-layout{display:grid;grid-template-columns:280px 1fr;gap:18px}
 .sinbad-profile{border:1px solid var(--line);background:#091d2d;border-radius:18px;padding:20px;text-align:center}
 .sinbad-avatar{position:relative;display:block;margin:auto;overflow:hidden;background:var(--panel2);border:2px solid var(--gold)}
-.sinbad-avatar.large{width:170px;height:210px;border-radius:22px}
+.sinbad-avatar.large{width:172px;height:134px;border-radius:22px}
+.sinbad-avatar.large[data-state="board-teaching"]{height:258px}
 .sinbad-avatar.small{width:52px;height:52px;margin:0;border-radius:50%}
 .sinbad-capabilities{display:grid;gap:8px;text-align:left;margin-top:18px;color:var(--muted);font-size:14px}
 .chat-panel{border:1px solid var(--line);background:#071b2a;border-radius:18px;padding:16px}
@@ -55,8 +56,15 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
 
 /* ---- Captain Sinbad live assistant avatar (real Academy illustration pack) ---- */
 .sinbad-status-line{margin:8px 0 2px;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.sinbad-avatar-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 6%;opacity:1;transition:opacity .22s ease}
-.sinbad-avatar.small .sinbad-avatar-img{object-position:50% 2%}
+/* Large avatar: a close chest/belt-up crop by default so the face, eyes,
+   mouth and hand gesture stay legible at card size - a tiny full-body figure
+   reads as blank. Full body (object-fit:contain) is reserved for the
+   board-teaching / Academy scene, which gets a taller card above. Small
+   floating avatar stays a tight head/shoulders crop for the same reason. */
+.sinbad-avatar-img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:50% 50%;opacity:1;transition:opacity .22s ease}
+.sinbad-avatar.large .sinbad-avatar-img{object-fit:cover;object-position:50% 4%}
+.sinbad-avatar.large[data-state="board-teaching"] .sinbad-avatar-img{object-fit:contain;object-position:50% 50%}
+.sinbad-avatar.small .sinbad-avatar-img{object-fit:cover;object-position:50% 2%}
 .sinbad-avatar .sinbad-status-light{position:absolute;right:6px;bottom:6px;width:12px;height:12px;border-radius:50%;background:var(--muted);border:2px solid var(--panel2);z-index:2}
 .sinbad-avatar.small .sinbad-status-light{width:9px;height:9px;right:2px;bottom:2px;border-width:1.5px}
 /* Turquoise/gold energy rings - pure CSS pseudo-elements, no separate SVG parts needed. */
@@ -122,7 +130,7 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
   .sinbad-avatar-img{animation:none!important}
 }
 .sinbad-force-reduced-motion .sinbad-avatar-img{animation:none!important}
-@media(max-width:800px){.sinbad-layout{grid-template-columns:1fr}.sinbad-profile{display:grid;grid-template-columns:105px 1fr;align-items:center;text-align:left}.sinbad-avatar.large{width:105px;height:130px}.sinbad-capabilities,.sinbad-status-line{grid-column:1/-1}.chat-bubble{max-width:92%}}
+@media(max-width:800px){.sinbad-layout{grid-template-columns:1fr}.sinbad-profile{display:grid;grid-template-columns:110px 1fr;align-items:center;text-align:left}.sinbad-avatar.large{width:110px;height:86px}.sinbad-avatar.large[data-state="board-teaching"]{height:165px}.sinbad-capabilities,.sinbad-status-line{grid-column:1/-1}.chat-bubble{max-width:92%}}
 @media(max-width:600px){.sinbad-profile{grid-template-columns:1fr;text-align:center}.chat-input-row{grid-template-columns:1fr}.sinbad-float span{display:none}.sinbad-float{padding:7px;right:14px;bottom:14px}}
 
 

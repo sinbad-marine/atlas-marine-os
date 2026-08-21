@@ -552,7 +552,24 @@ function speakSinbadStandard(text,onVoiceReady){
   if(!sinbadState.voiceEnabled||!('speechSynthesis'in window)){announce();sinbadAwaitingAnswer=false;scheduleSinbadListening();return;}
   const voices=speechSynthesis.getVoices();
   if(!voices.length){
-    speechSynthesis.onvoiceschanged=()=>{speechSynthesis.onvoiceschanged=null;speakSinbadStandard(text,onVoiceReady);};
+    let settled=false;
+    const voiceWaitTimer=setTimeout(()=>{
+      if(settled)return;
+      settled=true;
+      speechSynthesis.onvoiceschanged=null;
+      if(status)status.textContent='Uygun Türkçe ses bulunamadı · metin modunda devam ediliyor';
+      setSinbadAssistantState('voice-disabled');
+      announce();
+      sinbadAwaitingAnswer=false;
+      scheduleSinbadListening();
+    },1500);
+    speechSynthesis.onvoiceschanged=()=>{
+      if(settled||!speechSynthesis.getVoices().length)return; // ignore spurious empty-list events
+      settled=true;
+      clearTimeout(voiceWaitTimer);
+      speechSynthesis.onvoiceschanged=null;
+      speakSinbadStandard(text,onVoiceReady);
+    };
     return;
   }
   if(sinbadIsListening)sinbadRecognition?.stop();
@@ -562,8 +579,16 @@ function speakSinbadStandard(text,onVoiceReady){
   if(!cleanText){announce();finishSinbadVoice();return;}
   const runs=splitSpeechByLanguage(cleanText,sinbadState.language);
   let index=0;
+  let anyVoiceQueued=false;
   const speakNext=()=>{
-    if(index>=runs.length){if(status)status.textContent='';finishSinbadVoice();return;}
+    if(index>=runs.length){
+      finishSinbadVoice();
+      if(!anyVoiceQueued){
+        if(status)status.textContent='Uygun Türkçe ses bulunamadı · metin modunda devam ediliyor';
+        setSinbadAssistantState('voice-disabled');
+      }else if(status)status.textContent='';
+      return;
+    }
     const run=runs[index++];
     const isTurkish=run.lang.toLowerCase().startsWith('tr');
     const voice=isTurkish?pickSinbadTurkishVoice(voices):pickVoiceForLang(voices,run.lang);
@@ -575,6 +600,7 @@ function speakSinbadStandard(text,onVoiceReady){
       speakNext();
       return;
     }
+    anyVoiceQueued=true;
     const utterance=new SpeechSynthesisUtterance(run.text);
     utterance.voice=voice;
     utterance.lang=voice.lang;
