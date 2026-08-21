@@ -4,7 +4,8 @@ const persistedVerifier=require('./persisted-workspace-verifier.js');
 const runnerModule=require('./docker-sandbox-test-runner.js');
 const launcherModule=require('./node-docker-cli-launcher.js');
 const evidenceWriterModule=require('./docker-test-evidence-writer.js');
-const VERSION='0.4.2',MODE='GUIDED_VERIFIED_DOCKER_TEST_SESSION';
+const evidenceVerifierModule=require('./docker-test-evidence-verifier.js');
+const VERSION='0.4.3',MODE='GUIDED_VERIFIED_DOCKER_TEST_SESSION';
 const freeze=value=>{if(value&&typeof value==='object'&&!Object.isFrozen(value)){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 
 function create(options={}){
@@ -12,6 +13,7 @@ function create(options={}){
   const launch=typeof options.launch==='function'?options.launch:launcherModule.create(options.launcherOptions).launch;
   const runner=runnerModule.create({approvedBase,clock:options.clock,launch,timeoutMs:options.timeoutMs,maxOutputBytes:options.maxOutputBytes});
   const evidenceWriter=evidenceWriterModule.create({approvedBase,clock:options.clock});
+  const evidenceVerifier=evidenceVerifierModule.create({approvedBase});
   let state='NEW',report=null,lastResult=null;
   const capabilities=freeze({inspectVerifiedTests:true,verifiedSoftwareTestExecution:true,persistTestEvidence:true,generalCommandExecution:false,shell:false,network:false,hostWrite:false,coreWrite:false,merge:false,publish:false});
   const snapshot=(status,nextAction,detail={})=>freeze({version:VERSION,mode:MODE,status,state,nextAction,...detail,capabilities});
@@ -36,10 +38,10 @@ function create(options={}){
 
   async function persistEvidence(approval={}){
     if(!['PASSED','FAILED'].includes(state))return snapshot('DOCKER_TEST_SESSION_BLOCKED','FOLLOW_CURRENT_NEXT_ACTION',{reason:'EVIDENCE_WRITE_OUT_OF_ORDER'});
-    try{const saved=await evidenceWriter.persist(lastResult,evidenceWriter.authorize(lastResult,approval));state='EVIDENCE_PERSISTED';return snapshot('DOCKER_TEST_EVIDENCE_PERSISTED','REVIEW_PERSISTED_TEST_EVIDENCE',{evidence:saved.evidence,evidenceId:saved.evidenceId,receiptHash:saved.receiptHash,testStatus:saved.testStatus,sourceModified:false,published:false});}catch(error){return snapshot('DOCKER_TEST_SESSION_BLOCKED','REVIEW_EVIDENCE_WRITE_APPROVAL',{reason:error&&error.message?error.message:'TEST_EVIDENCE_WRITE_FAILED'});}
+    try{const saved=await evidenceWriter.persist(lastResult,evidenceWriter.authorize(lastResult,approval)),verified=await evidenceVerifier.verify(saved);if(verified.status!=='DOCKER_TEST_EVIDENCE_VERIFIED'){state='BLOCKED';return snapshot('DOCKER_TEST_SESSION_BLOCKED','INSPECT_TEST_EVIDENCE_INTEGRITY',{reason:verified.reason});}state='EVIDENCE_VERIFIED';return snapshot('DOCKER_TEST_EVIDENCE_VERIFIED','REVIEW_VERIFIED_TEST_EVIDENCE',{evidence:saved.evidence,evidenceId:saved.evidenceId,receiptHash:verified.receiptHash,testStatus:verified.testStatus,manifestHash:verified.manifestHash,sourceModified:false,published:false});}catch(error){return snapshot('DOCKER_TEST_SESSION_BLOCKED','REVIEW_EVIDENCE_WRITE_APPROVAL',{reason:error&&error.message?error.message:'TEST_EVIDENCE_WRITE_FAILED'});}
   }
 
-  function status(){const actions={NEW:'SUBMIT_AUTHENTIC_PERSISTED_REPORT',INPUT_BLOCKED:'CREATE_NEW_SESSION_AFTER_REVERIFICATION',APPROVAL_REQUIRED:'APPROVE_EXACT_VERIFIED_TEST_RUN',PASSED:'APPROVE_TEST_EVIDENCE_WRITE',FAILED:'APPROVE_TEST_EVIDENCE_WRITE',EVIDENCE_PERSISTED:'REVIEW_PERSISTED_TEST_EVIDENCE',BLOCKED:'CREATE_NEW_SESSION_AFTER_REVIEW'};return snapshot('DOCKER_TEST_SESSION_STATUS',actions[state]||'STOP');}
+  function status(){const actions={NEW:'SUBMIT_AUTHENTIC_PERSISTED_REPORT',INPUT_BLOCKED:'CREATE_NEW_SESSION_AFTER_REVERIFICATION',APPROVAL_REQUIRED:'APPROVE_EXACT_VERIFIED_TEST_RUN',PASSED:'APPROVE_TEST_EVIDENCE_WRITE',FAILED:'APPROVE_TEST_EVIDENCE_WRITE',EVIDENCE_VERIFIED:'REVIEW_VERIFIED_TEST_EVIDENCE',BLOCKED:'CREATE_NEW_SESSION_AFTER_REVIEW'};return snapshot('DOCKER_TEST_SESSION_STATUS',actions[state]||'STOP');}
   return freeze({VERSION,MODE,approvedBase,prepare,runVerifiedTests,persistEvidence,status});
 }
 module.exports=freeze({VERSION,MODE,create});

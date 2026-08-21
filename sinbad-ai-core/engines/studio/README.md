@@ -179,3 +179,8 @@ sessions, which remain non-executing.
 after a separate short-lived approval. It creates a new, never-overwritten,
 hash-bound receipt containing the exact manifest, pinned image, policy and
 honest pass/fail output. It cannot modify source, execute, merge or publish.
+
+`docker-test-evidence-verifier.js` independently reopens that exact authentic
+receipt and fails closed on schema, file-set, symlink/redirection, output hash,
+receipt hash or receipt-binding changes. It is strictly read-only and grants no
+execution or publication authority.
