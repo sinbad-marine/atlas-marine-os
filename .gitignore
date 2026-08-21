@@ -2,3 +2,5 @@
 .codex-*.wav
 supabase/.temp/
 node_modules/
+.release/
+.release-test-*/

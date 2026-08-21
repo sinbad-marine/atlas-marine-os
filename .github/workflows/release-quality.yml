@@ -1,0 +1,29 @@
+name: Release quality
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Record runtime
+        run: node --version
+      - name: Run complete regression suite
+        run: node --test sinbad-ai-core/tests/*.test.js tests/*.test.js
+      - name: Build allowlisted Pages artifact
+        run: node tools/build-pages-artifact.js .release/pages
+      - name: Verify release manifest is present
+        run: test -s .release/pages/release-manifest.json
+      - name: Generate dependency SBOM
+        working-directory: sinbad-ai-core/engines/navigation
+        run: npm sbom --package-lock-only --sbom-format cyclonedx > ../../../.release/navigation-sbom.cdx.json
