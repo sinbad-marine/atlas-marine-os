@@ -14,6 +14,9 @@ const RELEASE_FILES=Object.freeze([
   'icon-512.png','vendor/ol-10.6.1.js','vendor/ol-10.6.1.css',
   'vendor/land-110m.json','supabase/functions/sinbad-answer/core-decision.js'
   ,'vendor/supabase-2.112.3.js','vendor/mammoth-1.12.1.min.js','vendor/tesseract-5.1.1.min.js'
+  ,'assets/captain-sinbad/captain-sinbad-idle-master.png','assets/captain-sinbad/captain-sinbad-listening.png'
+  ,'assets/captain-sinbad/captain-sinbad-thinking.png','assets/captain-sinbad/captain-sinbad-speaking.png'
+  ,'assets/captain-sinbad/captain-sinbad-board-teaching.png'
 ]);
 const SOURCE_OVERRIDES=Object.freeze({
   'vendor/supabase-2.112.3.js':'node_modules/@supabase/supabase-js/dist/umd/supabase.js',

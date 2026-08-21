@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.14-offline-map-r3-persistent-xtts-worker';
+const CACHE='sinbad-marine-v8.20.14-multilingual-teaching-voice-v1';
 const ASSETS=[
   './',
   './index.html',
@@ -22,7 +22,12 @@ const ASSETS=[
   './vendor/tesseract-5.1.1.min.js',
   './manifest.webmanifest',
   './icon-192.png',
-  './icon-512.png'
+  './icon-512.png',
+  './assets/captain-sinbad/captain-sinbad-idle-master.png',
+  './assets/captain-sinbad/captain-sinbad-listening.png',
+  './assets/captain-sinbad/captain-sinbad-thinking.png',
+  './assets/captain-sinbad/captain-sinbad-speaking.png',
+  './assets/captain-sinbad/captain-sinbad-board-teaching.png'
 ];
 
 self.addEventListener('install',event=>{

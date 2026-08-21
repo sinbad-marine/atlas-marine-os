@@ -38,18 +38,23 @@ test('persistent worker binds loopback, caches the Yasemin latent and bounds req
   assert.match(bridge,/documents=\$documents\.ToArray\(\)/);
 });
 
-test('frontend requests sentence chunks, plays only the latest clone and falls back only to a local device voice',()=>{
+test('the optional xtts-clone provider (not default, kept for later) requests sentence chunks, plays only the latest cloned wav and fails closed - never a silent local-device fallback',()=>{
   assert.match(app,/new AbortController\(\)/);
   assert.match(app,/splitSinbadCloneChunks\(cleanText\)/);
   assert.match(app,/150000/);
   assert.match(app,/new Audio\(objectUrl\)/);
-  assert.match(app,/speakSinbadFallback\(cleanText\)/);
   assert.match(app,/sinbadVoiceAbort!==controller/);
   assert.match(app,/AbortError.*!timedOut/);
-  assert.match(app,/localService===true/);
-  assert.match(app,/cihaz içi standart ses aktif/);
-  assert.match(app,/güvenilir cihaz içi ses bulunamadı/);
-  assert.doesNotMatch(app,/console\.warn\('Sinbad XTTS clone unavailable/);
+  assert.match(app,/Sinbad XTTS clone unavailable/);
+  assert.match(app,/Klon ses zaman/);
+  assert.doesNotMatch(app,/Yasemin klon sesi|Yasemin XTTS/);
+  // main independently reintroduced a naive local-device-voice fallback
+  // (speakSinbadFallback: no Turkish-language preference, single-slot
+  // onvoiceschanged, no generation token) on XTTS failure - resolved in
+  // favor of this branch's calm error state; never let XTTS silently
+  // re-enable browser speechSynthesis as its own fallback.
+  assert.doesNotMatch(app,/speakSinbadFallback/);
+  assert.doesNotMatch(app,/localService===true/);
   assert.match(app,/URL\.revokeObjectURL/);
   assert.match(app,/speakSinbad\(text,onVoiceReady\)/);
   assert.match(app,/preservesPitch=false/);
@@ -60,7 +65,7 @@ test('frontend requests sentence chunks, plays only the latest clone and falls b
   assert.match(app,/speakSinbad\(answer,\(\)=>addSinbadMessage\('sinbad',answer\)\)/);
   assert.doesNotMatch(app,/onvoiceschanged=.*speakSinbad\(text\)/);
   assert.match(app,/if\(sinbadVoiceObjectUrl===objectUrl\)/);
-  assert.match(serviceWorker,/sinbad-marine-v8\.20\.14-offline-map-r3-persistent-xtts-worker/);
+  assert.match(serviceWorker,/sinbad-marine-v8\.20\.14-multilingual-teaching-voice-v1/);
 });
 
 test('OpenCPN-first route transfer is bounded to the verified local bridge',()=>{
