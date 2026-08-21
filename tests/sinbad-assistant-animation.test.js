@@ -77,7 +77,7 @@ test('SpeechRecognition onstart drives listening, not a fake button-press state'
 });
 
 test('sending a question drives thinking, synced with the existing #sinbadThinking bubble',()=>{
-  const sendToSinbad=app.slice(app.indexOf('async function sendToSinbad'),app.indexOf('async function sendToSinbad')+1200);
+  const sendToSinbad=app.slice(app.indexOf('async function sendToSinbad'),app.indexOf("$('sendSinbad').addEventListener"));
   assert.match(sendToSinbad,/setSinbadAssistantState\('thinking'\);\s*\n\s*\$\('sinbadThinking'\)\.classList\.remove\('hidden'\);/);
   assert.match(sendToSinbad,/setSinbadAssistantState\('thinking'\);\s*\n\s*const plotted=await prepareNavigationPlotFromConversation/);
 });
@@ -179,7 +179,7 @@ test('warning never uses a red alarm colour, and error stays calm (no urgent/fas
 
 test('service worker cache version was bumped for this change and precaches the real bound-state Academy assets for offline use (hero-portrait excluded - see the round-table fix test)',()=>{
   const sw=fs.readFileSync('sw.js','utf8');
-  assert.match(sw,/const CACHE='sinbad-marine-v8\.20\.13-captain-sinbad-roundtable-fixes-v1';/);
+  assert.match(sw,/const CACHE='sinbad-marine-v8\.20\.14-multilingual-teaching-voice-v1';/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-idle-master\.png'/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-listening\.png'/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-thinking\.png'/);
@@ -207,10 +207,29 @@ test('standard is the default voice provider, xtts-clone is preserved but not de
   assert.match(app,/function speakSinbadStandard\(text,onVoiceReady\)\{/);
 });
 
-test('a dedicated Sinbad voice profile exists with rate/pitch/volume inside the decided ranges',()=>{
-  assert.match(app,/const SINBAD_VOICE_PROFILE=\{rate:\.96,pitch:\.91,volume:1\};/);
-  assert.ok(.94<=.96&&.96<=.98,'rate must sit in 0.94-0.98');
-  assert.ok(.88<=.91&&.91<=.94,'pitch must sit in 0.88-0.94');
+test('language-aware Academy voice profiles use a calm teaching pace',()=>{
+  assert.match(app,/tr:\{rate:\.82,pitch:\.91,volume:1\}/);
+  assert.match(app,/en:\{rate:\.86,pitch:\.96,volume:1\}/);
+  assert.match(app,/function sinbadVoiceProfileForLanguage\(lang=''\)\{/);
+  assert.match(app,/const profile=sinbadVoiceProfileForLanguage\(run\.lang\);/);
+  assert.ok(.75<=.82&&.82<=.88,'Turkish teaching rate must be measured');
+  assert.ok(.75<=.86&&.86<=.88,'English teaching rate must be measured');
+});
+
+test('English letters are never mistaken for Turkish diacritics',()=>{
+  assert.match(app,/const hasTurkishChars=\/\[çğıöşüÇĞİÖŞÜ\]\/\.test\(token\);/);
+  assert.doesNotMatch(app,/const hasTurkishChars=\/\[cgiosuCGIOSU\]\//);
+  assert.match(app,/if\(enScore>trScore\+1\)return 'en-US';/);
+  assert.match(app,/const languageRuns=splitSpeechByLanguage\(sentence\.trim\(\),sentenceLang\);/);
+});
+
+test('standard speech reads only a bounded plain-text teaching summary, not the complete markdown answer',()=>{
+  assert.match(app,/const SINBAD_SPOKEN_SUMMARY_MAX_CHARS=320;/);
+  assert.match(app,/function buildSinbadSpokenSummary\(text,maxChars=SINBAD_SPOKEN_SUMMARY_MAX_CHARS\)\{/);
+  assert.match(app,/\.replace\(\/```\[\\s\\S\]\*\?```\/g,' '\)/);
+  const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function splitSinbadCloneChunks'));
+  assert.match(fn,/const cleanText=buildSinbadSpokenSummary\(text\);/);
+  assert.match(fn,/const runs=splitSinbadTeachingSpeech\(cleanText,sinbadState\.language\);/);
 });
 
 test('the standard provider prefers a tr-TR voice via a dedicated selector, never silently substituting a mismatched-language voice',()=>{
@@ -224,7 +243,7 @@ test('the standard provider prefers a tr-TR voice via a dedicated selector, neve
 test('when no suitable voice is found, the app skips audio entirely and stays in text mode - never a mismatched-language fallback voice',()=>{
   const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function speakSinbadXttsClone'));
   assert.match(fn,/if\(!voice\)\{/);
-  assert.match(fn,/bulunamad/); // "bulunamadı" (not found) - status text surfaces the gap
+  assert.match(fn,/sinbadNoVoiceMessage\(run\.lang\)/); // language-specific status surfaces the gap
   // no SpeechSynthesisUtterance is constructed on the no-voice branch: it
   // returns (via speakNext()) before ever reaching `new SpeechSynthesisUtterance`.
   const noVoiceBranch=fn.slice(fn.indexOf('if(!voice){'),fn.indexOf('const utterance=new SpeechSynthesisUtterance'));
@@ -241,7 +260,7 @@ test('when the browser reports zero voices at all, a bounded timeout falls back 
   const zeroVoiceBranch=fn.slice(fn.indexOf('if(!voices.length){'),fn.indexOf('if(sinbadIsListening)'));
   assert.match(zeroVoiceBranch,/setTimeout\(\(\)=>\{/);
   assert.match(zeroVoiceBranch,/1500/);
-  assert.match(zeroVoiceBranch,/bulunamad/); // status text surfaces the gap instead of hanging silently
+  assert.match(zeroVoiceBranch,/sinbadNoVoiceMessage\(sinbadState\.language,true\)/); // language-specific status instead of hanging silently
   assert.match(zeroVoiceBranch,/announce\(\);/); // text answer is still delivered even with zero voices
   assert.match(zeroVoiceBranch,/clearTimeout\(voiceWaitTimer\);/); // a real voiceschanged event cancels the fallback timer
   assert.match(zeroVoiceBranch,/let settled=false;/);
@@ -253,13 +272,13 @@ test('when the browser reports zero voices at all, a bounded timeout falls back 
   assert.match(zeroVoiceBranch,/finishSinbadVoice\('warning'\);/);
 });
 
-test('acceptance regression: the avatar never stays in preparing-voice forever when no suitable tr-TR voice exists among a real voice list',()=>{
+test('acceptance regression: the avatar never stays in preparing-voice forever when no suitable selected-language voice exists among a real voice list',()=>{
   const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function splitSinbadCloneChunks'));
   assert.match(fn,/let anyVoiceQueued=false;/);
   assert.match(fn,/anyVoiceQueued=true;/);
   const terminalBranch=fn.slice(fn.indexOf('if(index>=runs.length){'),fn.indexOf('const run=runs[index++];'));
   assert.match(terminalBranch,/if\(!anyVoiceQueued\)\{/);
-  assert.match(terminalBranch,/Uygun Türkçe ses bulunamadı · metin modunda devam ediliyor/);
+  assert.match(terminalBranch,/sinbadNoVoiceMessage\(sinbadState\.language,true\)/);
   assert.match(terminalBranch,/finishSinbadVoice\('warning'\);/);
   assert.match(terminalBranch,/finishSinbadVoice\(\);/); // the anyVoiceQueued branch resolves via the default (idle/voice-disabled) outcome
 });
@@ -277,9 +296,18 @@ test('speaking (standard provider) starts only on the real utterance onstart eve
 test('onboundary drives a real per-word cue (not a fabricated continuous loop, and never for a superseded call), onend advances/finishes cleanly',()=>{
   const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function splitSinbadCloneChunks'));
   assert.match(fn,/utterance\.onboundary=\(\)=>\{if\(myGeneration===sinbadStandardSpeechGeneration\)sinbadStandardVoiceTick\(\);\};/);
-  assert.match(fn,/utterance\.onend=speakNext;/);
+  assert.match(fn,/if\(run\.pauseAfter\)setTimeout\(speakNext,run\.pauseAfter\);/);
+  assert.match(fn,/else speakNext\(\);/);
   assert.match(app,/function sinbadStandardVoiceTick\(\)\{/);
   assert.match(css,/\.sinbad-avatar\.sinbad-voice-tick \.sinbad-avatar-img\{transform:scale\(1\.018\)/);
+});
+
+test('a new question immediately cancels the previous spoken answer and invalidates queued teaching pauses',()=>{
+  const send=app.slice(app.indexOf('async function sendToSinbad'),app.indexOf("$('sendSinbad').addEventListener"));
+  assert.match(send,/const q=\(text\|\|'\'\)\.trim\(\); if\(!q\)return;\s*\n\s*\/\/[^\n]*\n(?:\s*\/\/[^\n]*\n)*\s*stopSinbadVoice\(\);/);
+  const stop=app.slice(app.indexOf('function stopSinbadVoice'),app.indexOf('let sinbadStandardBoundaryTimer'));
+  assert.match(stop,/sinbadStandardSpeechGeneration\+\+;/);
+  assert.match(stop,/window\.speechSynthesis\?\.cancel\(\);/);
 });
 
 test('a standard-provider error never falls back to a fake state and still lets the conversation continue',()=>{

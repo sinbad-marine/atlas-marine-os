@@ -493,7 +493,7 @@ function setSinbadVoiceUI(){
 }
 const SINBAD_ENGLISH_WORDS=new Set(['the','a','an','and','or','for','with','is','are','you','your','this','that','can','will','please','from','have','has','not','use','using','check','safety','route','chart','course','wind','weather','forecast','notice','mariners','waypoint','knots','bearing','captain','system','online','offline','welcome','update','report','status','warning','alert','engine','fuel','crew','port','starboard','bridge','log','logbook','signal','emergency','distress','mayday','over','out','copy','roger','standby','ahead','astern','anchor','depart','arrival','eta','etd']);
 function detectRunLanguage(token,fallbackLang,currentLang){
-  const hasTurkishChars=/[cgiosuCGIOSU]/.test(token);
+  const hasTurkishChars=/[çğıöşüÇĞİÖŞÜ]/.test(token);
   if(hasTurkishChars)return fallbackLang.startsWith('tr')?fallbackLang:'tr-TR';
   const cleaned=token.toLowerCase().replace(/[^a-z']/g,'');
   if(cleaned&&SINBAD_ENGLISH_WORDS.has(cleaned))return 'en-US';
@@ -526,11 +526,79 @@ function pickVoiceForLang(voices,lang){
   const root=lang.split('-')[0].toLowerCase();
   return voices.find(v=>v.lang.toLowerCase()===lang.toLowerCase())||voices.find(v=>v.lang.toLowerCase().startsWith(root))||null;
 }
-// Captain Sinbad's own voice profile (standard TTS provider). Values sit
-// inside the ranges the architecture decision specified (rate 0.94-0.98,
-// pitch 0.88-0.94, volume 1.0); pin them here as named constants so any
-// future local retuning has one place to change.
-const SINBAD_VOICE_PROFILE={rate:.96,pitch:.91,volume:1};
+// Academy speech is deliberately calmer than a screen reader. Keep the
+// profile language-aware so English is never spoken with the Turkish voice
+// (and vice versa), while both retain a measured teaching cadence.
+const SINBAD_VOICE_PROFILES=Object.freeze({
+  tr:{rate:.82,pitch:.91,volume:1},
+  en:{rate:.86,pitch:.96,volume:1},
+  default:{rate:.84,pitch:.94,volume:1}
+});
+const SINBAD_SPOKEN_SUMMARY_MAX_CHARS=320;
+function sinbadVoiceProfileForLanguage(lang=''){
+  return SINBAD_VOICE_PROFILES[lang.toLowerCase().split('-')[0]]||SINBAD_VOICE_PROFILES.default;
+}
+function stripSinbadSpeechMarkup(text){
+  return String(text||'')
+    .replace(/```[\s\S]*?```/g,' ')
+    .replace(/`([^`]+)`/g,'$1')
+    .replace(/\[S\d+\]/gi,' ')
+    .replace(/https?:\/\/\S+/gi,' ')
+    .replace(/^#{1,6}\s+/gm,'')
+    .replace(/^\s*[-*•]\s+/gm,'')
+    .replace(/[>*_]/g,' ')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+function buildSinbadSpokenSummary(text,maxChars=SINBAD_SPOKEN_SUMMARY_MAX_CHARS){
+  const clean=stripSinbadSpeechMarkup(text);
+  if(clean.length<=maxChars)return clean;
+  const sentences=clean.match(/[^.!?…]+[.!?…]+|[^.!?…]+$/gu)||[clean];
+  const selected=[];
+  let length=0;
+  for(const sentence of sentences){
+    const part=sentence.trim();if(!part)continue;
+    if(selected.length&&length+1+part.length>maxChars)break;
+    if(!selected.length&&part.length>maxChars){
+      const clipped=part.slice(0,maxChars-1).replace(/\s+\S*$/u,'').trim();
+      return `${clipped}…`;
+    }
+    selected.push(part);length+=part.length+(selected.length>1?1:0);
+    if(selected.length>=3)break;
+  }
+  return selected.join(' ');
+}
+function detectSinbadSpeechLanguage(text,fallbackLang){
+  const sample=String(text).toLowerCase();
+  if(/[\u0400-\u04ff]/u.test(sample))return fallbackLang?.startsWith('ru')?fallbackLang:'ru-RU';
+  if(/[\u0600-\u06ff]/u.test(sample))return fallbackLang?.startsWith('ar')?fallbackLang:'ar-SA';
+  const trScore=(sample.match(/[\u00e7\u011f\u0131\u00f6\u015f\u00fc]/gu)||[]).length+(sample.match(/\b(bir|bu|ve|ile|için|olarak|deniz|gemi|gelgit|nedir|nasıl)\b/gu)||[]).length*2;
+  const enScore=(sample.match(/\b(the|and|with|for|from|this|that|tide|ship|sea|water|is|are|how|why)\b/gu)||[]).length*2;
+  if(enScore>trScore+1)return 'en-US';
+  if(trScore>enScore+1)return 'tr-TR';
+  return fallbackLang||'en-US';
+}
+function splitSinbadTeachingSpeech(text,fallbackLang){
+  const sentences=String(text).match(/[^.!?…]+[.!?…]+|[^.!?…]+$/gu)||[String(text)];
+  const teachingRuns=[];
+  sentences.forEach((sentence,sentenceIndex)=>{
+    const sentenceLang=detectSinbadSpeechLanguage(sentence,fallbackLang);
+    const languageRuns=splitSpeechByLanguage(sentence.trim(),sentenceLang);
+    languageRuns.forEach((run,runIndex)=>teachingRuns.push({
+      text:run.text.trim(),
+      lang:run.lang,
+      // Pause only at a sentence boundary, never between two language runs
+      // belonging to the same sentence (for example “gelgit / spring tide”).
+      pauseAfter:runIndex===languageRuns.length-1&&sentenceIndex<sentences.length-1?360:0
+    }));
+  });
+  return teachingRuns.filter(item=>item.text);
+}
+function sinbadNoVoiceMessage(lang,textMode=false){
+  const root=String(lang||'').toLowerCase().split('-')[0];
+  const name={tr:'Türkçe',en:'English',ru:'Русский',fr:'Français',de:'Deutsch',ar:'العربية',es:'Español',it:'Italiano'}[root]||lang||'Selected language';
+  return textMode?`${name} sesi bulunamadı · metin modunda devam ediliyor`:`${name} sesi bulunamadı`;
+}
 function pickSinbadTurkishVoice(voices){
   const trVoices=voices.filter(v=>v.lang.toLowerCase()==='tr-tr'||v.lang.toLowerCase().startsWith('tr'));
   if(!trVoices.length)return null;
@@ -558,6 +626,7 @@ function finishSinbadVoice(forceState){
   scheduleSinbadListening();
 }
 function stopSinbadVoice(){
+  sinbadStandardSpeechGeneration++;
   sinbadVoiceAbort?.abort();sinbadVoiceAbort=null;
   if(sinbadVoiceAudio){sinbadVoiceAudio.pause();sinbadVoiceAudio.src='';}
   if(sinbadVoiceObjectUrl)URL.revokeObjectURL(sinbadVoiceObjectUrl);
@@ -605,7 +674,7 @@ function speakSinbadStandard(text,onVoiceReady){
       // No suitable voice for this turn - a transient work-status, not a
       // change to the user's persistent voice preference, so this resolves
       // to 'warning' (auto-clears) rather than 'voice-disabled'.
-      if(status)status.textContent='Uygun Türkçe ses bulunamadı · metin modunda devam ediliyor';
+      if(status)status.textContent=sinbadNoVoiceMessage(sinbadState.language,true);
       announce();
       finishSinbadVoice('warning');
     },1500);
@@ -615,16 +684,16 @@ function speakSinbadStandard(text,onVoiceReady){
   if(sinbadIsListening)sinbadRecognition?.stop();
   speechSynthesis.cancel();
   setSinbadAssistantState('preparing-voice');
-  const cleanText=String(text).replace(/[•*_#]/g,' ').trim();
+  const cleanText=buildSinbadSpokenSummary(text);
   if(!cleanText){announce();finishSinbadVoice();return;}
-  const runs=splitSpeechByLanguage(cleanText,sinbadState.language);
+  const runs=splitSinbadTeachingSpeech(cleanText,sinbadState.language);
   let index=0;
   let anyVoiceQueued=false;
   const speakNext=()=>{
     if(myGeneration!==sinbadStandardSpeechGeneration)return; // a newer speak request has taken over
     if(index>=runs.length){
       if(!anyVoiceQueued){
-        if(status)status.textContent='Uygun Türkçe ses bulunamadı · metin modunda devam ediliyor';
+        if(status)status.textContent=sinbadNoVoiceMessage(sinbadState.language,true);
         announce();
         finishSinbadVoice('warning');
       }else{
@@ -639,7 +708,7 @@ function speakSinbadStandard(text,onVoiceReady){
     if(!voice){
       // No silent fallback to a mismatched-language system voice: skip this
       // run's audio, surface it plainly, still deliver the text answer.
-      if(status)status.textContent=isTurkish?'Uygun Türkçe ses bulunamadı':`${run.lang} için uygun ses bulunamadı`;
+      if(status)status.textContent=sinbadNoVoiceMessage(run.lang);
       announce();
       speakNext();
       return;
@@ -648,12 +717,17 @@ function speakSinbadStandard(text,onVoiceReady){
     const utterance=new SpeechSynthesisUtterance(run.text);
     utterance.voice=voice;
     utterance.lang=voice.lang;
-    utterance.rate=SINBAD_VOICE_PROFILE.rate;utterance.pitch=SINBAD_VOICE_PROFILE.pitch;utterance.volume=SINBAD_VOICE_PROFILE.volume;
+    const profile=sinbadVoiceProfileForLanguage(run.lang);
+    utterance.rate=profile.rate;utterance.pitch=profile.pitch;utterance.volume=profile.volume;
     // Only the real 'speaking has actually started' signal flips the avatar -
     // never the moment we merely queued/prepared the utterance.
     utterance.onstart=()=>{if(myGeneration!==sinbadStandardSpeechGeneration)return;announce();setSinbadAssistantState('speaking');};
     utterance.onboundary=()=>{if(myGeneration===sinbadStandardSpeechGeneration)sinbadStandardVoiceTick();};
-    utterance.onend=speakNext;
+    utterance.onend=()=>{
+      if(myGeneration!==sinbadStandardSpeechGeneration)return;
+      if(run.pauseAfter)setTimeout(speakNext,run.pauseAfter);
+      else speakNext();
+    };
     utterance.onerror=()=>{
       if(myGeneration!==sinbadStandardSpeechGeneration)return;
       if(status)status.textContent='Standart ses okunamadı';
@@ -1083,6 +1157,9 @@ async function sinbadOfflineAiAnswer(question){
 }
 async function sendToSinbad(text){
   const q=(text||'').trim(); if(!q)return;
+  // A new question always takes the floor immediately. This cancels queued
+  // teaching pauses and any utterance still reading the previous answer.
+  stopSinbadVoice();
   if(pendingSinbadWebQuestion&&/^(izin ver|evet|ara|webde ara|allow|yes|search|разрешаю|да|autoriser|oui|erlauben|ja|اسمح|نعم|permitir|sí|consenti|sì)[.! ]*$/iu.test(q)){
     addSinbadMessage('user',q);$('sinbadInput').value='';await performSinbadWebSearch();return;
   }
