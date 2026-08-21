@@ -8,6 +8,10 @@ const release=fs.readFileSync('.github/workflows/pages-release.yml','utf8');
 
 test('quality workflow runs regression artifact build and SBOM with read-only permission',()=>{
   assert.match(quality,/permissions:\s*\n\s*contents: read/u);
+  assert.match(quality,/FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true/u);
+  assert.match(quality,/actions\/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd/u);
+  assert.match(quality,/actions\/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e/u);
+  assert.match(quality,/package-manager-cache: false/u);
   assert.match(quality,/node-version: 24\.19\.0/u);
   assert.match(quality,/npm ci --prefix sinbad-ai-core\/engines\/navigation/u);
   assert.match(quality,/npm audit --prefix sinbad-ai-core\/engines\/navigation --audit-level=moderate/u);
@@ -23,6 +27,11 @@ test('Pages release is manual gated least-privilege and SHA pinned',()=>{
   assert.match(release,/environment:\s*\n\s*name: github-pages/u);
   assert.match(release,/attestations: write/u);
   assert.match(release,/artifact-metadata: write/u);
+  assert.match(release,/FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true/u);
+  assert.match(release,/actions\/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd/u);
+  assert.match(release,/actions\/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e/u);
+  assert.match(release,/actions\/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128/u);
+  assert.match(release,/package-manager-cache: false/u);
   assert.match(release,/node-version: 24\.19\.0/u);
   assert.match(release,/npm ci --prefix sinbad-ai-core\/engines\/navigation/u);
   assert.match(release,/npm audit --prefix sinbad-ai-core\/engines\/navigation --audit-level=moderate/u);
