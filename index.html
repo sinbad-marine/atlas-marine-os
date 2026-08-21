@@ -151,6 +151,7 @@
   <article class="module-card" data-cloud-bucket="nautical-publications"><div>📚</div><h3>Nautical Publications</h3><p>SOLAS, MARPOL, sailing directions, lights and tide tables in Atlas Cloud.</p><a>Open cloud library →</a></article>
   <article class="module-card" data-cloud-bucket="nautical-charts"><div>🗺️</div><h3>Nautical Charts</h3><p>Private chart archive organized by country, region and chart number.</p><a>Open cloud charts →</a></article>
   <article class="module-card" data-open="knowledge"><div>🤖</div><h3>Atlas Knowledge Search</h3><p>Search uploaded filenames, folders, tags and extracted text notes.</p><a>Open →</a></article><article class="module-card" data-open="sinbad"><div>🧞‍♂️</div><h3>Captain Sinbad</h3><p>Atlas AI marine intelligence guide and conversation workspace.</p><a>Open Sinbad →</a></article>
+  <article class="module-card featured-card" data-open="studio-console"><div>🧰</div><h3>Sinbad Studio</h3><p>Offline web, software and animation workspace with approval-gated Docker verification.</p><a>Open capability console →</a></article>
   <article class="module-card" data-open="cloud-control"><div>☁️</div><h3>Atlas Cloud Control Center</h3><p>Connect Supabase, manage workspaces, users, storage and AI status.</p><a>Open →</a></article>
   <article class="module-card featured-card" data-open="admin-settings"><div>⚙️</div><h3>Settings &amp; Administration</h3><p>Account security, invitations, member access, developer roles and audit history.</p><a>Open settings →</a></article>
   <article class="module-card" data-open="cloud-documents"><div>🗄️</div><h3>Cloud Document Center</h3><p>Upload and browse private documents, publications and charts.</p><a>Open →</a></article>
@@ -394,6 +395,19 @@
   <button class="btn primary" id="knowledgeSearchBtn">Search Knowledge</button>
   <div class="notice">This v4.0 search reads filenames, folders, tags and text-based uploads. Full AI reading of scanned PDFs and charts requires the later cloud AI backend.</div>
   <div id="knowledgeResults"></div>
+</section>
+
+
+<section id="studio-console" class="workspace">
+  <div class="workspace-head"><div><h2>Sinbad Studio Capability Console</h2><p>Local, offline-first creation and verified test boundary.</p></div><button class="btn close">Close</button></div>
+  <div class="studio-status-strip"><span id="studioStatusDot" class="live-dot"></span><div><strong id="studioStatusTitle">Local Studio status not checked</strong><small id="studioStatusDetail">Start Sinbad Bridge on this computer to inspect the local runtime.</small></div><button class="btn compact" id="refreshStudioStatus" type="button">Refresh status</button></div>
+  <div class="studio-capability-grid">
+    <article><span>Planning</span><strong>Web · Software · Animation</strong><p>Deterministic drafts and local-model proposals remain isolated from Core and production.</p></article>
+    <article><span>Verified execution</span><strong>Software tests only</strong><p>Networkless, read-only Docker sandbox with CPU, memory, PID, timeout and non-root limits.</p></article>
+    <article><span>Evidence</span><strong>Hash-bound and reverified</strong><p>Pass and fail receipts are written separately, never overwritten and independently checked.</p></article>
+  </div>
+  <div class="studio-boundary"><strong>Current safety boundary</strong><p id="studioBoundaryText">General commands, network access, host/Core writes, automatic merge and live publishing are prohibited.</p></div>
+  <div class="notice">This console reports capability only. It does not expose a browser-to-Docker execution endpoint. Each exact verified test run still requires a local, single-use approval.</div>
 </section>
 
 

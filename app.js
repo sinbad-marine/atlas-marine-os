@@ -32,7 +32,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&
 
 document.querySelectorAll('[data-open]').forEach(x=>x.onclick=()=>openWorkspace(x.dataset.open));
 document.querySelectorAll('.close').forEach(x=>x.onclick=closeWorkspaces);
-function openWorkspace(id){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');$(id).scrollIntoView({behavior:'smooth'});renderAll();if(id==='enc-viewer')initEncViewer();if(id==='navigation-plot')initNavigationPlot()}
+function openWorkspace(id){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');$(id).scrollIntoView({behavior:'smooth'});renderAll();if(id==='enc-viewer')initEncViewer();if(id==='navigation-plot')initNavigationPlot();if(id==='studio-console')refreshStudioCapability()}
 function closeWorkspaces(){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));scrollTo({top:0,behavior:'smooth'})}
 
 let encMap=null,encChartLayer=null,encBathymetryLayer=null,encSeamarkLayer=null;
@@ -552,6 +552,18 @@ async function copyPassagePlanDraft(){
   await navigator.clipboard.writeText(text);$('copyPassagePlan').textContent='Copied';setTimeout(()=>$('copyPassagePlan').textContent='Copy draft',1200);
 }
 const SINBAD_BRIDGE_URL='http://127.0.0.1:31983';
+async function refreshStudioCapability(){
+ const dot=$('studioStatusDot'),title=$('studioStatusTitle'),detail=$('studioStatusDetail'),boundary=$('studioBoundaryText');
+ if(!dot||!title||!detail)return;
+ dot.classList.remove('online');title.textContent='Checking local Studio runtime…';detail.textContent='Reading capability status from Sinbad Bridge.';
+ try{
+  const response=await fetch(`${SINBAD_BRIDGE_URL}/studio/status`,{cache:'no-store'});if(!response.ok)throw new Error(`Bridge returned ${response.status}`);const status=await response.json(),ready=status.status==='READY_FOR_APPROVAL_GATED_TESTS';
+  dot.classList.toggle('online',ready);title.textContent=ready?`Studio ${status.studioVersion} ready`:`Studio ${status.studioVersion||''} runtime incomplete`;
+  detail.textContent=`Docker installed: ${status.docker?.installed?'yes':'no'} · Docker running: ${status.docker?.processRunning?'yes':'no'} · WSL installed: ${status.wsl?.installed?'yes':'no'} · Core installed: ${status.core?.installed?'yes':'no'}`;
+  if(boundary)boundary.textContent=`Allowed: ${(status.allowed||[]).join(', ')}. Prohibited: ${(status.prohibited||[]).join(', ')}. Approval: ${status.approval||'required'}.`;
+ }catch(_){title.textContent='Local Studio service offline';detail.textContent='Start Sinbad Bridge on this Windows computer, then refresh. No remote fallback was used.';}
+}
+$('refreshStudioStatus')?.addEventListener('click',refreshStudioCapability);
 let bridgeWaypoints=[];
 function bridgeXml(value){return String(value??'').replace(/[<>&"']/g,ch=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&apos;'}[ch]));}
 function bridgeRouteName(){
