@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.13-captain-sinbad-roundtable-fixes-v1';
+const CACHE='sinbad-marine-v8.20.14-multilingual-teaching-voice-v1';
 const ASSETS=[
   './',
   './index.html',
