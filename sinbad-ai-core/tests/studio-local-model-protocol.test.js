@@ -33,6 +33,14 @@ test('rejects invalid model IDs empty prompts and oversized prompt inputs',()=>{
   assert.throws(()=>protocol.createRequest({endpoint:'http://localhost:11434/api/generate',model:'local',instruction:''}),/INSTRUCTION/);
   assert.throws(()=>protocol.createRequest({endpoint:'http://localhost:11434/api/generate',model:'local',instruction:'x'.repeat(protocol.MAX_PROMPT_BYTES+1)}),/TOO_LARGE/);
   assert.throws(()=>protocol.createRequest({endpoint:'http://localhost:11434/api/generate',model:'local',instruction:'x',responseFormat:'xml'}),/RESPONSE_FORMAT/);
+  assert.throws(()=>protocol.createRequest({endpoint:'http://localhost:11434/api/generate',model:'local',instruction:'x',outputTokenLimit:63}),/OUTPUT_TOKEN_LIMIT/);
+  assert.throws(()=>protocol.createRequest({endpoint:'http://localhost:11434/api/generate',model:'local',instruction:'x',outputTokenLimit:1025}),/OUTPUT_TOKEN_LIMIT/);
+});
+
+test('binds a validated output token budget into the authentic request',()=>{
+  const request=protocol.createRequest({endpoint:'http://localhost:11434/api/generate',model:'local',instruction:'Taslak',outputTokenLimit:256});
+  assert.equal(request.limits.outputTokenLimit,256);
+  assert.equal(protocol.createRequest({endpoint:'http://localhost:11434/api/generate',model:'local',instruction:'Taslak'}).limits.outputTokenLimit,1024);
 });
 
 test('protocol exposes no transport shell model installer or downloader',()=>{

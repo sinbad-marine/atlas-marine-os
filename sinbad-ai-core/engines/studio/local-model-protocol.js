@@ -1,9 +1,12 @@
 'use strict';
 
-const VERSION='0.2.0';
+const VERSION='0.3.0';
 const MODE='LOCAL_MODEL_PROTOCOL_NO_IO';
 const MAX_PROMPT_BYTES=32768;
 const MAX_RESPONSE_BYTES=65536;
+const MIN_OUTPUT_TOKENS=64;
+const MAX_OUTPUT_TOKENS=1024;
+const DEFAULT_OUTPUT_TOKENS=1024;
 const MODEL_ID=/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,127}$/u;
 const ALLOWED_PATHS=new Set(['/api/generate','/v1/chat/completions','/v1/responses']);
 const requests=new WeakSet();
@@ -19,12 +22,13 @@ function validateEndpoint(input){
 }
 
 function createRequest(input={}){
-  const endpoint=validateEndpoint(input.endpoint),model=clean(input.model),instruction=clean(input.instruction),context=clean(input.context),responseFormat=input.responseFormat===undefined?'text':String(input.responseFormat);
+  const endpoint=validateEndpoint(input.endpoint),model=clean(input.model),instruction=clean(input.instruction),context=clean(input.context),responseFormat=input.responseFormat===undefined?'text':String(input.responseFormat),outputTokenLimit=input.outputTokenLimit===undefined?DEFAULT_OUTPUT_TOKENS:Number(input.outputTokenLimit);
   if(!MODEL_ID.test(model))throw new TypeError('LOCAL_MODEL_ID_INVALID');
   if(!instruction)throw new TypeError('LOCAL_MODEL_INSTRUCTION_REQUIRED');
   if(!['text','json'].includes(responseFormat))throw new TypeError('LOCAL_MODEL_RESPONSE_FORMAT_INVALID');
+  if(!Number.isInteger(outputTokenLimit)||outputTokenLimit<MIN_OUTPUT_TOKENS||outputTokenLimit>MAX_OUTPUT_TOKENS)throw new RangeError('LOCAL_MODEL_OUTPUT_TOKEN_LIMIT_INVALID');
   if(Buffer.byteLength(instruction,'utf8')>MAX_PROMPT_BYTES||Buffer.byteLength(context,'utf8')>MAX_PROMPT_BYTES)throw new RangeError('LOCAL_MODEL_PROMPT_TOO_LARGE');
-  const request=freeze({version:VERSION,mode:MODE,status:'LOCAL_MODEL_REQUEST_READY',endpoint,model,instruction,context,responseFormat,systemBoundary:'Return a draft only. Do not claim execution, publication, network access, Core modification, or approval.',limits:{maxPromptBytes:MAX_PROMPT_BYTES,maxResponseBytes:MAX_RESPONSE_BYTES},io:{performed:false,network:false,commands:false},nextGate:'EXPLICIT_LOOPBACK_TRANSPORT_AUTHORIZATION'});
+  const request=freeze({version:VERSION,mode:MODE,status:'LOCAL_MODEL_REQUEST_READY',endpoint,model,instruction,context,responseFormat,systemBoundary:'Return a draft only. Do not claim execution, publication, network access, Core modification, or approval.',limits:{maxPromptBytes:MAX_PROMPT_BYTES,maxResponseBytes:MAX_RESPONSE_BYTES,outputTokenLimit},io:{performed:false,network:false,commands:false},nextGate:'EXPLICIT_LOOPBACK_TRANSPORT_AUTHORIZATION'});
   requests.add(request);return request;
 }
 
@@ -47,4 +51,4 @@ function parseResponse(request,payload){
 }
 
 const isAuthenticRequest=value=>Boolean(value&&requests.has(value));
-module.exports=freeze({VERSION,MODE,MAX_PROMPT_BYTES,MAX_RESPONSE_BYTES,ALLOWED_PATHS,validateEndpoint,createRequest,parseResponse,isAuthenticRequest});
+module.exports=freeze({VERSION,MODE,MAX_PROMPT_BYTES,MAX_RESPONSE_BYTES,MIN_OUTPUT_TOKENS,MAX_OUTPUT_TOKENS,DEFAULT_OUTPUT_TOKENS,ALLOWED_PATHS,validateEndpoint,createRequest,parseResponse,isAuthenticRequest});
