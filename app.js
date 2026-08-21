@@ -389,11 +389,11 @@ function stopSinbadVoice(){
   window.speechSynthesis?.cancel();
 }
 function speakSinbadFallback(text){
-  if(!sinbadState.voiceEnabled||!('speechSynthesis'in window)){sinbadAwaitingAnswer=false;scheduleSinbadListening();return;}
-  const voices=speechSynthesis.getVoices();
+  if(!sinbadState.voiceEnabled||!('speechSynthesis'in window)){sinbadAwaitingAnswer=false;scheduleSinbadListening();return false;}
+  const voices=speechSynthesis.getVoices().filter(voice=>voice.localService===true);
   if(!voices.length){
     speechSynthesis.onvoiceschanged=()=>{speechSynthesis.onvoiceschanged=null;speakSinbadFallback(text);};
-    return;
+    return false;
   }
   if(sinbadIsListening)sinbadRecognition?.stop();
   speechSynthesis.cancel();
@@ -411,6 +411,7 @@ function speakSinbadFallback(text){
     speechSynthesis.speak(utterance);
   };
   speakNext();
+  return true;
 }
 async function speakSinbad(text,onVoiceReady){
   let announced=false;
@@ -440,8 +441,8 @@ async function speakSinbad(text,onVoiceReady){
     audio.onerror=()=>{
       if(sinbadVoiceAudio!==audio)return;
       announce();stopSinbadVoice();
-      if(status)status.textContent='XTTS klon sesi oynatılamadı · standart sese geçilmedi';
-      sinbadAwaitingAnswer=false;scheduleSinbadListening();
+      const fallback=speakSinbadFallback(cleanText);
+      if(status)status.textContent=fallback?'XTTS oynatılamadı · cihaz içi standart ses aktif':'XTTS oynatılamadı · güvenilir cihaz içi ses bulunamadı';
     };
     if(status)status.textContent='Sinbad XTTS klon sesi aktif · owner-local';
     announce();
@@ -449,10 +450,10 @@ async function speakSinbad(text,onVoiceReady){
   }catch(error){
     if(sinbadVoiceAbort!==controller)return;
     if(error?.name==='AbortError'&&!timedOut)return;
-    console.warn('Sinbad XTTS clone unavailable; standard voice disabled',error);
+    console.info('Sinbad XTTS clone unavailable; checking local device voice',error?.message||error);
     announce();stopSinbadVoice();
-    if(status)status.textContent=timedOut?'XTTS klon sesi zaman aşımına uğradı · standart sese geçilmedi':'XTTS klon sesi üretilemedi · standart sese geçilmedi';
-    sinbadAwaitingAnswer=false;scheduleSinbadListening();
+    const fallback=speakSinbadFallback(cleanText);
+    if(status)status.textContent=fallback?(timedOut?'XTTS zaman aşımı · cihaz içi standart ses aktif':'XTTS kullanılamıyor · cihaz içi standart ses aktif'):(timedOut?'XTTS zaman aşımı · güvenilir cihaz içi ses bulunamadı':'XTTS kullanılamıyor · güvenilir cihaz içi ses bulunamadı');
   }finally{clearTimeout(timeout);}
 }
 let sinbadRecognition=null;

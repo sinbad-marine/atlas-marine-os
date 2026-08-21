@@ -31,15 +31,17 @@ test('bridge bounds requests, serializes synthesis and erases temporary output',
   assert.match(bridge,/documents=\$documents\.ToArray\(\)/);
 });
 
-test('frontend plays only the latest cloned wav and fails closed',()=>{
+test('frontend plays only the latest cloned wav and falls back only to a local device voice',()=>{
   assert.match(app,/new AbortController\(\)/);
   assert.match(app,/120000/);
   assert.match(app,/new Audio\(sinbadVoiceObjectUrl\)/);
-  assert.doesNotMatch(app,/speakSinbadFallback\(cleanText\)/);
+  assert.match(app,/speakSinbadFallback\(cleanText\)/);
   assert.match(app,/sinbadVoiceAbort!==controller/);
   assert.match(app,/AbortError.*!timedOut/);
-  assert.match(app,/standard voice disabled/);
-  assert.match(app,/standart sese ge.ilmedi/);
+  assert.match(app,/localService===true/);
+  assert.match(app,/cihaz içi standart ses aktif/);
+  assert.match(app,/güvenilir cihaz içi ses bulunamadı/);
+  assert.doesNotMatch(app,/console\.warn\('Sinbad XTTS clone unavailable/);
   assert.match(app,/URL\.revokeObjectURL/);
   assert.match(app,/speakSinbad\(text,onVoiceReady\)/);
   assert.match(app,/preservesPitch=false/);
