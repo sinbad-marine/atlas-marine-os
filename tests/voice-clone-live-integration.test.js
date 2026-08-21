@@ -60,7 +60,7 @@ test('frontend requests sentence chunks, plays only the latest clone and falls b
   assert.match(app,/speakSinbad\(answer,\(\)=>addSinbadMessage\('sinbad',answer\)\)/);
   assert.doesNotMatch(app,/onvoiceschanged=.*speakSinbad\(text\)/);
   assert.match(app,/if\(sinbadVoiceObjectUrl===objectUrl\)/);
-  assert.match(serviceWorker,/sinbad-marine-v8\.20\.12-offline-map-r3-persistent-xtts-worker/);
+  assert.match(serviceWorker,/sinbad-marine-v8\.20\.13-offline-map-r3-persistent-xtts-worker/);
 });
 
 test('OpenCPN-first route transfer is bounded to the verified local bridge',()=>{

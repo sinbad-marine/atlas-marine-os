@@ -47,7 +47,7 @@ test('generated voice and Supabase temporary artifacts stay outside Git',()=>{
 });
 
 test('primary README reports the current Core gate without production overclaim',()=>{
-  assert.match(readme,/Sinbad Marine v8\.20\.12/);
+  assert.match(readme,/Sinbad Marine v8\.20\.13/);
   assert.match(readme,/DECISION_SUPPORT_ONLY/);
   assert.match(readme,/PLAN_ONLY/);
   assert.match(readme,/not certified ECDIS\/ECS/);
