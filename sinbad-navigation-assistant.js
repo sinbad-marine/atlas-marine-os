@@ -11,6 +11,14 @@
     return Boolean(analysis&&(analysis.intent==='navigation'||(analysis.secondaryIntents||[]).includes('navigation')));
   }
 
+  function isCalculationRequest(question){
+    const text=String(question||'').normalize('NFKC').toLocaleLowerCase('tr-TR');
+    const explicit=/(hesapla|hesabı yap|hesap yap|calculate|compute|cpa|tcpa|course to steer|tutulacak rota|dead reckoning|\bdr\b|varış mevki|varis mevki|arrival position|sonundaki pozisyon)/iu.test(text);
+    const asksQuantity=/(kaç|kac|ne kadar|nedir|what is|find)/iu.test(text);
+    const hasNumericNavigation=/\d/.test(text)&&/(knot|\bkn\b|saat|hour|dakika|minute|derece|degree|rota|course|hız|hiz|speed|mesafe|distance|enlem|boylam|latitude|longitude|mevki|position)/iu.test(text);
+    return explicit||(asksQuantity&&hasNumericNavigation);
+  }
+
   function createExpert(options={}){
     const engine=options.engine;
     if(!engine||typeof engine.answer!=='function')throw new TypeError('navigation engine with answer() is required');
@@ -18,7 +26,7 @@
     return Object.freeze({
       mode:'DECISION_SUPPORT_ONLY',
       handle(question,context={}){
-        if(!isNavigationContext(context))return null;
+        if(!isNavigationContext(context)||!isCalculationRequest(question))return null;
         const calculation=engine.answer(question,language);
         if(calculation==null||String(calculation).trim()==='')return null;
         return Object.freeze({
@@ -30,5 +38,5 @@
     });
   }
 
-  return Object.freeze({SOURCE,WARNING,isNavigationContext,createExpert});
+  return Object.freeze({SOURCE,WARNING,isNavigationContext,isCalculationRequest,createExpert});
 });
