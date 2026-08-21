@@ -1688,7 +1688,10 @@ async function uploadCloudFiles(){
 async function loadCloudFiles(){
   if(!cloudClient || !selectedWorkspaceId)return;
   const bucket=$('cloudBucketSelect').value;
-  const {data,error}=await cloudClient.from('documents').select('id,title,original_filename,bucket_id,object_path,file_size_bytes,status,classification,created_at').eq('workspace_id',selectedWorkspaceId).eq('bucket_id',bucket).order('created_at',{ascending:false}).limit(100);
+  const search=($('cloudFileSearch')?.value||'').trim();
+  let query=cloudClient.from('documents').select('id,title,original_filename,bucket_id,object_path,file_size_bytes,status,classification,created_at').eq('workspace_id',selectedWorkspaceId).eq('bucket_id',bucket);
+  if(search)query=query.ilike('title',`%${search.replace(/[%_]/g,'')}%`);
+  const {data,error}=await query.order('created_at',{ascending:false}).limit(100);
   if(error){$('cloudFileList').textContent=error.message;return;}
   $('cloudFileList').innerHTML=data?.length ? data.map(d=>`
     <article class="cloud-file-card">
@@ -1700,9 +1703,29 @@ async function loadCloudFiles(){
         <button class="btn cloud-share-file" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}" data-name="${cloudEsc(d.original_filename)}">Share</button>
         ${roleCanManageLibrary()?`<button class="btn cloud-rename-file" data-id="${cloudEsc(d.id)}" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}" data-name="${cloudEsc(d.original_filename)}">Rename</button>
         <button class="btn cloud-index-file" data-id="${cloudEsc(d.id)}">Index AI</button>
+        <button class="btn cloud-repair-knowledge" data-id="${cloudEsc(d.id)}" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}" data-name="${cloudEsc(d.original_filename)}">Repair AI text</button>
         <button class="btn danger cloud-delete-file" data-id="${cloudEsc(d.id)}" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}">Delete</button>`:''}
       </div>
     </article>`).join('') : 'No cloud files in this category.';
+}
+async function repairCloudDocumentKnowledge(documentId,bucket,path,filename){
+  const progress=$('cloudUploadProgress');
+  try{
+    if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId)throw new Error('Atlas Cloud workspace is not connected.');
+    if(!roleCanManageLibrary())throw new Error('Only an authorized library manager can repair AI text.');
+    if(progress)progress.textContent=`Downloading ${filename} for AI text repair…`;
+    const {data:blob,error:downloadError}=await cloudClient.storage.from(bucket).download(path);
+    if(downloadError)throw downloadError;
+    const file=new File([blob],filename||'atlas-document',{type:blob.type||''});
+    const text=await extractDocumentText(file,message=>{if(progress)progress.textContent=`${filename}: ${message}`;});
+    if(!text.trim())throw new Error('No machine-readable text was extracted. OCR or a text counterpart is required.');
+    const result=await saveDocumentKnowledge(documentId,file,text,bucket);
+    if(progress)progress.textContent=`✓ AI text repaired: ${filename} · ${result.chunks} chunk(s) · ${result.classification}`;
+    return result;
+  }catch(error){
+    if(progress)progress.textContent=`⚠ AI text repair failed for ${filename}: ${error.message||error}`;
+    throw error;
+  }
 }
 async function openCloudFile(bucket,path,filename=''){
   if(bucket==='nautical-charts'){
@@ -2269,6 +2292,8 @@ $('settingsMemberList')?.addEventListener('click',event=>{
 });
 $('uploadCloudFiles').addEventListener('click',uploadCloudFiles);
 $('refreshCloudFiles').addEventListener('click',loadCloudFiles);
+$('searchCloudFiles')?.addEventListener('click',loadCloudFiles);
+$('cloudFileSearch')?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();loadCloudFiles();}});
 $('cloudBucketSelect').addEventListener('change',loadCloudFiles);
 $('cloudFileList').addEventListener('click',e=>{
   const o=e.target.closest('.cloud-open-file');
@@ -2276,12 +2301,14 @@ $('cloudFileList').addEventListener('click',e=>{
   const s=e.target.closest('.cloud-share-file');
   const r=e.target.closest('.cloud-rename-file');
   const i=e.target.closest('.cloud-index-file');
+  const k=e.target.closest('.cloud-repair-knowledge');
   const x=e.target.closest('.cloud-delete-file');
   if(o)openCloudFile(o.dataset.bucket,o.dataset.path,o.dataset.name||'');
   if(d)downloadCloudFile(d.dataset.bucket,d.dataset.path,d.dataset.name);
   if(s)shareCloudFile(s.dataset.bucket,s.dataset.path,s.dataset.name);
   if(r)renameCloudFile(r.dataset.id,r.dataset.bucket,r.dataset.path,r.dataset.name);
   if(i)indexCloudDocument(i.dataset.id);
+  if(k)repairCloudDocumentKnowledge(k.dataset.id,k.dataset.bucket,k.dataset.path,k.dataset.name).catch(()=>{});
   if(x)deleteCloudFile(x.dataset.id,x.dataset.bucket,x.dataset.path);
 });
 $('memberList').addEventListener('click',e=>{
