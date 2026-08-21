@@ -3,10 +3,12 @@ const assert=require('node:assert/strict');
 const manifest=require('../engines/studio/studio-pro-acceptance-manifest.js');
 const proSession=require('../engines/studio/guided-pro-model-session.js');
 
-test('freezes the finite honest Pro 0.2 acceptance scope',()=>{
+test('freezes the finite honest Pro 0.3 acceptance scope',()=>{
   assert.equal(manifest.status,'PRO_STUDIO_LOCAL_MODEL_FOUNDATION_ACCEPTED');assert.equal(Object.isFrozen(manifest),true);assert.equal(Object.isFrozen(manifest.runtimeEvidence),true);
   for(const capability of ['LOOPBACK_ONLY_LOCAL_MODEL_PROTOCOL','STRICT_MODEL_ARTIFACT_JSON_VALIDATION','ISOLATED_UNTRUSTED_PROPOSAL_PERSISTENCE','SCRIPTLESS_MODEL_PREVIEW_PACKAGING'])assert.ok(manifest.acceptedCapabilities.includes(capability),capability);
-  assert.equal(manifest.runtimeEvidence.probeResult,'PRO_MODEL_PROPOSAL_READY');assert.match(manifest.runtimeEvidence.modelDigest,/^sha256:[a-f0-9]{64}$/u);assert.equal(manifest.runtimeEvidence.licensePresent,true);assert.equal(manifest.runtimeEvidence.quantization,'Q4_K_M');assert.equal(manifest.runtimeEvidence.persisted,false);assert.equal(manifest.runtimeEvidence.portableClaim,false);
+  assert.match(manifest.runtimeEvidence.modelDigest,/^sha256:[a-f0-9]{64}$/u);assert.equal(manifest.runtimeEvidence.licensePresent,true);assert.equal(manifest.runtimeEvidence.quantization,'Q4_K_M');assert.equal(manifest.runtimeEvidence.persisted,false);assert.equal(manifest.runtimeEvidence.executed,false);assert.equal(manifest.runtimeEvidence.published,false);assert.equal(manifest.runtimeEvidence.portableClaim,false);
+  assert.deepEqual(manifest.runtimeEvidence.evaluationHistory.map(item=>item.result),['LOOPBACK_MODEL_TIMEOUT','STATIC_POLICY_VIOLATION','PRO_MODEL_PROPOSAL_READY']);
+  assert.equal(manifest.runtimeEvidence.successfulEvaluation.authority,'DATA_ONLY');assert.equal(manifest.runtimeEvidence.successfulEvaluation.schemaValidated,true);assert.equal(manifest.runtimeEvidence.successfulEvaluation.staticPolicyValidated,true);assert.match(manifest.runtimeEvidence.successfulEvaluation.manifestHash,/^sha256:[a-f0-9]{64}$/u);
 });
 test('keeps execution remote access merge Core write and publish explicitly prohibited',()=>{
   for(const capability of ['GENERATED_CODE_EXECUTION','REMOTE_MODEL_OR_INTERNET_ACCESS','AUTOMATIC_PROPOSAL_MERGE','CORE_OR_PRODUCTION_WRITE','LIVE_DEPLOYMENT_OR_PUBLISH'])assert.ok(manifest.prohibitedCapabilities.includes(capability),capability);
