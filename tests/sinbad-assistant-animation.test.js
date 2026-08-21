@@ -212,11 +212,19 @@ test('the standard provider prefers a tr-TR voice via a dedicated selector, neve
   assert.match(app,/return voices\.find\(v=>v\.lang\.toLowerCase\(\)===lang\.toLowerCase\(\)\)\|\|voices\.find\(v=>v\.lang\.toLowerCase\(\)\.startsWith\(root\)\)\|\|null;/);
 });
 
-test('when no suitable voice is found, the app surfaces this clearly instead of guessing a wrong-language voice',()=>{
+test('when no suitable voice is found, the app skips audio entirely and stays in text mode - never a mismatched-language fallback voice',()=>{
   const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function speakSinbadStandard')+3000);
-  assert.match(fn,/if\(!voice&&!noVoiceWarned\)\{/);
+  assert.match(fn,/if\(!voice\)\{/);
   assert.match(fn,/bulunamad/); // "bulunamadı" (not found) - status text surfaces the gap
-  assert.match(fn,/if\(voice\)utterance\.voice=voice;/);
+  // no SpeechSynthesisUtterance is constructed on the no-voice branch: it
+  // returns (via speakNext()) before ever reaching `new SpeechSynthesisUtterance`.
+  const noVoiceBranch=fn.slice(fn.indexOf('if(!voice){'),fn.indexOf('const utterance=new SpeechSynthesisUtterance'));
+  assert.match(noVoiceBranch,/announce\(\);\s*\n\s*speakNext\(\);\s*\n\s*return;/);
+  assert.doesNotMatch(noVoiceBranch,/SpeechSynthesisUtterance/);
+  // the old "system default voice will be used" phrasing must be gone entirely
+  assert.doesNotMatch(app,/sistemin varsay|sistem varsay/i);
+  // once a voice IS found, it is always assigned (never left to browser-default guessing)
+  assert.match(fn,/utterance\.voice=voice;\s*\n\s*utterance\.lang=voice\.lang;/);
 });
 
 test('speaking (standard provider) starts only on the real utterance onstart event, never when merely queued',()=>{

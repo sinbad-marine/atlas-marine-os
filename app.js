@@ -562,19 +562,22 @@ function speakSinbadStandard(text,onVoiceReady){
   if(!cleanText){announce();finishSinbadVoice();return;}
   const runs=splitSpeechByLanguage(cleanText,sinbadState.language);
   let index=0;
-  let noVoiceWarned=false;
   const speakNext=()=>{
     if(index>=runs.length){if(status)status.textContent='';finishSinbadVoice();return;}
     const run=runs[index++];
     const isTurkish=run.lang.toLowerCase().startsWith('tr');
     const voice=isTurkish?pickSinbadTurkishVoice(voices):pickVoiceForLang(voices,run.lang);
-    if(!voice&&!noVoiceWarned){
-      noVoiceWarned=true;
-      if(status)status.textContent=isTurkish?'Uygun tr-TR sesi bulunamad\u0131 \u00b7 sistemin varsay\u0131lan sesi kullan\u0131lacak':`${run.lang} i\u00e7in uygun ses bulunamad\u0131 \u00b7 sistemin varsay\u0131lan sesi kullan\u0131lacak`;
+    if(!voice){
+      // No silent fallback to a mismatched-language system voice: skip this
+      // run's audio, surface it plainly, still deliver the text answer.
+      if(status)status.textContent=isTurkish?'Uygun Türkçe ses bulunamadı':`${run.lang} için uygun ses bulunamadı`;
+      announce();
+      speakNext();
+      return;
     }
     const utterance=new SpeechSynthesisUtterance(run.text);
-    if(voice)utterance.voice=voice;
-    utterance.lang=voice?.lang||run.lang;
+    utterance.voice=voice;
+    utterance.lang=voice.lang;
     utterance.rate=SINBAD_VOICE_PROFILE.rate;utterance.pitch=SINBAD_VOICE_PROFILE.pitch;utterance.volume=SINBAD_VOICE_PROFILE.volume;
     // Only the real 'speaking has actually started' signal flips the avatar -
     // never the moment we merely queued/prepared the utterance.
@@ -582,7 +585,7 @@ function speakSinbadStandard(text,onVoiceReady){
     utterance.onboundary=sinbadStandardVoiceTick;
     utterance.onend=speakNext;
     utterance.onerror=()=>{
-      if(status)status.textContent='Standart ses okunamad\u0131';
+      if(status)status.textContent='Standart ses okunamadı';
       speakNext();
     };
     speechSynthesis.speak(utterance);
