@@ -1623,7 +1623,7 @@ async function sinbadCloudKnowledgeAnswer(question){
       // Older cloud deployments can return a polite "no source found" notice
       // as if it were a complete AI answer. Treat those notices as a miss so
       // the installed Ollama brain gets an opportunity to answer instead.
-      const cloudMiss=/yeterli kaynak bulunamad[ıi]|eşleşen bir kaynak bulamad[ıi]|AI bağlantısı henüz etkin|not enough (?:material|source)|no matching (?:knowledge|source)|keine ausreichende quelle|keine passende quelle/i.test(answer);
+      const cloudMiss=/yeterli kaynak bulunamad[ıi]|eşleşen bir kaynak bulamad[ıi]|AI bağlantısı henüz etkin|metni (?:yer almad[ıi]ğından|bulunmad[ıi]ğından)|kaynağa dayalı (?:olarak )?doğrulayam[ıi]yorum|not enough (?:material|source)|no matching (?:knowledge|source)|source text (?:is|was) not available|keine ausreichende quelle|keine passende quelle/i.test(answer);
       const normalizedAnswer=answer.toLocaleLowerCase('tr-TR')
         .replace(/[ıİ]/g,'i').replace(/[şŞ]/g,'s').replace(/[ğĞ]/g,'g')
         .replace(/[üÜ]/g,'u').replace(/[öÖ]/g,'o').replace(/[çÇ]/g,'c')
@@ -1637,8 +1637,24 @@ async function sinbadCloudKnowledgeAnswer(question){
     }
     if(trustedAiData?.needsWebPermission){if(status)status.textContent='Atlas Cloud has no answer · trying offline brain';return null;}
     const terms=question.toLocaleLowerCase(language).normalize('NFKD').replace(/[^a-z0-9çğıöşüа-яёء-ي ]/gi,' ').split(/\s+/).filter(x=>x.length>2).slice(0,8);if(!terms.length)return null;
-    const {data,error}=await cloudClient.from('document_knowledge_chunks').select('content,chunk_index,document_knowledge!inner(title,classification,workspace_id)').eq('document_knowledge.workspace_id',selectedWorkspaceId).ilike('content',`%${terms[0]}%`).limit(12);
-    if(error)throw error;if(!data?.length){if(status)status.textContent='Atlas Cloud has no answer · trying offline brain';return null;}
+    const titleRows=[];
+    for(const term of terms.slice(0,5)){
+      const {data,error}=await cloudClient.from('document_knowledge').select('id,title,classification').eq('workspace_id',selectedWorkspaceId).ilike('title',`%${term.replace(/[%_]/g,'')}%`).limit(6);
+      if(error)throw error;if(data)titleRows.push(...data);
+    }
+    const titleMatches=[...new Map(titleRows.map(row=>[row.id,row])).values()].slice(0,8);
+    let data=[];
+    if(titleMatches.length){
+      const {data:chunks,error}=await cloudClient.from('document_knowledge_chunks').select('knowledge_id,content,chunk_index').in('knowledge_id',titleMatches.map(row=>row.id)).limit(500);
+      if(error)throw error;
+      const titles=new Map(titleMatches.map(row=>[row.id,row]));
+      data=(chunks||[]).map(row=>({...row,document_knowledge:titles.get(row.knowledge_id)}));
+    }
+    if(!data.length){
+      const result=await cloudClient.from('document_knowledge_chunks').select('content,chunk_index,document_knowledge!inner(title,classification,workspace_id)').eq('document_knowledge.workspace_id',selectedWorkspaceId).ilike('content',`%${terms[0]}%`).limit(12);
+      if(result.error)throw result.error;data=result.data||[];
+    }
+    if(!data.length){if(status)status.textContent='Atlas Cloud has no answer · trying offline brain';return null;}
     const ranked=data.map(row=>({row,score:terms.reduce((n,t)=>n+(row.content.toLocaleLowerCase(language).includes(t)?1:0),0)})).sort((a,b)=>b.score-a.score).slice(0,4);
     const excerpts=ranked.map(({row})=>{const lower=row.content.toLocaleLowerCase(language),positions=terms.map(t=>lower.indexOf(t)).filter(n=>n>=0),at=positions.length?Math.min(...positions):0;return `• ${row.document_knowledge.title} [${row.document_knowledge.classification}]\n${row.content.slice(Math.max(0,at-180),at+650).replace(/\s+/g,' ').trim()}`;});
     if(status)status.textContent='Classified cloud archive active';

@@ -21,3 +21,10 @@ test('authorized owner can rebuild AI chunks from an existing cloud document',()
   assert.match(app,/class="btn cloud-repair-knowledge"/);
   assert.match(app,/if\(k\)repairCloudDocumentKnowledge/);
 });
+
+test('named-source misses recover through title-matched knowledge chunks',()=>{
+  assert.match(app,/metni \(\?:yer almad/);
+  assert.match(app,/from\('document_knowledge'\).*ilike\('title'/s);
+  assert.match(app,/\.in\('knowledge_id',titleMatches\.map/);
+  assert.match(app,/titleMatches\.length/);
+});
