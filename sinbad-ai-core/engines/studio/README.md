@@ -125,11 +125,14 @@ packager. JavaScript is excluded, HTML receives the offline CSP, and a third
 single-use authorization is required before `studio-previews/` is created. The
 guided Pro session never opens that preview automatically.
 
-`studio-pro-acceptance-manifest.js` freezes the Pro 0.2 completion meaning and
-the real local runtime probe observed on 2026-08-21. The runtime observation is
-explicitly non-portable. It also records the remaining activation blocker:
-generated code cannot execute until a sandbox capable of denying network access
-is available; Node's current host permission flags alone are insufficient.
+`studio-pro-acceptance-manifest.js` freezes the local-model completion meaning
+and the real runtime probes observed on 2026-08-21. Those observations are
+explicitly non-portable. Exact verified Studio software tests can now run only
+through the separately authorized Pro 0.4 Docker boundary described below.
+General generated-code execution, web or animation script execution, and
+containerized model inference remain blocked. The measured model-inference
+blocker is the Ollama/WSL2 Intel Arc completion stall recorded in that manifest;
+the system does not silently fall back to a weaker isolation mode.
 
 ## Pro 0.3 review foundation
 
