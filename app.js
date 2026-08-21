@@ -336,6 +336,156 @@ function requestSinbadWebPermission(question){
   pendingSinbadWebQuestion=question;const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];$('sinbadWebConsentText').textContent=copy.ask;$('sinbadWebConsent').classList.remove('hidden');return copy.ask;
 }
 
+// ---- Captain Sinbad live assistant animation state machine ----
+// Single, centralised, testable entry point for avatar state. Every state
+// here is wired to a real application event (see setSinbadAssistantState
+// call sites below) - none of them are shown ahead of the real event they
+// represent. Visuals are the real illustrated Academy pack
+// (assets/captain-sinbad/, ACADEMY_BEHAVIOR_MANIFEST_TR.md) - Claude does not
+// redraw the character or imitate it with SVG geometry.
+const SINBAD_ASSISTANT_STATES=['idle','listening','thinking','preparing-voice','speaking','success','warning','error','voice-disabled','board-teaching'];
+const SINBAD_ASSISTANT_STATE_LABELS={
+ 'tr-TR':{idle:'Hazır',listening:'Dinliyor',thinking:'Düşünüyor','preparing-voice':'Ses hazırlanıyor',speaking:'Konuşuyor',success:'Tamamlandı',warning:'Dikkat',error:'Bağlantı sorunu','voice-disabled':'Ses kapalı','board-teaching':'Tahtada anlatıyor'},
+ 'en-US':{idle:'Ready',listening:'Listening',thinking:'Thinking','preparing-voice':'Preparing voice',speaking:'Speaking',success:'Done',warning:'Attention',error:'Connection issue','voice-disabled':'Voice off','board-teaching':'Teaching at the board'},
+ 'ru-RU':{idle:'Готов',listening:'Слушает',thinking:'Думает','preparing-voice':'Готовит голос',speaking:'Говорит',success:'Готово',warning:'Внимание',error:'Проблема связи','voice-disabled':'Звук выкл.','board-teaching':'Объясняет у доски'},
+ 'fr-FR':{idle:'Prêt',listening:'Écoute',thinking:'Réfléchit','preparing-voice':'Prépare la voix',speaking:'Parle',success:'Terminé',warning:'Attention',error:'Problème de connexion','voice-disabled':'Voix coupée','board-teaching':'Explique au tableau'},
+ 'de-DE':{idle:'Bereit',listening:'Hört zu',thinking:'Denkt nach','preparing-voice':'Bereitet Stimme vor',speaking:'Spricht',success:'Fertig',warning:'Achtung',error:'Verbindungsproblem','voice-disabled':'Stimme aus','board-teaching':'Erklärt an der Tafel'},
+ 'ar-SA':{idle:'جاهز',listening:'يستمع',thinking:'يفكر','preparing-voice':'يجهز الصوت',speaking:'يتحدث',success:'تم',warning:'تنبيه',error:'مشكلة اتصال','voice-disabled':'الصوت متوقف','board-teaching':'يشرح عند السبورة'},
+ 'es-ES':{idle:'Listo',listening:'Escuchando',thinking:'Pensando','preparing-voice':'Preparando voz',speaking:'Hablando',success:'Hecho',warning:'Atención',error:'Problema de conexión','voice-disabled':'Voz apagada','board-teaching':'Explicando en la pizarra'},
+ 'it-IT':{idle:'Pronto',listening:'Ascolta',thinking:'Pensa','preparing-voice':'Prepara la voce',speaking:'Parla',success:'Fatto',warning:'Attenzione',error:'Problema di connessione','voice-disabled':'Voce disattivata','board-teaching':'Spiega alla lavagna'}
+};
+// Which real illustrated Academy asset represents each state. Several logical
+// states (preparing-voice, success, warning, error, voice-disabled) do not yet
+// have dedicated art in the v1 pack - they honestly fall back to the idle
+// pose (closed mouth, neutral stance), matching what ACADEMY_BEHAVIOR_MANIFEST_TR.md
+// itself specifies for those states ("preparing-voice: ağız kapalı", "voice-disabled:
+// konuşma jesti yok", "success/warning/error: mevcut duruşun devamı + efekt").
+// Distinct status colour/text still applies (see CSS + sinbadAvatarStatus label).
+const SINBAD_AVATAR_ASSET_BASE='./assets/captain-sinbad/';
+const SINBAD_STATE_ASSET={
+  idle:'captain-sinbad-idle-master.png',
+  listening:'captain-sinbad-listening.png',
+  thinking:'captain-sinbad-thinking.png',
+  'preparing-voice':'captain-sinbad-idle-master.png',
+  speaking:'captain-sinbad-speaking.png',
+  success:'captain-sinbad-idle-master.png',
+  warning:'captain-sinbad-idle-master.png',
+  error:'captain-sinbad-idle-master.png',
+  'voice-disabled':'captain-sinbad-idle-master.png',
+  'board-teaching':'captain-sinbad-board-teaching.png'
+};
+let sinbadAssistantState='idle';
+let sinbadAssistantTimers=[];
+let sinbadAssistantLastDetail={};
+function sinbadAssistantElements(){return document.querySelectorAll('.sinbad-avatar');}
+function clearSinbadAssistantTimers(){sinbadAssistantTimers.forEach(clearTimeout);sinbadAssistantTimers=[];}
+function preloadSinbadAvatarAssets(){
+  const seen=new Set();
+  Object.values(SINBAD_STATE_ASSET).forEach(file=>{
+    if(seen.has(file))return;seen.add(file);
+    const img=new Image();img.src=SINBAD_AVATAR_ASSET_BASE+file;
+  });
+}
+let sinbadLipSyncAudioContext=null,sinbadLipSyncAnalyser=null,sinbadLipSyncSource=null,sinbadLipSyncRaf=null;
+function stopSinbadLipSyncAnalyser(){
+  if(sinbadLipSyncRaf)cancelAnimationFrame(sinbadLipSyncRaf);
+  sinbadLipSyncRaf=null;
+  // Disconnect the previous turn's graph nodes explicitly - a Web Audio node
+  // stays wired into the context (and reachable from `destination`) until
+  // disconnected, regardless of whether any JS reference to it remains, so
+  // skipping this across repeated speech turns leaks nodes on the shared
+  // long-lived AudioContext.
+  if(sinbadLipSyncSource){try{sinbadLipSyncSource.disconnect();}catch(_){/* already disconnected */}}
+  if(sinbadLipSyncAnalyser){try{sinbadLipSyncAnalyser.disconnect();}catch(_){/* already disconnected */}}
+  sinbadLipSyncSource=null;sinbadLipSyncAnalyser=null;
+  sinbadAssistantElements().forEach(el=>el.style.removeProperty('--sinbad-voice-amp'));
+}
+async function startSinbadLipSyncAnalyser(audio){
+  // Never run two graphs/RAF loops at once, and never leak the previous
+  // turn's source/analyser nodes into this one.
+  stopSinbadLipSyncAnalyser();
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+    if(!sinbadLipSyncAudioContext)sinbadLipSyncAudioContext=new AC();
+    if(sinbadLipSyncAudioContext.state==='suspended')await sinbadLipSyncAudioContext.resume();
+    // If resume() did not actually bring the context to 'running' (blocked by
+    // an autoplay policy, browser quirk, etc.) do NOT tap the <audio>
+    // element: creating a MediaElementSource unconditionally reroutes ALL of
+    // the element's output through the (possibly still-suspended) Web Audio
+    // graph, which can silence real playback while the UI still says
+    // "speaking". Bail out here and stay on the CSS-only lip-sync fallback -
+    // audio keeps playing through its normal, untouched element path.
+    if(sinbadLipSyncAudioContext.state!=='running')return;
+    if(audio.paused||audio.ended)return; // playback already moved on while we awaited resume()
+    const source=sinbadLipSyncAudioContext.createMediaElementSource(audio);
+    const analyser=sinbadLipSyncAudioContext.createAnalyser();
+    analyser.fftSize=256;
+    source.connect(analyser);
+    analyser.connect(sinbadLipSyncAudioContext.destination);
+    sinbadLipSyncSource=source;sinbadLipSyncAnalyser=analyser;
+    const data=new Uint8Array(analyser.frequencyBinCount);
+    const tick=()=>{
+      if(sinbadLipSyncAnalyser!==analyser||audio.paused||audio.ended){sinbadLipSyncRaf=null;return;}
+      analyser.getByteFrequencyData(data);
+      let sum=0;for(let i=0;i<data.length;i++)sum+=data[i];
+      const amp=Math.min(1,(sum/data.length)/72);
+      sinbadAssistantElements().forEach(el=>el.style.setProperty('--sinbad-voice-amp',amp.toFixed(3)));
+      sinbadLipSyncRaf=requestAnimationFrame(tick);
+    };
+    tick();
+  }catch(error){
+    // Expected on browsers/contexts without Web Audio support, or if the
+    // element graph cannot be tapped - the CSS-only fallback (a calm speaking
+    // pulse driven purely by [data-state="speaking"]) still plays, and
+    // playback audio itself is never affected because nothing here runs
+    // before the real <audio> element already exists. The v1 Academy pack
+    // has no separate mouth/phoneme layer yet (ACADEMY_BEHAVIOR_MANIFEST_TR.md
+    // production step 2), so this amplitude drives a whole-portrait energy
+    // cue rather than per-phoneme mouth shapes.
+    console.warn('Sinbad lip-sync analyser unavailable; using CSS fallback',error);
+  }
+}
+let sinbadAvatarImageGeneration=0;
+function setSinbadAssistantState(state,detail={}){
+  const next=SINBAD_ASSISTANT_STATES.includes(state)?state:'idle';
+  const changed=next!==sinbadAssistantState;
+  sinbadAssistantState=next;
+  sinbadAssistantLastDetail=detail||{};
+  clearSinbadAssistantTimers();
+  const asset=SINBAD_STATE_ASSET[next]||SINBAD_STATE_ASSET.idle;
+  const src=SINBAD_AVATAR_ASSET_BASE+asset;
+  // A generation token so a slow/stale image load from an earlier state
+  // change can never reveal itself (via opacity) once a newer state change
+  // has already superseded it.
+  const generation=++sinbadAvatarImageGeneration;
+  sinbadAssistantElements().forEach(el=>{
+    el.dataset.state=next;
+    const img=el.querySelector('.sinbad-avatar-img');
+    if(img&&!img.src.endsWith(asset)){
+      img.style.opacity='0';
+      img.onload=()=>{if(generation===sinbadAvatarImageGeneration)img.style.opacity='1';};
+      img.src=src;
+    }
+  });
+  if('reducedMotion' in (detail||{}))document.documentElement.classList.toggle('sinbad-force-reduced-motion',detail.reducedMotion===true);
+  if(next!=='speaking')stopSinbadLipSyncAnalyser();
+  const copy=SINBAD_ASSISTANT_STATE_LABELS[sinbadState.language]||SINBAD_ASSISTANT_STATE_LABELS['en-US'];
+  const label=$('sinbadAvatarStatus');
+  if(label&&changed)label.textContent=copy[next]||next;
+  const floatButton=$('sinbadFloat');
+  if(floatButton)floatButton.setAttribute('aria-label',`Open Captain Sinbad — ${copy[next]||next}`);
+  if(next==='success')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='success')setSinbadAssistantState('idle');},2200));
+  if(next==='warning')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='warning')setSinbadAssistantState('idle');},4200));
+  if(next==='error')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='error')setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');},6000));
+  return next;
+}
+preloadSinbadAvatarAssets();
+if(typeof document!=='undefined'&&'visibilityState'in document){
+  document.addEventListener('visibilitychange',()=>{
+    document.documentElement.classList.toggle('sinbad-tab-hidden',document.visibilityState==='hidden');
+  },{passive:true});
+}
+
 function setSinbadVoiceUI(){
   const button=$('toggleSinbadVoice');if(!button)return;
   button.textContent=sinbadState.voiceEnabled?'🔊 Voice: On':'🔇 Voice: Off';
@@ -370,16 +520,42 @@ function splitSpeechByLanguage(text,fallbackLang){
   return runs.length?runs:[{lang:fallbackLang,text}];
 }
 function pickVoiceForLang(voices,lang){
-  const root=lang.split('-')[0];
-  return voices.find(v=>v.lang.toLowerCase()===lang.toLowerCase())||voices.find(v=>v.lang.toLowerCase().startsWith(root))||voices.find(v=>/^en[-_]/i.test(v.lang))||null;
+  // Deliberately no cross-language fallback here: returning an English voice
+  // for a Turkish (or any other) run would silently mispronounce the text.
+  // Callers must handle a null result explicitly (surface it, don't guess).
+  const root=lang.split('-')[0].toLowerCase();
+  return voices.find(v=>v.lang.toLowerCase()===lang.toLowerCase())||voices.find(v=>v.lang.toLowerCase().startsWith(root))||null;
+}
+// Captain Sinbad's own voice profile (standard TTS provider). Values sit
+// inside the ranges the architecture decision specified (rate 0.94-0.98,
+// pitch 0.88-0.94, volume 1.0); pin them here as named constants so any
+// future local retuning has one place to change.
+const SINBAD_VOICE_PROFILE={rate:.96,pitch:.91,volume:1};
+function pickSinbadTurkishVoice(voices){
+  const trVoices=voices.filter(v=>v.lang.toLowerCase()==='tr-tr'||v.lang.toLowerCase().startsWith('tr'));
+  if(!trVoices.length)return null;
+  // Best-effort warmer/male-leaning preference by voice name - the Web
+  // Speech API exposes no gender field, so this is a name heuristic only,
+  // not a guarantee. Falls back to any tr-TR voice rather than guessing wrong.
+  const preferred=/tolga|ahmet|mehmet|emre|burak|kaan|ali|erkek|male/i;
+  const avoid=/yelda|filiz|kad[ıi]n|female/i;
+  return trVoices.find(v=>preferred.test(v.name))||trVoices.find(v=>!avoid.test(v.name))||trVoices[0];
 }
 let sinbadVoiceAudio=null;
 let sinbadVoiceObjectUrl='';
 let sinbadVoiceAbort=null;
-function finishSinbadVoice(){
+// The single idempotent end-of-turn path for both voice providers. Always
+// resolves the avatar out of thinking/preparing-voice/speaking - never
+// leaves it stuck on an early return, error, or timeout. `forceState` lets a
+// caller pick a specific transient outcome (e.g. 'warning' for "no suitable
+// voice this turn"); otherwise it falls back to the real persistent voice
+// preference so a transient hiccup never misrepresents that preference.
+function finishSinbadVoice(forceState){
   if(sinbadVoiceObjectUrl)URL.revokeObjectURL(sinbadVoiceObjectUrl);
   sinbadVoiceObjectUrl='';sinbadVoiceAudio=null;sinbadVoiceAbort=null;
-  sinbadAwaitingAnswer=false;scheduleSinbadListening();
+  sinbadAwaitingAnswer=false;
+  setSinbadAssistantState(forceState||(sinbadState.voiceEnabled?'idle':'voice-disabled'));
+  scheduleSinbadListening();
 }
 function stopSinbadVoice(){
   sinbadVoiceAbort?.abort();sinbadVoiceAbort=null;
@@ -387,27 +563,102 @@ function stopSinbadVoice(){
   if(sinbadVoiceObjectUrl)URL.revokeObjectURL(sinbadVoiceObjectUrl);
   sinbadVoiceObjectUrl='';sinbadVoiceAudio=null;
   window.speechSynthesis?.cancel();
+  if(sinbadAssistantState==='speaking'||sinbadAssistantState==='preparing-voice')setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');
 }
-function speakSinbadFallback(text){
-  if(!sinbadState.voiceEnabled||!('speechSynthesis'in window)){sinbadAwaitingAnswer=false;scheduleSinbadListening();return false;}
-  const voices=speechSynthesis.getVoices().filter(voice=>voice.localService===true);
+let sinbadStandardBoundaryTimer=null;
+function sinbadStandardVoiceTick(){
+  sinbadAssistantElements().forEach(el=>el.classList.add('sinbad-voice-tick'));
+  clearTimeout(sinbadStandardBoundaryTimer);
+  sinbadStandardBoundaryTimer=setTimeout(()=>sinbadAssistantElements().forEach(el=>el.classList.remove('sinbad-voice-tick')),160);
+}
+// Default voice provider: low-latency browser speechSynthesis ('standard').
+// speakSinbadXttsClone (GPU-dependent Yasemin voice clone) is kept fully
+// functional below as an optional provider for later - not deleted, not
+// wired as default. Both providers are called through speakSinbad() below,
+// which is the single entry point every existing call site already uses.
+// Bumped once per call so a stale earlier call (still waiting on a timer or
+// a 'voiceschanged' event) can recognize a newer call has taken over and
+// stop touching shared state/UI - never let an old request finish over a
+// newer one.
+let sinbadStandardSpeechGeneration=0;
+function speakSinbadStandard(text,onVoiceReady){
+  const myGeneration=++sinbadStandardSpeechGeneration;
+  let announced=false;
+  const announce=()=>{if(!announced){announced=true;onVoiceReady?.();}};
+  const status=$('sinbadKnowledgeStatus');
+  if(!sinbadState.voiceEnabled||!('speechSynthesis'in window)){announce();finishSinbadVoice();return;}
+  const voices=speechSynthesis.getVoices();
   if(!voices.length){
-    speechSynthesis.onvoiceschanged=()=>{speechSynthesis.onvoiceschanged=null;speakSinbadFallback(text);};
-    return false;
+    let settled=false;
+    let voiceWaitTimer;
+    const onVoicesChanged=()=>{
+      if(myGeneration!==sinbadStandardSpeechGeneration||settled||!speechSynthesis.getVoices().length)return; // stale call or still-empty list
+      settled=true;
+      clearTimeout(voiceWaitTimer);
+      speechSynthesis.removeEventListener('voiceschanged',onVoicesChanged);
+      speakSinbadStandard(text,onVoiceReady);
+    };
+    voiceWaitTimer=setTimeout(()=>{
+      if(myGeneration!==sinbadStandardSpeechGeneration||settled)return;
+      settled=true;
+      speechSynthesis.removeEventListener('voiceschanged',onVoicesChanged);
+      // No suitable voice for this turn - a transient work-status, not a
+      // change to the user's persistent voice preference, so this resolves
+      // to 'warning' (auto-clears) rather than 'voice-disabled'.
+      if(status)status.textContent='Uygun Türkçe ses bulunamadı · metin modunda devam ediliyor';
+      announce();
+      finishSinbadVoice('warning');
+    },1500);
+    speechSynthesis.addEventListener('voiceschanged',onVoicesChanged);
+    return;
   }
   if(sinbadIsListening)sinbadRecognition?.stop();
   speechSynthesis.cancel();
-  const cleanText=String(text).replace(/[\u2022*_#]/g,' ');
+  setSinbadAssistantState('preparing-voice');
+  const cleanText=String(text).replace(/[•*_#]/g,' ').trim();
+  if(!cleanText){announce();finishSinbadVoice();return;}
   const runs=splitSpeechByLanguage(cleanText,sinbadState.language);
   let index=0;
+  let anyVoiceQueued=false;
   const speakNext=()=>{
-    if(index>=runs.length){sinbadAwaitingAnswer=false;scheduleSinbadListening();return;}
+    if(myGeneration!==sinbadStandardSpeechGeneration)return; // a newer speak request has taken over
+    if(index>=runs.length){
+      if(!anyVoiceQueued){
+        if(status)status.textContent='Uygun Türkçe ses bulunamadı · metin modunda devam ediliyor';
+        announce();
+        finishSinbadVoice('warning');
+      }else{
+        if(status)status.textContent='';
+        finishSinbadVoice();
+      }
+      return;
+    }
     const run=runs[index++];
+    const isTurkish=run.lang.toLowerCase().startsWith('tr');
+    const voice=isTurkish?pickSinbadTurkishVoice(voices):pickVoiceForLang(voices,run.lang);
+    if(!voice){
+      // No silent fallback to a mismatched-language system voice: skip this
+      // run's audio, surface it plainly, still deliver the text answer.
+      if(status)status.textContent=isTurkish?'Uygun Türkçe ses bulunamadı':`${run.lang} için uygun ses bulunamadı`;
+      announce();
+      speakNext();
+      return;
+    }
+    anyVoiceQueued=true;
     const utterance=new SpeechSynthesisUtterance(run.text);
-    const voice=pickVoiceForLang(voices,run.lang);
-    utterance.voice=voice;utterance.lang=voice?.lang||run.lang;utterance.rate=.96;utterance.pitch=.92;
+    utterance.voice=voice;
+    utterance.lang=voice.lang;
+    utterance.rate=SINBAD_VOICE_PROFILE.rate;utterance.pitch=SINBAD_VOICE_PROFILE.pitch;utterance.volume=SINBAD_VOICE_PROFILE.volume;
+    // Only the real 'speaking has actually started' signal flips the avatar -
+    // never the moment we merely queued/prepared the utterance.
+    utterance.onstart=()=>{if(myGeneration!==sinbadStandardSpeechGeneration)return;announce();setSinbadAssistantState('speaking');};
+    utterance.onboundary=()=>{if(myGeneration===sinbadStandardSpeechGeneration)sinbadStandardVoiceTick();};
     utterance.onend=speakNext;
-    utterance.onerror=speakNext;
+    utterance.onerror=()=>{
+      if(myGeneration!==sinbadStandardSpeechGeneration)return;
+      if(status)status.textContent='Standart ses okunamadı';
+      speakNext();
+    };
     speechSynthesis.speak(utterance);
   };
   speakNext();
@@ -439,24 +690,37 @@ function playSinbadCloneBlob(blob,controller){
       if(sinbadVoiceAudio===audio)sinbadVoiceAudio=null;
       URL.revokeObjectURL(objectUrl);
       if(sinbadVoiceObjectUrl===objectUrl)sinbadVoiceObjectUrl='';
+      stopSinbadLipSyncAnalyser();
     };
+    // 'playing' fires only once audio is actually producing sound - this is
+    // the real signal the task requires, not the fetch/announce moment.
+    audio.addEventListener('playing',()=>{
+      if(sinbadVoiceAbort!==controller)return;
+      setSinbadAssistantState('speaking');
+      startSinbadLipSyncAnalyser(audio);
+    },{once:true});
     audio.onended=()=>{cleanup();resolve();};
     audio.onerror=()=>{cleanup();reject(new Error('XTTS cloned audio playback failed'));};
     controller.signal.addEventListener('abort',()=>{audio.pause();audio.src='';cleanup();resolve();},{once:true});
     audio.play().catch(error=>{cleanup();reject(error);});
   });
 }
-async function speakSinbad(text,onVoiceReady){
+// Optional GPU-dependent clone-voice provider. Kept fully functional per the
+// architecture decision (not deleted), but not the active default - see
+// sinbadVoiceProvider below. UI-facing status text is deliberately generic
+// ("klon ses"), no voice-clone identity is named in the interface.
+async function speakSinbadXttsClone(text,onVoiceReady){
   let announced=false;
   const announce=()=>{if(!announced){announced=true;onVoiceReady?.();}};
-  if(!sinbadState.voiceEnabled){announce();sinbadAwaitingAnswer=false;scheduleSinbadListening();return;}
+  if(!sinbadState.voiceEnabled){announce();finishSinbadVoice();return;}
   if(sinbadIsListening)sinbadRecognition?.stop();
   stopSinbadVoice();
-  const cleanText=String(text).replace(/[\u2022*_#]/g,' ').trim();
+  const cleanText=String(text).replace(/[•*_#]/g,' ').trim();
   if(!cleanText){finishSinbadVoice();return;}
   const chunks=splitSinbadCloneChunks(cleanText);
   const status=$('sinbadKnowledgeStatus');
   const controller=new AbortController();sinbadVoiceAbort=controller;
+  setSinbadAssistantState('preparing-voice');
   let timedOut=false;
   const loadChunk=async index=>{
     const timeout=setTimeout(()=>{timedOut=true;controller.abort();},150000);
@@ -472,11 +736,11 @@ async function speakSinbad(text,onVoiceReady){
     let pendingChunk=loadChunk(0);
     for(let index=0;index<chunks.length;index++){
       if(sinbadVoiceAbort!==controller)return;
-      if(status)status.textContent=`Yasemin klon sesi hazırlanıyor · ${index+1}/${chunks.length}`;
+      if(status)status.textContent=`Klon ses hazırlanıyor · ${index+1}/${chunks.length}`;
       const blob=await pendingChunk;
       if(sinbadVoiceAbort!==controller)return;
       pendingChunk=index+1<chunks.length?loadChunk(index+1):null;
-      if(status)status.textContent=`Yasemin XTTS klon sesi aktif · ${index+1}/${chunks.length}`;
+      if(status)status.textContent=`Klon ses aktif · ${index+1}/${chunks.length}`;
       announce();
       await playSinbadCloneBlob(blob,controller);
     }
@@ -484,12 +748,23 @@ async function speakSinbad(text,onVoiceReady){
   }catch(error){
     if(sinbadVoiceAbort!==controller)return;
     if(error?.name==='AbortError'&&!timedOut)return;
-    console.info('Sinbad XTTS clone unavailable; checking local device voice',error?.message||error);
+    console.warn('Sinbad XTTS clone unavailable',error);
+    setSinbadAssistantState('error');
     announce();stopSinbadVoice();
-    const fallback=speakSinbadFallback(cleanText);
-    if(status)status.textContent=fallback?(timedOut?'XTTS zaman aşımı · cihaz içi standart ses aktif':'XTTS kullanılamıyor · cihaz içi standart ses aktif'):(timedOut?'XTTS zaman aşımı · güvenilir cihaz içi ses bulunamadı':'XTTS kullanılamıyor · güvenilir cihaz içi ses bulunamadı');
+    if(status)status.textContent=timedOut?'Klon ses zaman aşımına uğradı':'Klon ses üretilemedi';
     sinbadAwaitingAnswer=false;scheduleSinbadListening();
   }
+}
+// Provider switch: 'standard' (default, low-latency browser TTS) or
+// 'xtts-clone' (optional, GPU-dependent, manual opt-in only - not exposed in
+// the UI). Both providers share the exact same (text, onVoiceReady) call
+// shape and the exact same setSinbadAssistantState event contract, so
+// switching providers never requires touching a call site or the animation
+// wiring.
+let sinbadVoiceProvider='standard';
+function speakSinbad(text,onVoiceReady){
+  if(sinbadVoiceProvider==='xtts-clone')return speakSinbadXttsClone(text,onVoiceReady);
+  return speakSinbadStandard(text,onVoiceReady);
 }
 let sinbadRecognition=null;
 let sinbadIsListening=false;
@@ -525,7 +800,7 @@ function beginSinbadRecognition(){
   if(!sinbadHandsFreeEnabled||sinbadIsListening||sinbadAwaitingAnswer)return;
   sinbadRecognition=new Recognition();sinbadRecognition.lang=sinbadState.language;sinbadRecognition.continuous=false;sinbadRecognition.interimResults=true;sinbadRecognition.maxAlternatives=1;
   let finalTranscript='';
-  sinbadRecognition.onstart=()=>{sinbadIsListening=true;setListeningUI(sinbadWakeActive?speechCopy().listen:handsFreeMessage(),true);};
+  sinbadRecognition.onstart=()=>{sinbadIsListening=true;setListeningUI(sinbadWakeActive?speechCopy().listen:handsFreeMessage(),true);setSinbadAssistantState('listening');};
   sinbadRecognition.onresult=event=>{let interim='';for(let i=event.resultIndex;i<event.results.length;i++){const part=event.results[i][0].transcript;if(event.results[i].isFinal)finalTranscript+=part;else interim+=part;}$('sinbadInput').value=(finalTranscript||interim).trim();};
   sinbadRecognition.onerror=event=>{sinbadIsListening=false;if(event.error==='not-allowed'||event.error==='service-not-allowed'){sinbadHandsFreeEnabled=false;setListeningUI(speechCopy().denied,true);return;}if(!['no-speech','aborted'].includes(event.error))setListeningUI(`Microphone: ${event.error}`,true);};
   sinbadRecognition.onend=()=>{
@@ -535,7 +810,7 @@ function beginSinbadRecognition(){
     if(wakeMatch){sinbadWakeActive=true;command=heard.slice((wakeMatch.index||0)+wakeMatch[0].length).replace(/^[,.:;!?\s-]+/,'').trim();}
     else if(sinbadWakeActive)command=heard;
     if(command){sinbadWakeActive=false;sinbadAwaitingAnswer=true;$('sinbadInput').value=command;setListeningUI(speechCopy().heard,true);setTimeout(()=>sendToSinbad(command),250);}
-    else {if(wakeMatch)setListeningUI(speechCopy().listen,true);else $('sinbadInput').value='';scheduleSinbadListening(wakeMatch?150:500);}
+    else {if(wakeMatch)setListeningUI(speechCopy().listen,true);else $('sinbadInput').value='';if(sinbadAssistantState==='listening')setSinbadAssistantState('idle');scheduleSinbadListening(wakeMatch?150:500);}
   };
   try{sinbadRecognition.start();}catch(error){sinbadIsListening=false;setListeningUI(error.message||String(error),true);}
 }
@@ -582,6 +857,7 @@ function createPassagePlanDraft(){
   const text=SinbadCore.formatPlan(plan);$('passagePlanOutput').textContent=text;
   localStorage.setItem('atlas_last_passage_draft',JSON.stringify(plan));
   addSinbadMessage('sinbad',`Passage plan draft created for ${plan.title}. ${plan.sources.length} approved official source(s) cited. Captain approval and live navigation checks are still required.`);
+  setSinbadAssistantState('success');
 }
 async function copyPassagePlanDraft(){
   const text=$('passagePlanOutput').textContent;if(!text)return;
@@ -619,7 +895,7 @@ function syncBridgeWaypoint(event){
 }
 function validBridgeWaypoints(){
   const points=bridgeWaypoints.map((point,index)=>({name:point.name.trim()||`WP${index+1}`,lat:Number(point.lat),lon:Number(point.lon)}));
-  if(points.length<2||points.some(point=>!Number.isFinite(point.lat)||!Number.isFinite(point.lon)||Math.abs(point.lat)>90||Math.abs(point.lon)>180))throw new Error('Add at least two waypoints with valid latitude and longitude.');
+  if(points.length<2||points.some(point=>!Number.isFinite(point.lat)||!Number.isFinite(point.lon)||Math.abs(point.lat)>90||Math.abs(point.lon)>180))throw new Error(SINBAD_MISSING_WAYPOINTS_MESSAGE);
   return points;
 }
 function buildBridgeGpx(){
@@ -627,14 +903,15 @@ function buildBridgeGpx(){
   return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Sinbad Marine ECS" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">\n  <metadata><name>${bridgeXml(name)}</name><time>${created}</time><desc>Planning draft. Verify against current official charts and Notices to Mariners.</desc></metadata>\n  ${points.map(point=>`<wpt lat="${point.lat.toFixed(6)}" lon="${point.lon.toFixed(6)}"><name>${bridgeXml(point.name)}</name></wpt>`).join('\n  ')}\n  <rte><name>${bridgeXml(name)}</name><desc>Sinbad planning route — captain approval required.</desc>\n    ${points.map(point=>`<rtept lat="${point.lat.toFixed(6)}" lon="${point.lon.toFixed(6)}"><name>${bridgeXml(point.name)}</name></rtept>`).join('\n    ')}\n  </rte>\n</gpx>\n`;
 }
 function safeBridgeFilename(){return `${bridgeRouteName().replace(/[^a-z0-9_-]+/gi,'-').replace(/^-|-$/g,'')||'sinbad-route'}.gpx`;}
+const SINBAD_MISSING_WAYPOINTS_MESSAGE='Add at least two waypoints with valid latitude and longitude.';
 function downloadBridgeGpx(){
-  try{const blob=new Blob([buildBridgeGpx()],{type:'application/gpx+xml'}),link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=safeBridgeFilename();link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000);$('bridgeMessage').textContent='GPX downloaded. Import it in OpenCPN Route & Mark Manager.';}catch(error){$('bridgeMessage').textContent=error.message;}
+  try{const blob=new Blob([buildBridgeGpx()],{type:'application/gpx+xml'}),link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=safeBridgeFilename();link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000);$('bridgeMessage').textContent='GPX downloaded. Import it in OpenCPN Route & Mark Manager.';setSinbadAssistantState('success');}catch(error){$('bridgeMessage').textContent=error.message;setSinbadAssistantState(error.message===SINBAD_MISSING_WAYPOINTS_MESSAGE?'warning':'error');}
 }
 async function sendBridgeGpx(){
   try{
     const response=await fetch(`${SINBAD_BRIDGE_URL}/routes`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({filename:safeBridgeFilename(),name:bridgeRouteName(),gpx:buildBridgeGpx()})});
-    if(!response.ok)throw new Error(`Bridge returned ${response.status}`);const result=await response.json();$('bridgeMessage').textContent=`Route saved locally: ${result.path}. Import it from OpenCPN Route & Mark Manager.`;checkBridgeStatus();
-  }catch(error){$('bridgeMessage').textContent='Local Bridge is not reachable. Start bridge/start-sinbad-bridge.cmd, or use Download GPX.';}
+    if(!response.ok)throw new Error(`Bridge returned ${response.status}`);const result=await response.json();$('bridgeMessage').textContent=`Route saved locally: ${result.path}. Import it from OpenCPN Route & Mark Manager.`;checkBridgeStatus();setSinbadAssistantState('success');
+  }catch(error){$('bridgeMessage').textContent='Local Bridge is not reachable. Start bridge/start-sinbad-bridge.cmd, or use Download GPX.';setSinbadAssistantState(error.message===SINBAD_MISSING_WAYPOINTS_MESSAGE?'warning':'error');}
 }
 async function checkBridgeStatus(){
   const badge=$('bridgeStatus');if(!badge)return;
@@ -815,9 +1092,11 @@ async function sendToSinbad(text){
   addSinbadMessage('user',q);
   $('sinbadInput').value='';
   if(window.SinbadRouteVisualizer?.isPlotRequest?.(q)){
+    setSinbadAssistantState('thinking');
     const plotted=await prepareNavigationPlotFromConversation(q);
     addSinbadMessage('sinbad',plotted.message);speakSinbad(plotted.message);return;
   }
+  setSinbadAssistantState('thinking');
   $('sinbadThinking').classList.remove('hidden');
   setTimeout(async()=>{
     const answer=await sinbadLocalAnswer(q);
@@ -830,7 +1109,8 @@ $('sinbadInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey)
 document.querySelectorAll('.sinbad-prompt').forEach(b=>b.addEventListener('click',()=>sendToSinbad(b.textContent)));
 $('sinbadFloat').addEventListener('click',()=>openWorkspace('sinbad'));
 $('backToSinbad')?.addEventListener('click',()=>openWorkspace('sinbad'));
-$('toggleSinbadVoice')?.addEventListener('click',()=>{sinbadState.voiceEnabled=!sinbadState.voiceEnabled;localStorage.setItem('atlas_sinbad_voice',sinbadState.voiceEnabled?'on':'off');setSinbadVoiceUI();if(!sinbadState.voiceEnabled)stopSinbadVoice();});
+$('toggleSinbadVoice')?.addEventListener('click',()=>{sinbadState.voiceEnabled=!sinbadState.voiceEnabled;localStorage.setItem('atlas_sinbad_voice',sinbadState.voiceEnabled?'on':'off');setSinbadVoiceUI();if(!sinbadState.voiceEnabled){stopSinbadVoice();setSinbadAssistantState('voice-disabled');}else if(sinbadAssistantState==='voice-disabled')setSinbadAssistantState('idle');});
+setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');
 $('stopSinbadVoice')?.addEventListener('click',stopSinbadVoice);
 $('startSinbadListening')?.addEventListener('click',startSinbadListening);
 $('testSinbadVoice')?.addEventListener('click',()=>{sinbadState.voiceEnabled=true;localStorage.setItem('atlas_sinbad_voice','on');setSinbadVoiceUI();speakSinbad(speechCopy().test);});
@@ -1677,6 +1957,7 @@ async function sinbadCloudKnowledgeAnswer(question){
 }
 async function performSinbadWebSearch(){
   const question=pendingSinbadWebQuestion;if(!question)return;$('sinbadWebConsent').classList.add('hidden');pendingSinbadWebQuestion='';
+  setSinbadAssistantState('thinking');
   $('sinbadThinking').classList.remove('hidden');
   try{
     const history=sinbadState.messages.slice(-12).map(message=>({role:message.role==='sinbad'?'assistant':'user',content:message.text}));

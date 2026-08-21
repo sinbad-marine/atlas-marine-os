@@ -425,20 +425,11 @@
 
   <div class="sinbad-layout">
     <aside class="sinbad-profile">
-      <div class="sinbad-avatar large" aria-label="Captain Sinbad cartoon avatar">
-        <svg viewBox="0 0 160 160" role="img" aria-label="Friendly sailor Captain Sinbad">
-          <circle cx="80" cy="80" r="74" fill="#102b40" stroke="#e2bf72" stroke-width="5"/>
-          <path d="M40 56 Q80 18 120 56 L113 72 H47 Z" fill="#f4f7fa"/>
-          <rect x="47" y="51" width="66" height="13" rx="6" fill="#e2bf72"/>
-          <circle cx="80" cy="90" r="35" fill="#d69c6b"/>
-          <path d="M52 85 Q80 58 108 85 Q104 122 80 128 Q56 122 52 85" fill="#7a4f2f"/>
-          <path d="M60 91 Q68 84 74 91" stroke="#18212a" stroke-width="4" fill="none" stroke-linecap="round"/>
-          <path d="M86 91 Q94 84 101 91" stroke="#18212a" stroke-width="4" fill="none" stroke-linecap="round"/>
-          <path d="M66 106 Q80 116 94 106" stroke="#f4f7fa" stroke-width="4" fill="none" stroke-linecap="round"/>
-          <path d="M54 122 L42 149 H118 L106 122 Q80 138 54 122" fill="#0a3d62"/>
-          <path d="M80 124 L72 145 H88 Z" fill="#e2bf72"/>
-        </svg>
+      <div class="sinbad-avatar large" data-state="idle" role="img" aria-label="Captain Sinbad, AI marine intelligence guide">
+        <img class="sinbad-avatar-img" src="./assets/captain-sinbad/captain-sinbad-idle-master.png" alt="">
+        <span class="sinbad-status-light" aria-hidden="true"></span>
       </div>
+      <p id="sinbadAvatarStatus" class="sinbad-status-line" aria-live="polite">Ready</p>
       <h3>Captain Sinbad</h3>
       <span class="badge">Atlas AI</span>
       <p class="muted">“Every Voyage Adds Knowledge.”</p>
@@ -783,18 +774,10 @@
 </main>
 
 
-<button id="sinbadFloat" class="sinbad-float" type="button" aria-label="Open Captain Sinbad">
-  <div class="sinbad-avatar small">
-    <svg viewBox="0 0 160 160" aria-hidden="true">
-      <circle cx="80" cy="80" r="74" fill="#102b40" stroke="#e2bf72" stroke-width="5"/>
-      <path d="M40 56 Q80 18 120 56 L113 72 H47 Z" fill="#f4f7fa"/>
-      <rect x="47" y="51" width="66" height="13" rx="6" fill="#e2bf72"/>
-      <circle cx="80" cy="90" r="35" fill="#d69c6b"/>
-      <path d="M52 85 Q80 58 108 85 Q104 122 80 128 Q56 122 52 85" fill="#7a4f2f"/>
-      <path d="M60 91 Q68 84 74 91" stroke="#18212a" stroke-width="4" fill="none" stroke-linecap="round"/>
-      <path d="M86 91 Q94 84 101 91" stroke="#18212a" stroke-width="4" fill="none" stroke-linecap="round"/>
-      <path d="M66 106 Q80 116 94 106" stroke="#f4f7fa" stroke-width="4" fill="none" stroke-linecap="round"/>
-    </svg>
+<button id="sinbadFloat" class="sinbad-float" type="button" aria-label="Open Captain Sinbad — Ready">
+  <div class="sinbad-avatar small" data-state="idle" aria-hidden="true">
+    <img class="sinbad-avatar-img" src="./assets/captain-sinbad/captain-sinbad-idle-master.png" alt="">
+    <span class="sinbad-status-light" aria-hidden="true"></span>
   </div>
   <span>Ask Sinbad</span>
 </button>
