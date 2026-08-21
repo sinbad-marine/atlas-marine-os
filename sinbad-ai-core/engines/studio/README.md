@@ -1,7 +1,7 @@
-# Sinbad Studio Engine 0.1
+# Sinbad Studio Engine 0.4.3
 
 Sinbad Studio Engine is an offline-first, inert planning boundary for web,
-software and animation work. Version 0.1 produces deterministic project plans;
+software and animation work. The 0.1 foundation produces deterministic project plans;
 it does not write files, run commands, call a model, access a network, modify
 Sinbad Core or publish a result.
 
@@ -184,3 +184,8 @@ honest pass/fail output. It cannot modify source, execute, merge or publish.
 receipt and fails closed on schema, file-set, symlink/redirection, output hash,
 receipt hash or receipt-binding changes. It is strictly read-only and grants no
 execution or publication authority.
+
+The local Bridge may expose a read-only `/studio/status` capability summary for
+the Studio console. That endpoint reports installed runtime prerequisites and
+the fixed allow/deny boundary only. It cannot start a test, accept a command,
+read project content, grant an approval, merge, deploy or publish.
