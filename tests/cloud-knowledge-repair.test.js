@@ -32,6 +32,8 @@ test('named-source misses recover through title-matched knowledge chunks',()=>{
 
 test('server RAG resolves named publications by title before synthesis',()=>{
   assert.match(edge,/from\('document_knowledge'\)[\s\S]*?ilike\('title'/);
+  assert.match(edge,/title\.includes\(term\) \? 1 : 0/);
+  assert.match(edge,/b\.score - a\.score/);
   assert.match(edge,/\.in\('knowledge_id', titleMatches\.map/);
   assert.match(edge,/title\.includes\(term\) \? 3 : 0/);
   assert.match(edge,/APPROVED PRIVATE LIBRARY SOURCES/);
