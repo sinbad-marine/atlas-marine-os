@@ -495,8 +495,26 @@ function splitSpeechByLanguage(text,fallbackLang){
   return runs.length?runs:[{lang:fallbackLang,text}];
 }
 function pickVoiceForLang(voices,lang){
-  const root=lang.split('-')[0];
-  return voices.find(v=>v.lang.toLowerCase()===lang.toLowerCase())||voices.find(v=>v.lang.toLowerCase().startsWith(root))||voices.find(v=>/^en[-_]/i.test(v.lang))||null;
+  // Deliberately no cross-language fallback here: returning an English voice
+  // for a Turkish (or any other) run would silently mispronounce the text.
+  // Callers must handle a null result explicitly (surface it, don't guess).
+  const root=lang.split('-')[0].toLowerCase();
+  return voices.find(v=>v.lang.toLowerCase()===lang.toLowerCase())||voices.find(v=>v.lang.toLowerCase().startsWith(root))||null;
+}
+// Captain Sinbad's own voice profile (standard TTS provider). Values sit
+// inside the ranges the architecture decision specified (rate 0.94-0.98,
+// pitch 0.88-0.94, volume 1.0); pin them here as named constants so any
+// future local retuning has one place to change.
+const SINBAD_VOICE_PROFILE={rate:.96,pitch:.91,volume:1};
+function pickSinbadTurkishVoice(voices){
+  const trVoices=voices.filter(v=>v.lang.toLowerCase()==='tr-tr'||v.lang.toLowerCase().startsWith('tr'));
+  if(!trVoices.length)return null;
+  // Best-effort warmer/male-leaning preference by voice name - the Web
+  // Speech API exposes no gender field, so this is a name heuristic only,
+  // not a guarantee. Falls back to any tr-TR voice rather than guessing wrong.
+  const preferred=/tolga|ahmet|mehmet|emre|burak|kaan|ali|erkek|male/i;
+  const avoid=/yelda|filiz|kad[ıi]n|female/i;
+  return trVoices.find(v=>preferred.test(v.name))||trVoices.find(v=>!avoid.test(v.name))||trVoices[0];
 }
 let sinbadVoiceAudio=null;
 let sinbadVoiceObjectUrl='';
@@ -516,26 +534,57 @@ function stopSinbadVoice(){
   window.speechSynthesis?.cancel();
   if(sinbadAssistantState==='speaking'||sinbadAssistantState==='preparing-voice')setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');
 }
-function speakSinbadFallback(text){
-  if(!sinbadState.voiceEnabled||!('speechSynthesis'in window)){sinbadAwaitingAnswer=false;scheduleSinbadListening();return;}
+let sinbadStandardBoundaryTimer=null;
+function sinbadStandardVoiceTick(){
+  sinbadAssistantElements().forEach(el=>el.classList.add('sinbad-voice-tick'));
+  clearTimeout(sinbadStandardBoundaryTimer);
+  sinbadStandardBoundaryTimer=setTimeout(()=>sinbadAssistantElements().forEach(el=>el.classList.remove('sinbad-voice-tick')),160);
+}
+// Default voice provider: low-latency browser speechSynthesis ('standard').
+// speakSinbadXttsClone (GPU-dependent Yasemin voice clone) is kept fully
+// functional below as an optional provider for later - not deleted, not
+// wired as default. Both providers are called through speakSinbad() below,
+// which is the single entry point every existing call site already uses.
+function speakSinbadStandard(text,onVoiceReady){
+  let announced=false;
+  const announce=()=>{if(!announced){announced=true;onVoiceReady?.();}};
+  const status=$('sinbadKnowledgeStatus');
+  if(!sinbadState.voiceEnabled||!('speechSynthesis'in window)){announce();sinbadAwaitingAnswer=false;scheduleSinbadListening();return;}
   const voices=speechSynthesis.getVoices();
   if(!voices.length){
-    speechSynthesis.onvoiceschanged=()=>{speechSynthesis.onvoiceschanged=null;speakSinbadFallback(text);};
+    speechSynthesis.onvoiceschanged=()=>{speechSynthesis.onvoiceschanged=null;speakSinbadStandard(text,onVoiceReady);};
     return;
   }
   if(sinbadIsListening)sinbadRecognition?.stop();
   speechSynthesis.cancel();
-  const cleanText=String(text).replace(/[\u2022*_#]/g,' ');
+  setSinbadAssistantState('preparing-voice');
+  const cleanText=String(text).replace(/[\u2022*_#]/g,' ').trim();
+  if(!cleanText){announce();finishSinbadVoice();return;}
   const runs=splitSpeechByLanguage(cleanText,sinbadState.language);
   let index=0;
+  let noVoiceWarned=false;
   const speakNext=()=>{
-    if(index>=runs.length){sinbadAwaitingAnswer=false;scheduleSinbadListening();return;}
+    if(index>=runs.length){if(status)status.textContent='';finishSinbadVoice();return;}
     const run=runs[index++];
+    const isTurkish=run.lang.toLowerCase().startsWith('tr');
+    const voice=isTurkish?pickSinbadTurkishVoice(voices):pickVoiceForLang(voices,run.lang);
+    if(!voice&&!noVoiceWarned){
+      noVoiceWarned=true;
+      if(status)status.textContent=isTurkish?'Uygun tr-TR sesi bulunamad\u0131 \u00b7 sistemin varsay\u0131lan sesi kullan\u0131lacak':`${run.lang} i\u00e7in uygun ses bulunamad\u0131 \u00b7 sistemin varsay\u0131lan sesi kullan\u0131lacak`;
+    }
     const utterance=new SpeechSynthesisUtterance(run.text);
-    const voice=pickVoiceForLang(voices,run.lang);
-    utterance.voice=voice;utterance.lang=voice?.lang||run.lang;utterance.rate=.96;utterance.pitch=.92;
+    if(voice)utterance.voice=voice;
+    utterance.lang=voice?.lang||run.lang;
+    utterance.rate=SINBAD_VOICE_PROFILE.rate;utterance.pitch=SINBAD_VOICE_PROFILE.pitch;utterance.volume=SINBAD_VOICE_PROFILE.volume;
+    // Only the real 'speaking has actually started' signal flips the avatar -
+    // never the moment we merely queued/prepared the utterance.
+    utterance.onstart=()=>{announce();setSinbadAssistantState('speaking');};
+    utterance.onboundary=sinbadStandardVoiceTick;
     utterance.onend=speakNext;
-    utterance.onerror=speakNext;
+    utterance.onerror=()=>{
+      if(status)status.textContent='Standart ses okunamad\u0131';
+      speakNext();
+    };
     speechSynthesis.speak(utterance);
   };
   speakNext();
@@ -581,13 +630,17 @@ function playSinbadCloneBlob(blob,controller){
     audio.play().catch(error=>{cleanup();reject(error);});
   });
 }
-async function speakSinbad(text,onVoiceReady){
+// Optional GPU-dependent clone-voice provider. Kept fully functional per the
+// architecture decision (not deleted), but not the active default - see
+// sinbadVoiceProvider below. UI-facing status text is deliberately generic
+// ("klon ses"), no voice-clone identity is named in the interface.
+async function speakSinbadXttsClone(text,onVoiceReady){
   let announced=false;
   const announce=()=>{if(!announced){announced=true;onVoiceReady?.();}};
   if(!sinbadState.voiceEnabled){announce();sinbadAwaitingAnswer=false;scheduleSinbadListening();return;}
   if(sinbadIsListening)sinbadRecognition?.stop();
   stopSinbadVoice();
-  const cleanText=String(text).replace(/[\u2022*_#]/g,' ').trim();
+  const cleanText=String(text).replace(/[•*_#]/g,' ').trim();
   if(!cleanText){finishSinbadVoice();return;}
   const chunks=splitSinbadCloneChunks(cleanText);
   const status=$('sinbadKnowledgeStatus');
@@ -608,11 +661,11 @@ async function speakSinbad(text,onVoiceReady){
     let pendingChunk=loadChunk(0);
     for(let index=0;index<chunks.length;index++){
       if(sinbadVoiceAbort!==controller)return;
-      if(status)status.textContent=`Yasemin klon sesi hazırlanıyor · ${index+1}/${chunks.length}`;
+      if(status)status.textContent=`Klon ses hazırlanıyor · ${index+1}/${chunks.length}`;
       const blob=await pendingChunk;
       if(sinbadVoiceAbort!==controller)return;
       pendingChunk=index+1<chunks.length?loadChunk(index+1):null;
-      if(status)status.textContent=`Yasemin XTTS klon sesi aktif · ${index+1}/${chunks.length}`;
+      if(status)status.textContent=`Klon ses aktif · ${index+1}/${chunks.length}`;
       announce();
       await playSinbadCloneBlob(blob,controller);
     }
@@ -620,12 +673,23 @@ async function speakSinbad(text,onVoiceReady){
   }catch(error){
     if(sinbadVoiceAbort!==controller)return;
     if(error?.name==='AbortError'&&!timedOut)return;
-    console.warn('Sinbad XTTS clone unavailable; standard voice disabled',error);
+    console.warn('Sinbad XTTS clone unavailable',error);
     setSinbadAssistantState('error');
     announce();stopSinbadVoice();
-    if(status)status.textContent=timedOut?'XTTS klon sesi zaman aşımına uğradı · standart sese geçilmedi':'XTTS klon sesi üretilemedi · standart sese geçilmedi';
+    if(status)status.textContent=timedOut?'Klon ses zaman aşımına uğradı':'Klon ses üretilemedi';
     sinbadAwaitingAnswer=false;scheduleSinbadListening();
   }
+}
+// Provider switch: 'standard' (default, low-latency browser TTS) or
+// 'xtts-clone' (optional, GPU-dependent, manual opt-in only - not exposed in
+// the UI). Both providers share the exact same (text, onVoiceReady) call
+// shape and the exact same setSinbadAssistantState event contract, so
+// switching providers never requires touching a call site or the animation
+// wiring.
+let sinbadVoiceProvider='standard';
+function speakSinbad(text,onVoiceReady){
+  if(sinbadVoiceProvider==='xtts-clone')return speakSinbadXttsClone(text,onVoiceReady);
+  return speakSinbadStandard(text,onVoiceReady);
 }
 let sinbadRecognition=null;
 let sinbadIsListening=false;

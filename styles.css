@@ -99,6 +99,10 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-state="preparing-voice"] .sinbad-status-light{animation:sinbadCalmBlinkLight 1s ease-in-out infinite}
 
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-state="speaking"] .sinbad-avatar-img{animation:sinbadVoicePulse .5s ease-in-out infinite}
+  /* Real per-word cue from SpeechSynthesisUtterance's own onboundary event
+     (standard voice provider) - a brief, subtle emphasis, not a fabricated
+     continuous mouth-shape animation. */
+  html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar.sinbad-voice-tick .sinbad-avatar-img{transform:scale(1.018);transition:transform .12s ease-out}
 
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-state="success"] .sinbad-avatar-img{animation:sinbadNod .8s ease}
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-state="success"]::before,

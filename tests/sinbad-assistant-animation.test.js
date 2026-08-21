@@ -186,3 +186,65 @@ test('board-teaching state exists with real art wired, but is not fabricated a f
   assert.match(app,/'board-teaching':'captain-sinbad-board-teaching\.png'/);
   assert.doesNotMatch(app,/setSinbadAssistantState\('board-teaching'\)/);
 });
+
+// ---- Voice architecture decision: standard (low-latency browser TTS) is the
+// default provider; xtts-clone is preserved but optional. Both share one
+// event contract into the avatar state machine. ----
+
+test('standard is the default voice provider, xtts-clone is preserved but not deleted',()=>{
+  assert.match(app,/let sinbadVoiceProvider='standard';/);
+  assert.match(app,/function speakSinbad\(text,onVoiceReady\)\{\s*\n\s*if\(sinbadVoiceProvider==='xtts-clone'\)return speakSinbadXttsClone\(text,onVoiceReady\);\s*\n\s*return speakSinbadStandard\(text,onVoiceReady\);\s*\n\}/);
+  assert.match(app,/async function speakSinbadXttsClone\(text,onVoiceReady\)\{/);
+  assert.match(app,/function speakSinbadStandard\(text,onVoiceReady\)\{/);
+});
+
+test('a dedicated Sinbad voice profile exists with rate/pitch/volume inside the decided ranges',()=>{
+  assert.match(app,/const SINBAD_VOICE_PROFILE=\{rate:\.96,pitch:\.91,volume:1\};/);
+  assert.ok(.94<=.96&&.96<=.98,'rate must sit in 0.94-0.98');
+  assert.ok(.88<=.91&&.91<=.94,'pitch must sit in 0.88-0.94');
+});
+
+test('the standard provider prefers a tr-TR voice via a dedicated selector, never silently substituting a mismatched-language voice',()=>{
+  assert.match(app,/function pickSinbadTurkishVoice\(voices\)\{/);
+  assert.match(app,/const trVoices=voices\.filter\(v=>v\.lang\.toLowerCase\(\)==='tr-tr'\|\|v\.lang\.toLowerCase\(\)\.startsWith\('tr'\)\);/);
+  // the old cross-language English fallback in pickVoiceForLang must be gone
+  assert.doesNotMatch(app,/voices\.find\(v=>\/\^en\[-_\]\/i\.test\(v\.lang\)\)/);
+  assert.match(app,/return voices\.find\(v=>v\.lang\.toLowerCase\(\)===lang\.toLowerCase\(\)\)\|\|voices\.find\(v=>v\.lang\.toLowerCase\(\)\.startsWith\(root\)\)\|\|null;/);
+});
+
+test('when no suitable voice is found, the app surfaces this clearly instead of guessing a wrong-language voice',()=>{
+  const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function speakSinbadStandard')+3000);
+  assert.match(fn,/if\(!voice&&!noVoiceWarned\)\{/);
+  assert.match(fn,/bulunamad/); // "bulunamadı" (not found) - status text surfaces the gap
+  assert.match(fn,/if\(voice\)utterance\.voice=voice;/);
+});
+
+test('speaking (standard provider) starts only on the real utterance onstart event, never when merely queued',()=>{
+  const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function speakSinbadStandard')+3000);
+  assert.match(fn,/utterance\.onstart=\(\)=>\{announce\(\);setSinbadAssistantState\('speaking'\);\};/);
+  assert.match(fn,/setSinbadAssistantState\('preparing-voice'\);/);
+  // preparing-voice must be set before speechSynthesis.speak() is ever called
+  const preparingIdx=fn.indexOf("setSinbadAssistantState('preparing-voice')");
+  const speakCallIdx=fn.indexOf('speechSynthesis.speak(utterance)');
+  assert.ok(preparingIdx>0&&preparingIdx<speakCallIdx);
+});
+
+test('onboundary drives a real per-word cue (not a fabricated continuous loop), onend advances/finishes cleanly',()=>{
+  const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function speakSinbadStandard')+3000);
+  assert.match(fn,/utterance\.onboundary=sinbadStandardVoiceTick;/);
+  assert.match(fn,/utterance\.onend=speakNext;/);
+  assert.match(app,/function sinbadStandardVoiceTick\(\)\{/);
+  assert.match(css,/\.sinbad-avatar\.sinbad-voice-tick \.sinbad-avatar-img\{transform:scale\(1\.018\)/);
+});
+
+test('a standard-provider error never falls back to a fake state and still lets the conversation continue',()=>{
+  const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function speakSinbadStandard')+3000);
+  assert.match(fn,/utterance\.onerror=\(\)=>\{/);
+  assert.match(fn,/speakNext\(\);/);
+});
+
+test('no "Yasemin" branding appears in any user-visible status text (comments are fine, UI text is not)',()=>{
+  const uiStrings=app.match(/textContent=`[^`]*`|textContent='[^']*'/g)||[];
+  const leaked=uiStrings.filter(s=>/yasemin/i.test(s));
+  assert.deepEqual(leaked,[],`found Yasemin branding in UI-facing text: ${JSON.stringify(leaked)}`);
+});
