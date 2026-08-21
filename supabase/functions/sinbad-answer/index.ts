@@ -87,7 +87,15 @@ Deno.serve(async req => {
       if (!error && data) titleRows.push(...data);
     }
 
-    const titleMatches = [...new Map(titleRows.map(row => [row.id, row])).values()].slice(0, 8) as any[];
+    const titleMatches = [...new Map(titleRows.map(row => [row.id, row])).values()]
+      .map((row: any) => {
+        const title = String(row.title || '').toLocaleLowerCase('tr-TR');
+        const score = queryTerms.reduce((total, term) => total + (title.includes(term) ? 1 : 0), 0);
+        return { row, score };
+      })
+      .sort((a: any, b: any) => b.score - a.score || String(a.row.title).localeCompare(String(b.row.title)))
+      .slice(0, 8)
+      .map(({ row }: any) => row) as any[];
     const rows: any[] = [];
     if (titleMatches.length) {
       const { data, error } = await db.from('document_knowledge_chunks')
