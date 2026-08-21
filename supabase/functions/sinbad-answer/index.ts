@@ -76,17 +76,48 @@ Deno.serve(async req => {
       return json({ answer, sources: [], mode: 'core-safety-blocked', ...decisionSupport });
     }
 
-    const rows: any[] = [];
-    for (const term of words(question).slice(0, 5)) {
-      const { data, error } = await db.from('document_knowledge_chunks')
-        .select('content,chunk_index,document_knowledge!inner(title,classification,workspace_id)')
-        .eq('document_knowledge.workspace_id', workspaceId)
-        .ilike('content', `%${term}%`)
-        .limit(6);
-      if (!error && data) rows.push(...data);
+    const queryTerms = words(question);
+    const titleRows: any[] = [];
+    for (const term of queryTerms.slice(0, 6)) {
+      const { data, error } = await db.from('document_knowledge')
+        .select('id,title,classification')
+        .eq('workspace_id', workspaceId)
+        .ilike('title', `%${term.replace(/[%_]/g, '')}%`)
+        .limit(8);
+      if (!error && data) titleRows.push(...data);
     }
 
-    const unique = [...new Map(rows.map(row => [`${row.document_knowledge.title}:${row.chunk_index}`, row])).values()].slice(0, 10) as any[];
+    const titleMatches = [...new Map(titleRows.map(row => [row.id, row])).values()].slice(0, 8) as any[];
+    const rows: any[] = [];
+    if (titleMatches.length) {
+      const { data, error } = await db.from('document_knowledge_chunks')
+        .select('knowledge_id,content,chunk_index')
+        .in('knowledge_id', titleMatches.map(row => row.id))
+        .limit(500);
+      if (!error && data) {
+        const titles = new Map(titleMatches.map(row => [row.id, row]));
+        rows.push(...data.map(row => ({ ...row, document_knowledge: titles.get(row.knowledge_id) })));
+      }
+    }
+
+    if (!rows.length) {
+      for (const term of queryTerms.slice(0, 5)) {
+        const { data, error } = await db.from('document_knowledge_chunks')
+          .select('content,chunk_index,document_knowledge!inner(title,classification,workspace_id)')
+          .eq('document_knowledge.workspace_id', workspaceId)
+          .ilike('content', `%${term}%`)
+          .limit(6);
+        if (!error && data) rows.push(...data);
+      }
+    }
+
+    const rankedRows = rows.map(row => {
+      const haystack = `${row.document_knowledge?.title || ''} ${row.content || ''}`.toLocaleLowerCase('tr-TR');
+      const title = String(row.document_knowledge?.title || '').toLocaleLowerCase('tr-TR');
+      const score = queryTerms.reduce((total, term) => total + (haystack.includes(term) ? 1 : 0) + (title.includes(term) ? 3 : 0), 0);
+      return { row, score };
+    }).sort((a, b) => b.score - a.score);
+    const unique = [...new Map(rankedRows.map(({ row }) => [`${row.document_knowledge.title}:${row.chunk_index}`, row])).values()].slice(0, 8) as any[];
     const sources = unique.map((row: any, index: number) => ({ id: `S${index + 1}`, title: row.document_knowledge.title, chunk: row.chunk_index }));
     const context = unique.map((row: any, index: number) =>
       `[S${index + 1}] ${row.document_knowledge.title} — ${row.document_knowledge.classification}\n${String(row.content).slice(0, 2200)}`
