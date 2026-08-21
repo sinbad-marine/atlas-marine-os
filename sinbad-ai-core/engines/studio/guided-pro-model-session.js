@@ -3,12 +3,14 @@ const path=require('node:path');
 const protocol=require('./local-model-protocol.js');
 const gatewayModule=require('./local-model-loopback-gateway.js');
 const validator=require('./local-model-artifact-validator.js');
+const staticVerifier=require('./static-artifact-verifier.js');
 const proposalWriterModule=require('./local-model-proposal-writer.js');
 const nodeTransport=require('./node-loopback-http-transport.js');
 const previewPackagerModule=require('./scriptless-preview-packager.js');
 const previewWriterModule=require('./scriptless-preview-writer.js');
-const VERSION='0.2.0',MODE='GUIDED_PRO_LOCAL_MODEL_SESSION';
-const ARTIFACT_SCHEMA_INSTRUCTION='Return one JSON object only, with exactly these keys: version, projectSlug, artifacts. version must be 1. projectSlug must match lowercase letters, digits and hyphens. artifacts must contain 1-16 objects with exactly path, mediaType and content. Every path must start with web/, software/ or animation/ and use only safe relative path segments. Allowed extensions are .html, .css, .js, .md, .json and .svg with matching media types. Do not use Markdown fences, explanations, external URLs, active HTML, unsafe commands, network APIs or Core/production actions.';
+const VERSION='0.3.0',MODE='GUIDED_PRO_LOCAL_MODEL_SESSION';
+const MEDIA_TYPE_INSTRUCTION=Object.entries(staticVerifier.TYPE_BY_EXTENSION).map(([extension,mediaType])=>`${extension}=${mediaType}`).join(', ');
+const ARTIFACT_SCHEMA_INSTRUCTION=`Return one JSON object only, with exactly these keys: version, projectSlug, artifacts. version must be 1. projectSlug must match lowercase letters, digits and hyphens. artifacts must contain 1-16 objects with exactly path, mediaType and content. Every path must start with web/, software/ or animation/ and use only safe relative path segments. Use this exact extension-to-mediaType mapping: ${MEDIA_TYPE_INSTRUCTION}. mediaType matching is case-sensitive and exact. Do not use Markdown fences, explanations, external URLs, active HTML, unsafe commands, network APIs or Core/production actions.`;
 const freeze=value=>{if(value&&typeof value==='object'&&!Object.isFrozen(value)){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 function create(options={}){
   const approvedBase=path.resolve(String(options.approvedBase||process.cwd())),clock=typeof options.clock==='function'?options.clock:Date.now;
@@ -22,4 +24,4 @@ function create(options={}){
   function status(){const actions={NEW:'PREPARE_LOCAL_MODEL_REQUEST',MODEL_CALL_READY:'APPROVE_ONE_LOOPBACK_MODEL_CALL',INPUT_BLOCKED:'CREATE_NEW_SESSION_WITH_REVISED_INPUT',PROPOSAL_BLOCKED:'CREATE_NEW_SESSION_WITH_REVISED_PROMPT',PROPOSAL_VERIFIED:'APPROVE_ISOLATED_PROPOSAL_WRITE',PROPOSAL_PERSISTED:'APPROVE_SCRIPTLESS_MODEL_PREVIEW_WRITE',PREVIEW_BLOCKED:'INSPECT_MODEL_PREVIEW_PACKAGE',LOCAL_PREVIEW_READY:'USER_MAY_OPEN_LOCAL_INDEX'};return snapshot('PRO_MODEL_SESSION_STATUS',actions[state]||'STOP');}
   return freeze({VERSION,MODE,approvedBase,prepare,generate,persist,createPreview,status});
 }
-module.exports=freeze({VERSION,MODE,ARTIFACT_SCHEMA_INSTRUCTION,create});
+module.exports=freeze({VERSION,MODE,MEDIA_TYPE_INSTRUCTION,ARTIFACT_SCHEMA_INSTRUCTION,create});
