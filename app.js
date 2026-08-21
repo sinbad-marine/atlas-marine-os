@@ -32,7 +32,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&
 
 document.querySelectorAll('[data-open]').forEach(x=>x.onclick=()=>openWorkspace(x.dataset.open));
 document.querySelectorAll('.close').forEach(x=>x.onclick=closeWorkspaces);
-function openWorkspace(id){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');$(id).scrollIntoView({behavior:'smooth'});renderAll();if(id==='enc-viewer')initEncViewer();if(id==='navigation-plot')initNavigationPlot()}
+function openWorkspace(id){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');$(id).scrollIntoView({behavior:'smooth'});renderAll();if(id==='enc-viewer')initEncViewer();if(id==='navigation-plot')initNavigationPlot();if(id==='studio-console')refreshStudioCapability()}
 function closeWorkspaces(){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));scrollTo({top:0,behavior:'smooth'})}
 
 let encMap=null,encChartLayer=null,encBathymetryLayer=null,encSeamarkLayer=null;
@@ -662,6 +662,7 @@ function speakSinbadStandard(text,onVoiceReady){
     speechSynthesis.speak(utterance);
   };
   speakNext();
+  return true;
 }
 function splitSinbadCloneChunks(text,maxLength=220){
   const sentences=String(text).match(/[^.!?…]+[.!?…]?/gu)||[String(text)];
@@ -863,6 +864,18 @@ async function copyPassagePlanDraft(){
   await navigator.clipboard.writeText(text);$('copyPassagePlan').textContent='Copied';setTimeout(()=>$('copyPassagePlan').textContent='Copy draft',1200);
 }
 const SINBAD_BRIDGE_URL='http://127.0.0.1:31983';
+async function refreshStudioCapability(){
+ const dot=$('studioStatusDot'),title=$('studioStatusTitle'),detail=$('studioStatusDetail'),boundary=$('studioBoundaryText');
+ if(!dot||!title||!detail)return;
+ dot.classList.remove('online');title.textContent='Checking local Studio runtime…';detail.textContent='Reading capability status from Sinbad Bridge.';
+ try{
+  const response=await fetch(`${SINBAD_BRIDGE_URL}/studio/status`,{cache:'no-store'});if(!response.ok)throw new Error(`Bridge returned ${response.status}`);const status=await response.json(),ready=status.status==='READY_FOR_APPROVAL_GATED_TESTS';
+  dot.classList.toggle('online',ready);title.textContent=ready?`Studio ${status.studioVersion} ready`:`Studio ${status.studioVersion||''} runtime incomplete`;
+  detail.textContent=`Docker installed: ${status.docker?.installed?'yes':'no'} · Docker running: ${status.docker?.processRunning?'yes':'no'} · WSL installed: ${status.wsl?.installed?'yes':'no'} · Core installed: ${status.core?.installed?'yes':'no'}`;
+  if(boundary)boundary.textContent=`Allowed: ${(status.allowed||[]).join(', ')}. Prohibited: ${(status.prohibited||[]).join(', ')}. Approval: ${status.approval||'required'}.`;
+ }catch(_){title.textContent='Local Studio service offline';detail.textContent='Start Sinbad Bridge on this Windows computer, then refresh. No remote fallback was used.';}
+}
+$('refreshStudioStatus')?.addEventListener('click',refreshStudioCapability);
 let bridgeWaypoints=[];
 function bridgeXml(value){return String(value??'').replace(/[<>&"']/g,ch=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&apos;'}[ch]));}
 function bridgeRouteName(){
@@ -1904,7 +1917,7 @@ async function sinbadCloudKnowledgeAnswer(question){
       // Older cloud deployments can return a polite "no source found" notice
       // as if it were a complete AI answer. Treat those notices as a miss so
       // the installed Ollama brain gets an opportunity to answer instead.
-      const cloudMiss=/yeterli kaynak bulunamad[ıi]|eşleşen bir kaynak bulamad[ıi]|AI bağlantısı henüz etkin|not enough (?:material|source)|no matching (?:knowledge|source)|keine ausreichende quelle|keine passende quelle/i.test(answer);
+      const cloudMiss=/yeterli kaynak bulunamad[ıi]|eşleşen bir kaynak bulamad[ıi]|AI bağlantısı henüz etkin|metni (?:yer almad[ıi]ğından|bulunmad[ıi]ğından)|kaynağa dayalı (?:olarak )?doğrulayam[ıi]yorum|not enough (?:material|source)|no matching (?:knowledge|source)|source text (?:is|was) not available|keine ausreichende quelle|keine passende quelle/i.test(answer);
       const normalizedAnswer=answer.toLocaleLowerCase('tr-TR')
         .replace(/[ıİ]/g,'i').replace(/[şŞ]/g,'s').replace(/[ğĞ]/g,'g')
         .replace(/[üÜ]/g,'u').replace(/[öÖ]/g,'o').replace(/[çÇ]/g,'c')
@@ -1918,8 +1931,24 @@ async function sinbadCloudKnowledgeAnswer(question){
     }
     if(trustedAiData?.needsWebPermission){if(status)status.textContent='Atlas Cloud has no answer · trying offline brain';return null;}
     const terms=question.toLocaleLowerCase(language).normalize('NFKD').replace(/[^a-z0-9çğıöşüа-яёء-ي ]/gi,' ').split(/\s+/).filter(x=>x.length>2).slice(0,8);if(!terms.length)return null;
-    const {data,error}=await cloudClient.from('document_knowledge_chunks').select('content,chunk_index,document_knowledge!inner(title,classification,workspace_id)').eq('document_knowledge.workspace_id',selectedWorkspaceId).ilike('content',`%${terms[0]}%`).limit(12);
-    if(error)throw error;if(!data?.length){if(status)status.textContent='Atlas Cloud has no answer · trying offline brain';return null;}
+    const titleRows=[];
+    for(const term of terms.slice(0,5)){
+      const {data,error}=await cloudClient.from('document_knowledge').select('id,title,classification').eq('workspace_id',selectedWorkspaceId).ilike('title',`%${term.replace(/[%_]/g,'')}%`).limit(6);
+      if(error)throw error;if(data)titleRows.push(...data);
+    }
+    const titleMatches=[...new Map(titleRows.map(row=>[row.id,row])).values()].slice(0,8);
+    let data=[];
+    if(titleMatches.length){
+      const {data:chunks,error}=await cloudClient.from('document_knowledge_chunks').select('knowledge_id,content,chunk_index').in('knowledge_id',titleMatches.map(row=>row.id)).limit(500);
+      if(error)throw error;
+      const titles=new Map(titleMatches.map(row=>[row.id,row]));
+      data=(chunks||[]).map(row=>({...row,document_knowledge:titles.get(row.knowledge_id)}));
+    }
+    if(!data.length){
+      const result=await cloudClient.from('document_knowledge_chunks').select('content,chunk_index,document_knowledge!inner(title,classification,workspace_id)').eq('document_knowledge.workspace_id',selectedWorkspaceId).ilike('content',`%${terms[0]}%`).limit(12);
+      if(result.error)throw result.error;data=result.data||[];
+    }
+    if(!data.length){if(status)status.textContent='Atlas Cloud has no answer · trying offline brain';return null;}
     const ranked=data.map(row=>({row,score:terms.reduce((n,t)=>n+(row.content.toLocaleLowerCase(language).includes(t)?1:0),0)})).sort((a,b)=>b.score-a.score).slice(0,4);
     const excerpts=ranked.map(({row})=>{const lower=row.content.toLocaleLowerCase(language),positions=terms.map(t=>lower.indexOf(t)).filter(n=>n>=0),at=positions.length?Math.min(...positions):0;return `• ${row.document_knowledge.title} [${row.document_knowledge.classification}]\n${row.content.slice(Math.max(0,at-180),at+650).replace(/\s+/g,' ').trim()}`;});
     if(status)status.textContent='Classified cloud archive active';
@@ -1970,7 +1999,10 @@ async function uploadCloudFiles(){
 async function loadCloudFiles(){
   if(!cloudClient || !selectedWorkspaceId)return;
   const bucket=$('cloudBucketSelect').value;
-  const {data,error}=await cloudClient.from('documents').select('id,title,original_filename,bucket_id,object_path,file_size_bytes,status,classification,created_at').eq('workspace_id',selectedWorkspaceId).eq('bucket_id',bucket).order('created_at',{ascending:false}).limit(100);
+  const search=($('cloudFileSearch')?.value||'').trim();
+  let query=cloudClient.from('documents').select('id,title,original_filename,bucket_id,object_path,file_size_bytes,status,classification,created_at').eq('workspace_id',selectedWorkspaceId).eq('bucket_id',bucket);
+  if(search)query=query.ilike('title',`%${search.replace(/[%_]/g,'')}%`);
+  const {data,error}=await query.order('created_at',{ascending:false}).limit(100);
   if(error){$('cloudFileList').textContent=error.message;return;}
   $('cloudFileList').innerHTML=data?.length ? data.map(d=>`
     <article class="cloud-file-card">
@@ -1982,9 +2014,29 @@ async function loadCloudFiles(){
         <button class="btn cloud-share-file" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}" data-name="${cloudEsc(d.original_filename)}">Share</button>
         ${roleCanManageLibrary()?`<button class="btn cloud-rename-file" data-id="${cloudEsc(d.id)}" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}" data-name="${cloudEsc(d.original_filename)}">Rename</button>
         <button class="btn cloud-index-file" data-id="${cloudEsc(d.id)}">Index AI</button>
+        <button class="btn cloud-repair-knowledge" data-id="${cloudEsc(d.id)}" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}" data-name="${cloudEsc(d.original_filename)}">Repair AI text</button>
         <button class="btn danger cloud-delete-file" data-id="${cloudEsc(d.id)}" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}">Delete</button>`:''}
       </div>
     </article>`).join('') : 'No cloud files in this category.';
+}
+async function repairCloudDocumentKnowledge(documentId,bucket,path,filename){
+  const progress=$('cloudUploadProgress');
+  try{
+    if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId)throw new Error('Atlas Cloud workspace is not connected.');
+    if(!roleCanManageLibrary())throw new Error('Only an authorized library manager can repair AI text.');
+    if(progress)progress.textContent=`Downloading ${filename} for AI text repair…`;
+    const {data:blob,error:downloadError}=await cloudClient.storage.from(bucket).download(path);
+    if(downloadError)throw downloadError;
+    const file=new File([blob],filename||'atlas-document',{type:blob.type||''});
+    const text=await extractDocumentText(file,message=>{if(progress)progress.textContent=`${filename}: ${message}`;});
+    if(!text.trim())throw new Error('No machine-readable text was extracted. OCR or a text counterpart is required.');
+    const result=await saveDocumentKnowledge(documentId,file,text,bucket);
+    if(progress)progress.textContent=`✓ AI text repaired: ${filename} · ${result.chunks} chunk(s) · ${result.classification}`;
+    return result;
+  }catch(error){
+    if(progress)progress.textContent=`⚠ AI text repair failed for ${filename}: ${error.message||error}`;
+    throw error;
+  }
 }
 async function openCloudFile(bucket,path,filename=''){
   if(bucket==='nautical-charts'){
@@ -2551,6 +2603,8 @@ $('settingsMemberList')?.addEventListener('click',event=>{
 });
 $('uploadCloudFiles').addEventListener('click',uploadCloudFiles);
 $('refreshCloudFiles').addEventListener('click',loadCloudFiles);
+$('searchCloudFiles')?.addEventListener('click',loadCloudFiles);
+$('cloudFileSearch')?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();loadCloudFiles();}});
 $('cloudBucketSelect').addEventListener('change',loadCloudFiles);
 $('cloudFileList').addEventListener('click',e=>{
   const o=e.target.closest('.cloud-open-file');
@@ -2558,12 +2612,14 @@ $('cloudFileList').addEventListener('click',e=>{
   const s=e.target.closest('.cloud-share-file');
   const r=e.target.closest('.cloud-rename-file');
   const i=e.target.closest('.cloud-index-file');
+  const k=e.target.closest('.cloud-repair-knowledge');
   const x=e.target.closest('.cloud-delete-file');
   if(o)openCloudFile(o.dataset.bucket,o.dataset.path,o.dataset.name||'');
   if(d)downloadCloudFile(d.dataset.bucket,d.dataset.path,d.dataset.name);
   if(s)shareCloudFile(s.dataset.bucket,s.dataset.path,s.dataset.name);
   if(r)renameCloudFile(r.dataset.id,r.dataset.bucket,r.dataset.path,r.dataset.name);
   if(i)indexCloudDocument(i.dataset.id);
+  if(k)repairCloudDocumentKnowledge(k.dataset.id,k.dataset.bucket,k.dataset.path,k.dataset.name).catch(()=>{});
   if(x)deleteCloudFile(x.dataset.id,x.dataset.bucket,x.dataset.path);
 });
 $('memberList').addEventListener('click',e=>{

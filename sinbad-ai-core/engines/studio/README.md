@@ -1,7 +1,7 @@
-# Sinbad Studio Engine 0.1
+# Sinbad Studio Engine 0.4.3
 
 Sinbad Studio Engine is an offline-first, inert planning boundary for web,
-software and animation work. Version 0.1 produces deterministic project plans;
+software and animation work. The 0.1 foundation produces deterministic project plans;
 it does not write files, run commands, call a model, access a network, modify
 Sinbad Core or publish a result.
 
@@ -37,3 +37,158 @@ active HTML/SVG/CSS content, and rejects command/runtime capabilities. A clean
 bundle receives an immutable per-file SHA-256 manifest and a process-local
 authentic static-preview report. The report is evidence for a later gate; it is
 not permission to run, publish or connect the generated project.
+
+`persisted-workspace-verifier.js` re-verifies a written sandbox project against
+that process-local static report. It requires the exact expected file set and
+matching byte counts and SHA-256 hashes, and rejects redirected roots, symbolic
+links, junctions and special filesystem entries. It only reads files: it does
+not render or execute generated content, write changes, access a network or
+grant preview/publish authority. A clean result is evidence for a later,
+scriptless local-preview packaging gate.
+
+`scriptless-preview-packager.js` rechecks every selected persisted file against
+the bound verification report, excludes JavaScript, removes HTML script tags,
+and injects a restrictive offline Content Security Policy. It returns a new
+immutable package in memory only. It neither writes nor opens the preview and
+does not expose execution, rendering, network, deployment or publish methods.
+
+`scriptless-preview-writer.js` is the separate persistence boundary for that
+package. A short-lived, single-use authorization is bound to one authentic
+package and one manifest. The writer atomically creates a new project beneath
+the exact `studio-previews/` root, refuses overwrite and redirected roots, and
+rechecks all artifact hashes before writing. It never opens a browser, renders,
+executes, connects or publishes the preview.
+
+`guided-studio-session.js` joins the gates into one finite offline workflow. It
+guides the caller from a brief to a verified draft, requests the exact sandbox
+and preview-write approvals at the correct stages, and reports a concrete next
+action when input, policy or integrity blocks progress. It never weakens the
+underlying process-local authenticity boundaries and still exposes no command,
+browser-open, model/network, Core-write or publishing capability.
+
+`studio-acceptance-manifest.js` freezes the finite Studio 0.1 acceptance scope.
+It distinguishes implemented offline draft/verification/preview capabilities
+from prohibited actions and honest limitations. In particular, this foundation
+uses deterministic bounded templates; it is not itself a local language model.
+Grok, Gemini and Claude cannot operate offline, and any future local-model or
+explicit online-review adapter remains a separate product and authorization
+decision.
+
+## Pro 0.2 foundation
+
+`local-model-protocol.js` begins the Pro boundary without installing or calling
+a model. It accepts only explicit HTTP loopback endpoints on an allowlisted API
+path, validates bounded model identity and prompt fields, and normalizes common
+local-provider response shapes as untrusted `DATA_ONLY` drafts. The module has
+no transport, shell, installer or downloader. A real localhost connection must
+remain behind a later explicit authorization and timeout boundary.
+
+`local-model-loopback-gateway.js` implements that next boundary without bundling
+a network client. An injected transport can be invoked once only after a short-
+lived authorization bound to one authentic request, endpoint and model. The
+gateway enforces timeout, HTTP/JSON and wire-size checks, consumes authorization
+before transport, and marks every result untrusted `DATA_ONLY`. It cannot reach
+a remote host because the authenticated protocol request is loopback-only.
+
+`node-loopback-http-transport.js` is the concrete Node transport for that gate.
+It revalidates the endpoint, canonicalizes `localhost` to the numeric loopback
+address, permits only bounded POST JSON, honors abort signals, requires a JSON
+response and stops reading at the caller's byte limit. It does not follow
+redirects and exposes no generic remote client, shell, installer or publisher.
+
+`local-model-artifact-validator.js` treats the returned model text as hostile
+until it passes an exact JSON schema, bounded artifact count/bytes, fixed domain
+roots, duplicate/traversal rejection and the same static artifact policy used by
+the deterministic Studio compiler. A clean proposal remains explicitly
+untrusted `DATA_ONLY`, stays in memory, and cannot be written without another
+separate authorization boundary.
+
+`local-model-proposal-writer.js` provides that isolated authorization boundary.
+It atomically creates a new, never-overwritten project under
+`studio-proposals/`, rechecks every artifact hash, and adds a non-executable
+evidence marker that labels the material untrusted and not publishable. It does
+not merge into `studio-workspaces`, open, execute, connect or publish anything.
+
+`guided-pro-model-session.js` composes the Pro boundaries into a finite state
+machine. Model-call approval and proposal-write approval remain separate; an
+invalid input, transport failure or policy violation produces a concrete safe
+next action. A successful session ends at isolated, untrusted proposal storage
+for human review—not execution, merge, Core modification or publication.
+
+For local artifact sessions the protocol requests provider JSON mode, disables
+supported reasoning traces, fixes temperature to zero and bounds generation to
+1024 tokens. The authorization timeout remains finite (maximum 60 seconds) so
+CPU-only local runtimes can complete without creating an unbounded wait.
+
+Verified local-model proposals can also enter the existing scriptless preview
+packager. JavaScript is excluded, HTML receives the offline CSP, and a third
+single-use authorization is required before `studio-previews/` is created. The
+guided Pro session never opens that preview automatically.
+
+`studio-pro-acceptance-manifest.js` freezes the local-model completion meaning
+and the real runtime probes observed on 2026-08-21. Those observations are
+explicitly non-portable. Exact verified Studio software tests can now run only
+through the separately authorized Pro 0.4 Docker boundary described below.
+General generated-code execution, web or animation script execution, and
+containerized model inference remain blocked. The measured model-inference
+blocker is the Ollama/WSL2 Intel Arc completion stall recorded in that manifest;
+the system does not silently fall back to a weaker isolation mode.
+
+## Pro 0.3 review foundation
+
+`model-proposal-diff-planner.js` compares an authentic verified workspace with
+an authentic model proposal after rechecking the exact persisted file set and
+hashes. It emits only `CREATE`, `UPDATE`, `UNCHANGED` and `PRESERVE`; deletion is
+always denied. The result is a read-only human-review plan and exposes no patch,
+write, execution, network or publication capability.
+
+`model-proposal-revision-writer.js` can materialize an approved diff only as a
+new atomic project beneath `studio-revisions/`. Before copying it reruns the
+read-only planner and rehashes every source file. Existing files absent from the
+proposal are preserved, proposed files may update only the derived staging tree,
+and the original workspace is never modified or deleted.
+
+`studio-pro-03-acceptance-manifest.js` freezes this finite Pro 0.3 completion
+scope and the observed host sandbox gap. Pro 0.3 means authenticated read-only
+proposal review plus atomic no-delete derived revisions; it does not mean code
+execution, automatic merge, Core modification or publication.
+
+## Pro 0.4 verified test sandbox
+
+`docker-sandbox-test-runner.js` permits only test files already bound to an
+authentic persisted-workspace report. A short-lived, single-use human approval
+is tied to that exact manifest; the complete file set and every hash are checked
+again immediately before launch. The runner creates no general command or shell
+surface.
+
+`node-docker-cli-launcher.js` accepts only process-local authentic launch
+requests from that runner. The pinned Node image runs without networking, with
+a read-only root filesystem and host mount, all capabilities dropped, privilege
+escalation denied, a non-root user, bounded CPU/RAM/PIDs/output/time and forced
+container cleanup on timeout. This does not enable web or animation scripts,
+package installation, host/Core writes, merge, deployment or publication.
+
+`studio-pro-04-acceptance-manifest.js` freezes that narrow completion meaning.
+The real Docker integration test is opt-in because it depends on installed host
+infrastructure; all policy and adversarial contract tests remain offline.
+
+`guided-docker-test-session.js` presents the exact verified test list, pinned
+image and immutable isolation policy before requesting one bound approval. It
+then runs that exact test set once and returns bounded evidence or a concrete
+fail-closed next action. It does not alter the existing draft and preview
+sessions, which remain non-executing.
+
+`docker-test-evidence-writer.js` persists an authentic sandbox result only
+after a separate short-lived approval. It creates a new, never-overwritten,
+hash-bound receipt containing the exact manifest, pinned image, policy and
+honest pass/fail output. It cannot modify source, execute, merge or publish.
+
+`docker-test-evidence-verifier.js` independently reopens that exact authentic
+receipt and fails closed on schema, file-set, symlink/redirection, output hash,
+receipt hash or receipt-binding changes. It is strictly read-only and grants no
+execution or publication authority.
+
+The local Bridge may expose a read-only `/studio/status` capability summary for
+the Studio console. That endpoint reports installed runtime prerequisites and
+the fixed allow/deny boundary only. It cannot start a test, accept a command,
+read project content, grant an approval, merge, deploy or publish.

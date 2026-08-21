@@ -1,0 +1,18 @@
+const test=require('node:test');
+const assert=require('node:assert/strict');
+const fsp=require('node:fs').promises;
+const os=require('node:os');
+const path=require('node:path');
+const compiler=require('../engines/studio/virtual-artifact-compiler.js');
+const staticVerifier=require('../engines/studio/static-artifact-verifier.js');
+const sandboxWriter=require('../engines/studio/sandbox-writer.js');
+const persistedVerifier=require('../engines/studio/persisted-workspace-verifier.js');
+const runnerModule=require('../engines/studio/docker-sandbox-test-runner.js');
+
+async function fixture(t,launch){const base=await fsp.mkdtemp(path.join(os.tmpdir(),'sinbad-docker-runner-'));t.after(()=>fsp.rm(base,{recursive:true,force:true}));const bundle=compiler.compile({instruction:'Program hazırla',projectName:'Docker Test',audience:'owner',acceptanceCriteria:'tests'}),staticReport=staticVerifier.verify(bundle),writer=sandboxWriter.create({approvedBase:base,clock:()=>1000});await writer.persist(bundle,writer.authorize(bundle,{approvedBy:'owner-001',purpose:'write-001',nonce:'write-001',expiresAt:2000}));const report=await persistedVerifier.create({approvedBase:base}).verify(staticReport);return {base,report,runner:runnerModule.create({approvedBase:base,clock:()=>1000,launch})};}
+const approval={approvedBy:'owner-001',purpose:'test-001',nonce:'test-001',expiresAt:2000};
+
+test('emits only the fixed fail-closed Docker policy and verified tests',async t=>{let request;const {report,runner}=await fixture(t,async value=>(request=value,{exitCode:0,timedOut:false,output:'ok'})),result=await runner.run(report,runner.authorize(report,approval));assert.equal(result.status,'SANDBOX_TESTS_PASSED');assert.equal(result.image,runnerModule.IMAGE);assert.deepEqual(result.tests,['software/tests/index.test.js']);for(const pair of [['--network','none'],['--read-only','--cap-drop'],['--cap-drop','ALL'],['--user','65532:65532']])assert.equal(request.args.indexOf(pair[1]),request.args.indexOf(pair[0])+1);assert.match(request.args.find(item=>item.startsWith('type=bind,')),/target=\/workspace,readonly$/u);assert.deepEqual(result.writes,{host:false,core:false,production:false});});
+test('grant is authentic bound single-use and expiry is fail-closed',async t=>{const {base,report,runner}=await fixture(t,async()=>({exitCode:0})),auth=runner.authorize(report,approval);await assert.rejects(runner.run(report,{...auth}),/NOT_AUTHORIZED/);await runner.run(report,auth);await assert.rejects(runner.run(report,auth),/NOT_AUTHORIZED/);let now=1000;const late=runnerModule.create({approvedBase:base,clock:()=>now,launch:async()=>({exitCode:0})}),expired=late.authorize(report,{...approval,nonce:'test-002',expiresAt:1100});now=1100;await assert.rejects(late.run(report,expired),/AUTHORIZATION_EXPIRED/);});
+test('source tamper is rejected before launcher invocation',async t=>{let calls=0;const {base,report,runner}=await fixture(t,async()=>{calls++;return {exitCode:0};}),auth=runner.authorize(report,approval);await fsp.writeFile(path.join(base,'studio-workspaces',report.projectSlug,'software','src','index.js'),'tamper');await assert.rejects(runner.run(report,auth),/SOURCE_HASH_CHANGED/);assert.equal(calls,0);});
+test('missing launcher consumes authorization and exposes no generic command surface',async t=>{const {report,runner}=await fixture(t,null),auth=runner.authorize(report,approval);await assert.rejects(runner.run(report,auth),/LAUNCHER_NOT_CONFIGURED/);await assert.rejects(runner.run(report,auth),/NOT_AUTHORIZED/);for(const field of ['execute','shell','command','fetch','publish','deploy','writeCore','writeProduction'])assert.equal(field in runner,false);});

@@ -111,6 +111,12 @@ test('high and critical risk stop before the cloud model provider',()=>{
   assert.match(edge,/mode: 'core-safety-blocked'/);
 });
 
+test('server gate allows named-source distress terminology questions through to retrieval',()=>{
+  const decision=edgeCore.analyzeCore('GMDSS Handbook AMSA 2018 kaynağına göre distress alert hangi temel bilgileri içermelidir?');
+  assert.equal(decision.emergency,false);
+  assert.notEqual(decision.risk,'critical');
+});
+
 test('cloud Core gate Edge function passes executable TypeScript syntax checking',()=>{
   const edgePath=path.join(root,'supabase/functions/sinbad-answer/index.ts');
   const checked=spawnSync(process.execPath,['--experimental-strip-types','--check',edgePath],{encoding:'utf8'});

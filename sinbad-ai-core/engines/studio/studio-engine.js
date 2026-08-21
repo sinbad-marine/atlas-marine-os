@@ -10,7 +10,7 @@
   const MAX_INSTRUCTION_LENGTH=12000;
   const DOMAINS=Object.freeze({
     web:/(web|website|site|sayfa|html|css|frontend|landing|portal|dashboard)/iu,
-    software:/(software|program|uygulama|app\b|api\b|backend|kod|code|cli\b|desktop|mobile)/iu,
+    software:/(software|yazılım|yazilim|program|uygulama|app\b|api\b|backend|kod|code|cli\b|desktop|mobile)/iu,
     animation:/(animasyon|animation|motion|storyboard|svg|canvas|webgl|three\.js|blender|video|vfx)/iu
   });
   const HARD_STOPS=Object.freeze([
