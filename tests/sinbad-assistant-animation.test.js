@@ -156,7 +156,7 @@ test('a visible, aria-live status line exists for the large avatar so state is n
 
 test('reduced-motion strips every keyframe animation in the Sinbad avatar block but keeps colour/text state cues',()=>{
   const sectionStart=css.indexOf('/* ---- Captain Sinbad live assistant avatar');
-  const sectionEnd=css.indexOf('@media(max-width:800px){.sinbad-layout',sectionStart);
+  const sectionEnd=css.indexOf('.cloud-status-grid{',sectionStart);
   assert.ok(sectionStart>0&&sectionEnd>sectionStart);
   const section=css.slice(sectionStart,sectionEnd);
   const motionBlockStart=section.indexOf('@media not (prefers-reduced-motion: reduce){');
@@ -179,7 +179,7 @@ test('warning never uses a red alarm colour, and error stays calm (no urgent/fas
 
 test('service worker cache version was bumped for this change and precaches the real bound-state Academy assets for offline use (hero-portrait excluded - see the round-table fix test)',()=>{
   const sw=fs.readFileSync('sw.js','utf8');
-  assert.match(sw,/const CACHE='sinbad-marine-v8\.20\.14-multilingual-teaching-voice-v1';/);
+  assert.match(sw,/const CACHE='sinbad-marine-v8\.20\.15-sinbad-workspace-usability-v1';/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-idle-master\.png'/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-listening\.png'/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-thinking\.png'/);
@@ -187,8 +187,11 @@ test('service worker cache version was bumped for this change and precaches the 
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-board-teaching\.png'/);
 });
 
-test('mobile: the status line spans the full row instead of colliding with the avatar column',()=>{
-  assert.match(css,/@media\(max-width:800px\)\{\.sinbad-layout\{grid-template-columns:1fr\}\.sinbad-profile\{[^}]*\}\.sinbad-avatar\.large\{width:110px;height:86px\}\.sinbad-avatar\.large\[data-state="board-teaching"\]\{height:165px\}\.sinbad-capabilities,\.sinbad-status-line\{grid-column:1\/-1\}/);
+test('tablet: the compact avatar rail gives status and capabilities dedicated grid areas without collisions',()=>{
+  assert.match(css,/@media\(max-width:900px\)\{\.sinbad-layout\{grid-template-columns:1fr\}/);
+  assert.match(css,/\.sinbad-avatar\.large\{grid-row:1\/4;width:96px;height:82px\}/);
+  assert.match(css,/\.sinbad-capabilities\{grid-column:2\/4;display:flex;/);
+  assert.match(css,/\.sinbad-status-line\{grid-column:2\}/);
 });
 
 test('board-teaching state exists with real art wired, but is not fabricated a fake trigger (no board UI exists yet in this pass)',()=>{
@@ -462,4 +465,34 @@ test('round-table fix: the unused hero-portrait asset is no longer force-downloa
 
 test('round-table: TTS text normalization verified - the same message text rendered into the chat DOM is HTML-escaped via esc(), and SpeechSynthesisUtterance.text is not an HTML/markup sink, so no concrete injection path exists and no new escaping was added',()=>{
   assert.match(app,/\$\{m\.role==='user'\?'Captain':'Captain Sinbad'\}<\/span>\s*\n\s*\$\{esc\(m\.text\)\}/);
+});
+
+test('Sinbad workspace separates chat, Academy, passage planning and sources into accessible tabs without duplicating functional controls',()=>{
+  for(const name of ['chat','academy','passage','sources']){
+    assert.match(html,new RegExp(`role="tab"[^>]+data-sinbad-tab="${name}"`));
+    assert.match(html,new RegExp(`role="tabpanel"[^>]+data-sinbad-panel="${name}"`));
+  }
+  for(const id of ['sinbadMessages','sinbadInput','sendSinbad','academyModule','passageDeparture','officialSourceList']){
+    assert.equal((html.match(new RegExp(`id="${id}"`,'g'))||[]).length,1,`${id} must remain unique`);
+  }
+});
+
+test('Sinbad workspace tabs implement selection, panel visibility, session preference and keyboard navigation',()=>{
+  assert.match(app,/const SINBAD_WORKSPACE_TABS=Object\.freeze\(\['chat','academy','passage','sources'\]\)/);
+  assert.match(app,/function setSinbadWorkspaceTab\(requested,\{focus=false\}=\{\}\)/);
+  assert.match(app,/button\.setAttribute\('aria-selected',String\(active\)\)/);
+  assert.match(app,/panel\.hidden=panel\.dataset\.sinbadPanel!==tab/);
+  assert.match(app,/sessionStorage\.setItem\('atlas_sinbad_workspace_tab',tab\)/);
+  assert.match(app,/event\.key==='ArrowRight'/);
+  assert.match(app,/event\.key==='ArrowLeft'/);
+  assert.match(app,/event\.key==='Home'/);
+  assert.match(app,/event\.key==='End'/);
+});
+
+test('Sinbad usability layout keeps a compact sticky profile, responsive tab rail and sticky chat composer',()=>{
+  assert.match(css,/\.sinbad-profile\{position:sticky;/);
+  assert.match(css,/\.sinbad-workspace-tabs\{position:sticky;/);
+  assert.match(css,/\.sinbad-workspace-panel\[hidden\]\{display:none!important\}/);
+  assert.match(css,/\.sinbad-composer\{position:sticky;bottom:0;/);
+  assert.match(css,/@media\(max-width:600px\)\{\.sinbad-workspace-tabs\{position:static;display:flex;overflow-x:auto/);
 });

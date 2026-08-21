@@ -65,7 +65,7 @@ test('the optional xtts-clone provider (not default, kept for later) requests se
   assert.match(app,/speakSinbad\(answer,\(\)=>addSinbadMessage\('sinbad',answer\)\)/);
   assert.doesNotMatch(app,/onvoiceschanged=.*speakSinbad\(text\)/);
   assert.match(app,/if\(sinbadVoiceObjectUrl===objectUrl\)/);
-  assert.match(serviceWorker,/sinbad-marine-v8\.20\.14-multilingual-teaching-voice-v1/);
+  assert.match(serviceWorker,/sinbad-marine-v8\.20\.15-sinbad-workspace-usability-v1/);
 });
 
 test('OpenCPN-first route transfer is bounded to the verified local bridge',()=>{

@@ -1184,6 +1184,37 @@ async function sendToSinbad(text){
 $('sendSinbad').addEventListener('click',()=>{window.speechSynthesis?.resume();sendToSinbad($('sinbadInput').value);});
 $('sinbadInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendToSinbad($('sinbadInput').value)}});
 document.querySelectorAll('.sinbad-prompt').forEach(b=>b.addEventListener('click',()=>sendToSinbad(b.textContent)));
+
+const SINBAD_WORKSPACE_TABS=Object.freeze(['chat','academy','passage','sources']);
+function setSinbadWorkspaceTab(requested,{focus=false}={}){
+  const tab=SINBAD_WORKSPACE_TABS.includes(requested)?requested:'chat';
+  document.querySelectorAll('[data-sinbad-tab]').forEach(button=>{
+    const active=button.dataset.sinbadTab===tab;
+    button.classList.toggle('active',active);
+    button.setAttribute('aria-selected',String(active));
+    button.tabIndex=active?0:-1;
+    if(active&&focus)button.focus();
+  });
+  document.querySelectorAll('[data-sinbad-panel]').forEach(panel=>{panel.hidden=panel.dataset.sinbadPanel!==tab;});
+  try{sessionStorage.setItem('atlas_sinbad_workspace_tab',tab);}catch{}
+}
+document.querySelectorAll('[data-sinbad-tab]').forEach(button=>{
+  button.addEventListener('click',()=>setSinbadWorkspaceTab(button.dataset.sinbadTab));
+  button.addEventListener('keydown',event=>{
+    const current=SINBAD_WORKSPACE_TABS.indexOf(button.dataset.sinbadTab);
+    let next=current;
+    if(event.key==='ArrowRight')next=(current+1)%SINBAD_WORKSPACE_TABS.length;
+    else if(event.key==='ArrowLeft')next=(current-1+SINBAD_WORKSPACE_TABS.length)%SINBAD_WORKSPACE_TABS.length;
+    else if(event.key==='Home')next=0;
+    else if(event.key==='End')next=SINBAD_WORKSPACE_TABS.length-1;
+    else return;
+    event.preventDefault();setSinbadWorkspaceTab(SINBAD_WORKSPACE_TABS[next],{focus:true});
+  });
+});
+let initialSinbadWorkspaceTab='chat';
+try{initialSinbadWorkspaceTab=sessionStorage.getItem('atlas_sinbad_workspace_tab')||'chat';}catch{}
+setSinbadWorkspaceTab(initialSinbadWorkspaceTab);
+
 $('sinbadFloat').addEventListener('click',()=>openWorkspace('sinbad'));
 $('backToSinbad')?.addEventListener('click',()=>openWorkspace('sinbad'));
 $('toggleSinbadVoice')?.addEventListener('click',()=>{sinbadState.voiceEnabled=!sinbadState.voiceEnabled;localStorage.setItem('atlas_sinbad_voice',sinbadState.voiceEnabled?'on':'off');setSinbadVoiceUI();if(!sinbadState.voiceEnabled){stopSinbadVoice();setSinbadAssistantState('voice-disabled');}else if(sinbadAssistantState==='voice-disabled')setSinbadAssistantState('idle');});

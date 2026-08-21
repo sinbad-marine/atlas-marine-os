@@ -103,7 +103,7 @@
   <div class="topbar-account-actions">
     <select id="appLanguage" class="app-language" aria-label="Application language"></select>
     <button class="account-password-button" id="openAccountPassword" type="button">Account &amp; Password</button>
-    <div class="version">● v8.20.14</div>
+    <div class="version">● v8.20.15</div>
   </div>
 </header>
 
@@ -442,7 +442,16 @@
     </aside>
 
 
-    <div class="chat-panel">
+    <div class="sinbad-workspace-main">
+      <div class="sinbad-workspace-tabs" role="tablist" aria-label="Captain Sinbad tools">
+        <button type="button" class="sinbad-workspace-tab active" id="sinbad-tab-chat" role="tab" aria-selected="true" aria-controls="sinbad-panel-chat" data-sinbad-tab="chat">💬 Chat</button>
+        <button type="button" class="sinbad-workspace-tab" id="sinbad-tab-academy" role="tab" aria-selected="false" aria-controls="sinbad-panel-academy" data-sinbad-tab="academy" tabindex="-1">🎓 Academy</button>
+        <button type="button" class="sinbad-workspace-tab" id="sinbad-tab-passage" role="tab" aria-selected="false" aria-controls="sinbad-panel-passage" data-sinbad-tab="passage" tabindex="-1">🧭 Passage plan</button>
+        <button type="button" class="sinbad-workspace-tab" id="sinbad-tab-sources" role="tab" aria-selected="false" aria-controls="sinbad-panel-sources" data-sinbad-tab="sources" tabindex="-1">📚 Sources</button>
+      </div>
+
+      <section class="chat-panel sinbad-workspace-panel" id="sinbad-panel-chat" role="tabpanel" aria-labelledby="sinbad-tab-chat" data-sinbad-panel="chat">
+        <div class="sinbad-panel-heading"><div><span class="eyebrow">CAPTAIN'S DESK</span><h3>Ask Sinbad</h3></div><span class="badge" id="sinbadKnowledgeStatus">Approved library only • Web search off</span></div>
       <div id="sinbadMessages" class="chat-messages" aria-live="polite"></div>
       <div id="sinbadThinking" class="thinking-bubble hidden" aria-live="polite">
         <span></span><span></span><span></span>
@@ -454,7 +463,39 @@
         <button type="button" class="btn sinbad-prompt">Review crew expiries</button>
         <button type="button" class="btn sinbad-prompt">Create passage checklist</button>
       </div>
-      <details class="sinbad-planner">
+      <div class="sinbad-voice-toolbar" aria-label="Voice controls">
+        <label>Answer language
+          <select id="sinbadLanguage" aria-label="Sinbad answer language">
+            <option value="tr-TR">Türkçe</option><option value="en-US">English</option>
+            <option value="ru-RU">Русский</option><option value="fr-FR">Français</option>
+            <option value="de-DE">Deutsch</option><option value="ar-SA">العربية</option>
+            <option value="es-ES">Español</option><option value="it-IT">Italiano</option>
+          </select>
+        </label>
+        <button type="button" class="btn" id="toggleSinbadVoice" aria-pressed="true">🔊 Voice: On</button>
+        <button type="button" class="btn primary" id="startSinbadListening" aria-pressed="false">🎙️ Speak</button>
+        <button type="button" class="btn" id="testSinbadVoice">Test</button>
+        <button type="button" class="btn" id="stopSinbadVoice">Stop</button>
+      </div>
+      <div id="sinbadListeningStatus" class="notice hidden" role="status">Microphone is ready.</div>
+      <div id="sinbadWebConsent" class="notice hidden" role="alert">
+        <span id="sinbadWebConsentText">Atlas Cloud does not contain enough information. May Sinbad search the public web?</span>
+        <div class="action-row">
+          <button type="button" class="btn primary" id="allowSinbadWebSearch">Allow web search</button>
+          <button type="button" class="btn" id="denySinbadWebSearch">Do not search</button>
+        </div>
+      </div>
+      <div class="sinbad-composer">
+        <div class="chat-input-row">
+          <textarea id="sinbadInput" placeholder="Ask Captain Sinbad..." aria-label="Message Captain Sinbad"></textarea>
+          <button type="button" class="btn primary" id="sendSinbad">Send</button>
+        </div>
+        <p class="sinbad-library-note">Answers use the owner-approved marine library. Public web search requires permission.</p>
+      </div>
+      </section>
+
+      <section class="sinbad-workspace-panel" id="sinbad-panel-passage" role="tabpanel" aria-labelledby="sinbad-tab-passage" data-sinbad-panel="passage" hidden>
+      <details class="sinbad-planner" open>
         <summary>Passage Plan Studio — first working version</summary>
         <div class="passage-form">
           <label>Departure<input id="passageDeparture" placeholder="Marmaris"></label>
@@ -493,10 +534,16 @@
           <p class="bridge-warning">Planning and decision support only — not a certified ECDIS. Captain approval and current official charts remain mandatory.</p>
         </section>
       </details>
-      <details class="sinbad-sources">
+      </section>
+
+      <section class="sinbad-workspace-panel" id="sinbad-panel-sources" role="tabpanel" aria-labelledby="sinbad-tab-sources" data-sinbad-panel="sources" hidden>
+      <details class="sinbad-sources" open>
         <summary>Approved official source catalogue</summary>
         <div id="officialSourceList" class="source-list"></div>
       </details>
+      </section>
+
+      <section class="sinbad-workspace-panel" id="sinbad-panel-academy" role="tabpanel" aria-labelledby="sinbad-tab-academy" data-sinbad-panel="academy" hidden>
       <details class="sinbad-academy" open>
         <summary>Sinbad Navigation Academy - offline training</summary>
         <div class="academy-grid">
@@ -517,34 +564,7 @@
         </div>
         <div id="academyOutput" class="academy-output" aria-live="polite">Choose a module. Lessons and source search remain available without an internet connection.</div>
       </details>
-      <div class="action-row">
-        <label>Answer language
-          <select id="sinbadLanguage" aria-label="Sinbad answer language">
-            <option value="tr-TR">Türkçe</option><option value="en-US">English</option>
-            <option value="ru-RU">Русский</option><option value="fr-FR">Français</option>
-            <option value="de-DE">Deutsch</option><option value="ar-SA">العربية</option>
-            <option value="es-ES">Español</option><option value="it-IT">Italiano</option>
-          </select>
-        </label>
-        <button type="button" class="btn" id="toggleSinbadVoice" aria-pressed="true">🔊 Voice: On</button>
-        <button type="button" class="btn primary" id="startSinbadListening" aria-pressed="false">🎙️ Speak to Sinbad</button>
-        <button type="button" class="btn" id="testSinbadVoice">Test voice</button>
-        <button type="button" class="btn" id="stopSinbadVoice">Stop voice</button>
-        <span class="badge" id="sinbadKnowledgeStatus">Approved library only • Web search off</span>
-      </div>
-      <div id="sinbadListeningStatus" class="notice hidden" role="status">Microphone is ready.</div>
-      <div id="sinbadWebConsent" class="notice hidden" role="alert">
-        <span id="sinbadWebConsentText">Atlas Cloud does not contain enough information. May Sinbad search the public web?</span>
-        <div class="action-row">
-          <button type="button" class="btn primary" id="allowSinbadWebSearch">Allow web search</button>
-          <button type="button" class="btn" id="denySinbadWebSearch">Do not search</button>
-        </div>
-      </div>
-      <div class="chat-input-row">
-        <textarea id="sinbadInput" placeholder="Ask Captain Sinbad..." aria-label="Message Captain Sinbad"></textarea>
-        <button type="button" class="btn primary" id="sendSinbad">Send</button>
-      </div>
-      <div class="notice">Captain Sinbad answers only from the owner-approved Atlas Cloud marine library. Public web search is disabled. Answers can be read aloud by your device.</div>
+      </section>
     </div>
   </div>
 </section>
@@ -788,17 +808,17 @@
 <script src="./pilot-data.js?v=8161"></script>
 <script src="./route-data.js?v=8162"></script>
 <script src="./official-publications.js?v=8162"></script>
-<script src="./supabase/functions/sinbad-answer/core-decision.js?v=82014"></script>
-<script src="./sinbad-core.js?v=82014"></script>
+<script src="./supabase/functions/sinbad-answer/core-decision.js?v=82015"></script>
+<script src="./sinbad-core.js?v=82015"></script>
 <script src="./sinbad-training-data.js?v=8180"></script>
 <script src="./sinbad-academy.js?v=8180"></script>
 <script src="./vendor/supabase-2.112.3.js"></script>
 <script src="./vendor/mammoth-1.12.1.min.js"></script>
 <script src="./vendor/tesseract-5.1.1.min.js"></script>
 <script src="./vendor/ol-10.6.1.js"></script>
-  <script src="./sinbad-navigation.js?v=82014"></script>
-  <script src="./sinbad-navigation-assistant.js?v=82014"></script>
-  <script src="./sinbad-route-visualizer.js?v=82014"></script>
-  <script src="./app.js?v=82014"></script>
+  <script src="./sinbad-navigation.js?v=82015"></script>
+  <script src="./sinbad-navigation-assistant.js?v=82015"></script>
+  <script src="./sinbad-route-visualizer.js?v=82015"></script>
+  <script src="./app.js?v=82015"></script>
 </body>
 </html>
