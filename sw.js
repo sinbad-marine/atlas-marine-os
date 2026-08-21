@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.10-offline-map-r3-persistent-xtts-worker';
+const CACHE='sinbad-marine-v8.20.11-offline-map-r3-persistent-xtts-worker';
 const ASSETS=[
   './',
   './index.html',
