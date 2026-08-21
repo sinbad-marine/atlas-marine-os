@@ -5,6 +5,7 @@ const fs=require('node:fs');
 
 const app=fs.readFileSync('app.js','utf8');
 const html=fs.readFileSync('index.html','utf8');
+const edge=fs.readFileSync('supabase/functions/sinbad-answer/index.ts','utf8');
 
 test('cloud document centre can locate older source files by title',()=>{
   assert.match(html,/id="cloudFileSearch"/);
@@ -27,4 +28,11 @@ test('named-source misses recover through title-matched knowledge chunks',()=>{
   assert.match(app,/from\('document_knowledge'\).*ilike\('title'/s);
   assert.match(app,/\.in\('knowledge_id',titleMatches\.map/);
   assert.match(app,/titleMatches\.length/);
+});
+
+test('server RAG resolves named publications by title before synthesis',()=>{
+  assert.match(edge,/from\('document_knowledge'\)[\s\S]*?ilike\('title'/);
+  assert.match(edge,/\.in\('knowledge_id', titleMatches\.map/);
+  assert.match(edge,/title\.includes\(term\) \? 3 : 0/);
+  assert.match(edge,/APPROVED PRIVATE LIBRARY SOURCES/);
 });
