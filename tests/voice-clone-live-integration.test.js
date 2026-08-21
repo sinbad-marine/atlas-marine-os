@@ -5,6 +5,7 @@ const fs=require('node:fs');
 
 const bridge=fs.readFileSync('bridge/sinbad-bridge.ps1','utf8');
 const openCpnClient=fs.readFileSync('bridge/opencpn-rest-client.js','utf8');
+const worker=fs.readFileSync('bridge/xtts-worker.py','utf8');
 const app=fs.readFileSync('app.js','utf8');
 const serviceWorker=fs.readFileSync('sw.js','utf8');
 const visualizer=fs.readFileSync('sinbad-route-visualizer.js','utf8');
@@ -15,26 +16,33 @@ test('voice clone uses a loopback bridge endpoint and never accepts a client ref
   assert.match(bridge,/XttsSpeakerWav/);
   assert.doesNotMatch(app,/speaker_wav|speakerWav|referenceAudio|XttsSpeakerWav/);
   assert.match(app,/fetch\(`\$\{SINBAD_BRIDGE_URL\}\/ai\/tts`/);
-  assert.match(app,/JSON\.stringify\(\{text:cleanText,language:sinbadState\.language\}\)/);
+  assert.match(app,/JSON\.stringify\(\{text:chunks\[index\],language:sinbadState\.language\}\)/);
 });
 
-test('bridge bounds requests, serializes synthesis and erases temporary output',()=>{
+test('persistent worker binds loopback, caches the Yasemin latent and bounds requests',()=>{
+  assert.match(worker,/ThreadingHTTPServer\(\("127\.0\.0\.1"/);
+  assert.match(worker,/get_conditioning_latents/);
+  assert.match(worker,/GPT_COND_LATENT = gpt_cond_latent/);
+  assert.match(worker,/SPEAKER_EMBEDDING = speaker_embedding/);
+  assert.match(worker,/len\(text\) > 240/);
+  assert.match(worker,/self\.path != "\/status"/);
+  assert.match(worker,/self\.path != "\/synthesize"/);
+  assert.match(worker,/with SYNTH_LOCK/);
   assert.match(bridge,/contentLength -gt 8192/);
   assert.match(bridge,/text\.Length -gt 800/);
   assert.match(bridge,/XttsBusy/);
-  assert.match(bridge,/Remove-Item -LiteralPath \$outputPath/);
-  assert.match(bridge,/\$exitCode = \$LASTEXITCODE/);
-  assert.match(bridge,/\$ErrorActionPreference = 'Continue'/);
-  assert.match(bridge,/\$ErrorActionPreference = \$previousErrorAction/);
-  assert.match(bridge,/Remove-Item -LiteralPath \$diagnosticPath/);
+  assert.match(bridge,/Start-XttsWorkerIfNeeded/);
+  assert.match(bridge,/Sinbad\\xtts-venv\\Scripts\\python\.exe/);
+  assert.match(bridge,/\$xttsWorkerUrl\/synthesize/);
   assert.match(bridge,/XTTS_ORIGIN_DENIED/);
   assert.match(bridge,/documents=\$documents\.ToArray\(\)/);
 });
 
-test('frontend plays only the latest cloned wav and falls back only to a local device voice',()=>{
+test('frontend requests sentence chunks, plays only the latest clone and falls back only to a local device voice',()=>{
   assert.match(app,/new AbortController\(\)/);
-  assert.match(app,/120000/);
-  assert.match(app,/new Audio\(sinbadVoiceObjectUrl\)/);
+  assert.match(app,/splitSinbadCloneChunks\(cleanText\)/);
+  assert.match(app,/150000/);
+  assert.match(app,/new Audio\(objectUrl\)/);
   assert.match(app,/speakSinbadFallback\(cleanText\)/);
   assert.match(app,/sinbadVoiceAbort!==controller/);
   assert.match(app,/AbortError.*!timedOut/);
@@ -47,10 +55,12 @@ test('frontend plays only the latest cloned wav and falls back only to a local d
   assert.match(app,/preservesPitch=false/);
   assert.match(app,/playbackRate=1\.04/);
   assert.match(app,/volume=\.92/);
-  assert.match(app,/addSinbadMessage\('sinbad',answer\);\s*speakSinbad\(answer\)/);
-  assert.doesNotMatch(app,/speakSinbad\(answer,/);
+  assert.match(app,/let pendingChunk=loadChunk\(0\)/);
+  assert.match(app,/pendingChunk=index\+1<chunks\.length\?loadChunk\(index\+1\):null/);
+  assert.match(app,/speakSinbad\(answer,\(\)=>addSinbadMessage\('sinbad',answer\)\)/);
   assert.doesNotMatch(app,/onvoiceschanged=.*speakSinbad\(text\)/);
-  assert.match(serviceWorker,/sinbad-marine-v8\.20\.9-offline-map/);
+  assert.match(app,/if\(sinbadVoiceObjectUrl===objectUrl\)/);
+  assert.match(serviceWorker,/sinbad-marine-v8\.20\.12-offline-map-r3-persistent-xtts-worker/);
 });
 
 test('OpenCPN-first route transfer is bounded to the verified local bridge',()=>{

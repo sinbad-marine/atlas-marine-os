@@ -413,6 +413,39 @@ function speakSinbadFallback(text){
   speakNext();
   return true;
 }
+function splitSinbadCloneChunks(text,maxLength=220){
+  const sentences=String(text).match(/[^.!?…]+[.!?…]?/gu)||[String(text)];
+  const chunks=[];
+  for(const sentence of sentences){
+    const clean=sentence.trim();if(!clean)continue;
+    if(clean.length<=maxLength){chunks.push(clean);continue;}
+    let chunk='';
+    for(const word of clean.split(/\s+/)){
+      if(chunk&&`${chunk} ${word}`.length>maxLength){chunks.push(chunk);chunk=word;}
+      else chunk=chunk?`${chunk} ${word}`:word;
+    }
+    if(chunk)chunks.push(chunk);
+  }
+  return chunks;
+}
+function playSinbadCloneBlob(blob,controller){
+  return new Promise((resolve,reject)=>{
+    if(sinbadVoiceObjectUrl)URL.revokeObjectURL(sinbadVoiceObjectUrl);
+    const objectUrl=URL.createObjectURL(blob);
+    sinbadVoiceObjectUrl=objectUrl;
+    const audio=new Audio(objectUrl);sinbadVoiceAudio=audio;
+    audio.preservesPitch=false;audio.playbackRate=1.04;audio.volume=.92;
+    const cleanup=()=>{
+      if(sinbadVoiceAudio===audio)sinbadVoiceAudio=null;
+      URL.revokeObjectURL(objectUrl);
+      if(sinbadVoiceObjectUrl===objectUrl)sinbadVoiceObjectUrl='';
+    };
+    audio.onended=()=>{cleanup();resolve();};
+    audio.onerror=()=>{cleanup();reject(new Error('XTTS cloned audio playback failed'));};
+    controller.signal.addEventListener('abort',()=>{audio.pause();audio.src='';cleanup();resolve();},{once:true});
+    audio.play().catch(error=>{cleanup();reject(error);});
+  });
+}
 async function speakSinbad(text,onVoiceReady){
   let announced=false;
   const announce=()=>{if(!announced){announced=true;onVoiceReady?.();}};
@@ -421,32 +454,33 @@ async function speakSinbad(text,onVoiceReady){
   stopSinbadVoice();
   const cleanText=String(text).replace(/[\u2022*_#]/g,' ').trim();
   if(!cleanText){finishSinbadVoice();return;}
+  const chunks=splitSinbadCloneChunks(cleanText);
   const status=$('sinbadKnowledgeStatus');
   const controller=new AbortController();sinbadVoiceAbort=controller;
   let timedOut=false;
-  const timeout=setTimeout(()=>{timedOut=true;controller.abort();},120000);
+  const loadChunk=async index=>{
+    const timeout=setTimeout(()=>{timedOut=true;controller.abort();},150000);
+    try{
+      const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/tts`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:chunks[index],language:sinbadState.language}),signal:controller.signal});
+      if(!response.ok)throw new Error(`XTTS returned ${response.status}: ${await response.text()}`);
+      const blob=await response.blob();
+      if(!blob.size)throw new Error('XTTS returned empty audio');
+      return blob;
+    }finally{clearTimeout(timeout);}
+  };
   try{
-    if(status)status.textContent='Sinbad ses klonu haz\u0131rlan\u0131yor\u2026';
-    const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/tts`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:cleanText,language:sinbadState.language}),signal:controller.signal});
-    if(!response.ok)throw new Error(`XTTS returned ${response.status}`);
-    const blob=await response.blob();
-    if(!blob.size)throw new Error('XTTS returned empty audio');
-    if(sinbadVoiceAbort!==controller)return;
-    sinbadVoiceObjectUrl=URL.createObjectURL(blob);
-    const audio=new Audio(sinbadVoiceObjectUrl);sinbadVoiceAudio=audio;
-    audio.preservesPitch=false;
-    audio.playbackRate=1.04;
-    audio.volume=.92;
-    audio.onended=()=>{if(sinbadVoiceAudio===audio)finishSinbadVoice();};
-    audio.onerror=()=>{
-      if(sinbadVoiceAudio!==audio)return;
-      announce();stopSinbadVoice();
-      const fallback=speakSinbadFallback(cleanText);
-      if(status)status.textContent=fallback?'XTTS oynatılamadı · cihaz içi standart ses aktif':'XTTS oynatılamadı · güvenilir cihaz içi ses bulunamadı';
-    };
-    if(status)status.textContent='Sinbad XTTS klon sesi aktif · owner-local';
-    announce();
-    await audio.play();
+    let pendingChunk=loadChunk(0);
+    for(let index=0;index<chunks.length;index++){
+      if(sinbadVoiceAbort!==controller)return;
+      if(status)status.textContent=`Yasemin klon sesi hazırlanıyor · ${index+1}/${chunks.length}`;
+      const blob=await pendingChunk;
+      if(sinbadVoiceAbort!==controller)return;
+      pendingChunk=index+1<chunks.length?loadChunk(index+1):null;
+      if(status)status.textContent=`Yasemin XTTS klon sesi aktif · ${index+1}/${chunks.length}`;
+      announce();
+      await playSinbadCloneBlob(blob,controller);
+    }
+    if(sinbadVoiceAbort===controller)finishSinbadVoice();
   }catch(error){
     if(sinbadVoiceAbort!==controller)return;
     if(error?.name==='AbortError'&&!timedOut)return;
@@ -454,7 +488,8 @@ async function speakSinbad(text,onVoiceReady){
     announce();stopSinbadVoice();
     const fallback=speakSinbadFallback(cleanText);
     if(status)status.textContent=fallback?(timedOut?'XTTS zaman aşımı · cihaz içi standart ses aktif':'XTTS kullanılamıyor · cihaz içi standart ses aktif'):(timedOut?'XTTS zaman aşımı · güvenilir cihaz içi ses bulunamadı':'XTTS kullanılamıyor · güvenilir cihaz içi ses bulunamadı');
-  }finally{clearTimeout(timeout);}
+    sinbadAwaitingAnswer=false;scheduleSinbadListening();
+  }
 }
 let sinbadRecognition=null;
 let sinbadIsListening=false;
@@ -787,8 +822,7 @@ async function sendToSinbad(text){
   setTimeout(async()=>{
     const answer=await sinbadLocalAnswer(q);
     $('sinbadThinking').classList.add('hidden');
-    addSinbadMessage('sinbad',answer);
-    speakSinbad(answer);
+    speakSinbad(answer,()=>addSinbadMessage('sinbad',answer));
   },650);
 }
 $('sendSinbad').addEventListener('click',()=>{window.speechSynthesis?.resume();sendToSinbad($('sinbadInput').value);});
@@ -1603,7 +1637,7 @@ async function sinbadCloudKnowledgeAnswer(question){
       // Older cloud deployments can return a polite "no source found" notice
       // as if it were a complete AI answer. Treat those notices as a miss so
       // the installed Ollama brain gets an opportunity to answer instead.
-      const cloudMiss=/yeterli kaynak bulunamad[ıi]|eşleşen bir kaynak bulamad[ıi]|AI bağlantısı henüz etkin|not enough (?:material|source)|no matching (?:knowledge|source)|keine ausreichende quelle|keine passende quelle/i.test(answer);
+      const cloudMiss=/yeterli kaynak bulunamad[ıi]|eşleşen bir kaynak bulamad[ıi]|AI bağlantısı henüz etkin|metni (?:yer almad[ıi]ğından|bulunmad[ıi]ğından)|kaynağa dayalı (?:olarak )?doğrulayam[ıi]yorum|not enough (?:material|source)|no matching (?:knowledge|source)|source text (?:is|was) not available|keine ausreichende quelle|keine passende quelle/i.test(answer);
       const normalizedAnswer=answer.toLocaleLowerCase('tr-TR')
         .replace(/[ıİ]/g,'i').replace(/[şŞ]/g,'s').replace(/[ğĞ]/g,'g')
         .replace(/[üÜ]/g,'u').replace(/[öÖ]/g,'o').replace(/[çÇ]/g,'c')
@@ -1617,8 +1651,24 @@ async function sinbadCloudKnowledgeAnswer(question){
     }
     if(trustedAiData?.needsWebPermission){if(status)status.textContent='Atlas Cloud has no answer · trying offline brain';return null;}
     const terms=question.toLocaleLowerCase(language).normalize('NFKD').replace(/[^a-z0-9çğıöşüа-яёء-ي ]/gi,' ').split(/\s+/).filter(x=>x.length>2).slice(0,8);if(!terms.length)return null;
-    const {data,error}=await cloudClient.from('document_knowledge_chunks').select('content,chunk_index,document_knowledge!inner(title,classification,workspace_id)').eq('document_knowledge.workspace_id',selectedWorkspaceId).ilike('content',`%${terms[0]}%`).limit(12);
-    if(error)throw error;if(!data?.length){if(status)status.textContent='Atlas Cloud has no answer · trying offline brain';return null;}
+    const titleRows=[];
+    for(const term of terms.slice(0,5)){
+      const {data,error}=await cloudClient.from('document_knowledge').select('id,title,classification').eq('workspace_id',selectedWorkspaceId).ilike('title',`%${term.replace(/[%_]/g,'')}%`).limit(6);
+      if(error)throw error;if(data)titleRows.push(...data);
+    }
+    const titleMatches=[...new Map(titleRows.map(row=>[row.id,row])).values()].slice(0,8);
+    let data=[];
+    if(titleMatches.length){
+      const {data:chunks,error}=await cloudClient.from('document_knowledge_chunks').select('knowledge_id,content,chunk_index').in('knowledge_id',titleMatches.map(row=>row.id)).limit(500);
+      if(error)throw error;
+      const titles=new Map(titleMatches.map(row=>[row.id,row]));
+      data=(chunks||[]).map(row=>({...row,document_knowledge:titles.get(row.knowledge_id)}));
+    }
+    if(!data.length){
+      const result=await cloudClient.from('document_knowledge_chunks').select('content,chunk_index,document_knowledge!inner(title,classification,workspace_id)').eq('document_knowledge.workspace_id',selectedWorkspaceId).ilike('content',`%${terms[0]}%`).limit(12);
+      if(result.error)throw result.error;data=result.data||[];
+    }
+    if(!data.length){if(status)status.textContent='Atlas Cloud has no answer · trying offline brain';return null;}
     const ranked=data.map(row=>({row,score:terms.reduce((n,t)=>n+(row.content.toLocaleLowerCase(language).includes(t)?1:0),0)})).sort((a,b)=>b.score-a.score).slice(0,4);
     const excerpts=ranked.map(({row})=>{const lower=row.content.toLocaleLowerCase(language),positions=terms.map(t=>lower.indexOf(t)).filter(n=>n>=0),at=positions.length?Math.min(...positions):0;return `• ${row.document_knowledge.title} [${row.document_knowledge.classification}]\n${row.content.slice(Math.max(0,at-180),at+650).replace(/\s+/g,' ').trim()}`;});
     if(status)status.textContent='Classified cloud archive active';
@@ -1634,7 +1684,7 @@ async function performSinbadWebSearch(){
     const {data,error}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language:sinbadState.language,allowWebSearch:true,coreEnvelope}});if(error)throw error;
     if(!cloudAnswerPassesCoreGate(data,coreEnvelope))throw new Error('Core safety gate rejected the cloud response');
     const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];const answer=`${copy.result}:\n\n${data?.answer||'No reliable web result was found.'}`;
-    addSinbadMessage('sinbad',answer);speakSinbad(answer);
+    speakSinbad(answer,()=>addSinbadMessage('sinbad',answer));
   }catch(error){addSinbadMessage('sinbad',`Web search failed: ${error.message||error}`);}finally{$('sinbadThinking').classList.add('hidden');}
 }
 async function uploadCloudFiles(){
@@ -1668,7 +1718,10 @@ async function uploadCloudFiles(){
 async function loadCloudFiles(){
   if(!cloudClient || !selectedWorkspaceId)return;
   const bucket=$('cloudBucketSelect').value;
-  const {data,error}=await cloudClient.from('documents').select('id,title,original_filename,bucket_id,object_path,file_size_bytes,status,classification,created_at').eq('workspace_id',selectedWorkspaceId).eq('bucket_id',bucket).order('created_at',{ascending:false}).limit(100);
+  const search=($('cloudFileSearch')?.value||'').trim();
+  let query=cloudClient.from('documents').select('id,title,original_filename,bucket_id,object_path,file_size_bytes,status,classification,created_at').eq('workspace_id',selectedWorkspaceId).eq('bucket_id',bucket);
+  if(search)query=query.ilike('title',`%${search.replace(/[%_]/g,'')}%`);
+  const {data,error}=await query.order('created_at',{ascending:false}).limit(100);
   if(error){$('cloudFileList').textContent=error.message;return;}
   $('cloudFileList').innerHTML=data?.length ? data.map(d=>`
     <article class="cloud-file-card">
@@ -1680,9 +1733,29 @@ async function loadCloudFiles(){
         <button class="btn cloud-share-file" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}" data-name="${cloudEsc(d.original_filename)}">Share</button>
         ${roleCanManageLibrary()?`<button class="btn cloud-rename-file" data-id="${cloudEsc(d.id)}" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}" data-name="${cloudEsc(d.original_filename)}">Rename</button>
         <button class="btn cloud-index-file" data-id="${cloudEsc(d.id)}">Index AI</button>
+        <button class="btn cloud-repair-knowledge" data-id="${cloudEsc(d.id)}" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}" data-name="${cloudEsc(d.original_filename)}">Repair AI text</button>
         <button class="btn danger cloud-delete-file" data-id="${cloudEsc(d.id)}" data-bucket="${cloudEsc(d.bucket_id)}" data-path="${cloudEsc(d.object_path)}">Delete</button>`:''}
       </div>
     </article>`).join('') : 'No cloud files in this category.';
+}
+async function repairCloudDocumentKnowledge(documentId,bucket,path,filename){
+  const progress=$('cloudUploadProgress');
+  try{
+    if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId)throw new Error('Atlas Cloud workspace is not connected.');
+    if(!roleCanManageLibrary())throw new Error('Only an authorized library manager can repair AI text.');
+    if(progress)progress.textContent=`Downloading ${filename} for AI text repair…`;
+    const {data:blob,error:downloadError}=await cloudClient.storage.from(bucket).download(path);
+    if(downloadError)throw downloadError;
+    const file=new File([blob],filename||'atlas-document',{type:blob.type||''});
+    const text=await extractDocumentText(file,message=>{if(progress)progress.textContent=`${filename}: ${message}`;});
+    if(!text.trim())throw new Error('No machine-readable text was extracted. OCR or a text counterpart is required.');
+    const result=await saveDocumentKnowledge(documentId,file,text,bucket);
+    if(progress)progress.textContent=`✓ AI text repaired: ${filename} · ${result.chunks} chunk(s) · ${result.classification}`;
+    return result;
+  }catch(error){
+    if(progress)progress.textContent=`⚠ AI text repair failed for ${filename}: ${error.message||error}`;
+    throw error;
+  }
 }
 async function openCloudFile(bucket,path,filename=''){
   if(bucket==='nautical-charts'){
@@ -2249,6 +2322,8 @@ $('settingsMemberList')?.addEventListener('click',event=>{
 });
 $('uploadCloudFiles').addEventListener('click',uploadCloudFiles);
 $('refreshCloudFiles').addEventListener('click',loadCloudFiles);
+$('searchCloudFiles')?.addEventListener('click',loadCloudFiles);
+$('cloudFileSearch')?.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();loadCloudFiles();}});
 $('cloudBucketSelect').addEventListener('change',loadCloudFiles);
 $('cloudFileList').addEventListener('click',e=>{
   const o=e.target.closest('.cloud-open-file');
@@ -2256,12 +2331,14 @@ $('cloudFileList').addEventListener('click',e=>{
   const s=e.target.closest('.cloud-share-file');
   const r=e.target.closest('.cloud-rename-file');
   const i=e.target.closest('.cloud-index-file');
+  const k=e.target.closest('.cloud-repair-knowledge');
   const x=e.target.closest('.cloud-delete-file');
   if(o)openCloudFile(o.dataset.bucket,o.dataset.path,o.dataset.name||'');
   if(d)downloadCloudFile(d.dataset.bucket,d.dataset.path,d.dataset.name);
   if(s)shareCloudFile(s.dataset.bucket,s.dataset.path,s.dataset.name);
   if(r)renameCloudFile(r.dataset.id,r.dataset.bucket,r.dataset.path,r.dataset.name);
   if(i)indexCloudDocument(i.dataset.id);
+  if(k)repairCloudDocumentKnowledge(k.dataset.id,k.dataset.bucket,k.dataset.path,k.dataset.name).catch(()=>{});
   if(x)deleteCloudFile(x.dataset.id,x.dataset.bucket,x.dataset.path);
 });
 $('memberList').addEventListener('click',e=>{

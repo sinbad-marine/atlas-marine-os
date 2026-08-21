@@ -37,3 +37,23 @@ test('does not invoke navigation mathematics for a non-navigation question',asyn
   assert.equal(result.handled,false);
   assert.equal(calls,0);
 });
+
+test('does not divert tide and current reference questions into the calculation engine',async()=>{
+  let calls=0;
+  const expert=assistant.createExpert({engine:{answer(){calls++;return 'unexpected';}}});
+  const result=await core.orchestrate('NOAA Glossary kaynağına göre tide ile tidal current arasındaki fark nedir?',{
+    experts:{navigation:expert}
+  });
+  assert.equal(result.handled,false);
+  assert.equal(calls,0);
+});
+
+test('still routes a numeric destination-position question to the engine',async()=>{
+  const expert=assistant.createExpert({engine:globalThis.SinbadNavigation,language:'tr-TR'});
+  const result=await core.orchestrate('26 derece 10 dakika N, 13 derece 15 dakika W mevkiinden 294 derece rota ve 22 knot ile 5 saat sonundaki pozisyon nedir?',{
+    experts:{navigation:expert}
+  });
+  assert.equal(result.handled,true);
+  assert.equal(result.expert,'navigation');
+  assert.match(result.answer,/SEYİR MOTORU/);
+});

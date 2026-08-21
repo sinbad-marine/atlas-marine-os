@@ -6,7 +6,8 @@ param(
   [string]$XttsModelPath = '',
   [string]$XttsConfigPath = '',
   [string]$XttsSpeakerWav = '',
-  [string]$OpenCpnExecutable = ''
+  [string]$OpenCpnExecutable = '',
+  [int]$XttsWorkerPort = 31984
 )
 
 $ErrorActionPreference = 'Stop'
@@ -29,6 +30,11 @@ if ([string]::IsNullOrWhiteSpace($OpenCpnExecutable)) {
     (Join-Path $env:ProgramFiles 'OpenCPN\opencpn.exe')
   ) | Where-Object { $_ -and (Test-Path -LiteralPath $_) } | Select-Object -First 1
 }
+$xttsPython = Join-Path (Split-Path -Parent (Split-Path -Parent $XttsExecutable)) 'python.exe'
+$isolatedXttsPython = Join-Path $env:LOCALAPPDATA 'Sinbad\xtts-venv\Scripts\python.exe'
+if (Test-Path -LiteralPath $isolatedXttsPython -PathType Leaf) { $xttsPython = $isolatedXttsPython }
+$xttsWorkerScript = Join-Path $PSScriptRoot 'xtts-worker.py'
+$xttsWorkerUrl = "http://127.0.0.1:$XttsWorkerPort"
 $voiceTempRoot = Join-Path $bridgeRoot 'Voice\Temp'
 $openCpnConfigPath = Join-Path $env:ProgramData 'opencpn\opencpn.ini'
 $openCpnRestClientPath = Join-Path $PSScriptRoot 'opencpn-rest-client.js'
@@ -44,7 +50,7 @@ Write-Host "Sinbad Bridge is online: http://127.0.0.1:$Port" -ForegroundColor Gr
 Write-Host "GPX exchange folder: $routeRoot"
 Write-Host "Offline library folder: $libraryRoot"
 Write-Host "Offline AI model: $AiModel"
-Write-Host "XTTS voice clone: $((Test-Path -LiteralPath $XttsExecutable) -and (Test-Path -LiteralPath $XttsModelPath) -and (Test-Path -LiteralPath $XttsConfigPath) -and (Test-Path -LiteralPath $XttsSpeakerWav))"
+Write-Host "XTTS persistent worker: http://127.0.0.1:$XttsWorkerPort"
 Write-Host 'Keep this window open while using the Bridge. Press Ctrl+C to stop.'
 
 function Invoke-LocalJsonGet([string]$uri) {
@@ -208,11 +214,32 @@ function Get-OllamaStatus {
 }
 
 function Get-XttsStatus {
-  $ready = (Test-Path -LiteralPath $XttsExecutable -PathType Leaf) -and
+  $configured = (Test-Path -LiteralPath $xttsPython -PathType Leaf) -and
     (Test-Path -LiteralPath $XttsModelPath -PathType Container) -and
     (Test-Path -LiteralPath $XttsConfigPath -PathType Leaf) -and
-    (Test-Path -LiteralPath $XttsSpeakerWav -PathType Leaf)
-  return @{ online=$ready; engine='coqui-xtts-v2'; profile='owner-local'; language='tr'; busy=[bool]$script:XttsBusy; latencyClass='batch' }
+    (Test-Path -LiteralPath $XttsSpeakerWav -PathType Leaf) -and
+    (Test-Path -LiteralPath $xttsWorkerScript -PathType Leaf)
+  if (-not $configured) { return @{ online=$false; state='not-configured'; engine='coqui-xtts-v2-persistent'; profile='owner-local'; language='tr'; busy=$false; latencyClass='sentence-stream' } }
+  try {
+    $worker = Invoke-LocalJsonGet "$xttsWorkerUrl/status"
+    return @{ online=[bool]$worker.ready; state=[string]$worker.state; engine='coqui-xtts-v2-persistent'; profile='owner-local'; language='tr'; busy=[bool]$worker.busy; latencyClass='sentence-stream'; loadSeconds=$worker.loadSeconds; lastSynthesisSeconds=$worker.lastSynthesisSeconds; speakerDigest=$worker.speakerDigest }
+  } catch {
+    return @{ online=$false; state='worker-offline'; engine='coqui-xtts-v2-persistent'; profile='owner-local'; language='tr'; busy=$false; latencyClass='sentence-stream' }
+  }
+}
+
+function Start-XttsWorkerIfNeeded {
+  $status = Get-XttsStatus
+  if ($status.state -ne 'worker-offline') { return $status }
+  $arguments = @(
+    $xttsWorkerScript,
+    '--model-path', $XttsModelPath,
+    '--config-path', $XttsConfigPath,
+    '--speaker-wav', $XttsSpeakerWav,
+    '--port', [string]$XttsWorkerPort
+  )
+  Start-Process -FilePath $xttsPython -ArgumentList $arguments -WorkingDirectory $PSScriptRoot -WindowStyle Hidden | Out-Null
+  return @{ online=$false; state='starting'; engine='coqui-xtts-v2-persistent'; profile='owner-local'; language='tr'; busy=$false; latencyClass='sentence-stream' }
 }
 
 function Invoke-XttsVoice($payload) {
@@ -233,38 +260,27 @@ function Invoke-XttsVoice($payload) {
     '^it' { 'it'; break }
     default { 'tr' }
   }
-  $outputPath = Join-Path $voiceTempRoot "$([guid]::NewGuid().ToString('N')).wav"
-  $diagnosticPath = "$outputPath.log"
   $script:XttsBusy = $true
   try {
-    $arguments = @(
-      '--text', $text,
-      '--model_path', $XttsModelPath,
-      '--config_path', $XttsConfigPath,
-      '--language_idx', $language,
-      '--speaker_wav', $XttsSpeakerWav,
-      '--out_path', $outputPath
-    )
-    $previousErrorAction = $ErrorActionPreference
+    $client = [Net.Http.HttpClient]::new()
     try {
-      $ErrorActionPreference = 'Continue'
-      & $XttsExecutable @arguments 2> $diagnosticPath | Out-Null
-      $exitCode = $LASTEXITCODE
+      $client.Timeout = [TimeSpan]::FromSeconds(150)
+      $json = @{ text=$text; language=$language } | ConvertTo-Json -Compress
+      $content = [Net.Http.StringContent]::new($json, [Text.Encoding]::UTF8, 'application/json')
+      $response = $client.PostAsync("$xttsWorkerUrl/synthesize", $content).GetAwaiter().GetResult()
+      if (-not $response.IsSuccessStatusCode) {
+        $workerError = $response.Content.ReadAsStringAsync().GetAwaiter().GetResult()
+        throw "XTTS_WORKER_FAILED: $workerError"
+      }
+      $audio = $response.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult()
     } finally {
-      $ErrorActionPreference = $previousErrorAction
+      $client.Dispose()
     }
-    $diagnostic = if (Test-Path -LiteralPath $diagnosticPath) { Get-Content -LiteralPath $diagnosticPath -Raw } else { '' }
-    if ($exitCode -ne 0 -or -not (Test-Path -LiteralPath $outputPath -PathType Leaf)) {
-      throw "XTTS_FAILED: $($diagnostic.Substring(0, [Math]::Min(500, $diagnostic.Length)))"
-    }
-    $audio = [IO.File]::ReadAllBytes($outputPath)
     if ($audio.Length -lt 44 -or [Text.Encoding]::ASCII.GetString($audio, 0, 4) -ne 'RIFF' -or
         [Text.Encoding]::ASCII.GetString($audio, 8, 4) -ne 'WAVE') { throw 'XTTS_INVALID_WAV' }
     return $audio
   } finally {
     $script:XttsBusy = $false
-    Remove-Item -LiteralPath $outputPath -Force -ErrorAction SilentlyContinue
-    Remove-Item -LiteralPath $diagnosticPath -Force -ErrorAction SilentlyContinue
   }
 }
 
@@ -385,6 +401,8 @@ if (Test-Path -LiteralPath $indexPath) {
   try { $script:LibraryIndex = Get-Content -LiteralPath $indexPath -Raw | ConvertFrom-Json } catch { $script:LibraryIndex = $null }
 }
 if (-not $script:LibraryIndex) { $null = Update-LibraryIndex }
+$workerStartup = Start-XttsWorkerIfNeeded
+Write-Host "XTTS worker state: $($workerStartup.state)"
 
 try {
   while ($true) {
