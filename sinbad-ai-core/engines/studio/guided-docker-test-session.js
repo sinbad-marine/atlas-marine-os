@@ -3,15 +3,17 @@ const path=require('node:path');
 const persistedVerifier=require('./persisted-workspace-verifier.js');
 const runnerModule=require('./docker-sandbox-test-runner.js');
 const launcherModule=require('./node-docker-cli-launcher.js');
-const VERSION='0.4.1',MODE='GUIDED_VERIFIED_DOCKER_TEST_SESSION';
+const evidenceWriterModule=require('./docker-test-evidence-writer.js');
+const VERSION='0.4.2',MODE='GUIDED_VERIFIED_DOCKER_TEST_SESSION';
 const freeze=value=>{if(value&&typeof value==='object'&&!Object.isFrozen(value)){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 
 function create(options={}){
   const approvedBase=path.resolve(String(options.approvedBase||process.cwd())),workspaceRoot=path.join(approvedBase,'studio-workspaces');
   const launch=typeof options.launch==='function'?options.launch:launcherModule.create(options.launcherOptions).launch;
   const runner=runnerModule.create({approvedBase,clock:options.clock,launch,timeoutMs:options.timeoutMs,maxOutputBytes:options.maxOutputBytes});
-  let state='NEW',report=null;
-  const capabilities=freeze({inspectVerifiedTests:true,verifiedSoftwareTestExecution:true,generalCommandExecution:false,shell:false,network:false,hostWrite:false,coreWrite:false,merge:false,publish:false});
+  const evidenceWriter=evidenceWriterModule.create({approvedBase,clock:options.clock});
+  let state='NEW',report=null,lastResult=null;
+  const capabilities=freeze({inspectVerifiedTests:true,verifiedSoftwareTestExecution:true,persistTestEvidence:true,generalCommandExecution:false,shell:false,network:false,hostWrite:false,coreWrite:false,merge:false,publish:false});
   const snapshot=(status,nextAction,detail={})=>freeze({version:VERSION,mode:MODE,status,state,nextAction,...detail,capabilities});
 
   function prepare(inputReport){
@@ -27,12 +29,17 @@ function create(options={}){
   async function runVerifiedTests(approval={}){
     if(state!=='APPROVAL_REQUIRED')return snapshot('DOCKER_TEST_SESSION_BLOCKED','FOLLOW_CURRENT_NEXT_ACTION',{reason:'TEST_RUN_OUT_OF_ORDER'});
     try{
-      const result=await runner.run(report,runner.authorize(report,approval));state=result.status==='SANDBOX_TESTS_PASSED'?'PASSED':'FAILED';
-      return snapshot(result.status,state==='PASSED'?'REVIEW_TEST_EVIDENCE':'REVIEW_FAILED_TEST_EVIDENCE',{projectSlug:result.projectSlug,image:result.image,tests:result.tests,exitCode:result.exitCode,timedOut:result.timedOut,output:result.output,policy:result.policy,writes:result.writes,publishPerformed:false});
+      const result=await runner.run(report,runner.authorize(report,approval));lastResult=result;state=result.status==='SANDBOX_TESTS_PASSED'?'PASSED':'FAILED';
+      return snapshot(result.status,'APPROVE_TEST_EVIDENCE_WRITE',{projectSlug:result.projectSlug,manifestHash:result.manifestHash,image:result.image,tests:result.tests,exitCode:result.exitCode,timedOut:result.timedOut,output:result.output,policy:result.policy,writes:result.writes,publishPerformed:false});
     }catch(error){state='BLOCKED';return snapshot('DOCKER_TEST_SESSION_BLOCKED','REVIEW_APPROVAL_RUNTIME_OR_WORKSPACE',{reason:error&&error.message?error.message:'SANDBOX_TEST_FAILED_CLOSED'});}
   }
 
-  function status(){const actions={NEW:'SUBMIT_AUTHENTIC_PERSISTED_REPORT',INPUT_BLOCKED:'CREATE_NEW_SESSION_AFTER_REVERIFICATION',APPROVAL_REQUIRED:'APPROVE_EXACT_VERIFIED_TEST_RUN',PASSED:'REVIEW_TEST_EVIDENCE',FAILED:'REVIEW_FAILED_TEST_EVIDENCE',BLOCKED:'CREATE_NEW_SESSION_AFTER_REVIEW'};return snapshot('DOCKER_TEST_SESSION_STATUS',actions[state]||'STOP');}
-  return freeze({VERSION,MODE,approvedBase,prepare,runVerifiedTests,status});
+  async function persistEvidence(approval={}){
+    if(!['PASSED','FAILED'].includes(state))return snapshot('DOCKER_TEST_SESSION_BLOCKED','FOLLOW_CURRENT_NEXT_ACTION',{reason:'EVIDENCE_WRITE_OUT_OF_ORDER'});
+    try{const saved=await evidenceWriter.persist(lastResult,evidenceWriter.authorize(lastResult,approval));state='EVIDENCE_PERSISTED';return snapshot('DOCKER_TEST_EVIDENCE_PERSISTED','REVIEW_PERSISTED_TEST_EVIDENCE',{evidence:saved.evidence,evidenceId:saved.evidenceId,receiptHash:saved.receiptHash,testStatus:saved.testStatus,sourceModified:false,published:false});}catch(error){return snapshot('DOCKER_TEST_SESSION_BLOCKED','REVIEW_EVIDENCE_WRITE_APPROVAL',{reason:error&&error.message?error.message:'TEST_EVIDENCE_WRITE_FAILED'});}
+  }
+
+  function status(){const actions={NEW:'SUBMIT_AUTHENTIC_PERSISTED_REPORT',INPUT_BLOCKED:'CREATE_NEW_SESSION_AFTER_REVERIFICATION',APPROVAL_REQUIRED:'APPROVE_EXACT_VERIFIED_TEST_RUN',PASSED:'APPROVE_TEST_EVIDENCE_WRITE',FAILED:'APPROVE_TEST_EVIDENCE_WRITE',EVIDENCE_PERSISTED:'REVIEW_PERSISTED_TEST_EVIDENCE',BLOCKED:'CREATE_NEW_SESSION_AFTER_REVIEW'};return snapshot('DOCKER_TEST_SESSION_STATUS',actions[state]||'STOP');}
+  return freeze({VERSION,MODE,approvedBase,prepare,runVerifiedTests,persistEvidence,status});
 }
 module.exports=freeze({VERSION,MODE,create});

@@ -8,6 +8,7 @@ const VERSION='0.4.0',MODE='DOCKER_SANDBOX_TEST_ONLY',MAX_TTL_MS=5*60*1000;
 const IMAGE='node@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32';
 const ID=/^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$/u;
 const launchRequests=new WeakSet();
+const authenticResults=new WeakSet();
 const freeze=value=>{if(value&&typeof value==='object'&&!Object.isFrozen(value)){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 const sha256=value=>crypto.createHash('sha256').update(value).digest('hex');
 
@@ -53,9 +54,10 @@ function create(options={}){
     const launchRequest=freeze({version:VERSION,mode:MODE,args,containerName,timeoutMs,maxOutputBytes});launchRequests.add(launchRequest);
     const outcome=await launch(launchRequest);
     const exitCode=Number(outcome&&outcome.exitCode),timedOut=Boolean(outcome&&outcome.timedOut),output=Buffer.from(String(outcome&&outcome.output||''),'utf8').subarray(0,maxOutputBytes).toString('utf8');
-    return freeze({version:VERSION,mode:MODE,status:!timedOut&&exitCode===0?'SANDBOX_TESTS_PASSED':'SANDBOX_TESTS_FAILED',projectSlug:report.projectSlug,image:IMAGE,tests:grant.tests,exitCode:Number.isInteger(exitCode)?exitCode:null,timedOut,output,policy:{network:'NONE',rootFilesystem:'READ_ONLY',hostMount:'READ_ONLY',capabilities:'DROP_ALL',privilegeEscalation:'DENY',user:'65532:65532',memory:'256m',cpus:1,pids:64},writes:{host:false,core:false,production:false},publishPerformed:false});
+    const result=freeze({version:VERSION,mode:MODE,status:!timedOut&&exitCode===0?'SANDBOX_TESTS_PASSED':'SANDBOX_TESTS_FAILED',projectSlug:report.projectSlug,manifestHash:report.manifestHash,image:IMAGE,tests:grant.tests,exitCode:Number.isInteger(exitCode)?exitCode:null,timedOut,output,policy:{network:'NONE',rootFilesystem:'READ_ONLY',hostMount:'READ_ONLY',capabilities:'DROP_ALL',privilegeEscalation:'DENY',user:'65532:65532',memory:'256m',cpus:1,pids:64},writes:{host:false,core:false,production:false},publishPerformed:false});authenticResults.add(result);return result;
   }
   return freeze({VERSION,MODE,IMAGE,authorize,run});
 }
 const isAuthenticLaunchRequest=value=>Boolean(value&&launchRequests.has(value));
-module.exports=freeze({VERSION,MODE,IMAGE,MAX_TTL_MS,create,isAuthenticLaunchRequest});
+const isAuthenticResult=value=>Boolean(value&&authenticResults.has(value));
+module.exports=freeze({VERSION,MODE,IMAGE,MAX_TTL_MS,create,isAuthenticLaunchRequest,isAuthenticResult});

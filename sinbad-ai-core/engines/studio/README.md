@@ -174,3 +174,8 @@ image and immutable isolation policy before requesting one bound approval. It
 then runs that exact test set once and returns bounded evidence or a concrete
 fail-closed next action. It does not alter the existing draft and preview
 sessions, which remain non-executing.
+
+`docker-test-evidence-writer.js` persists an authentic sandbox result only
+after a separate short-lived approval. It creates a new, never-overwritten,
+hash-bound receipt containing the exact manifest, pinned image, policy and
+honest pass/fail output. It cannot modify source, execute, merge or publish.
