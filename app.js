@@ -336,6 +336,85 @@ function requestSinbadWebPermission(question){
   pendingSinbadWebQuestion=question;const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];$('sinbadWebConsentText').textContent=copy.ask;$('sinbadWebConsent').classList.remove('hidden');return copy.ask;
 }
 
+// ---- Captain Sinbad live assistant animation state machine ----
+// Single, centralised, testable entry point for avatar state. Every state
+// here is wired to a real application event (see setSinbadAssistantState
+// call sites below) - none of them are shown ahead of the real event they
+// represent.
+const SINBAD_ASSISTANT_STATES=['idle','listening','thinking','preparing-voice','speaking','success','warning','error','voice-disabled'];
+const SINBAD_ASSISTANT_STATE_LABELS={
+ 'tr-TR':{idle:'Hazır',listening:'Dinliyor',thinking:'Düşünüyor','preparing-voice':'Ses hazırlanıyor',speaking:'Konuşuyor',success:'Tamamlandı',warning:'Dikkat',error:'Bağlantı sorunu','voice-disabled':'Ses kapalı'},
+ 'en-US':{idle:'Ready',listening:'Listening',thinking:'Thinking','preparing-voice':'Preparing voice',speaking:'Speaking',success:'Done',warning:'Attention',error:'Connection issue','voice-disabled':'Voice off'},
+ 'ru-RU':{idle:'Готов',listening:'Слушает',thinking:'Думает','preparing-voice':'Готовит голос',speaking:'Говорит',success:'Готово',warning:'Внимание',error:'Проблема связи','voice-disabled':'Звук выкл.'},
+ 'fr-FR':{idle:'Prêt',listening:'Écoute',thinking:'Réfléchit','preparing-voice':'Prépare la voix',speaking:'Parle',success:'Terminé',warning:'Attention',error:'Problème de connexion','voice-disabled':'Voix coupée'},
+ 'de-DE':{idle:'Bereit',listening:'Hört zu',thinking:'Denkt nach','preparing-voice':'Bereitet Stimme vor',speaking:'Spricht',success:'Fertig',warning:'Achtung',error:'Verbindungsproblem','voice-disabled':'Stimme aus'},
+ 'ar-SA':{idle:'جاهز',listening:'يستمع',thinking:'يفكر','preparing-voice':'يجهز الصوت',speaking:'يتحدث',success:'تم',warning:'تنبيه',error:'مشكلة اتصال','voice-disabled':'الصوت متوقف'},
+ 'es-ES':{idle:'Listo',listening:'Escuchando',thinking:'Pensando','preparing-voice':'Preparando voz',speaking:'Hablando',success:'Hecho',warning:'Atención',error:'Problema de conexión','voice-disabled':'Voz apagada'},
+ 'it-IT':{idle:'Pronto',listening:'Ascolta',thinking:'Pensa','preparing-voice':'Prepara la voce',speaking:'Parla',success:'Fatto',warning:'Attenzione',error:'Problema di connessione','voice-disabled':'Voce disattivata'}
+};
+let sinbadAssistantState='idle';
+let sinbadAssistantTimers=[];
+function sinbadAssistantElements(){return document.querySelectorAll('.sinbad-avatar');}
+function clearSinbadAssistantTimers(){sinbadAssistantTimers.forEach(clearTimeout);sinbadAssistantTimers=[];}
+let sinbadLipSyncAudioContext=null,sinbadLipSyncAnalyser=null,sinbadLipSyncSource=null,sinbadLipSyncRaf=null;
+function stopSinbadLipSyncAnalyser(){
+  if(sinbadLipSyncRaf)cancelAnimationFrame(sinbadLipSyncRaf);
+  sinbadLipSyncRaf=null;
+  sinbadAssistantElements().forEach(el=>el.style.removeProperty('--sinbad-mouth-amp'));
+}
+function startSinbadLipSyncAnalyser(audio){
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+    if(!sinbadLipSyncAudioContext)sinbadLipSyncAudioContext=new AC();
+    if(sinbadLipSyncAudioContext.state==='suspended')sinbadLipSyncAudioContext.resume();
+    const source=sinbadLipSyncAudioContext.createMediaElementSource(audio);
+    const analyser=sinbadLipSyncAudioContext.createAnalyser();
+    analyser.fftSize=256;
+    source.connect(analyser);
+    analyser.connect(sinbadLipSyncAudioContext.destination);
+    sinbadLipSyncSource=source;sinbadLipSyncAnalyser=analyser;
+    const data=new Uint8Array(analyser.frequencyBinCount);
+    const tick=()=>{
+      if(sinbadLipSyncAnalyser!==analyser||audio.paused||audio.ended){sinbadLipSyncRaf=null;return;}
+      analyser.getByteFrequencyData(data);
+      let sum=0;for(let i=0;i<data.length;i++)sum+=data[i];
+      const amp=Math.min(1,(sum/data.length)/72);
+      sinbadAssistantElements().forEach(el=>el.style.setProperty('--sinbad-mouth-amp',amp.toFixed(3)));
+      sinbadLipSyncRaf=requestAnimationFrame(tick);
+    };
+    tick();
+  }catch(error){
+    // Expected on browsers/contexts without Web Audio support, or if the
+    // element graph cannot be tapped - the CSS-only fallback cycle (driven
+    // purely by the [data-state="speaking"] attribute) still animates the
+    // mouth naturally, and playback audio itself is never affected because
+    // nothing here runs before the real <audio> element already exists.
+    console.warn('Sinbad lip-sync analyser unavailable; using CSS fallback lip-sync',error);
+  }
+}
+function setSinbadAssistantState(state){
+  const next=SINBAD_ASSISTANT_STATES.includes(state)?state:'idle';
+  const changed=next!==sinbadAssistantState;
+  sinbadAssistantState=next;
+  clearSinbadAssistantTimers();
+  sinbadAssistantElements().forEach(el=>{el.dataset.state=next;});
+  if(next!=='speaking'){sinbadLipSyncAnalyser=null;stopSinbadLipSyncAnalyser();}
+  const copy=SINBAD_ASSISTANT_STATE_LABELS[sinbadState.language]||SINBAD_ASSISTANT_STATE_LABELS['en-US'];
+  const label=$('sinbadAvatarStatus');
+  if(label&&changed)label.textContent=copy[next]||next;
+  const floatButton=$('sinbadFloat');
+  if(floatButton)floatButton.setAttribute('aria-label',`Open Captain Sinbad — ${copy[next]||next}`);
+  if(next==='success')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='success')setSinbadAssistantState('idle');},2200));
+  if(next==='warning')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='warning')setSinbadAssistantState('idle');},4200));
+  if(next==='error')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='error')setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');},6000));
+  return next;
+}
+if(typeof document!=='undefined'&&'visibilityState'in document){
+  document.addEventListener('visibilitychange',()=>{
+    document.documentElement.classList.toggle('sinbad-tab-hidden',document.visibilityState==='hidden');
+  },{passive:true});
+}
+
 function setSinbadVoiceUI(){
   const button=$('toggleSinbadVoice');if(!button)return;
   button.textContent=sinbadState.voiceEnabled?'🔊 Voice: On':'🔇 Voice: Off';
@@ -379,7 +458,9 @@ let sinbadVoiceAbort=null;
 function finishSinbadVoice(){
   if(sinbadVoiceObjectUrl)URL.revokeObjectURL(sinbadVoiceObjectUrl);
   sinbadVoiceObjectUrl='';sinbadVoiceAudio=null;sinbadVoiceAbort=null;
-  sinbadAwaitingAnswer=false;scheduleSinbadListening();
+  sinbadAwaitingAnswer=false;
+  if(sinbadState.voiceEnabled)setSinbadAssistantState('idle');
+  scheduleSinbadListening();
 }
 function stopSinbadVoice(){
   sinbadVoiceAbort?.abort();sinbadVoiceAbort=null;
@@ -387,6 +468,7 @@ function stopSinbadVoice(){
   if(sinbadVoiceObjectUrl)URL.revokeObjectURL(sinbadVoiceObjectUrl);
   sinbadVoiceObjectUrl='';sinbadVoiceAudio=null;
   window.speechSynthesis?.cancel();
+  if(sinbadAssistantState==='speaking'||sinbadAssistantState==='preparing-voice')setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');
 }
 function speakSinbadFallback(text){
   if(!sinbadState.voiceEnabled||!('speechSynthesis'in window)){sinbadAwaitingAnswer=false;scheduleSinbadListening();return;}
@@ -438,7 +520,15 @@ function playSinbadCloneBlob(blob,controller){
       if(sinbadVoiceAudio===audio)sinbadVoiceAudio=null;
       URL.revokeObjectURL(objectUrl);
       if(sinbadVoiceObjectUrl===objectUrl)sinbadVoiceObjectUrl='';
+      stopSinbadLipSyncAnalyser();
     };
+    // 'playing' fires only once audio is actually producing sound - this is
+    // the real signal the task requires, not the fetch/announce moment.
+    audio.addEventListener('playing',()=>{
+      if(sinbadVoiceAbort!==controller)return;
+      setSinbadAssistantState('speaking');
+      startSinbadLipSyncAnalyser(audio);
+    },{once:true});
     audio.onended=()=>{cleanup();resolve();};
     audio.onerror=()=>{cleanup();reject(new Error('XTTS cloned audio playback failed'));};
     controller.signal.addEventListener('abort',()=>{audio.pause();audio.src='';cleanup();resolve();},{once:true});
@@ -456,6 +546,7 @@ async function speakSinbad(text,onVoiceReady){
   const chunks=splitSinbadCloneChunks(cleanText);
   const status=$('sinbadKnowledgeStatus');
   const controller=new AbortController();sinbadVoiceAbort=controller;
+  setSinbadAssistantState('preparing-voice');
   let timedOut=false;
   const loadChunk=async index=>{
     const timeout=setTimeout(()=>{timedOut=true;controller.abort();},150000);
@@ -484,6 +575,7 @@ async function speakSinbad(text,onVoiceReady){
     if(sinbadVoiceAbort!==controller)return;
     if(error?.name==='AbortError'&&!timedOut)return;
     console.warn('Sinbad XTTS clone unavailable; standard voice disabled',error);
+    setSinbadAssistantState('error');
     announce();stopSinbadVoice();
     if(status)status.textContent=timedOut?'XTTS klon sesi zaman aşımına uğradı · standart sese geçilmedi':'XTTS klon sesi üretilemedi · standart sese geçilmedi';
     sinbadAwaitingAnswer=false;scheduleSinbadListening();
@@ -523,7 +615,7 @@ function beginSinbadRecognition(){
   if(!sinbadHandsFreeEnabled||sinbadIsListening||sinbadAwaitingAnswer)return;
   sinbadRecognition=new Recognition();sinbadRecognition.lang=sinbadState.language;sinbadRecognition.continuous=false;sinbadRecognition.interimResults=true;sinbadRecognition.maxAlternatives=1;
   let finalTranscript='';
-  sinbadRecognition.onstart=()=>{sinbadIsListening=true;setListeningUI(sinbadWakeActive?speechCopy().listen:handsFreeMessage(),true);};
+  sinbadRecognition.onstart=()=>{sinbadIsListening=true;setListeningUI(sinbadWakeActive?speechCopy().listen:handsFreeMessage(),true);setSinbadAssistantState('listening');};
   sinbadRecognition.onresult=event=>{let interim='';for(let i=event.resultIndex;i<event.results.length;i++){const part=event.results[i][0].transcript;if(event.results[i].isFinal)finalTranscript+=part;else interim+=part;}$('sinbadInput').value=(finalTranscript||interim).trim();};
   sinbadRecognition.onerror=event=>{sinbadIsListening=false;if(event.error==='not-allowed'||event.error==='service-not-allowed'){sinbadHandsFreeEnabled=false;setListeningUI(speechCopy().denied,true);return;}if(!['no-speech','aborted'].includes(event.error))setListeningUI(`Microphone: ${event.error}`,true);};
   sinbadRecognition.onend=()=>{
@@ -533,7 +625,7 @@ function beginSinbadRecognition(){
     if(wakeMatch){sinbadWakeActive=true;command=heard.slice((wakeMatch.index||0)+wakeMatch[0].length).replace(/^[,.:;!?\s-]+/,'').trim();}
     else if(sinbadWakeActive)command=heard;
     if(command){sinbadWakeActive=false;sinbadAwaitingAnswer=true;$('sinbadInput').value=command;setListeningUI(speechCopy().heard,true);setTimeout(()=>sendToSinbad(command),250);}
-    else {if(wakeMatch)setListeningUI(speechCopy().listen,true);else $('sinbadInput').value='';scheduleSinbadListening(wakeMatch?150:500);}
+    else {if(wakeMatch)setListeningUI(speechCopy().listen,true);else $('sinbadInput').value='';if(sinbadAssistantState==='listening')setSinbadAssistantState('idle');scheduleSinbadListening(wakeMatch?150:500);}
   };
   try{sinbadRecognition.start();}catch(error){sinbadIsListening=false;setListeningUI(error.message||String(error),true);}
 }
@@ -580,6 +672,7 @@ function createPassagePlanDraft(){
   const text=SinbadCore.formatPlan(plan);$('passagePlanOutput').textContent=text;
   localStorage.setItem('atlas_last_passage_draft',JSON.stringify(plan));
   addSinbadMessage('sinbad',`Passage plan draft created for ${plan.title}. ${plan.sources.length} approved official source(s) cited. Captain approval and live navigation checks are still required.`);
+  setSinbadAssistantState('success');
 }
 async function copyPassagePlanDraft(){
   const text=$('passagePlanOutput').textContent;if(!text)return;
@@ -605,7 +698,7 @@ function syncBridgeWaypoint(event){
 }
 function validBridgeWaypoints(){
   const points=bridgeWaypoints.map((point,index)=>({name:point.name.trim()||`WP${index+1}`,lat:Number(point.lat),lon:Number(point.lon)}));
-  if(points.length<2||points.some(point=>!Number.isFinite(point.lat)||!Number.isFinite(point.lon)||Math.abs(point.lat)>90||Math.abs(point.lon)>180))throw new Error('Add at least two waypoints with valid latitude and longitude.');
+  if(points.length<2||points.some(point=>!Number.isFinite(point.lat)||!Number.isFinite(point.lon)||Math.abs(point.lat)>90||Math.abs(point.lon)>180))throw new Error(SINBAD_MISSING_WAYPOINTS_MESSAGE);
   return points;
 }
 function buildBridgeGpx(){
@@ -613,14 +706,15 @@ function buildBridgeGpx(){
   return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Sinbad Marine ECS" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">\n  <metadata><name>${bridgeXml(name)}</name><time>${created}</time><desc>Planning draft. Verify against current official charts and Notices to Mariners.</desc></metadata>\n  ${points.map(point=>`<wpt lat="${point.lat.toFixed(6)}" lon="${point.lon.toFixed(6)}"><name>${bridgeXml(point.name)}</name></wpt>`).join('\n  ')}\n  <rte><name>${bridgeXml(name)}</name><desc>Sinbad planning route — captain approval required.</desc>\n    ${points.map(point=>`<rtept lat="${point.lat.toFixed(6)}" lon="${point.lon.toFixed(6)}"><name>${bridgeXml(point.name)}</name></rtept>`).join('\n    ')}\n  </rte>\n</gpx>\n`;
 }
 function safeBridgeFilename(){return `${bridgeRouteName().replace(/[^a-z0-9_-]+/gi,'-').replace(/^-|-$/g,'')||'sinbad-route'}.gpx`;}
+const SINBAD_MISSING_WAYPOINTS_MESSAGE='Add at least two waypoints with valid latitude and longitude.';
 function downloadBridgeGpx(){
-  try{const blob=new Blob([buildBridgeGpx()],{type:'application/gpx+xml'}),link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=safeBridgeFilename();link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000);$('bridgeMessage').textContent='GPX downloaded. Import it in OpenCPN Route & Mark Manager.';}catch(error){$('bridgeMessage').textContent=error.message;}
+  try{const blob=new Blob([buildBridgeGpx()],{type:'application/gpx+xml'}),link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=safeBridgeFilename();link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000);$('bridgeMessage').textContent='GPX downloaded. Import it in OpenCPN Route & Mark Manager.';setSinbadAssistantState('success');}catch(error){$('bridgeMessage').textContent=error.message;setSinbadAssistantState(error.message===SINBAD_MISSING_WAYPOINTS_MESSAGE?'warning':'error');}
 }
 async function sendBridgeGpx(){
   try{
     const response=await fetch(`${SINBAD_BRIDGE_URL}/routes`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({filename:safeBridgeFilename(),name:bridgeRouteName(),gpx:buildBridgeGpx()})});
-    if(!response.ok)throw new Error(`Bridge returned ${response.status}`);const result=await response.json();$('bridgeMessage').textContent=`Route saved locally: ${result.path}. Import it from OpenCPN Route & Mark Manager.`;checkBridgeStatus();
-  }catch(error){$('bridgeMessage').textContent='Local Bridge is not reachable. Start bridge/start-sinbad-bridge.cmd, or use Download GPX.';}
+    if(!response.ok)throw new Error(`Bridge returned ${response.status}`);const result=await response.json();$('bridgeMessage').textContent=`Route saved locally: ${result.path}. Import it from OpenCPN Route & Mark Manager.`;checkBridgeStatus();setSinbadAssistantState('success');
+  }catch(error){$('bridgeMessage').textContent='Local Bridge is not reachable. Start bridge/start-sinbad-bridge.cmd, or use Download GPX.';setSinbadAssistantState(error.message===SINBAD_MISSING_WAYPOINTS_MESSAGE?'warning':'error');}
 }
 async function checkBridgeStatus(){
   const badge=$('bridgeStatus');if(!badge)return;
@@ -801,9 +895,11 @@ async function sendToSinbad(text){
   addSinbadMessage('user',q);
   $('sinbadInput').value='';
   if(window.SinbadRouteVisualizer?.isPlotRequest?.(q)){
+    setSinbadAssistantState('thinking');
     const plotted=await prepareNavigationPlotFromConversation(q);
     addSinbadMessage('sinbad',plotted.message);speakSinbad(plotted.message);return;
   }
+  setSinbadAssistantState('thinking');
   $('sinbadThinking').classList.remove('hidden');
   setTimeout(async()=>{
     const answer=await sinbadLocalAnswer(q);
@@ -816,7 +912,8 @@ $('sinbadInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey)
 document.querySelectorAll('.sinbad-prompt').forEach(b=>b.addEventListener('click',()=>sendToSinbad(b.textContent)));
 $('sinbadFloat').addEventListener('click',()=>openWorkspace('sinbad'));
 $('backToSinbad')?.addEventListener('click',()=>openWorkspace('sinbad'));
-$('toggleSinbadVoice')?.addEventListener('click',()=>{sinbadState.voiceEnabled=!sinbadState.voiceEnabled;localStorage.setItem('atlas_sinbad_voice',sinbadState.voiceEnabled?'on':'off');setSinbadVoiceUI();if(!sinbadState.voiceEnabled)stopSinbadVoice();});
+$('toggleSinbadVoice')?.addEventListener('click',()=>{sinbadState.voiceEnabled=!sinbadState.voiceEnabled;localStorage.setItem('atlas_sinbad_voice',sinbadState.voiceEnabled?'on':'off');setSinbadVoiceUI();if(!sinbadState.voiceEnabled){stopSinbadVoice();setSinbadAssistantState('voice-disabled');}else if(sinbadAssistantState==='voice-disabled')setSinbadAssistantState('idle');});
+setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');
 $('stopSinbadVoice')?.addEventListener('click',stopSinbadVoice);
 $('startSinbadListening')?.addEventListener('click',startSinbadListening);
 $('testSinbadVoice')?.addEventListener('click',()=>{sinbadState.voiceEnabled=true;localStorage.setItem('atlas_sinbad_voice','on');setSinbadVoiceUI();speakSinbad(speechCopy().test);});
@@ -1647,6 +1744,7 @@ async function sinbadCloudKnowledgeAnswer(question){
 }
 async function performSinbadWebSearch(){
   const question=pendingSinbadWebQuestion;if(!question)return;$('sinbadWebConsent').classList.add('hidden');pendingSinbadWebQuestion='';
+  setSinbadAssistantState('thinking');
   $('sinbadThinking').classList.remove('hidden');
   try{
     const history=sinbadState.messages.slice(-12).map(message=>({role:message.role==='sinbad'?'assistant':'user',content:message.text}));

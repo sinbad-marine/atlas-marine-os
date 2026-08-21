@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.9-offline-map-r3-persistent-xtts-worker';
+const CACHE='sinbad-marine-v8.20.9-captain-sinbad-assistant-animation';
 const ASSETS=[
   './',
   './index.html',

@@ -51,7 +51,89 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
 @keyframes sinbadPulse{0%,80%,100%{transform:scale(.65);opacity:.45}40%{transform:scale(1);opacity:1}}
 .sinbad-float{position:fixed;right:22px;bottom:22px;z-index:50;display:flex;align-items:center;gap:10px;background:#091d2d;color:white;border:2px solid var(--gold);border-radius:999px;padding:8px 14px 8px 8px;font-weight:700;cursor:pointer}
 .sinbad-float:hover{transform:translateY(-2px)}
-@media(max-width:800px){.sinbad-layout{grid-template-columns:1fr}.sinbad-profile{display:grid;grid-template-columns:110px 1fr;align-items:center;text-align:left}.sinbad-avatar.large{width:105px;height:105px}.sinbad-capabilities{grid-column:1/-1}.chat-bubble{max-width:92%}}
+
+/* ---- Captain Sinbad live assistant avatar ---- */
+.sinbad-status-line{margin:8px 0 2px;font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.sinbad-avatar svg *{transform-box:fill-box}
+.sinbad-avatar .sinbad-voice-ring circle{fill:none;stroke:var(--cyan);stroke-width:2;opacity:0;transform-origin:center}
+.sinbad-avatar .sinbad-status-light{fill:var(--muted);stroke:var(--panel2)}
+.sinbad-avatar .sinbad-eyelid-left,.sinbad-avatar .sinbad-eyelid-right{transform-origin:center;transform:scaleY(0)}
+.sinbad-avatar .sinbad-mouth{transform-origin:center}
+.sinbad-avatar .sinbad-mouth-teeth{transform-origin:center;transform:scaleY(calc(.4 + var(--sinbad-mouth-amp,0) * 1.4))}
+.sinbad-avatar .sinbad-head-group,.sinbad-avatar .sinbad-arm-left,.sinbad-avatar .sinbad-arm-right,.sinbad-avatar .sinbad-body,.sinbad-avatar .sinbad-pupil,.sinbad-avatar .sinbad-raven,.sinbad-avatar .sinbad-raven-wing-left{transform-origin:center}
+/* Small floating avatar stays legible at 52px - only head, eyes, ring and status light read at that size. */
+.sinbad-avatar.small .sinbad-raven,.sinbad-avatar.small .sinbad-sword,.sinbad-avatar.small .sinbad-arm-left,.sinbad-avatar.small .sinbad-arm-right{display:none}
+
+/* Status colour - always present, never the only signal (see .sinbad-status-line and aria-label). */
+.sinbad-avatar[data-state="listening"] .sinbad-status-light,.sinbad-avatar[data-state="speaking"] .sinbad-status-light{fill:var(--cyan)}
+.sinbad-avatar[data-state="thinking"] .sinbad-status-light,.sinbad-avatar[data-state="preparing-voice"] .sinbad-status-light{fill:var(--gold)}
+.sinbad-avatar[data-state="success"] .sinbad-status-light{fill:var(--green)}
+.sinbad-avatar[data-state="warning"] .sinbad-status-light{fill:#d99a3d}
+.sinbad-avatar[data-state="error"] .sinbad-status-light{fill:var(--danger)}
+.sinbad-avatar[data-state="voice-disabled"] .sinbad-status-light{fill:var(--line)}
+
+/* Static (non-animated) expression shifts - kept OUTSIDE the reduced-motion guard below,
+   since these are instant state-driven shape changes, not motion. */
+.sinbad-avatar[data-state="thinking"] .sinbad-brow-left{transform:translate(1px,1px) rotate(-3deg)}
+.sinbad-avatar[data-state="thinking"] .sinbad-brow-right{transform:translate(-1px,1px) rotate(3deg)}
+.sinbad-avatar[data-state="warning"] .sinbad-brow-left{transform:translateY(1.5px) rotate(-5deg)}
+.sinbad-avatar[data-state="warning"] .sinbad-brow-right{transform:translateY(1.5px) rotate(5deg)}
+.sinbad-avatar[data-state="warning"] .sinbad-mouth{transform:scaleY(.55)}
+.sinbad-avatar[data-state="success"] .sinbad-mouth{transform:scaleY(1.18) translateY(-1px)}
+.sinbad-avatar[data-state="voice-disabled"] .sinbad-voice-ring circle{opacity:0}
+.sinbad-avatar[data-state="listening"] .sinbad-arm-left{transform:translate(4px,-6px) rotate(-8deg)}
+
+@media not (prefers-reduced-motion: reduce){
+  @keyframes sinbadBreathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.6px)}}
+  @keyframes sinbadIdleSway{0%,100%{transform:rotate(0deg)}50%{transform:rotate(.6deg)}}
+  @keyframes sinbadBlink{0%,90%,100%{transform:scaleY(0)}93%,96%{transform:scaleY(1)}}
+  @keyframes sinbadRingPulse{0%{transform:scale(.88);opacity:.5}100%{transform:scale(1.22);opacity:0}}
+  @keyframes sinbadListenTurn{from{transform:rotate(0deg)}to{transform:rotate(-3deg)}}
+  @keyframes sinbadThinkGaze{0%,100%{transform:translate(0,0)}50%{transform:translate(1.6px,-1.6px)}}
+  @keyframes sinbadTalk{0%,100%{transform:scaleY(.55)}28%{transform:scaleY(1.12)}55%{transform:scaleY(.75)}78%{transform:scaleY(1.02)}}
+  @keyframes sinbadSpeakSway{0%,100%{transform:rotate(0deg)}50%{transform:rotate(1.2deg)}}
+  @keyframes sinbadArmGesture{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-3deg)}}
+  @keyframes sinbadNod{0%,100%{transform:rotate(0deg)}28%{transform:rotate(-5deg)}60%{transform:rotate(2deg)}}
+  @keyframes sinbadCalmBlinkLight{0%,100%{opacity:1}50%{opacity:.4}}
+  @keyframes sinbadRavenFlutter{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-14deg)}}
+
+  html:not(.sinbad-tab-hidden) .sinbad-avatar[data-state]:not([data-state="speaking"]) .sinbad-eyelid-left,
+  html:not(.sinbad-tab-hidden) .sinbad-avatar[data-state]:not([data-state="speaking"]) .sinbad-eyelid-right{animation:sinbadBlink 6.4s ease-in-out infinite}
+  html:not(.sinbad-tab-hidden) .sinbad-avatar[data-state="idle"] .sinbad-body,
+  html:not(.sinbad-tab-hidden) .sinbad-avatar[data-state="voice-disabled"] .sinbad-body,
+  html:not(.sinbad-tab-hidden) .sinbad-avatar[data-state="error"] .sinbad-body{animation:sinbadBreathe 4.2s ease-in-out infinite}
+  html:not(.sinbad-tab-hidden) .sinbad-avatar[data-state="idle"] .sinbad-head-group{animation:sinbadIdleSway 7s ease-in-out infinite}
+
+  html:not(.sinbad-tab-hidden) .sinbad-avatar[data-state="listening"] .sinbad-head-group{animation:sinbadListenTurn .5s ease forwards}
+  html:not(.sinbad-tab-hidden) .sinbad-avatar[data-state="listening"] .sinbad-voice-ring circle,
+  html:not(.sinbad-tab-hidden) .sinbad-avatar[data-state="speaking"] .sinbad-voice-ring circle{stroke:var(--cyan);opacity:.5;animation:sinbadRingPulse 1.8s ease-out infinite}
+  html:not(.sinbad-tab-hidden) .sinbad-avatar[data-state="listening"] .sinbad-voice-ring circle:nth-child(2),
+  html:not(.sinbad-tab-hidden) .sinbad-avatar[data-state="speaking"] .sinbad-voice-ring circle:nth-child(2){animation-delay:.45s}
+
+  html:not(.sinbad-tab-hidden) .sinbad-avatar[data-state="thinking"] .sinbad-pupil{animation:sinbadThinkGaze 2.4s ease-in-out infinite}
+  html:not(.sinbad-tab-hidden) .sinbad-avatar[data-state="thinking"] .sinbad-voice-ring circle{stroke:var(--gold);opacity:.3;animation:sinbadRingPulse 3.2s ease-in-out infinite}
+
+  html:not(.sinbad-tab-hidden) .sinbad-avatar[data-state="preparing-voice"] .sinbad-voice-ring circle{stroke:var(--gold);opacity:.55;animation:sinbadRingPulse 1.1s ease-out infinite}
+  html:not(.sinbad-tab-hidden) .sinbad-avatar[data-state="preparing-voice"] .sinbad-status-light{animation:sinbadCalmBlinkLight 1s ease-in-out infinite}
+
+  html:not(.sinbad-tab-hidden) .sinbad-avatar[data-state="speaking"] .sinbad-mouth{animation:sinbadTalk .42s ease-in-out infinite}
+  html:not(.sinbad-tab-hidden) .sinbad-avatar[data-state="speaking"] .sinbad-head-group{animation:sinbadSpeakSway 3.7s ease-in-out infinite}
+  html:not(.sinbad-tab-hidden) .sinbad-avatar[data-state="speaking"] .sinbad-arm-right{animation:sinbadArmGesture 2.9s ease-in-out infinite}
+
+  html:not(.sinbad-tab-hidden) .sinbad-avatar[data-state="success"] .sinbad-head-group{animation:sinbadNod .9s ease}
+  html:not(.sinbad-tab-hidden) .sinbad-avatar[data-state="success"] .sinbad-voice-ring circle{stroke:var(--green);opacity:.55;animation:sinbadRingPulse 1s ease-out 2}
+
+  html:not(.sinbad-tab-hidden) .sinbad-avatar[data-state="warning"] .sinbad-voice-ring circle{stroke:#d99a3d;opacity:.3;animation:sinbadRingPulse 3.6s ease-in-out infinite}
+
+  html:not(.sinbad-tab-hidden) .sinbad-avatar[data-state="error"] .sinbad-status-light{animation:sinbadCalmBlinkLight 2.4s ease-in-out infinite}
+
+  html:not(.sinbad-tab-hidden) .sinbad-avatar .sinbad-raven-wing-left{animation:sinbadRavenFlutter 2.6s ease-in-out infinite}
+  html.sinbad-tab-hidden .sinbad-avatar *{animation-play-state:paused!important}
+}
+@media (prefers-reduced-motion: reduce){
+  .sinbad-avatar[data-state="idle"] .sinbad-eyelid-left,.sinbad-avatar[data-state="idle"] .sinbad-eyelid-right{transform:scaleY(0)}
+}
+@media(max-width:800px){.sinbad-layout{grid-template-columns:1fr}.sinbad-profile{display:grid;grid-template-columns:110px 1fr;align-items:center;text-align:left}.sinbad-avatar.large{width:105px;height:105px}.sinbad-capabilities,.sinbad-status-line{grid-column:1/-1}.chat-bubble{max-width:92%}}
 @media(max-width:600px){.sinbad-profile{grid-template-columns:1fr;text-align:center}.chat-input-row{grid-template-columns:1fr}.sinbad-float span{display:none}.sinbad-float{padding:7px;right:14px;bottom:14px}}
 
 
