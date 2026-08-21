@@ -340,27 +340,57 @@ function requestSinbadWebPermission(question){
 // Single, centralised, testable entry point for avatar state. Every state
 // here is wired to a real application event (see setSinbadAssistantState
 // call sites below) - none of them are shown ahead of the real event they
-// represent.
-const SINBAD_ASSISTANT_STATES=['idle','listening','thinking','preparing-voice','speaking','success','warning','error','voice-disabled'];
+// represent. Visuals are the real illustrated Academy pack
+// (assets/captain-sinbad/, ACADEMY_BEHAVIOR_MANIFEST_TR.md) - Claude does not
+// redraw the character or imitate it with SVG geometry.
+const SINBAD_ASSISTANT_STATES=['idle','listening','thinking','preparing-voice','speaking','success','warning','error','voice-disabled','board-teaching'];
 const SINBAD_ASSISTANT_STATE_LABELS={
- 'tr-TR':{idle:'Hazır',listening:'Dinliyor',thinking:'Düşünüyor','preparing-voice':'Ses hazırlanıyor',speaking:'Konuşuyor',success:'Tamamlandı',warning:'Dikkat',error:'Bağlantı sorunu','voice-disabled':'Ses kapalı'},
- 'en-US':{idle:'Ready',listening:'Listening',thinking:'Thinking','preparing-voice':'Preparing voice',speaking:'Speaking',success:'Done',warning:'Attention',error:'Connection issue','voice-disabled':'Voice off'},
- 'ru-RU':{idle:'Готов',listening:'Слушает',thinking:'Думает','preparing-voice':'Готовит голос',speaking:'Говорит',success:'Готово',warning:'Внимание',error:'Проблема связи','voice-disabled':'Звук выкл.'},
- 'fr-FR':{idle:'Prêt',listening:'Écoute',thinking:'Réfléchit','preparing-voice':'Prépare la voix',speaking:'Parle',success:'Terminé',warning:'Attention',error:'Problème de connexion','voice-disabled':'Voix coupée'},
- 'de-DE':{idle:'Bereit',listening:'Hört zu',thinking:'Denkt nach','preparing-voice':'Bereitet Stimme vor',speaking:'Spricht',success:'Fertig',warning:'Achtung',error:'Verbindungsproblem','voice-disabled':'Stimme aus'},
- 'ar-SA':{idle:'جاهز',listening:'يستمع',thinking:'يفكر','preparing-voice':'يجهز الصوت',speaking:'يتحدث',success:'تم',warning:'تنبيه',error:'مشكلة اتصال','voice-disabled':'الصوت متوقف'},
- 'es-ES':{idle:'Listo',listening:'Escuchando',thinking:'Pensando','preparing-voice':'Preparando voz',speaking:'Hablando',success:'Hecho',warning:'Atención',error:'Problema de conexión','voice-disabled':'Voz apagada'},
- 'it-IT':{idle:'Pronto',listening:'Ascolta',thinking:'Pensa','preparing-voice':'Prepara la voce',speaking:'Parla',success:'Fatto',warning:'Attenzione',error:'Problema di connessione','voice-disabled':'Voce disattivata'}
+ 'tr-TR':{idle:'Hazır',listening:'Dinliyor',thinking:'Düşünüyor','preparing-voice':'Ses hazırlanıyor',speaking:'Konuşuyor',success:'Tamamlandı',warning:'Dikkat',error:'Bağlantı sorunu','voice-disabled':'Ses kapalı','board-teaching':'Tahtada anlatıyor'},
+ 'en-US':{idle:'Ready',listening:'Listening',thinking:'Thinking','preparing-voice':'Preparing voice',speaking:'Speaking',success:'Done',warning:'Attention',error:'Connection issue','voice-disabled':'Voice off','board-teaching':'Teaching at the board'},
+ 'ru-RU':{idle:'Готов',listening:'Слушает',thinking:'Думает','preparing-voice':'Готовит голос',speaking:'Говорит',success:'Готово',warning:'Внимание',error:'Проблема связи','voice-disabled':'Звук выкл.','board-teaching':'Объясняет у доски'},
+ 'fr-FR':{idle:'Prêt',listening:'Écoute',thinking:'Réfléchit','preparing-voice':'Prépare la voix',speaking:'Parle',success:'Terminé',warning:'Attention',error:'Problème de connexion','voice-disabled':'Voix coupée','board-teaching':'Explique au tableau'},
+ 'de-DE':{idle:'Bereit',listening:'Hört zu',thinking:'Denkt nach','preparing-voice':'Bereitet Stimme vor',speaking:'Spricht',success:'Fertig',warning:'Achtung',error:'Verbindungsproblem','voice-disabled':'Stimme aus','board-teaching':'Erklärt an der Tafel'},
+ 'ar-SA':{idle:'جاهز',listening:'يستمع',thinking:'يفكر','preparing-voice':'يجهز الصوت',speaking:'يتحدث',success:'تم',warning:'تنبيه',error:'مشكلة اتصال','voice-disabled':'الصوت متوقف','board-teaching':'يشرح عند السبورة'},
+ 'es-ES':{idle:'Listo',listening:'Escuchando',thinking:'Pensando','preparing-voice':'Preparando voz',speaking:'Hablando',success:'Hecho',warning:'Atención',error:'Problema de conexión','voice-disabled':'Voz apagada','board-teaching':'Explicando en la pizarra'},
+ 'it-IT':{idle:'Pronto',listening:'Ascolta',thinking:'Pensa','preparing-voice':'Prepara la voce',speaking:'Parla',success:'Fatto',warning:'Attenzione',error:'Problema di connessione','voice-disabled':'Voce disattivata','board-teaching':'Spiega alla lavagna'}
+};
+// Which real illustrated Academy asset represents each state. Several logical
+// states (preparing-voice, success, warning, error, voice-disabled) do not yet
+// have dedicated art in the v1 pack - they honestly fall back to the idle
+// pose (closed mouth, neutral stance), matching what ACADEMY_BEHAVIOR_MANIFEST_TR.md
+// itself specifies for those states ("preparing-voice: ağız kapalı", "voice-disabled:
+// konuşma jesti yok", "success/warning/error: mevcut duruşun devamı + efekt").
+// Distinct status colour/text still applies (see CSS + sinbadAvatarStatus label).
+const SINBAD_AVATAR_ASSET_BASE='./assets/captain-sinbad/';
+const SINBAD_STATE_ASSET={
+  idle:'captain-sinbad-idle-master.png',
+  listening:'captain-sinbad-listening.png',
+  thinking:'captain-sinbad-thinking.png',
+  'preparing-voice':'captain-sinbad-idle-master.png',
+  speaking:'captain-sinbad-speaking.png',
+  success:'captain-sinbad-idle-master.png',
+  warning:'captain-sinbad-idle-master.png',
+  error:'captain-sinbad-idle-master.png',
+  'voice-disabled':'captain-sinbad-idle-master.png',
+  'board-teaching':'captain-sinbad-board-teaching.png'
 };
 let sinbadAssistantState='idle';
 let sinbadAssistantTimers=[];
+let sinbadAssistantLastDetail={};
 function sinbadAssistantElements(){return document.querySelectorAll('.sinbad-avatar');}
 function clearSinbadAssistantTimers(){sinbadAssistantTimers.forEach(clearTimeout);sinbadAssistantTimers=[];}
+function preloadSinbadAvatarAssets(){
+  const seen=new Set();
+  Object.values(SINBAD_STATE_ASSET).forEach(file=>{
+    if(seen.has(file))return;seen.add(file);
+    const img=new Image();img.src=SINBAD_AVATAR_ASSET_BASE+file;
+  });
+}
 let sinbadLipSyncAudioContext=null,sinbadLipSyncAnalyser=null,sinbadLipSyncSource=null,sinbadLipSyncRaf=null;
 function stopSinbadLipSyncAnalyser(){
   if(sinbadLipSyncRaf)cancelAnimationFrame(sinbadLipSyncRaf);
   sinbadLipSyncRaf=null;
-  sinbadAssistantElements().forEach(el=>el.style.removeProperty('--sinbad-mouth-amp'));
+  sinbadAssistantElements().forEach(el=>el.style.removeProperty('--sinbad-voice-amp'));
 }
 function startSinbadLipSyncAnalyser(audio){
   try{
@@ -379,25 +409,40 @@ function startSinbadLipSyncAnalyser(audio){
       analyser.getByteFrequencyData(data);
       let sum=0;for(let i=0;i<data.length;i++)sum+=data[i];
       const amp=Math.min(1,(sum/data.length)/72);
-      sinbadAssistantElements().forEach(el=>el.style.setProperty('--sinbad-mouth-amp',amp.toFixed(3)));
+      sinbadAssistantElements().forEach(el=>el.style.setProperty('--sinbad-voice-amp',amp.toFixed(3)));
       sinbadLipSyncRaf=requestAnimationFrame(tick);
     };
     tick();
   }catch(error){
     // Expected on browsers/contexts without Web Audio support, or if the
-    // element graph cannot be tapped - the CSS-only fallback cycle (driven
-    // purely by the [data-state="speaking"] attribute) still animates the
-    // mouth naturally, and playback audio itself is never affected because
-    // nothing here runs before the real <audio> element already exists.
-    console.warn('Sinbad lip-sync analyser unavailable; using CSS fallback lip-sync',error);
+    // element graph cannot be tapped - the CSS-only fallback (a calm speaking
+    // pulse driven purely by [data-state="speaking"]) still plays, and
+    // playback audio itself is never affected because nothing here runs
+    // before the real <audio> element already exists. The v1 Academy pack
+    // has no separate mouth/phoneme layer yet (ACADEMY_BEHAVIOR_MANIFEST_TR.md
+    // production step 2), so this amplitude drives a whole-portrait energy
+    // cue rather than per-phoneme mouth shapes.
+    console.warn('Sinbad lip-sync analyser unavailable; using CSS fallback',error);
   }
 }
-function setSinbadAssistantState(state){
+function setSinbadAssistantState(state,detail={}){
   const next=SINBAD_ASSISTANT_STATES.includes(state)?state:'idle';
   const changed=next!==sinbadAssistantState;
   sinbadAssistantState=next;
+  sinbadAssistantLastDetail=detail||{};
   clearSinbadAssistantTimers();
-  sinbadAssistantElements().forEach(el=>{el.dataset.state=next;});
+  const asset=SINBAD_STATE_ASSET[next]||SINBAD_STATE_ASSET.idle;
+  const src=SINBAD_AVATAR_ASSET_BASE+asset;
+  sinbadAssistantElements().forEach(el=>{
+    el.dataset.state=next;
+    const img=el.querySelector('.sinbad-avatar-img');
+    if(img&&!img.src.endsWith(asset)){
+      img.style.opacity='0';
+      img.onload=()=>{img.style.opacity='1';};
+      img.src=src;
+    }
+  });
+  if('reducedMotion' in (detail||{}))document.documentElement.classList.toggle('sinbad-force-reduced-motion',detail.reducedMotion===true);
   if(next!=='speaking'){sinbadLipSyncAnalyser=null;stopSinbadLipSyncAnalyser();}
   const copy=SINBAD_ASSISTANT_STATE_LABELS[sinbadState.language]||SINBAD_ASSISTANT_STATE_LABELS['en-US'];
   const label=$('sinbadAvatarStatus');
@@ -409,6 +454,7 @@ function setSinbadAssistantState(state){
   if(next==='error')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='error')setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');},6000));
   return next;
 }
+preloadSinbadAvatarAssets();
 if(typeof document!=='undefined'&&'visibilityState'in document){
   document.addEventListener('visibilitychange',()=>{
     document.documentElement.classList.toggle('sinbad-tab-hidden',document.visibilityState==='hidden');

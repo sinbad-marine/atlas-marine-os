@@ -58,7 +58,7 @@ test('frontend requests sentence chunks, plays only the latest cloned wav and fa
   assert.match(app,/speakSinbad\(answer,\(\)=>addSinbadMessage\('sinbad',answer\)\)/);
   assert.doesNotMatch(app,/onvoiceschanged=.*speakSinbad\(text\)/);
   assert.match(app,/if\(sinbadVoiceObjectUrl===objectUrl\)/);
-  assert.match(serviceWorker,/sinbad-marine-v8\.20\.9-captain-sinbad-assistant-animation/);
+  assert.match(serviceWorker,/sinbad-marine-v8\.20\.9-captain-sinbad-academy-pack-v1/);
 });
 
 test('OpenCPN-first route transfer is bounded to the verified local bridge',()=>{
