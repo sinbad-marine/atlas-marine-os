@@ -38,3 +38,12 @@ test('server RAG resolves named publications by title before synthesis',()=>{
   assert.match(edge,/title\.includes\(term\) \? 3 : 0/);
   assert.match(edge,/APPROVED PRIVATE LIBRARY SOURCES/);
 });
+
+test('server title lookup expands bounded multilingual maritime aliases',()=>{
+  assert.match(edge,/const TITLE_ALIASES/);
+  assert.match(edge,/classification: \['klas'/);
+  assert.match(edge,/construction: \['inşa', 'insa'/);
+  assert.match(edge,/ships: \['gemi', 'gemileri'/);
+  assert.match(edge,/const expandedTitleTerms = titleTerms\(queryTerms\)/);
+  assert.match(edge,/for \(const term of expandedTitleTerms\.slice\(0, 18\)\)/);
+});
