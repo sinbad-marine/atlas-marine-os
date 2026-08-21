@@ -13,7 +13,13 @@ const RELEASE_FILES=Object.freeze([
   'sinbad-route-visualizer.js','sw.js','manifest.webmanifest','icon-192.png',
   'icon-512.png','vendor/ol-10.6.1.js','vendor/ol-10.6.1.css',
   'vendor/land-110m.json','supabase/functions/sinbad-answer/core-decision.js'
+  ,'vendor/supabase-2.112.3.js','vendor/mammoth-1.12.1.min.js','vendor/tesseract-5.1.1.min.js'
 ]);
+const SOURCE_OVERRIDES=Object.freeze({
+  'vendor/supabase-2.112.3.js':'node_modules/@supabase/supabase-js/dist/umd/supabase.js',
+  'vendor/mammoth-1.12.1.min.js':'node_modules/mammoth/mammoth.browser.min.js',
+  'vendor/tesseract-5.1.1.min.js':'node_modules/tesseract.js/dist/tesseract.min.js'
+});
 
 const sha256=buffer=>crypto.createHash('sha256').update(buffer).digest('hex');
 
@@ -24,7 +30,7 @@ async function buildPagesArtifact(destination){
   if(fs.existsSync(target))throw new Error('RELEASE_TARGET_ALREADY_EXISTS');
   const entries=[];
   for(const name of RELEASE_FILES){
-    const source=path.join(ROOT,...name.split('/'));
+    const source=path.join(ROOT,...(SOURCE_OVERRIDES[name]||name).split('/'));
     const stat=await fsp.lstat(source);
     if(!stat.isFile()||stat.isSymbolicLink())throw new Error(`RELEASE_SOURCE_NOT_REGULAR_FILE:${name}`);
     const bytes=await fsp.readFile(source);

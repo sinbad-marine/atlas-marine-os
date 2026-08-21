@@ -1,0 +1,22 @@
+{
+  "name": "sinbad-marine-release-quality",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": "24.19.0"
+  },
+  "scripts": {
+    "test": "node --test sinbad-ai-core/tests/*.test.js tests/*.test.js",
+    "test:web": "playwright test",
+    "test:web:install": "playwright install chromium"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.62.1"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.112.3",
+    "mammoth": "1.12.1",
+    "tesseract.js": "5.1.1"
+  }
+}

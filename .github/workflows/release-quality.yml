@@ -16,10 +16,22 @@ jobs:
     steps:
       - name: Check out exact source
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Use verified Node runtime
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24.19.0
       - name: Record runtime
         run: node --version
+      - name: Install locked browser-test dependencies
+        run: npm ci
+      - name: Reject vulnerable dependencies
+        run: npm audit --audit-level=moderate
       - name: Run complete regression suite
         run: node --test sinbad-ai-core/tests/*.test.js tests/*.test.js
+      - name: Install Chromium test runtime
+        run: npx playwright install --with-deps chromium
+      - name: Run desktop mobile and WCAG browser tests
+        run: npm run test:web
       - name: Build allowlisted Pages artifact
         run: node tools/build-pages-artifact.js .release/pages
       - name: Verify release manifest is present
