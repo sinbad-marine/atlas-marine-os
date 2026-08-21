@@ -11,6 +11,12 @@ test('creates an inert digest-pinned networkless model isolation plan',()=>{
   assert.equal(Object.isFrozen(plan),true);assert.equal(Object.isFrozen(plan.policy),true);assert.equal(Object.isFrozen(plan.mounts),true);
 });
 
+test('offers a separately pinned low-resource profile without activating it',()=>{
+  const plan=planModule.create({model:'qwen3:4b',modelRoot:path.resolve('C:/synthetic/.ollama/models')});
+  assert.equal(plan.model,'qwen3:4b');assert.equal(plan.modelSizeBytes,2497293931);assert.equal(plan.policy.memory,'6g');assert.equal(plan.containerInferenceStatus,'NOT_YET_AUTHORIZED');assert.equal(plan.modelCalled,false);
+  assert.match(plan.modelDigest,/^sha256:[a-f0-9]{64}$/u);assert.notEqual(plan.modelDigest,planModule.MODEL_PROFILES['qwen3:14b'].digest);
+});
+
 test('rejects unpinned models and ambiguous model roots',()=>{
   assert.throws(()=>planModule.create({model:'other',modelRoot:'C:/synthetic/.ollama/models'}),/PINNED_LOCAL_MODEL/);
   for(const modelRoot of ['', '.', 'relative/models', 'C:/synthetic/.ollama/blobs'])assert.throws(()=>planModule.create({model:'qwen3:14b',modelRoot}),/MODELS_ROOT/);
