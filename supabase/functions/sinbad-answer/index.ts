@@ -23,6 +23,16 @@ const words = (value: string) => [...new Set(
     .filter(word => word.length > 1 && !STOP.has(word))
 )].slice(0, 12);
 
+const TITLE_ALIASES: Record<string, string[]> = {
+  rules: ['kuralları', 'kurallari'], regulation: ['yönetmelik', 'yonetmelik'], regulations: ['yönetmelik', 'yonetmelik'],
+  classification: ['klas', 'sınıflandırma', 'siniflandirma'], class: ['klas'], construction: ['inşa', 'insa', 'yapım', 'yapim'],
+  ship: ['gemi'], ships: ['gemi', 'gemileri'], vessel: ['gemi', 'tekne'], vessels: ['gemi', 'gemileri', 'tekneler'],
+  marine: ['deniz', 'denizcilik'], maritime: ['deniz', 'denizcilik'], stability: ['stabilite', 'stability'],
+  machinery: ['makine', 'makina'], installations: ['tesisat', 'donanım', 'donanim'], safety: ['emniyet', 'güvenlik', 'guvenlik'],
+  labour: ['çalışma', 'calisma', 'iş', 'is'], weather: ['hava', 'meteoroloji'], current: ['akıntı', 'akinti'], tide: ['gelgit']
+};
+const titleTerms = (terms: string[]) => [...new Set(terms.flatMap(term => [term, ...(TITLE_ALIASES[term] || [])]))].slice(0, 30);
+
 const extractText = (response: any) => response?.output_text || response?.output
   ?.flatMap((item: any) => item?.content || [])
   .filter((part: any) => part?.type === 'output_text')
@@ -77,8 +87,9 @@ Deno.serve(async req => {
     }
 
     const queryTerms = words(question);
+    const expandedTitleTerms = titleTerms(queryTerms);
     const titleRows: any[] = [];
-    for (const term of queryTerms.slice(0, 6)) {
+    for (const term of expandedTitleTerms.slice(0, 18)) {
       const { data, error } = await db.from('document_knowledge')
         .select('id,title,classification')
         .eq('workspace_id', workspaceId)
@@ -90,7 +101,7 @@ Deno.serve(async req => {
     const titleMatches = [...new Map(titleRows.map(row => [row.id, row])).values()]
       .map((row: any) => {
         const title = String(row.title || '').toLocaleLowerCase('tr-TR');
-        const score = queryTerms.reduce((total, term) => total + (title.includes(term) ? 1 : 0), 0);
+        const score = expandedTitleTerms.reduce((total, term) => total + (title.includes(term) ? 1 : 0), 0);
         return { row, score };
       })
       .sort((a: any, b: any) => b.score - a.score || String(a.row.title).localeCompare(String(b.row.title)))
