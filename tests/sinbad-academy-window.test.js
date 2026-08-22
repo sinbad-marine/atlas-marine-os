@@ -69,3 +69,14 @@ test('Captain Sinbad teaches with real state art, browser voice and verified sou
   assert.match(academyCss,/\[data-state="speaking"\]/);
   assert.match(academyCss,/@media\(prefers-reduced-motion:reduce\)/);
 });
+
+test('live Academy instructor is driven by the bounded character engine',()=>{
+  assert.match(academyHtml,/id="academyInstructorStage"/);
+  assert.match(academyHtml,/sinbad-character-engine\.js\?v=82019/);
+  assert.match(academyHtml,/sinbad-character-rig\.js\?v=82019/);
+  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82019/);
+  assert.match(academyApp,/createCharacterEngine\(\{initialState:'idle'\}\)/);
+  assert.match(academyApp,/academyCharacterEngine\.setState\(safeState\)/);
+  assert.match(academyApp,/SinbadCharacterRig\?\.poseForState/);
+  assert.match(academyCss,/\[data-gesture="listen-lean"\]/);
+});

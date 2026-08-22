@@ -10,7 +10,7 @@ const css=fs.readFileSync('styles.css','utf8');
 
 test('a single centralised, testable state API exists with the required states, including board-teaching from the Academy manifest',()=>{
   assert.match(app,/function setSinbadAssistantState\(state,detail=\{\}\)\{/);
-  assert.match(app,/const SINBAD_ASSISTANT_STATES=\[[^\]]*'idle'[^\]]*'listening'[^\]]*'thinking'[^\]]*'preparing-voice'[^\]]*'speaking'[^\]]*'success'[^\]]*'warning'[^\]]*'error'[^\]]*'voice-disabled'[^\]]*'board-teaching'[^\]]*\]/);
+  assert.match(app,/const SINBAD_ASSISTANT_STATES=\[[^\]]*'idle'[^\]]*'listening'[^\]]*'thinking'[^\]]*'preparing-voice'[^\]]*'speaking'[^\]]*'walking'[^\]]*'success'[^\]]*'warning'[^\]]*'error'[^\]]*'voice-disabled'[^\]]*'board-teaching'[^\]]*\]/);
 });
 
 test('unknown state falls back to idle safely',()=>{
@@ -73,8 +73,57 @@ test('avatar image swap preloads all unique state assets and preserves aspect/al
   assert.match(css,/\.sinbad-avatar\.small \.sinbad-avatar-img\{object-fit:cover/);
 });
 
-test('SpeechRecognition onstart drives listening, not a fake button-press state',()=>{
-  assert.match(app,/sinbadRecognition\.onstart=\(\)=>\{sinbadIsListening=true;setListeningUI\(sinbadWakeActive\?speechCopy\(\)\.listen:handsFreeMessage\(\),true\);setSinbadAssistantState\('listening'\);\};/);
+test('a real blink frame is bounded to calm states and respects visibility and reduced motion',()=>{
+  const sw=fs.readFileSync('sw.js','utf8');
+  assert.ok(fs.existsSync('assets/captain-sinbad/captain-sinbad-idle-blink-v1.png'));
+  assert.match(app,/const SINBAD_BLINK_ASSET='captain-sinbad-idle-blink-v1\.png';/);
+  assert.match(app,/\['idle','voice-disabled','success','warning','error'\]\.includes\(sinbadAssistantState\)/);
+  assert.match(app,/document\.visibilityState!=='hidden'/);
+  assert.match(app,/prefers-reduced-motion: reduce/);
+  assert.match(app,/3800\+Math\.floor\(Math\.random\(\)\*3200\)/);
+  assert.match(css,/\.sinbad-avatar\.sinbad-blinking \.sinbad-avatar-blink\{opacity:1\}/);
+  assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-idle-blink-v1\.png'/);
+});
+
+test('real phoneme frames follow audio amplitude or genuine speech boundaries and close on silence',()=>{
+  const sw=fs.readFileSync('sw.js','utf8');
+  for(const file of ['captain-sinbad-speaking-mbp-v1.png','captain-sinbad-speaking-o-v1.png']){
+    assert.ok(fs.existsSync(`assets/captain-sinbad/${file}`));assert.match(sw,new RegExp(file.replaceAll('.','\\.')));
+  }
+  assert.match(app,/const SINBAD_SPEECH_ASSETS=Object\.freeze\(\{closed:'captain-sinbad-speaking-mbp-v1\.png',open:'captain-sinbad-speaking\.png',round:'captain-sinbad-speaking-o-v1\.png'\}\);/);
+  assert.match(app,/setSinbadMouthFrame\(amp<\.12\?'closed':amp<\.48\?'open':'round'\)/);
+  assert.match(app,/setSinbadMouthFrame\(\+\+sinbadStandardMouthSequence%3===0\?'round':'open'\)/);
+  assert.match(app,/setSinbadMouthFrame\('closed'\)/);
+  assert.match(css,/data-mouth-frame="round"/);
+});
+
+test('laughing is a real illustrated, labelled and time-bounded reaction',()=>{
+  const sw=fs.readFileSync('sw.js','utf8');
+  assert.ok(fs.existsSync('assets/captain-sinbad/captain-sinbad-laughing-v1.png'));
+  assert.match(app,/laughing:'captain-sinbad-laughing-v1\.png'/);
+  assert.match(app,/laughing:'Gülüyor'/);assert.match(app,/laughing:'Laughing'/);
+  assert.match(app,/if\(next==='laughing'\)sinbadAssistantTimers\.push\(setTimeout/);
+  assert.match(app,/if\(!\['laugh','walk'\]\.includes\(action\)\)return Object\.freeze\(\{accepted:false,reason:'UNKNOWN_REACTION'\}\)/);
+  assert.match(app,/const event=action==='walk'\?'WALK':'LAUGH'/);
+  assert.match(css,/data-gesture="laugh"/);assert.match(sw,/captain-sinbad-laughing-v1\.png/);
+});
+
+test('SpeechRecognition lifecycle drives listening, not a fake button-press state',()=>{
+  assert.match(app,/sinbadRecognition\.onstart=\(\)=>\{if\(sinbadRecognition!==recognition\)return;sinbadIsListening=true;/);
+  assert.match(app,/sinbadRecognition\.onsoundstart=\(\)=>listeningCue\(1,'sound'\)/);
+  assert.match(app,/sinbadRecognition\.onspeechstart=\(\)=>listeningCue\(2,'speech'\)/);
+  assert.match(app,/sinbadRecognition\.onspeechend=\(\)=>listeningCue\(3,'processed'\)/);
+  assert.match(app,/if\(sinbadRecognition!==recognition\)return;const cue=sinbadPerformanceDirector\?\.cueAt\('listening',index\)/);
+  assert.match(css,/data-listening-activity="speech"/);
+});
+
+test('walking uses two real alpha PNG frames and a bounded user-triggered cycle',()=>{
+  const sw=fs.readFileSync('sw.js','utf8');
+  for(const file of ['captain-sinbad-walk-a-v1.png','captain-sinbad-walk-b-v1.png']){const path=`assets/captain-sinbad/${file}`;assert.ok(fs.existsSync(path));const bytes=fs.readFileSync(path);assert.equal(bytes.toString('ascii',1,4),'PNG');assert.equal(bytes[25],6);}
+  assert.match(app,/const SINBAD_WALK_ASSETS=Object\.freeze\(\['captain-sinbad-walk-a-v1\.png','captain-sinbad-walk-b-v1\.png'\]\)/);
+  assert.match(app,/function startSinbadWalkCycle\(generation\)/);assert.match(app,/setTimeout\(tick,280\)/);assert.match(app,/if\(next==='walking'\).*2240/);
+  assert.match(app,/action==='walk'&&!\['idle','voice-disabled'\]\.includes\(sinbadAssistantState\)/);
+  assert.match(html,/id="testSinbadWalk"/);assert.match(sw,/captain-sinbad-walk-a-v1\.png/);assert.match(sw,/captain-sinbad-walk-b-v1\.png/);
 });
 
 test('sending a question drives thinking, synced with the existing #sinbadThinking bubble',()=>{
@@ -89,7 +138,7 @@ test('preparing-voice starts before the XTTS fetch, not after it resolves',()=>{
 });
 
 test('speaking only starts on the real audio "playing" event, never on fetch/announce',()=>{
-  assert.match(app,/audio\.addEventListener\('playing',\(\)=>\{\s*\n\s*if\(sinbadVoiceAbort!==controller\)return;\s*\n\s*setSinbadAssistantState\('speaking'\);\s*\n\s*startSinbadLipSyncAnalyser\(audio\);\s*\n\s*\},\{once:true\}\);/);
+  assert.match(app,/audio\.addEventListener\('playing',\(\)=>\{\s*\n\s*if\(sinbadVoiceAbort!==controller\)return;\s*\n\s*setSinbadAssistantState\('speaking',sinbadSpeechPerformanceCue\(0\)\);\s*\n\s*startSinbadLipSyncAnalyser\(audio\);\s*\n\s*\},\{once:true\}\);/);
   const playIdx=app.indexOf("audio.play().catch");
   const listenerIdx=app.indexOf("audio.addEventListener('playing'");
   assert.ok(listenerIdx>0&&listenerIdx<playIdx,'the playing listener must be attached before audio.play() is called');
@@ -183,6 +232,8 @@ test('service worker cache version was bumped for this change and precaches the 
   const visible=html.match(/<div class="version">● v(\d+\.\d+\.\d+)<\/div>/);
   assert.ok(visible);
   assert.match(sw,new RegExp(`const CACHE='sinbad-marine-v${visible[1].replace(/\./g,'\\.')}-`));
+  assert.match(sw,/'\.\/sinbad-character-engine\.js'/);
+  assert.match(sw,/'\.\/sinbad-character-rig\.js'/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-idle-master\.png'/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-listening\.png'/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-thinking\.png'/);
@@ -197,7 +248,7 @@ test('tablet: the compact avatar rail gives status and capabilities dedicated gr
   assert.match(css,/\.sinbad-status-line\{grid-column:2\}/);
 });
 
-test('board-teaching state exists with real art wired, but is not fabricated a fake trigger (no board UI exists yet in this pass)',()=>{
+test('board-teaching state exists with real art wired for the native Academy stage',()=>{
   assert.match(app,/'board-teaching':'captain-sinbad-board-teaching\.png'/);
   assert.doesNotMatch(app,/setSinbadAssistantState\('board-teaching'\)/);
 });
@@ -307,7 +358,7 @@ test('acceptance regression: the avatar never stays in preparing-voice forever w
 
 test('speaking (standard provider) starts only on the real utterance onstart event, never when merely queued, and a superseded (stale) call cannot flip state either',()=>{
   const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function splitSinbadCloneChunks'));
-  assert.match(fn,/utterance\.onstart=\(\)=>\{if\(myGeneration!==sinbadStandardSpeechGeneration\)return;announce\(\);setSinbadAssistantState\('speaking'\);\};/);
+  assert.match(fn,/utterance\.onstart=\(\)=>\{if\(myGeneration!==sinbadStandardSpeechGeneration\)return;announce\(\);setSinbadAssistantState\('speaking',sinbadSpeechPerformanceCue\(0\)\);\};/);
   assert.match(fn,/setSinbadAssistantState\('preparing-voice'\);/);
   // preparing-voice must be set before speechSynthesis.speak() is ever called
   const preparingIdx=fn.indexOf("setSinbadAssistantState('preparing-voice')");
@@ -317,10 +368,12 @@ test('speaking (standard provider) starts only on the real utterance onstart eve
 
 test('onboundary drives a real per-word cue (not a fabricated continuous loop, and never for a superseded call), onend advances/finishes cleanly',()=>{
   const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function splitSinbadCloneChunks'));
-  assert.match(fn,/utterance\.onboundary=\(\)=>\{if\(myGeneration===sinbadStandardSpeechGeneration\)sinbadStandardVoiceTick\(\);\};/);
+  assert.match(fn,/utterance\.onboundary=event=>\{if\(myGeneration===sinbadStandardSpeechGeneration\)sinbadStandardVoiceTick\(event\);\};/);
+  assert.match(app,/sinbadSpeechPerformanceCue\(sinbadStandardMouthSequence-1\)/);
   assert.match(fn,/if\(run\.pauseAfter\)setTimeout\(speakNext,run\.pauseAfter\);/);
   assert.match(fn,/else speakNext\(\);/);
-  assert.match(app,/function sinbadStandardVoiceTick\(\)\{/);
+  assert.match(app,/function sinbadStandardVoiceTick\(boundaryEvent\)\{/);
+  assert.match(app,/el\.dataset\.speechBoundary=boundaryEvent\?\.name==='sentence'\?'sentence':'word'/);
   assert.match(css,/\.sinbad-avatar\.sinbad-voice-tick \.sinbad-avatar-img\{transform:scale\(1\.018\)/);
 });
 
@@ -433,8 +486,8 @@ test('round-table fix: voiceschanged uses addEventListener/removeEventListener w
   assert.match(standardFn,/if\(myGeneration!==sinbadStandardSpeechGeneration\|\|settled\)return;/);
   assert.match(standardFn,/if\(myGeneration!==sinbadStandardSpeechGeneration\|\|settled\|\|!speechSynthesis\.getVoices\(\)\.length\)return;/);
   assert.match(standardFn,/if\(myGeneration!==sinbadStandardSpeechGeneration\)return; \/\/ a newer speak request has taken over/);
-  assert.match(standardFn,/utterance\.onstart=\(\)=>\{if\(myGeneration!==sinbadStandardSpeechGeneration\)return;announce\(\);setSinbadAssistantState\('speaking'\);\};/);
-  assert.match(standardFn,/utterance\.onboundary=\(\)=>\{if\(myGeneration===sinbadStandardSpeechGeneration\)sinbadStandardVoiceTick\(\);\};/);
+  assert.match(standardFn,/utterance\.onstart=\(\)=>\{if\(myGeneration!==sinbadStandardSpeechGeneration\)return;announce\(\);setSinbadAssistantState\('speaking',sinbadSpeechPerformanceCue\(0\)\);\};/);
+  assert.match(standardFn,/utterance\.onboundary=event=>\{if\(myGeneration===sinbadStandardSpeechGeneration\)sinbadStandardVoiceTick\(event\);\};/);
   assert.match(standardFn,/utterance\.onerror=\(\)=>\{\s*\n\s*if\(myGeneration!==sinbadStandardSpeechGeneration\)return;/);
 });
 
@@ -463,14 +516,15 @@ test('round-table fix: stopSinbadLipSyncAnalyser disconnects the previous source
 
 test('round-table fix: the avatar image swap uses a generation token so a slow/stale image load from a superseded state change can never flip opacity back on',()=>{
   assert.match(app,/let sinbadAvatarImageGeneration=0;/);
-  const fn=app.slice(app.indexOf('function setSinbadAssistantState'),app.indexOf('function setSinbadAssistantState')+1400);
+  const fn=app.slice(app.indexOf('function setSinbadAssistantState'),app.indexOf('function setSinbadAssistantState')+2600);
   assert.match(fn,/const generation=\+\+sinbadAvatarImageGeneration;/);
   assert.match(fn,/img\.onload=\(\)=>\{if\(generation===sinbadAvatarImageGeneration\)img\.style\.opacity='1';\};/);
 });
 
 test('round-table: SpeechRecognition error/abort paths verified - onend (which the Web Speech spec guarantees fires after error/abort) already resets the avatar out of listening, so no fix was needed here',()=>{
-  const fn=app.slice(app.indexOf('function beginSinbadRecognition'),app.indexOf('function beginSinbadRecognition')+2200);
-  assert.match(fn,/sinbadRecognition\.onerror=event=>\{sinbadIsListening=false;/);
+  const fn=app.slice(app.indexOf('function beginSinbadRecognition'),app.indexOf('function startSinbadListening'));
+  assert.match(fn,/sinbadRecognition\.onerror=event=>\{if\(sinbadRecognition!==recognition\)return;sinbadIsListening=false;/);
+  assert.match(fn,/sinbadRecognition\.onend=\(\)=>\{\s*if\(sinbadRecognition!==recognition\)return;\s*sinbadRecognition=null;/);
   assert.match(fn,/if\(sinbadAssistantState==='listening'\)setSinbadAssistantState\('idle'\);/);
 });
 

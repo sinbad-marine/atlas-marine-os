@@ -10,12 +10,16 @@ const RELEASE_FILES=Object.freeze([
   'index.html','styles.css','app.js','academy.html','academy.css','academy-window.js','pilot-data.js','route-data.js',
   'official-publications.js','sinbad-core.js','sinbad-training-data.js',
   'sinbad-academy.js','sinbad-navigation.js','sinbad-navigation-assistant.js',
-  'sinbad-route-visualizer.js','sw.js','manifest.webmanifest','icon-192.png',
+  'sinbad-route-visualizer.js','sinbad-character-engine.js','sinbad-character-rig.js',
+  'sinbad-performance-director.js','sw.js','manifest.webmanifest','icon-192.png',
   'icon-512.png','vendor/ol-10.6.1.js','vendor/ol-10.6.1.css',
   'vendor/land-110m.json','supabase/functions/sinbad-answer/core-decision.js'
   ,'vendor/supabase-2.112.3.js','vendor/mammoth-1.12.1.min.js','vendor/tesseract-5.1.1.min.js'
   ,'assets/captain-sinbad/captain-sinbad-idle-master.png','assets/captain-sinbad/captain-sinbad-listening.png'
   ,'assets/captain-sinbad/captain-sinbad-thinking.png','assets/captain-sinbad/captain-sinbad-speaking.png'
+  ,'assets/captain-sinbad/captain-sinbad-idle-blink-v1.png','assets/captain-sinbad/captain-sinbad-speaking-mbp-v1.png'
+  ,'assets/captain-sinbad/captain-sinbad-speaking-o-v1.png','assets/captain-sinbad/captain-sinbad-laughing-v1.png'
+  ,'assets/captain-sinbad/captain-sinbad-walk-a-v1.png','assets/captain-sinbad/captain-sinbad-walk-b-v1.png'
   ,'assets/captain-sinbad/captain-sinbad-board-teaching.png'
 ]);
 const SOURCE_OVERRIDES=Object.freeze({
