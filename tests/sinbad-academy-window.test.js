@@ -41,3 +41,31 @@ test('standalone Academy retains course and quiz handlers',()=>{
   assert.match(academyApp,/function renderLesson\(\)/);
   assert.match(academyApp,/function renderQuiz\(\)/);
 });
+
+test('standalone Academy is a live free-form voice and text classroom, not a required topic menu',()=>{
+  assert.match(academyHtml,/id="academyChatForm"/);
+  assert.match(academyHtml,/id="academyQuestion"/);
+  assert.match(academyHtml,/id="academyMic"/);
+  assert.match(academyHtml,/Optional guided lesson shortcuts — no selection required/);
+  assert.match(academyApp,/async function askSinbad\(question\)/);
+  assert.match(academyApp,/functions\.invoke\('sinbad-answer'/);
+  assert.match(academyApp,/includeSourceVisuals:true/);
+  assert.match(academyApp,/SpeechRecognition\|\|window\.webkitSpeechRecognition/);
+  assert.match(academyApp,/academyChatForm/);
+});
+
+test('Captain Sinbad teaches with real state art, browser voice and verified source-page visuals',()=>{
+  assert.match(academyHtml,/id="academySinbadAvatar"/);
+  assert.match(academyHtml,/id="academyVoiceToggle"/);
+  assert.match(academyHtml,/id="academyReplayVoice"/);
+  assert.match(academyHtml,/id="academyStopVoice"/);
+  assert.match(academyApp,/captain-sinbad-board-teaching\.png/);
+  assert.match(academyApp,/captain-sinbad-speaking\.png/);
+  assert.match(academyApp,/captain-sinbad-listening\.png/);
+  assert.match(academyApp,/new SpeechSynthesisUtterance/);
+  assert.match(academyApp,/function renderVisuals\(visuals\)/);
+  assert.match(academyApp,/cloudClient\.storage\.from\(doc\.bucket_id\)\.download/);
+  assert.match(academyApp,/#page=\$\{Math\.max/);
+  assert.match(academyCss,/\[data-state="speaking"\]/);
+  assert.match(academyCss,/@media\(prefers-reduced-motion:reduce\)/);
+});

@@ -10,7 +10,9 @@ test('cloud retrieval exposes only bounded, provenance-linked PDF page visuals',
   assert.match(edge,/const wantsSourceVisuals = \(question: string\)/);
   assert.match(edge,/const isContextualFollowUp = \(question: string\)/);
   assert.match(edge,/previousUserMessage/);
-  assert.match(edge,/retrievalQuestion = wantsSourceVisuals\(question\) && isContextualFollowUp\(question\)/);
+  assert.match(edge,/includeSourceVisuals = body\.includeSourceVisuals === true/);
+  assert.match(edge,/sourceVisualsRequested = includeSourceVisuals \|\| wantsSourceVisuals\(question\)/);
+  assert.match(edge,/retrievalQuestion = sourceVisualsRequested && isContextualFollowUp\(question\)/);
   assert.match(edge,/words\(retrievalQuestion\)/);
   assert.match(edge,/const pageForChunk = \(content: string, terms: string\[\]\)/);
   assert.match(edge,/document_id,source_mime_type/);
