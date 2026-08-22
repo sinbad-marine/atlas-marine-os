@@ -12,6 +12,7 @@
       <iframe id="phaseOneClassroom" src="./academy.html" title="Sinbad Academy live classroom"></iframe>
       <aside>
         <div class="identity"><label for="learnerName">Student name</label><div><input id="learnerName" maxlength="80" value="Captain"><button id="saveLearnerName" type="button">Save</button></div><small>Stored only in this browser.</small></div>
+        <section class="profile-backup"><h2>Private progress backup</h2><div><button id="exportProfile" type="button">Download backup</button><label class="import-button">Restore backup<input id="importProfile" type="file" accept="application/json,.json"></label></div><small id="profileBackupStatus">No chat, voice or document content is included.</small></section>
         <section class="summary"><h2>Learning profile</h2><dl><div><dt>Current level</dt><dd id="learnerLevel">Foundation</dd></div><div><dt>Evidence</dt><dd id="learnerEvidence">0</dd></div><div><dt>Priority</dt><dd id="learnerPriority">Not assessed</dd></div><div><dt>Strongest</dt><dd id="learnerStrongest">Not assessed</dd></div></dl></section>
         <section class="diagnostic"><h2>Initial diagnostic</h2><p id="diagnosticStatus">Six short questions establish a first learning baseline.</p><button id="startDiagnostic" type="button">Start diagnostic</button><div id="diagnosticQuestion" hidden></div></section>
         <section><h2>Topic readiness</h2><div id="masteryList" class="mastery-list"></div></section>
