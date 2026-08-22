@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.17-contextual-source-visuals-live-character-rig-blink-v1';
+const CACHE='sinbad-marine-v8.20.17-contextual-source-visuals-live-character-phonemes-v1';
 const ASSETS=[
   './',
   './index.html',
@@ -33,6 +33,8 @@ const ASSETS=[
   './assets/captain-sinbad/captain-sinbad-listening.png',
   './assets/captain-sinbad/captain-sinbad-thinking.png',
   './assets/captain-sinbad/captain-sinbad-speaking.png',
+  './assets/captain-sinbad/captain-sinbad-speaking-mbp-v1.png',
+  './assets/captain-sinbad/captain-sinbad-speaking-o-v1.png',
   './assets/captain-sinbad/captain-sinbad-board-teaching.png'
 ];
 

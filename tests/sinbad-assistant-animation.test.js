@@ -85,6 +85,18 @@ test('a real blink frame is bounded to calm states and respects visibility and r
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-idle-blink-v1\.png'/);
 });
 
+test('real phoneme frames follow audio amplitude or genuine speech boundaries and close on silence',()=>{
+  const sw=fs.readFileSync('sw.js','utf8');
+  for(const file of ['captain-sinbad-speaking-mbp-v1.png','captain-sinbad-speaking-o-v1.png']){
+    assert.ok(fs.existsSync(`assets/captain-sinbad/${file}`));assert.match(sw,new RegExp(file.replaceAll('.','\\.')));
+  }
+  assert.match(app,/const SINBAD_SPEECH_ASSETS=Object\.freeze\(\{closed:'captain-sinbad-speaking-mbp-v1\.png',open:'captain-sinbad-speaking\.png',round:'captain-sinbad-speaking-o-v1\.png'\}\);/);
+  assert.match(app,/setSinbadMouthFrame\(amp<\.12\?'closed':amp<\.48\?'open':'round'\)/);
+  assert.match(app,/setSinbadMouthFrame\(\+\+sinbadStandardMouthSequence%3===0\?'round':'open'\)/);
+  assert.match(app,/setSinbadMouthFrame\('closed'\)/);
+  assert.match(css,/data-mouth-frame="round"/);
+});
+
 test('SpeechRecognition onstart drives listening, not a fake button-press state',()=>{
   assert.match(app,/sinbadRecognition\.onstart=\(\)=>\{sinbadIsListening=true;setListeningUI\(sinbadWakeActive\?speechCopy\(\)\.listen:handsFreeMessage\(\),true\);setSinbadAssistantState\('listening'\);\};/);
 });

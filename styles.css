@@ -82,6 +82,11 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
    floating avatar stays a tight head/shoulders crop for the same reason. */
 .sinbad-avatar-img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:50% 50%;opacity:1;transition:opacity .22s ease;transform-origin:50% 62%;filter:saturate(calc(1 + var(--sinbad-rig-energy,0)))}
 .sinbad-avatar-blink{z-index:1;opacity:0;pointer-events:none;transition:none}
+.sinbad-avatar-mouth{z-index:1;opacity:0;pointer-events:none;transition:opacity .045s linear}
+.sinbad-avatar[data-state="speaking"][data-mouth-frame="closed"] .sinbad-avatar-img:not(.sinbad-avatar-mouth-closed),
+.sinbad-avatar[data-state="speaking"][data-mouth-frame="round"] .sinbad-avatar-img:not(.sinbad-avatar-mouth-round){opacity:0}
+.sinbad-avatar[data-state="speaking"][data-mouth-frame="closed"] .sinbad-avatar-mouth-closed,
+.sinbad-avatar[data-state="speaking"][data-mouth-frame="round"] .sinbad-avatar-mouth-round{opacity:1}
 .sinbad-avatar.sinbad-blinking .sinbad-avatar-img:not(.sinbad-avatar-blink){opacity:0}
 .sinbad-avatar.sinbad-blinking .sinbad-avatar-blink{opacity:1}
 .sinbad-avatar.large .sinbad-avatar-img{object-fit:cover;object-position:50% 4%}
