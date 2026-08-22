@@ -1,10 +1,15 @@
-const CACHE='sinbad-marine-v8.20.19-live-academy-character-engine-v1';
+const CACHE='sinbad-marine-v8.20.19-professor-phase-2-character-engine-v1';
 const ASSETS=[
   './',
   './index.html',
   './academy.html',
   './academy.css',
   './academy-window.js',
+  './academy-professor.html',
+  './academy-professor.css',
+  './academy-professor-guidance.css',
+  './academy-professor.js',
+  './sinbad-professor.js',
   './styles.css',
   './app.js',
   './sinbad-character-engine.js',
@@ -66,7 +71,8 @@ self.addEventListener('fetch',event=>{
   }
 
   if(request.mode==='navigate'){
-    const pageKey=url.pathname.endsWith('/academy.html')?'./academy.html':'./index.html';
+    let pageKey=url.pathname.endsWith('/academy.html')?'./academy.html':'./index.html';
+    if(url.pathname.endsWith('/academy-professor.html'))pageKey='./academy-professor.html';
     event.respondWith(
       fetch(request)
         .then(response=>{

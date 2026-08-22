@@ -7,7 +7,8 @@ const crypto=require('node:crypto');
 
 const ROOT=path.resolve(__dirname,'..');
 const RELEASE_FILES=Object.freeze([
-  'index.html','styles.css','app.js','academy.html','academy.css','academy-window.js','pilot-data.js','route-data.js',
+  'index.html','styles.css','app.js','academy.html','academy.css','academy-window.js',
+  'academy-professor.html','academy-professor.css','academy-professor-guidance.css','academy-professor.js','sinbad-professor.js','pilot-data.js','route-data.js',
   'official-publications.js','sinbad-core.js','sinbad-training-data.js',
   'sinbad-academy.js','sinbad-navigation.js','sinbad-navigation-assistant.js',
   'sinbad-route-visualizer.js','sinbad-character-engine.js','sinbad-character-rig.js',

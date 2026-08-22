@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "sinbad-professor-phase-2-freeze/v1",
+  "realityCheck": "professor-phase-2-reality-check.json",
+  "decision": "GO",
+  "status": "FROZEN",
+  "evaluatedCommit": "9c12111e2813532cf5b728dd8cbfa405a8f97c2c",
+  "evaluatedAt": "2026-08-23",
+  "scope": "Adaptive Professor layer composed around the frozen Phase 1 classroom",
+  "verification": {
+    "tests": { "total": 680, "passed": 679, "failed": 0, "skipped": 1 },
+    "browser": { "total": 10, "passed": 10, "failed": 0 }
+  },
+  "files": {
+    "academy-professor.html": "97bd5fdee8b5ab34b48b9316e059648d9f848133b31cadcb66d1e9fbc03f3ff4",
+    "academy-professor.css": "96ae6c21a736ae99680b8205f5eb44071a3362da4192b95dd3e48bb8b22a8ef4",
+    "academy-professor-guidance.css": "439bf3ce1e0876d6cf3f58e20412a9ccaeab5f092f4fb28ae8d25c7fbf2d38d0",
+    "academy-professor.js": "ffab18d2bf0bd1478fed209d8d0d46ab28131dbeeca717347cadc67bb91fd223",
+    "sinbad-professor.js": "e5da5b8f8d440357a38b736f8f4a150d207369474216bf2fdb5958f502531b4c"
+  },
+  "explicitExclusions": [
+    "Final maritime curriculum and final topic taxonomy",
+    "Certification, licensing or competency endorsement",
+    "Cloud-synchronized learner profiles",
+    "Automated mastery inference from chat text, voice, facial expression or lesson opening",
+    "3D rigged embodied instructor and improvisational gesture engine",
+    "Replacement for an approved instructor, simulator, official publication or operational decision process"
+  ]
+}

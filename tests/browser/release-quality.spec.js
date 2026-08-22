@@ -52,3 +52,51 @@ test('Sinbad Academy opens outside the main app as a standalone classroom window
   await expect(classroom.locator('#academyOutput')).toContainText('Learning objectives');
   await classroom.close();
 });
+
+test('Professor Phase 2 opens separately, embeds the frozen classroom and starts a real diagnostic',async({page,context})=>{
+  await stubBridge(page);
+  await page.goto('/');
+  await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');});
+  const popupPromise=context.waitForEvent('page');
+  await page.evaluate(()=>openSinbadProfessorWindow());
+  const professor=await popupPromise;
+  const errors=[];
+  professor.on('console',message=>{if(message.type()==='error')errors.push(message.text());});
+  await professor.waitForLoadState();
+  await expect(professor).toHaveURL(/academy-professor\.html$/);
+  await expect(professor.getByRole('heading',{name:/Professor Workspace/})).toBeVisible();
+  await expect(professor.locator('#learnerLevel')).toHaveText('foundation');
+  await expect(professor.locator('#adaptiveCoach')).toBeVisible();
+  await expect(professor.locator('#coachReason')).toContainText('No mastery is inferred');
+  await expect(professor.locator('body')).not.toContainText(/Ã.|â€|ï¿½|Â./u);
+  const accessibility=await new AxeBuilder({page:professor})
+    .include('aside')
+    .withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa','wcag22aa'])
+    .analyze();
+  expect(accessibility.violations).toEqual([]);
+  const classroom=professor.frameLocator('#phaseOneClassroom');
+  await expect(classroom.locator('#academyChatForm')).toBeVisible();
+  await expect(classroom.locator('#academySinbadAvatar')).toHaveCount(1);
+  await classroom.locator('#academyMessages').evaluate(box=>{const article=document.createElement('article');article.className='academy-message user';article.innerHTML='<strong>Captain</strong><p>Gelgit nasıl oluşur?</p>';box.append(article);});
+  await expect(professor.locator('#chatReflection')).toBeHidden();
+  await classroom.locator('#academyCloudStatus').evaluate(node=>{node.textContent='Answer ready';});
+  await classroom.locator('#academyMessages').evaluate(box=>{const article=document.createElement('article');article.className='academy-message sinbad';article.innerHTML='<strong>Captain Sinbad</strong><p>Gelgit, gök cisimlerinin çekimi ve yerel hidrografiyle oluşur.</p>';box.append(article);});
+  await expect(professor.locator('#chatReflection')).toBeVisible();
+  await professor.locator('#reflectionUnderstood').click();
+  await expect(professor.locator('#reflectionCheck')).toBeVisible();
+  await expect(professor.locator('#coachReason')).toContainText('complete the knowledge check to change mastery');
+  await professor.locator('#reflectionCheckChoices button').first().click();
+  await expect(professor.locator('#reflectionCheckStatus')).toContainText('Correct');
+  await expect(professor.locator('#coachReason')).toContainText('knowledge check answered correctly');
+  await expect(professor.locator('#evidenceLedger')).toContainText('Observation only — mastery unchanged');
+  await expect(professor.locator('#evidenceLedger')).toContainText('Mastery evidence');
+  professor.once('dialog',dialog=>dialog.accept());
+  await professor.locator('#resetLearnerProfile').click();
+  await expect(professor.locator('#learnerEvidence')).toHaveText('0');
+  await expect(professor.locator('#resetProfileStatus')).toContainText('Atlas documents and chats were not changed');
+  await professor.locator('#startDiagnostic').click();
+  await expect(professor.locator('#diagnosticQuestion')).toBeVisible();
+  await expect(professor.locator('#diagnosticQuestion strong')).toContainText('1/6');
+  expect(errors).toEqual([]);
+  await professor.close();
+});
