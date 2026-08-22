@@ -96,6 +96,7 @@ Deno.serve(async req => {
     const question = normalizeCoreQuestion(body.question);
     const language = String(body.language || 'tr-TR').slice(0, 12);
     const allowWebSearch = body.allowWebSearch === true;
+    const includeSourceVisuals = body.includeSourceVisuals === true;
     const coreEnvelope = body.coreEnvelope;
     const history = normalizeCoreHistory(coreEnvelope?.history, 10);
     if (!workspaceId || !question) return json({ error: 'workspaceId and question are required' }, 400);
@@ -120,7 +121,8 @@ Deno.serve(async req => {
     }
 
     const previousUserMessage = [...history].reverse().find((item: any) => item.role === 'user')?.content || '';
-    const retrievalQuestion = wantsSourceVisuals(question) && isContextualFollowUp(question) && previousUserMessage
+    const sourceVisualsRequested = includeSourceVisuals || wantsSourceVisuals(question);
+    const retrievalQuestion = sourceVisualsRequested && isContextualFollowUp(question) && previousUserMessage
       ? `${previousUserMessage} ${question}`
       : question;
     const queryTerms = words(retrievalQuestion);
@@ -182,7 +184,7 @@ Deno.serve(async req => {
       mimeType: row.document_knowledge.source_mime_type || null,
       page: pageForChunk(String(row.content || ''), queryTerms)
     }));
-    const visuals = wantsSourceVisuals(question)
+    const visuals = sourceVisualsRequested
       ? sources.filter((source: any) => source.documentId && source.page && /pdf/i.test(String(source.mimeType || ''))).slice(0, 3).map((source: any) => ({
           sourceId: source.id,
           title: source.title,

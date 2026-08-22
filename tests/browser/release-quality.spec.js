@@ -43,6 +43,11 @@ test('Sinbad Academy opens outside the main app as a standalone classroom window
   await expect(classroom).toHaveURL(/academy\.html$/);
   await expect(classroom.getByRole('heading',{name:'Navigation Classroom'})).toBeVisible();
   await expect(page.locator('#sinbadAcademyWindow')).toHaveCount(0);
+  await expect(classroom.locator('#academySinbadAvatar')).toBeVisible();
+  await expect(classroom.locator('#academyChatForm')).toBeVisible();
+  await expect(classroom.locator('#academyQuestion')).toBeVisible();
+  await expect(classroom.locator('#academyMic')).toBeVisible();
+  await classroom.locator('.academy-guided-tools > summary').click();
   await classroom.locator('#startAcademyLesson').click();
   await expect(classroom.locator('#academyOutput')).toContainText('Learning objectives');
   await classroom.close();
