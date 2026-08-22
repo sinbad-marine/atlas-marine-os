@@ -39,6 +39,19 @@ const extractText = (response: any) => response?.output_text || response?.output
   .map((part: any) => part.text)
   .join('\n') || '';
 
+const SPOKEN_SUMMARY_MARKER = '<<<SPOKEN_SUMMARY>>>';
+const splitAnswerAndSpokenSummary = (raw: string) => {
+  const markerIndex = raw.lastIndexOf(SPOKEN_SUMMARY_MARKER);
+  if (markerIndex < 0) return { answer: raw.trim(), spokenSummary: '' };
+  const answer = raw.slice(0, markerIndex).trim();
+  const spokenSummary = raw.slice(markerIndex + SPOKEN_SUMMARY_MARKER.length).trim();
+  // Reject malformed or verbose summaries instead of cutting them. The
+  // browser then builds a complete-sentence fallback from the full answer.
+  const words = spokenSummary.split(/\s+/).filter(Boolean).length;
+  const sentences = spokenSummary.match(/[^.!?…]+[.!?…]+|[^.!?…]+$/gu)?.filter(Boolean).length || 0;
+  return { answer, spokenSummary: words >= 20 && words <= 150 && sentences >= 2 && sentences <= 8 ? spokenSummary : '' };
+};
+
 const needsFreshData = (question: string) => serverCoreDecision(question).needsLiveData;
 
 Deno.serve(async req => {
@@ -166,7 +179,9 @@ You may use stable general maritime knowledge for education and planning support
 
 For passage planning, collision avoidance, stability, weather, chart work or other safety-critical topics, provide decision support only. Remind the user that the master remains responsible and that current corrected official charts, MSI/NAVTEX, Notices to Mariners, weather, port and pilot instructions must be checked. Never claim to be certified ECDIS or replace an approved navigation system. Do not repeat this warning for casual conversation.
 
-If web search results are available, cite them using the citations supplied by the tool. Never claim to have searched the web unless the tool was actually used.`;
+If web search results are available, cite them using the citations supplied by the tool. Never claim to have searched the web unless the tool was actually used.
+
+After the complete written answer, always add the exact marker <<<SPOKEN_SUMMARY>>> and then a coherent spoken teaching summary in the same language. The spoken summary must contain 3 to 6 complete sentences and roughly 60 to 110 words. Teach the central idea, the essential supporting points, and any critical safety caveat. Do not merely copy the first characters, do not use markdown, do not include citations, and never cut a sentence short.`;
 
     const userInput = unique.length
       ? `${question}\n\nAPPROVED PRIVATE LIBRARY SOURCES\n${context}`
@@ -191,10 +206,12 @@ If web search results are available, cite them using the citations supplied by t
     });
     const payload = await response.json();
     if (!response.ok) return json({ error: 'AI provider request failed', providerStatus: response.status, providerCode: payload?.error?.code || null }, 502);
-    const answer = extractText(payload);
+    const rawAnswer = extractText(payload);
+    const { answer, spokenSummary } = splitAnswerAndSpokenSummary(rawAnswer);
     if (!answer) return json({ error: 'AI provider returned no answer' }, 502);
     if (!answerIsSafe(answer)) return json({ error: 'AI provider answer crossed the decision-support boundary', code: 'UNSAFE_PROVIDER_ANSWER' }, 502);
-    return json({ answer, sources, mode: allowWebSearch ? 'web-assisted' : unique.length ? 'private-rag' : 'general-ai', ...decisionSupport });
+    if (spokenSummary && !answerIsSafe(spokenSummary)) return json({ error: 'AI provider spoken summary crossed the decision-support boundary', code: 'UNSAFE_PROVIDER_SUMMARY' }, 502);
+    return json({ answer, spokenSummary, sources, mode: allowWebSearch ? 'web-assisted' : unique.length ? 'private-rag' : 'general-ai', ...decisionSupport });
   } catch (error) {
     return json({ error: error instanceof Error ? error.message : 'Unexpected error' }, 500);
   }

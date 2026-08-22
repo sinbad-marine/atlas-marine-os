@@ -179,7 +179,7 @@ test('warning never uses a red alarm colour, and error stays calm (no urgent/fas
 
 test('service worker cache version was bumped for this change and precaches the real bound-state Academy assets for offline use (hero-portrait excluded - see the round-table fix test)',()=>{
   const sw=fs.readFileSync('sw.js','utf8');
-  assert.match(sw,/const CACHE='sinbad-marine-v8\.20\.15-sinbad-workspace-usability-v1';/);
+  assert.match(sw,/const CACHE='sinbad-marine-v8\.20\.16-semantic-spoken-summary-v1';/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-idle-master\.png'/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-listening\.png'/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-thinking\.png'/);
@@ -226,13 +226,29 @@ test('English letters are never mistaken for Turkish diacritics',()=>{
   assert.match(app,/const languageRuns=splitSpeechByLanguage\(sentence\.trim\(\),sentenceLang\);/);
 });
 
-test('standard speech reads only a bounded plain-text teaching summary, not the complete markdown answer',()=>{
-  assert.match(app,/const SINBAD_SPOKEN_SUMMARY_MAX_CHARS=320;/);
-  assert.match(app,/function buildSinbadSpokenSummary\(text,maxChars=SINBAD_SPOKEN_SUMMARY_MAX_CHARS\)\{/);
+test('standard speech uses a semantic model summary or a complete-sentence teaching fallback, never a 320-character prefix',()=>{
+  assert.doesNotMatch(app,/SINBAD_SPOKEN_SUMMARY_MAX_CHARS|slice\(0,maxChars/);
+  assert.match(app,/const SINBAD_SPOKEN_SUMMARY_MAX_SENTENCES=6;/);
+  assert.match(app,/const SINBAD_SPOKEN_SUMMARY_MAX_WORDS=110;/);
+  assert.match(app,/function buildSinbadSpokenSummary\(text,\{maxSentences=SINBAD_SPOKEN_SUMMARY_MAX_SENTENCES,maxWords=SINBAD_SPOKEN_SUMMARY_MAX_WORDS\}=\{\}\)\{/);
+  assert.match(app,/function selectSinbadSpokenText\(answer,modelSummary=''\)\{/);
   assert.match(app,/\.replace\(\/```\[\\s\\S\]\*\?```\/g,' '\)/);
   const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function splitSinbadCloneChunks'));
-  assert.match(fn,/const cleanText=buildSinbadSpokenSummary\(text\);/);
+  assert.match(fn,/const cleanText=selectSinbadSpokenText\(text,sinbadModelSpokenSummary\);/);
   assert.match(fn,/const runs=splitSinbadTeachingSpeech\(cleanText,sinbadState\.language\);/);
+});
+
+test('spoken-summary fallback preserves complete ideas beyond 320 characters and prefers a valid model-written lesson summary',()=>{
+  const source=app.slice(app.indexOf('const SINBAD_SPOKEN_SUMMARY_MAX_SENTENCES'),app.indexOf('function detectSinbadSpeechLanguage'));
+  const helpers=new Function(`${source};return {buildSinbadSpokenSummary,selectSinbadSpokenText};`)();
+  const longOpening='Gelgit, Ay ve Güneş çekiminin deniz seviyesinde oluşturduğu düzenli yükselme ve alçalma hareketidir; seyir planlamasında su derinliğini, akıntının yönünü, liman giriş zamanını ve emniyet payını birlikte etkileyen temel bir olaydır.';
+  const answer=`${longOpening} İkinci öğretim noktası, gelgit cetvellerinin güncel saat ve düzeltmelerle kullanılmasıdır. Önemli güvenlik kuralı, tahmini değeri güncel resmî yayınla doğrulamaktır. Son ayrıntı yalnız yazılı cevapta kalabilir.`;
+  const fallback=helpers.buildSinbadSpokenSummary(answer);
+  assert.ok(fallback.length>320,'a coherent lesson may legitimately exceed the old blind 320-character limit');
+  assert.match(fallback,/Önemli güvenlik kuralı/);
+  assert.doesNotMatch(fallback,/…$/,'fallback must not signal a mid-sentence clipping');
+  const modelSummary='Gelgit, su seviyesinin gök cisimlerinin çekimiyle düzenli değişmesidir. Seyir planında derinlik ve akıntı birlikte değerlendirilmelidir. Güncel resmî gelgit yayını mutlaka kontrol edilmelidir.';
+  assert.equal(helpers.selectSinbadSpokenText(answer,modelSummary),modelSummary);
 });
 
 test('the standard provider prefers a tr-TR voice via a dedicated selector, never silently substituting a mismatched-language voice',()=>{
