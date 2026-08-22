@@ -378,6 +378,7 @@ let sinbadAssistantState='idle';
 let sinbadAssistantTimers=[];
 let sinbadAssistantLastDetail={};
 const sinbadCharacterEngine=window.SinbadCharacterEngine?.createCharacterEngine({initialState:'idle'})||null;
+const sinbadCharacterRig=window.SinbadCharacterRig||null;
 function sinbadAssistantElements(){return document.querySelectorAll('.sinbad-avatar');}
 function clearSinbadAssistantTimers(){sinbadAssistantTimers.forEach(clearTimeout);sinbadAssistantTimers=[];}
 function preloadSinbadAvatarAssets(){
@@ -465,6 +466,11 @@ function setSinbadAssistantState(state,detail={}){
     el.dataset.emotion=performance.emotion;
     el.dataset.gesture=performance.gesture;
     el.dataset.gaze=performance.gaze;
+    const defaultEnergy=sinbadCharacterRig?.STATE_POSES[next]?.energy??0;
+    const requestedEnergy=Number(detail.energy??defaultEnergy);
+    const rigPose=sinbadCharacterRig?.poseForState(next,{energy:Math.max(0,Math.min(1,Number.isFinite(requestedEnergy)?requestedEnergy:defaultEnergy))});
+    const rigCss=rigPose?.accepted?sinbadCharacterRig.cssVariables(rigPose.controls):null;
+    if(rigCss?.accepted)Object.entries(rigCss.variables).forEach(([name,value])=>el.style.setProperty(name,value));
     const img=el.querySelector('.sinbad-avatar-img');
     if(img&&!img.src.endsWith(asset)){
       img.style.opacity='0';

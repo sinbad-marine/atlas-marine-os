@@ -184,6 +184,7 @@ test('service worker cache version was bumped for this change and precaches the 
   assert.ok(visible);
   assert.match(sw,new RegExp(`const CACHE='sinbad-marine-v${visible[1].replace(/\./g,'\\.')}-`));
   assert.match(sw,/'\.\/sinbad-character-engine\.js'/);
+  assert.match(sw,/'\.\/sinbad-character-rig\.js'/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-idle-master\.png'/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-listening\.png'/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-thinking\.png'/);
@@ -464,7 +465,7 @@ test('round-table fix: stopSinbadLipSyncAnalyser disconnects the previous source
 
 test('round-table fix: the avatar image swap uses a generation token so a slow/stale image load from a superseded state change can never flip opacity back on',()=>{
   assert.match(app,/let sinbadAvatarImageGeneration=0;/);
-  const fn=app.slice(app.indexOf('function setSinbadAssistantState'),app.indexOf('function setSinbadAssistantState')+1400);
+  const fn=app.slice(app.indexOf('function setSinbadAssistantState'),app.indexOf('function setSinbadAssistantState')+2600);
   assert.match(fn,/const generation=\+\+sinbadAvatarImageGeneration;/);
   assert.match(fn,/img\.onload=\(\)=>\{if\(generation===sinbadAvatarImageGeneration\)img\.style\.opacity='1';\};/);
 });
