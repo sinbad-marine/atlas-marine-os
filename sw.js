@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.17-live-character-speech-cadence-v6';
+const CACHE='sinbad-marine-v8.20.17-live-character-listening-cadence-v7';
 const ASSETS=[
   './',
   './index.html',

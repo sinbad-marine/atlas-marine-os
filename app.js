@@ -993,12 +993,13 @@ function beginSinbadRecognition(){
   sinbadRecognition=new Recognition();sinbadRecognition.lang=sinbadState.language;sinbadRecognition.continuous=false;sinbadRecognition.interimResults=true;sinbadRecognition.maxAlternatives=1;
   const recognition=sinbadRecognition;
   let finalTranscript='';
-  const listeningCue=(index,activity)=>{if(sinbadRecognition!==recognition)return;const cue=sinbadPerformanceDirector?.cueAt('listening',index);setSinbadAssistantState('listening',{...(cue?.accepted?cue.cue:{}),listeningActivity:activity});};
-  sinbadRecognition.onstart=()=>{if(sinbadRecognition!==recognition)return;sinbadIsListening=true;setListeningUI(sinbadWakeActive?speechCopy().listen:handsFreeMessage(),true);listeningCue(0,'ready');};
-  sinbadRecognition.onsoundstart=()=>listeningCue(1,'sound');
-  sinbadRecognition.onspeechstart=()=>listeningCue(2,'speech');
-  sinbadRecognition.onspeechend=()=>listeningCue(3,'processed');
-  sinbadRecognition.onresult=event=>{if(sinbadRecognition!==recognition)return;let interim='';for(let i=event.resultIndex;i<event.results.length;i++){const part=event.results[i][0].transcript;if(event.results[i].isFinal)finalTranscript+=part;else interim+=part;}$('sinbadInput').value=(finalTranscript||interim).trim();};
+  let listeningProgressBucket=-1;
+  const listeningCue=(activity,revision=0)=>{if(sinbadRecognition!==recognition)return;const cue=sinbadPerformanceDirector?.listeningCueForActivity(activity,revision);setSinbadAssistantState('listening',{...(cue?.accepted?cue.cue:{}),listeningActivity:activity});};
+  sinbadRecognition.onstart=()=>{if(sinbadRecognition!==recognition)return;sinbadIsListening=true;setListeningUI(sinbadWakeActive?speechCopy().listen:handsFreeMessage(),true);listeningCue('ready');};
+  sinbadRecognition.onsoundstart=()=>listeningCue('sound');
+  sinbadRecognition.onspeechstart=()=>listeningCue('speech');
+  sinbadRecognition.onspeechend=()=>listeningCue('pause');
+  sinbadRecognition.onresult=event=>{if(sinbadRecognition!==recognition)return;let interim='',hasFinal=false;for(let i=event.resultIndex;i<event.results.length;i++){const part=event.results[i][0].transcript;if(event.results[i].isFinal){finalTranscript+=part;hasFinal=true;}else interim+=part;}const heardSoFar=(finalTranscript||interim).trim();$('sinbadInput').value=heardSoFar;const progressBucket=Math.floor(heardSoFar.length/12);if(hasFinal)listeningCue('processed',progressBucket);else if(progressBucket>listeningProgressBucket){listeningProgressBucket=progressBucket;listeningCue('interim',progressBucket);}};
   sinbadRecognition.onerror=event=>{if(sinbadRecognition!==recognition)return;sinbadIsListening=false;if(event.error==='not-allowed'||event.error==='service-not-allowed'){sinbadHandsFreeEnabled=false;setListeningUI(speechCopy().denied,true);return;}if(!['no-speech','aborted'].includes(event.error))setListeningUI(`Microphone: ${event.error}`,true);};
   sinbadRecognition.onend=()=>{
     if(sinbadRecognition!==recognition)return;

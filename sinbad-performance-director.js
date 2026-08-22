@@ -78,6 +78,21 @@
     }
     return Object.freeze({accepted:true,cue:Object.freeze(cue)});
   }
+  const LISTENING_ACTIVITY_CUES=Object.freeze({
+    ready:Object.freeze({gesture:'listen-lean',gaze:'audience',emotion:'attentive',energy:.24}),
+    sound:Object.freeze({gesture:'open-hand',gaze:'audience',emotion:'attentive',energy:.34}),
+    speech:Object.freeze({gesture:'listen-lean',gaze:'audience',emotion:'attentive',energy:.46}),
+    pause:Object.freeze({gesture:'hold',gaze:'thought',emotion:'attentive',energy:.28}),
+    processed:Object.freeze({gesture:'nod',gaze:'audience',emotion:'warm',energy:.36})
+  });
+  function listeningCueForActivity(activity,revision=0){
+    if(!Object.hasOwn(LISTENING_ACTIVITY_CUES,activity)&&activity!=='interim')return Object.freeze({accepted:false,reason:'UNKNOWN_LISTENING_ACTIVITY'});
+    if(!Number.isSafeInteger(revision)||revision<0)return Object.freeze({accepted:false,reason:'INVALID_LISTENING_REVISION'});
+    const cue=activity==='interim'
+      ?Object.freeze({gesture:revision%3===2?'hold':'listen-lean',gaze:'audience',emotion:'attentive',energy:revision%3===2?.38:.52})
+      :LISTENING_ACTIVITY_CUES[activity];
+    return Object.freeze({accepted:true,cue});
+  }
   function createPerformanceDirector(options={}){
     const schedule=options.setTimeout||setTimeout,cancelSchedule=options.clearTimeout||clearTimeout;
     let generation=0,timers=[];
@@ -93,5 +108,5 @@
     };
     return Object.freeze({play,cancel});
   }
-  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,cueAt,speechModeForDecision,speechCueForBoundary,createPerformanceDirector});
+  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,createPerformanceDirector});
 });

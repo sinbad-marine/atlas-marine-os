@@ -110,10 +110,13 @@ test('laughing is a real illustrated, labelled and time-bounded reaction',()=>{
 
 test('SpeechRecognition lifecycle drives listening, not a fake button-press state',()=>{
   assert.match(app,/sinbadRecognition\.onstart=\(\)=>\{if\(sinbadRecognition!==recognition\)return;sinbadIsListening=true;/);
-  assert.match(app,/sinbadRecognition\.onsoundstart=\(\)=>listeningCue\(1,'sound'\)/);
-  assert.match(app,/sinbadRecognition\.onspeechstart=\(\)=>listeningCue\(2,'speech'\)/);
-  assert.match(app,/sinbadRecognition\.onspeechend=\(\)=>listeningCue\(3,'processed'\)/);
-  assert.match(app,/if\(sinbadRecognition!==recognition\)return;const cue=sinbadPerformanceDirector\?\.cueAt\('listening',index\)/);
+  assert.match(app,/sinbadRecognition\.onsoundstart=\(\)=>listeningCue\('sound'\)/);
+  assert.match(app,/sinbadRecognition\.onspeechstart=\(\)=>listeningCue\('speech'\)/);
+  assert.match(app,/sinbadRecognition\.onspeechend=\(\)=>listeningCue\('pause'\)/);
+  assert.match(app,/const cue=sinbadPerformanceDirector\?\.listeningCueForActivity\(activity,revision\)/);
+  assert.match(app,/const progressBucket=Math\.floor\(heardSoFar\.length\/12\)/);
+  assert.match(app,/if\(hasFinal\)listeningCue\('processed',progressBucket\)/);
+  assert.match(app,/else if\(progressBucket>listeningProgressBucket\)/);
   assert.match(css,/data-listening-activity="speech"/);
 });
 

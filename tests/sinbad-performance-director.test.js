@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,cueAt,speechModeForDecision,speechCueForBoundary,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -65,4 +65,15 @@ test('caution cadence never turns a safety statement into a playful question cue
   assert.deepEqual(speechCueForBoundary({text:'Onay var mı? Bekle.',name:'sentence',charIndex:12,wordIndex:2,mode:'caution'}).cue,{gesture:'nod',gaze:'audience',emotion:'attentive',cadence:'sentence-end'});
   assert.equal(speechCueForBoundary(null).reason,'INVALID_BOUNDARY');
   assert.equal(speechCueForBoundary({text:'x',charIndex:9,wordIndex:0}).reason,'INVALID_BOUNDARY');
+});
+
+test('real recognition activity has restrained progress and pause cues',()=>{
+  assert.equal(listeningCueForActivity('ready').cue.gesture,'listen-lean');
+  assert.equal(listeningCueForActivity('sound').cue.gesture,'open-hand');
+  assert.equal(listeningCueForActivity('speech').cue.energy,.46);
+  assert.deepEqual([0,1,2,3].map(revision=>listeningCueForActivity('interim',revision).cue.gesture),['listen-lean','listen-lean','hold','listen-lean']);
+  assert.equal(listeningCueForActivity('pause').cue.gaze,'thought');
+  assert.equal(listeningCueForActivity('processed').cue.gesture,'nod');
+  assert.equal(listeningCueForActivity('invented').reason,'UNKNOWN_LISTENING_ACTIVITY');
+  assert.equal(listeningCueForActivity('interim',-1).reason,'INVALID_LISTENING_REVISION');
 });
