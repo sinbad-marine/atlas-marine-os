@@ -14,7 +14,7 @@ test('cloud retrieval exposes only bounded, provenance-linked PDF page visuals',
   assert.match(edge,/kind: 'pdf-page'/);
   assert.match(edge,/VERIFIED SOURCE PAGE VISUALS/);
   assert.match(edge,/Do not claim that no visual is available/);
-  assert.match(edge,/return json\(\{ answer, sources, visuals,/);
+  assert.match(edge,/return json\(\{ answer, spokenSummary, sources, visuals,/);
 });
 
 test('Sinbad chat renders source pages from authenticated Atlas storage, not invented image URLs',()=>{

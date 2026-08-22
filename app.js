@@ -534,7 +534,9 @@ const SINBAD_VOICE_PROFILES=Object.freeze({
   en:{rate:.86,pitch:.96,volume:1},
   default:{rate:.84,pitch:.94,volume:1}
 });
-const SINBAD_SPOKEN_SUMMARY_MAX_CHARS=320;
+const SINBAD_SPOKEN_SUMMARY_MAX_SENTENCES=6;
+const SINBAD_SPOKEN_SUMMARY_MAX_WORDS=110;
+let sinbadModelSpokenSummary='';
 function sinbadVoiceProfileForLanguage(lang=''){
   return SINBAD_VOICE_PROFILES[lang.toLowerCase().split('-')[0]]||SINBAD_VOICE_PROFILES.default;
 }
@@ -550,23 +552,36 @@ function stripSinbadSpeechMarkup(text){
     .replace(/\s+/g,' ')
     .trim();
 }
-function buildSinbadSpokenSummary(text,maxChars=SINBAD_SPOKEN_SUMMARY_MAX_CHARS){
-  const clean=stripSinbadSpeechMarkup(text);
-  if(clean.length<=maxChars)return clean;
-  const sentences=clean.match(/[^.!?…]+[.!?…]+|[^.!?…]+$/gu)||[clean];
-  const selected=[];
-  let length=0;
-  for(const sentence of sentences){
-    const part=sentence.trim();if(!part)continue;
-    if(selected.length&&length+1+part.length>maxChars)break;
-    if(!selected.length&&part.length>maxChars){
-      const clipped=part.slice(0,maxChars-1).replace(/\s+\S*$/u,'').trim();
-      return `${clipped}…`;
-    }
-    selected.push(part);length+=part.length+(selected.length>1?1:0);
-    if(selected.length>=3)break;
+function sinbadSpeechSentences(text){
+  return stripSinbadSpeechMarkup(text).match(/[^.!?…]+[.!?…]+|[^.!?…]+$/gu)?.map(part=>part.trim()).filter(Boolean)||[];
+}
+function sinbadSentenceWordCount(sentence){return sentence.split(/\s+/u).filter(Boolean).length;}
+function buildSinbadSpokenSummary(text,{maxSentences=SINBAD_SPOKEN_SUMMARY_MAX_SENTENCES,maxWords=SINBAD_SPOKEN_SUMMARY_MAX_WORDS}={}){
+  const sentences=sinbadSpeechSentences(text);
+  if(!sentences.length)return '';
+  const chosen=[];
+  let words=0;
+  // Offline/retrieval-only fallback: select complete teaching points and
+  // prioritize safety guidance. Never clip a sentence at a character limit.
+  const safety=/\b(dikkat|uyar[ıi]|önemli|emniyet|güvenlik|risk|kural|doğrula|kontrol|must|important|warning|safety|risk|verify|check)\b/iu;
+  const candidates=[sentences[0],...sentences.slice(1).filter(sentence=>safety.test(sentence)),...sentences.slice(1)];
+  for(const sentence of candidates){
+    if(chosen.includes(sentence))continue;
+    const count=sinbadSentenceWordCount(sentence);
+    if(chosen.length&&(words+count>maxWords||chosen.length>=maxSentences))continue;
+    chosen.push(sentence);words+=count;
+    if(words>=maxWords||chosen.length>=maxSentences)break;
   }
-  return selected.join(' ');
+  // A single complete sentence may exceed the preferred word budget. Keep it
+  // intact: coherent teaching is more important than a blind hard cut.
+  return chosen.join(' ');
+}
+function selectSinbadSpokenText(answer,modelSummary=''){
+  const supplied=stripSinbadSpeechMarkup(modelSummary);
+  const suppliedSentences=sinbadSpeechSentences(supplied);
+  const suppliedWords=sinbadSentenceWordCount(supplied);
+  if(supplied&&suppliedSentences.length>=2&&suppliedSentences.length<=8&&suppliedWords>=20&&suppliedWords<=150)return supplied;
+  return buildSinbadSpokenSummary(answer);
 }
 function detectSinbadSpeechLanguage(text,fallbackLang){
   const sample=String(text).toLowerCase();
@@ -684,7 +699,8 @@ function speakSinbadStandard(text,onVoiceReady){
   if(sinbadIsListening)sinbadRecognition?.stop();
   speechSynthesis.cancel();
   setSinbadAssistantState('preparing-voice');
-  const cleanText=buildSinbadSpokenSummary(text);
+  const cleanText=selectSinbadSpokenText(text,sinbadModelSpokenSummary);
+  sinbadModelSpokenSummary='';
   if(!cleanText){announce();finishSinbadVoice();return;}
   const runs=splitSinbadTeachingSpeech(cleanText,sinbadState.language);
   let index=0;
@@ -1224,6 +1240,7 @@ async function sendToSinbad(text){
   // A new question always takes the floor immediately. This cancels queued
   // teaching pauses and any utterance still reading the previous answer.
   stopSinbadVoice();
+  sinbadModelSpokenSummary='';
   if(pendingSinbadWebQuestion&&/^(izin ver|evet|ara|webde ara|allow|yes|search|разрешаю|да|autoriser|oui|erlauben|ja|اسمح|نعم|permitir|sí|consenti|sì)[.! ]*$/iu.test(q)){
     addSinbadMessage('user',q);$('sinbadInput').value='';await performSinbadWebSearch();return;
   }
@@ -2113,7 +2130,11 @@ async function sinbadCloudKnowledgeAnswer(question){
         || normalizedAnswer.includes('yeterli kaynak bulunamadi')
         || normalizedAnswer.includes('yalnizca onayli atlas cloud')
         || normalizedAnswer.includes('kitabi veya belgeyi kutuphaneye yukleyin');
-      if(!cloudMiss&&!cloudMissFallback){sinbadPendingSourceVisuals=Array.isArray(trustedAiData.visuals)?trustedAiData.visuals.slice(0,3):[];if(status)status.textContent=sinbadPendingSourceVisuals.length?'Atlas Cloud AI active · source visuals ready':'Atlas Cloud AI active';return answer;}
+      if(!cloudMiss&&!cloudMissFallback){
+        sinbadModelSpokenSummary=String(trustedAiData.spokenSummary||'').trim();
+        sinbadPendingSourceVisuals=Array.isArray(trustedAiData.visuals)?trustedAiData.visuals.slice(0,3):[];
+        if(status)status.textContent=sinbadPendingSourceVisuals.length?'Atlas Cloud AI active · source visuals ready':'Atlas Cloud AI active';return answer;
+      }
       if(status)status.textContent='Atlas Cloud has no answer · trying offline brain';
     }
     if(trustedAiData?.needsWebPermission){if(status)status.textContent='Atlas Cloud has no answer · trying offline brain';return null;}
@@ -2151,6 +2172,7 @@ async function performSinbadWebSearch(){
     const coreEnvelope=window.SinbadCore?.aiEnvelope?.(question,history);
     const {data,error}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language:sinbadState.language,allowWebSearch:true,coreEnvelope}});if(error)throw error;
     if(!cloudAnswerPassesCoreGate(data,coreEnvelope))throw new Error('Core safety gate rejected the cloud response');
+    sinbadModelSpokenSummary=String(data?.spokenSummary||'').trim();
     const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];const answer=`${copy.result}:\n\n${data?.answer||'No reliable web result was found.'}`;
     speakSinbad(answer,()=>addSinbadMessage('sinbad',answer));
   }catch(error){addSinbadMessage('sinbad',`Web search failed: ${error.message||error}`);}finally{$('sinbadThinking').classList.add('hidden');}

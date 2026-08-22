@@ -7,6 +7,14 @@ const app=fs.readFileSync('app.js','utf8');
 const html=fs.readFileSync('index.html','utf8');
 const edge=fs.readFileSync('supabase/functions/sinbad-answer/index.ts','utf8');
 
+test('cloud AI returns a separate semantic spoken teaching summary instead of forcing the browser to clip the written answer',()=>{
+  assert.match(edge,/const SPOKEN_SUMMARY_MARKER = '<<<SPOKEN_SUMMARY>>>';/);
+  assert.match(edge,/3 to 6 complete sentences and roughly 60 to 110 words/);
+  assert.match(edge,/Do not merely copy the first characters/);
+  assert.match(edge,/return json\(\{ answer, spokenSummary, sources,/);
+  assert.match(app,/sinbadModelSpokenSummary=String\(trustedAiData\.spokenSummary\|\|''\)\.trim\(\)/);
+});
+
 test('cloud document centre can locate older source files by title',()=>{
   assert.match(html,/id="cloudFileSearch"/);
   assert.match(html,/id="searchCloudFiles"/);

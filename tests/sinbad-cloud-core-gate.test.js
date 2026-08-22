@@ -90,11 +90,13 @@ test('cloud answers cannot claim execution authority',()=>{
 });
 
 test('provider answer is checked by the canonical authority-claim filter',()=>{
-  const extract=edge.indexOf('const answer = extractText(payload)');
+  const extract=edge.indexOf('const rawAnswer = extractText(payload)');
   const safety=edge.indexOf('if (!answerIsSafe(answer))',extract);
-  const success=edge.indexOf('return json({ answer, sources',safety);
+  const success=edge.indexOf('return json({ answer, spokenSummary, sources',safety);
   assert.ok(extract>=0&&safety>extract&&success>safety);
   assert.match(edge,/UNSAFE_PROVIDER_ANSWER/);
+  assert.match(edge,/spokenSummary && !answerIsSafe\(spokenSummary\)/);
+  assert.match(edge,/UNSAFE_PROVIDER_SUMMARY/);
 });
 
 test('high-risk block is localized and carries the trusted decision shape',()=>{
