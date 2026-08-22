@@ -591,6 +591,15 @@ test('Sinbad usability layout keeps a compact sticky profile, responsive tab rai
   assert.match(css,/@media\(max-width:600px\)\{\.sinbad-workspace-tabs\{position:static;display:flex;overflow-x:auto/);
 });
 
+test('rig head, lean and gaze outputs drive the real portrait while caution hold has a distinct bounded gesture',()=>{
+  assert.match(css,/transform:rotate\(calc\(var\(--sinbad-rig-head-x,0deg\) \+ var\(--sinbad-rig-lean,0deg\) \+ var\(--sinbad-gaze-offset,0deg\)\)\)/);
+  assert.match(css,/\.sinbad-avatar\[data-gaze="thought"\]\{--sinbad-gaze-offset:-\.7deg\}/);
+  assert.match(css,/\.sinbad-avatar\[data-gesture="hold"\]\{animation:sinbadStageHold 1\.1s ease-out both\}/);
+  assert.match(css,/@keyframes sinbadStageHold\{/);
+  assert.match(css,/@media \(prefers-reduced-motion: reduce\)\{\s*\.sinbad-avatar,\.sinbad-avatar-img\{animation:none!important\}/);
+  assert.match(css,/\.sinbad-force-reduced-motion \.sinbad-avatar,\.sinbad-force-reduced-motion \.sinbad-avatar-img\{animation:none!important\}/);
+});
+
 test('thinking animation reports only real asynchronous work stages and removes the old artificial delay',()=>{
   assert.match(app,/function setSinbadThinkingStage\(stage\)\{/);
   assert.match(app,/thinkingCueForStage\(stage\)/);

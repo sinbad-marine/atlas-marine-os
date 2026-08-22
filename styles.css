@@ -80,7 +80,9 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
    reads as blank. Full body (object-fit:contain) is reserved for the
    board-teaching / Academy scene, which gets a taller card above. Small
    floating avatar stays a tight head/shoulders crop for the same reason. */
-.sinbad-avatar-img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:50% 50%;opacity:1;transition:opacity .22s ease;transform-origin:50% 62%;filter:saturate(calc(1 + var(--sinbad-rig-energy,0)))}
+.sinbad-avatar-img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:50% 50%;opacity:1;transition:opacity .22s ease,transform .28s ease;transform-origin:50% 62%;transform:rotate(calc(var(--sinbad-rig-head-x,0deg) + var(--sinbad-rig-lean,0deg) + var(--sinbad-gaze-offset,0deg))) rotateX(var(--sinbad-rig-head-y,0deg));filter:saturate(calc(1 + var(--sinbad-rig-energy,0)))}
+.sinbad-avatar[data-gaze="thought"]{--sinbad-gaze-offset:-.7deg}
+.sinbad-avatar[data-gaze="board"]{--sinbad-gaze-offset:.8deg}
 .sinbad-avatar-blink{z-index:1;opacity:0;pointer-events:none;transition:none}
 .sinbad-avatar-mouth{z-index:1;opacity:0;pointer-events:none;transition:opacity .045s linear}
 .sinbad-avatar[data-state="speaking"][data-mouth-frame="closed"] .sinbad-avatar-img:not(.sinbad-avatar-mouth-closed),
@@ -144,12 +146,14 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-state="speaking"] .sinbad-avatar-img{animation:sinbadVoicePulse .5s ease-in-out infinite}
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="explain"]{animation:sinbadStageExplain 2.8s ease-in-out infinite}
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="open-hand"]{animation:sinbadStageOpenHand 1.2s ease-out both}
+  html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="hold"]{animation:sinbadStageHold 1.1s ease-out both}
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="listen-lean"]{animation:sinbadStageListen 2.4s ease-in-out infinite}
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-listening-activity="speech"]{filter:drop-shadow(0 0 8px rgba(85,214,190,.42))}
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="nod"]{animation:sinbadStageNod .8s ease-out both}
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="laugh"]{animation:sinbadStageLaugh .72s ease-in-out 2}
   @keyframes sinbadStageExplain{0%,100%{transform:translateY(0) rotate(0)}35%{transform:translateY(-2px) rotate(-.7deg)}70%{transform:translateY(1px) rotate(.55deg)}}
   @keyframes sinbadStageOpenHand{0%{transform:scale(.985)}55%{transform:scale(1.018)}100%{transform:scale(1)}}
+  @keyframes sinbadStageHold{0%{transform:translateY(0)}45%{transform:translateY(1.5px) scale(.992)}100%{transform:translateY(0)}}
   @keyframes sinbadStageListen{0%,100%{transform:translateX(0)}50%{transform:translateX(2px)}}
   @keyframes sinbadStageNod{0%,100%{transform:translateY(0)}45%{transform:translateY(4px)}}
   @keyframes sinbadStageLaugh{0%,100%{transform:translateY(0) rotate(0)}45%{transform:translateY(-3px) rotate(-.55deg)}}
@@ -173,9 +177,9 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
   html.sinbad-tab-hidden .sinbad-avatar *{animation-play-state:paused!important}
 }
 @media (prefers-reduced-motion: reduce){
-  .sinbad-avatar-img{animation:none!important}
+  .sinbad-avatar,.sinbad-avatar-img{animation:none!important}
 }
-.sinbad-force-reduced-motion .sinbad-avatar-img{animation:none!important}
+.sinbad-force-reduced-motion .sinbad-avatar,.sinbad-force-reduced-motion .sinbad-avatar-img{animation:none!important}
 .sinbad-force-reduced-motion .sinbad-avatar-blink{display:none}
 @media(max-width:900px){.sinbad-layout{grid-template-columns:1fr}.sinbad-profile{position:static;display:grid;grid-template-columns:96px 1fr auto;gap:12px;align-items:center;text-align:left;padding:12px}.sinbad-avatar.large{grid-row:1/4;width:96px;height:82px}.sinbad-profile h3,.sinbad-profile p{margin:2px 0}.sinbad-profile .badge{justify-self:end}.sinbad-capabilities{grid-column:2/4;display:flex;gap:12px;overflow:auto;margin-top:4px;padding-bottom:4px}.sinbad-capabilities span{white-space:nowrap}.sinbad-status-line{grid-column:2}.sinbad-workspace-tabs{top:68px}.chat-bubble{max-width:92%}}
 @media(max-width:600px){.sinbad-workspace-tabs{position:static;display:flex;overflow-x:auto;scroll-snap-type:x mandatory}.sinbad-workspace-tab{min-width:132px;scroll-snap-align:start}.sinbad-workspace-panel{padding:12px;min-height:480px}.sinbad-profile{grid-template-columns:76px 1fr}.sinbad-avatar.large{width:76px;height:68px}.sinbad-profile .badge{display:none}.sinbad-capabilities{grid-column:1/-1}.sinbad-panel-heading{display:grid}.sinbad-panel-heading .badge{max-width:none;text-align:left}.sinbad-voice-toolbar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.sinbad-voice-toolbar label{grid-column:1/-1}.sinbad-voice-toolbar select,.sinbad-voice-toolbar .btn{width:100%}.quick-prompts{flex-wrap:nowrap;overflow-x:auto}.quick-prompts .btn{white-space:nowrap}.chat-input-row{grid-template-columns:1fr}.sinbad-float span{display:none}.sinbad-float{padding:7px;right:14px;bottom:14px}}
