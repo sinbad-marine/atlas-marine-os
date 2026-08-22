@@ -343,16 +343,16 @@ function requestSinbadWebPermission(question){
 // represent. Visuals are the real illustrated Academy pack
 // (assets/captain-sinbad/, ACADEMY_BEHAVIOR_MANIFEST_TR.md) - Claude does not
 // redraw the character or imitate it with SVG geometry.
-const SINBAD_ASSISTANT_STATES=['idle','listening','thinking','preparing-voice','speaking','laughing','success','warning','error','voice-disabled','board-teaching'];
+const SINBAD_ASSISTANT_STATES=['idle','listening','thinking','preparing-voice','speaking','laughing','walking','success','warning','error','voice-disabled','board-teaching'];
 const SINBAD_ASSISTANT_STATE_LABELS={
- 'tr-TR':{idle:'Hazır',listening:'Dinliyor',thinking:'Düşünüyor','preparing-voice':'Ses hazırlanıyor',speaking:'Konuşuyor',laughing:'Gülüyor',success:'Tamamlandı',warning:'Dikkat',error:'Bağlantı sorunu','voice-disabled':'Ses kapalı','board-teaching':'Tahtada anlatıyor'},
- 'en-US':{idle:'Ready',listening:'Listening',thinking:'Thinking','preparing-voice':'Preparing voice',speaking:'Speaking',laughing:'Laughing',success:'Done',warning:'Attention',error:'Connection issue','voice-disabled':'Voice off','board-teaching':'Teaching at the board'},
- 'ru-RU':{idle:'Готов',listening:'Слушает',thinking:'Думает','preparing-voice':'Готовит голос',speaking:'Говорит',laughing:'Смеётся',success:'Готово',warning:'Внимание',error:'Проблема связи','voice-disabled':'Звук выкл.','board-teaching':'Объясняет у доски'},
- 'fr-FR':{idle:'Prêt',listening:'Écoute',thinking:'Réfléchit','preparing-voice':'Prépare la voix',speaking:'Parle',laughing:'Rit',success:'Terminé',warning:'Attention',error:'Problème de connexion','voice-disabled':'Voix coupée','board-teaching':'Explique au tableau'},
- 'de-DE':{idle:'Bereit',listening:'Hört zu',thinking:'Denkt nach','preparing-voice':'Bereitet Stimme vor',speaking:'Spricht',laughing:'Lacht',success:'Fertig',warning:'Achtung',error:'Verbindungsproblem','voice-disabled':'Stimme aus','board-teaching':'Erklärt an der Tafel'},
- 'ar-SA':{idle:'جاهز',listening:'يستمع',thinking:'يفكر','preparing-voice':'يجهز الصوت',speaking:'يتحدث',laughing:'يضحك',success:'تم',warning:'تنبيه',error:'مشكلة اتصال','voice-disabled':'الصوت متوقف','board-teaching':'يشرح عند السبورة'},
- 'es-ES':{idle:'Listo',listening:'Escuchando',thinking:'Pensando','preparing-voice':'Preparando voz',speaking:'Hablando',laughing:'Riendo',success:'Hecho',warning:'Atención',error:'Problema de conexión','voice-disabled':'Voz apagada','board-teaching':'Explicando en la pizarra'},
- 'it-IT':{idle:'Pronto',listening:'Ascolta',thinking:'Pensa','preparing-voice':'Prepara la voce',speaking:'Parla',laughing:'Ride',success:'Fatto',warning:'Attenzione',error:'Problema di connessione','voice-disabled':'Voce disattivata','board-teaching':'Spiega alla lavagna'}
+ 'tr-TR':{idle:'Hazır',listening:'Dinliyor',thinking:'Düşünüyor','preparing-voice':'Ses hazırlanıyor',speaking:'Konuşuyor',laughing:'Gülüyor',walking:'Yürüyor',success:'Tamamlandı',warning:'Dikkat',error:'Bağlantı sorunu','voice-disabled':'Ses kapalı','board-teaching':'Tahtada anlatıyor'},
+ 'en-US':{idle:'Ready',listening:'Listening',thinking:'Thinking','preparing-voice':'Preparing voice',speaking:'Speaking',laughing:'Laughing',walking:'Walking',success:'Done',warning:'Attention',error:'Connection issue','voice-disabled':'Voice off','board-teaching':'Teaching at the board'},
+ 'ru-RU':{idle:'Готов',listening:'Слушает',thinking:'Думает','preparing-voice':'Готовит голос',speaking:'Говорит',laughing:'Смеётся',walking:'Идёт',success:'Готово',warning:'Внимание',error:'Проблема связи','voice-disabled':'Звук выкл.','board-teaching':'Объясняет у доски'},
+ 'fr-FR':{idle:'Prêt',listening:'Écoute',thinking:'Réfléchit','preparing-voice':'Prépare la voix',speaking:'Parle',laughing:'Rit',walking:'Marche',success:'Terminé',warning:'Attention',error:'Problème de connexion','voice-disabled':'Voix coupée','board-teaching':'Explique au tableau'},
+ 'de-DE':{idle:'Bereit',listening:'Hört zu',thinking:'Denkt nach','preparing-voice':'Bereitet Stimme vor',speaking:'Spricht',laughing:'Lacht',walking:'Geht',success:'Fertig',warning:'Achtung',error:'Verbindungsproblem','voice-disabled':'Stimme aus','board-teaching':'Erklärt an der Tafel'},
+ 'ar-SA':{idle:'جاهز',listening:'يستمع',thinking:'يفكر','preparing-voice':'يجهز الصوت',speaking:'يتحدث',laughing:'يضحك',walking:'يمشي',success:'تم',warning:'تنبيه',error:'مشكلة اتصال','voice-disabled':'الصوت متوقف','board-teaching':'يشرح عند السبورة'},
+ 'es-ES':{idle:'Listo',listening:'Escuchando',thinking:'Pensando','preparing-voice':'Preparando voz',speaking:'Hablando',laughing:'Riendo',walking:'Caminando',success:'Hecho',warning:'Atención',error:'Problema de conexión','voice-disabled':'Voz apagada','board-teaching':'Explicando en la pizarra'},
+ 'it-IT':{idle:'Pronto',listening:'Ascolta',thinking:'Pensa','preparing-voice':'Prepara la voce',speaking:'Parla',laughing:'Ride',walking:'Cammina',success:'Fatto',warning:'Attenzione',error:'Problema di connessione','voice-disabled':'Voce disattivata','board-teaching':'Spiega alla lavagna'}
 };
 // Which real illustrated Academy asset represents each state. Several logical
 // states (preparing-voice, success, warning, error, voice-disabled) do not yet
@@ -364,6 +364,7 @@ const SINBAD_ASSISTANT_STATE_LABELS={
 const SINBAD_AVATAR_ASSET_BASE='./assets/captain-sinbad/';
 const SINBAD_BLINK_ASSET='captain-sinbad-idle-blink-v1.png';
 const SINBAD_SPEECH_ASSETS=Object.freeze({closed:'captain-sinbad-speaking-mbp-v1.png',open:'captain-sinbad-speaking.png',round:'captain-sinbad-speaking-o-v1.png'});
+const SINBAD_WALK_ASSETS=Object.freeze(['captain-sinbad-walk-a-v1.png','captain-sinbad-walk-b-v1.png']);
 const SINBAD_STATE_ASSET={
   idle:'captain-sinbad-idle-master.png',
   listening:'captain-sinbad-listening.png',
@@ -371,6 +372,7 @@ const SINBAD_STATE_ASSET={
   'preparing-voice':'captain-sinbad-idle-master.png',
   speaking:'captain-sinbad-speaking.png',
   laughing:'captain-sinbad-laughing-v1.png',
+  walking:SINBAD_WALK_ASSETS[0],
   success:'captain-sinbad-idle-master.png',
   warning:'captain-sinbad-idle-master.png',
   error:'captain-sinbad-idle-master.png',
@@ -402,6 +404,7 @@ function preloadSinbadAvatarAssets(){
   });
   const blink=new Image();blink.src=SINBAD_AVATAR_ASSET_BASE+SINBAD_BLINK_ASSET;
   Object.values(SINBAD_SPEECH_ASSETS).forEach(file=>{const img=new Image();img.src=SINBAD_AVATAR_ASSET_BASE+file;});
+  SINBAD_WALK_ASSETS.forEach(file=>{const img=new Image();img.src=SINBAD_AVATAR_ASSET_BASE+file;});
 }
 let sinbadBlinkTimer=null;
 function sinbadBlinkAllowed(){
@@ -503,6 +506,11 @@ async function startSinbadLipSyncAnalyser(audio){
   }
 }
 let sinbadAvatarImageGeneration=0;
+function startSinbadWalkCycle(generation){
+  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches||document.documentElement.classList.contains('sinbad-force-reduced-motion'))return;
+  let frame=0;const tick=()=>{if(generation!==sinbadAvatarImageGeneration||sinbadAssistantState!=='walking')return;frame=(frame+1)%SINBAD_WALK_ASSETS.length;sinbadAssistantElements().forEach(el=>{const img=el.querySelector('.sinbad-avatar-img:not(.sinbad-avatar-blink):not(.sinbad-avatar-mouth)');if(img)img.src=SINBAD_AVATAR_ASSET_BASE+SINBAD_WALK_ASSETS[frame];});sinbadAssistantTimers.push(setTimeout(tick,280));};
+  sinbadAssistantTimers.push(setTimeout(tick,280));
+}
 function setSinbadAssistantState(state,detail={}){
   const next=SINBAD_ASSISTANT_STATES.includes(state)?state:'idle';
   const performance=sinbadCharacterEngine?.setState(next,detail)?.snapshot||{state:next,emotion:'neutral',gesture:'rest',gaze:'audience'};
@@ -545,6 +553,7 @@ function setSinbadAssistantState(state,detail={}){
   if(floatButton)floatButton.setAttribute('aria-label',`Open Captain Sinbad — ${copy[next]||next}`);
   if(next==='success')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='success')setSinbadAssistantState('idle');},2200));
   if(next==='laughing')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='laughing')setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');},1250));
+  if(next==='walking'){startSinbadWalkCycle(generation);sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='walking')setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');},2240));}
   if(next==='warning')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='warning')setSinbadAssistantState('idle');},4200));
   if(next==='error')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='error')setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');},6000));
   scheduleSinbadBlink();
@@ -552,10 +561,11 @@ function setSinbadAssistantState(state,detail={}){
 }
 window.SinbadCharacterController=Object.freeze({
   react(action){
-    if(action!=='laugh')return Object.freeze({accepted:false,reason:'UNKNOWN_REACTION'});
-    const result=sinbadCharacterEngine?.dispatch('LAUGH');
+    if(!['laugh','walk'].includes(action))return Object.freeze({accepted:false,reason:'UNKNOWN_REACTION'});
+    if(action==='walk'&&!['idle','voice-disabled'].includes(sinbadAssistantState))return Object.freeze({accepted:false,reason:'CHARACTER_BUSY'});
+    const event=action==='walk'?'WALK':'LAUGH',state=action==='walk'?'walking':'laughing';const result=sinbadCharacterEngine?.dispatch(event);
     if(!result?.accepted)return Object.freeze({accepted:false,reason:result?.reason||'CHARACTER_ENGINE_UNAVAILABLE'});
-    setSinbadAssistantState('laughing');return Object.freeze({accepted:true,state:'laughing'});
+    setSinbadAssistantState(state);return Object.freeze({accepted:true,state});
   }
 });
 ensureSinbadBlinkLayers();ensureSinbadSpeechLayers();scheduleSinbadBlink();
@@ -1375,6 +1385,7 @@ setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');
 $('stopSinbadVoice')?.addEventListener('click',stopSinbadVoice);
 $('startSinbadListening')?.addEventListener('click',startSinbadListening);
 $('testSinbadVoice')?.addEventListener('click',()=>{sinbadState.voiceEnabled=true;localStorage.setItem('atlas_sinbad_voice','on');setSinbadVoiceUI();speakSinbad(speechCopy().test);});
+$('testSinbadWalk')?.addEventListener('click',()=>window.SinbadCharacterController.react('walk'));
 $('sinbadLanguage').value=sinbadState.language;
 $('sinbadLanguage')?.addEventListener('change',e=>{sinbadState.language=e.target.value;localStorage.setItem('atlas_sinbad_language',e.target.value);stopSinbadVoice();if(sinbadIsListening)sinbadRecognition?.stop();setListeningUI();});
 $('allowSinbadWebSearch')?.addEventListener('click',performSinbadWebSearch);

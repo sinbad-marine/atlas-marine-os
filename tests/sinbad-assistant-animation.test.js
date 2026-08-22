@@ -10,7 +10,7 @@ const css=fs.readFileSync('styles.css','utf8');
 
 test('a single centralised, testable state API exists with the required states, including board-teaching from the Academy manifest',()=>{
   assert.match(app,/function setSinbadAssistantState\(state,detail=\{\}\)\{/);
-  assert.match(app,/const SINBAD_ASSISTANT_STATES=\[[^\]]*'idle'[^\]]*'listening'[^\]]*'thinking'[^\]]*'preparing-voice'[^\]]*'speaking'[^\]]*'success'[^\]]*'warning'[^\]]*'error'[^\]]*'voice-disabled'[^\]]*'board-teaching'[^\]]*\]/);
+  assert.match(app,/const SINBAD_ASSISTANT_STATES=\[[^\]]*'idle'[^\]]*'listening'[^\]]*'thinking'[^\]]*'preparing-voice'[^\]]*'speaking'[^\]]*'walking'[^\]]*'success'[^\]]*'warning'[^\]]*'error'[^\]]*'voice-disabled'[^\]]*'board-teaching'[^\]]*\]/);
 });
 
 test('unknown state falls back to idle safely',()=>{
@@ -103,8 +103,8 @@ test('laughing is a real illustrated, labelled and time-bounded reaction',()=>{
   assert.match(app,/laughing:'captain-sinbad-laughing-v1\.png'/);
   assert.match(app,/laughing:'Gülüyor'/);assert.match(app,/laughing:'Laughing'/);
   assert.match(app,/if\(next==='laughing'\)sinbadAssistantTimers\.push\(setTimeout/);
-  assert.match(app,/if\(action!=='laugh'\)return Object\.freeze\(\{accepted:false,reason:'UNKNOWN_REACTION'\}\)/);
-  assert.match(app,/sinbadCharacterEngine\?\.dispatch\('LAUGH'\)/);
+  assert.match(app,/if\(!\['laugh','walk'\]\.includes\(action\)\)return Object\.freeze\(\{accepted:false,reason:'UNKNOWN_REACTION'\}\)/);
+  assert.match(app,/const event=action==='walk'\?'WALK':'LAUGH'/);
   assert.match(css,/data-gesture="laugh"/);assert.match(sw,/captain-sinbad-laughing-v1\.png/);
 });
 
@@ -115,6 +115,15 @@ test('SpeechRecognition lifecycle drives listening, not a fake button-press stat
   assert.match(app,/sinbadRecognition\.onspeechend=\(\)=>listeningCue\(3,'processed'\)/);
   assert.match(app,/if\(sinbadRecognition!==recognition\)return;const cue=sinbadPerformanceDirector\?\.cueAt\('listening',index\)/);
   assert.match(css,/data-listening-activity="speech"/);
+});
+
+test('walking uses two real alpha PNG frames and a bounded user-triggered cycle',()=>{
+  const sw=fs.readFileSync('sw.js','utf8');
+  for(const file of ['captain-sinbad-walk-a-v1.png','captain-sinbad-walk-b-v1.png']){const path=`assets/captain-sinbad/${file}`;assert.ok(fs.existsSync(path));const bytes=fs.readFileSync(path);assert.equal(bytes.toString('ascii',1,4),'PNG');assert.equal(bytes[25],6);}
+  assert.match(app,/const SINBAD_WALK_ASSETS=Object\.freeze\(\['captain-sinbad-walk-a-v1\.png','captain-sinbad-walk-b-v1\.png'\]\)/);
+  assert.match(app,/function startSinbadWalkCycle\(generation\)/);assert.match(app,/setTimeout\(tick,280\)/);assert.match(app,/if\(next==='walking'\).*2240/);
+  assert.match(app,/action==='walk'&&!\['idle','voice-disabled'\]\.includes\(sinbadAssistantState\)/);
+  assert.match(html,/id="testSinbadWalk"/);assert.match(sw,/captain-sinbad-walk-a-v1\.png/);assert.match(sw,/captain-sinbad-walk-b-v1\.png/);
 });
 
 test('sending a question drives thinking, synced with the existing #sinbadThinking bubble',()=>{

@@ -91,6 +91,7 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
 .sinbad-avatar.sinbad-blinking .sinbad-avatar-blink{opacity:1}
 .sinbad-avatar.large .sinbad-avatar-img{object-fit:cover;object-position:50% 4%}
 .sinbad-avatar.large[data-state="board-teaching"] .sinbad-avatar-img{object-fit:contain;object-position:50% 50%}
+.sinbad-avatar.large[data-state="walking"] .sinbad-avatar-img{object-fit:contain;object-position:50% 50%}
 .sinbad-avatar.small .sinbad-avatar-img{object-fit:cover;object-position:50% 2%}
 .sinbad-avatar .sinbad-status-light{position:absolute;right:6px;bottom:6px;width:12px;height:12px;border-radius:50%;background:var(--muted);border:2px solid var(--panel2);z-index:2}
 .sinbad-avatar.small .sinbad-status-light{width:9px;height:9px;right:2px;bottom:2px;border-width:1.5px}
@@ -101,6 +102,7 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
 /* Status colour - always present, never the only signal (see .sinbad-status-line and aria-label). */
 .sinbad-avatar[data-state="listening"] .sinbad-status-light,.sinbad-avatar[data-state="speaking"] .sinbad-status-light{background:var(--cyan)}
 .sinbad-avatar[data-state="laughing"] .sinbad-status-light{background:var(--green)}
+.sinbad-avatar[data-state="walking"] .sinbad-status-light{background:var(--green)}
 .sinbad-avatar[data-state="thinking"] .sinbad-status-light,.sinbad-avatar[data-state="preparing-voice"] .sinbad-status-light{background:var(--gold)}
 .sinbad-avatar[data-state="success"] .sinbad-status-light{background:var(--green)}
 .sinbad-avatar[data-state="warning"] .sinbad-status-light{background:#d99a3d}
