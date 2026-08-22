@@ -60,15 +60,24 @@ test('Professor Phase 2 opens separately, embeds the frozen classroom and starts
   const popupPromise=context.waitForEvent('page');
   await page.evaluate(()=>openSinbadProfessorWindow());
   const professor=await popupPromise;
+  const errors=[];
+  professor.on('console',message=>{if(message.type()==='error')errors.push(message.text());});
   await professor.waitForLoadState();
   await expect(professor).toHaveURL(/academy-professor\.html$/);
   await expect(professor.getByRole('heading',{name:/Professor Workspace/})).toBeVisible();
   await expect(professor.locator('#learnerLevel')).toHaveText('foundation');
+  await expect(professor.locator('body')).not.toContainText(/Ã.|â€|ï¿½|Â./u);
+  const accessibility=await new AxeBuilder({page:professor})
+    .include('aside')
+    .withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa','wcag22aa'])
+    .analyze();
+  expect(accessibility.violations).toEqual([]);
   const classroom=professor.frameLocator('#phaseOneClassroom');
   await expect(classroom.locator('#academyChatForm')).toBeVisible();
   await expect(classroom.locator('#academySinbadAvatar')).toHaveCount(1);
   await professor.locator('#startDiagnostic').click();
   await expect(professor.locator('#diagnosticQuestion')).toBeVisible();
   await expect(professor.locator('#diagnosticQuestion strong')).toContainText('1/6');
+  expect(errors).toEqual([]);
   await professor.close();
 });

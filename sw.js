@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.18-live-academy-instructor-v1';
+const CACHE='sinbad-marine-v8.20.19-professor-phase-2-beta-v1';
 const ASSETS=[
   './',
   './index.html',
