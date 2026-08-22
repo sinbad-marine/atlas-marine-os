@@ -362,6 +362,7 @@ const SINBAD_ASSISTANT_STATE_LABELS={
 // konuşma jesti yok", "success/warning/error: mevcut duruşun devamı + efekt").
 // Distinct status colour/text still applies (see CSS + sinbadAvatarStatus label).
 const SINBAD_AVATAR_ASSET_BASE='./assets/captain-sinbad/';
+const SINBAD_BLINK_ASSET='captain-sinbad-idle-blink-v1.png';
 const SINBAD_STATE_ASSET={
   idle:'captain-sinbad-idle-master.png',
   listening:'captain-sinbad-listening.png',
@@ -387,6 +388,32 @@ function preloadSinbadAvatarAssets(){
     if(seen.has(file))return;seen.add(file);
     const img=new Image();img.src=SINBAD_AVATAR_ASSET_BASE+file;
   });
+  const blink=new Image();blink.src=SINBAD_AVATAR_ASSET_BASE+SINBAD_BLINK_ASSET;
+}
+let sinbadBlinkTimer=null;
+function sinbadBlinkAllowed(){
+  return ['idle','voice-disabled','success','warning','error'].includes(sinbadAssistantState)
+    &&document.visibilityState!=='hidden'
+    &&!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    &&!document.documentElement.classList.contains('sinbad-force-reduced-motion');
+}
+function ensureSinbadBlinkLayers(){
+  sinbadAssistantElements().forEach(el=>{
+    if(el.querySelector('.sinbad-avatar-blink'))return;
+    const blink=document.createElement('img');blink.className='sinbad-avatar-img sinbad-avatar-blink';
+    blink.src=SINBAD_AVATAR_ASSET_BASE+SINBAD_BLINK_ASSET;blink.alt='';blink.setAttribute('aria-hidden','true');
+    el.insertBefore(blink,el.querySelector('.sinbad-status-light'));
+  });
+}
+function scheduleSinbadBlink(){
+  clearTimeout(sinbadBlinkTimer);sinbadBlinkTimer=null;
+  if(!sinbadBlinkAllowed())return;
+  sinbadBlinkTimer=setTimeout(()=>{
+    if(!sinbadBlinkAllowed())return;
+    sinbadAssistantElements().forEach(el=>el.classList.add('sinbad-blinking'));
+    setTimeout(()=>sinbadAssistantElements().forEach(el=>el.classList.remove('sinbad-blinking')),135);
+    scheduleSinbadBlink();
+  },3800+Math.floor(Math.random()*3200));
 }
 let sinbadLipSyncAudioContext=null,sinbadLipSyncAnalyser=null,sinbadLipSyncSource=null,sinbadLipSyncRaf=null;
 function stopSinbadLipSyncAnalyser(){
@@ -488,12 +515,15 @@ function setSinbadAssistantState(state,detail={}){
   if(next==='success')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='success')setSinbadAssistantState('idle');},2200));
   if(next==='warning')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='warning')setSinbadAssistantState('idle');},4200));
   if(next==='error')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='error')setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');},6000));
+  scheduleSinbadBlink();
   return next;
 }
+ensureSinbadBlinkLayers();scheduleSinbadBlink();
 preloadSinbadAvatarAssets();
 if(typeof document!=='undefined'&&'visibilityState'in document){
   document.addEventListener('visibilitychange',()=>{
     document.documentElement.classList.toggle('sinbad-tab-hidden',document.visibilityState==='hidden');
+    scheduleSinbadBlink();
   },{passive:true});
 }
 

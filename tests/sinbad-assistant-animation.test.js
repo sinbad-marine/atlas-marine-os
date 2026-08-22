@@ -73,6 +73,18 @@ test('avatar image swap preloads all unique state assets and preserves aspect/al
   assert.match(css,/\.sinbad-avatar\.small \.sinbad-avatar-img\{object-fit:cover/);
 });
 
+test('a real blink frame is bounded to calm states and respects visibility and reduced motion',()=>{
+  const sw=fs.readFileSync('sw.js','utf8');
+  assert.ok(fs.existsSync('assets/captain-sinbad/captain-sinbad-idle-blink-v1.png'));
+  assert.match(app,/const SINBAD_BLINK_ASSET='captain-sinbad-idle-blink-v1\.png';/);
+  assert.match(app,/\['idle','voice-disabled','success','warning','error'\]\.includes\(sinbadAssistantState\)/);
+  assert.match(app,/document\.visibilityState!=='hidden'/);
+  assert.match(app,/prefers-reduced-motion: reduce/);
+  assert.match(app,/3800\+Math\.floor\(Math\.random\(\)\*3200\)/);
+  assert.match(css,/\.sinbad-avatar\.sinbad-blinking \.sinbad-avatar-blink\{opacity:1\}/);
+  assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-idle-blink-v1\.png'/);
+});
+
 test('SpeechRecognition onstart drives listening, not a fake button-press state',()=>{
   assert.match(app,/sinbadRecognition\.onstart=\(\)=>\{sinbadIsListening=true;setListeningUI\(sinbadWakeActive\?speechCopy\(\)\.listen:handsFreeMessage\(\),true\);setSinbadAssistantState\('listening'\);\};/);
 });
