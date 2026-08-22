@@ -103,6 +103,21 @@
     if(!Object.hasOwn(THINKING_STAGE_CUES,stage))return Object.freeze({accepted:false,reason:'UNKNOWN_THINKING_STAGE'});
     return Object.freeze({accepted:true,cue:THINKING_STAGE_CUES[stage]});
   }
+  function responseCueForText(text,mode='warm'){
+    if(typeof text!=='string'||!text.trim())return Object.freeze({accepted:false,reason:'INVALID_RESPONSE_TEXT'});
+    const safeMode=['warm','instructional','caution'].includes(mode)?mode:'warm';
+    const normalized=text.toLocaleLowerCase('tr-TR');
+    const caution=safeMode==='caution'||/(uyarı|dikkat|tehlike|acil|mayday|warning|caution|danger|emergency|kritik|critical)/iu.test(normalized);
+    const question=/\?/u.test(text);
+    const completed=/(başarıyla (?:tamamlandı|oluşturuldu|kaydedildi)|(?:işlem|plan|rota) tamamlandı|completed successfully|successfully (?:created|saved)|is now ready)/iu.test(normalized);
+    let cue;
+    if(caution)cue={gesture:'hold',gaze:'audience',emotion:'concerned',energy:.34,responseKind:'caution'};
+    else if(question)cue={gesture:'open-hand',gaze:'audience',emotion:'curious',energy:.42,responseKind:'question'};
+    else if(completed)cue={gesture:'nod',gaze:'audience',emotion:'confident',energy:.4,responseKind:'completion'};
+    else if(safeMode==='instructional'||text.length>=120)cue={gesture:'explain',gaze:'audience',emotion:'confident',energy:.44,responseKind:'explanation'};
+    else cue={gesture:'open-hand',gaze:'audience',emotion:'warm',energy:.36,responseKind:'conversation'};
+    return Object.freeze({accepted:true,cue:Object.freeze(cue)});
+  }
   function createPerformanceDirector(options={}){
     const schedule=options.setTimeout||setTimeout,cancelSchedule=options.clearTimeout||clearTimeout;
     let generation=0,timers=[];
@@ -118,5 +133,5 @@
     };
     return Object.freeze({play,cancel});
   }
-  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,THINKING_STAGE_CUES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,createPerformanceDirector});
+  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,THINKING_STAGE_CUES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,responseCueForText,createPerformanceDirector});
 });

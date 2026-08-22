@@ -396,6 +396,7 @@ const sinbadCharacterEngine=window.SinbadCharacterEngine?.createCharacterEngine(
 const sinbadCharacterRig=window.SinbadCharacterRig||null;
 const sinbadPerformanceDirector=window.SinbadPerformanceDirector||null;
 let sinbadSpeechPerformanceMode='warm';
+let sinbadResponseOpeningCue={gesture:'open-hand',gaze:'audience',emotion:'warm',energy:.36,responseKind:'conversation'};
 function prepareSinbadSpeechPerformance(question){
   const decision=window.SinbadCore?.analyzeQuery?.(question)||{};
   sinbadSpeechPerformanceMode=sinbadPerformanceDirector?.speechModeForDecision(decision)||'warm';
@@ -407,6 +408,11 @@ function sinbadSpeechPerformanceCue(index){
 function sinbadSpeechBoundaryCue(boundaryEvent,text,index){
   const result=sinbadPerformanceDirector?.speechCueForBoundary({name:boundaryEvent?.name,charIndex:boundaryEvent?.charIndex,text,wordIndex:index,mode:sinbadSpeechPerformanceMode});
   return result?.accepted?result.cue:sinbadSpeechPerformanceCue(index);
+}
+function prepareSinbadResponsePerformance(text){
+  const result=sinbadPerformanceDirector?.responseCueForText(text,sinbadSpeechPerformanceMode);
+  sinbadResponseOpeningCue=result?.accepted?result.cue:{gesture:'hold',gaze:'audience',emotion:'concerned',energy:.24,responseKind:'blocked'};
+  return sinbadResponseOpeningCue;
 }
 function setSinbadThinkingStage(stage){
   const result=sinbadPerformanceDirector?.thinkingCueForStage(stage);
@@ -819,7 +825,7 @@ function speakSinbadStandard(text,onVoiceReady){
   }
   if(sinbadIsListening)sinbadRecognition?.stop();
   speechSynthesis.cancel();
-  setSinbadAssistantState('preparing-voice');
+  setSinbadAssistantState('preparing-voice',sinbadResponseOpeningCue);
   const cleanText=selectSinbadSpokenText(text,sinbadModelSpokenSummary);
   sinbadModelSpokenSummary='';
   if(!cleanText){announce();finishSinbadVoice();return;}
@@ -858,7 +864,7 @@ function speakSinbadStandard(text,onVoiceReady){
     utterance.rate=profile.rate;utterance.pitch=profile.pitch;utterance.volume=profile.volume;
     // Only the real 'speaking has actually started' signal flips the avatar -
     // never the moment we merely queued/prepared the utterance.
-    utterance.onstart=()=>{if(myGeneration!==sinbadStandardSpeechGeneration)return;announce();setSinbadAssistantState('speaking',sinbadSpeechPerformanceCue(0));};
+    utterance.onstart=()=>{if(myGeneration!==sinbadStandardSpeechGeneration)return;announce();setSinbadAssistantState('speaking',sinbadResponseOpeningCue);};
     utterance.onboundary=event=>{if(myGeneration===sinbadStandardSpeechGeneration)sinbadStandardVoiceTick(event,run.text);};
     utterance.onend=()=>{
       if(myGeneration!==sinbadStandardSpeechGeneration)return;
@@ -907,7 +913,7 @@ function playSinbadCloneBlob(blob,controller){
     // the real signal the task requires, not the fetch/announce moment.
     audio.addEventListener('playing',()=>{
       if(sinbadVoiceAbort!==controller)return;
-      setSinbadAssistantState('speaking',sinbadSpeechPerformanceCue(0));
+      setSinbadAssistantState('speaking',sinbadResponseOpeningCue);
       startSinbadLipSyncAnalyser(audio);
     },{once:true});
     audio.onended=()=>{cleanup();resolve();};
@@ -931,7 +937,7 @@ async function speakSinbadXttsClone(text,onVoiceReady){
   const chunks=splitSinbadCloneChunks(cleanText);
   const status=$('sinbadKnowledgeStatus');
   const controller=new AbortController();sinbadVoiceAbort=controller;
-  setSinbadAssistantState('preparing-voice');
+  setSinbadAssistantState('preparing-voice',sinbadResponseOpeningCue);
   let timedOut=false;
   const loadChunk=async index=>{
     const timeout=setTimeout(()=>{timedOut=true;controller.abort();},150000);
@@ -974,6 +980,7 @@ async function speakSinbadXttsClone(text,onVoiceReady){
 // wiring.
 let sinbadVoiceProvider='standard';
 function speakSinbad(text,onVoiceReady){
+  prepareSinbadResponsePerformance(text);
   if(sinbadVoiceProvider==='xtts-clone')return speakSinbadXttsClone(text,onVoiceReady);
   return speakSinbadStandard(text,onVoiceReady);
 }

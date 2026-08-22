@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,THINKING_STAGE_CUES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,THINKING_STAGE_CUES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,responseCueForText,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -85,4 +85,14 @@ test('real thinking work maps to distinct restrained and fail-closed stage cues'
   assert.equal(thinkingCueForStage('retrieving').cue.emotion,'attentive');
   assert.equal(thinkingCueForStage('composing').cue.gesture,'nod');
   assert.equal(thinkingCueForStage('pretending').reason,'UNKNOWN_THINKING_STAGE');
+});
+
+test('real answer meaning selects a deterministic opening reaction without random animation',()=>{
+  assert.equal(responseCueForText('Dikkat: rota emniyet sınırını aşıyor.','warm').cue.responseKind,'caution');
+  assert.equal(responseCueForText('Bu yöntemi birlikte deneyelim mi?','warm').cue.responseKind,'question');
+  assert.equal(responseCueForText('Rota başarıyla oluşturuldu.','warm').cue.responseKind,'completion');
+  assert.equal(responseCueForText('Bu, adım adım açıklanan öğretici bir yanıttır.','instructional').cue.responseKind,'explanation');
+  assert.equal(responseCueForText('Merhaba Kaptan.','warm').cue.responseKind,'conversation');
+  assert.equal(responseCueForText('   ','warm').reason,'INVALID_RESPONSE_TEXT');
+  assert.equal(responseCueForText('Harika mı?','caution').cue.responseKind,'caution');
 });

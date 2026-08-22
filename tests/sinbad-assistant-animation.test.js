@@ -137,11 +137,11 @@ test('sending a question drives thinking, synced with the existing #sinbadThinki
 
 test('preparing-voice starts before the XTTS fetch, not after it resolves',()=>{
   const speakSinbad=app.slice(app.indexOf('async function speakSinbad'),app.indexOf('async function speakSinbad')+900);
-  assert.match(speakSinbad,/const controller=new AbortController\(\);sinbadVoiceAbort=controller;\s*\n\s*setSinbadAssistantState\('preparing-voice'\);/);
+  assert.match(speakSinbad,/const controller=new AbortController\(\);sinbadVoiceAbort=controller;\s*\n\s*setSinbadAssistantState\('preparing-voice',sinbadResponseOpeningCue\);/);
 });
 
 test('speaking only starts on the real audio "playing" event, never on fetch/announce',()=>{
-  assert.match(app,/audio\.addEventListener\('playing',\(\)=>\{\s*\n\s*if\(sinbadVoiceAbort!==controller\)return;\s*\n\s*setSinbadAssistantState\('speaking',sinbadSpeechPerformanceCue\(0\)\);\s*\n\s*startSinbadLipSyncAnalyser\(audio\);\s*\n\s*\},\{once:true\}\);/);
+  assert.match(app,/audio\.addEventListener\('playing',\(\)=>\{\s*\n\s*if\(sinbadVoiceAbort!==controller\)return;\s*\n\s*setSinbadAssistantState\('speaking',sinbadResponseOpeningCue\);\s*\n\s*startSinbadLipSyncAnalyser\(audio\);\s*\n\s*\},\{once:true\}\);/);
   const playIdx=app.indexOf("audio.play().catch");
   const listenerIdx=app.indexOf("audio.addEventListener('playing'");
   assert.ok(listenerIdx>0&&listenerIdx<playIdx,'the playing listener must be attached before audio.play() is called');
@@ -263,7 +263,7 @@ test('board-teaching state exists with real art wired for the native Academy sta
 
 test('standard is the default voice provider, xtts-clone is preserved but not deleted',()=>{
   assert.match(app,/let sinbadVoiceProvider='standard';/);
-  assert.match(app,/function speakSinbad\(text,onVoiceReady\)\{\s*\n\s*if\(sinbadVoiceProvider==='xtts-clone'\)return speakSinbadXttsClone\(text,onVoiceReady\);\s*\n\s*return speakSinbadStandard\(text,onVoiceReady\);\s*\n\}/);
+  assert.match(app,/function speakSinbad\(text,onVoiceReady\)\{\s*\n\s*prepareSinbadResponsePerformance\(text\);\s*\n\s*if\(sinbadVoiceProvider==='xtts-clone'\)return speakSinbadXttsClone\(text,onVoiceReady\);\s*\n\s*return speakSinbadStandard\(text,onVoiceReady\);\s*\n\}/);
   assert.match(app,/async function speakSinbadXttsClone\(text,onVoiceReady\)\{/);
   assert.match(app,/function speakSinbadStandard\(text,onVoiceReady\)\{/);
 });
@@ -362,10 +362,10 @@ test('acceptance regression: the avatar never stays in preparing-voice forever w
 
 test('speaking (standard provider) starts only on the real utterance onstart event, never when merely queued, and a superseded (stale) call cannot flip state either',()=>{
   const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function splitSinbadCloneChunks'));
-  assert.match(fn,/utterance\.onstart=\(\)=>\{if\(myGeneration!==sinbadStandardSpeechGeneration\)return;announce\(\);setSinbadAssistantState\('speaking',sinbadSpeechPerformanceCue\(0\)\);\};/);
-  assert.match(fn,/setSinbadAssistantState\('preparing-voice'\);/);
+  assert.match(fn,/utterance\.onstart=\(\)=>\{if\(myGeneration!==sinbadStandardSpeechGeneration\)return;announce\(\);setSinbadAssistantState\('speaking',sinbadResponseOpeningCue\);\};/);
+  assert.match(fn,/setSinbadAssistantState\('preparing-voice',sinbadResponseOpeningCue\);/);
   // preparing-voice must be set before speechSynthesis.speak() is ever called
-  const preparingIdx=fn.indexOf("setSinbadAssistantState('preparing-voice')");
+  const preparingIdx=fn.indexOf("setSinbadAssistantState('preparing-voice',sinbadResponseOpeningCue)");
   const speakCallIdx=fn.indexOf('speechSynthesis.speak(utterance)');
   assert.ok(preparingIdx>0&&preparingIdx<speakCallIdx);
 });
@@ -491,7 +491,7 @@ test('round-table fix: voiceschanged uses addEventListener/removeEventListener w
   assert.match(standardFn,/if\(myGeneration!==sinbadStandardSpeechGeneration\|\|settled\)return;/);
   assert.match(standardFn,/if\(myGeneration!==sinbadStandardSpeechGeneration\|\|settled\|\|!speechSynthesis\.getVoices\(\)\.length\)return;/);
   assert.match(standardFn,/if\(myGeneration!==sinbadStandardSpeechGeneration\)return; \/\/ a newer speak request has taken over/);
-  assert.match(standardFn,/utterance\.onstart=\(\)=>\{if\(myGeneration!==sinbadStandardSpeechGeneration\)return;announce\(\);setSinbadAssistantState\('speaking',sinbadSpeechPerformanceCue\(0\)\);\};/);
+  assert.match(standardFn,/utterance\.onstart=\(\)=>\{if\(myGeneration!==sinbadStandardSpeechGeneration\)return;announce\(\);setSinbadAssistantState\('speaking',sinbadResponseOpeningCue\);\};/);
   assert.match(standardFn,/utterance\.onboundary=event=>\{if\(myGeneration===sinbadStandardSpeechGeneration\)sinbadStandardVoiceTick\(event,run\.text\);\};/);
   assert.match(standardFn,/utterance\.onerror=\(\)=>\{\s*\n\s*if\(myGeneration!==sinbadStandardSpeechGeneration\)return;/);
 });
