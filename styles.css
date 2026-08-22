@@ -83,12 +83,12 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
 .sinbad-avatar-img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:50% 50%;opacity:1;transition:opacity .22s ease,transform .28s ease;transform-origin:50% 62%;transform:rotate(calc(var(--sinbad-rig-head-x,0deg) + var(--sinbad-rig-lean,0deg) + var(--sinbad-gaze-offset,0deg))) rotateX(var(--sinbad-rig-head-y,0deg));filter:saturate(calc(1 + var(--sinbad-rig-energy,0)))}
 .sinbad-avatar[data-gaze="thought"]{--sinbad-gaze-offset:-.7deg}
 .sinbad-avatar[data-gaze="board"]{--sinbad-gaze-offset:.8deg}
-.sinbad-avatar[data-motion-profile="measured"]{--sinbad-motion-duration:1.35s}
-.sinbad-avatar[data-motion-profile="lively"]{--sinbad-motion-duration:.82s}
-.sinbad-avatar[data-motion-profile="thoughtful"]{--sinbad-motion-duration:1.6s}
-.sinbad-avatar[data-motion-profile="crisp"]{--sinbad-motion-duration:.68s}
-.sinbad-avatar[data-motion-profile="gentle"]{--sinbad-motion-duration:1.48s}
-.sinbad-avatar[data-motion-profile="deliberate"]{--sinbad-motion-duration:1.85s}
+.sinbad-avatar[data-motion-profile="measured"]{--sinbad-motion-duration:1.35s;--sinbad-motion-rise:-2px;--sinbad-motion-fall:1px;--sinbad-motion-travel:4px;--sinbad-motion-nod:3px;--sinbad-motion-scale-up:1.014;--sinbad-motion-scale-down:.988;--sinbad-motion-tilt-left:-.55deg;--sinbad-motion-tilt-right:.4deg}
+.sinbad-avatar[data-motion-profile="lively"]{--sinbad-motion-duration:.82s;--sinbad-motion-rise:-3px;--sinbad-motion-fall:1.5px;--sinbad-motion-travel:6px;--sinbad-motion-nod:4.5px;--sinbad-motion-scale-up:1.022;--sinbad-motion-scale-down:.982;--sinbad-motion-tilt-left:-.85deg;--sinbad-motion-tilt-right:.65deg}
+.sinbad-avatar[data-motion-profile="thoughtful"]{--sinbad-motion-duration:1.6s;--sinbad-motion-rise:-1px;--sinbad-motion-fall:.5px;--sinbad-motion-travel:2px;--sinbad-motion-nod:2px;--sinbad-motion-scale-up:1.008;--sinbad-motion-scale-down:.994;--sinbad-motion-tilt-left:-.35deg;--sinbad-motion-tilt-right:.25deg}
+.sinbad-avatar[data-motion-profile="crisp"]{--sinbad-motion-duration:.68s;--sinbad-motion-rise:-2px;--sinbad-motion-fall:.75px;--sinbad-motion-travel:4px;--sinbad-motion-nod:3.5px;--sinbad-motion-scale-up:1.012;--sinbad-motion-scale-down:.99;--sinbad-motion-tilt-left:-.45deg;--sinbad-motion-tilt-right:.35deg}
+.sinbad-avatar[data-motion-profile="gentle"]{--sinbad-motion-duration:1.48s;--sinbad-motion-rise:-1.5px;--sinbad-motion-fall:.5px;--sinbad-motion-travel:3px;--sinbad-motion-nod:2.5px;--sinbad-motion-scale-up:1.01;--sinbad-motion-scale-down:.992;--sinbad-motion-tilt-left:-.3deg;--sinbad-motion-tilt-right:.2deg}
+.sinbad-avatar[data-motion-profile="deliberate"]{--sinbad-motion-duration:1.85s;--sinbad-motion-rise:-2.5px;--sinbad-motion-fall:1px;--sinbad-motion-travel:5px;--sinbad-motion-nod:4px;--sinbad-motion-scale-up:1.016;--sinbad-motion-scale-down:.986;--sinbad-motion-tilt-left:-.65deg;--sinbad-motion-tilt-right:.5deg}
 .sinbad-avatar-blink{z-index:1;opacity:0;pointer-events:none;transition:none}
 .sinbad-avatar-mouth{z-index:1;opacity:0;pointer-events:none;transition:opacity .045s linear}
 .sinbad-avatar[data-state="speaking"][data-mouth-frame="closed"] .sinbad-avatar-img:not(.sinbad-avatar-mouth-closed),
@@ -160,12 +160,12 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="nod"]{animation:sinbadStageNod .8s ease-out both}
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="laugh"]{animation:sinbadStageLaugh .72s ease-in-out 2}
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-motion-profile]{animation-duration:var(--sinbad-motion-duration)!important}
-  @keyframes sinbadStageExplain{0%,100%{transform:translateY(0) rotate(0)}35%{transform:translateY(-2px) rotate(-.7deg)}70%{transform:translateY(1px) rotate(.55deg)}}
-  @keyframes sinbadStageOpenHand{0%{transform:scale(.985)}55%{transform:scale(1.018)}100%{transform:scale(1)}}
-  @keyframes sinbadStageShowPalm{0%{transform:translateX(0) scale(.985)}48%{transform:translateX(5px) scale(1.015)}100%{transform:translateX(0) scale(1)}}
-  @keyframes sinbadStageHold{0%{transform:translateY(0)}45%{transform:translateY(1.5px) scale(.992)}100%{transform:translateY(0)}}
+  @keyframes sinbadStageExplain{0%,100%{transform:translateY(0) rotate(0)}35%{transform:translateY(var(--sinbad-motion-rise,-2px)) rotate(var(--sinbad-motion-tilt-left,-.7deg))}70%{transform:translateY(var(--sinbad-motion-fall,1px)) rotate(var(--sinbad-motion-tilt-right,.55deg))}}
+  @keyframes sinbadStageOpenHand{0%{transform:scale(var(--sinbad-motion-scale-down,.985))}55%{transform:scale(var(--sinbad-motion-scale-up,1.018))}100%{transform:scale(1)}}
+  @keyframes sinbadStageShowPalm{0%{transform:translateX(0) scale(var(--sinbad-motion-scale-down,.985))}48%{transform:translateX(var(--sinbad-motion-travel,5px)) scale(var(--sinbad-motion-scale-up,1.015))}100%{transform:translateX(0) scale(1)}}
+  @keyframes sinbadStageHold{0%{transform:translateY(0)}45%{transform:translateY(var(--sinbad-motion-fall,1.5px)) scale(var(--sinbad-motion-scale-down,.992))}100%{transform:translateY(0)}}
   @keyframes sinbadStageListen{0%,100%{transform:translateX(0)}50%{transform:translateX(2px)}}
-  @keyframes sinbadStageNod{0%,100%{transform:translateY(0)}45%{transform:translateY(4px)}}
+  @keyframes sinbadStageNod{0%,100%{transform:translateY(0)}45%{transform:translateY(var(--sinbad-motion-nod,4px))}}
   @keyframes sinbadStageLaugh{0%,100%{transform:translateY(0) rotate(0)}45%{transform:translateY(-3px) rotate(-.55deg)}}
   /* Real per-word cue from SpeechSynthesisUtterance's own onboundary event
      (standard voice provider) - a brief, subtle emphasis, not a fabricated

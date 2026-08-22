@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.17-live-character-motion-profiles-v20';
+const CACHE='sinbad-marine-v8.20.17-live-character-motion-dynamics-v21';
 const ASSETS=[
   './',
   './index.html',

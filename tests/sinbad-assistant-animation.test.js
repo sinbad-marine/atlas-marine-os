@@ -608,9 +608,17 @@ test('answer choreography uses a bounded non-repeating improvisation director ra
 
 test('six bounded motion profiles change gesture timing and are cleared with the next plain state',()=>{
   assert.match(app,/if\(detail\.motionProfile\)el\.dataset\.motionProfile=detail\.motionProfile;\s*\n\s*else delete el\.dataset\.motionProfile;/);
-  assert.match(css,/data-motion-profile="measured"\]\{--sinbad-motion-duration:1\.35s\}/);
-  assert.match(css,/data-motion-profile="deliberate"\]\{--sinbad-motion-duration:1\.85s\}/);
+  assert.match(css,/data-motion-profile="measured"\]\{--sinbad-motion-duration:1\.35s;/);
+  assert.match(css,/data-motion-profile="deliberate"\]\{--sinbad-motion-duration:1\.85s;/);
   assert.match(css,/data-motion-profile\]\{animation-duration:var\(--sinbad-motion-duration\)!important\}/);
+});
+
+test('motion profiles vary bounded body travel, scale and tilt instead of changing speed alone',()=>{
+  assert.match(css,/data-motion-profile="lively"\][^\n]*--sinbad-motion-travel:6px[^\n]*--sinbad-motion-scale-up:1\.022/);
+  assert.match(css,/data-motion-profile="thoughtful"\][^\n]*--sinbad-motion-travel:2px[^\n]*--sinbad-motion-scale-up:1\.008/);
+  assert.match(css,/translateX\(var\(--sinbad-motion-travel,5px\)\)/);
+  assert.match(css,/rotate\(var\(--sinbad-motion-tilt-left,-\.7deg\)\)/);
+  assert.match(css,/translateY\(var\(--sinbad-motion-nod,4px\)\)/);
 });
 
 test('a supported explicit gesture request overrides only the opening cue and unsupported poses are never fabricated',()=>{
