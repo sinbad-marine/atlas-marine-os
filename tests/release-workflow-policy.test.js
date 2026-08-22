@@ -28,6 +28,7 @@ test('Pages release runs for main pushes and manual recovery with least privileg
   assert.match(release,/artifact-metadata: write/u);
   assert.match(release,/FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true/u);
   assert.match(release,/actions\/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd/u);
+  assert.match(release,/actions\/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd[^]*?fetch-depth: 0/u);
   assert.match(release,/actions\/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e/u);
   assert.match(release,/actions\/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128/u);
   assert.match(release,/package-manager-cache: false/u);
