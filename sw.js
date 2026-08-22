@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.17-live-character-lesson-entry-v2';
+const CACHE='sinbad-marine-v8.20.17-live-character-board-writing-v3';
 const ASSETS=[
   './',
   './index.html',

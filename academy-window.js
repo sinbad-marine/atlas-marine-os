@@ -21,6 +21,18 @@ function renderAcademyCharacterCue(cue,text){
   image.src=cue.state==='walking'?ACADEMY_CHARACTER_ASSETS.walking[cue.walkFrame===1?1:0]:ACADEMY_CHARACTER_ASSETS['board-teaching'];
 }
 
+function renderAcademyBoardProgress(board,text,index,finished=false){
+  board.replaceChildren(document.createTextNode(text.slice(0,index)));
+  if(!finished){const cursor=document.createElement('span');cursor.className='academy-chalk-cursor';cursor.setAttribute('aria-hidden','true');board.append(cursor);}
+}
+
+function directAcademyWritingGesture(index,text,lastCueBucket){
+  const cueBucket=Math.floor(index/42);if(cueBucket===lastCueBucket)return lastCueBucket;
+  const audienceTurn=cueBucket%3===2;
+  renderAcademyCharacterCue({state:'board-teaching',gesture:audienceTurn?'explain':'point-board',gaze:audienceTurn?'audience':'board'},text);
+  return cueBucket;
+}
+
 function teachLessonAtBoard(lesson){
   const stage=byId('academyTeachingStage'),title=byId('academyTeachingTitle'),board=byId('academyTeachingText');
   if(!stage||!title||!board)return;
@@ -30,9 +42,9 @@ function teachLessonAtBoard(lesson){
   academyPerformanceDirector?.play('lesson-opening',cue=>renderAcademyCharacterCue(cue,text),{reducedMotion});
   if(!academyPerformanceDirector)renderAcademyCharacterCue({state:'board-teaching',gesture:'point-board',gaze:'board'},text);
   if(reducedMotion){board.textContent=text;return;}
-  let index=0;const writeNext=()=>{if(generation!==academyBoardGeneration)return;board.textContent=text.slice(0,++index);if(index<text.length)setTimeout(writeNext,/\s/.test(text[index]||'')?28:14);};setTimeout(()=>{if(generation===academyBoardGeneration)writeNext();},1680);
+  let index=0,lastCueBucket=-1;const writeNext=()=>{if(generation!==academyBoardGeneration)return;index++;lastCueBucket=directAcademyWritingGesture(index,text,lastCueBucket);renderAcademyBoardProgress(board,text,index,index>=text.length);if(index<text.length)setTimeout(writeNext,/\s/.test(text[index]||'')?28:14);};setTimeout(()=>{if(generation===academyBoardGeneration)writeNext();},1680);
 }
-function stopBoardTeaching(){academyBoardGeneration++;academyPerformanceDirector?.cancel();const stage=byId('academyTeachingStage');if(stage)stage.hidden=true;academyCharacterEngine?.dispatch('READY');}
+function stopBoardTeaching(){academyBoardGeneration++;academyPerformanceDirector?.cancel();const stage=byId('academyTeachingStage');if(stage)stage.hidden=true;const board=byId('academyTeachingText');board?.querySelector('.academy-chalk-cursor')?.remove();academyCharacterEngine?.dispatch('READY');}
 
 function saveWindowGeometry(){
   try{localStorage.setItem(GEOMETRY_KEY,JSON.stringify({left:window.screenX,top:window.screenY,width:window.outerWidth,height:window.outerHeight}));}catch{}
