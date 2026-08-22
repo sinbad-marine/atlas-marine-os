@@ -544,28 +544,51 @@
       </section>
 
       <section class="sinbad-workspace-panel" id="sinbad-panel-academy" role="tabpanel" aria-labelledby="sinbad-tab-academy" data-sinbad-panel="academy" hidden>
-      <details class="sinbad-academy" open>
-        <summary>Sinbad Navigation Academy - offline training</summary>
-        <div class="academy-grid">
-          <label>Training module
-            <select id="academyModule">
-              <option value="chart-reading">Chart reading and hydrography</option>
-              <option value="tides-water-levels">Tides and water levels</option>
-              <option value="currents-set-drift">Currents, set and drift</option>
-              <option value="colregs-navigation-rules">COLREG and navigation rules</option>
-              <option value="electronic-navigation">Electronic navigation and ENC</option>
-              <option value="marine-weather">Marine weather</option>
-            </select>
-          </label>
-          <div class="action-row">
-            <button type="button" class="btn primary" id="startAcademyLesson">Open lesson</button>
-            <button type="button" class="btn" id="startAcademyQuiz">Practice question</button>
-          </div>
-        </div>
-        <div id="academyOutput" class="academy-output" aria-live="polite">Choose a module. Lessons and source search remain available without an internet connection.</div>
-      </details>
+      <section class="academy-launch-card" aria-labelledby="academyLaunchTitle">
+        <div><strong id="academyLaunchTitle">🎓 Sinbad Navigation Academy</strong><p>Open Sinbad’s resizable classroom in a separate workspace window.</p></div>
+        <button type="button" class="btn primary" id="openSinbadAcademyClassroom">Open classroom</button>
+      </section>
       </section>
     </div>
+  </div>
+</section>
+
+<section id="sinbadAcademyWindow" class="academy-window hidden" role="dialog" aria-modal="false" aria-labelledby="academyWindowTitle">
+  <header id="academyWindowTitlebar" class="academy-window-titlebar">
+    <div class="academy-window-brand"><span aria-hidden="true">⚓</span><strong id="academyWindowTitle">Sinbad Academy — Classroom</strong></div>
+    <div class="academy-window-controls" aria-label="Classroom window controls">
+      <button type="button" id="minimizeSinbadAcademy" aria-label="Minimize classroom" title="Minimize">—</button>
+      <button type="button" id="maximizeSinbadAcademy" aria-label="Maximize classroom" title="Maximize">□</button>
+      <button type="button" id="closeSinbadAcademy" aria-label="Close classroom" title="Close">×</button>
+    </div>
+  </header>
+  <div id="sinbadAcademyWindowBody" class="academy-window-body">
+    <aside class="academy-classroom-sidebar">
+      <div class="academy-classroom-emblem" aria-hidden="true">🎓</div>
+      <h3>Captain Sinbad</h3>
+      <p>Your interactive maritime instructor.</p>
+      <small>Drag the title bar to move this window. Drag its lower-right corner to resize it.</small>
+    </aside>
+    <main class="academy-classroom-main">
+      <div class="academy-classroom-heading"><div><span class="eyebrow">SINBAD MARINE ACADEMY</span><h2>Navigation Classroom</h2></div><span class="badge">Offline-ready lessons</span></div>
+      <div class="academy-grid">
+        <label>Training module
+          <select id="academyModule">
+            <option value="chart-reading">Chart reading and hydrography</option>
+            <option value="tides-water-levels">Tides and water levels</option>
+            <option value="currents-set-drift">Currents, set and drift</option>
+            <option value="colregs-navigation-rules">COLREG and navigation rules</option>
+            <option value="electronic-navigation">Electronic navigation and ENC</option>
+            <option value="marine-weather">Marine weather</option>
+          </select>
+        </label>
+        <div class="action-row">
+          <button type="button" class="btn primary" id="startAcademyLesson">Open lesson</button>
+          <button type="button" class="btn" id="startAcademyQuiz">Practice question</button>
+        </div>
+      </div>
+      <div id="academyOutput" class="academy-output academy-classroom-board" aria-live="polite">Choose a module. Lessons and source search remain available without an internet connection.</div>
+    </main>
   </div>
 </section>
 
