@@ -1,7 +1,10 @@
-const CACHE='sinbad-marine-v8.20.16-source-visuals-spoken-summary-v1';
+const CACHE='sinbad-marine-v8.20.17-contextual-source-visuals-v1';
 const ASSETS=[
   './',
   './index.html',
+  './academy.html',
+  './academy.css',
+  './academy-window.js',
   './styles.css',
   './app.js',
   './pilot-data.js',
@@ -54,14 +57,15 @@ self.addEventListener('fetch',event=>{
   }
 
   if(request.mode==='navigate'){
+    const pageKey=url.pathname.endsWith('/academy.html')?'./academy.html':'./index.html';
     event.respondWith(
       fetch(request)
         .then(response=>{
           const copy=response.clone();
-          caches.open(CACHE).then(cache=>cache.put('./index.html',copy));
+          caches.open(CACHE).then(cache=>cache.put(pageKey,copy));
           return response;
         })
-        .catch(()=>caches.match('./index.html'))
+        .catch(()=>caches.match(pageKey))
     );
     return;
   }

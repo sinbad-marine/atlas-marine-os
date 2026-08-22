@@ -103,7 +103,7 @@
   <div class="topbar-account-actions">
     <select id="appLanguage" class="app-language" aria-label="Application language"></select>
     <button class="account-password-button" id="openAccountPassword" type="button">Account &amp; Password</button>
-    <div class="version">● v8.20.16</div>
+    <div class="version">● v8.20.17</div>
   </div>
 </header>
 
@@ -553,45 +553,6 @@
   </div>
 </section>
 
-<section id="sinbadAcademyWindow" class="academy-window hidden" role="dialog" aria-modal="false" aria-labelledby="academyWindowTitle">
-  <header id="academyWindowTitlebar" class="academy-window-titlebar">
-    <div class="academy-window-brand"><span aria-hidden="true">⚓</span><strong id="academyWindowTitle">Sinbad Academy — Classroom</strong></div>
-    <div class="academy-window-controls" aria-label="Classroom window controls">
-      <button type="button" id="minimizeSinbadAcademy" aria-label="Minimize classroom" title="Minimize">—</button>
-      <button type="button" id="maximizeSinbadAcademy" aria-label="Maximize classroom" title="Maximize">□</button>
-      <button type="button" id="closeSinbadAcademy" aria-label="Close classroom" title="Close">×</button>
-    </div>
-  </header>
-  <div id="sinbadAcademyWindowBody" class="academy-window-body">
-    <aside class="academy-classroom-sidebar">
-      <div class="academy-classroom-emblem" aria-hidden="true">🎓</div>
-      <h3>Captain Sinbad</h3>
-      <p>Your interactive maritime instructor.</p>
-      <small>Drag the title bar to move this window. Drag its lower-right corner to resize it.</small>
-    </aside>
-    <main class="academy-classroom-main">
-      <div class="academy-classroom-heading"><div><span class="eyebrow">SINBAD MARINE ACADEMY</span><h2>Navigation Classroom</h2></div><span class="badge">Offline-ready lessons</span></div>
-      <div class="academy-grid">
-        <label>Training module
-          <select id="academyModule">
-            <option value="chart-reading">Chart reading and hydrography</option>
-            <option value="tides-water-levels">Tides and water levels</option>
-            <option value="currents-set-drift">Currents, set and drift</option>
-            <option value="colregs-navigation-rules">COLREG and navigation rules</option>
-            <option value="electronic-navigation">Electronic navigation and ENC</option>
-            <option value="marine-weather">Marine weather</option>
-          </select>
-        </label>
-        <div class="action-row">
-          <button type="button" class="btn primary" id="startAcademyLesson">Open lesson</button>
-          <button type="button" class="btn" id="startAcademyQuiz">Practice question</button>
-        </div>
-      </div>
-      <div id="academyOutput" class="academy-output academy-classroom-board" aria-live="polite">Choose a module. Lessons and source search remain available without an internet connection.</div>
-    </main>
-  </div>
-</section>
-
 <section id="navigation-plot" class="workspace">
   <div class="workspace-head">
     <div><div class="eyebrow">SINBAD NAVIGATION ENGINE</div><h2>Seyir Çizim Sayfası</h2><p>Hesaplanan eğitim rotasının etkileşimli harita görünümü.</p></div>
@@ -831,17 +792,17 @@
 <script src="./pilot-data.js?v=8161"></script>
 <script src="./route-data.js?v=8162"></script>
 <script src="./official-publications.js?v=8162"></script>
-<script src="./supabase/functions/sinbad-answer/core-decision.js?v=82016"></script>
-<script src="./sinbad-core.js?v=82016"></script>
+<script src="./supabase/functions/sinbad-answer/core-decision.js?v=82017"></script>
+<script src="./sinbad-core.js?v=82017"></script>
 <script src="./sinbad-training-data.js?v=8180"></script>
 <script src="./sinbad-academy.js?v=8180"></script>
 <script src="./vendor/supabase-2.112.3.js"></script>
 <script src="./vendor/mammoth-1.12.1.min.js"></script>
 <script src="./vendor/tesseract-5.1.1.min.js"></script>
 <script src="./vendor/ol-10.6.1.js"></script>
-  <script src="./sinbad-navigation.js?v=82016"></script>
-  <script src="./sinbad-navigation-assistant.js?v=82016"></script>
-  <script src="./sinbad-route-visualizer.js?v=82016"></script>
-  <script src="./app.js?v=82016"></script>
+  <script src="./sinbad-navigation.js?v=82017"></script>
+  <script src="./sinbad-navigation-assistant.js?v=82017"></script>
+  <script src="./sinbad-route-visualizer.js?v=82017"></script>
+  <script src="./app.js?v=82017"></script>
 </body>
 </html>

@@ -4,34 +4,40 @@ const fs=require('node:fs');
 
 const html=fs.readFileSync('index.html','utf8');
 const app=fs.readFileSync('app.js','utf8');
-const css=fs.readFileSync('styles.css','utf8');
+const academyHtml=fs.readFileSync('academy.html','utf8');
+const academyCss=fs.readFileSync('academy.css','utf8');
+const academyApp=fs.readFileSync('academy-window.js','utf8');
+const worker=fs.readFileSync('sw.js','utf8');
 
-test('Academy is a separate Windows-style classroom with complete window controls',()=>{
+test('Academy launches as a genuine separate resizable browser window',()=>{
   assert.match(html,/id="openSinbadAcademyClassroom"/);
-  assert.match(html,/id="sinbadAcademyWindow"[^>]*role="dialog"/);
-  assert.match(html,/id="academyWindowTitlebar"/);
-  assert.match(html,/id="minimizeSinbadAcademy"/);
-  assert.match(html,/id="maximizeSinbadAcademy"/);
-  assert.match(html,/id="closeSinbadAcademy"/);
-  assert.match(html,/id="academyModule"/);
-  assert.match(html,/id="academyOutput"/);
+  assert.doesNotMatch(html,/id="sinbadAcademyWindow"/);
+  assert.match(app,/window\.open\('\.\/academy\.html','sinbadAcademyClassroom'/);
+  assert.match(app,/popup=yes/);
+  assert.match(app,/resizable=yes/);
+  assert.match(app,/scrollbars=yes/);
+  assert.match(app,/screen\.availWidth/);
+  assert.match(app,/screen\.availHeight/);
 });
 
-test('classroom can move, resize, maximize, minimize, close and restore its saved bounds',()=>{
-  assert.match(css,/\.academy-window\{[^}]*position:fixed[^}]*resize:both/s);
-  assert.match(css,/\.academy-window\.maximized\{/);
-  assert.match(css,/\.academy-window\.minimized\{/);
-  assert.match(app,/function openSinbadAcademyWindow\(\)/);
-  assert.match(app,/function closeSinbadAcademyWindow\(\)/);
-  assert.match(app,/function minimizeSinbadAcademyWindow\(\)/);
-  assert.match(app,/function maximizeSinbadAcademyWindow\(\)/);
-  assert.match(app,/function beginSinbadAcademyDrag\(event\)/);
-  assert.match(app,/function moveSinbadAcademyWindow\(event\)/);
-  assert.match(app,/atlas_sinbad_academy_window/);
+test('standalone classroom owns its full viewport and preserves native window geometry',()=>{
+  assert.match(academyHtml,/<title>Sinbad Academy — Classroom<\/title>/);
+  assert.match(academyHtml,/id="academyModule"/);
+  assert.match(academyHtml,/id="academyOutput"/);
+  assert.match(academyHtml,/id="closeAcademyWindow"/);
+  assert.match(academyCss,/\.academy-shell\{height:100vh/);
+  assert.match(academyApp,/window\.resizeTo\(width,height\)/);
+  assert.match(academyApp,/window\.moveTo\(/);
+  assert.match(academyApp,/window\.outerWidth/);
+  assert.match(academyApp,/window\.outerHeight/);
+  assert.match(academyApp,/window\.close\(\)/);
+  assert.match(worker,/'\.\/academy\.html'/);
+  assert.match(worker,/pageKey=url\.pathname\.endsWith\('\/academy\.html'\)/);
 });
 
-test('Academy course and quiz handlers remain bound after moving into the classroom',()=>{
-  assert.match(app,/\$\('startAcademyLesson'\)\?\.addEventListener\('click',renderAcademyLesson\)/);
-  assert.match(app,/\$\('startAcademyQuiz'\)\?\.addEventListener\('click',renderAcademyQuiz\)/);
-  assert.match(app,/\$\('academyModule'\)\?\.value/);
+test('standalone Academy retains course and quiz handlers',()=>{
+  assert.match(academyApp,/startAcademyLesson/);
+  assert.match(academyApp,/startAcademyQuiz/);
+  assert.match(academyApp,/function renderLesson\(\)/);
+  assert.match(academyApp,/function renderQuiz\(\)/);
 });
