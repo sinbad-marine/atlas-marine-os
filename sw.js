@@ -7,6 +7,7 @@ const ASSETS=[
   './academy-window.js',
   './academy-professor.html',
   './academy-professor.css',
+  './academy-professor-guidance.css',
   './academy-professor.js',
   './sinbad-professor.js',
   './styles.css',

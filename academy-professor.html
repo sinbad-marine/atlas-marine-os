@@ -4,10 +4,15 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Sinbad Professor — Phase 2</title>
   <link rel="stylesheet" href="./academy-professor.css?v=82019">
+  <link rel="stylesheet" href="./academy-professor-guidance.css?v=82019">
 </head>
 <body>
   <main class="professor-shell">
     <header><div><span>⚓ SINBAD MARINE ACADEMY</span><h1>Professor Workspace <small>Phase 2 Beta</small></h1></div><p>Phase 1 classroom preserved · adaptive layer local to this device</p></header>
+    <section class="adaptive-coach" id="adaptiveCoach" aria-live="polite">
+      <div><span>PROFESSOR GUIDANCE</span><strong id="coachNextLesson">Complete an assessment first</strong><p id="coachReason">Recommendations use only explicit learner feedback and recorded assessment evidence.</p></div>
+      <button id="coachOpenRecommended" type="button" disabled>Open recommended lesson</button>
+    </section>
     <section class="professor-grid">
       <iframe id="phaseOneClassroom" src="./academy.html" title="Sinbad Academy live classroom"></iframe>
       <aside>

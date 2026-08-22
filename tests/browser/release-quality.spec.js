@@ -66,6 +66,8 @@ test('Professor Phase 2 opens separately, embeds the frozen classroom and starts
   await expect(professor).toHaveURL(/academy-professor\.html$/);
   await expect(professor.getByRole('heading',{name:/Professor Workspace/})).toBeVisible();
   await expect(professor.locator('#learnerLevel')).toHaveText('foundation');
+  await expect(professor.locator('#adaptiveCoach')).toBeVisible();
+  await expect(professor.locator('#coachReason')).toContainText('No mastery is inferred');
   await expect(professor.locator('body')).not.toContainText(/Ã.|â€|ï¿½|Â./u);
   const accessibility=await new AxeBuilder({page:professor})
     .include('aside')

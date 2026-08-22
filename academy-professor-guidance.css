@@ -1,0 +1,24 @@
+.adaptive-coach {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 10px 20px;
+  border-bottom: 1px solid #8a6a2b;
+  background: linear-gradient(90deg, rgba(164, 124, 46, .2), rgba(13, 36, 52, .96));
+}
+.adaptive-coach div { min-width: 0; }
+.adaptive-coach span {
+  display: block;
+  color: var(--gold);
+  font-size: .65rem;
+  font-weight: 850;
+  letter-spacing: .12em;
+}
+.adaptive-coach strong { display: block; margin-top: 2px; }
+.adaptive-coach p { margin: 1px 0 0; color: var(--muted); font-size: .76rem; }
+.adaptive-coach button { flex: 0 0 auto; }
+@media (max-width: 980px) {
+  .adaptive-coach { align-items: stretch; flex-direction: column; }
+  .adaptive-coach button { width: 100%; }
+}
