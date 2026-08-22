@@ -179,7 +179,9 @@ test('warning never uses a red alarm colour, and error stays calm (no urgent/fas
 
 test('service worker cache version was bumped for this change and precaches the real bound-state Academy assets for offline use (hero-portrait excluded - see the round-table fix test)',()=>{
   const sw=fs.readFileSync('sw.js','utf8');
-  assert.match(sw,/const CACHE='sinbad-marine-v8\.20\.15-sinbad-workspace-usability-v1';/);
+  const visible=html.match(/<div class="version">● v(\d+\.\d+\.\d+)<\/div>/);
+  assert.ok(visible);
+  assert.match(sw,new RegExp(`const CACHE='sinbad-marine-v${visible[1].replace(/\./g,'\\.')}-`));
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-idle-master\.png'/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-listening\.png'/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-thinking\.png'/);

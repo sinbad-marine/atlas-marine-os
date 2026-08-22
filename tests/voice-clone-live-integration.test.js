@@ -7,6 +7,7 @@ const bridge=fs.readFileSync('bridge/sinbad-bridge.ps1','utf8');
 const openCpnClient=fs.readFileSync('bridge/opencpn-rest-client.js','utf8');
 const worker=fs.readFileSync('bridge/xtts-worker.py','utf8');
 const app=fs.readFileSync('app.js','utf8');
+const html=fs.readFileSync('index.html','utf8');
 const serviceWorker=fs.readFileSync('sw.js','utf8');
 const visualizer=fs.readFileSync('sinbad-route-visualizer.js','utf8');
 
@@ -65,7 +66,9 @@ test('the optional xtts-clone provider (not default, kept for later) requests se
   assert.match(app,/speakSinbad\(answer,\(\)=>addSinbadMessage\('sinbad',answer\)\)/);
   assert.doesNotMatch(app,/onvoiceschanged=.*speakSinbad\(text\)/);
   assert.match(app,/if\(sinbadVoiceObjectUrl===objectUrl\)/);
-  assert.match(serviceWorker,/sinbad-marine-v8\.20\.15-sinbad-workspace-usability-v1/);
+  const visible=html.match(/<div class="version">● v(\d+\.\d+\.\d+)<\/div>/);
+  assert.ok(visible);
+  assert.match(serviceWorker,new RegExp(`sinbad-marine-v${visible[1].replace(/\./g,'\\.')}-`));
 });
 
 test('OpenCPN-first route transfer is bounded to the verified local bridge',()=>{

@@ -897,6 +897,15 @@ function startSinbadListening(){
 function saveSinbadMessages(){
   localStorage.setItem('atlas_sinbad_messages', JSON.stringify(sinbadState.messages.slice(-80)));
 }
+function sinbadVisualCards(visuals=[]){
+  if(!Array.isArray(visuals)||!visuals.length)return '';
+  return `<div class="sinbad-source-visuals">${visuals.slice(0,3).map((visual,index)=>`
+    <article class="sinbad-source-visual" data-visual-index="${index}">
+      <div><strong>${esc(visual.title||'Atlas Cloud source')}</strong><small>${esc(visual.sourceId||'Source')} · page ${esc(visual.page)}</small></div>
+      <button type="button" class="btn sinbad-open-source-visual" data-document-id="${esc(visual.documentId)}" data-page="${esc(visual.page)}" data-title="${esc(visual.title||'Atlas Cloud source')}">Kaynak sayfasını göster</button>
+      <div class="sinbad-source-visual-stage hidden" aria-live="polite"><span>Kaynak sayfası hazırlanıyor…</span></div>
+    </article>`).join('')}</div>`;
+}
 function renderSinbadMessages(){
   const box=$('sinbadMessages'); if(!box) return;
   if(!sinbadState.messages.length){
@@ -910,12 +919,34 @@ function renderSinbadMessages(){
     <div class="chat-bubble ${m.role==='user'?'user':'sinbad'}">
       <span class="speaker">${m.role==='user'?'Captain':'Captain Sinbad'}</span>
       ${esc(m.text)}
+      ${m.role==='sinbad'?sinbadVisualCards(m.visuals):''}
     </div>`).join('');
   box.scrollTop=box.scrollHeight;
 }
-function addSinbadMessage(role,text){
-  sinbadState.messages.push({role,text,at:new Date().toISOString()});
+function addSinbadMessage(role,text,visuals=[]){
+  sinbadState.messages.push({role,text,visuals:Array.isArray(visuals)?visuals.slice(0,3):[],at:new Date().toISOString()});
   saveSinbadMessages();renderSinbadMessages();
+}
+
+async function openSinbadSourceVisual(button){
+  const documentId=button?.dataset?.documentId,pageNumber=Math.max(1,Number(button?.dataset?.page)||1);
+  const card=button?.closest('.sinbad-source-visual'),stage=card?.querySelector('.sinbad-source-visual-stage');
+  if(!documentId||!stage||!cloudClient||!selectedWorkspaceId)return;
+  button.disabled=true;stage.classList.remove('hidden');stage.replaceChildren(Object.assign(document.createElement('span'),{textContent:'Kaynak sayfası hazırlanıyor…'}));
+  try{
+    const {data:documentRow,error:documentError}=await cloudClient.from('documents').select('bucket_id,object_path,original_filename,mime_type').eq('workspace_id',selectedWorkspaceId).eq('id',documentId).maybeSingle();
+    if(documentError||!documentRow)throw documentError||new Error('Kaynak belgesi bulunamadı.');
+    if(!/pdf/i.test(documentRow.mime_type||documentRow.original_filename||''))throw new Error('Bu kaynak PDF sayfası olarak gösterilemiyor.');
+    const {data:blob,error:downloadError}=await cloudClient.storage.from(documentRow.bucket_id).download(documentRow.object_path);
+    if(downloadError||!blob)throw downloadError||new Error('Kaynak indirilemedi.');
+    const pdfjs=await ensurePdfJs(),pdf=await pdfjs.getDocument({data:await blob.arrayBuffer()}).promise;
+    const safePage=Math.min(pageNumber,pdf.numPages),page=await pdf.getPage(safePage),viewport=page.getViewport({scale:1.35});
+    const canvas=document.createElement('canvas');canvas.width=Math.ceil(viewport.width);canvas.height=Math.ceil(viewport.height);canvas.setAttribute('aria-label',`${button.dataset.title||'Kaynak'} sayfa ${safePage}`);
+    await page.render({canvasContext:canvas.getContext('2d'),viewport}).promise;
+    const caption=document.createElement('small');caption.textContent=`${documentRow.original_filename||button.dataset.title} · sayfa ${safePage}/${pdf.numPages}`;
+    stage.replaceChildren(canvas,caption);button.textContent='Sayfayı yenile';
+  }catch(error){stage.replaceChildren(Object.assign(document.createElement('span'),{textContent:`Görsel açılamadı: ${error.message||error}`}));}
+  finally{button.disabled=false;}
 }
 function renderOfficialSources(){
   const box=$('officialSourceList');if(!box||typeof OFFICIAL_PUBLICATIONS==='undefined')return;
@@ -1178,10 +1209,11 @@ async function sendToSinbad(text){
   setTimeout(async()=>{
     const answer=await sinbadLocalAnswer(q);
     $('sinbadThinking').classList.add('hidden');
-    speakSinbad(answer,()=>addSinbadMessage('sinbad',answer));
+    speakSinbad(answer,()=>addSinbadMessage('sinbad',answer,consumeSinbadSourceVisuals()));
   },650);
 }
 $('sendSinbad').addEventListener('click',()=>{window.speechSynthesis?.resume();sendToSinbad($('sinbadInput').value);});
+$('sinbadMessages')?.addEventListener('click',event=>{const button=event.target.closest('.sinbad-open-source-visual');if(button)openSinbadSourceVisual(button);});
 $('sinbadInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendToSinbad($('sinbadInput').value)}});
 document.querySelectorAll('.sinbad-prompt').forEach(b=>b.addEventListener('click',()=>sendToSinbad(b.textContent)));
 
@@ -2009,7 +2041,10 @@ function cloudAnswerPassesCoreGate(data,envelope){
   const expected=envelope?.analysis,answerSafe=data?.answer==null||window.SinbadCoreDecision?.answerIsSafe?.(String(data.answer))===true;
   return Boolean(data&&answerSafe&&data.coreGateVersion===window.SinbadCore?.CORE_GATE_VERSION&&data.coreGateVersion===envelope?.gateVersion&&data.permission==='DECISION_SUPPORT_ONLY'&&data.executionPerformed===false&&decision&&expected&&['low','medium','high','critical'].includes(decision.risk)&&decision.risk===expected.risk&&['emergency','operational','needsLiveData','requiresHumanApproval','requiresIndependentVerification'].every(field=>typeof decision[field]==='boolean'&&decision[field]===expected[field]));
 }
+let sinbadPendingSourceVisuals=[];
+function consumeSinbadSourceVisuals(){const visuals=sinbadPendingSourceVisuals;sinbadPendingSourceVisuals=[];return visuals;}
 async function sinbadCloudKnowledgeAnswer(question){
+  sinbadPendingSourceVisuals=[];
   if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId)return null;
   const status=$('sinbadKnowledgeStatus');if(status)status.textContent='Searching Atlas Cloud…';
   try{
@@ -2034,7 +2069,7 @@ async function sinbadCloudKnowledgeAnswer(question){
         || normalizedAnswer.includes('yeterli kaynak bulunamadi')
         || normalizedAnswer.includes('yalnizca onayli atlas cloud')
         || normalizedAnswer.includes('kitabi veya belgeyi kutuphaneye yukleyin');
-      if(!cloudMiss&&!cloudMissFallback){if(status)status.textContent='Atlas Cloud AI active';return answer;}
+      if(!cloudMiss&&!cloudMissFallback){sinbadPendingSourceVisuals=Array.isArray(trustedAiData.visuals)?trustedAiData.visuals.slice(0,3):[];if(status)status.textContent=sinbadPendingSourceVisuals.length?'Atlas Cloud AI active · source visuals ready':'Atlas Cloud AI active';return answer;}
       if(status)status.textContent='Atlas Cloud has no answer · trying offline brain';
     }
     if(trustedAiData?.needsWebPermission){if(status)status.textContent='Atlas Cloud has no answer · trying offline brain';return null;}
