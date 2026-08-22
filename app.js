@@ -408,6 +408,7 @@ const sinbadCharacterRig=window.SinbadCharacterRig||null;
 const sinbadPerformanceDirector=window.SinbadPerformanceDirector||null;
 let sinbadSpeechPerformanceMode='warm';
 let sinbadResponseOpeningCue={gesture:'open-hand',gaze:'audience',emotion:'warm',energy:.36,responseKind:'conversation'};
+let sinbadTextPresentationCues=[];
 function prepareSinbadSpeechPerformance(question){
   const decision=window.SinbadCore?.analyzeQuery?.(question)||{};
   sinbadSpeechPerformanceMode=sinbadPerformanceDirector?.speechModeForDecision(decision)||'warm';
@@ -423,6 +424,8 @@ function sinbadSpeechBoundaryCue(boundaryEvent,text,index){
 function prepareSinbadResponsePerformance(text){
   const result=sinbadPerformanceDirector?.responseCueForText(text,sinbadSpeechPerformanceMode);
   sinbadResponseOpeningCue=result?.accepted?result.cue:{gesture:'hold',gaze:'audience',emotion:'concerned',energy:.24,responseKind:'blocked'};
+  const presentation=sinbadPerformanceDirector?.textPresentationCues(text,sinbadSpeechPerformanceMode);
+  sinbadTextPresentationCues=presentation?.accepted?presentation.cues:[sinbadResponseOpeningCue];
   return sinbadResponseOpeningCue;
 }
 function setSinbadThinkingStage(stage){
@@ -784,6 +787,11 @@ function finishSinbadVoice(forceState){
   setSinbadAssistantState(forceState||(sinbadState.voiceEnabled?'idle':'voice-disabled'),isPresenting?sinbadResponseOpeningCue:{});
   if(isPresenting){
     if(sinbadResponseOpeningCue.responseKind)setSinbadResponseKind(sinbadResponseOpeningCue.responseKind);
+    sinbadTextPresentationCues.slice(1).forEach(cue=>sinbadAssistantTimers.push(setTimeout(()=>{
+      if(sinbadAssistantState!=='presenting')return;
+      sinbadAssistantElements().forEach(el=>{el.dataset.gesture=cue.gesture;el.dataset.gaze=cue.gaze;el.dataset.emotion=cue.emotion;});
+      if(cue.responseKind)setSinbadResponseKind(cue.responseKind);
+    },cue.at)));
     return;
   }
   scheduleSinbadListening();

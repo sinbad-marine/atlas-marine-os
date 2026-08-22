@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,THINKING_STAGE_CUES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,responseCueForText,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,THINKING_STAGE_CUES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,responseCueForText,textPresentationCues,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -105,4 +105,13 @@ test('speech boundaries follow the meaning of each real sentence instead of free
   assert.equal(warning.responseKind,'caution');assert.equal(warning.emotion,'concerned');
   assert.equal(explanation.responseKind,'conversation');assert.equal(explanation.emotion,'warm');
   assert.equal(question.responseKind,'question');assert.equal(question.emotion,'curious');
+});
+
+test('text-only presentation follows at most three real sentence meanings on a bounded timeline',()=>{
+  const result=textPresentationCues('Dikkat: sığlık var. Rota başarıyla oluşturuldu. Hazır mısınız? Dördüncü cümle.','warm');
+  assert.equal(result.accepted,true);
+  assert.deepEqual(result.cues.map(cue=>cue.at),[0,550,1100]);
+  assert.deepEqual(result.cues.map(cue=>cue.responseKind),['caution','completion','question']);
+  assert.ok(Object.isFrozen(result.cues));
+  assert.equal(textPresentationCues('  ').reason,'INVALID_RESPONSE_TEXT');
 });

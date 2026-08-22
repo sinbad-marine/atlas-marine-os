@@ -216,6 +216,8 @@ test('text-only answers are honestly presented without entering the speaking or 
   assert.match(app,/finishSinbadVoice\('presenting'\)/);
   assert.match(app,/setSinbadAssistantState\(forceState\|\|\(sinbadState\.voiceEnabled\?'idle':'voice-disabled'\),isPresenting\?sinbadResponseOpeningCue:\{\}\);/);
   assert.match(app,/if\(sinbadResponseOpeningCue\.responseKind\)setSinbadResponseKind\(sinbadResponseOpeningCue\.responseKind\);/);
+  assert.match(app,/sinbadTextPresentationCues\.slice\(1\)\.forEach\(cue=>sinbadAssistantTimers\.push\(setTimeout/);
+  assert.match(app,/if\(sinbadAssistantState!=='presenting'\)return;/);
   assert.doesNotMatch(css,/data-state="presenting"\]\[data-mouth-frame/);
   assert.match(css,/data-state="presenting"\] \.sinbad-status-light\{background:var\(--green\)\}/);
 });
