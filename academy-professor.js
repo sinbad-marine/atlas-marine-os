@@ -1,14 +1,14 @@
 'use strict';
 const $=id=>document.getElementById(id),PROFILE_KEY='atlas_sinbad_professor_learner_v1';
 const TOPICS=[
-  {id:'chart-reading',label:'Chart reading & hydrography'},
-  {id:'tides-water-levels',label:'Tides & water levels',prerequisites:['chart-reading']},
-  {id:'currents-set-drift',label:'Currents, set & drift',prerequisites:['chart-reading']},
-  {id:'colregs-navigation-rules',label:'COLREG & navigation rules'},
-  {id:'electronic-navigation',label:'Electronic navigation',prerequisites:['chart-reading']},
-  {id:'marine-weather',label:'Marine weather'}
+  {id:'chart-reading',label:'Chart reading & hydrography',aliases:['harita','chart','hidrografi','datum','derinlik']},
+  {id:'tides-water-levels',label:'Tides & water levels',prerequisites:['chart-reading'],aliases:['gelgit','tide','medcezir','su-seviyesi']},
+  {id:'currents-set-drift',label:'Currents, set & drift',prerequisites:['chart-reading'],aliases:['akıntı','akinti','current','drift']},
+  {id:'colregs-navigation-rules',label:'COLREG & navigation rules',aliases:['colreg','çatışma','catisma','seyir-kuralı','iskele','sancak']},
+  {id:'electronic-navigation',label:'Electronic navigation',prerequisites:['chart-reading'],aliases:['ecdis','enc','ais','radar','elektronik-seyir']},
+  {id:'marine-weather',label:'Marine weather',aliases:['hava','weather','meteoroloji','rüzgar','ruzgar','dalga']}
 ];
-let profile=loadProfile(),recommended=null,diagnosticItems=[],diagnosticIndex=0,diagnosticCorrect=0;
+let profile=loadProfile(),recommended=null,diagnosticItems=[],diagnosticIndex=0,diagnosticCorrect=0,pendingReflection=null,lastReflectedQuestion='';
 function loadProfile(){try{return SinbadProfessor.normalizeProfile(JSON.parse(localStorage.getItem(PROFILE_KEY)||'null'))}catch{return SinbadProfessor.createProfile()}}
 function saveProfile(){localStorage.setItem(PROFILE_KEY,JSON.stringify(profile))}
 function labelFor(id){return TOPICS.find(topic=>topic.id===id)?.label||id||'Not assessed'}
@@ -16,7 +16,9 @@ function render(){const summary=SinbadProfessor.summary(profile,TOPICS.map(x=>x.
 function renderPlan(){const plan=$('studyPlan');plan.replaceChildren();SinbadProfessor.buildPlan(profile,TOPICS,5).forEach(item=>{const li=document.createElement('li'),title=document.createElement('b'),meta=document.createElement('small');title.textContent=item.title;meta.textContent=`${item.action} · ${Math.round(item.mastery*100)}%${item.blockedBy.length?` · first: ${item.blockedBy.map(labelFor).join(', ')}`:''}`;li.append(title,meta);plan.append(li)})}
 function renderReviews(){const host=$('reviewSchedule');host.replaceChildren();SinbadProfessor.reviewSchedule(profile,TOPICS).slice(0,5).forEach(item=>{const row=document.createElement('div');row.className=`review-item${item.due?' due':''}`;const title=document.createElement('b'),meta=document.createElement('small');title.textContent=item.title;meta.textContent=item.due?'Due now':`Next: ${new Date(item.nextAt).toLocaleDateString()}`;row.append(title,meta);host.append(row)})}
 function record(topic,score,kind){profile=SinbadProfessor.recordEvidence(profile,{topic,score,confidence:1,kind});saveProfile();render();renderPlan();renderReviews()}
-function connectClassroom(){const frame=$('phaseOneClassroom');frame.addEventListener('load',()=>{try{const doc=frame.contentDocument;doc.getElementById('startAcademyLesson')?.addEventListener('click',()=>record(doc.getElementById('academyModule').value,.35,'lesson-opened'));doc.getElementById('academyOutput')?.addEventListener('click',event=>{const choice=event.target.closest?.('.academy-choices .btn');if(choice)record(doc.getElementById('academyModule').value,choice.classList.contains('primary')?1:0,'guided-quiz')})}catch{}})}
+function offerChatReflection(doc){const users=doc.querySelectorAll('.academy-message.user p'),question=users[users.length-1]?.textContent?.trim()||'';if(!question||question===lastReflectedQuestion)return;const result=SinbadProfessor.classifyTopic(question,TOPICS);if(!result)return;lastReflectedQuestion=question;pendingReflection=result;$('reflectionPrompt').textContent=`${labelFor(result.topic)} konusu: Bu açıklamayı ne ölçüde anladınız?`;$('chatReflection').hidden=false}
+function connectClassroom(){const frame=$('phaseOneClassroom');frame.addEventListener('load',()=>{try{const doc=frame.contentDocument;doc.getElementById('startAcademyLesson')?.addEventListener('click',()=>record(doc.getElementById('academyModule').value,.35,'lesson-opened'));doc.getElementById('academyOutput')?.addEventListener('click',event=>{const choice=event.target.closest?.('.academy-choices .btn');if(choice)record(doc.getElementById('academyModule').value,choice.classList.contains('primary')?1:0,'guided-quiz')});const messages=doc.getElementById('academyMessages');if(messages)new MutationObserver(()=>offerChatReflection(doc)).observe(messages,{childList:true})}catch{}})}
+function completeReflection(score){if(!pendingReflection)return;record(pendingReflection.topic,score,'learner-reflection');pendingReflection=null;$('chatReflection').hidden=true}
 function renderDiagnosticQuestion(){const host=$('diagnosticQuestion'),item=diagnosticItems[diagnosticIndex];host.replaceChildren();if(!item){host.hidden=true;$('diagnosticStatus').textContent=`Diagnostic complete: ${diagnosticCorrect}/${diagnosticItems.length} correct. Your study plan has been updated.`;$('startDiagnostic').disabled=false;$('startDiagnostic').textContent='Run diagnostic again';render();renderPlan();return}host.hidden=false;const question=document.createElement('strong');question.textContent=`${diagnosticIndex+1}/${diagnosticItems.length} · ${item.q}`;host.append(question);item.choices.forEach((choice,index)=>{const button=document.createElement('button');button.type='button';button.textContent=choice;button.addEventListener('click',()=>{const correct=index===item.answer;if(correct)diagnosticCorrect+=1;record(item.category,correct?1:0,'diagnostic');diagnosticIndex+=1;renderDiagnosticQuestion()});host.append(button)})}
 function startDiagnostic(){const doc=$('phaseOneClassroom').contentDocument,academy=doc?.defaultView?.SinbadAcademy;if(!academy){$('diagnosticStatus').textContent='Classroom is still loading. Try again in a moment.';return}diagnosticItems=TOPICS.flatMap(topic=>academy.quiz(topic.id).slice(0,1));diagnosticIndex=0;diagnosticCorrect=0;$('startDiagnostic').disabled=true;$('diagnosticStatus').textContent='Answer each question. Results remain on this device.';renderDiagnosticQuestion()}
 function downloadProfile(){const data=SinbadProfessor.exportProfile(profile),blob=new Blob([data],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=`sinbad-professor-${profile.learnerId}.json`;link.click();setTimeout(()=>URL.revokeObjectURL(url),0);$('profileBackupStatus').textContent='Private progress backup downloaded.'}
@@ -25,5 +27,7 @@ $('saveLearnerName').addEventListener('click',()=>{profile=SinbadProfessor.norma
 $('startDiagnostic').addEventListener('click',startDiagnostic);
 $('exportProfile').addEventListener('click',downloadProfile);
 $('importProfile').addEventListener('change',event=>restoreProfile(event.target.files?.[0]));
+$('reflectionUnderstood').addEventListener('click',()=>completeReflection(.85));
+$('reflectionReview').addEventListener('click',()=>completeReflection(.2));
 $('openRecommended').addEventListener('click',()=>{if(!recommended)return;const doc=$('phaseOneClassroom').contentDocument,module=doc?.getElementById('academyModule');if(module){module.value=recommended.id;doc.getElementById('startAcademyLesson')?.click();$('phaseOneClassroom').focus()}});
 connectClassroom();render();renderPlan();renderReviews();
