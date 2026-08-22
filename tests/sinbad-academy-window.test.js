@@ -45,7 +45,7 @@ test('standalone Academy retains course and quiz handlers',()=>{
 test('native Academy owns a bounded live Sinbad board-teaching stage',()=>{
   assert.match(academyHtml,/id="academyTeachingStage"/);assert.match(academyHtml,/captain-sinbad-board-teaching\.png/);
   assert.match(academyHtml,/sinbad-character-engine\.js\?v=82017/);
-  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82018/);assert.match(academyHtml,/academy-window\.js\?v=82020/);assert.match(academyHtml,/academy\.css\?v=82019/);
+  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82018/);assert.match(academyHtml,/academy-window\.js\?v=82021/);assert.match(academyHtml,/academy\.css\?v=82019/);
   assert.match(academyApp,/function teachLessonAtBoard\(lesson\)/);
   assert.match(academyApp,/\.join\('\\n\\n'\)\.slice\(0,500\)/);
   assert.match(academyApp,/const event=cue\.state==='walking'\?'WALK':'TEACH_AT_BOARD'/);
@@ -57,7 +57,7 @@ test('native Academy owns a bounded live Sinbad board-teaching stage',()=>{
   assert.match(academyCss,/\.academy-teaching-stage\[hidden\]\{display:none\}/);
   assert.match(academyCss,/@media\(prefers-reduced-motion:reduce\)/);
   assert.match(academyCss,/\.academy-sinbad\[data-state="walking"\] img\{animation:none/);
-  assert.match(worker,/sinbad-marine-v8\.20\.17-live-character-writing-frames-v4/);
+  assert.match(worker,/sinbad-marine-v8\.20\.17-live-character-writing-rhythm-v5/);
 });
 
 test('board writing progress drives a real chalk cursor and bounded character direction cues',()=>{
@@ -77,10 +77,14 @@ test('real transparent writing frames follow measured board progress and settle 
   for(const file of ['captain-sinbad-writing-contact-v1.png','captain-sinbad-writing-lift-v1.png']){
     const path=`assets/captain-sinbad/${file}`,bytes=fs.readFileSync(path);assert.equal(bytes.toString('ascii',1,4),'PNG');assert.equal(bytes[25],6);assert.match(worker,new RegExp(file.replaceAll('.','\\.')));
   }
-  assert.match(academyApp,/writing:Object\.freeze\(\['\.\/assets\/captain-sinbad\/captain-sinbad-writing-contact-v1\.png','\.\/assets\/captain-sinbad\/captain-sinbad-writing-lift-v1\.png'\]\)/);
+  assert.match(academyApp,/writing:Object\.freeze\(\{ready:'\.\/assets\/captain-sinbad\/captain-sinbad-board-teaching\.png',contact:'\.\/assets\/captain-sinbad\/captain-sinbad-writing-contact-v1\.png',lift:'\.\/assets\/captain-sinbad\/captain-sinbad-writing-lift-v1\.png'\}\)/);
   assert.match(academyApp,/function preloadAcademyCharacterAssets\(\)/);
-  assert.match(academyApp,/function renderAcademyWritingFrame\(index,lastFrameBucket\)/);
-  assert.match(academyApp,/const frameBucket=Math\.floor\(index\/8\)/);
-  assert.match(academyApp,/ACADEMY_CHARACTER_ASSETS\.writing\[frameBucket%2\]/);
+  assert.match(academyApp,/function academyWritingFrameKey\(index,text\)/);
+  assert.match(academyApp,/if\(\/\[\.!\?;:\]\/u\.test\(character\)\)return 'ready'/);
+  assert.match(academyApp,/if\(\/\\s\/u\.test\(character\)\)return 'lift'/);
+  assert.match(academyApp,/Math\.floor\(index\/3\)%2===0\?'contact':'lift'/);
+  assert.match(academyApp,/function renderAcademyWritingFrame\(index,text,lastFrameKey\)/);
+  assert.match(academyApp,/ACADEMY_CHARACTER_ASSETS\.writing\[frameKey\]/);
+  assert.match(academyApp,/setTimeout\(writeNext,\/\\s\/\.test\(text\[index\]\|\|''\)\?55:/);
   assert.match(academyApp,/else renderAcademyCharacterCue\(\{state:'board-teaching',gesture:'explain',gaze:'audience'\},text\)/);
 });
