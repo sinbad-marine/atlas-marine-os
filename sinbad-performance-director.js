@@ -189,7 +189,7 @@
     if(typeof text!=='string'||!text.trim())return Object.freeze({accepted:false,reason:'INVALID_REQUEST_TEXT'});
     const normalized=text.toLocaleLowerCase('tr-TR');
     if(/(avuc(?:unu|unda|unun)|avuç|palm|open (?:your )?hand|show (?:me )?(?:your )?hand)/iu.test(normalized)){
-      return Object.freeze({accepted:true,action:'show-palm',supported:false,reason:'POSE_ASSET_REQUIRED'});
+      return Object.freeze({accepted:true,action:'show-palm',supported:true,cue:Object.freeze({gesture:'show-palm',gaze:'audience',emotion:'warm',energy:.4})});
     }
     if(/(tahta(?:yı|ya|da)?|yazı tahtası|board|blackboard)/iu.test(normalized)){
       return Object.freeze({accepted:true,action:'point-board',supported:true,cue:Object.freeze({gesture:'point-board',gaze:'board',emotion:'confident',energy:.42})});

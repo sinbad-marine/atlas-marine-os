@@ -13,6 +13,12 @@ test('laugh is an explicit bounded reaction state',()=>{
   assert.equal(result.snapshot.emotion,'joyful');assert.equal(result.snapshot.gesture,'laugh');
 });
 
+test('character engine accepts the real open-palm pose and rejects invented gestures',()=>{
+  const engine=createCharacterEngine();
+  assert.equal(engine.setState('presenting',{gesture:'show-palm'}).snapshot.gesture,'show-palm');
+  assert.equal(engine.setState('presenting',{gesture:'teleport'}).snapshot.gesture,'open-hand');
+});
+
 test('walk is an explicit interruptible performance state',()=>{
   const engine=createCharacterEngine();const result=engine.dispatch('WALK');assert.equal(result.accepted,true);assert.equal(result.snapshot.state,'walking');assert.equal(result.snapshot.gesture,'walk');assert.equal(result.snapshot.canInterrupt,true);
 });

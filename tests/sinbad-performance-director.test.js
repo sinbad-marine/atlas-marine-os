@@ -134,7 +134,7 @@ test('improvisation is injectable for tests and fails closed for invalid context
 
 test('explicit gesture requests override improvisation only when a real supported pose exists',()=>{
   const palm=gestureRequestForText('Sinbad avucunun içinde bir şey mi var? Avucunu açar mısın?');
-  assert.deepEqual(palm,{accepted:true,action:'show-palm',supported:false,reason:'POSE_ASSET_REQUIRED'});
+  assert.equal(palm.supported,true);assert.equal(palm.action,'show-palm');assert.equal(palm.cue.gesture,'show-palm');
   const board=gestureRequestForText('Bunu tahtada göster.');
   assert.equal(board.supported,true);assert.equal(board.cue.gesture,'point-board');assert.equal(board.cue.gaze,'board');
   const listening=gestureRequestForText('Beni dinliyor musun?');

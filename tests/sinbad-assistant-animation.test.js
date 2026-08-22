@@ -613,6 +613,13 @@ test('a supported explicit gesture request overrides only the opening cue and un
   assert.match(app,/sinbadRequestedGesture=null;/);
 });
 
+test('show-palm reuses the verified real open-hand artwork, removes the large-avatar crop and stays bounded',()=>{
+  assert.match(css,/\.sinbad-avatar\.large\[data-gesture="show-palm"\] \.sinbad-avatar-img\{object-fit:contain/);
+  assert.match(css,/\.sinbad-avatar\[data-gesture="show-palm"\]\{animation:sinbadStageShowPalm 1\.35s ease-out both\}/);
+  assert.match(css,/@keyframes sinbadStageShowPalm\{/);
+  assert.doesNotMatch(app,/show-palm.*\.png/);
+});
+
 test('thinking animation reports only real asynchronous work stages and removes the old artificial delay',()=>{
   assert.match(app,/function setSinbadThinkingStage\(stage\)\{/);
   assert.match(app,/thinkingCueForStage\(stage\)/);
