@@ -185,6 +185,20 @@
     const reset=()=>previous.clear();
     return Object.freeze({choose,reset});
   }
+  function gestureRequestForText(text){
+    if(typeof text!=='string'||!text.trim())return Object.freeze({accepted:false,reason:'INVALID_REQUEST_TEXT'});
+    const normalized=text.toLocaleLowerCase('tr-TR');
+    if(/(avuc(?:unu|unda|unun)|avuç|palm|open (?:your )?hand|show (?:me )?(?:your )?hand)/iu.test(normalized)){
+      return Object.freeze({accepted:true,action:'show-palm',supported:false,reason:'POSE_ASSET_REQUIRED'});
+    }
+    if(/(tahta(?:yı|ya|da)?|yazı tahtası|board|blackboard)/iu.test(normalized)){
+      return Object.freeze({accepted:true,action:'point-board',supported:true,cue:Object.freeze({gesture:'point-board',gaze:'board',emotion:'confident',energy:.42})});
+    }
+    if(/(beni dinliyor musun|dinlediğini göster|are you listening|show .*listening)/iu.test(normalized)){
+      return Object.freeze({accepted:true,action:'show-listening',supported:true,cue:Object.freeze({gesture:'listen-lean',gaze:'audience',emotion:'attentive',energy:.38})});
+    }
+    return Object.freeze({accepted:false,reason:'NO_GESTURE_REQUEST'});
+  }
   function createPerformanceDirector(options={}){
     const schedule=options.setTimeout||setTimeout,cancelSchedule=options.clearTimeout||clearTimeout;
     let generation=0,timers=[];
@@ -200,5 +214,5 @@
     };
     return Object.freeze({play,cancel});
   }
-  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,THINKING_STAGE_CUES,IMPROVISATION_POOLS,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,responseCueForText,textPresentationCues,createImprovisationDirector,createPerformanceDirector});
+  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,THINKING_STAGE_CUES,IMPROVISATION_POOLS,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,createImprovisationDirector,createPerformanceDirector});
 });

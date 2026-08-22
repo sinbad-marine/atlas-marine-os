@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,THINKING_STAGE_CUES,IMPROVISATION_POOLS,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,responseCueForText,textPresentationCues,createImprovisationDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,THINKING_STAGE_CUES,IMPROVISATION_POOLS,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,createImprovisationDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -130,4 +130,15 @@ test('improvisation is injectable for tests and fails closed for invalid context
   assert.equal(high.cue.variantId,'conversation-rest');
   assert.equal(createImprovisationDirector({entropy:()=>1}).choose('conversation').reason,'INVALID_ENTROPY');
   assert.equal(createImprovisationDirector().choose('unsafe-dance').reason,'UNKNOWN_RESPONSE_KIND');
+});
+
+test('explicit gesture requests override improvisation only when a real supported pose exists',()=>{
+  const palm=gestureRequestForText('Sinbad avucunun içinde bir şey mi var? Avucunu açar mısın?');
+  assert.deepEqual(palm,{accepted:true,action:'show-palm',supported:false,reason:'POSE_ASSET_REQUIRED'});
+  const board=gestureRequestForText('Bunu tahtada göster.');
+  assert.equal(board.supported,true);assert.equal(board.cue.gesture,'point-board');assert.equal(board.cue.gaze,'board');
+  const listening=gestureRequestForText('Beni dinliyor musun?');
+  assert.equal(listening.action,'show-listening');assert.equal(listening.cue.gesture,'listen-lean');
+  assert.equal(gestureRequestForText('Bugün hava güzel.').reason,'NO_GESTURE_REQUEST');
+  assert.equal(gestureRequestForText(' ').reason,'INVALID_REQUEST_TEXT');
 });

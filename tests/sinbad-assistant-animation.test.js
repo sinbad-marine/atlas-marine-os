@@ -606,6 +606,13 @@ test('answer choreography uses a bounded non-repeating improvisation director ra
   assert.match(app,/Object\.freeze\(\{\.\.\.cue,\.\.\.improvised\.cue,responseKind:cue\.responseKind\}\)/);
 });
 
+test('a supported explicit gesture request overrides only the opening cue and unsupported poses are never fabricated',()=>{
+  assert.match(app,/gestureRequestForText\(question\)/);
+  assert.match(app,/if\(sinbadRequestedGesture\?\.supported&&sinbadTextPresentationCues\.length\)/);
+  assert.match(app,/\.\.\.sinbadRequestedGesture\.cue,responseKind:sinbadTextPresentationCues\[0\]\.responseKind/);
+  assert.match(app,/sinbadRequestedGesture=null;/);
+});
+
 test('thinking animation reports only real asynchronous work stages and removes the old artificial delay',()=>{
   assert.match(app,/function setSinbadThinkingStage\(stage\)\{/);
   assert.match(app,/thinkingCueForStage\(stage\)/);

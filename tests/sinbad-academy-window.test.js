@@ -57,7 +57,7 @@ test('native Academy owns a bounded live Sinbad board-teaching stage',()=>{
   assert.match(academyCss,/\.academy-teaching-stage\[hidden\]\{display:none\}/);
   assert.match(academyCss,/@media\(prefers-reduced-motion:reduce\)/);
   assert.match(academyCss,/\.academy-sinbad\[data-state="walking"\] img\{animation:none/);
-  assert.match(worker,/sinbad-marine-v8\.20\.17-live-character-improvisation-v16/);
+  assert.match(worker,/sinbad-marine-v8\.20\.17-live-character-gesture-intent-v17/);
 });
 
 test('board writing progress drives a real chalk cursor and bounded character direction cues',()=>{

@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.17-live-character-improvisation-v16';
+const CACHE='sinbad-marine-v8.20.17-live-character-gesture-intent-v17';
 const ASSETS=[
   './',
   './index.html',
