@@ -52,3 +52,23 @@ test('Sinbad Academy opens outside the main app as a standalone classroom window
   await expect(classroom.locator('#academyOutput')).toContainText('Learning objectives');
   await classroom.close();
 });
+
+test('Professor Phase 2 opens separately, embeds the frozen classroom and starts a real diagnostic',async({page,context})=>{
+  await stubBridge(page);
+  await page.goto('/');
+  await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');});
+  const popupPromise=context.waitForEvent('page');
+  await page.evaluate(()=>openSinbadProfessorWindow());
+  const professor=await popupPromise;
+  await professor.waitForLoadState();
+  await expect(professor).toHaveURL(/academy-professor\.html$/);
+  await expect(professor.getByRole('heading',{name:/Professor Workspace/})).toBeVisible();
+  await expect(professor.locator('#learnerLevel')).toHaveText('foundation');
+  const classroom=professor.frameLocator('#phaseOneClassroom');
+  await expect(classroom.locator('#academyChatForm')).toBeVisible();
+  await expect(classroom.locator('#academySinbadAvatar')).toHaveCount(1);
+  await professor.locator('#startDiagnostic').click();
+  await expect(professor.locator('#diagnosticQuestion')).toBeVisible();
+  await expect(professor.locator('#diagnosticQuestion strong')).toContainText('1/6');
+  await professor.close();
+});
