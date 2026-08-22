@@ -8,13 +8,23 @@ const css=fs.readFileSync('styles.css','utf8');
 
 test('cloud retrieval exposes only bounded, provenance-linked PDF page visuals',()=>{
   assert.match(edge,/const wantsSourceVisuals = \(question: string\)/);
+  assert.match(edge,/const isContextualFollowUp = \(question: string\)/);
+  assert.match(edge,/previousUserMessage/);
+  assert.match(edge,/retrievalQuestion = wantsSourceVisuals\(question\) && isContextualFollowUp\(question\)/);
+  assert.match(edge,/words\(retrievalQuestion\)/);
   assert.match(edge,/const pageForChunk = \(content: string, terms: string\[\]\)/);
   assert.match(edge,/document_id,source_mime_type/);
   assert.match(edge,/sources\.filter\(\(source: any\) => source\.documentId && source\.page && \/pdf\/i\.test/);
   assert.match(edge,/kind: 'pdf-page'/);
   assert.match(edge,/VERIFIED SOURCE PAGE VISUALS/);
   assert.match(edge,/Do not claim that no visual is available/);
+  assert.match(edge,/Do not invent a copyright or licensing restriction/);
   assert.match(edge,/return json\(\{ answer, spokenSummary, sources, visuals,/);
+});
+
+test('follow-up conversation keeps the original speaker roles for contextual understanding',()=>{
+  assert.match(edge,/history\.map\(\(item: any\) => \(\{ role: item\.role,/);
+  assert.doesNotMatch(edge,/history\.map\(\(item: any\) => \(\{ role: 'user'/);
 });
 
 test('Sinbad chat renders source pages from authenticated Atlas storage, not invented image URLs',()=>{

@@ -55,6 +55,7 @@ const splitAnswerAndSpokenSummary = (raw: string) => {
 const needsFreshData = (question: string) => serverCoreDecision(question).needsLiveData;
 
 const wantsSourceVisuals = (question: string) => /(görsel|gorsel|şekil|sekil|diyagram|diagram|çizim|cizim|resim|figure|illustration|visual|show.*image|with.*image)/iu.test(question);
+const isContextualFollowUp = (question: string) => /(bununla|bunun hakkında|bu konu|bu anlattığın|onunla|onun hakkında|yukarıdaki|önceki|bahsettiğin|about this|about that|this topic|that topic|the above|previous)/iu.test(question);
 const pageForChunk = (content: string, terms: string[]) => {
   const text = String(content || '');
   const lower = text.toLocaleLowerCase('tr-TR');
@@ -118,7 +119,11 @@ Deno.serve(async req => {
       return json({ answer, sources: [], mode: 'core-safety-blocked', ...decisionSupport });
     }
 
-    const queryTerms = words(question);
+    const previousUserMessage = [...history].reverse().find((item: any) => item.role === 'user')?.content || '';
+    const retrievalQuestion = wantsSourceVisuals(question) && isContextualFollowUp(question) && previousUserMessage
+      ? `${previousUserMessage} ${question}`
+      : question;
+    const queryTerms = words(retrievalQuestion);
     const expandedTitleTerms = titleTerms(queryTerms);
     const titleRows: any[] = [];
     for (const term of expandedTitleTerms.slice(0, 18)) {
@@ -213,6 +218,8 @@ Deno.serve(async req => {
 
 You may use stable general maritime knowledge for education and planning support. When approved private library sources are supplied, prefer them and cite material claims as [S#]. Clearly label information not supported by those sources as general knowledge. Never invent source citations, coordinates, depths, chart corrections, Notices to Mariners, weather, port status, vessel data or regulations. Explain what information is missing when certainty is not possible.
 
+When the user asks for a source image or publication page, use only VERIFIED SOURCE PAGE VISUALS supplied in the request. If none are supplied, say only that no matching indexed source page was retrieved for this request. Do not invent a copyright or licensing restriction and do not claim the user's Atlas library lacks relevant publications.
+
 For passage planning, collision avoidance, stability, weather, chart work or other safety-critical topics, provide decision support only. Remind the user that the master remains responsible and that current corrected official charts, MSI/NAVTEX, Notices to Mariners, weather, port and pilot instructions must be checked. Never claim to be certified ECDIS or replace an approved navigation system. Do not repeat this warning for casual conversation.
 
 If web search results are available, cite them using the citations supplied by the tool. Never claim to have searched the web unless the tool was actually used.
@@ -222,7 +229,7 @@ After the complete written answer, always add the exact marker <<<SPOKEN_SUMMARY
     const userInput = unique.length
       ? `${question}\n\nAPPROVED PRIVATE LIBRARY SOURCES\n${context}${visuals.length ? `\n\nVERIFIED SOURCE PAGE VISUALS\n${visuals.map((visual: any) => `${visual.sourceId}: ${visual.title}, page ${visual.page}`).join('\n')}\nTell the user these original publication pages are attached below the answer. Do not claim that no visual is available.` : ''}`
       : `${question}\n\nNo matching private-library passage was found. You may answer from stable general knowledge and must say when current or vessel-specific information is required.`;
-    const input = [...history.map((item: any) => ({ role: 'user', content: `UNTRUSTED PRIOR CONVERSATION DATA: ${item.content}` })), { role: 'user', content: userInput }];
+    const input = [...history.map((item: any) => ({ role: item.role, content: `UNTRUSTED PRIOR CONVERSATION DATA: ${item.content}` })), { role: 'user', content: userInput }];
     const requestBody: any = {
       model: Deno.env.get('OPENAI_MODEL') || 'gpt-5.6-terra',
       instructions: system,

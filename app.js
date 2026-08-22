@@ -1098,39 +1098,14 @@ function academyOfflineAnswer(query){
   if(!academyTrainingQuery(query)||!window.SinbadAcademy||!window.SINBAD_TRAINING_DATA)return null;
   return SinbadAcademy.answer(query,SINBAD_TRAINING_DATA)?.text||null;
 }
-const SINBAD_ACADEMY_WINDOW_KEY='atlas_sinbad_academy_window';
-let sinbadAcademyDrag=null,sinbadAcademyRestoreBounds=null;
-function saveSinbadAcademyWindow(){
-  const win=$('sinbadAcademyWindow');if(!win||win.classList.contains('maximized'))return;
-  const rect=win.getBoundingClientRect();
-  localStorage.setItem(SINBAD_ACADEMY_WINDOW_KEY,JSON.stringify({left:Math.round(rect.left),top:Math.round(rect.top),width:Math.round(rect.width),height:Math.round(rect.height)}));
+let sinbadAcademyNativeWindow=null;
+function openSinbadAcademyWindow(){
+  if(sinbadAcademyNativeWindow&&!sinbadAcademyNativeWindow.closed){sinbadAcademyNativeWindow.focus();return;}
+  const width=Math.max(900,screen.availWidth||1200),height=Math.max(650,screen.availHeight||800);
+  sinbadAcademyNativeWindow=window.open('./academy.html','sinbadAcademyClassroom',`popup=yes,left=0,top=0,width=${width},height=${height},resizable=yes,scrollbars=yes`);
+  if(!sinbadAcademyNativeWindow){alert('Sinbad Academy penceresi engellendi. Bu site için açılır pencerelere izin verip yeniden deneyin.');return;}
+  sinbadAcademyNativeWindow.focus();
 }
-function restoreSinbadAcademyWindow(){
-  const win=$('sinbadAcademyWindow');if(!win)return;
-  try{
-    const saved=JSON.parse(localStorage.getItem(SINBAD_ACADEMY_WINDOW_KEY)||'null');if(!saved)return;
-    const width=Math.min(Math.max(Number(saved.width)||760,520),window.innerWidth-16),height=Math.min(Math.max(Number(saved.height)||520,360),window.innerHeight-16);
-    win.style.width=`${width}px`;win.style.height=`${height}px`;win.style.left=`${Math.max(0,Math.min(Number(saved.left)||8,window.innerWidth-width))}px`;win.style.top=`${Math.max(0,Math.min(Number(saved.top)||8,window.innerHeight-height))}px`;
-  }catch{}
-}
-function openSinbadAcademyWindow(){const win=$('sinbadAcademyWindow');if(!win)return;restoreSinbadAcademyWindow();win.classList.remove('hidden','minimized');win.setAttribute('aria-hidden','false');$('academyModule')?.focus();}
-function closeSinbadAcademyWindow(){const win=$('sinbadAcademyWindow');if(!win)return;saveSinbadAcademyWindow();win.classList.add('hidden');win.setAttribute('aria-hidden','true');$('openSinbadAcademyClassroom')?.focus();}
-function minimizeSinbadAcademyWindow(){const win=$('sinbadAcademyWindow');if(!win)return;win.classList.toggle('minimized');$('minimizeSinbadAcademy').textContent=win.classList.contains('minimized')?'▢':'—';}
-function maximizeSinbadAcademyWindow(){
-  const win=$('sinbadAcademyWindow');if(!win)return;
-  if(win.classList.contains('maximized')){win.classList.remove('maximized');if(sinbadAcademyRestoreBounds)Object.assign(win.style,sinbadAcademyRestoreBounds);$('maximizeSinbadAcademy').textContent='□';}
-  else{const rect=win.getBoundingClientRect();sinbadAcademyRestoreBounds={left:`${rect.left}px`,top:`${rect.top}px`,width:`${rect.width}px`,height:`${rect.height}px`};win.classList.remove('minimized');win.classList.add('maximized');$('maximizeSinbadAcademy').textContent='❐';}
-}
-function beginSinbadAcademyDrag(event){
-  if(event.button!==0||event.target.closest('.academy-window-controls'))return;
-  const win=$('sinbadAcademyWindow');if(!win||win.classList.contains('maximized'))return;
-  const rect=win.getBoundingClientRect();sinbadAcademyDrag={pointerId:event.pointerId,offsetX:event.clientX-rect.left,offsetY:event.clientY-rect.top};event.currentTarget.setPointerCapture?.(event.pointerId);
-}
-function moveSinbadAcademyWindow(event){
-  const win=$('sinbadAcademyWindow');if(!win||!sinbadAcademyDrag||sinbadAcademyDrag.pointerId!==event.pointerId)return;
-  const left=Math.max(0,Math.min(event.clientX-sinbadAcademyDrag.offsetX,window.innerWidth-win.offsetWidth)),top=Math.max(0,Math.min(event.clientY-sinbadAcademyDrag.offsetY,window.innerHeight-46));win.style.left=`${left}px`;win.style.top=`${top}px`;
-}
-function endSinbadAcademyDrag(event){if(!sinbadAcademyDrag||sinbadAcademyDrag.pointerId!==event.pointerId)return;sinbadAcademyDrag=null;saveSinbadAcademyWindow();}
 function renderAcademyLesson(){
   const category=$('academyModule')?.value,lesson=window.SinbadAcademy?.lesson(category,window.SINBAD_TRAINING_DATA),output=$('academyOutput');
   if(!lesson||!output)return;
@@ -1329,19 +1304,7 @@ $('importBridgeGpx')?.addEventListener('click',()=>$('bridgeGpxFile')?.click());
 $('bridgeGpxFile')?.addEventListener('change',event=>importBridgeGpxFile(event.target.files?.[0]));
 $('syncSinbadMemory')?.addEventListener('click',syncSinbadOfflineMemory);
 addBridgeWaypoint({name:'Departure'});addBridgeWaypoint({name:'Destination'});checkBridgeStatus();setInterval(checkBridgeStatus,30000);
-$('startAcademyLesson')?.addEventListener('click',renderAcademyLesson);
-$('startAcademyQuiz')?.addEventListener('click',renderAcademyQuiz);
 $('openSinbadAcademyClassroom')?.addEventListener('click',openSinbadAcademyWindow);
-$('closeSinbadAcademy')?.addEventListener('click',closeSinbadAcademyWindow);
-$('minimizeSinbadAcademy')?.addEventListener('click',minimizeSinbadAcademyWindow);
-$('maximizeSinbadAcademy')?.addEventListener('click',maximizeSinbadAcademyWindow);
-$('academyWindowTitlebar')?.addEventListener('dblclick',event=>{if(!event.target.closest('.academy-window-controls'))maximizeSinbadAcademyWindow();});
-$('academyWindowTitlebar')?.addEventListener('pointerdown',beginSinbadAcademyDrag);
-$('academyWindowTitlebar')?.addEventListener('pointermove',moveSinbadAcademyWindow);
-$('academyWindowTitlebar')?.addEventListener('pointerup',endSinbadAcademyDrag);
-$('academyWindowTitlebar')?.addEventListener('pointercancel',endSinbadAcademyDrag);
-$('sinbadAcademyWindow')?.addEventListener('pointerup',saveSinbadAcademyWindow);
-window.addEventListener('keydown',event=>{if(event.key==='Escape'&&!$('sinbadAcademyWindow')?.classList.contains('hidden'))closeSinbadAcademyWindow();});
 renderOfficialSources();
 setSinbadVoiceUI();
 setListeningUI();

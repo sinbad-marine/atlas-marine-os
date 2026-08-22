@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0b1d2b">
+  <title>Sinbad Academy — Classroom</title>
+  <link rel="stylesheet" href="./academy.css?v=82017">
+</head>
+<body>
+  <div class="academy-shell">
+    <header class="academy-command-bar">
+      <div class="academy-brand"><span aria-hidden="true">⚓</span><div><strong>Sinbad Academy</strong><small>Independent classroom window</small></div></div>
+      <div class="academy-window-note">Use the Windows title bar to move, resize, minimize or maximize this classroom.</div>
+    </header>
+    <div class="academy-layout">
+      <aside class="academy-sidebar">
+        <div class="academy-emblem" aria-hidden="true">🎓</div>
+        <h2>Captain Sinbad</h2>
+        <p>Your interactive maritime instructor.</p>
+        <div class="academy-status"><span></span> Offline-ready lessons</div>
+      </aside>
+      <main class="academy-main">
+        <div class="academy-heading"><div><span class="eyebrow">SINBAD MARINE ACADEMY</span><h1>Navigation Classroom</h1></div><button type="button" class="btn" id="closeAcademyWindow">Close classroom</button></div>
+        <section class="academy-controls" aria-label="Academy lesson controls">
+          <label>Training module
+            <select id="academyModule">
+              <option value="chart-reading">Chart reading and hydrography</option>
+              <option value="tides-water-levels">Tides and water levels</option>
+              <option value="currents-set-drift">Currents, set and drift</option>
+              <option value="colregs-navigation-rules">COLREG and navigation rules</option>
+              <option value="electronic-navigation">Electronic navigation and ENC</option>
+              <option value="marine-weather">Marine weather</option>
+            </select>
+          </label>
+          <div class="academy-actions">
+            <button type="button" class="btn primary" id="startAcademyLesson">Open lesson</button>
+            <button type="button" class="btn" id="startAcademyQuiz">Practice question</button>
+          </div>
+        </section>
+        <section id="academyOutput" class="academy-board" aria-live="polite">Choose a module. Lessons and source search remain available without an internet connection.</section>
+      </main>
+    </div>
+  </div>
+  <script src="./sinbad-training-data.js?v=8180"></script>
+  <script src="./sinbad-academy.js?v=8180"></script>
+  <script src="./academy-window.js?v=82017"></script>
+</body>
+</html>

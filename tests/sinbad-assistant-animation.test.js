@@ -5,6 +5,7 @@ const fs=require('node:fs');
 
 const app=fs.readFileSync('app.js','utf8');
 const html=fs.readFileSync('index.html','utf8');
+const academyHtml=fs.readFileSync('academy.html','utf8');
 const css=fs.readFileSync('styles.css','utf8');
 
 test('a single centralised, testable state API exists with the required states, including board-teaching from the Academy manifest',()=>{
@@ -490,9 +491,11 @@ test('Sinbad workspace separates chat, Academy, passage planning and sources int
     assert.match(html,new RegExp(`role="tab"[^>]+data-sinbad-tab="${name}"`));
     assert.match(html,new RegExp(`role="tabpanel"[^>]+data-sinbad-panel="${name}"`));
   }
-  for(const id of ['sinbadMessages','sinbadInput','sendSinbad','academyModule','passageDeparture','officialSourceList']){
+  for(const id of ['sinbadMessages','sinbadInput','sendSinbad','passageDeparture','officialSourceList']){
     assert.equal((html.match(new RegExp(`id="${id}"`,'g'))||[]).length,1,`${id} must remain unique`);
   }
+  assert.equal((html.match(/id="academyModule"/g)||[]).length,0,'Academy controls must not remain embedded in the main app');
+  assert.equal((academyHtml.match(/id="academyModule"/g)||[]).length,1,'academyModule must remain unique in the standalone classroom');
 });
 
 test('Sinbad workspace tabs implement selection, panel visibility, session preference and keyboard navigation',()=>{
