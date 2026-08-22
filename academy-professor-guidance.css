@@ -23,6 +23,14 @@
 .reflection-check strong { display: block; margin-bottom: 8px; }
 .reflection-check-choices { display: grid; gap: 7px; }
 .reflection-check-choices button { width: 100%; text-align: left; }
+.evidence-ledger-list { display: grid; gap: 7px; margin-bottom: 10px; }
+.evidence-ledger-item { padding: 8px; border: 1px solid rgba(54, 86, 106, .65); border-radius: 8px; }
+.evidence-ledger-item b, .evidence-ledger-item span { display: block; }
+.evidence-ledger-item span { color: var(--muted); font-size: .74rem; }
+.evidence-ledger-item .mastery-proof { color: var(--green); }
+.evidence-ledger-item .observation-only { color: var(--gold); }
+.danger-button { width: 100%; border-color: #985d5d; background: #44272d; }
+.evidence-ledger > small { display: block; margin-top: 8px; }
 @media (max-width: 980px) {
   .adaptive-coach { align-items: stretch; flex-direction: column; }
   .adaptive-coach button { width: 100%; }

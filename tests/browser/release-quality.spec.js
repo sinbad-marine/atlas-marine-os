@@ -88,6 +88,12 @@ test('Professor Phase 2 opens separately, embeds the frozen classroom and starts
   await professor.locator('#reflectionCheckChoices button').first().click();
   await expect(professor.locator('#reflectionCheckStatus')).toContainText('Correct');
   await expect(professor.locator('#coachReason')).toContainText('knowledge check answered correctly');
+  await expect(professor.locator('#evidenceLedger')).toContainText('Observation only — mastery unchanged');
+  await expect(professor.locator('#evidenceLedger')).toContainText('Mastery evidence');
+  professor.once('dialog',dialog=>dialog.accept());
+  await professor.locator('#resetLearnerProfile').click();
+  await expect(professor.locator('#learnerEvidence')).toHaveText('0');
+  await expect(professor.locator('#resetProfileStatus')).toContainText('Atlas documents and chats were not changed');
   await professor.locator('#startDiagnostic').click();
   await expect(professor.locator('#diagnosticQuestion')).toBeVisible();
   await expect(professor.locator('#diagnosticQuestion strong')).toContainText('1/6');
