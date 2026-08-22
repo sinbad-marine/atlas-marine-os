@@ -286,7 +286,17 @@ $('saveCrew').onclick=()=>{const a=get('atlas_crew');a.unshift({name:$('crewName
 function renderCrew(){const a=get('atlas_crew');$('crewList').innerHTML=a.map(c=>`<article class="record"><h3>${esc(c.name)}</h3><p>${esc(c.rank)} • ${esc(c.nationality)}</p></article>`).join('')||'<div class="empty">No crew records.</div>'}
 
 
-async function renderSummary(){const rows=await dbAll();$('sumFiles').textContent=rows.length;$('sumPubs').textContent=rows.filter(x=>x.folder==='Nautical Publications').length;$('sumCharts').textContent=rows.filter(x=>x.folder==='Nautical Charts').length;$('sumStorage').textContent=(rows.reduce((a,x)=>a+x.size,0)/1048576).toFixed(1)+' MB'}
+async function renderSummary(){
+ if(cloudClient&&cloudSession?.user&&selectedWorkspaceId){
+  await refreshCloudSummary();
+  return;
+ }
+ const rows=await dbAll();
+ $('sumFiles').textContent=rows.length;
+ $('sumPubs').textContent=rows.filter(x=>x.folder==='Nautical Publications').length;
+ $('sumCharts').textContent=rows.filter(x=>x.folder==='Nautical Charts').length;
+ $('sumStorage').textContent=(rows.reduce((a,x)=>a+x.size,0)/1048576).toFixed(1)+' MB';
+}
 async function renderAll(){renderFleet();renderCrew();renderPilot();renderRoutes();await renderDocuments();await renderSummary()}
 
 
@@ -1580,6 +1590,10 @@ async function diagnosePublicCloudConnection(){
     let detail='';
     try{detail=JSON.parse(raw)?.message||'';}catch(_error){}
     if(!response.ok)throw new Error(detail||`Supabase returned HTTP ${response.status}.`);
+    if(!cloudClient){
+      initCloudClient();
+      await restoreCloudSession();
+    }
     output.textContent='Atlas Cloud is reachable and ready. You may sign in.';
     output.className='auth-message success';
     return true;
@@ -1645,6 +1659,10 @@ async function cloudSignOut(){
 
 async function gatewaySignIn(){
   setAuthMessage('Signing in…');
+  if(!cloudClient){
+    initCloudClient();
+    await restoreCloudSession();
+  }
   if(!cloudClient){setAuthMessage('Atlas Cloud connection is not ready. Open Cloud Setup & Security and save the Project URL again.','error');return;}
   const email=$('gatewayEmail').value.trim();
   const password=$('gatewayPassword').value;

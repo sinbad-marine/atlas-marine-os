@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.17-contextual-source-visuals-v1';
+const CACHE='sinbad-marine-v8.20.17-contextual-visuals-dashboard-menus-v1';
 const ASSETS=[
   './',
   './index.html',
