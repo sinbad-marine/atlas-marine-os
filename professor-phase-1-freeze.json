@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "sinbad-professor-freeze/v1",
+  "realityCheck": "CORE_REALITY_CHECK_V1",
+  "decision": "GO",
+  "status": "FROZEN",
+  "evaluatedCommit": "35dc0751ee8fcd62dcd00c6cd5b626e5ef2bcd03",
+  "release": "v8.20.18",
+  "evaluatedAt": "2026-08-22",
+  "edgeFunction": {
+    "name": "sinbad-answer",
+    "status": "ACTIVE",
+    "version": 17,
+    "verifyJwt": true,
+    "sha256": "c024abb61b0fe0f61b49d8dac878d99e0c041ccc881d545a9299012a3e5eb622"
+  },
+  "verification": {
+    "tests": { "total": 647, "passed": 646, "failed": 0, "skipped": 1 },
+    "browser": { "total": 8, "passed": 8, "failed": 0 }
+  },
+  "files": {
+    "academy.html": "4246622077b95cb71276e0db9e96a1ba0264d5fb6262f92aa376b412d4ffcac8",
+    "academy.css": "11485ceccdb967732b5c48104a327f5720469e992ff252223fbdfdc4189af75b",
+    "academy-window.js": "77d1548433486f5271313816dfb6022a9ee6153a2c016974f587d83465ea9ef8",
+    "sinbad-core.js": "b6589388241f403f71b3e5d38707dd08f24e5119b1a1c47a6c4f4427cfb1e992",
+    "supabase/functions/sinbad-answer/index.ts": "549ae2b9270f47384bb24a0e8a4ec53a5b6c075f581700642f0942ea7e4420f4",
+    "supabase/functions/sinbad-answer/core-decision.js": "975834395f952f9540dce93312ae75c05bb39211fcb9f88873c9077cd6618fe1"
+  }
+}
