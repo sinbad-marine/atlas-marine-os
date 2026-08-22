@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,cueAt,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,cueAt,speechModeForDecision,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -31,4 +31,12 @@ test('real speech boundaries resolve to a deterministic bounded gesture sequence
 test('real recognition activity maps to restrained listening cues',()=>{
   assert.deepEqual([0,1,2,3].map(index=>cueAt('listening',index).cue.gesture),['listen-lean','listen-lean','hold','nod']);
   assert.deepEqual([0,1,2,3].map(index=>cueAt('listening',index).cue.energy),[.28,.46,.62,.34]);
+});
+
+test('structured Core decisions select conservative speech performance modes',()=>{
+  assert.equal(speechModeForDecision({intent:'emergency',emergency:true,risk:'critical'}),'caution');
+  assert.equal(speechModeForDecision({intent:'navigation',risk:'medium'}),'instructional');
+  assert.equal(speechModeForDecision({intent:'general',risk:'low'}),'warm');
+  assert.equal(speechModeForDecision(null),'warm');
+  assert.equal(cueAt('speaking-caution',0).cue.emotion,'concerned');
 });

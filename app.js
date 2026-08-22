@@ -383,6 +383,15 @@ let sinbadAssistantLastDetail={};
 const sinbadCharacterEngine=window.SinbadCharacterEngine?.createCharacterEngine({initialState:'idle'})||null;
 const sinbadCharacterRig=window.SinbadCharacterRig||null;
 const sinbadPerformanceDirector=window.SinbadPerformanceDirector||null;
+let sinbadSpeechPerformanceMode='warm';
+function prepareSinbadSpeechPerformance(question){
+  const decision=window.SinbadCore?.analyzeQuery?.(question)||{};
+  sinbadSpeechPerformanceMode=sinbadPerformanceDirector?.speechModeForDecision(decision)||'warm';
+}
+function sinbadSpeechPerformanceCue(index){
+  const sequence=sinbadSpeechPerformanceMode==='caution'?'speaking-caution':sinbadSpeechPerformanceMode==='instructional'?'speaking-instructional':'speaking';
+  const result=sinbadPerformanceDirector?.cueAt(sequence,index);return result?.accepted?result.cue:{};
+}
 function sinbadAssistantElements(){return document.querySelectorAll('.sinbad-avatar');}
 function clearSinbadAssistantTimers(){sinbadAssistantTimers.forEach(clearTimeout);sinbadAssistantTimers=[];}
 function preloadSinbadAvatarAssets(){
@@ -726,9 +735,9 @@ let sinbadStandardMouthSequence=0;
 function sinbadStandardVoiceTick(boundaryEvent){
   sinbadAssistantElements().forEach(el=>el.classList.add('sinbad-voice-tick'));
   setSinbadMouthFrame(++sinbadStandardMouthSequence%3===0?'round':'open');
-  const performanceCue=sinbadPerformanceDirector?.cueAt('speaking',sinbadStandardMouthSequence-1);
-  if(performanceCue?.accepted&&sinbadAssistantState==='speaking')sinbadAssistantElements().forEach(el=>{
-    el.dataset.gesture=performanceCue.cue.gesture;el.dataset.gaze=performanceCue.cue.gaze;
+  const performanceCue=sinbadSpeechPerformanceCue(sinbadStandardMouthSequence-1);
+  if(performanceCue.gesture&&sinbadAssistantState==='speaking')sinbadAssistantElements().forEach(el=>{
+    el.dataset.gesture=performanceCue.gesture;el.dataset.gaze=performanceCue.gaze;el.dataset.emotion=performanceCue.emotion||'warm';
     el.dataset.speechBoundary=boundaryEvent?.name==='sentence'?'sentence':'word';
   });
   clearTimeout(sinbadStandardBoundaryTimer);
@@ -816,7 +825,7 @@ function speakSinbadStandard(text,onVoiceReady){
     utterance.rate=profile.rate;utterance.pitch=profile.pitch;utterance.volume=profile.volume;
     // Only the real 'speaking has actually started' signal flips the avatar -
     // never the moment we merely queued/prepared the utterance.
-    utterance.onstart=()=>{if(myGeneration!==sinbadStandardSpeechGeneration)return;announce();setSinbadAssistantState('speaking');};
+    utterance.onstart=()=>{if(myGeneration!==sinbadStandardSpeechGeneration)return;announce();setSinbadAssistantState('speaking',sinbadSpeechPerformanceCue(0));};
     utterance.onboundary=event=>{if(myGeneration===sinbadStandardSpeechGeneration)sinbadStandardVoiceTick(event);};
     utterance.onend=()=>{
       if(myGeneration!==sinbadStandardSpeechGeneration)return;
@@ -865,7 +874,7 @@ function playSinbadCloneBlob(blob,controller){
     // the real signal the task requires, not the fetch/announce moment.
     audio.addEventListener('playing',()=>{
       if(sinbadVoiceAbort!==controller)return;
-      setSinbadAssistantState('speaking');
+      setSinbadAssistantState('speaking',sinbadSpeechPerformanceCue(0));
       startSinbadLipSyncAnalyser(audio);
     },{once:true});
     audio.onended=()=>{cleanup();resolve();};
@@ -1301,6 +1310,7 @@ async function sendToSinbad(text){
   // A new question always takes the floor immediately. This cancels queued
   // teaching pauses and any utterance still reading the previous answer.
   stopSinbadVoice();
+  prepareSinbadSpeechPerformance(q);
   sinbadModelSpokenSummary='';
   if(pendingSinbadWebQuestion&&/^(izin ver|evet|ara|webde ara|allow|yes|search|разрешаю|да|autoriser|oui|erlauben|ja|اسمح|نعم|permitir|sí|consenti|sì)[.! ]*$/iu.test(q)){
     addSinbadMessage('user',q);$('sinbadInput').value='';await performSinbadWebSearch();return;

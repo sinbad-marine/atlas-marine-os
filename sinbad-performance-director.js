@@ -19,6 +19,18 @@
       Object.freeze({gesture:'explain',gaze:'audience'}),
       Object.freeze({gesture:'nod',gaze:'audience'})
     ]),
+    'speaking-instructional':Object.freeze([
+      Object.freeze({gesture:'explain',gaze:'audience',emotion:'confident'}),
+      Object.freeze({gesture:'open-hand',gaze:'audience',emotion:'confident'}),
+      Object.freeze({gesture:'explain',gaze:'audience',emotion:'warm'}),
+      Object.freeze({gesture:'nod',gaze:'audience',emotion:'confident'})
+    ]),
+    'speaking-caution':Object.freeze([
+      Object.freeze({gesture:'hold',gaze:'audience',emotion:'concerned'}),
+      Object.freeze({gesture:'open-hand',gaze:'audience',emotion:'concerned'}),
+      Object.freeze({gesture:'hold',gaze:'audience',emotion:'concerned'}),
+      Object.freeze({gesture:'nod',gaze:'audience',emotion:'attentive'})
+    ]),
     listening:Object.freeze([
       Object.freeze({gesture:'listen-lean',gaze:'audience',emotion:'attentive',energy:.28}),
       Object.freeze({gesture:'listen-lean',gaze:'audience',emotion:'attentive',energy:.46}),
@@ -30,6 +42,12 @@
     if(!Object.hasOwn(CUE_SEQUENCES,name))return Object.freeze({accepted:false,reason:'UNKNOWN_CUE_SEQUENCE'});
     if(!Number.isSafeInteger(index)||index<0)return Object.freeze({accepted:false,reason:'INVALID_CUE_INDEX'});
     return Object.freeze({accepted:true,cue:CUE_SEQUENCES[name][index%CUE_SEQUENCES[name].length]});
+  }
+  function speechModeForDecision(decision={}){
+    if(!decision||typeof decision!=='object'||Array.isArray(decision))return 'warm';
+    if(decision.emergency===true||decision.requiresHumanApproval===true||['high','critical'].includes(decision.risk))return 'caution';
+    if(['navigation','passage','publication','document','crew','weather'].includes(decision.intent))return 'instructional';
+    return 'warm';
   }
   function createPerformanceDirector(options={}){
     const schedule=options.setTimeout||setTimeout,cancelSchedule=options.clearTimeout||clearTimeout;
@@ -45,5 +63,5 @@
     };
     return Object.freeze({play,cancel});
   }
-  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,cueAt,createPerformanceDirector});
+  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,cueAt,speechModeForDecision,createPerformanceDirector});
 });

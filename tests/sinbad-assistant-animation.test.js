@@ -129,7 +129,7 @@ test('preparing-voice starts before the XTTS fetch, not after it resolves',()=>{
 });
 
 test('speaking only starts on the real audio "playing" event, never on fetch/announce',()=>{
-  assert.match(app,/audio\.addEventListener\('playing',\(\)=>\{\s*\n\s*if\(sinbadVoiceAbort!==controller\)return;\s*\n\s*setSinbadAssistantState\('speaking'\);\s*\n\s*startSinbadLipSyncAnalyser\(audio\);\s*\n\s*\},\{once:true\}\);/);
+  assert.match(app,/audio\.addEventListener\('playing',\(\)=>\{\s*\n\s*if\(sinbadVoiceAbort!==controller\)return;\s*\n\s*setSinbadAssistantState\('speaking',sinbadSpeechPerformanceCue\(0\)\);\s*\n\s*startSinbadLipSyncAnalyser\(audio\);\s*\n\s*\},\{once:true\}\);/);
   const playIdx=app.indexOf("audio.play().catch");
   const listenerIdx=app.indexOf("audio.addEventListener('playing'");
   assert.ok(listenerIdx>0&&listenerIdx<playIdx,'the playing listener must be attached before audio.play() is called');
@@ -349,7 +349,7 @@ test('acceptance regression: the avatar never stays in preparing-voice forever w
 
 test('speaking (standard provider) starts only on the real utterance onstart event, never when merely queued, and a superseded (stale) call cannot flip state either',()=>{
   const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function splitSinbadCloneChunks'));
-  assert.match(fn,/utterance\.onstart=\(\)=>\{if\(myGeneration!==sinbadStandardSpeechGeneration\)return;announce\(\);setSinbadAssistantState\('speaking'\);\};/);
+  assert.match(fn,/utterance\.onstart=\(\)=>\{if\(myGeneration!==sinbadStandardSpeechGeneration\)return;announce\(\);setSinbadAssistantState\('speaking',sinbadSpeechPerformanceCue\(0\)\);\};/);
   assert.match(fn,/setSinbadAssistantState\('preparing-voice'\);/);
   // preparing-voice must be set before speechSynthesis.speak() is ever called
   const preparingIdx=fn.indexOf("setSinbadAssistantState('preparing-voice')");
@@ -360,7 +360,7 @@ test('speaking (standard provider) starts only on the real utterance onstart eve
 test('onboundary drives a real per-word cue (not a fabricated continuous loop, and never for a superseded call), onend advances/finishes cleanly',()=>{
   const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function splitSinbadCloneChunks'));
   assert.match(fn,/utterance\.onboundary=event=>\{if\(myGeneration===sinbadStandardSpeechGeneration\)sinbadStandardVoiceTick\(event\);\};/);
-  assert.match(app,/sinbadPerformanceDirector\?\.cueAt\('speaking',sinbadStandardMouthSequence-1\)/);
+  assert.match(app,/sinbadSpeechPerformanceCue\(sinbadStandardMouthSequence-1\)/);
   assert.match(fn,/if\(run\.pauseAfter\)setTimeout\(speakNext,run\.pauseAfter\);/);
   assert.match(fn,/else speakNext\(\);/);
   assert.match(app,/function sinbadStandardVoiceTick\(boundaryEvent\)\{/);
@@ -477,7 +477,7 @@ test('round-table fix: voiceschanged uses addEventListener/removeEventListener w
   assert.match(standardFn,/if\(myGeneration!==sinbadStandardSpeechGeneration\|\|settled\)return;/);
   assert.match(standardFn,/if\(myGeneration!==sinbadStandardSpeechGeneration\|\|settled\|\|!speechSynthesis\.getVoices\(\)\.length\)return;/);
   assert.match(standardFn,/if\(myGeneration!==sinbadStandardSpeechGeneration\)return; \/\/ a newer speak request has taken over/);
-  assert.match(standardFn,/utterance\.onstart=\(\)=>\{if\(myGeneration!==sinbadStandardSpeechGeneration\)return;announce\(\);setSinbadAssistantState\('speaking'\);\};/);
+  assert.match(standardFn,/utterance\.onstart=\(\)=>\{if\(myGeneration!==sinbadStandardSpeechGeneration\)return;announce\(\);setSinbadAssistantState\('speaking',sinbadSpeechPerformanceCue\(0\)\);\};/);
   assert.match(standardFn,/utterance\.onboundary=event=>\{if\(myGeneration===sinbadStandardSpeechGeneration\)sinbadStandardVoiceTick\(event\);\};/);
   assert.match(standardFn,/utterance\.onerror=\(\)=>\{\s*\n\s*if\(myGeneration!==sinbadStandardSpeechGeneration\)return;/);
 });
