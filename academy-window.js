@@ -2,18 +2,26 @@
 const byId=id=>document.getElementById(id);
 const GEOMETRY_KEY='atlas_sinbad_academy_native_window';
 const academyCharacterEngine=window.SinbadCharacterEngine?.createCharacterEngine({initialState:'idle'})||null;
+const academyPerformanceDirector=window.SinbadPerformanceDirector?.createPerformanceDirector()||null;
 let academyBoardGeneration=0;
+
+academyCharacterEngine?.subscribe(snapshot=>{
+  const avatar=byId('academyTeachingStage')?.querySelector('.academy-sinbad');if(!avatar)return;
+  avatar.dataset.state=snapshot.state;avatar.dataset.gesture=snapshot.gesture;avatar.dataset.gaze=snapshot.gaze;
+});
 
 function teachLessonAtBoard(lesson){
   const stage=byId('academyTeachingStage'),title=byId('academyTeachingTitle'),board=byId('academyTeachingText');
   if(!stage||!title||!board)return;
   const text=lesson.objectives.map((objective,index)=>`${index+1}. ${objective}`).join('\n\n').slice(0,500);
   const generation=++academyBoardGeneration;stage.hidden=false;title.textContent=lesson.title;board.textContent='';
-  academyCharacterEngine?.dispatch('TEACH_AT_BOARD',{boardText:text});
-  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){board.textContent=text;return;}
+  const reducedMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches===true;
+  academyPerformanceDirector?.play('board-teaching',cue=>academyCharacterEngine?.dispatch('TEACH_AT_BOARD',{boardText:text,...cue}),{reducedMotion});
+  if(!academyPerformanceDirector)academyCharacterEngine?.dispatch('TEACH_AT_BOARD',{boardText:text});
+  if(reducedMotion){board.textContent=text;return;}
   let index=0;const writeNext=()=>{if(generation!==academyBoardGeneration)return;board.textContent=text.slice(0,++index);if(index<text.length)setTimeout(writeNext,/\s/.test(text[index]||'')?28:14);};writeNext();
 }
-function stopBoardTeaching(){academyBoardGeneration++;const stage=byId('academyTeachingStage');if(stage)stage.hidden=true;academyCharacterEngine?.dispatch('READY');}
+function stopBoardTeaching(){academyBoardGeneration++;academyPerformanceDirector?.cancel();const stage=byId('academyTeachingStage');if(stage)stage.hidden=true;academyCharacterEngine?.dispatch('READY');}
 
 function saveWindowGeometry(){
   try{localStorage.setItem(GEOMETRY_KEY,JSON.stringify({left:window.screenX,top:window.screenY,width:window.outerWidth,height:window.outerHeight}));}catch{}
