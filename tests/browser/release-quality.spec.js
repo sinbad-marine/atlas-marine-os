@@ -83,7 +83,11 @@ test('Professor Phase 2 opens separately, embeds the frozen classroom and starts
   await classroom.locator('#academyMessages').evaluate(box=>{const article=document.createElement('article');article.className='academy-message sinbad';article.innerHTML='<strong>Captain Sinbad</strong><p>Gelgit, gök cisimlerinin çekimi ve yerel hidrografiyle oluşur.</p>';box.append(article);});
   await expect(professor.locator('#chatReflection')).toBeVisible();
   await professor.locator('#reflectionUnderstood').click();
-  await expect(professor.locator('#coachReason')).toContainText('understanding confirmed by the learner');
+  await expect(professor.locator('#reflectionCheck')).toBeVisible();
+  await expect(professor.locator('#coachReason')).toContainText('complete the knowledge check to change mastery');
+  await professor.locator('#reflectionCheckChoices button').first().click();
+  await expect(professor.locator('#reflectionCheckStatus')).toContainText('Correct');
+  await expect(professor.locator('#coachReason')).toContainText('knowledge check answered correctly');
   await professor.locator('#startDiagnostic').click();
   await expect(professor.locator('#diagnosticQuestion')).toBeVisible();
   await expect(professor.locator('#diagnosticQuestion strong')).toContainText('1/6');
