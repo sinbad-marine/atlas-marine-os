@@ -21,9 +21,8 @@ test('quality workflow runs regression artifact build and SBOM with read-only pe
   assert.ok(quality.indexOf('run: npm ci')<quality.indexOf('Run complete regression suite'));
 });
 
-test('Pages release is manual gated least-privilege and SHA pinned',()=>{
-  assert.match(release,/on:\s*\n\s*workflow_dispatch:/u);
-  assert.doesNotMatch(release,/\bpush:/u);
+test('Pages release runs for main pushes and manual recovery with least privilege and SHA pins',()=>{
+  assert.match(release,/on:\s*\n\s*push:\s*\n\s*branches:\s*\n\s*- main\s*\n\s*workflow_dispatch:/u);
   assert.match(release,/environment:\s*\n\s*name: github-pages/u);
   assert.match(release,/attestations: write/u);
   assert.match(release,/artifact-metadata: write/u);

@@ -1,6 +1,9 @@
 name: Controlled Pages release
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 concurrency:

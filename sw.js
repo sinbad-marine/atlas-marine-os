@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.17-contextual-source-visuals-live-character-walk-v1';
+const CACHE='sinbad-marine-v8.20.19-live-academy-character-engine-v1';
 const ASSETS=[
   './',
   './index.html',

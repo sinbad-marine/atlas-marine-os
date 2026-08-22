@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#0b1d2b">
   <title>Sinbad Academy — Classroom</title>
-  <link rel="stylesheet" href="./academy.css?v=82017">
+  <link rel="stylesheet" href="./academy.css?v=82019">
 </head>
 <body>
   <div class="academy-shell">
@@ -15,46 +15,65 @@
     </header>
     <div class="academy-layout">
       <aside class="academy-sidebar">
-        <div class="academy-emblem" aria-hidden="true">🎓</div>
+        <div class="academy-instructor-stage" id="academyInstructorStage" data-state="idle">
+          <span class="academy-presence-ring" aria-hidden="true"></span>
+          <img id="academySinbadAvatar" src="./assets/captain-sinbad/captain-sinbad-idle-master.png" alt="Captain Sinbad, maritime instructor">
+          <div class="academy-speaking-bars" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+        </div>
         <h2>Captain Sinbad</h2>
         <p>Your interactive maritime instructor.</p>
+        <div class="academy-instructor-status" id="academyInstructorStatus" role="status" aria-live="polite">Ready to teach</div>
+        <div class="academy-voice-controls" aria-label="Instructor voice controls">
+          <button type="button" class="btn" id="academyVoiceToggle" aria-pressed="true">🔊 Voice: On</button>
+          <button type="button" class="btn" id="academyReplayVoice" disabled>↻ Replay</button>
+          <button type="button" class="btn" id="academyStopVoice" disabled>■ Stop</button>
+        </div>
         <div class="academy-status"><span></span> Offline-ready lessons</div>
       </aside>
       <main class="academy-main">
         <div class="academy-heading"><div><span class="eyebrow">SINBAD MARINE ACADEMY</span><h1>Navigation Classroom</h1></div><button type="button" class="btn" id="closeAcademyWindow">Close classroom</button></div>
-        <section id="academyTeachingStage" class="academy-teaching-stage" aria-labelledby="academyTeachingTitle" hidden>
-          <div class="academy-sinbad" data-state="board-teaching" aria-hidden="true">
-            <img id="academySinbadImage" src="./assets/captain-sinbad/captain-sinbad-board-teaching.png" alt="">
+        <section class="academy-chat" aria-label="Live Sinbad classroom">
+          <div class="academy-chat-heading"><div><strong>Live lesson with Captain Sinbad</strong><small id="academyCloudStatus">Connecting to Atlas knowledge…</small></div><span class="academy-live-badge"><i></i> LIVE CLASS</span></div>
+          <div id="academyMessages" class="academy-messages" role="log" aria-live="polite" aria-relevant="additions">
+            <article class="academy-message sinbad"><strong>Captain Sinbad</strong><p>Welcome aboard. Ask any maritime question by writing or speaking. I will teach from the approved Atlas library and show verified source pages when available.</p></article>
           </div>
-          <div class="academy-live-board">
-            <strong id="academyTeachingTitle">Captain Sinbad's board</strong>
-            <pre id="academyTeachingText" aria-hidden="true"></pre>
-          </div>
+          <form id="academyChatForm" class="academy-composer">
+            <label class="sr-only" for="academyQuestion">Ask Captain Sinbad</label>
+            <textarea id="academyQuestion" rows="2" placeholder="Ask any maritime question…" required></textarea>
+            <button type="button" class="btn academy-mic" id="academyMic" aria-pressed="false" title="Ask by voice">🎙 Speak</button>
+            <button type="submit" class="btn primary" id="academySend">Ask Sinbad</button>
+          </form>
+          <div class="academy-chat-hint">Enter sends · Shift+Enter creates a new line · source-page visuals remain tied to their original documents.</div>
         </section>
-        <section class="academy-controls" aria-label="Academy lesson controls">
-          <label>Training module
-            <select id="academyModule">
-              <option value="chart-reading">Chart reading and hydrography</option>
-              <option value="tides-water-levels">Tides and water levels</option>
-              <option value="currents-set-drift">Currents, set and drift</option>
-              <option value="colregs-navigation-rules">COLREG and navigation rules</option>
-              <option value="electronic-navigation">Electronic navigation and ENC</option>
-              <option value="marine-weather">Marine weather</option>
-            </select>
-          </label>
-          <div class="academy-actions">
-            <button type="button" class="btn primary" id="startAcademyLesson">Open lesson</button>
-            <button type="button" class="btn" id="startAcademyQuiz">Practice question</button>
-          </div>
-        </section>
-        <section id="academyOutput" class="academy-board" aria-live="polite">Choose a module. Lessons and source search remain available without an internet connection.</section>
+        <details class="academy-guided-tools">
+          <summary>Optional guided lesson shortcuts — no selection required</summary>
+          <p class="academy-guided-note">These temporary headings are not the final Academy curriculum. They can be revised later; the live classroom above works independently for every question.</p>
+          <section class="academy-controls" aria-label="Academy lesson controls">
+            <label>Training module
+              <select id="academyModule">
+                <option value="chart-reading">Chart reading and hydrography</option>
+                <option value="tides-water-levels">Tides and water levels</option>
+                <option value="currents-set-drift">Currents, set and drift</option>
+                <option value="colregs-navigation-rules">COLREG and navigation rules</option>
+                <option value="electronic-navigation">Electronic navigation and ENC</option>
+                <option value="marine-weather">Marine weather</option>
+              </select>
+            </label>
+            <div class="academy-actions"><button type="button" class="btn" id="startAcademyLesson">Open guided lesson</button><button type="button" class="btn" id="startAcademyQuiz">Practice question</button></div>
+          </section>
+          <section id="academyOutput" class="academy-board" aria-live="polite">Guided modules are optional. The live classroom above accepts questions on every maritime subject.</section>
+        </details>
       </main>
     </div>
   </div>
   <script src="./sinbad-training-data.js?v=8180"></script>
   <script src="./sinbad-academy.js?v=8180"></script>
-  <script src="./sinbad-character-engine.js?v=82017"></script>
-  <script src="./sinbad-performance-director.js?v=82017"></script>
-  <script src="./academy-window.js?v=82017"></script>
+  <script src="./supabase/functions/sinbad-answer/core-decision.js?v=82019"></script>
+  <script src="./sinbad-core.js?v=82019"></script>
+  <script src="./vendor/supabase-2.112.3.js"></script>
+  <script src="./sinbad-character-engine.js?v=82019"></script>
+  <script src="./sinbad-character-rig.js?v=82019"></script>
+  <script src="./sinbad-performance-director.js?v=82019"></script>
+  <script src="./academy-window.js?v=82019"></script>
 </body>
 </html>
