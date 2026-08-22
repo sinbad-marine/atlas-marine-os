@@ -52,7 +52,7 @@
   }
   function cssVariables(controls){
     const result=normalizeControls(controls);if(!result.accepted)return result;const c=result.controls;
-    return Object.freeze({accepted:true,variables:Object.freeze({'--sinbad-rig-blink':String(c.blink),'--sinbad-rig-mouth':String(c.mouthOpen),'--sinbad-rig-smile':String(c.smile),'--sinbad-rig-head-x':`${(c.headYaw*2.2).toFixed(2)}deg`,'--sinbad-rig-head-y':`${(c.headPitch*2.2).toFixed(2)}deg`,'--sinbad-rig-lean':`${(c.bodyLean*1.8).toFixed(2)}deg`,'--sinbad-rig-left-arm':`${(c.leftArm*38).toFixed(2)}deg`,'--sinbad-rig-right-arm':`${(c.rightArm*38).toFixed(2)}deg`,'--sinbad-rig-energy':String(c.energy)})});
+    return Object.freeze({accepted:true,variables:Object.freeze({'--sinbad-rig-blink':String(c.blink),'--sinbad-rig-mouth':String(c.mouthOpen),'--sinbad-rig-smile':String(c.smile),'--sinbad-rig-head-x':`${(c.headYaw*2.2).toFixed(2)}deg`,'--sinbad-rig-head-y':`${(c.headPitch*2.2).toFixed(2)}deg`,'--sinbad-rig-lean':`${(c.bodyLean*1.8).toFixed(2)}deg`,'--sinbad-rig-left-arm':`${(c.leftArm*14).toFixed(2)}deg`,'--sinbad-rig-right-arm':`${(c.rightArm*14).toFixed(2)}deg`,'--sinbad-rig-energy':String(c.energy)})});
   }
   return Object.freeze({RIG_VERSION,CONTROL_LIMITS,STATE_POSES,GESTURE_POSES,neutralControls,normalizeControls,poseForState,poseForPerformance,cssVariables});
 });

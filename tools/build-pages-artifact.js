@@ -23,6 +23,8 @@ const RELEASE_FILES=Object.freeze([
   ,'assets/captain-sinbad/captain-sinbad-walk-a-v1.png','assets/captain-sinbad/captain-sinbad-walk-b-v1.png'
   ,'assets/captain-sinbad/captain-sinbad-writing-contact-v1.png','assets/captain-sinbad/captain-sinbad-writing-lift-v1.png'
   ,'assets/captain-sinbad/captain-sinbad-board-teaching.png'
+  ,'assets/captain-sinbad/captain-sinbad-rig-head-v1.png','assets/captain-sinbad/captain-sinbad-rig-torso-v1.png'
+  ,'assets/captain-sinbad/captain-sinbad-rig-left-arm-v1.png','assets/captain-sinbad/captain-sinbad-rig-right-arm-v1.png'
 ]);
 const SOURCE_OVERRIDES=Object.freeze({
   'vendor/supabase-2.112.3.js':'node_modules/@supabase/supabase-js/dist/umd/supabase.js',

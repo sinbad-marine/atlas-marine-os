@@ -32,6 +32,27 @@ test('member sign-in dialog has no automatically detectable WCAG A/AA violations
   expect(results.violations).toEqual([]);
 });
 
+test('large Captain Sinbad portrait loads the four-layer articulated rig with its fallback hidden',async({page},testInfo)=>{
+  await stubBridge(page);
+  await page.goto('/');
+  await page.evaluate(()=>{
+    document.body.classList.remove('auth-pending','signed-out');
+    document.body.classList.add('authenticated');
+    document.querySelector('#sinbad')?.classList.add('active');
+  });
+  const avatar=page.locator('.sinbad-avatar.large');
+  await expect(avatar).toHaveAttribute('data-rig-ready','true');
+  await expect(avatar.locator('.sinbad-rig-part')).toHaveCount(4);
+  await expect(avatar.locator('.sinbad-rig-stage')).toHaveCSS('opacity','1');
+  await expect(avatar.locator(':scope > .sinbad-avatar-img').first()).toHaveCSS('opacity','0');
+  const restingArm=await avatar.locator('.sinbad-rig-right-arm').evaluate(element=>getComputedStyle(element).transform);
+  await page.evaluate(()=>setSinbadAssistantState('speaking',{gesture:'show-palm',motionProfile:'lively'}));
+  await page.waitForTimeout(150);
+  const showingPalm=await avatar.locator('.sinbad-rig-right-arm').evaluate(element=>getComputedStyle(element).transform);
+  expect(showingPalm).not.toBe(restingArm);
+  if(testInfo.project.name==='desktop-chromium')await avatar.screenshot({path:'test-results/sinbad-layered-rig-preview.png'});
+});
+
 test('Sinbad Academy opens outside the main app as a standalone classroom window',async({page})=>{
   await stubBridge(page);
   await page.goto('/');

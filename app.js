@@ -385,6 +385,7 @@ const SINBAD_AVATAR_ASSET_BASE='./assets/captain-sinbad/';
 const SINBAD_BLINK_ASSET='captain-sinbad-idle-blink-v1.png';
 const SINBAD_SPEECH_ASSETS=Object.freeze({closed:'captain-sinbad-speaking-mbp-v1.png',open:'captain-sinbad-speaking.png',round:'captain-sinbad-speaking-o-v1.png'});
 const SINBAD_WALK_ASSETS=Object.freeze(['captain-sinbad-walk-a-v1.png','captain-sinbad-walk-b-v1.png']);
+const SINBAD_RIG_PART_ASSETS=Object.freeze(['captain-sinbad-rig-head-v1.png','captain-sinbad-rig-torso-v1.png','captain-sinbad-rig-left-arm-v1.png','captain-sinbad-rig-right-arm-v1.png']);
 const SINBAD_STATE_ASSET={
   idle:'captain-sinbad-idle-master.png',
   listening:'captain-sinbad-listening.png',
@@ -455,6 +456,19 @@ function setSinbadResponseKind(kind){
   return true;
 }
 function sinbadAssistantElements(){return document.querySelectorAll('.sinbad-avatar');}
+function ensureSinbadArticulatedRig(){
+  document.querySelectorAll('.sinbad-avatar.large .sinbad-rig-stage').forEach(stage=>{
+    const avatar=stage.closest('.sinbad-avatar'),parts=[...stage.querySelectorAll('.sinbad-rig-part')];
+    if(!avatar||parts.length!==SINBAD_RIG_PART_ASSETS.length)return;
+    let remaining=parts.length,failed=false;
+    const settled=ok=>{failed=failed||!ok;remaining--;if(remaining===0){if(!failed)avatar.dataset.rigReady='true';else delete avatar.dataset.rigReady;}};
+    parts.forEach(part=>{
+      if(part.complete){settled(part.naturalWidth>0);return;}
+      part.addEventListener('load',()=>settled(true),{once:true});
+      part.addEventListener('error',()=>settled(false),{once:true});
+    });
+  });
+}
 function clearSinbadAssistantTimers(){sinbadAssistantTimers.forEach(clearTimeout);sinbadAssistantTimers=[];}
 function preloadSinbadAvatarAssets(){
   const seen=new Set();
@@ -465,6 +479,7 @@ function preloadSinbadAvatarAssets(){
   const blink=new Image();blink.src=SINBAD_AVATAR_ASSET_BASE+SINBAD_BLINK_ASSET;
   Object.values(SINBAD_SPEECH_ASSETS).forEach(file=>{const img=new Image();img.src=SINBAD_AVATAR_ASSET_BASE+file;});
   SINBAD_WALK_ASSETS.forEach(file=>{const img=new Image();img.src=SINBAD_AVATAR_ASSET_BASE+file;});
+  SINBAD_RIG_PART_ASSETS.forEach(file=>{const img=new Image();img.src=SINBAD_AVATAR_ASSET_BASE+file;});
 }
 let sinbadBlinkTimer=null;
 function sinbadBlinkAllowed(){
@@ -639,7 +654,7 @@ window.SinbadCharacterController=Object.freeze({
     setSinbadAssistantState(state);return Object.freeze({accepted:true,state});
   }
 });
-ensureSinbadBlinkLayers();ensureSinbadSpeechLayers();scheduleSinbadBlink();
+ensureSinbadArticulatedRig();ensureSinbadBlinkLayers();ensureSinbadSpeechLayers();scheduleSinbadBlink();
 preloadSinbadAvatarAssets();
 if(typeof document!=='undefined'&&'visibilityState'in document){
   document.addEventListener('visibilitychange',()=>{

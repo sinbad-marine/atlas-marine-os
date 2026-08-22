@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.17-live-character-articulated-rig-v22';
+const CACHE='sinbad-marine-v8.20.17-live-character-layered-rig-v23';
 const ASSETS=[
   './',
   './index.html',
@@ -30,6 +30,10 @@ const ASSETS=[
   './icon-192.png',
   './icon-512.png',
   './assets/captain-sinbad/captain-sinbad-idle-master.png',
+  './assets/captain-sinbad/captain-sinbad-rig-head-v1.png',
+  './assets/captain-sinbad/captain-sinbad-rig-torso-v1.png',
+  './assets/captain-sinbad/captain-sinbad-rig-left-arm-v1.png',
+  './assets/captain-sinbad/captain-sinbad-rig-right-arm-v1.png',
   './assets/captain-sinbad/captain-sinbad-idle-blink-v1.png',
   './assets/captain-sinbad/captain-sinbad-listening.png',
   './assets/captain-sinbad/captain-sinbad-thinking.png',

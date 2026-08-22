@@ -81,6 +81,15 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
    board-teaching / Academy scene, which gets a taller card above. Small
    floating avatar stays a tight head/shoulders crop for the same reason. */
 .sinbad-avatar-img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:50% 50%;opacity:1;transition:opacity .22s ease,transform .28s ease;transform-origin:50% 62%;transform:rotate(calc(var(--sinbad-rig-head-x,0deg) + var(--sinbad-rig-lean,0deg) + var(--sinbad-gaze-offset,0deg))) rotateX(var(--sinbad-rig-head-y,0deg));filter:saturate(calc(1 + var(--sinbad-rig-energy,0)))}
+.sinbad-rig-stage{display:none}
+.sinbad-avatar.large .sinbad-rig-stage{display:block;position:absolute;inset:6px;z-index:2;opacity:0;pointer-events:none;transition:opacity .22s ease;overflow:hidden}
+.sinbad-avatar.large[data-rig-ready="true"]>.sinbad-avatar-img{opacity:0!important}
+.sinbad-avatar.large[data-rig-ready="true"] .sinbad-rig-stage{opacity:1}
+.sinbad-rig-part{position:absolute;display:block;height:auto;will-change:transform;transition:transform var(--sinbad-motion-duration,1.2s) ease-in-out;filter:saturate(calc(1 + var(--sinbad-rig-energy,0)))}
+.sinbad-rig-torso{z-index:2;width:72%;left:14%;top:27%;transform-origin:50% 58%;transform:rotate(var(--sinbad-rig-lean,0deg))}
+.sinbad-rig-head{z-index:3;width:45%;left:27.5%;top:1%;transform-origin:50% 82%;transform:rotate(calc(var(--sinbad-rig-head-x,0deg) + var(--sinbad-gaze-offset,0deg))) rotateX(var(--sinbad-rig-head-y,0deg))}
+.sinbad-rig-right-arm{z-index:1;width:48%;left:0;top:32%;transform-origin:86% 12%;transform:rotate(var(--sinbad-rig-right-arm,0deg))}
+.sinbad-rig-left-arm{z-index:1;width:37%;right:0;top:32%;transform-origin:14% 10%;transform:rotate(var(--sinbad-rig-left-arm,0deg))}
 .sinbad-avatar[data-gaze="thought"]{--sinbad-gaze-offset:-.7deg}
 .sinbad-avatar[data-gaze="board"]{--sinbad-gaze-offset:.8deg}
 .sinbad-avatar[data-motion-profile="measured"]{--sinbad-motion-duration:1.35s;--sinbad-motion-rise:-2px;--sinbad-motion-fall:1px;--sinbad-motion-travel:4px;--sinbad-motion-nod:3px;--sinbad-motion-scale-up:1.014;--sinbad-motion-scale-down:.988;--sinbad-motion-tilt-left:-.55deg;--sinbad-motion-tilt-right:.4deg}

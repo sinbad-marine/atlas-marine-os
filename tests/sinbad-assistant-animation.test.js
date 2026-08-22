@@ -629,6 +629,27 @@ test('live state applies the selected gesture through the versioned articulated 
   assert.match(rig,/'--sinbad-rig-right-arm'/);
 });
 
+test('large live portrait activates four real alpha rig layers only after every part loads',()=>{
+  assert.match(html,/class="sinbad-rig-part sinbad-rig-left-arm"/);
+  assert.match(html,/class="sinbad-rig-part sinbad-rig-torso"/);
+  assert.match(html,/class="sinbad-rig-part sinbad-rig-right-arm"/);
+  assert.match(html,/class="sinbad-rig-part sinbad-rig-head"/);
+  assert.match(app,/if\(!failed\)avatar\.dataset\.rigReady='true';else delete avatar\.dataset\.rigReady/);
+  assert.match(css,/data-rig-ready="true"\] \.sinbad-rig-stage\{opacity:1\}/);
+  assert.match(css,/transform:rotate\(var\(--sinbad-rig-left-arm,0deg\)\)/);
+  assert.match(css,/transform:rotate\(var\(--sinbad-rig-right-arm,0deg\)\)/);
+});
+
+test('every live rig part is a non-empty RGBA PNG rather than a baked checkerboard RGB image',()=>{
+  for(const name of ['head','torso','left-arm','right-arm']){
+    const bytes=fs.readFileSync(`assets/captain-sinbad/captain-sinbad-rig-${name}-v1.png`);
+    assert.equal(bytes.subarray(0,8).toString('hex'),'89504e470d0a1a0a',name);
+    assert.ok(bytes.readUInt32BE(16)>100,name);
+    assert.ok(bytes.readUInt32BE(20)>100,name);
+    assert.equal(bytes[25],6,`${name} must use PNG RGBA color type`);
+  }
+});
+
 test('a supported explicit gesture request overrides only the opening cue and unsupported poses are never fabricated',()=>{
   assert.match(app,/gestureRequestForText\(question\)/);
   assert.match(app,/if\(sinbadRequestedGesture\?\.supported&&sinbadTextPresentationCues\.length\)/);
