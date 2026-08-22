@@ -382,6 +382,7 @@ let sinbadAssistantTimers=[];
 let sinbadAssistantLastDetail={};
 const sinbadCharacterEngine=window.SinbadCharacterEngine?.createCharacterEngine({initialState:'idle'})||null;
 const sinbadCharacterRig=window.SinbadCharacterRig||null;
+const sinbadPerformanceDirector=window.SinbadPerformanceDirector||null;
 function sinbadAssistantElements(){return document.querySelectorAll('.sinbad-avatar');}
 function clearSinbadAssistantTimers(){sinbadAssistantTimers.forEach(clearTimeout);sinbadAssistantTimers=[];}
 function preloadSinbadAvatarAssets(){
@@ -720,9 +721,14 @@ function stopSinbadVoice(){
 }
 let sinbadStandardBoundaryTimer=null;
 let sinbadStandardMouthSequence=0;
-function sinbadStandardVoiceTick(){
+function sinbadStandardVoiceTick(boundaryEvent){
   sinbadAssistantElements().forEach(el=>el.classList.add('sinbad-voice-tick'));
   setSinbadMouthFrame(++sinbadStandardMouthSequence%3===0?'round':'open');
+  const performanceCue=sinbadPerformanceDirector?.cueAt('speaking',sinbadStandardMouthSequence-1);
+  if(performanceCue?.accepted&&sinbadAssistantState==='speaking')sinbadAssistantElements().forEach(el=>{
+    el.dataset.gesture=performanceCue.cue.gesture;el.dataset.gaze=performanceCue.cue.gaze;
+    el.dataset.speechBoundary=boundaryEvent?.name==='sentence'?'sentence':'word';
+  });
   clearTimeout(sinbadStandardBoundaryTimer);
   sinbadStandardBoundaryTimer=setTimeout(()=>{sinbadAssistantElements().forEach(el=>el.classList.remove('sinbad-voice-tick'));setSinbadMouthFrame('closed');},160);
 }
@@ -809,7 +815,7 @@ function speakSinbadStandard(text,onVoiceReady){
     // Only the real 'speaking has actually started' signal flips the avatar -
     // never the moment we merely queued/prepared the utterance.
     utterance.onstart=()=>{if(myGeneration!==sinbadStandardSpeechGeneration)return;announce();setSinbadAssistantState('speaking');};
-    utterance.onboundary=()=>{if(myGeneration===sinbadStandardSpeechGeneration)sinbadStandardVoiceTick();};
+    utterance.onboundary=event=>{if(myGeneration===sinbadStandardSpeechGeneration)sinbadStandardVoiceTick(event);};
     utterance.onend=()=>{
       if(myGeneration!==sinbadStandardSpeechGeneration)return;
       if(run.pauseAfter)setTimeout(speakNext,run.pauseAfter);

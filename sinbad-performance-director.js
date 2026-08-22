@@ -12,6 +12,19 @@
       Object.freeze({at:4500,gesture:'nod',gaze:'audience'})
     ])
   });
+  const CUE_SEQUENCES=Object.freeze({
+    speaking:Object.freeze([
+      Object.freeze({gesture:'explain',gaze:'audience'}),
+      Object.freeze({gesture:'open-hand',gaze:'audience'}),
+      Object.freeze({gesture:'explain',gaze:'audience'}),
+      Object.freeze({gesture:'nod',gaze:'audience'})
+    ])
+  });
+  function cueAt(name,index){
+    if(!Object.hasOwn(CUE_SEQUENCES,name))return Object.freeze({accepted:false,reason:'UNKNOWN_CUE_SEQUENCE'});
+    if(!Number.isSafeInteger(index)||index<0)return Object.freeze({accepted:false,reason:'INVALID_CUE_INDEX'});
+    return Object.freeze({accepted:true,cue:CUE_SEQUENCES[name][index%CUE_SEQUENCES[name].length]});
+  }
   function createPerformanceDirector(options={}){
     const schedule=options.setTimeout||setTimeout,cancelSchedule=options.clearTimeout||clearTimeout;
     let generation=0,timers=[];
@@ -26,5 +39,5 @@
     };
     return Object.freeze({play,cancel});
   }
-  return Object.freeze({PERFORMANCES,createPerformanceDirector});
+  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,cueAt,createPerformanceDirector});
 });

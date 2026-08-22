@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,cueAt,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -20,4 +20,10 @@ test('cancel invalidates stale cues and reduced motion emits one cue only',()=>{
 
 test('unknown performances and invalid emitters fail closed',()=>{
   const director=createPerformanceDirector();assert.equal(director.play('dance',()=>{}).reason,'UNKNOWN_PERFORMANCE');assert.equal(director.play('board-teaching',null).reason,'INVALID_EMITTER');
+});
+
+test('real speech boundaries resolve to a deterministic bounded gesture sequence',()=>{
+  assert.ok(Object.isFrozen(CUE_SEQUENCES.speaking));
+  assert.deepEqual([0,1,2,3,4].map(index=>cueAt('speaking',index).cue.gesture),['explain','open-hand','explain','nod','explain']);
+  assert.equal(cueAt('dance',0).reason,'UNKNOWN_CUE_SEQUENCE');assert.equal(cueAt('speaking',-1).reason,'INVALID_CUE_INDEX');
 });

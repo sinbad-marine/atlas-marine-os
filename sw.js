@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.17-contextual-source-visuals-live-character-performance-v1';
+const CACHE='sinbad-marine-v8.20.17-contextual-source-visuals-live-character-speech-gestures-v1';
 const ASSETS=[
   './',
   './index.html',

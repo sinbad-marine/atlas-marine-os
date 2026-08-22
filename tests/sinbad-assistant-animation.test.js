@@ -354,10 +354,12 @@ test('speaking (standard provider) starts only on the real utterance onstart eve
 
 test('onboundary drives a real per-word cue (not a fabricated continuous loop, and never for a superseded call), onend advances/finishes cleanly',()=>{
   const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function splitSinbadCloneChunks'));
-  assert.match(fn,/utterance\.onboundary=\(\)=>\{if\(myGeneration===sinbadStandardSpeechGeneration\)sinbadStandardVoiceTick\(\);\};/);
+  assert.match(fn,/utterance\.onboundary=event=>\{if\(myGeneration===sinbadStandardSpeechGeneration\)sinbadStandardVoiceTick\(event\);\};/);
+  assert.match(app,/sinbadPerformanceDirector\?\.cueAt\('speaking',sinbadStandardMouthSequence-1\)/);
   assert.match(fn,/if\(run\.pauseAfter\)setTimeout\(speakNext,run\.pauseAfter\);/);
   assert.match(fn,/else speakNext\(\);/);
-  assert.match(app,/function sinbadStandardVoiceTick\(\)\{/);
+  assert.match(app,/function sinbadStandardVoiceTick\(boundaryEvent\)\{/);
+  assert.match(app,/el\.dataset\.speechBoundary=boundaryEvent\?\.name==='sentence'\?'sentence':'word'/);
   assert.match(css,/\.sinbad-avatar\.sinbad-voice-tick \.sinbad-avatar-img\{transform:scale\(1\.018\)/);
 });
 
@@ -471,7 +473,7 @@ test('round-table fix: voiceschanged uses addEventListener/removeEventListener w
   assert.match(standardFn,/if\(myGeneration!==sinbadStandardSpeechGeneration\|\|settled\|\|!speechSynthesis\.getVoices\(\)\.length\)return;/);
   assert.match(standardFn,/if\(myGeneration!==sinbadStandardSpeechGeneration\)return; \/\/ a newer speak request has taken over/);
   assert.match(standardFn,/utterance\.onstart=\(\)=>\{if\(myGeneration!==sinbadStandardSpeechGeneration\)return;announce\(\);setSinbadAssistantState\('speaking'\);\};/);
-  assert.match(standardFn,/utterance\.onboundary=\(\)=>\{if\(myGeneration===sinbadStandardSpeechGeneration\)sinbadStandardVoiceTick\(\);\};/);
+  assert.match(standardFn,/utterance\.onboundary=event=>\{if\(myGeneration===sinbadStandardSpeechGeneration\)sinbadStandardVoiceTick\(event\);\};/);
   assert.match(standardFn,/utterance\.onerror=\(\)=>\{\s*\n\s*if\(myGeneration!==sinbadStandardSpeechGeneration\)return;/);
 });
 
