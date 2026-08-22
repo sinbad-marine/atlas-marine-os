@@ -32,16 +32,18 @@ test('member sign-in dialog has no automatically detectable WCAG A/AA violations
   expect(results.violations).toEqual([]);
 });
 
-test('Sinbad Academy opens as a controllable classroom window',async({page})=>{
+test('Sinbad Academy opens outside the main app as a standalone classroom window',async({page,context})=>{
   await stubBridge(page);
   await page.goto('/');
-  await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');document.querySelector('#openSinbadAcademyClassroom').click();});
-  const classroom=page.locator('#sinbadAcademyWindow');
-  await expect(classroom).toBeVisible();
-  await page.getByRole('button',{name:'Maximize classroom'}).click();
-  await expect(classroom).toHaveClass(/maximized/);
-  await page.getByRole('button',{name:'Minimize classroom'}).click();
-  await expect(classroom).toHaveClass(/minimized/);
-  await page.getByRole('button',{name:'Close classroom'}).click();
-  await expect(classroom).toBeHidden();
+  await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');});
+  const popupPromise=context.waitForEvent('page');
+  await page.evaluate(()=>openSinbadAcademyWindow());
+  const classroom=await popupPromise;
+  await classroom.waitForLoadState();
+  await expect(classroom).toHaveURL(/academy\.html$/);
+  await expect(classroom.getByRole('heading',{name:'Navigation Classroom'})).toBeVisible();
+  await expect(page.locator('#sinbadAcademyWindow')).toHaveCount(0);
+  await classroom.locator('#startAcademyLesson').click();
+  await expect(classroom.locator('#academyOutput')).toContainText('Learning objectives');
+  await classroom.close();
 });
