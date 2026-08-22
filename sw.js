@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.17-live-character-board-writing-v3';
+const CACHE='sinbad-marine-v8.20.17-live-character-writing-frames-v4';
 const ASSETS=[
   './',
   './index.html',
@@ -39,6 +39,8 @@ const ASSETS=[
   './assets/captain-sinbad/captain-sinbad-laughing-v1.png',
   './assets/captain-sinbad/captain-sinbad-walk-a-v1.png',
   './assets/captain-sinbad/captain-sinbad-walk-b-v1.png',
+  './assets/captain-sinbad/captain-sinbad-writing-contact-v1.png',
+  './assets/captain-sinbad/captain-sinbad-writing-lift-v1.png',
   './assets/captain-sinbad/captain-sinbad-board-teaching.png'
 ];
 

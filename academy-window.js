@@ -5,6 +5,7 @@ const academyCharacterEngine=window.SinbadCharacterEngine?.createCharacterEngine
 const academyPerformanceDirector=window.SinbadPerformanceDirector?.createPerformanceDirector()||null;
 const ACADEMY_CHARACTER_ASSETS=Object.freeze({
   walking:Object.freeze(['./assets/captain-sinbad/captain-sinbad-walk-a-v1.png','./assets/captain-sinbad/captain-sinbad-walk-b-v1.png']),
+  writing:Object.freeze(['./assets/captain-sinbad/captain-sinbad-writing-contact-v1.png','./assets/captain-sinbad/captain-sinbad-writing-lift-v1.png']),
   'board-teaching':'./assets/captain-sinbad/captain-sinbad-board-teaching.png'
 });
 let academyBoardGeneration=0;
@@ -21,6 +22,10 @@ function renderAcademyCharacterCue(cue,text){
   image.src=cue.state==='walking'?ACADEMY_CHARACTER_ASSETS.walking[cue.walkFrame===1?1:0]:ACADEMY_CHARACTER_ASSETS['board-teaching'];
 }
 
+function preloadAcademyCharacterAssets(){
+  [...ACADEMY_CHARACTER_ASSETS.walking,...ACADEMY_CHARACTER_ASSETS.writing,ACADEMY_CHARACTER_ASSETS['board-teaching']].forEach(src=>{const image=new Image();image.src=src;});
+}
+
 function renderAcademyBoardProgress(board,text,index,finished=false){
   board.replaceChildren(document.createTextNode(text.slice(0,index)));
   if(!finished){const cursor=document.createElement('span');cursor.className='academy-chalk-cursor';cursor.setAttribute('aria-hidden','true');board.append(cursor);}
@@ -29,8 +34,14 @@ function renderAcademyBoardProgress(board,text,index,finished=false){
 function directAcademyWritingGesture(index,text,lastCueBucket){
   const cueBucket=Math.floor(index/42);if(cueBucket===lastCueBucket)return lastCueBucket;
   const audienceTurn=cueBucket%3===2;
-  renderAcademyCharacterCue({state:'board-teaching',gesture:audienceTurn?'explain':'point-board',gaze:audienceTurn?'audience':'board'},text);
+  academyCharacterEngine?.dispatch('TEACH_AT_BOARD',{boardText:text,gesture:audienceTurn?'explain':'point-board',gaze:audienceTurn?'audience':'board'});
   return cueBucket;
+}
+
+function renderAcademyWritingFrame(index,lastFrameBucket){
+  const frameBucket=Math.floor(index/8);if(frameBucket===lastFrameBucket)return lastFrameBucket;
+  const image=byId('academySinbadImage');if(image)image.src=ACADEMY_CHARACTER_ASSETS.writing[frameBucket%2];
+  return frameBucket;
 }
 
 function teachLessonAtBoard(lesson){
@@ -42,7 +53,7 @@ function teachLessonAtBoard(lesson){
   academyPerformanceDirector?.play('lesson-opening',cue=>renderAcademyCharacterCue(cue,text),{reducedMotion});
   if(!academyPerformanceDirector)renderAcademyCharacterCue({state:'board-teaching',gesture:'point-board',gaze:'board'},text);
   if(reducedMotion){board.textContent=text;return;}
-  let index=0,lastCueBucket=-1;const writeNext=()=>{if(generation!==academyBoardGeneration)return;index++;lastCueBucket=directAcademyWritingGesture(index,text,lastCueBucket);renderAcademyBoardProgress(board,text,index,index>=text.length);if(index<text.length)setTimeout(writeNext,/\s/.test(text[index]||'')?28:14);};setTimeout(()=>{if(generation===academyBoardGeneration)writeNext();},1680);
+  let index=0,lastCueBucket=-1,lastFrameBucket=-1;const writeNext=()=>{if(generation!==academyBoardGeneration)return;index++;lastCueBucket=directAcademyWritingGesture(index,text,lastCueBucket);lastFrameBucket=renderAcademyWritingFrame(index,lastFrameBucket);renderAcademyBoardProgress(board,text,index,index>=text.length);if(index<text.length)setTimeout(writeNext,/\s/.test(text[index]||'')?28:14);else renderAcademyCharacterCue({state:'board-teaching',gesture:'explain',gaze:'audience'},text);};setTimeout(()=>{if(generation===academyBoardGeneration)writeNext();},1680);
 }
 function stopBoardTeaching(){academyBoardGeneration++;academyPerformanceDirector?.cancel();const stage=byId('academyTeachingStage');if(stage)stage.hidden=true;const board=byId('academyTeachingText');board?.querySelector('.academy-chalk-cursor')?.remove();academyCharacterEngine?.dispatch('READY');}
 
@@ -73,6 +84,7 @@ function renderQuiz(){
   const choices=document.createElement('div');choices.className='academy-choices';item.choices.forEach((choice,index)=>{const button=document.createElement('button');button.type='button';button.className='btn';button.textContent=choice;button.addEventListener('click',()=>{[...choices.children].forEach(node=>node.disabled=true);button.classList.add(index===item.answer?'primary':'danger');const result=document.createElement('p');result.textContent=`${index===item.answer?'✓ Correct':'✗ Review'} — ${item.explanation} [${item.source}]`;output.append(result);});choices.append(button);});output.append(choices);const source=document.createElement('small');source.className='academy-source';source.textContent=`Official source: ${item.source}`;output.append(source);
 }
 restoreWindowGeometry();
+preloadAcademyCharacterAssets();
 byId('startAcademyLesson').addEventListener('click',renderLesson);
 byId('startAcademyQuiz').addEventListener('click',renderQuiz);
 byId('closeAcademyWindow').addEventListener('click',()=>{saveWindowGeometry();window.close();});

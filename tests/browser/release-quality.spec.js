@@ -32,18 +32,18 @@ test('member sign-in dialog has no automatically detectable WCAG A/AA violations
   expect(results.violations).toEqual([]);
 });
 
-test('Sinbad Academy opens outside the main app as a standalone classroom window',async({page,context})=>{
+test('Sinbad Academy opens outside the main app as a standalone classroom window',async({page})=>{
   await stubBridge(page);
   await page.goto('/');
   await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');});
-  const popupPromise=context.waitForEvent('page');
+  const popupPromise=page.waitForEvent('popup');
   await page.evaluate(()=>openSinbadAcademyWindow());
   const classroom=await popupPromise;
   await classroom.waitForLoadState();
   await expect(classroom).toHaveURL(/academy\.html$/);
   await expect(classroom.getByRole('heading',{name:'Navigation Classroom'})).toBeVisible();
   await expect(page.locator('#sinbadAcademyWindow')).toHaveCount(0);
-  await classroom.locator('#startAcademyLesson').click();
+  await classroom.getByRole('button',{name:'Open lesson'}).click();
   await expect(classroom.locator('#academyOutput')).toContainText('Learning objectives');
   await classroom.close();
 });
