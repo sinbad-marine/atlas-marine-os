@@ -7,6 +7,7 @@ const app=fs.readFileSync('app.js','utf8');
 const html=fs.readFileSync('index.html','utf8');
 const academyHtml=fs.readFileSync('academy.html','utf8');
 const css=fs.readFileSync('styles.css','utf8');
+const rig=fs.readFileSync('sinbad-character-rig.js','utf8');
 
 test('a single centralised, testable state API exists with the required states, including board-teaching from the Academy manifest',()=>{
   assert.match(app,/function setSinbadAssistantState\(state,detail=\{\}\)\{/);
@@ -619,6 +620,13 @@ test('motion profiles vary bounded body travel, scale and tilt instead of changi
   assert.match(css,/translateX\(var\(--sinbad-motion-travel,5px\)\)/);
   assert.match(css,/rotate\(var\(--sinbad-motion-tilt-left,-\.7deg\)\)/);
   assert.match(css,/translateY\(var\(--sinbad-motion-nod,4px\)\)/);
+});
+
+test('live state applies the selected gesture through the versioned articulated rig contract',()=>{
+  assert.match(app,/poseForPerformance\?\.\(next,performance\.gesture,rigOverrides\)\|\|sinbadCharacterRig\?\.poseForState\?\.\(next,rigOverrides\)/);
+  assert.match(rig,/const RIG_VERSION='sinbad-2d-rig\/2'/);
+  assert.match(rig,/'--sinbad-rig-left-arm'/);
+  assert.match(rig,/'--sinbad-rig-right-arm'/);
 });
 
 test('a supported explicit gesture request overrides only the opening cue and unsupported poses are never fabricated',()=>{

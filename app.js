@@ -599,7 +599,8 @@ function setSinbadAssistantState(state,detail={}){
     else if(next!=='speaking')delete el.dataset.responseKind;
     const defaultEnergy=sinbadCharacterRig?.STATE_POSES[next]?.energy??0;
     const requestedEnergy=Number(detail.energy??defaultEnergy);
-    const rigPose=sinbadCharacterRig?.poseForState(next,{energy:Math.max(0,Math.min(1,Number.isFinite(requestedEnergy)?requestedEnergy:defaultEnergy))});
+    const rigOverrides={energy:Math.max(0,Math.min(1,Number.isFinite(requestedEnergy)?requestedEnergy:defaultEnergy))};
+    const rigPose=sinbadCharacterRig?.poseForPerformance?.(next,performance.gesture,rigOverrides)||sinbadCharacterRig?.poseForState?.(next,rigOverrides);
     const rigCss=rigPose?.accepted?sinbadCharacterRig.cssVariables(rigPose.controls):null;
     if(rigCss?.accepted)Object.entries(rigCss.variables).forEach(([name,value])=>el.style.setProperty(name,value));
     const img=el.querySelector('.sinbad-avatar-img');
