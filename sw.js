@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.17-contextual-source-visuals-v1';
+const CACHE='sinbad-marine-v8.20.17-contextual-source-visuals-live-character-v1';
 const ASSETS=[
   './',
   './index.html',
@@ -7,6 +7,7 @@ const ASSETS=[
   './academy-window.js',
   './styles.css',
   './app.js',
+  './sinbad-character-engine.js',
   './pilot-data.js',
   './route-data.js',
   './official-publications.js',

@@ -377,6 +377,7 @@ const SINBAD_STATE_ASSET={
 let sinbadAssistantState='idle';
 let sinbadAssistantTimers=[];
 let sinbadAssistantLastDetail={};
+const sinbadCharacterEngine=window.SinbadCharacterEngine?.createCharacterEngine({initialState:'idle'})||null;
 function sinbadAssistantElements(){return document.querySelectorAll('.sinbad-avatar');}
 function clearSinbadAssistantTimers(){sinbadAssistantTimers.forEach(clearTimeout);sinbadAssistantTimers=[];}
 function preloadSinbadAvatarAssets(){
@@ -448,6 +449,7 @@ async function startSinbadLipSyncAnalyser(audio){
 let sinbadAvatarImageGeneration=0;
 function setSinbadAssistantState(state,detail={}){
   const next=SINBAD_ASSISTANT_STATES.includes(state)?state:'idle';
+  const performance=sinbadCharacterEngine?.setState(next,detail)?.snapshot||{state:next,emotion:'neutral',gesture:'rest',gaze:'audience'};
   const changed=next!==sinbadAssistantState;
   sinbadAssistantState=next;
   sinbadAssistantLastDetail=detail||{};
@@ -460,6 +462,9 @@ function setSinbadAssistantState(state,detail={}){
   const generation=++sinbadAvatarImageGeneration;
   sinbadAssistantElements().forEach(el=>{
     el.dataset.state=next;
+    el.dataset.emotion=performance.emotion;
+    el.dataset.gesture=performance.gesture;
+    el.dataset.gaze=performance.gaze;
     const img=el.querySelector('.sinbad-avatar-img');
     if(img&&!img.src.endsWith(asset)){
       img.style.opacity='0';

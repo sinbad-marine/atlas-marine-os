@@ -126,6 +126,14 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-state="preparing-voice"] .sinbad-status-light{animation:sinbadCalmBlinkLight 1s ease-in-out infinite}
 
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-state="speaking"] .sinbad-avatar-img{animation:sinbadVoicePulse .5s ease-in-out infinite}
+  html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="explain"]{animation:sinbadStageExplain 2.8s ease-in-out infinite}
+  html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="open-hand"]{animation:sinbadStageOpenHand 1.2s ease-out both}
+  html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="listen-lean"]{animation:sinbadStageListen 2.4s ease-in-out infinite}
+  html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="nod"]{animation:sinbadStageNod .8s ease-out both}
+  @keyframes sinbadStageExplain{0%,100%{transform:translateY(0) rotate(0)}35%{transform:translateY(-2px) rotate(-.7deg)}70%{transform:translateY(1px) rotate(.55deg)}}
+  @keyframes sinbadStageOpenHand{0%{transform:scale(.985)}55%{transform:scale(1.018)}100%{transform:scale(1)}}
+  @keyframes sinbadStageListen{0%,100%{transform:translateX(0)}50%{transform:translateX(2px)}}
+  @keyframes sinbadStageNod{0%,100%{transform:translateY(0)}45%{transform:translateY(4px)}}
   /* Real per-word cue from SpeechSynthesisUtterance's own onboundary event
      (standard voice provider) - a brief, subtle emphasis, not a fabricated
      continuous mouth-shape animation. */
