@@ -1099,12 +1099,20 @@ function academyOfflineAnswer(query){
   return SinbadAcademy.answer(query,SINBAD_TRAINING_DATA)?.text||null;
 }
 let sinbadAcademyNativeWindow=null;
+let sinbadProfessorNativeWindow=null;
 function openSinbadAcademyWindow(){
   if(sinbadAcademyNativeWindow&&!sinbadAcademyNativeWindow.closed){sinbadAcademyNativeWindow.focus();return;}
   const width=Math.max(900,screen.availWidth||1200),height=Math.max(650,screen.availHeight||800);
   sinbadAcademyNativeWindow=window.open('./academy.html','sinbadAcademyClassroom',`popup=yes,left=0,top=0,width=${width},height=${height},resizable=yes,scrollbars=yes`);
   if(!sinbadAcademyNativeWindow){alert('Sinbad Academy penceresi engellendi. Bu site için açılır pencerelere izin verip yeniden deneyin.');return;}
   sinbadAcademyNativeWindow.focus();
+}
+function openSinbadProfessorWindow(){
+  if(sinbadProfessorNativeWindow&&!sinbadProfessorNativeWindow.closed){sinbadProfessorNativeWindow.focus();return;}
+  const width=Math.max(1100,screen.availWidth||1400),height=Math.max(700,screen.availHeight||900);
+  sinbadProfessorNativeWindow=window.open('./academy-professor.html','sinbadProfessorWorkspace',`popup=yes,left=0,top=0,width=${width},height=${height},resizable=yes,scrollbars=yes`);
+  if(!sinbadProfessorNativeWindow){alert('Sinbad Professor penceresi engellendi. Bu site için açılır pencerelere izin verip yeniden deneyin.');return;}
+  sinbadProfessorNativeWindow.focus();
 }
 function renderAcademyLesson(){
   const category=$('academyModule')?.value,lesson=window.SinbadAcademy?.lesson(category,window.SINBAD_TRAINING_DATA),output=$('academyOutput');
@@ -1305,6 +1313,7 @@ $('bridgeGpxFile')?.addEventListener('change',event=>importBridgeGpxFile(event.t
 $('syncSinbadMemory')?.addEventListener('click',syncSinbadOfflineMemory);
 addBridgeWaypoint({name:'Departure'});addBridgeWaypoint({name:'Destination'});checkBridgeStatus();setInterval(checkBridgeStatus,30000);
 $('openSinbadAcademyClassroom')?.addEventListener('click',openSinbadAcademyWindow);
+$('openSinbadProfessorWorkspace')?.addEventListener('click',openSinbadProfessorWindow);
 renderOfficialSources();
 setSinbadVoiceUI();
 setListeningUI();

@@ -1,0 +1,6 @@
+const test=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');
+const html=fs.readFileSync('academy-professor.html','utf8'),app=fs.readFileSync('academy-professor.js','utf8'),css=fs.readFileSync('academy-professor.css','utf8');
+const mainHtml=fs.readFileSync('index.html','utf8'),mainApp=fs.readFileSync('app.js','utf8');
+test('Phase 2 workspace composes the frozen Phase 1 classroom without modifying it',()=>{assert.match(html,/id="phaseOneClassroom" src="\.\/academy\.html"/);assert.match(html,/sinbad-professor\.js/);assert.match(css,/grid-template-columns:minmax\(680px,1fr\) 340px/)});
+test('adaptive panel is local, visible and evidence-driven',()=>{assert.match(html,/id="learnerLevel"/);assert.match(html,/id="learnerPriority"/);assert.match(html,/id="masteryList"/);assert.match(app,/PROFILE_KEY='atlas_sinbad_professor_learner_v1'/);assert.match(app,/SinbadProfessor\.recordEvidence/);assert.match(app,/SinbadProfessor\.nextLesson/);assert.match(app,/\.academy-choices \.btn/)});
+test('main application exposes a separate resizable Professor beta window',()=>{assert.match(mainHtml,/id="openSinbadProfessorWorkspace"/);assert.match(mainApp,/window\.open\('\.\/academy-professor\.html','sinbadProfessorWorkspace'/);assert.match(mainApp,/resizable=yes/)});
