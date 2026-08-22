@@ -168,9 +168,9 @@ test('voice-disabled toggles with the real voice switch, and startup state match
   assert.match(app,/setSinbadAssistantState\(sinbadState\.voiceEnabled\?'idle':'voice-disabled'\);/);
 });
 
-test('audio ended/aborted always resolves the avatar state (idle if voice is still enabled, voice-disabled otherwise) via the single idempotent finishSinbadVoice path, never a stale state',()=>{
+test('audio ended/aborted resolves the avatar, while genuine text-only delivery gets a bounded presenting state',()=>{
   const fn=app.slice(app.indexOf('function finishSinbadVoice'),app.indexOf('function stopSinbadVoice'));
-  assert.match(fn,/setSinbadAssistantState\(forceState\|\|\(sinbadState\.voiceEnabled\?'idle':'voice-disabled'\)\);\s*\n\s*scheduleSinbadListening\(\);/);
+  assert.match(fn,/setSinbadAssistantState\(forceState\|\|\(sinbadState\.voiceEnabled\?'idle':'voice-disabled'\)\);\s*\n\s*if\(forceState==='presenting'\)return;\s*\n\s*scheduleSinbadListening\(\);/);
 });
 
 test('an aborted/superseded XTTS request cannot corrupt the animation state',()=>{
@@ -206,6 +206,15 @@ test('a visible, aria-live status line exists for the large avatar so state is n
   assert.match(html,/<p id="sinbadAvatarStatus" class="sinbad-status-line" aria-live="polite">Ready<\/p>/);
   assert.match(app,/const statusText=next==='thinking'&&thinkingCopy\[detail\.thinkingStage\]\?thinkingCopy\[detail\.thinkingStage\]:next==='speaking'&&responseCopy\[detail\.responseKind\]\?responseCopy\[detail\.responseKind\]:\(copy\[next\]\|\|next\);/);
   assert.match(app,/if\(label&&\(changed\|\|next==='thinking'\)\)label\.textContent=statusText;/);
+});
+
+test('text-only answers are honestly presented without entering the speaking or mouth-animation state',()=>{
+  assert.match(app,/presenting:'Yanıtı ekranda sunuyor'/);
+  assert.match(app,/presenting:'captain-sinbad-idle-master\.png'/);
+  assert.match(app,/if\(next==='presenting'\)sinbadAssistantTimers\.push\(setTimeout\(\(\)=>\{if\(sinbadAssistantState==='presenting'\)\{setSinbadAssistantState\(sinbadState\.voiceEnabled\?'idle':'voice-disabled'\);scheduleSinbadListening\(\);\}\},1800\)\);/);
+  assert.match(app,/finishSinbadVoice\('presenting'\)/);
+  assert.doesNotMatch(css,/data-state="presenting"\]\[data-mouth-frame/);
+  assert.match(css,/data-state="presenting"\] \.sinbad-status-light\{background:var\(--green\)\}/);
 });
 
 test('reduced-motion strips every keyframe animation in the Sinbad avatar block but keeps colour/text state cues',()=>{
@@ -462,8 +471,8 @@ test('round-table fix: every early-return in speakSinbadStandard and speakSinbad
   // the old scattered `sinbadAwaitingAnswer=false;scheduleSinbadListening();` pattern must be gone
   assert.doesNotMatch(standardFn,/announce\(\);sinbadAwaitingAnswer=false;scheduleSinbadListening\(\);return;/);
   assert.doesNotMatch(cloneFn,/announce\(\);sinbadAwaitingAnswer=false;scheduleSinbadListening\(\);return;/);
-  assert.match(standardFn,/if\(!sinbadState\.voiceEnabled\|\|!\('speechSynthesis'in window\)\)\{announce\(\);finishSinbadVoice\(\);return;\}/);
-  assert.match(cloneFn,/if\(!sinbadState\.voiceEnabled\)\{announce\(\);finishSinbadVoice\(\);return;\}/);
+  assert.match(standardFn,/if\(!sinbadState\.voiceEnabled\|\|!\('speechSynthesis'in window\)\)\{announce\(\);finishSinbadVoice\('presenting'\);return;\}/);
+  assert.match(cloneFn,/if\(!sinbadState\.voiceEnabled\)\{announce\(\);finishSinbadVoice\('presenting'\);return;\}/);
 });
 
 test('round-table fix: a transient "no suitable voice this turn" resolves to the warning state (auto-clears), never voice-disabled, so it never misrepresents the user\'s persistent voice preference',()=>{

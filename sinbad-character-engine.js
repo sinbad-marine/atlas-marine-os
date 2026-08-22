@@ -5,7 +5,7 @@
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
   'use strict';
 
-  const STATES=Object.freeze(['idle','listening','thinking','preparing-voice','speaking','laughing','walking','success','warning','error','voice-disabled','board-teaching']);
+  const STATES=Object.freeze(['idle','listening','thinking','preparing-voice','presenting','speaking','laughing','walking','success','warning','error','voice-disabled','board-teaching']);
   const EMOTIONS=Object.freeze(['neutral','attentive','curious','warm','joyful','confident','concerned']);
   const GESTURES=Object.freeze(['rest','open-hand','explain','laugh','walk','point-board','nod','listen-lean','hold']);
   const DEFAULT_PERFORMANCE=Object.freeze({
@@ -13,6 +13,7 @@
     listening:{emotion:'attentive',gesture:'listen-lean',gaze:'audience'},
     thinking:{emotion:'curious',gesture:'hold',gaze:'thought'},
     'preparing-voice':{emotion:'confident',gesture:'rest',gaze:'audience'},
+    presenting:{emotion:'warm',gesture:'open-hand',gaze:'audience'},
     speaking:{emotion:'warm',gesture:'explain',gaze:'audience'},
     laughing:{emotion:'joyful',gesture:'laugh',gaze:'audience'},
     walking:{emotion:'warm',gesture:'walk',gaze:'path'},
@@ -24,7 +25,7 @@
   });
   const EVENT_TO_STATE=Object.freeze({
     READY:'idle',VOICE_DISABLED:'voice-disabled',LISTEN_STARTED:'listening',
-    THINK_STARTED:'thinking',VOICE_PREPARING:'preparing-voice',AUDIO_STARTED:'speaking',
+    THINK_STARTED:'thinking',VOICE_PREPARING:'preparing-voice',TEXT_PRESENTED:'presenting',AUDIO_STARTED:'speaking',
     LAUGH:'laughing',WALK:'walking',TURN_SUCCEEDED:'success',WARNING:'warning',ERROR:'error',TEACH_AT_BOARD:'board-teaching'
   });
 
@@ -35,7 +36,7 @@
     return Object.freeze({
       state,emotion,gesture,gaze:detail.gaze||defaults.gaze,
       boardText:state==='board-teaching'?String(detail.boardText||'').slice(0,500):'',
-      canInterrupt:state==='speaking'||state==='preparing-voice'||state==='walking'||state==='board-teaching',
+      canInterrupt:state==='speaking'||state==='preparing-voice'||state==='presenting'||state==='walking'||state==='board-teaching',
       sequence
     });
   }

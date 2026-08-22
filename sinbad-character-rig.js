@@ -8,7 +8,7 @@
   const CONTROL_LIMITS=Object.freeze({blink:[0,1],mouthOpen:[0,1],smile:[-1,1],headYaw:[-1,1],headPitch:[-1,1],bodyLean:[-1,1],leftArm:[-1,1],rightArm:[-1,1],energy:[0,1]});
   const STATE_POSES=Object.freeze({
     idle:{smile:.18,energy:.18},listening:{headPitch:.12,bodyLean:.16,smile:.08,energy:.3},
-    thinking:{headYaw:.12,headPitch:-.08,energy:.2},'preparing-voice':{headPitch:.05,energy:.3},
+    thinking:{headYaw:.12,headPitch:-.08,energy:.2},'preparing-voice':{headPitch:.05,energy:.3},presenting:{headPitch:.08,smile:.2,leftArm:.24,energy:.34},
     speaking:{mouthOpen:.42,smile:.16,leftArm:.42,rightArm:.5,energy:.7},
     laughing:{mouthOpen:.68,smile:.72,leftArm:.55,rightArm:.62,energy:.82},
     walking:{smile:.2,bodyLean:.08,leftArm:-.3,rightArm:.3,energy:.72},

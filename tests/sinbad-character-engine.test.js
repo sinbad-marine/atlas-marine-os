@@ -4,7 +4,7 @@ const assert=require('node:assert/strict');
 const {createCharacterEngine,STATES}=require('../sinbad-character-engine.js');
 
 test('character engine exposes stable states',()=>{
-  assert.deepEqual(STATES,['idle','listening','thinking','preparing-voice','speaking','laughing','walking','success','warning','error','voice-disabled','board-teaching']);
+  assert.deepEqual(STATES,['idle','listening','thinking','preparing-voice','presenting','speaking','laughing','walking','success','warning','error','voice-disabled','board-teaching']);
 });
 
 test('laugh is an explicit bounded reaction state',()=>{

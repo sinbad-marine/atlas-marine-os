@@ -343,16 +343,16 @@ function requestSinbadWebPermission(question){
 // represent. Visuals are the real illustrated Academy pack
 // (assets/captain-sinbad/, ACADEMY_BEHAVIOR_MANIFEST_TR.md) - Claude does not
 // redraw the character or imitate it with SVG geometry.
-const SINBAD_ASSISTANT_STATES=['idle','listening','thinking','preparing-voice','speaking','laughing','walking','success','warning','error','voice-disabled','board-teaching'];
+const SINBAD_ASSISTANT_STATES=['idle','listening','thinking','preparing-voice','presenting','speaking','laughing','walking','success','warning','error','voice-disabled','board-teaching'];
 const SINBAD_ASSISTANT_STATE_LABELS={
- 'tr-TR':{idle:'Hazır',listening:'Dinliyor',thinking:'Düşünüyor','preparing-voice':'Ses hazırlanıyor',speaking:'Konuşuyor',laughing:'Gülüyor',walking:'Yürüyor',success:'Tamamlandı',warning:'Dikkat',error:'Bağlantı sorunu','voice-disabled':'Ses kapalı','board-teaching':'Tahtada anlatıyor'},
- 'en-US':{idle:'Ready',listening:'Listening',thinking:'Thinking','preparing-voice':'Preparing voice',speaking:'Speaking',laughing:'Laughing',walking:'Walking',success:'Done',warning:'Attention',error:'Connection issue','voice-disabled':'Voice off','board-teaching':'Teaching at the board'},
- 'ru-RU':{idle:'Готов',listening:'Слушает',thinking:'Думает','preparing-voice':'Готовит голос',speaking:'Говорит',laughing:'Смеётся',walking:'Идёт',success:'Готово',warning:'Внимание',error:'Проблема связи','voice-disabled':'Звук выкл.','board-teaching':'Объясняет у доски'},
- 'fr-FR':{idle:'Prêt',listening:'Écoute',thinking:'Réfléchit','preparing-voice':'Prépare la voix',speaking:'Parle',laughing:'Rit',walking:'Marche',success:'Terminé',warning:'Attention',error:'Problème de connexion','voice-disabled':'Voix coupée','board-teaching':'Explique au tableau'},
- 'de-DE':{idle:'Bereit',listening:'Hört zu',thinking:'Denkt nach','preparing-voice':'Bereitet Stimme vor',speaking:'Spricht',laughing:'Lacht',walking:'Geht',success:'Fertig',warning:'Achtung',error:'Verbindungsproblem','voice-disabled':'Stimme aus','board-teaching':'Erklärt an der Tafel'},
- 'ar-SA':{idle:'جاهز',listening:'يستمع',thinking:'يفكر','preparing-voice':'يجهز الصوت',speaking:'يتحدث',laughing:'يضحك',walking:'يمشي',success:'تم',warning:'تنبيه',error:'مشكلة اتصال','voice-disabled':'الصوت متوقف','board-teaching':'يشرح عند السبورة'},
- 'es-ES':{idle:'Listo',listening:'Escuchando',thinking:'Pensando','preparing-voice':'Preparando voz',speaking:'Hablando',laughing:'Riendo',walking:'Caminando',success:'Hecho',warning:'Atención',error:'Problema de conexión','voice-disabled':'Voz apagada','board-teaching':'Explicando en la pizarra'},
- 'it-IT':{idle:'Pronto',listening:'Ascolta',thinking:'Pensa','preparing-voice':'Prepara la voce',speaking:'Parla',laughing:'Ride',walking:'Cammina',success:'Fatto',warning:'Attenzione',error:'Problema di connessione','voice-disabled':'Voce disattivata','board-teaching':'Spiega alla lavagna'}
+ 'tr-TR':{idle:'Hazır',listening:'Dinliyor',thinking:'Düşünüyor','preparing-voice':'Ses hazırlanıyor',presenting:'Yanıtı ekranda sunuyor',speaking:'Konuşuyor',laughing:'Gülüyor',walking:'Yürüyor',success:'Tamamlandı',warning:'Dikkat',error:'Bağlantı sorunu','voice-disabled':'Ses kapalı','board-teaching':'Tahtada anlatıyor'},
+ 'en-US':{idle:'Ready',listening:'Listening',thinking:'Thinking','preparing-voice':'Preparing voice',presenting:'Presenting the answer on screen',speaking:'Speaking',laughing:'Laughing',walking:'Walking',success:'Done',warning:'Attention',error:'Connection issue','voice-disabled':'Voice off','board-teaching':'Teaching at the board'},
+ 'ru-RU':{idle:'Готов',listening:'Слушает',thinking:'Думает','preparing-voice':'Готовит голос',presenting:'Показывает ответ',speaking:'Говорит',laughing:'Смеётся',walking:'Идёт',success:'Готово',warning:'Внимание',error:'Проблема связи','voice-disabled':'Звук выкл.','board-teaching':'Объясняет у доски'},
+ 'fr-FR':{idle:'Prêt',listening:'Écoute',thinking:'Réfléchit','preparing-voice':'Prépare la voix',presenting:'Présente la réponse à l’écran',speaking:'Parle',laughing:'Rit',walking:'Marche',success:'Terminé',warning:'Attention',error:'Problème de connexion','voice-disabled':'Voix coupée','board-teaching':'Explique au tableau'},
+ 'de-DE':{idle:'Bereit',listening:'Hört zu',thinking:'Denkt nach','preparing-voice':'Bereitet Stimme vor',presenting:'Zeigt die Antwort an',speaking:'Spricht',laughing:'Lacht',walking:'Geht',success:'Fertig',warning:'Achtung',error:'Verbindungsproblem','voice-disabled':'Stimme aus','board-teaching':'Erklärt an der Tafel'},
+ 'ar-SA':{idle:'جاهز',listening:'يستمع',thinking:'يفكر','preparing-voice':'يجهز الصوت',presenting:'يعرض الإجابة على الشاشة',speaking:'يتحدث',laughing:'يضحك',walking:'يمشي',success:'تم',warning:'تنبيه',error:'مشكلة اتصال','voice-disabled':'الصوت متوقف','board-teaching':'يشرح عند السبورة'},
+ 'es-ES':{idle:'Listo',listening:'Escuchando',thinking:'Pensando','preparing-voice':'Preparando voz',presenting:'Presentando la respuesta en pantalla',speaking:'Hablando',laughing:'Riendo',walking:'Caminando',success:'Hecho',warning:'Atención',error:'Problema de conexión','voice-disabled':'Voz apagada','board-teaching':'Explicando en la pizarra'},
+ 'it-IT':{idle:'Pronto',listening:'Ascolta',thinking:'Pensa','preparing-voice':'Prepara la voce',presenting:'Presenta la risposta sullo schermo',speaking:'Parla',laughing:'Ride',walking:'Cammina',success:'Fatto',warning:'Attenzione',error:'Problema di connessione','voice-disabled':'Voce disattivata','board-teaching':'Spiega alla lavagna'}
 };
 const SINBAD_THINKING_STAGE_LABELS={
  'tr-TR':{analyzing:'Soruyu analiz ediyor',calculating:'Hesaplıyor',retrieving:'Kaynaklara erişiyor',composing:'Yanıtı hazırlıyor'},
@@ -390,6 +390,7 @@ const SINBAD_STATE_ASSET={
   listening:'captain-sinbad-listening.png',
   thinking:'captain-sinbad-thinking.png',
   'preparing-voice':'captain-sinbad-idle-master.png',
+  presenting:'captain-sinbad-idle-master.png',
   speaking:'captain-sinbad-speaking.png',
   laughing:'captain-sinbad-laughing-v1.png',
   walking:SINBAD_WALK_ASSETS[0],
@@ -602,6 +603,7 @@ function setSinbadAssistantState(state,detail={}){
   const floatButton=$('sinbadFloat');
   if(floatButton)floatButton.setAttribute('aria-label',`Open Captain Sinbad — ${statusText}`);
   if(next==='success')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='success')setSinbadAssistantState('idle');},2200));
+  if(next==='presenting')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='presenting'){setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');scheduleSinbadListening();}},1800));
   if(next==='laughing')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='laughing')setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');},1250));
   if(next==='walking'){startSinbadWalkCycle(generation);sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='walking')setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');},2240));}
   if(next==='warning')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='warning')setSinbadAssistantState('idle');},4200));
@@ -779,6 +781,7 @@ function finishSinbadVoice(forceState){
   sinbadVoiceObjectUrl='';sinbadVoiceAudio=null;sinbadVoiceAbort=null;
   sinbadAwaitingAnswer=false;
   setSinbadAssistantState(forceState||(sinbadState.voiceEnabled?'idle':'voice-disabled'));
+  if(forceState==='presenting')return;
   scheduleSinbadListening();
 }
 function stopSinbadVoice(){
@@ -819,7 +822,7 @@ function speakSinbadStandard(text,onVoiceReady){
   let announced=false;
   const announce=()=>{if(!announced){announced=true;onVoiceReady?.();}};
   const status=$('sinbadKnowledgeStatus');
-  if(!sinbadState.voiceEnabled||!('speechSynthesis'in window)){announce();finishSinbadVoice();return;}
+  if(!sinbadState.voiceEnabled||!('speechSynthesis'in window)){announce();finishSinbadVoice('presenting');return;}
   const voices=speechSynthesis.getVoices();
   if(!voices.length){
     let settled=false;
@@ -951,7 +954,7 @@ function playSinbadCloneBlob(blob,controller){
 async function speakSinbadXttsClone(text,onVoiceReady){
   let announced=false;
   const announce=()=>{if(!announced){announced=true;onVoiceReady?.();}};
-  if(!sinbadState.voiceEnabled){announce();finishSinbadVoice();return;}
+  if(!sinbadState.voiceEnabled){announce();finishSinbadVoice('presenting');return;}
   if(sinbadIsListening)sinbadRecognition?.stop();
   stopSinbadVoice();
   const cleanText=String(text).replace(/[•*_#]/g,' ').trim();

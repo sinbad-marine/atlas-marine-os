@@ -104,6 +104,7 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
 .sinbad-avatar[data-state="laughing"] .sinbad-status-light{background:var(--green)}
 .sinbad-avatar[data-state="walking"] .sinbad-status-light{background:var(--green)}
 .sinbad-avatar[data-state="thinking"] .sinbad-status-light,.sinbad-avatar[data-state="preparing-voice"] .sinbad-status-light{background:var(--gold)}
+.sinbad-avatar[data-state="presenting"] .sinbad-status-light{background:var(--green)}
 .sinbad-avatar[data-state="success"] .sinbad-status-light{background:var(--green)}
 .sinbad-avatar[data-state="warning"] .sinbad-status-light{background:#d99a3d}
 .sinbad-avatar[data-state="error"] .sinbad-status-light{background:var(--danger)}

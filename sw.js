@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.17-live-character-visible-emotion-v11';
+const CACHE='sinbad-marine-v8.20.17-live-character-text-presenting-v12';
 const ASSETS=[
   './',
   './index.html',
