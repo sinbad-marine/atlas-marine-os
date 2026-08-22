@@ -10,6 +10,7 @@
     idle:{smile:.18,energy:.18},listening:{headPitch:.12,bodyLean:.16,smile:.08,energy:.3},
     thinking:{headYaw:.12,headPitch:-.08,energy:.2},'preparing-voice':{headPitch:.05,energy:.3},
     speaking:{mouthOpen:.42,smile:.16,leftArm:.42,rightArm:.5,energy:.7},
+    laughing:{mouthOpen:.68,smile:.72,leftArm:.55,rightArm:.62,energy:.82},
     success:{headPitch:.2,smile:.55,energy:.65},warning:{smile:-.18,leftArm:.28,energy:.38},
     error:{headPitch:-.12,smile:-.35,energy:.18},'voice-disabled':{energy:.08},
     'board-teaching':{headYaw:.24,leftArm:.12,rightArm:.82,energy:.55}

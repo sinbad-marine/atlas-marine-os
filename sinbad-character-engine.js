@@ -5,15 +5,16 @@
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
   'use strict';
 
-  const STATES=Object.freeze(['idle','listening','thinking','preparing-voice','speaking','success','warning','error','voice-disabled','board-teaching']);
-  const EMOTIONS=Object.freeze(['neutral','attentive','curious','warm','confident','concerned']);
-  const GESTURES=Object.freeze(['rest','open-hand','explain','point-board','nod','listen-lean','hold']);
+  const STATES=Object.freeze(['idle','listening','thinking','preparing-voice','speaking','laughing','success','warning','error','voice-disabled','board-teaching']);
+  const EMOTIONS=Object.freeze(['neutral','attentive','curious','warm','joyful','confident','concerned']);
+  const GESTURES=Object.freeze(['rest','open-hand','explain','laugh','point-board','nod','listen-lean','hold']);
   const DEFAULT_PERFORMANCE=Object.freeze({
     idle:{emotion:'warm',gesture:'rest',gaze:'audience'},
     listening:{emotion:'attentive',gesture:'listen-lean',gaze:'audience'},
     thinking:{emotion:'curious',gesture:'hold',gaze:'thought'},
     'preparing-voice':{emotion:'confident',gesture:'rest',gaze:'audience'},
     speaking:{emotion:'warm',gesture:'explain',gaze:'audience'},
+    laughing:{emotion:'joyful',gesture:'laugh',gaze:'audience'},
     success:{emotion:'confident',gesture:'nod',gaze:'audience'},
     warning:{emotion:'concerned',gesture:'open-hand',gaze:'audience'},
     error:{emotion:'concerned',gesture:'hold',gaze:'audience'},
@@ -23,7 +24,7 @@
   const EVENT_TO_STATE=Object.freeze({
     READY:'idle',VOICE_DISABLED:'voice-disabled',LISTEN_STARTED:'listening',
     THINK_STARTED:'thinking',VOICE_PREPARING:'preparing-voice',AUDIO_STARTED:'speaking',
-    TURN_SUCCEEDED:'success',WARNING:'warning',ERROR:'error',TEACH_AT_BOARD:'board-teaching'
+    LAUGH:'laughing',TURN_SUCCEEDED:'success',WARNING:'warning',ERROR:'error',TEACH_AT_BOARD:'board-teaching'
   });
 
   function immutableSnapshot(state,sequence,detail={}){

@@ -97,6 +97,17 @@ test('real phoneme frames follow audio amplitude or genuine speech boundaries an
   assert.match(css,/data-mouth-frame="round"/);
 });
 
+test('laughing is a real illustrated, labelled and time-bounded reaction',()=>{
+  const sw=fs.readFileSync('sw.js','utf8');
+  assert.ok(fs.existsSync('assets/captain-sinbad/captain-sinbad-laughing-v1.png'));
+  assert.match(app,/laughing:'captain-sinbad-laughing-v1\.png'/);
+  assert.match(app,/laughing:'Gülüyor'/);assert.match(app,/laughing:'Laughing'/);
+  assert.match(app,/if\(next==='laughing'\)sinbadAssistantTimers\.push\(setTimeout/);
+  assert.match(app,/if\(action!=='laugh'\)return Object\.freeze\(\{accepted:false,reason:'UNKNOWN_REACTION'\}\)/);
+  assert.match(app,/sinbadCharacterEngine\?\.dispatch\('LAUGH'\)/);
+  assert.match(css,/data-gesture="laugh"/);assert.match(sw,/captain-sinbad-laughing-v1\.png/);
+});
+
 test('SpeechRecognition onstart drives listening, not a fake button-press state',()=>{
   assert.match(app,/sinbadRecognition\.onstart=\(\)=>\{sinbadIsListening=true;setListeningUI\(sinbadWakeActive\?speechCopy\(\)\.listen:handsFreeMessage\(\),true\);setSinbadAssistantState\('listening'\);\};/);
 });
