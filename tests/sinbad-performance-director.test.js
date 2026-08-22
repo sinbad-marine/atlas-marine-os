@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,cueAt,speechModeForDecision,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,cueAt,speechModeForDecision,speechCueForBoundary,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -52,4 +52,17 @@ test('structured Core decisions select conservative speech performance modes',()
   assert.equal(speechModeForDecision({intent:'general',risk:'low'}),'warm');
   assert.equal(speechModeForDecision(null),'warm');
   assert.equal(cueAt('speaking-caution',0).cue.emotion,'concerned');
+});
+
+test('real text boundaries produce sentence-aware speaking cadence',()=>{
+  assert.deepEqual(speechCueForBoundary({text:'Merhaba dünya.',name:'word',charIndex:0,wordIndex:0,mode:'warm'}).cue,{gesture:'open-hand',gaze:'audience',emotion:'warm',cadence:'opening'});
+  assert.deepEqual(speechCueForBoundary({text:'Bir, iki',name:'word',charIndex:4,wordIndex:1,mode:'warm'}).cue,{gesture:'hold',gaze:'thought',emotion:'attentive',cadence:'pause'});
+  assert.deepEqual(speechCueForBoundary({text:'Hazır mısın? Evet.',name:'word',charIndex:12,wordIndex:2,mode:'warm'}).cue,{gesture:'open-hand',gaze:'audience',emotion:'curious',cadence:'question'});
+  assert.deepEqual(speechCueForBoundary({text:'Tamam. Sonra',name:'sentence',charIndex:7,wordIndex:1,mode:'instructional'}).cue,{gesture:'nod',gaze:'audience',emotion:'confident',cadence:'sentence-end'});
+});
+
+test('caution cadence never turns a safety statement into a playful question cue',()=>{
+  assert.deepEqual(speechCueForBoundary({text:'Onay var mı? Bekle.',name:'sentence',charIndex:12,wordIndex:2,mode:'caution'}).cue,{gesture:'nod',gaze:'audience',emotion:'attentive',cadence:'sentence-end'});
+  assert.equal(speechCueForBoundary(null).reason,'INVALID_BOUNDARY');
+  assert.equal(speechCueForBoundary({text:'x',charIndex:9,wordIndex:0}).reason,'INVALID_BOUNDARY');
 });

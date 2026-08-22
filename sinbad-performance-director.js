@@ -59,6 +59,25 @@
     if(['navigation','passage','publication','document','crew','weather'].includes(decision.intent))return 'instructional';
     return 'warm';
   }
+  function speechCueForBoundary(input={}){
+    if(!input||typeof input!=='object'||Array.isArray(input))return Object.freeze({accepted:false,reason:'INVALID_BOUNDARY'});
+    const {text,name,charIndex,wordIndex,mode='warm'}=input;
+    if(typeof text!=='string'||!Number.isSafeInteger(charIndex)||charIndex<0||charIndex>text.length||!Number.isSafeInteger(wordIndex)||wordIndex<0)return Object.freeze({accepted:false,reason:'INVALID_BOUNDARY'});
+    const safeMode=['warm','instructional','caution'].includes(mode)?mode:'warm';
+    const preceding=text.slice(0,charIndex).trimEnd().at(-1)||'';
+    const isSentence=name==='sentence'||/[.!?]/u.test(preceding),isPause=/[,;:]/u.test(preceding);
+    let cue;
+    if(safeMode==='caution'&&(isSentence||isPause))cue={gesture:isSentence?'nod':'hold',gaze:'audience',emotion:isSentence?'attentive':'concerned',cadence:isSentence?'sentence-end':'pause'};
+    else if(isSentence&&preceding==='?')cue={gesture:'open-hand',gaze:'audience',emotion:'curious',cadence:'question'};
+    else if(isSentence)cue={gesture:'nod',gaze:'audience',emotion:safeMode==='instructional'?'confident':'warm',cadence:'sentence-end'};
+    else if(isPause)cue={gesture:'hold',gaze:'thought',emotion:safeMode==='instructional'?'confident':'attentive',cadence:'pause'};
+    else if(charIndex===0)cue={gesture:'open-hand',gaze:'audience',emotion:safeMode==='instructional'?'confident':'warm',cadence:'opening'};
+    else{
+      const sequence=safeMode==='caution'?'speaking-caution':safeMode==='instructional'?'speaking-instructional':'speaking';
+      cue={...cueAt(sequence,wordIndex).cue,cadence:'word'};
+    }
+    return Object.freeze({accepted:true,cue:Object.freeze(cue)});
+  }
   function createPerformanceDirector(options={}){
     const schedule=options.setTimeout||setTimeout,cancelSchedule=options.clearTimeout||clearTimeout;
     let generation=0,timers=[];
@@ -74,5 +93,5 @@
     };
     return Object.freeze({play,cancel});
   }
-  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,cueAt,speechModeForDecision,createPerformanceDirector});
+  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,cueAt,speechModeForDecision,speechCueForBoundary,createPerformanceDirector});
 });

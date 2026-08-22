@@ -394,6 +394,10 @@ function sinbadSpeechPerformanceCue(index){
   const sequence=sinbadSpeechPerformanceMode==='caution'?'speaking-caution':sinbadSpeechPerformanceMode==='instructional'?'speaking-instructional':'speaking';
   const result=sinbadPerformanceDirector?.cueAt(sequence,index);return result?.accepted?result.cue:{};
 }
+function sinbadSpeechBoundaryCue(boundaryEvent,text,index){
+  const result=sinbadPerformanceDirector?.speechCueForBoundary({name:boundaryEvent?.name,charIndex:boundaryEvent?.charIndex,text,wordIndex:index,mode:sinbadSpeechPerformanceMode});
+  return result?.accepted?result.cue:sinbadSpeechPerformanceCue(index);
+}
 function sinbadAssistantElements(){return document.querySelectorAll('.sinbad-avatar');}
 function clearSinbadAssistantTimers(){sinbadAssistantTimers.forEach(clearTimeout);sinbadAssistantTimers=[];}
 function preloadSinbadAvatarAssets(){
@@ -742,13 +746,13 @@ function stopSinbadVoice(){
 }
 let sinbadStandardBoundaryTimer=null;
 let sinbadStandardMouthSequence=0;
-function sinbadStandardVoiceTick(boundaryEvent){
+function sinbadStandardVoiceTick(boundaryEvent,spokenText){
   sinbadAssistantElements().forEach(el=>el.classList.add('sinbad-voice-tick'));
   setSinbadMouthFrame(++sinbadStandardMouthSequence%3===0?'round':'open');
-  const performanceCue=sinbadSpeechPerformanceCue(sinbadStandardMouthSequence-1);
+  const performanceCue=sinbadSpeechBoundaryCue(boundaryEvent,spokenText,sinbadStandardMouthSequence-1);
   if(performanceCue.gesture&&sinbadAssistantState==='speaking')sinbadAssistantElements().forEach(el=>{
     el.dataset.gesture=performanceCue.gesture;el.dataset.gaze=performanceCue.gaze;el.dataset.emotion=performanceCue.emotion||'warm';
-    el.dataset.speechBoundary=boundaryEvent?.name==='sentence'?'sentence':'word';
+    el.dataset.speechBoundary=performanceCue.cadence||'word';
   });
   clearTimeout(sinbadStandardBoundaryTimer);
   sinbadStandardBoundaryTimer=setTimeout(()=>{sinbadAssistantElements().forEach(el=>el.classList.remove('sinbad-voice-tick'));setSinbadMouthFrame('closed');},160);
@@ -836,7 +840,7 @@ function speakSinbadStandard(text,onVoiceReady){
     // Only the real 'speaking has actually started' signal flips the avatar -
     // never the moment we merely queued/prepared the utterance.
     utterance.onstart=()=>{if(myGeneration!==sinbadStandardSpeechGeneration)return;announce();setSinbadAssistantState('speaking',sinbadSpeechPerformanceCue(0));};
-    utterance.onboundary=event=>{if(myGeneration===sinbadStandardSpeechGeneration)sinbadStandardVoiceTick(event);};
+    utterance.onboundary=event=>{if(myGeneration===sinbadStandardSpeechGeneration)sinbadStandardVoiceTick(event,run.text);};
     utterance.onend=()=>{
       if(myGeneration!==sinbadStandardSpeechGeneration)return;
       if(run.pauseAfter)setTimeout(speakNext,run.pauseAfter);

@@ -368,12 +368,13 @@ test('speaking (standard provider) starts only on the real utterance onstart eve
 
 test('onboundary drives a real per-word cue (not a fabricated continuous loop, and never for a superseded call), onend advances/finishes cleanly',()=>{
   const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function splitSinbadCloneChunks'));
-  assert.match(fn,/utterance\.onboundary=event=>\{if\(myGeneration===sinbadStandardSpeechGeneration\)sinbadStandardVoiceTick\(event\);\};/);
-  assert.match(app,/sinbadSpeechPerformanceCue\(sinbadStandardMouthSequence-1\)/);
+  assert.match(fn,/utterance\.onboundary=event=>\{if\(myGeneration===sinbadStandardSpeechGeneration\)sinbadStandardVoiceTick\(event,run\.text\);\};/);
+  assert.match(app,/sinbadSpeechBoundaryCue\(boundaryEvent,spokenText,sinbadStandardMouthSequence-1\)/);
   assert.match(fn,/if\(run\.pauseAfter\)setTimeout\(speakNext,run\.pauseAfter\);/);
   assert.match(fn,/else speakNext\(\);/);
-  assert.match(app,/function sinbadStandardVoiceTick\(boundaryEvent\)\{/);
-  assert.match(app,/el\.dataset\.speechBoundary=boundaryEvent\?\.name==='sentence'\?'sentence':'word'/);
+  assert.match(app,/function sinbadStandardVoiceTick\(boundaryEvent,spokenText\)\{/);
+  assert.match(app,/el\.dataset\.speechBoundary=performanceCue\.cadence\|\|'word'/);
+  assert.match(app,/function sinbadSpeechBoundaryCue\(boundaryEvent,text,index\)\{/);
   assert.match(css,/\.sinbad-avatar\.sinbad-voice-tick \.sinbad-avatar-img\{transform:scale\(1\.018\)/);
 });
 
@@ -487,7 +488,7 @@ test('round-table fix: voiceschanged uses addEventListener/removeEventListener w
   assert.match(standardFn,/if\(myGeneration!==sinbadStandardSpeechGeneration\|\|settled\|\|!speechSynthesis\.getVoices\(\)\.length\)return;/);
   assert.match(standardFn,/if\(myGeneration!==sinbadStandardSpeechGeneration\)return; \/\/ a newer speak request has taken over/);
   assert.match(standardFn,/utterance\.onstart=\(\)=>\{if\(myGeneration!==sinbadStandardSpeechGeneration\)return;announce\(\);setSinbadAssistantState\('speaking',sinbadSpeechPerformanceCue\(0\)\);\};/);
-  assert.match(standardFn,/utterance\.onboundary=event=>\{if\(myGeneration===sinbadStandardSpeechGeneration\)sinbadStandardVoiceTick\(event\);\};/);
+  assert.match(standardFn,/utterance\.onboundary=event=>\{if\(myGeneration===sinbadStandardSpeechGeneration\)sinbadStandardVoiceTick\(event,run\.text\);\};/);
   assert.match(standardFn,/utterance\.onerror=\(\)=>\{\s*\n\s*if\(myGeneration!==sinbadStandardSpeechGeneration\)return;/);
 });
 
