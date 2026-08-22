@@ -138,6 +138,7 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="explain"]{animation:sinbadStageExplain 2.8s ease-in-out infinite}
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="open-hand"]{animation:sinbadStageOpenHand 1.2s ease-out both}
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="listen-lean"]{animation:sinbadStageListen 2.4s ease-in-out infinite}
+  html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-listening-activity="speech"]{filter:drop-shadow(0 0 8px rgba(85,214,190,.42))}
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="nod"]{animation:sinbadStageNod .8s ease-out both}
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="laugh"]{animation:sinbadStageLaugh .72s ease-in-out 2}
   @keyframes sinbadStageExplain{0%,100%{transform:translateY(0) rotate(0)}35%{transform:translateY(-2px) rotate(-.7deg)}70%{transform:translateY(1px) rotate(.55deg)}}

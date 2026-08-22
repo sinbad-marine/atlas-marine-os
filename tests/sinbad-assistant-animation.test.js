@@ -108,8 +108,13 @@ test('laughing is a real illustrated, labelled and time-bounded reaction',()=>{
   assert.match(css,/data-gesture="laugh"/);assert.match(sw,/captain-sinbad-laughing-v1\.png/);
 });
 
-test('SpeechRecognition onstart drives listening, not a fake button-press state',()=>{
-  assert.match(app,/sinbadRecognition\.onstart=\(\)=>\{sinbadIsListening=true;setListeningUI\(sinbadWakeActive\?speechCopy\(\)\.listen:handsFreeMessage\(\),true\);setSinbadAssistantState\('listening'\);\};/);
+test('SpeechRecognition lifecycle drives listening, not a fake button-press state',()=>{
+  assert.match(app,/sinbadRecognition\.onstart=\(\)=>\{if\(sinbadRecognition!==recognition\)return;sinbadIsListening=true;/);
+  assert.match(app,/sinbadRecognition\.onsoundstart=\(\)=>listeningCue\(1,'sound'\)/);
+  assert.match(app,/sinbadRecognition\.onspeechstart=\(\)=>listeningCue\(2,'speech'\)/);
+  assert.match(app,/sinbadRecognition\.onspeechend=\(\)=>listeningCue\(3,'processed'\)/);
+  assert.match(app,/if\(sinbadRecognition!==recognition\)return;const cue=sinbadPerformanceDirector\?\.cueAt\('listening',index\)/);
+  assert.match(css,/data-listening-activity="speech"/);
 });
 
 test('sending a question drives thinking, synced with the existing #sinbadThinking bubble',()=>{
@@ -508,8 +513,9 @@ test('round-table fix: the avatar image swap uses a generation token so a slow/s
 });
 
 test('round-table: SpeechRecognition error/abort paths verified - onend (which the Web Speech spec guarantees fires after error/abort) already resets the avatar out of listening, so no fix was needed here',()=>{
-  const fn=app.slice(app.indexOf('function beginSinbadRecognition'),app.indexOf('function beginSinbadRecognition')+2200);
-  assert.match(fn,/sinbadRecognition\.onerror=event=>\{sinbadIsListening=false;/);
+  const fn=app.slice(app.indexOf('function beginSinbadRecognition'),app.indexOf('function startSinbadListening'));
+  assert.match(fn,/sinbadRecognition\.onerror=event=>\{if\(sinbadRecognition!==recognition\)return;sinbadIsListening=false;/);
+  assert.match(fn,/sinbadRecognition\.onend=\(\)=>\{\s*if\(sinbadRecognition!==recognition\)return;\s*sinbadRecognition=null;/);
   assert.match(fn,/if\(sinbadAssistantState==='listening'\)setSinbadAssistantState\('idle'\);/);
 });
 

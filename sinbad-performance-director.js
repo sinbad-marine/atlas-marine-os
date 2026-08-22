@@ -18,6 +18,12 @@
       Object.freeze({gesture:'open-hand',gaze:'audience'}),
       Object.freeze({gesture:'explain',gaze:'audience'}),
       Object.freeze({gesture:'nod',gaze:'audience'})
+    ]),
+    listening:Object.freeze([
+      Object.freeze({gesture:'listen-lean',gaze:'audience',emotion:'attentive',energy:.28}),
+      Object.freeze({gesture:'listen-lean',gaze:'audience',emotion:'attentive',energy:.46}),
+      Object.freeze({gesture:'hold',gaze:'audience',emotion:'attentive',energy:.62}),
+      Object.freeze({gesture:'nod',gaze:'audience',emotion:'warm',energy:.34})
     ])
   });
   function cueAt(name,index){
