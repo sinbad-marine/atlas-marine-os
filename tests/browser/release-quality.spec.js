@@ -31,3 +31,17 @@ test('member sign-in dialog has no automatically detectable WCAG A/AA violations
   const results=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa','wcag22aa']).analyze();
   expect(results.violations).toEqual([]);
 });
+
+test('Sinbad Academy opens as a controllable classroom window',async({page})=>{
+  await stubBridge(page);
+  await page.goto('/');
+  await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');document.querySelector('#openSinbadAcademyClassroom').click();});
+  const classroom=page.locator('#sinbadAcademyWindow');
+  await expect(classroom).toBeVisible();
+  await page.getByRole('button',{name:'Maximize classroom'}).click();
+  await expect(classroom).toHaveClass(/maximized/);
+  await page.getByRole('button',{name:'Minimize classroom'}).click();
+  await expect(classroom).toHaveClass(/minimized/);
+  await page.getByRole('button',{name:'Close classroom'}).click();
+  await expect(classroom).toBeHidden();
+});

@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.16-semantic-spoken-summary-v1';
+const CACHE='sinbad-marine-v8.20.16-source-visuals-spoken-summary-v1';
 const ASSETS=[
   './',
   './index.html',

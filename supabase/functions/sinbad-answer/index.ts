@@ -54,6 +54,25 @@ const splitAnswerAndSpokenSummary = (raw: string) => {
 
 const needsFreshData = (question: string) => serverCoreDecision(question).needsLiveData;
 
+const wantsSourceVisuals = (question: string) => /(görsel|gorsel|şekil|sekil|diyagram|diagram|çizim|cizim|resim|figure|illustration|visual|show.*image|with.*image)/iu.test(question);
+const pageForChunk = (content: string, terms: string[]) => {
+  const text = String(content || '');
+  const lower = text.toLocaleLowerCase('tr-TR');
+  const positions = terms.map(term => lower.indexOf(term)).filter(position => position >= 0);
+  const target = positions.length ? Math.min(...positions) : text.length;
+  const pagePattern = /\[Page\s+(\d+)\]/gi;
+  let match: RegExpExecArray | null;
+  let firstPage: number | null = null;
+  let nearestPage: number | null = null;
+  while ((match = pagePattern.exec(text))) {
+    const page = Number(match[1]);
+    if (!firstPage) firstPage = page;
+    if (match.index <= target) nearestPage = page;
+    else break;
+  }
+  return nearestPage || firstPage;
+};
+
 Deno.serve(async req => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
@@ -104,7 +123,7 @@ Deno.serve(async req => {
     const titleRows: any[] = [];
     for (const term of expandedTitleTerms.slice(0, 18)) {
       const { data, error } = await db.from('document_knowledge')
-        .select('id,title,classification')
+        .select('id,title,classification,document_id,source_mime_type')
         .eq('workspace_id', workspaceId)
         .ilike('title', `%${term.replace(/[%_]/g, '')}%`)
         .limit(8);
@@ -135,7 +154,7 @@ Deno.serve(async req => {
     if (!rows.length) {
       for (const term of queryTerms.slice(0, 5)) {
         const { data, error } = await db.from('document_knowledge_chunks')
-          .select('content,chunk_index,document_knowledge!inner(title,classification,workspace_id)')
+          .select('content,chunk_index,document_knowledge!inner(title,classification,workspace_id,document_id,source_mime_type)')
           .eq('document_knowledge.workspace_id', workspaceId)
           .ilike('content', `%${term}%`)
           .limit(6);
@@ -150,15 +169,32 @@ Deno.serve(async req => {
       return { row, score };
     }).sort((a, b) => b.score - a.score);
     const unique = [...new Map(rankedRows.map(({ row }) => [`${row.document_knowledge.title}:${row.chunk_index}`, row])).values()].slice(0, 8) as any[];
-    const sources = unique.map((row: any, index: number) => ({ id: `S${index + 1}`, title: row.document_knowledge.title, chunk: row.chunk_index }));
+    const sources = unique.map((row: any, index: number) => ({
+      id: `S${index + 1}`,
+      title: row.document_knowledge.title,
+      chunk: row.chunk_index,
+      documentId: row.document_knowledge.document_id || null,
+      mimeType: row.document_knowledge.source_mime_type || null,
+      page: pageForChunk(String(row.content || ''), queryTerms)
+    }));
+    const visuals = wantsSourceVisuals(question)
+      ? sources.filter((source: any) => source.documentId && source.page && /pdf/i.test(String(source.mimeType || ''))).slice(0, 3).map((source: any) => ({
+          sourceId: source.id,
+          title: source.title,
+          documentId: source.documentId,
+          page: source.page,
+          kind: 'pdf-page'
+        }))
+      : [];
     const context = unique.map((row: any, index: number) =>
-      `[S${index + 1}] ${row.document_knowledge.title} — ${row.document_knowledge.classification}\n${String(row.content).slice(0, 2200)}`
+      `[S${index + 1}] ${row.document_knowledge.title} — ${row.document_knowledge.classification}${pageForChunk(String(row.content || ''), queryTerms) ? ` — page ${pageForChunk(String(row.content || ''), queryTerms)}` : ''}\n${String(row.content).slice(0, 2200)}`
     ).join('\n\n');
 
     if (!openaiKey) {
       if (unique.length) return json({
         answer: `OpenAI bağlantısı henüz etkin değil. Kütüphanede bulduğum ilgili kaynaklar:\n\n${context}\n\nKritik seyir kararlarını güncel ve resmî kaynaklardan doğrulayın.`,
         sources,
+        visuals,
         mode: 'retrieval-only',
         ...decisionSupport
       });
@@ -184,7 +220,7 @@ If web search results are available, cite them using the citations supplied by t
 After the complete written answer, always add the exact marker <<<SPOKEN_SUMMARY>>> and then a coherent spoken teaching summary in the same language. The spoken summary must contain 3 to 6 complete sentences and roughly 60 to 110 words. Teach the central idea, the essential supporting points, and any critical safety caveat. Do not merely copy the first characters, do not use markdown, do not include citations, and never cut a sentence short.`;
 
     const userInput = unique.length
-      ? `${question}\n\nAPPROVED PRIVATE LIBRARY SOURCES\n${context}`
+      ? `${question}\n\nAPPROVED PRIVATE LIBRARY SOURCES\n${context}${visuals.length ? `\n\nVERIFIED SOURCE PAGE VISUALS\n${visuals.map((visual: any) => `${visual.sourceId}: ${visual.title}, page ${visual.page}`).join('\n')}\nTell the user these original publication pages are attached below the answer. Do not claim that no visual is available.` : ''}`
       : `${question}\n\nNo matching private-library passage was found. You may answer from stable general knowledge and must say when current or vessel-specific information is required.`;
     const input = [...history.map((item: any) => ({ role: 'user', content: `UNTRUSTED PRIOR CONVERSATION DATA: ${item.content}` })), { role: 'user', content: userInput }];
     const requestBody: any = {
@@ -211,7 +247,7 @@ After the complete written answer, always add the exact marker <<<SPOKEN_SUMMARY
     if (!answer) return json({ error: 'AI provider returned no answer' }, 502);
     if (!answerIsSafe(answer)) return json({ error: 'AI provider answer crossed the decision-support boundary', code: 'UNSAFE_PROVIDER_ANSWER' }, 502);
     if (spokenSummary && !answerIsSafe(spokenSummary)) return json({ error: 'AI provider spoken summary crossed the decision-support boundary', code: 'UNSAFE_PROVIDER_SUMMARY' }, 502);
-    return json({ answer, spokenSummary, sources, mode: allowWebSearch ? 'web-assisted' : unique.length ? 'private-rag' : 'general-ai', ...decisionSupport });
+    return json({ answer, spokenSummary, sources, visuals, mode: allowWebSearch ? 'web-assisted' : unique.length ? 'private-rag' : 'general-ai', ...decisionSupport });
   } catch (error) {
     return json({ error: error instanceof Error ? error.message : 'Unexpected error' }, 500);
   }
