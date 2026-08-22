@@ -364,6 +364,16 @@ const SINBAD_THINKING_STAGE_LABELS={
  'es-ES':{analyzing:'Analizando la pregunta',calculating:'Calculando',retrieving:'Consultando fuentes',composing:'Preparando la respuesta'},
  'it-IT':{analyzing:'Analizza la domanda',calculating:'Calcola',retrieving:'Consulta le fonti',composing:'Prepara la risposta'}
 };
+const SINBAD_RESPONSE_KIND_LABELS={
+ 'tr-TR':{caution:'Uyarıyor',question:'Soru yöneltiyor',completion:'Sonucu bildiriyor',explanation:'Açıklıyor',conversation:'Konuşuyor'},
+ 'en-US':{caution:'Giving a warning',question:'Asking a question',completion:'Reporting the result',explanation:'Explaining',conversation:'Speaking'},
+ 'ru-RU':{caution:'Предупреждает',question:'Задаёт вопрос',completion:'Сообщает результат',explanation:'Объясняет',conversation:'Говорит'},
+ 'fr-FR':{caution:'Avertit',question:'Pose une question',completion:'Annonce le résultat',explanation:'Explique',conversation:'Parle'},
+ 'de-DE':{caution:'Warnt',question:'Stellt eine Frage',completion:'Meldet das Ergebnis',explanation:'Erklärt',conversation:'Spricht'},
+ 'ar-SA':{caution:'يصدر تحذيراً',question:'يطرح سؤالاً',completion:'يعلن النتيجة',explanation:'يشرح',conversation:'يتحدث'},
+ 'es-ES':{caution:'Advierte',question:'Hace una pregunta',completion:'Comunica el resultado',explanation:'Explica',conversation:'Habla'},
+ 'it-IT':{caution:'Avverte',question:'Fa una domanda',completion:'Comunica il risultato',explanation:'Spiega',conversation:'Parla'}
+};
 // Which real illustrated Academy asset represents each state. Several logical
 // states (preparing-voice, success, warning, error, voice-disabled) do not yet
 // have dedicated art in the v1 pack - they honestly fall back to the idle
@@ -418,6 +428,14 @@ function setSinbadThinkingStage(stage){
   const result=sinbadPerformanceDirector?.thinkingCueForStage(stage);
   if(!result?.accepted)return false;
   return setSinbadAssistantState('thinking',{...result.cue,thinkingStage:stage});
+}
+function setSinbadResponseKind(kind){
+  const copy=SINBAD_RESPONSE_KIND_LABELS[sinbadState.language]||SINBAD_RESPONSE_KIND_LABELS['en-US'];
+  if(!Object.hasOwn(copy,kind))return false;
+  let changed=false;
+  sinbadAssistantElements().forEach(el=>{if(el.dataset.responseKind!==kind)changed=true;el.dataset.responseKind=kind;});
+  if(changed){const label=$('sinbadAvatarStatus');if(label)label.textContent=copy[kind];}
+  return true;
 }
 function sinbadAssistantElements(){return document.querySelectorAll('.sinbad-avatar');}
 function clearSinbadAssistantTimers(){sinbadAssistantTimers.forEach(clearTimeout);sinbadAssistantTimers=[];}
@@ -558,6 +576,8 @@ function setSinbadAssistantState(state,detail={}){
     else delete el.dataset.listeningActivity;
     if(next==='thinking'&&detail.thinkingStage)el.dataset.thinkingStage=detail.thinkingStage;
     else delete el.dataset.thinkingStage;
+    if(next==='speaking'&&detail.responseKind)el.dataset.responseKind=detail.responseKind;
+    else if(next!=='speaking')delete el.dataset.responseKind;
     const defaultEnergy=sinbadCharacterRig?.STATE_POSES[next]?.energy??0;
     const requestedEnergy=Number(detail.energy??defaultEnergy);
     const rigPose=sinbadCharacterRig?.poseForState(next,{energy:Math.max(0,Math.min(1,Number.isFinite(requestedEnergy)?requestedEnergy:defaultEnergy))});
@@ -576,7 +596,8 @@ function setSinbadAssistantState(state,detail={}){
   const copy=SINBAD_ASSISTANT_STATE_LABELS[sinbadState.language]||SINBAD_ASSISTANT_STATE_LABELS['en-US'];
   const label=$('sinbadAvatarStatus');
   const thinkingCopy=SINBAD_THINKING_STAGE_LABELS[sinbadState.language]||SINBAD_THINKING_STAGE_LABELS['en-US'];
-  const statusText=next==='thinking'&&thinkingCopy[detail.thinkingStage]?thinkingCopy[detail.thinkingStage]:(copy[next]||next);
+  const responseCopy=SINBAD_RESPONSE_KIND_LABELS[sinbadState.language]||SINBAD_RESPONSE_KIND_LABELS['en-US'];
+  const statusText=next==='thinking'&&thinkingCopy[detail.thinkingStage]?thinkingCopy[detail.thinkingStage]:next==='speaking'&&responseCopy[detail.responseKind]?responseCopy[detail.responseKind]:(copy[next]||next);
   if(label&&(changed||next==='thinking'))label.textContent=statusText;
   const floatButton=$('sinbadFloat');
   if(floatButton)floatButton.setAttribute('aria-label',`Open Captain Sinbad — ${statusText}`);
@@ -778,9 +799,8 @@ function sinbadStandardVoiceTick(boundaryEvent,spokenText){
   if(performanceCue.gesture&&sinbadAssistantState==='speaking')sinbadAssistantElements().forEach(el=>{
     el.dataset.gesture=performanceCue.gesture;el.dataset.gaze=performanceCue.gaze;el.dataset.emotion=performanceCue.emotion||'warm';
     el.dataset.speechBoundary=performanceCue.cadence||'word';
-    if(performanceCue.responseKind)el.dataset.responseKind=performanceCue.responseKind;
-    else delete el.dataset.responseKind;
   });
+  if(performanceCue.responseKind)setSinbadResponseKind(performanceCue.responseKind);
   clearTimeout(sinbadStandardBoundaryTimer);
   sinbadStandardBoundaryTimer=setTimeout(()=>{sinbadAssistantElements().forEach(el=>el.classList.remove('sinbad-voice-tick'));setSinbadMouthFrame('closed');},160);
 }

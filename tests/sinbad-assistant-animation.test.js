@@ -204,7 +204,7 @@ test('large and small avatars both render the real illustration via <img>, one a
 
 test('a visible, aria-live status line exists for the large avatar so state is never colour-only',()=>{
   assert.match(html,/<p id="sinbadAvatarStatus" class="sinbad-status-line" aria-live="polite">Ready<\/p>/);
-  assert.match(app,/const statusText=next==='thinking'&&thinkingCopy\[detail\.thinkingStage\]\?thinkingCopy\[detail\.thinkingStage\]:\(copy\[next\]\|\|next\);/);
+  assert.match(app,/const statusText=next==='thinking'&&thinkingCopy\[detail\.thinkingStage\]\?thinkingCopy\[detail\.thinkingStage\]:next==='speaking'&&responseCopy\[detail\.responseKind\]\?responseCopy\[detail\.responseKind\]:\(copy\[next\]\|\|next\);/);
   assert.match(app,/if\(label&&\(changed\|\|next==='thinking'\)\)label\.textContent=statusText;/);
 });
 
@@ -592,7 +592,13 @@ test('thinking animation reports only real asynchronous work stages and removes 
 });
 
 test('live speech boundaries expose sentence-level meaning so expression can change during one answer',()=>{
-  assert.match(app,/if\(performanceCue\.responseKind\)el\.dataset\.responseKind=performanceCue\.responseKind;/);
-  assert.match(app,/else delete el\.dataset\.responseKind;/);
+  assert.match(app,/function setSinbadResponseKind\(kind\)\{/);
+  assert.match(app,/if\(!Object\.hasOwn\(copy,kind\)\)return false;/);
+  assert.match(app,/if\(performanceCue\.responseKind\)setSinbadResponseKind\(performanceCue\.responseKind\);/);
+  assert.match(app,/if\(changed\)\{const label=\$\('sinbadAvatarStatus'\);if\(label\)label\.textContent=copy\[kind\];\}/);
   assert.match(app,/sinbadSpeechBoundaryCue\(boundaryEvent,spokenText,sinbadStandardMouthSequence-1\)/);
+  assert.match(css,/data-response-kind="caution"/);
+  assert.match(css,/data-response-kind="question"/);
+  assert.match(css,/data-response-kind="completion"/);
+  assert.match(css,/data-response-kind="explanation"/);
 });

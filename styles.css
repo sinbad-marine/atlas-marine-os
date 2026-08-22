@@ -109,6 +109,10 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
 .sinbad-avatar[data-state="error"] .sinbad-status-light{background:var(--danger)}
 .sinbad-avatar[data-state="voice-disabled"] .sinbad-status-light{background:var(--line)}
 .sinbad-avatar[data-state="board-teaching"] .sinbad-status-light{background:var(--gold)}
+.sinbad-avatar[data-state="speaking"][data-response-kind="caution"]{filter:drop-shadow(0 0 8px rgba(217,154,61,.38))}
+.sinbad-avatar[data-state="speaking"][data-response-kind="question"]{filter:drop-shadow(0 0 8px rgba(244,201,93,.34))}
+.sinbad-avatar[data-state="speaking"][data-response-kind="completion"] .sinbad-status-light{background:var(--green)}
+.sinbad-avatar[data-state="speaking"][data-response-kind="explanation"]{filter:drop-shadow(0 0 7px rgba(85,214,190,.28))}
 
 @media not (prefers-reduced-motion: reduce){
   @keyframes sinbadBreathe{0%,100%{transform:scale(1) translateY(0)}50%{transform:scale(1.012) translateY(-1.4px)}}
