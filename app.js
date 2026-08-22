@@ -354,6 +354,16 @@ const SINBAD_ASSISTANT_STATE_LABELS={
  'es-ES':{idle:'Listo',listening:'Escuchando',thinking:'Pensando','preparing-voice':'Preparando voz',speaking:'Hablando',laughing:'Riendo',walking:'Caminando',success:'Hecho',warning:'Atención',error:'Problema de conexión','voice-disabled':'Voz apagada','board-teaching':'Explicando en la pizarra'},
  'it-IT':{idle:'Pronto',listening:'Ascolta',thinking:'Pensa','preparing-voice':'Prepara la voce',speaking:'Parla',laughing:'Ride',walking:'Cammina',success:'Fatto',warning:'Attenzione',error:'Problema di connessione','voice-disabled':'Voce disattivata','board-teaching':'Spiega alla lavagna'}
 };
+const SINBAD_THINKING_STAGE_LABELS={
+ 'tr-TR':{analyzing:'Soruyu analiz ediyor',calculating:'Hesaplıyor',retrieving:'Kaynaklara erişiyor',composing:'Yanıtı hazırlıyor'},
+ 'en-US':{analyzing:'Analyzing the question',calculating:'Calculating',retrieving:'Retrieving sources',composing:'Preparing the answer'},
+ 'ru-RU':{analyzing:'Анализирует вопрос',calculating:'Вычисляет',retrieving:'Ищет источники',composing:'Готовит ответ'},
+ 'fr-FR':{analyzing:'Analyse la question',calculating:'Calcule',retrieving:'Consulte les sources',composing:'Prépare la réponse'},
+ 'de-DE':{analyzing:'Analysiert die Frage',calculating:'Berechnet',retrieving:'Ruft Quellen ab',composing:'Bereitet die Antwort vor'},
+ 'ar-SA':{analyzing:'يحلل السؤال',calculating:'يجري الحساب',retrieving:'يسترجع المصادر',composing:'يجهز الإجابة'},
+ 'es-ES':{analyzing:'Analizando la pregunta',calculating:'Calculando',retrieving:'Consultando fuentes',composing:'Preparando la respuesta'},
+ 'it-IT':{analyzing:'Analizza la domanda',calculating:'Calcola',retrieving:'Consulta le fonti',composing:'Prepara la risposta'}
+};
 // Which real illustrated Academy asset represents each state. Several logical
 // states (preparing-voice, success, warning, error, voice-disabled) do not yet
 // have dedicated art in the v1 pack - they honestly fall back to the idle
@@ -397,6 +407,11 @@ function sinbadSpeechPerformanceCue(index){
 function sinbadSpeechBoundaryCue(boundaryEvent,text,index){
   const result=sinbadPerformanceDirector?.speechCueForBoundary({name:boundaryEvent?.name,charIndex:boundaryEvent?.charIndex,text,wordIndex:index,mode:sinbadSpeechPerformanceMode});
   return result?.accepted?result.cue:sinbadSpeechPerformanceCue(index);
+}
+function setSinbadThinkingStage(stage){
+  const result=sinbadPerformanceDirector?.thinkingCueForStage(stage);
+  if(!result?.accepted)return false;
+  return setSinbadAssistantState('thinking',{...result.cue,thinkingStage:stage});
 }
 function sinbadAssistantElements(){return document.querySelectorAll('.sinbad-avatar');}
 function clearSinbadAssistantTimers(){sinbadAssistantTimers.forEach(clearTimeout);sinbadAssistantTimers=[];}
@@ -535,6 +550,8 @@ function setSinbadAssistantState(state,detail={}){
     el.dataset.gaze=performance.gaze;
     if(next==='listening'&&detail.listeningActivity)el.dataset.listeningActivity=detail.listeningActivity;
     else delete el.dataset.listeningActivity;
+    if(next==='thinking'&&detail.thinkingStage)el.dataset.thinkingStage=detail.thinkingStage;
+    else delete el.dataset.thinkingStage;
     const defaultEnergy=sinbadCharacterRig?.STATE_POSES[next]?.energy??0;
     const requestedEnergy=Number(detail.energy??defaultEnergy);
     const rigPose=sinbadCharacterRig?.poseForState(next,{energy:Math.max(0,Math.min(1,Number.isFinite(requestedEnergy)?requestedEnergy:defaultEnergy))});
@@ -552,9 +569,11 @@ function setSinbadAssistantState(state,detail={}){
   else setSinbadMouthFrame('closed');
   const copy=SINBAD_ASSISTANT_STATE_LABELS[sinbadState.language]||SINBAD_ASSISTANT_STATE_LABELS['en-US'];
   const label=$('sinbadAvatarStatus');
-  if(label&&changed)label.textContent=copy[next]||next;
+  const thinkingCopy=SINBAD_THINKING_STAGE_LABELS[sinbadState.language]||SINBAD_THINKING_STAGE_LABELS['en-US'];
+  const statusText=next==='thinking'&&thinkingCopy[detail.thinkingStage]?thinkingCopy[detail.thinkingStage]:(copy[next]||next);
+  if(label&&(changed||next==='thinking'))label.textContent=statusText;
   const floatButton=$('sinbadFloat');
-  if(floatButton)floatButton.setAttribute('aria-label',`Open Captain Sinbad — ${copy[next]||next}`);
+  if(floatButton)floatButton.setAttribute('aria-label',`Open Captain Sinbad — ${statusText}`);
   if(next==='success')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='success')setSinbadAssistantState('idle');},2200));
   if(next==='laughing')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='laughing')setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');},1250));
   if(next==='walking'){startSinbadWalkCycle(generation);sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='walking')setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');},2240));}
@@ -1221,6 +1240,7 @@ function renderAcademyQuiz(){
   output.append(choices);const source=document.createElement('small');source.className='academy-source';source.textContent=`Official source: ${item.source}`;output.append(source);
 }
 async function sinbadLocalAnswer(query){
+  setSinbadThinkingStage('analyzing');
   const q=query.toLowerCase();
   const language=sinbadState.language||appLanguage;
   const coreResult=await window.SinbadCore?.orchestrate?.(query,{
@@ -1305,6 +1325,7 @@ async function sinbadLocalAnswer(query){
 async function sinbadOfflineAiAnswer(question){
   const status=$('sinbadKnowledgeStatus');
   try{
+    setSinbadThinkingStage('retrieving');
     if(status)status.textContent='Connecting to Sinbad offline brain…';
     const history=sinbadState.messages.slice(-12,-1).map(message=>({role:message.role==='sinbad'?'assistant':'user',content:message.text}));
     const coreEnvelope=window.SinbadCore?.aiEnvelope?.(question,history);
@@ -1336,17 +1357,22 @@ async function sendToSinbad(text){
   addSinbadMessage('user',q);
   $('sinbadInput').value='';
   if(window.SinbadRouteVisualizer?.isPlotRequest?.(q)){
-    setSinbadAssistantState('thinking');
+    setSinbadThinkingStage('calculating');
     const plotted=await prepareNavigationPlotFromConversation(q);
+    setSinbadThinkingStage('composing');
     addSinbadMessage('sinbad',plotted.message);speakSinbad(plotted.message);return;
   }
-  setSinbadAssistantState('thinking');
+  setSinbadThinkingStage('analyzing');
   $('sinbadThinking').classList.remove('hidden');
-  setTimeout(async()=>{
+  try{
     const answer=await sinbadLocalAnswer(q);
-    $('sinbadThinking').classList.add('hidden');
+    setSinbadThinkingStage('composing');
     speakSinbad(answer,()=>addSinbadMessage('sinbad',answer,consumeSinbadSourceVisuals()));
-  },650);
+  }catch(error){
+    console.error('Sinbad answer failed',error);
+    const message=sinbadState.language==='tr-TR'?'Yanıt hazırlanırken güvenli biçimde durdum. Lütfen yeniden deneyin.':'I stopped safely while preparing the answer. Please try again.';
+    addSinbadMessage('sinbad',message);setSinbadAssistantState('error');
+  }finally{$('sinbadThinking').classList.add('hidden');}
 }
 $('sendSinbad').addEventListener('click',()=>{window.speechSynthesis?.resume();sendToSinbad($('sinbadInput').value);});
 $('sinbadMessages')?.addEventListener('click',event=>{const button=event.target.closest('.sinbad-open-source-visual');if(button)openSinbadSourceVisual(button);});
@@ -2182,6 +2208,7 @@ function consumeSinbadSourceVisuals(){const visuals=sinbadPendingSourceVisuals;s
 async function sinbadCloudKnowledgeAnswer(question){
   sinbadPendingSourceVisuals=[];
   if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId)return null;
+  setSinbadThinkingStage('retrieving');
   const status=$('sinbadKnowledgeStatus');if(status)status.textContent='Searching Atlas Cloud…';
   try{
     const language=sinbadState.language||appLanguage;
@@ -2240,7 +2267,7 @@ async function sinbadCloudKnowledgeAnswer(question){
 }
 async function performSinbadWebSearch(){
   const question=pendingSinbadWebQuestion;if(!question)return;$('sinbadWebConsent').classList.add('hidden');pendingSinbadWebQuestion='';
-  setSinbadAssistantState('thinking');
+  setSinbadThinkingStage('retrieving');
   $('sinbadThinking').classList.remove('hidden');
   try{
     const history=sinbadState.messages.slice(-12).map(message=>({role:message.role==='sinbad'?'assistant':'user',content:message.text}));

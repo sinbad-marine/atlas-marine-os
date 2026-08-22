@@ -93,6 +93,16 @@
       :LISTENING_ACTIVITY_CUES[activity];
     return Object.freeze({accepted:true,cue});
   }
+  const THINKING_STAGE_CUES=Object.freeze({
+    analyzing:Object.freeze({gesture:'hold',gaze:'thought',emotion:'curious',energy:.32}),
+    calculating:Object.freeze({gesture:'explain',gaze:'board',emotion:'confident',energy:.46}),
+    retrieving:Object.freeze({gesture:'open-hand',gaze:'thought',emotion:'attentive',energy:.38}),
+    composing:Object.freeze({gesture:'nod',gaze:'audience',emotion:'warm',energy:.3})
+  });
+  function thinkingCueForStage(stage){
+    if(!Object.hasOwn(THINKING_STAGE_CUES,stage))return Object.freeze({accepted:false,reason:'UNKNOWN_THINKING_STAGE'});
+    return Object.freeze({accepted:true,cue:THINKING_STAGE_CUES[stage]});
+  }
   function createPerformanceDirector(options={}){
     const schedule=options.setTimeout||setTimeout,cancelSchedule=options.clearTimeout||clearTimeout;
     let generation=0,timers=[];
@@ -108,5 +118,5 @@
     };
     return Object.freeze({play,cancel});
   }
-  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,createPerformanceDirector});
+  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,THINKING_STAGE_CUES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,createPerformanceDirector});
 });

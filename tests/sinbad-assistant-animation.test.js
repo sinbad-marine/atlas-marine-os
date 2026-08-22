@@ -131,8 +131,8 @@ test('walking uses two real alpha PNG frames and a bounded user-triggered cycle'
 
 test('sending a question drives thinking, synced with the existing #sinbadThinking bubble',()=>{
   const sendToSinbad=app.slice(app.indexOf('async function sendToSinbad'),app.indexOf("$('sendSinbad').addEventListener"));
-  assert.match(sendToSinbad,/setSinbadAssistantState\('thinking'\);\s*\n\s*\$\('sinbadThinking'\)\.classList\.remove\('hidden'\);/);
-  assert.match(sendToSinbad,/setSinbadAssistantState\('thinking'\);\s*\n\s*const plotted=await prepareNavigationPlotFromConversation/);
+  assert.match(sendToSinbad,/setSinbadThinkingStage\('analyzing'\);\s*\n\s*\$\('sinbadThinking'\)\.classList\.remove\('hidden'\);/);
+  assert.match(sendToSinbad,/setSinbadThinkingStage\('calculating'\);\s*\n\s*const plotted=await prepareNavigationPlotFromConversation/);
 });
 
 test('preparing-voice starts before the XTTS fetch, not after it resolves',()=>{
@@ -204,7 +204,8 @@ test('large and small avatars both render the real illustration via <img>, one a
 
 test('a visible, aria-live status line exists for the large avatar so state is never colour-only',()=>{
   assert.match(html,/<p id="sinbadAvatarStatus" class="sinbad-status-line" aria-live="polite">Ready<\/p>/);
-  assert.match(app,/const label=\$\('sinbadAvatarStatus'\);\s*\n\s*if\(label&&changed\)label\.textContent=copy\[next\]\|\|next;/);
+  assert.match(app,/const statusText=next==='thinking'&&thinkingCopy\[detail\.thinkingStage\]\?thinkingCopy\[detail\.thinkingStage\]:\(copy\[next\]\|\|next\);/);
+  assert.match(app,/if\(label&&\(changed\|\|next==='thinking'\)\)label\.textContent=statusText;/);
 });
 
 test('reduced-motion strips every keyframe animation in the Sinbad avatar block but keeps colour/text state cues',()=>{
@@ -574,4 +575,18 @@ test('Sinbad usability layout keeps a compact sticky profile, responsive tab rai
   assert.match(css,/\.sinbad-workspace-panel\[hidden\]\{display:none!important\}/);
   assert.match(css,/\.sinbad-composer\{position:sticky;bottom:0;/);
   assert.match(css,/@media\(max-width:600px\)\{\.sinbad-workspace-tabs\{position:static;display:flex;overflow-x:auto/);
+});
+
+test('thinking animation reports only real asynchronous work stages and removes the old artificial delay',()=>{
+  assert.match(app,/function setSinbadThinkingStage\(stage\)\{/);
+  assert.match(app,/thinkingCueForStage\(stage\)/);
+  assert.match(app,/if\(!result\?\.accepted\)return false;/);
+  assert.match(app,/el\.dataset\.thinkingStage=detail\.thinkingStage/);
+  assert.match(app,/setSinbadThinkingStage\('calculating'\);\s*\n\s*const plotted=await prepareNavigationPlotFromConversation\(q\)/);
+  assert.match(app,/setSinbadThinkingStage\('retrieving'\);\s*\n\s*const status=\$\('sinbadKnowledgeStatus'\)/);
+  const send=app.slice(app.indexOf('async function sendToSinbad'),app.indexOf("$('sendSinbad').addEventListener"));
+  assert.match(send,/setSinbadThinkingStage\('analyzing'\)/);
+  assert.match(send,/setSinbadThinkingStage\('composing'\)/);
+  assert.doesNotMatch(send,/setTimeout\(async/);
+  assert.match(send,/finally\{\$\('sinbadThinking'\)\.classList\.add\('hidden'\);\}/);
 });

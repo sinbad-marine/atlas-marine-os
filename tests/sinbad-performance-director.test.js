@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,THINKING_STAGE_CUES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -76,4 +76,13 @@ test('real recognition activity has restrained progress and pause cues',()=>{
   assert.equal(listeningCueForActivity('processed').cue.gesture,'nod');
   assert.equal(listeningCueForActivity('invented').reason,'UNKNOWN_LISTENING_ACTIVITY');
   assert.equal(listeningCueForActivity('interim',-1).reason,'INVALID_LISTENING_REVISION');
+});
+
+test('real thinking work maps to distinct restrained and fail-closed stage cues',()=>{
+  assert.ok(Object.isFrozen(THINKING_STAGE_CUES));
+  assert.deepEqual(thinkingCueForStage('analyzing').cue,{gesture:'hold',gaze:'thought',emotion:'curious',energy:.32});
+  assert.equal(thinkingCueForStage('calculating').cue.gaze,'board');
+  assert.equal(thinkingCueForStage('retrieving').cue.emotion,'attentive');
+  assert.equal(thinkingCueForStage('composing').cue.gesture,'nod');
+  assert.equal(thinkingCueForStage('pretending').reason,'UNKNOWN_THINKING_STAGE');
 });
