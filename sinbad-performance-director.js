@@ -132,6 +132,59 @@
     const cues=sentences.map((sentence,index)=>Object.freeze({at:index*550,...responseCueForText(sentence,safeMode).cue}));
     return Object.freeze({accepted:true,cues:Object.freeze(cues)});
   }
+  const IMPROVISATION_POOLS=Object.freeze({
+    caution:Object.freeze([
+      Object.freeze({variantId:'caution-hold',gesture:'hold',gaze:'audience',emotion:'concerned',energy:.32}),
+      Object.freeze({variantId:'caution-open',gesture:'open-hand',gaze:'audience',emotion:'concerned',energy:.36}),
+      Object.freeze({variantId:'caution-thought',gesture:'hold',gaze:'thought',emotion:'attentive',energy:.28}),
+      Object.freeze({variantId:'caution-nod',gesture:'nod',gaze:'audience',emotion:'attentive',energy:.3})
+    ]),
+    question:Object.freeze([
+      Object.freeze({variantId:'question-open',gesture:'open-hand',gaze:'audience',emotion:'curious',energy:.42}),
+      Object.freeze({variantId:'question-thought',gesture:'hold',gaze:'thought',emotion:'curious',energy:.3}),
+      Object.freeze({variantId:'question-explain',gesture:'explain',gaze:'audience',emotion:'curious',energy:.38}),
+      Object.freeze({variantId:'question-nod',gesture:'nod',gaze:'audience',emotion:'attentive',energy:.32})
+    ]),
+    completion:Object.freeze([
+      Object.freeze({variantId:'completion-nod',gesture:'nod',gaze:'audience',emotion:'confident',energy:.4}),
+      Object.freeze({variantId:'completion-open',gesture:'open-hand',gaze:'audience',emotion:'confident',energy:.38}),
+      Object.freeze({variantId:'completion-explain',gesture:'explain',gaze:'audience',emotion:'warm',energy:.34}),
+      Object.freeze({variantId:'completion-rest',gesture:'rest',gaze:'audience',emotion:'confident',energy:.28})
+    ]),
+    explanation:Object.freeze([
+      Object.freeze({variantId:'explanation-explain',gesture:'explain',gaze:'audience',emotion:'confident',energy:.44}),
+      Object.freeze({variantId:'explanation-open',gesture:'open-hand',gaze:'audience',emotion:'warm',energy:.4}),
+      Object.freeze({variantId:'explanation-thought',gesture:'hold',gaze:'thought',emotion:'attentive',energy:.32}),
+      Object.freeze({variantId:'explanation-nod',gesture:'nod',gaze:'audience',emotion:'confident',energy:.36})
+    ]),
+    conversation:Object.freeze([
+      Object.freeze({variantId:'conversation-open',gesture:'open-hand',gaze:'audience',emotion:'warm',energy:.36}),
+      Object.freeze({variantId:'conversation-nod',gesture:'nod',gaze:'audience',emotion:'warm',energy:.3}),
+      Object.freeze({variantId:'conversation-explain',gesture:'explain',gaze:'audience',emotion:'warm',energy:.34}),
+      Object.freeze({variantId:'conversation-rest',gesture:'rest',gaze:'audience',emotion:'attentive',energy:.26})
+    ])
+  });
+  function defaultEntropy(){
+    const cryptoApi=typeof globalThis!=='undefined'?globalThis.crypto:null;
+    if(cryptoApi?.getRandomValues){const value=new Uint32Array(1);cryptoApi.getRandomValues(value);return value[0]/4294967296;}
+    return Math.random();
+  }
+  function createImprovisationDirector(options={}){
+    const entropy=typeof options.entropy==='function'?options.entropy:defaultEntropy;
+    const previous=new Map();
+    const choose=(responseKind,context='answer')=>{
+      if(!Object.hasOwn(IMPROVISATION_POOLS,responseKind))return Object.freeze({accepted:false,reason:'UNKNOWN_RESPONSE_KIND'});
+      const key=`${context}:${responseKind}`,pool=IMPROVISATION_POOLS[responseKind],last=previous.get(key);
+      const candidates=pool.length>1?pool.filter(cue=>cue.variantId!==last):pool;
+      const sample=Number(entropy());
+      if(!Number.isFinite(sample)||sample<0||sample>=1)return Object.freeze({accepted:false,reason:'INVALID_ENTROPY'});
+      const cue=candidates[Math.min(candidates.length-1,Math.floor(sample*candidates.length))];
+      previous.set(key,cue.variantId);
+      return Object.freeze({accepted:true,cue});
+    };
+    const reset=()=>previous.clear();
+    return Object.freeze({choose,reset});
+  }
   function createPerformanceDirector(options={}){
     const schedule=options.setTimeout||setTimeout,cancelSchedule=options.clearTimeout||clearTimeout;
     let generation=0,timers=[];
@@ -147,5 +200,5 @@
     };
     return Object.freeze({play,cancel});
   }
-  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,THINKING_STAGE_CUES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,responseCueForText,textPresentationCues,createPerformanceDirector});
+  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,THINKING_STAGE_CUES,IMPROVISATION_POOLS,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,responseCueForText,textPresentationCues,createImprovisationDirector,createPerformanceDirector});
 });

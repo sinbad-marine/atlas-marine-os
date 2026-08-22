@@ -600,6 +600,12 @@ test('rig head, lean and gaze outputs drive the real portrait while caution hold
   assert.match(css,/\.sinbad-force-reduced-motion \.sinbad-avatar,\.sinbad-force-reduced-motion \.sinbad-avatar-img\{animation:none!important\}/);
 });
 
+test('answer choreography uses a bounded non-repeating improvisation director rather than a fixed visible order',()=>{
+  assert.match(app,/createImprovisationDirector\?\.\(\)/);
+  assert.match(app,/sinbadImprovisationDirector\?\.choose\(cue\.responseKind,'answer'\)/);
+  assert.match(app,/Object\.freeze\(\{\.\.\.cue,\.\.\.improvised\.cue,responseKind:cue\.responseKind\}\)/);
+});
+
 test('thinking animation reports only real asynchronous work stages and removes the old artificial delay',()=>{
   assert.match(app,/function setSinbadThinkingStage\(stage\)\{/);
   assert.match(app,/thinkingCueForStage\(stage\)/);

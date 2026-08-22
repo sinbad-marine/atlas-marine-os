@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,THINKING_STAGE_CUES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,responseCueForText,textPresentationCues,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,THINKING_STAGE_CUES,IMPROVISATION_POOLS,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,responseCueForText,textPresentationCues,createImprovisationDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -114,4 +114,20 @@ test('text-only presentation follows at most three real sentence meanings on a b
   assert.deepEqual(result.cues.map(cue=>cue.responseKind),['caution','completion','question']);
   assert.ok(Object.isFrozen(result.cues));
   assert.equal(textPresentationCues('  ').reason,'INVALID_RESPONSE_TEXT');
+});
+
+test('improvisation chooses context-safe variants without immediately repeating the same action',()=>{
+  const director=createImprovisationDirector({entropy:()=>0});
+  const first=director.choose('question'),second=director.choose('question');
+  assert.equal(first.accepted,true);assert.equal(second.accepted,true);
+  assert.notEqual(first.cue.variantId,second.cue.variantId);
+  assert.equal(first.cue.emotion,'curious');
+  assert.ok(Object.isFrozen(IMPROVISATION_POOLS));assert.ok(Object.isFrozen(first.cue));
+});
+
+test('improvisation is injectable for tests and fails closed for invalid context or entropy',()=>{
+  const high=createImprovisationDirector({entropy:()=>.999999}).choose('conversation');
+  assert.equal(high.cue.variantId,'conversation-rest');
+  assert.equal(createImprovisationDirector({entropy:()=>1}).choose('conversation').reason,'INVALID_ENTROPY');
+  assert.equal(createImprovisationDirector().choose('unsafe-dance').reason,'UNKNOWN_RESPONSE_KIND');
 });

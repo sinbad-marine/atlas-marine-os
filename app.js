@@ -406,6 +406,7 @@ let sinbadAssistantLastDetail={};
 const sinbadCharacterEngine=window.SinbadCharacterEngine?.createCharacterEngine({initialState:'idle'})||null;
 const sinbadCharacterRig=window.SinbadCharacterRig||null;
 const sinbadPerformanceDirector=window.SinbadPerformanceDirector||null;
+const sinbadImprovisationDirector=sinbadPerformanceDirector?.createImprovisationDirector?.()||null;
 let sinbadSpeechPerformanceMode='warm';
 let sinbadResponseOpeningCue={gesture:'open-hand',gaze:'audience',emotion:'warm',energy:.36,responseKind:'conversation'};
 let sinbadTextPresentationCues=[];
@@ -423,9 +424,14 @@ function sinbadSpeechBoundaryCue(boundaryEvent,text,index){
 }
 function prepareSinbadResponsePerformance(text){
   const result=sinbadPerformanceDirector?.responseCueForText(text,sinbadSpeechPerformanceMode);
-  sinbadResponseOpeningCue=result?.accepted?result.cue:{gesture:'hold',gaze:'audience',emotion:'concerned',energy:.24,responseKind:'blocked'};
+  const semantic=result?.accepted?result.cue:{gesture:'hold',gaze:'audience',emotion:'concerned',energy:.24,responseKind:'blocked'};
   const presentation=sinbadPerformanceDirector?.textPresentationCues(text,sinbadSpeechPerformanceMode);
-  sinbadTextPresentationCues=presentation?.accepted?presentation.cues:[sinbadResponseOpeningCue];
+  const sourceCues=presentation?.accepted?presentation.cues:[semantic];
+  sinbadTextPresentationCues=sourceCues.map(cue=>{
+    const improvised=sinbadImprovisationDirector?.choose(cue.responseKind,'answer');
+    return improvised?.accepted?Object.freeze({...cue,...improvised.cue,responseKind:cue.responseKind}):cue;
+  });
+  sinbadResponseOpeningCue=sinbadTextPresentationCues[0]||semantic;
   return sinbadResponseOpeningCue;
 }
 function setSinbadThinkingStage(stage){
