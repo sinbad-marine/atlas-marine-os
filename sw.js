@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.17-live-character-show-palm-v18';
+const CACHE='sinbad-marine-v8.20.17-live-character-shuffle-bag-v19';
 const ASSETS=[
   './',
   './index.html',

@@ -171,18 +171,20 @@
   }
   function createImprovisationDirector(options={}){
     const entropy=typeof options.entropy==='function'?options.entropy:defaultEntropy;
-    const previous=new Map();
+    const histories=new Map();
     const choose=(responseKind,context='answer')=>{
       if(!Object.hasOwn(IMPROVISATION_POOLS,responseKind))return Object.freeze({accepted:false,reason:'UNKNOWN_RESPONSE_KIND'});
-      const key=`${context}:${responseKind}`,pool=IMPROVISATION_POOLS[responseKind],last=previous.get(key);
-      const candidates=pool.length>1?pool.filter(cue=>cue.variantId!==last):pool;
+      const key=`${context}:${responseKind}`,pool=IMPROVISATION_POOLS[responseKind];
+      const history=histories.get(key)||{last:null,remaining:[...pool]};
+      if(!history.remaining.length)history.remaining=pool.length>1?pool.filter(cue=>cue.variantId!==history.last):[...pool];
       const sample=Number(entropy());
       if(!Number.isFinite(sample)||sample<0||sample>=1)return Object.freeze({accepted:false,reason:'INVALID_ENTROPY'});
-      const cue=candidates[Math.min(candidates.length-1,Math.floor(sample*candidates.length))];
-      previous.set(key,cue.variantId);
+      const index=Math.min(history.remaining.length-1,Math.floor(sample*history.remaining.length));
+      const [cue]=history.remaining.splice(index,1);
+      history.last=cue.variantId;histories.set(key,history);
       return Object.freeze({accepted:true,cue});
     };
-    const reset=()=>previous.clear();
+    const reset=()=>histories.clear();
     return Object.freeze({choose,reset});
   }
   function gestureRequestForText(text){

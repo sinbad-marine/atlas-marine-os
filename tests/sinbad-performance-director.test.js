@@ -125,6 +125,14 @@ test('improvisation chooses context-safe variants without immediately repeating 
   assert.ok(Object.isFrozen(IMPROVISATION_POOLS));assert.ok(Object.isFrozen(first.cue));
 });
 
+test('improvisation exhausts a shuffled context bag before reusing a variant',()=>{
+  const director=createImprovisationDirector({entropy:()=>0});
+  const cycle=Array.from({length:IMPROVISATION_POOLS.question.length},()=>director.choose('question').cue.variantId);
+  assert.equal(new Set(cycle).size,IMPROVISATION_POOLS.question.length);
+  const next=director.choose('question').cue.variantId;
+  assert.notEqual(next,cycle.at(-1));
+});
+
 test('improvisation is injectable for tests and fails closed for invalid context or entropy',()=>{
   const high=createImprovisationDirector({entropy:()=>.999999}).choose('conversation');
   assert.equal(high.cue.variantId,'conversation-rest');
