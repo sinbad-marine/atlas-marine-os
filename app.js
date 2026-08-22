@@ -589,6 +589,8 @@ function setSinbadAssistantState(state,detail={}){
     el.dataset.emotion=performance.emotion;
     el.dataset.gesture=performance.gesture;
     el.dataset.gaze=performance.gaze;
+    if(detail.motionProfile)el.dataset.motionProfile=detail.motionProfile;
+    else delete el.dataset.motionProfile;
     if(next==='listening'&&detail.listeningActivity)el.dataset.listeningActivity=detail.listeningActivity;
     else delete el.dataset.listeningActivity;
     if(next==='thinking'&&detail.thinkingStage)el.dataset.thinkingStage=detail.thinkingStage;
@@ -802,7 +804,7 @@ function finishSinbadVoice(forceState){
     if(sinbadResponseOpeningCue.responseKind)setSinbadResponseKind(sinbadResponseOpeningCue.responseKind);
     sinbadTextPresentationCues.slice(1).forEach(cue=>sinbadAssistantTimers.push(setTimeout(()=>{
       if(sinbadAssistantState!=='presenting')return;
-      sinbadAssistantElements().forEach(el=>{el.dataset.gesture=cue.gesture;el.dataset.gaze=cue.gaze;el.dataset.emotion=cue.emotion;});
+      sinbadAssistantElements().forEach(el=>{el.dataset.gesture=cue.gesture;el.dataset.gaze=cue.gaze;el.dataset.emotion=cue.emotion;if(cue.motionProfile)el.dataset.motionProfile=cue.motionProfile;});
       if(cue.responseKind)setSinbadResponseKind(cue.responseKind);
     },cue.at)));
     return;

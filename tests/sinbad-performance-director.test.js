@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,THINKING_STAGE_CUES,IMPROVISATION_POOLS,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,createImprovisationDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,createImprovisationDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -131,6 +131,14 @@ test('improvisation exhausts a shuffled context bag before reusing a variant',()
   assert.equal(new Set(cycle).size,IMPROVISATION_POOLS.question.length);
   const next=director.choose('question').cue.variantId;
   assert.notEqual(next,cycle.at(-1));
+});
+
+test('each gesture receives one of six non-repeating bounded motion profiles',()=>{
+  const director=createImprovisationDirector({entropy:()=>0});
+  const profiles=Array.from({length:MOTION_PROFILES.length},()=>director.choose('conversation').cue.motionProfile);
+  assert.equal(new Set(profiles).size,MOTION_PROFILES.length);
+  assert.equal(MOTION_PROFILES.length,6);assert.ok(Object.isFrozen(MOTION_PROFILES));
+  assert.notEqual(director.choose('conversation').cue.motionProfile,profiles.at(-1));
 });
 
 test('improvisation is injectable for tests and fails closed for invalid context or entropy',()=>{

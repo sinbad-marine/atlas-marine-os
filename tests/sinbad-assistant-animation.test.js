@@ -606,6 +606,13 @@ test('answer choreography uses a bounded non-repeating improvisation director ra
   assert.match(app,/Object\.freeze\(\{\.\.\.cue,\.\.\.improvised\.cue,responseKind:cue\.responseKind\}\)/);
 });
 
+test('six bounded motion profiles change gesture timing and are cleared with the next plain state',()=>{
+  assert.match(app,/if\(detail\.motionProfile\)el\.dataset\.motionProfile=detail\.motionProfile;\s*\n\s*else delete el\.dataset\.motionProfile;/);
+  assert.match(css,/data-motion-profile="measured"\]\{--sinbad-motion-duration:1\.35s\}/);
+  assert.match(css,/data-motion-profile="deliberate"\]\{--sinbad-motion-duration:1\.85s\}/);
+  assert.match(css,/data-motion-profile\]\{animation-duration:var\(--sinbad-motion-duration\)!important\}/);
+});
+
 test('a supported explicit gesture request overrides only the opening cue and unsupported poses are never fabricated',()=>{
   assert.match(app,/gestureRequestForText\(question\)/);
   assert.match(app,/if\(sinbadRequestedGesture\?\.supported&&sinbadTextPresentationCues\.length\)/);
