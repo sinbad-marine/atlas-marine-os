@@ -353,16 +353,16 @@ function requestSinbadWebPermission(question){
 // represent. Visuals are the real illustrated Academy pack
 // (assets/captain-sinbad/, ACADEMY_BEHAVIOR_MANIFEST_TR.md) - Claude does not
 // redraw the character or imitate it with SVG geometry.
-const SINBAD_ASSISTANT_STATES=['idle','listening','thinking','preparing-voice','speaking','success','warning','error','voice-disabled','board-teaching'];
+const SINBAD_ASSISTANT_STATES=['idle','listening','thinking','preparing-voice','speaking','laughing','walking','success','warning','error','voice-disabled','board-teaching'];
 const SINBAD_ASSISTANT_STATE_LABELS={
- 'tr-TR':{idle:'Hazır',listening:'Dinliyor',thinking:'Düşünüyor','preparing-voice':'Ses hazırlanıyor',speaking:'Konuşuyor',success:'Tamamlandı',warning:'Dikkat',error:'Bağlantı sorunu','voice-disabled':'Ses kapalı','board-teaching':'Tahtada anlatıyor'},
- 'en-US':{idle:'Ready',listening:'Listening',thinking:'Thinking','preparing-voice':'Preparing voice',speaking:'Speaking',success:'Done',warning:'Attention',error:'Connection issue','voice-disabled':'Voice off','board-teaching':'Teaching at the board'},
- 'ru-RU':{idle:'Готов',listening:'Слушает',thinking:'Думает','preparing-voice':'Готовит голос',speaking:'Говорит',success:'Готово',warning:'Внимание',error:'Проблема связи','voice-disabled':'Звук выкл.','board-teaching':'Объясняет у доски'},
- 'fr-FR':{idle:'Prêt',listening:'Écoute',thinking:'Réfléchit','preparing-voice':'Prépare la voix',speaking:'Parle',success:'Terminé',warning:'Attention',error:'Problème de connexion','voice-disabled':'Voix coupée','board-teaching':'Explique au tableau'},
- 'de-DE':{idle:'Bereit',listening:'Hört zu',thinking:'Denkt nach','preparing-voice':'Bereitet Stimme vor',speaking:'Spricht',success:'Fertig',warning:'Achtung',error:'Verbindungsproblem','voice-disabled':'Stimme aus','board-teaching':'Erklärt an der Tafel'},
- 'ar-SA':{idle:'جاهز',listening:'يستمع',thinking:'يفكر','preparing-voice':'يجهز الصوت',speaking:'يتحدث',success:'تم',warning:'تنبيه',error:'مشكلة اتصال','voice-disabled':'الصوت متوقف','board-teaching':'يشرح عند السبورة'},
- 'es-ES':{idle:'Listo',listening:'Escuchando',thinking:'Pensando','preparing-voice':'Preparando voz',speaking:'Hablando',success:'Hecho',warning:'Atención',error:'Problema de conexión','voice-disabled':'Voz apagada','board-teaching':'Explicando en la pizarra'},
- 'it-IT':{idle:'Pronto',listening:'Ascolta',thinking:'Pensa','preparing-voice':'Prepara la voce',speaking:'Parla',success:'Fatto',warning:'Attenzione',error:'Problema di connessione','voice-disabled':'Voce disattivata','board-teaching':'Spiega alla lavagna'}
+ 'tr-TR':{idle:'Hazır',listening:'Dinliyor',thinking:'Düşünüyor','preparing-voice':'Ses hazırlanıyor',speaking:'Konuşuyor',laughing:'Gülüyor',walking:'Yürüyor',success:'Tamamlandı',warning:'Dikkat',error:'Bağlantı sorunu','voice-disabled':'Ses kapalı','board-teaching':'Tahtada anlatıyor'},
+ 'en-US':{idle:'Ready',listening:'Listening',thinking:'Thinking','preparing-voice':'Preparing voice',speaking:'Speaking',laughing:'Laughing',walking:'Walking',success:'Done',warning:'Attention',error:'Connection issue','voice-disabled':'Voice off','board-teaching':'Teaching at the board'},
+ 'ru-RU':{idle:'Готов',listening:'Слушает',thinking:'Думает','preparing-voice':'Готовит голос',speaking:'Говорит',laughing:'Смеётся',walking:'Идёт',success:'Готово',warning:'Внимание',error:'Проблема связи','voice-disabled':'Звук выкл.','board-teaching':'Объясняет у доски'},
+ 'fr-FR':{idle:'Prêt',listening:'Écoute',thinking:'Réfléchit','preparing-voice':'Prépare la voix',speaking:'Parle',laughing:'Rit',walking:'Marche',success:'Terminé',warning:'Attention',error:'Problème de connexion','voice-disabled':'Voix coupée','board-teaching':'Explique au tableau'},
+ 'de-DE':{idle:'Bereit',listening:'Hört zu',thinking:'Denkt nach','preparing-voice':'Bereitet Stimme vor',speaking:'Spricht',laughing:'Lacht',walking:'Geht',success:'Fertig',warning:'Achtung',error:'Verbindungsproblem','voice-disabled':'Stimme aus','board-teaching':'Erklärt an der Tafel'},
+ 'ar-SA':{idle:'جاهز',listening:'يستمع',thinking:'يفكر','preparing-voice':'يجهز الصوت',speaking:'يتحدث',laughing:'يضحك',walking:'يمشي',success:'تم',warning:'تنبيه',error:'مشكلة اتصال','voice-disabled':'الصوت متوقف','board-teaching':'يشرح عند السبورة'},
+ 'es-ES':{idle:'Listo',listening:'Escuchando',thinking:'Pensando','preparing-voice':'Preparando voz',speaking:'Hablando',laughing:'Riendo',walking:'Caminando',success:'Hecho',warning:'Atención',error:'Problema de conexión','voice-disabled':'Voz apagada','board-teaching':'Explicando en la pizarra'},
+ 'it-IT':{idle:'Pronto',listening:'Ascolta',thinking:'Pensa','preparing-voice':'Prepara la voce',speaking:'Parla',laughing:'Ride',walking:'Cammina',success:'Fatto',warning:'Attenzione',error:'Problema di connessione','voice-disabled':'Voce disattivata','board-teaching':'Spiega alla lavagna'}
 };
 // Which real illustrated Academy asset represents each state. Several logical
 // states (preparing-voice, success, warning, error, voice-disabled) do not yet
@@ -372,12 +372,17 @@ const SINBAD_ASSISTANT_STATE_LABELS={
 // konuşma jesti yok", "success/warning/error: mevcut duruşun devamı + efekt").
 // Distinct status colour/text still applies (see CSS + sinbadAvatarStatus label).
 const SINBAD_AVATAR_ASSET_BASE='./assets/captain-sinbad/';
+const SINBAD_BLINK_ASSET='captain-sinbad-idle-blink-v1.png';
+const SINBAD_SPEECH_ASSETS=Object.freeze({closed:'captain-sinbad-speaking-mbp-v1.png',open:'captain-sinbad-speaking.png',round:'captain-sinbad-speaking-o-v1.png'});
+const SINBAD_WALK_ASSETS=Object.freeze(['captain-sinbad-walk-a-v1.png','captain-sinbad-walk-b-v1.png']);
 const SINBAD_STATE_ASSET={
   idle:'captain-sinbad-idle-master.png',
   listening:'captain-sinbad-listening.png',
   thinking:'captain-sinbad-thinking.png',
   'preparing-voice':'captain-sinbad-idle-master.png',
   speaking:'captain-sinbad-speaking.png',
+  laughing:'captain-sinbad-laughing-v1.png',
+  walking:SINBAD_WALK_ASSETS[0],
   success:'captain-sinbad-idle-master.png',
   warning:'captain-sinbad-idle-master.png',
   error:'captain-sinbad-idle-master.png',
@@ -387,6 +392,18 @@ const SINBAD_STATE_ASSET={
 let sinbadAssistantState='idle';
 let sinbadAssistantTimers=[];
 let sinbadAssistantLastDetail={};
+const sinbadCharacterEngine=window.SinbadCharacterEngine?.createCharacterEngine({initialState:'idle'})||null;
+const sinbadCharacterRig=window.SinbadCharacterRig||null;
+const sinbadPerformanceDirector=window.SinbadPerformanceDirector||null;
+let sinbadSpeechPerformanceMode='warm';
+function prepareSinbadSpeechPerformance(question){
+  const decision=window.SinbadCore?.analyzeQuery?.(question)||{};
+  sinbadSpeechPerformanceMode=sinbadPerformanceDirector?.speechModeForDecision(decision)||'warm';
+}
+function sinbadSpeechPerformanceCue(index){
+  const sequence=sinbadSpeechPerformanceMode==='caution'?'speaking-caution':sinbadSpeechPerformanceMode==='instructional'?'speaking-instructional':'speaking';
+  const result=sinbadPerformanceDirector?.cueAt(sequence,index);return result?.accepted?result.cue:{};
+}
 function sinbadAssistantElements(){return document.querySelectorAll('.sinbad-avatar');}
 function clearSinbadAssistantTimers(){sinbadAssistantTimers.forEach(clearTimeout);sinbadAssistantTimers=[];}
 function preloadSinbadAvatarAssets(){
@@ -395,6 +412,48 @@ function preloadSinbadAvatarAssets(){
     if(seen.has(file))return;seen.add(file);
     const img=new Image();img.src=SINBAD_AVATAR_ASSET_BASE+file;
   });
+  const blink=new Image();blink.src=SINBAD_AVATAR_ASSET_BASE+SINBAD_BLINK_ASSET;
+  Object.values(SINBAD_SPEECH_ASSETS).forEach(file=>{const img=new Image();img.src=SINBAD_AVATAR_ASSET_BASE+file;});
+  SINBAD_WALK_ASSETS.forEach(file=>{const img=new Image();img.src=SINBAD_AVATAR_ASSET_BASE+file;});
+}
+let sinbadBlinkTimer=null;
+function sinbadBlinkAllowed(){
+  return ['idle','voice-disabled','success','warning','error'].includes(sinbadAssistantState)
+    &&document.visibilityState!=='hidden'
+    &&!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    &&!document.documentElement.classList.contains('sinbad-force-reduced-motion');
+}
+function ensureSinbadBlinkLayers(){
+  sinbadAssistantElements().forEach(el=>{
+    if(el.querySelector('.sinbad-avatar-blink'))return;
+    const blink=document.createElement('img');blink.className='sinbad-avatar-img sinbad-avatar-blink';
+    blink.src=SINBAD_AVATAR_ASSET_BASE+SINBAD_BLINK_ASSET;blink.alt='';blink.setAttribute('aria-hidden','true');
+    el.insertBefore(blink,el.querySelector('.sinbad-status-light'));
+  });
+}
+function ensureSinbadSpeechLayers(){
+  sinbadAssistantElements().forEach(el=>{
+    for(const frame of ['closed','round']){
+      if(el.querySelector(`.sinbad-avatar-mouth-${frame}`))continue;
+      const img=document.createElement('img');img.className=`sinbad-avatar-img sinbad-avatar-mouth sinbad-avatar-mouth-${frame}`;
+      img.src=SINBAD_AVATAR_ASSET_BASE+SINBAD_SPEECH_ASSETS[frame];img.alt='';img.setAttribute('aria-hidden','true');
+      el.insertBefore(img,el.querySelector('.sinbad-status-light'));
+    }
+  });
+}
+function setSinbadMouthFrame(frame){
+  const safe=sinbadAssistantState==='speaking'&&Object.hasOwn(SINBAD_SPEECH_ASSETS,frame)?frame:'closed';
+  sinbadAssistantElements().forEach(el=>el.dataset.mouthFrame=safe);
+}
+function scheduleSinbadBlink(){
+  clearTimeout(sinbadBlinkTimer);sinbadBlinkTimer=null;
+  if(!sinbadBlinkAllowed())return;
+  sinbadBlinkTimer=setTimeout(()=>{
+    if(!sinbadBlinkAllowed())return;
+    sinbadAssistantElements().forEach(el=>el.classList.add('sinbad-blinking'));
+    setTimeout(()=>sinbadAssistantElements().forEach(el=>el.classList.remove('sinbad-blinking')),135);
+    scheduleSinbadBlink();
+  },3800+Math.floor(Math.random()*3200));
 }
 let sinbadLipSyncAudioContext=null,sinbadLipSyncAnalyser=null,sinbadLipSyncSource=null,sinbadLipSyncRaf=null;
 function stopSinbadLipSyncAnalyser(){
@@ -408,7 +467,7 @@ function stopSinbadLipSyncAnalyser(){
   if(sinbadLipSyncSource){try{sinbadLipSyncSource.disconnect();}catch(_){/* already disconnected */}}
   if(sinbadLipSyncAnalyser){try{sinbadLipSyncAnalyser.disconnect();}catch(_){/* already disconnected */}}
   sinbadLipSyncSource=null;sinbadLipSyncAnalyser=null;
-  sinbadAssistantElements().forEach(el=>el.style.removeProperty('--sinbad-voice-amp'));
+  sinbadAssistantElements().forEach(el=>el.style.removeProperty('--sinbad-voice-amp'));setSinbadMouthFrame('closed');
 }
 async function startSinbadLipSyncAnalyser(audio){
   // Never run two graphs/RAF loops at once, and never leak the previous
@@ -440,6 +499,7 @@ async function startSinbadLipSyncAnalyser(audio){
       let sum=0;for(let i=0;i<data.length;i++)sum+=data[i];
       const amp=Math.min(1,(sum/data.length)/72);
       sinbadAssistantElements().forEach(el=>el.style.setProperty('--sinbad-voice-amp',amp.toFixed(3)));
+      setSinbadMouthFrame(amp<.12?'closed':amp<.48?'open':'round');
       sinbadLipSyncRaf=requestAnimationFrame(tick);
     };
     tick();
@@ -456,8 +516,14 @@ async function startSinbadLipSyncAnalyser(audio){
   }
 }
 let sinbadAvatarImageGeneration=0;
+function startSinbadWalkCycle(generation){
+  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches||document.documentElement.classList.contains('sinbad-force-reduced-motion'))return;
+  let frame=0;const tick=()=>{if(generation!==sinbadAvatarImageGeneration||sinbadAssistantState!=='walking')return;frame=(frame+1)%SINBAD_WALK_ASSETS.length;sinbadAssistantElements().forEach(el=>{const img=el.querySelector('.sinbad-avatar-img:not(.sinbad-avatar-blink):not(.sinbad-avatar-mouth)');if(img)img.src=SINBAD_AVATAR_ASSET_BASE+SINBAD_WALK_ASSETS[frame];});sinbadAssistantTimers.push(setTimeout(tick,280));};
+  sinbadAssistantTimers.push(setTimeout(tick,280));
+}
 function setSinbadAssistantState(state,detail={}){
   const next=SINBAD_ASSISTANT_STATES.includes(state)?state:'idle';
+  const performance=sinbadCharacterEngine?.setState(next,detail)?.snapshot||{state:next,emotion:'neutral',gesture:'rest',gaze:'audience'};
   const changed=next!==sinbadAssistantState;
   sinbadAssistantState=next;
   sinbadAssistantLastDetail=detail||{};
@@ -470,6 +536,16 @@ function setSinbadAssistantState(state,detail={}){
   const generation=++sinbadAvatarImageGeneration;
   sinbadAssistantElements().forEach(el=>{
     el.dataset.state=next;
+    el.dataset.emotion=performance.emotion;
+    el.dataset.gesture=performance.gesture;
+    el.dataset.gaze=performance.gaze;
+    if(next==='listening'&&detail.listeningActivity)el.dataset.listeningActivity=detail.listeningActivity;
+    else delete el.dataset.listeningActivity;
+    const defaultEnergy=sinbadCharacterRig?.STATE_POSES[next]?.energy??0;
+    const requestedEnergy=Number(detail.energy??defaultEnergy);
+    const rigPose=sinbadCharacterRig?.poseForState(next,{energy:Math.max(0,Math.min(1,Number.isFinite(requestedEnergy)?requestedEnergy:defaultEnergy))});
+    const rigCss=rigPose?.accepted?sinbadCharacterRig.cssVariables(rigPose.controls):null;
+    if(rigCss?.accepted)Object.entries(rigCss.variables).forEach(([name,value])=>el.style.setProperty(name,value));
     const img=el.querySelector('.sinbad-avatar-img');
     if(img&&!img.src.endsWith(asset)){
       img.style.opacity='0';
@@ -479,20 +555,35 @@ function setSinbadAssistantState(state,detail={}){
   });
   if('reducedMotion' in (detail||{}))document.documentElement.classList.toggle('sinbad-force-reduced-motion',detail.reducedMotion===true);
   if(next!=='speaking')stopSinbadLipSyncAnalyser();
+  else setSinbadMouthFrame('closed');
   const copy=SINBAD_ASSISTANT_STATE_LABELS[sinbadState.language]||SINBAD_ASSISTANT_STATE_LABELS['en-US'];
   const label=$('sinbadAvatarStatus');
   if(label&&changed)label.textContent=copy[next]||next;
   const floatButton=$('sinbadFloat');
   if(floatButton)floatButton.setAttribute('aria-label',`Open Captain Sinbad — ${copy[next]||next}`);
   if(next==='success')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='success')setSinbadAssistantState('idle');},2200));
+  if(next==='laughing')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='laughing')setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');},1250));
+  if(next==='walking'){startSinbadWalkCycle(generation);sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='walking')setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');},2240));}
   if(next==='warning')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='warning')setSinbadAssistantState('idle');},4200));
   if(next==='error')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='error')setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');},6000));
+  scheduleSinbadBlink();
   return next;
 }
+window.SinbadCharacterController=Object.freeze({
+  react(action){
+    if(!['laugh','walk'].includes(action))return Object.freeze({accepted:false,reason:'UNKNOWN_REACTION'});
+    if(action==='walk'&&!['idle','voice-disabled'].includes(sinbadAssistantState))return Object.freeze({accepted:false,reason:'CHARACTER_BUSY'});
+    const event=action==='walk'?'WALK':'LAUGH',state=action==='walk'?'walking':'laughing';const result=sinbadCharacterEngine?.dispatch(event);
+    if(!result?.accepted)return Object.freeze({accepted:false,reason:result?.reason||'CHARACTER_ENGINE_UNAVAILABLE'});
+    setSinbadAssistantState(state);return Object.freeze({accepted:true,state});
+  }
+});
+ensureSinbadBlinkLayers();ensureSinbadSpeechLayers();scheduleSinbadBlink();
 preloadSinbadAvatarAssets();
 if(typeof document!=='undefined'&&'visibilityState'in document){
   document.addEventListener('visibilitychange',()=>{
     document.documentElement.classList.toggle('sinbad-tab-hidden',document.visibilityState==='hidden');
+    scheduleSinbadBlink();
   },{passive:true});
 }
 
@@ -660,10 +751,17 @@ function stopSinbadVoice(){
   if(sinbadAssistantState==='speaking'||sinbadAssistantState==='preparing-voice')setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');
 }
 let sinbadStandardBoundaryTimer=null;
-function sinbadStandardVoiceTick(){
+let sinbadStandardMouthSequence=0;
+function sinbadStandardVoiceTick(boundaryEvent){
   sinbadAssistantElements().forEach(el=>el.classList.add('sinbad-voice-tick'));
+  setSinbadMouthFrame(++sinbadStandardMouthSequence%3===0?'round':'open');
+  const performanceCue=sinbadSpeechPerformanceCue(sinbadStandardMouthSequence-1);
+  if(performanceCue.gesture&&sinbadAssistantState==='speaking')sinbadAssistantElements().forEach(el=>{
+    el.dataset.gesture=performanceCue.gesture;el.dataset.gaze=performanceCue.gaze;el.dataset.emotion=performanceCue.emotion||'warm';
+    el.dataset.speechBoundary=boundaryEvent?.name==='sentence'?'sentence':'word';
+  });
   clearTimeout(sinbadStandardBoundaryTimer);
-  sinbadStandardBoundaryTimer=setTimeout(()=>sinbadAssistantElements().forEach(el=>el.classList.remove('sinbad-voice-tick')),160);
+  sinbadStandardBoundaryTimer=setTimeout(()=>{sinbadAssistantElements().forEach(el=>el.classList.remove('sinbad-voice-tick'));setSinbadMouthFrame('closed');},160);
 }
 // Default voice provider: low-latency browser speechSynthesis ('standard').
 // speakSinbadXttsClone (GPU-dependent Yasemin voice clone) is kept fully
@@ -747,8 +845,8 @@ function speakSinbadStandard(text,onVoiceReady){
     utterance.rate=profile.rate;utterance.pitch=profile.pitch;utterance.volume=profile.volume;
     // Only the real 'speaking has actually started' signal flips the avatar -
     // never the moment we merely queued/prepared the utterance.
-    utterance.onstart=()=>{if(myGeneration!==sinbadStandardSpeechGeneration)return;announce();setSinbadAssistantState('speaking');};
-    utterance.onboundary=()=>{if(myGeneration===sinbadStandardSpeechGeneration)sinbadStandardVoiceTick();};
+    utterance.onstart=()=>{if(myGeneration!==sinbadStandardSpeechGeneration)return;announce();setSinbadAssistantState('speaking',sinbadSpeechPerformanceCue(0));};
+    utterance.onboundary=event=>{if(myGeneration===sinbadStandardSpeechGeneration)sinbadStandardVoiceTick(event);};
     utterance.onend=()=>{
       if(myGeneration!==sinbadStandardSpeechGeneration)return;
       if(run.pauseAfter)setTimeout(speakNext,run.pauseAfter);
@@ -796,7 +894,7 @@ function playSinbadCloneBlob(blob,controller){
     // the real signal the task requires, not the fetch/announce moment.
     audio.addEventListener('playing',()=>{
       if(sinbadVoiceAbort!==controller)return;
-      setSinbadAssistantState('speaking');
+      setSinbadAssistantState('speaking',sinbadSpeechPerformanceCue(0));
       startSinbadLipSyncAnalyser(audio);
     },{once:true});
     audio.onended=()=>{cleanup();resolve();};
@@ -899,11 +997,18 @@ function beginSinbadRecognition(){
   if(!Recognition){setListeningUI(speechCopy().unsupported,true);return;}
   if(!sinbadHandsFreeEnabled||sinbadIsListening||sinbadAwaitingAnswer)return;
   sinbadRecognition=new Recognition();sinbadRecognition.lang=sinbadState.language;sinbadRecognition.continuous=false;sinbadRecognition.interimResults=true;sinbadRecognition.maxAlternatives=1;
+  const recognition=sinbadRecognition;
   let finalTranscript='';
-  sinbadRecognition.onstart=()=>{sinbadIsListening=true;setListeningUI(sinbadWakeActive?speechCopy().listen:handsFreeMessage(),true);setSinbadAssistantState('listening');};
-  sinbadRecognition.onresult=event=>{let interim='';for(let i=event.resultIndex;i<event.results.length;i++){const part=event.results[i][0].transcript;if(event.results[i].isFinal)finalTranscript+=part;else interim+=part;}$('sinbadInput').value=(finalTranscript||interim).trim();};
-  sinbadRecognition.onerror=event=>{sinbadIsListening=false;if(event.error==='not-allowed'||event.error==='service-not-allowed'){sinbadHandsFreeEnabled=false;setListeningUI(speechCopy().denied,true);return;}if(!['no-speech','aborted'].includes(event.error))setListeningUI(`Microphone: ${event.error}`,true);};
+  const listeningCue=(index,activity)=>{if(sinbadRecognition!==recognition)return;const cue=sinbadPerformanceDirector?.cueAt('listening',index);setSinbadAssistantState('listening',{...(cue?.accepted?cue.cue:{}),listeningActivity:activity});};
+  sinbadRecognition.onstart=()=>{if(sinbadRecognition!==recognition)return;sinbadIsListening=true;setListeningUI(sinbadWakeActive?speechCopy().listen:handsFreeMessage(),true);listeningCue(0,'ready');};
+  sinbadRecognition.onsoundstart=()=>listeningCue(1,'sound');
+  sinbadRecognition.onspeechstart=()=>listeningCue(2,'speech');
+  sinbadRecognition.onspeechend=()=>listeningCue(3,'processed');
+  sinbadRecognition.onresult=event=>{if(sinbadRecognition!==recognition)return;let interim='';for(let i=event.resultIndex;i<event.results.length;i++){const part=event.results[i][0].transcript;if(event.results[i].isFinal)finalTranscript+=part;else interim+=part;}$('sinbadInput').value=(finalTranscript||interim).trim();};
+  sinbadRecognition.onerror=event=>{if(sinbadRecognition!==recognition)return;sinbadIsListening=false;if(event.error==='not-allowed'||event.error==='service-not-allowed'){sinbadHandsFreeEnabled=false;setListeningUI(speechCopy().denied,true);return;}if(!['no-speech','aborted'].includes(event.error))setListeningUI(`Microphone: ${event.error}`,true);};
   sinbadRecognition.onend=()=>{
+    if(sinbadRecognition!==recognition)return;
+    sinbadRecognition=null;
     sinbadIsListening=false;const heard=finalTranscript.trim();
     const wakeMatch=heard.match(/(?:hey|hei|hej|эй|يا)?\s*(?:sinbad|sindbad|simbad)/iu);
     let command='';
@@ -1233,6 +1338,7 @@ async function sendToSinbad(text){
   // A new question always takes the floor immediately. This cancels queued
   // teaching pauses and any utterance still reading the previous answer.
   stopSinbadVoice();
+  prepareSinbadSpeechPerformance(q);
   sinbadModelSpokenSummary='';
   if(pendingSinbadWebQuestion&&/^(izin ver|evet|ara|webde ara|allow|yes|search|разрешаю|да|autoriser|oui|erlauben|ja|اسمح|نعم|permitir|sí|consenti|sì)[.! ]*$/iu.test(q)){
     addSinbadMessage('user',q);$('sinbadInput').value='';await performSinbadWebSearch();return;
@@ -1297,6 +1403,7 @@ setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');
 $('stopSinbadVoice')?.addEventListener('click',stopSinbadVoice);
 $('startSinbadListening')?.addEventListener('click',startSinbadListening);
 $('testSinbadVoice')?.addEventListener('click',()=>{sinbadState.voiceEnabled=true;localStorage.setItem('atlas_sinbad_voice','on');setSinbadVoiceUI();speakSinbad(speechCopy().test);});
+$('testSinbadWalk')?.addEventListener('click',()=>window.SinbadCharacterController.react('walk'));
 $('sinbadLanguage').value=sinbadState.language;
 $('sinbadLanguage')?.addEventListener('change',e=>{sinbadState.language=e.target.value;localStorage.setItem('atlas_sinbad_language',e.target.value);stopSinbadVoice();if(sinbadIsListening)sinbadRecognition?.stop();setListeningUI();});
 $('allowSinbadWebSearch')?.addEventListener('click',performSinbadWebSearch);

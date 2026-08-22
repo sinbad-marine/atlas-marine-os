@@ -93,9 +93,18 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
    reads as blank. Full body (object-fit:contain) is reserved for the
    board-teaching / Academy scene, which gets a taller card above. Small
    floating avatar stays a tight head/shoulders crop for the same reason. */
-.sinbad-avatar-img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:50% 50%;opacity:1;transition:opacity .22s ease}
+.sinbad-avatar-img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:50% 50%;opacity:1;transition:opacity .22s ease;transform-origin:50% 62%;filter:saturate(calc(1 + var(--sinbad-rig-energy,0)))}
+.sinbad-avatar-blink{z-index:1;opacity:0;pointer-events:none;transition:none}
+.sinbad-avatar-mouth{z-index:1;opacity:0;pointer-events:none;transition:opacity .045s linear}
+.sinbad-avatar[data-state="speaking"][data-mouth-frame="closed"] .sinbad-avatar-img:not(.sinbad-avatar-mouth-closed),
+.sinbad-avatar[data-state="speaking"][data-mouth-frame="round"] .sinbad-avatar-img:not(.sinbad-avatar-mouth-round){opacity:0}
+.sinbad-avatar[data-state="speaking"][data-mouth-frame="closed"] .sinbad-avatar-mouth-closed,
+.sinbad-avatar[data-state="speaking"][data-mouth-frame="round"] .sinbad-avatar-mouth-round{opacity:1}
+.sinbad-avatar.sinbad-blinking .sinbad-avatar-img:not(.sinbad-avatar-blink){opacity:0}
+.sinbad-avatar.sinbad-blinking .sinbad-avatar-blink{opacity:1}
 .sinbad-avatar.large .sinbad-avatar-img{object-fit:cover;object-position:50% 4%}
 .sinbad-avatar.large[data-state="board-teaching"] .sinbad-avatar-img{object-fit:contain;object-position:50% 50%}
+.sinbad-avatar.large[data-state="walking"] .sinbad-avatar-img{object-fit:contain;object-position:50% 50%}
 .sinbad-avatar.small .sinbad-avatar-img{object-fit:cover;object-position:50% 2%}
 .sinbad-avatar .sinbad-status-light{position:absolute;right:6px;bottom:6px;width:12px;height:12px;border-radius:50%;background:var(--muted);border:2px solid var(--panel2);z-index:2}
 .sinbad-avatar.small .sinbad-status-light{width:9px;height:9px;right:2px;bottom:2px;border-width:1.5px}
@@ -105,6 +114,8 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
 
 /* Status colour - always present, never the only signal (see .sinbad-status-line and aria-label). */
 .sinbad-avatar[data-state="listening"] .sinbad-status-light,.sinbad-avatar[data-state="speaking"] .sinbad-status-light{background:var(--cyan)}
+.sinbad-avatar[data-state="laughing"] .sinbad-status-light{background:var(--green)}
+.sinbad-avatar[data-state="walking"] .sinbad-status-light{background:var(--green)}
 .sinbad-avatar[data-state="thinking"] .sinbad-status-light,.sinbad-avatar[data-state="preparing-voice"] .sinbad-status-light{background:var(--gold)}
 .sinbad-avatar[data-state="success"] .sinbad-status-light{background:var(--green)}
 .sinbad-avatar[data-state="warning"] .sinbad-status-light{background:#d99a3d}
@@ -139,6 +150,17 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-state="preparing-voice"] .sinbad-status-light{animation:sinbadCalmBlinkLight 1s ease-in-out infinite}
 
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-state="speaking"] .sinbad-avatar-img{animation:sinbadVoicePulse .5s ease-in-out infinite}
+  html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="explain"]{animation:sinbadStageExplain 2.8s ease-in-out infinite}
+  html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="open-hand"]{animation:sinbadStageOpenHand 1.2s ease-out both}
+  html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="listen-lean"]{animation:sinbadStageListen 2.4s ease-in-out infinite}
+  html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-listening-activity="speech"]{filter:drop-shadow(0 0 8px rgba(85,214,190,.42))}
+  html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="nod"]{animation:sinbadStageNod .8s ease-out both}
+  html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="laugh"]{animation:sinbadStageLaugh .72s ease-in-out 2}
+  @keyframes sinbadStageExplain{0%,100%{transform:translateY(0) rotate(0)}35%{transform:translateY(-2px) rotate(-.7deg)}70%{transform:translateY(1px) rotate(.55deg)}}
+  @keyframes sinbadStageOpenHand{0%{transform:scale(.985)}55%{transform:scale(1.018)}100%{transform:scale(1)}}
+  @keyframes sinbadStageListen{0%,100%{transform:translateX(0)}50%{transform:translateX(2px)}}
+  @keyframes sinbadStageNod{0%,100%{transform:translateY(0)}45%{transform:translateY(4px)}}
+  @keyframes sinbadStageLaugh{0%,100%{transform:translateY(0) rotate(0)}45%{transform:translateY(-3px) rotate(-.55deg)}}
   /* Real per-word cue from SpeechSynthesisUtterance's own onboundary event
      (standard voice provider) - a brief, subtle emphasis, not a fabricated
      continuous mouth-shape animation. */
@@ -162,6 +184,7 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
   .sinbad-avatar-img{animation:none!important}
 }
 .sinbad-force-reduced-motion .sinbad-avatar-img{animation:none!important}
+.sinbad-force-reduced-motion .sinbad-avatar-blink{display:none}
 @media(max-width:900px){.sinbad-layout{grid-template-columns:1fr}.sinbad-profile{position:static;display:grid;grid-template-columns:96px 1fr auto;gap:12px;align-items:center;text-align:left;padding:12px}.sinbad-avatar.large{grid-row:1/4;width:96px;height:82px}.sinbad-profile h3,.sinbad-profile p{margin:2px 0}.sinbad-profile .badge{justify-self:end}.sinbad-capabilities{grid-column:2/4;display:flex;gap:12px;overflow:auto;margin-top:4px;padding-bottom:4px}.sinbad-capabilities span{white-space:nowrap}.sinbad-status-line{grid-column:2}.sinbad-workspace-tabs{top:68px}.chat-bubble{max-width:92%}}
 @media(max-width:600px){.sinbad-workspace-tabs{position:static;display:flex;overflow-x:auto;scroll-snap-type:x mandatory}.sinbad-workspace-tab{min-width:132px;scroll-snap-align:start}.sinbad-workspace-panel{padding:12px;min-height:480px}.sinbad-profile{grid-template-columns:76px 1fr}.sinbad-avatar.large{width:76px;height:68px}.sinbad-profile .badge{display:none}.sinbad-capabilities{grid-column:1/-1}.sinbad-panel-heading{display:grid}.sinbad-panel-heading .badge{max-width:none;text-align:left}.sinbad-voice-toolbar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.sinbad-voice-toolbar label{grid-column:1/-1}.sinbad-voice-toolbar select,.sinbad-voice-toolbar .btn{width:100%}.quick-prompts{flex-wrap:nowrap;overflow-x:auto}.quick-prompts .btn{white-space:nowrap}.chat-input-row{grid-template-columns:1fr}.sinbad-float span{display:none}.sinbad-float{padding:7px;right:14px;bottom:14px}}
 

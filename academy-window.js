@@ -5,14 +5,25 @@ const VOICE_KEY='atlas_sinbad_academy_voice_enabled';
 const HISTORY_KEY='atlas_sinbad_academy_messages';
 const AVATARS={idle:'./assets/captain-sinbad/captain-sinbad-idle-master.png',teaching:'./assets/captain-sinbad/captain-sinbad-board-teaching.png',speaking:'./assets/captain-sinbad/captain-sinbad-speaking.png',listening:'./assets/captain-sinbad/captain-sinbad-listening.png',thinking:'./assets/captain-sinbad/captain-sinbad-thinking.png'};
 const DEFAULT_CLOUD={url:'https://kcvyftrvteqmabvxfebu.supabase.co',key:'sb_publishable_ZBHFlbhQAnhUAOyVg20Szw_nW0QDj_l'};
+const academyCharacterEngine=window.SinbadCharacterEngine?.createCharacterEngine({initialState:'idle'})||null;
+const academyPerformanceDirector=window.SinbadPerformanceDirector?.createPerformanceDirector()||null;
 let voiceEnabled=localStorage.getItem(VOICE_KEY)!=='false',lastNarration='',narrationRun=0,cloudClient=null,cloudSession=null;
 let messages=loadMessages(),recognition=null,objectUrls=[];
+
+function renderCharacterSnapshot(snapshot){
+  const stage=byId('academyInstructorStage'),image=byId('academySinbadAvatar');if(!stage||!image)return;
+  stage.dataset.state=snapshot.state;stage.dataset.gesture=snapshot.gesture;stage.dataset.gaze=snapshot.gaze;stage.dataset.emotion=snapshot.emotion;
+  const pose=window.SinbadCharacterRig?.poseForState(snapshot.state),rig=pose?.accepted&&window.SinbadCharacterRig?.cssVariables(pose.controls);
+  if(rig?.accepted)Object.entries(rig.variables).forEach(([name,value])=>stage.style.setProperty(name,value));
+  image.src=AVATARS[snapshot.state]||AVATARS[snapshot.state==='board-teaching'?'teaching':'idle']||AVATARS.idle;
+}
+academyCharacterEngine?.subscribe(renderCharacterSnapshot);
 
 function loadMessages(){try{return JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]').slice(-30)}catch{return[]}}
 function saveMessages(){localStorage.setItem(HISTORY_KEY,JSON.stringify(messages.slice(-30)))}
 function saveWindowGeometry(){try{localStorage.setItem(GEOMETRY_KEY,JSON.stringify({left:window.screenX,top:window.screenY,width:window.outerWidth,height:window.outerHeight}))}catch{}}
 function restoreWindowGeometry(){try{const saved=JSON.parse(localStorage.getItem(GEOMETRY_KEY)||'null');if(!saved)return;const width=Math.max(640,Math.min(Number(saved.width)||1200,screen.availWidth)),height=Math.max(520,Math.min(Number(saved.height)||800,screen.availHeight));window.resizeTo(width,height);window.moveTo(Math.max(screen.availLeft||0,Number(saved.left)||0),Math.max(screen.availTop||0,Number(saved.top)||0))}catch{}}
-function setInstructorState(state,status){const safeState=AVATARS[state]?state:'idle';byId('academyInstructorStage').dataset.state=safeState;byId('academySinbadAvatar').src=AVATARS[safeState];if(status)byId('academyInstructorStatus').textContent=status}
+function setInstructorState(state,status){const safeState=AVATARS[state]?state:'idle';academyPerformanceDirector?.cancel();if(academyCharacterEngine)academyCharacterEngine.setState(safeState);else renderCharacterSnapshot({state:safeState,gesture:'rest',gaze:'audience',emotion:'warm'});if(status)byId('academyInstructorStatus').textContent=status}
 function syncVoiceControls(){byId('academyVoiceToggle').textContent=voiceEnabled?'🔊 Voice: On':'🔇 Voice: Off';byId('academyVoiceToggle').setAttribute('aria-pressed',String(voiceEnabled));byId('academyReplayVoice').disabled=!lastNarration}
 function stopNarration(status='Voice stopped'){narrationRun+=1;if('speechSynthesis'in window)window.speechSynthesis.cancel();byId('academyStopVoice').disabled=true;setInstructorState('idle',status)}
 function selectVoice(){const voices=window.speechSynthesis?.getVoices?.()||[];return voices.find(v=>/^tr([-_]|$)/i.test(v.lang))||voices.find(v=>/^en([-_]|$)/i.test(v.lang))||voices[0]||null}

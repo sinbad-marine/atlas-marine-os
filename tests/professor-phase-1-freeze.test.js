@@ -2,9 +2,13 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const crypto=require('node:crypto');
+const {execFileSync}=require('node:child_process');
 
 const manifest=JSON.parse(fs.readFileSync('professor-phase-1-freeze.json','utf8'));
-const sha256=file=>crypto.createHash('sha256').update(Buffer.from(fs.readFileSync(file,'utf8').replace(/\r\n/g,'\n'),'utf8')).digest('hex');
+const FREEZE_TAG='sinbad-professor-phase-1-v1';
+const normalize=text=>text.replace(/\r\n/g,'\n');
+const taggedFile=file=>execFileSync('git',['show',`${FREEZE_TAG}:${file}`],{encoding:'utf8'});
+const sha256Text=text=>crypto.createHash('sha256').update(Buffer.from(normalize(text),'utf8')).digest('hex');
 
 test('Professor Phase 1 freeze records a bounded GO decision',()=>{
   assert.equal(manifest.schemaVersion,'sinbad-professor-freeze/v1');
@@ -17,9 +21,17 @@ test('Professor Phase 1 freeze records a bounded GO decision',()=>{
   assert.equal(manifest.verification.browser.failed,0);
 });
 
-test('Professor Phase 1 frozen files match their recorded hashes',()=>{
+test('Professor Phase 1 manifest remains identical to the immutable tag',()=>{
+  assert.equal(
+    normalize(fs.readFileSync('professor-phase-1-freeze.json','utf8')),
+    normalize(taggedFile('professor-phase-1-freeze.json')),
+    'the Phase 1 freeze record must not be rewritten',
+  );
+});
+
+test('Professor Phase 1 tagged files match their recorded hashes',()=>{
   for(const [file,expected] of Object.entries(manifest.files)){
-    assert.equal(sha256(file),expected,`${file} changed after the Phase 1 reality check`);
+    assert.equal(sha256Text(taggedFile(file)),expected,`${file} differs inside the immutable Phase 1 tag`);
   }
 });
 

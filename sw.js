@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.19-professor-phase-2-beta-v1';
+const CACHE='sinbad-marine-v8.20.19-professor-phase-2-character-engine-v1';
 const ASSETS=[
   './',
   './index.html',
@@ -12,6 +12,9 @@ const ASSETS=[
   './sinbad-professor.js',
   './styles.css',
   './app.js',
+  './sinbad-character-engine.js',
+  './sinbad-performance-director.js',
+  './sinbad-character-rig.js',
   './pilot-data.js',
   './route-data.js',
   './official-publications.js',
@@ -32,9 +35,15 @@ const ASSETS=[
   './icon-192.png',
   './icon-512.png',
   './assets/captain-sinbad/captain-sinbad-idle-master.png',
+  './assets/captain-sinbad/captain-sinbad-idle-blink-v1.png',
   './assets/captain-sinbad/captain-sinbad-listening.png',
   './assets/captain-sinbad/captain-sinbad-thinking.png',
   './assets/captain-sinbad/captain-sinbad-speaking.png',
+  './assets/captain-sinbad/captain-sinbad-speaking-mbp-v1.png',
+  './assets/captain-sinbad/captain-sinbad-speaking-o-v1.png',
+  './assets/captain-sinbad/captain-sinbad-laughing-v1.png',
+  './assets/captain-sinbad/captain-sinbad-walk-a-v1.png',
+  './assets/captain-sinbad/captain-sinbad-walk-b-v1.png',
   './assets/captain-sinbad/captain-sinbad-board-teaching.png'
 ];
 
