@@ -41,3 +41,15 @@ test('standalone Academy retains course and quiz handlers',()=>{
   assert.match(academyApp,/function renderLesson\(\)/);
   assert.match(academyApp,/function renderQuiz\(\)/);
 });
+
+test('native Academy owns a bounded live Sinbad board-teaching stage',()=>{
+  assert.match(academyHtml,/id="academyTeachingStage"/);assert.match(academyHtml,/captain-sinbad-board-teaching\.png/);
+  assert.match(academyHtml,/sinbad-character-engine\.js\?v=82017/);
+  assert.match(academyApp,/function teachLessonAtBoard\(lesson\)/);
+  assert.match(academyApp,/\.join\('\\n\\n'\)\.slice\(0,500\)/);
+  assert.match(academyApp,/academyCharacterEngine\?\.dispatch\('TEACH_AT_BOARD'/);
+  assert.match(academyApp,/generation!==academyBoardGeneration/);
+  assert.match(academyApp,/function stopBoardTeaching\(\)/);
+  assert.match(academyCss,/\.academy-teaching-stage\[hidden\]\{display:none\}/);
+  assert.match(academyCss,/@media\(prefers-reduced-motion:reduce\)/);
+});

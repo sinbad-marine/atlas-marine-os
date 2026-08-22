@@ -234,7 +234,7 @@ test('tablet: the compact avatar rail gives status and capabilities dedicated gr
   assert.match(css,/\.sinbad-status-line\{grid-column:2\}/);
 });
 
-test('board-teaching state exists with real art wired, but is not fabricated a fake trigger (no board UI exists yet in this pass)',()=>{
+test('board-teaching state exists with real art wired for the native Academy stage',()=>{
   assert.match(app,/'board-teaching':'captain-sinbad-board-teaching\.png'/);
   assert.doesNotMatch(app,/setSinbadAssistantState\('board-teaching'\)/);
 });
