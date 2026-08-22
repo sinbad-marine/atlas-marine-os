@@ -4,7 +4,7 @@ const fs=require('node:fs');
 const crypto=require('node:crypto');
 
 const manifest=JSON.parse(fs.readFileSync('professor-phase-1-freeze.json','utf8'));
-const sha256=file=>crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+const sha256=file=>crypto.createHash('sha256').update(Buffer.from(fs.readFileSync(file,'utf8').replace(/\r\n/g,'\n'),'utf8')).digest('hex');
 
 test('Professor Phase 1 freeze records a bounded GO decision',()=>{
   assert.equal(manifest.schemaVersion,'sinbad-professor-freeze/v1');

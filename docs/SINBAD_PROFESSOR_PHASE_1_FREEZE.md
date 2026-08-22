@@ -53,9 +53,12 @@ not a claim that the complete Professor engine is finished.
 | `academy.html` | `4246622077b95cb71276e0db9e96a1ba0264d5fb6262f92aa376b412d4ffcac8` |
 | `academy.css` | `11485ceccdb967732b5c48104a327f5720469e992ff252223fbdfdc4189af75b` |
 | `academy-window.js` | `77d1548433486f5271313816dfb6022a9ee6153a2c016974f587d83465ea9ef8` |
-| `sinbad-core.js` | `b6589388241f403f71b3e5d38707dd08f24e5119b1a1c47a6c4f4427cfb1e992` |
-| `supabase/functions/sinbad-answer/index.ts` | `549ae2b9270f47384bb24a0e8a4ec53a5b6c075f581700642f0942ea7e4420f4` |
-| `supabase/functions/sinbad-answer/core-decision.js` | `975834395f952f9540dce93312ae75c05bb39211fcb9f88873c9077cd6618fe1` |
+| `sinbad-core.js` | `f4da2aa5e70e75436d497d48441e9ada6d3aefd944f5e71f59ff8578afe3d7b1` |
+| `supabase/functions/sinbad-answer/index.ts` | `1ba487a973efbbe8f884fe9f7c3720d2c06fe93109d53ccb198bbccb6514cf63` |
+| `supabase/functions/sinbad-answer/core-decision.js` | `016d89dec3aeac09f0540d0b1b9f1323ed76d4b11593fa5a020a7a68b9de2585` |
+
+Hashes are calculated from UTF-8 text with line endings canonicalized to LF so
+the same frozen source verifies on Windows and Linux.
 
 ## Change rule
 
