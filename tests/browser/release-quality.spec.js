@@ -77,6 +77,13 @@ test('Professor Phase 2 opens separately, embeds the frozen classroom and starts
   const classroom=professor.frameLocator('#phaseOneClassroom');
   await expect(classroom.locator('#academyChatForm')).toBeVisible();
   await expect(classroom.locator('#academySinbadAvatar')).toHaveCount(1);
+  await classroom.locator('#academyMessages').evaluate(box=>{const article=document.createElement('article');article.className='academy-message user';article.innerHTML='<strong>Captain</strong><p>Gelgit nasıl oluşur?</p>';box.append(article);});
+  await expect(professor.locator('#chatReflection')).toBeHidden();
+  await classroom.locator('#academyCloudStatus').evaluate(node=>{node.textContent='Answer ready';});
+  await classroom.locator('#academyMessages').evaluate(box=>{const article=document.createElement('article');article.className='academy-message sinbad';article.innerHTML='<strong>Captain Sinbad</strong><p>Gelgit, gök cisimlerinin çekimi ve yerel hidrografiyle oluşur.</p>';box.append(article);});
+  await expect(professor.locator('#chatReflection')).toBeVisible();
+  await professor.locator('#reflectionUnderstood').click();
+  await expect(professor.locator('#coachReason')).toContainText('understanding confirmed by the learner');
   await professor.locator('#startDiagnostic').click();
   await expect(professor.locator('#diagnosticQuestion')).toBeVisible();
   await expect(professor.locator('#diagnosticQuestion strong')).toContainText('1/6');
