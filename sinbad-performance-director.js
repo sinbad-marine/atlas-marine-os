@@ -65,16 +65,23 @@
     if(typeof text!=='string'||!Number.isSafeInteger(charIndex)||charIndex<0||charIndex>text.length||!Number.isSafeInteger(wordIndex)||wordIndex<0)return Object.freeze({accepted:false,reason:'INVALID_BOUNDARY'});
     const safeMode=['warm','instructional','caution'].includes(mode)?mode:'warm';
     const preceding=text.slice(0,charIndex).trimEnd().at(-1)||'';
-    const isSentence=name==='sentence'||/[.!?]/u.test(preceding),isPause=/[,;:]/u.test(preceding);
+    const startsNewSentence=/[.!?]/u.test(preceding)&&/\S/u.test(text[charIndex]||'');
+    const isSentence=name==='sentence'||(/[.!?]/u.test(preceding)&&!startsNewSentence),isPause=/[,;:]/u.test(preceding);
+    const semanticIndex=Math.max(0,Math.min(text.length-1,(isSentence||isPause)&&!startsNewSentence?charIndex-1:charIndex));
+    const sentenceStart=Math.max(text.lastIndexOf('.',semanticIndex-1),text.lastIndexOf('!',semanticIndex-1),text.lastIndexOf('?',semanticIndex-1))+1;
+    const following=[text.indexOf('.',semanticIndex),text.indexOf('!',semanticIndex),text.indexOf('?',semanticIndex)].filter(index=>index>=0);
+    const sentenceEnd=following.length?Math.min(...following)+1:text.length;
+    const sentence=text.slice(sentenceStart,sentenceEnd).trim()||text.trim();
+    const semantic=responseCueForText(sentence,safeMode).cue||{gesture:'hold',gaze:'audience',emotion:'concerned',responseKind:'blocked'};
     let cue;
     if(safeMode==='caution'&&(isSentence||isPause))cue={gesture:isSentence?'nod':'hold',gaze:'audience',emotion:isSentence?'attentive':'concerned',cadence:isSentence?'sentence-end':'pause'};
     else if(isSentence&&preceding==='?')cue={gesture:'open-hand',gaze:'audience',emotion:'curious',cadence:'question'};
-    else if(isSentence)cue={gesture:'nod',gaze:'audience',emotion:safeMode==='instructional'?'confident':'warm',cadence:'sentence-end'};
-    else if(isPause)cue={gesture:'hold',gaze:'thought',emotion:safeMode==='instructional'?'confident':'attentive',cadence:'pause'};
-    else if(charIndex===0)cue={gesture:'open-hand',gaze:'audience',emotion:safeMode==='instructional'?'confident':'warm',cadence:'opening'};
+    else if(isSentence)cue={gesture:'nod',gaze:'audience',emotion:semantic.emotion,cadence:'sentence-end'};
+    else if(isPause)cue={gesture:'hold',gaze:'thought',emotion:semantic.responseKind==='caution'?'concerned':safeMode==='instructional'?'confident':'attentive',cadence:'pause'};
+    else if(charIndex===0||startsNewSentence)cue={gesture:semantic.gesture,gaze:semantic.gaze,emotion:semantic.emotion,cadence:'opening',responseKind:semantic.responseKind};
     else{
       const sequence=safeMode==='caution'?'speaking-caution':safeMode==='instructional'?'speaking-instructional':'speaking';
-      cue={...cueAt(sequence,wordIndex).cue,cadence:'word'};
+      cue={...cueAt(sequence,wordIndex).cue,emotion:semantic.emotion,cadence:'word',responseKind:semantic.responseKind};
     }
     return Object.freeze({accepted:true,cue:Object.freeze(cue)});
   }

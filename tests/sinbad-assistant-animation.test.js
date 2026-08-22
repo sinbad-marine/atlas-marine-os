@@ -590,3 +590,9 @@ test('thinking animation reports only real asynchronous work stages and removes 
   assert.doesNotMatch(send,/setTimeout\(async/);
   assert.match(send,/finally\{\$\('sinbadThinking'\)\.classList\.add\('hidden'\);\}/);
 });
+
+test('live speech boundaries expose sentence-level meaning so expression can change during one answer',()=>{
+  assert.match(app,/if\(performanceCue\.responseKind\)el\.dataset\.responseKind=performanceCue\.responseKind;/);
+  assert.match(app,/else delete el\.dataset\.responseKind;/);
+  assert.match(app,/sinbadSpeechBoundaryCue\(boundaryEvent,spokenText,sinbadStandardMouthSequence-1\)/);
+});

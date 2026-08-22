@@ -778,6 +778,8 @@ function sinbadStandardVoiceTick(boundaryEvent,spokenText){
   if(performanceCue.gesture&&sinbadAssistantState==='speaking')sinbadAssistantElements().forEach(el=>{
     el.dataset.gesture=performanceCue.gesture;el.dataset.gaze=performanceCue.gaze;el.dataset.emotion=performanceCue.emotion||'warm';
     el.dataset.speechBoundary=performanceCue.cadence||'word';
+    if(performanceCue.responseKind)el.dataset.responseKind=performanceCue.responseKind;
+    else delete el.dataset.responseKind;
   });
   clearTimeout(sinbadStandardBoundaryTimer);
   sinbadStandardBoundaryTimer=setTimeout(()=>{sinbadAssistantElements().forEach(el=>el.classList.remove('sinbad-voice-tick'));setSinbadMouthFrame('closed');},160);

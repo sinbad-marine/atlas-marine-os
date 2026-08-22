@@ -55,7 +55,7 @@ test('structured Core decisions select conservative speech performance modes',()
 });
 
 test('real text boundaries produce sentence-aware speaking cadence',()=>{
-  assert.deepEqual(speechCueForBoundary({text:'Merhaba dünya.',name:'word',charIndex:0,wordIndex:0,mode:'warm'}).cue,{gesture:'open-hand',gaze:'audience',emotion:'warm',cadence:'opening'});
+  assert.deepEqual(speechCueForBoundary({text:'Merhaba dünya.',name:'word',charIndex:0,wordIndex:0,mode:'warm'}).cue,{gesture:'open-hand',gaze:'audience',emotion:'warm',cadence:'opening',responseKind:'conversation'});
   assert.deepEqual(speechCueForBoundary({text:'Bir, iki',name:'word',charIndex:4,wordIndex:1,mode:'warm'}).cue,{gesture:'hold',gaze:'thought',emotion:'attentive',cadence:'pause'});
   assert.deepEqual(speechCueForBoundary({text:'Hazır mısın? Evet.',name:'word',charIndex:12,wordIndex:2,mode:'warm'}).cue,{gesture:'open-hand',gaze:'audience',emotion:'curious',cadence:'question'});
   assert.deepEqual(speechCueForBoundary({text:'Tamam. Sonra',name:'sentence',charIndex:7,wordIndex:1,mode:'instructional'}).cue,{gesture:'nod',gaze:'audience',emotion:'confident',cadence:'sentence-end'});
@@ -95,4 +95,14 @@ test('real answer meaning selects a deterministic opening reaction without rando
   assert.equal(responseCueForText('Merhaba Kaptan.','warm').cue.responseKind,'conversation');
   assert.equal(responseCueForText('   ','warm').reason,'INVALID_RESPONSE_TEXT');
   assert.equal(responseCueForText('Harika mı?','caution').cue.responseKind,'caution');
+});
+
+test('speech boundaries follow the meaning of each real sentence instead of freezing one emotion for the whole answer',()=>{
+  const text='Dikkat: sığlık var. Şimdi normal açıklamaya geçiyorum. Hazır mısınız?';
+  const warning=speechCueForBoundary({text,name:'word',charIndex:0,wordIndex:0,mode:'warm'}).cue;
+  const explanation=speechCueForBoundary({text,name:'word',charIndex:text.indexOf('Şimdi'),wordIndex:3,mode:'warm'}).cue;
+  const question=speechCueForBoundary({text,name:'word',charIndex:text.indexOf('Hazır'),wordIndex:7,mode:'warm'}).cue;
+  assert.equal(warning.responseKind,'caution');assert.equal(warning.emotion,'concerned');
+  assert.equal(explanation.responseKind,'conversation');assert.equal(explanation.emotion,'warm');
+  assert.equal(question.responseKind,'question');assert.equal(question.emotion,'curious');
 });
