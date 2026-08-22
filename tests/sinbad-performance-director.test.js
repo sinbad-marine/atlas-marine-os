@@ -7,6 +7,19 @@ test('board teaching performance is bounded, immutable and alternates board with
   assert.deepEqual(cues.map(cue=>cue.gaze),['board','audience','board','audience']);assert.ok(cues.at(-1).at<=5000);
 });
 
+test('lesson opening walks through alternating real frames before teaching',()=>{
+  const cues=PERFORMANCES['lesson-opening'];assert.equal(cues.length,8);assert.ok(Object.isFrozen(cues));
+  assert.deepEqual(cues.slice(0,6).map(cue=>cue.walkFrame),[0,1,0,1,0,1]);
+  assert.deepEqual(cues.slice(0,6).map(cue=>cue.state),Array(6).fill('walking'));
+  assert.deepEqual(cues.slice(6).map(cue=>cue.state),['board-teaching','board-teaching']);
+  assert.equal(cues[6].at,1680);assert.ok(cues.at(-1).at<=3500);
+});
+
+test('reduced motion skips lesson walking and lands directly at the board',()=>{
+  const seen=[],director=createPerformanceDirector();const result=director.play('lesson-opening',cue=>seen.push(cue),{reducedMotion:true});
+  assert.equal(result.accepted,true);assert.equal(result.cueCount,1);assert.equal(seen[0].state,'board-teaching');assert.equal(seen[0].at,0);
+});
+
 test('director emits the first cue immediately and schedules a finite performance',()=>{
   const scheduled=[],seen=[],director=createPerformanceDirector({setTimeout:(fn,ms)=>{scheduled.push({fn,ms});return scheduled.length;},clearTimeout:()=>{}});
   const result=director.play('board-teaching',cue=>seen.push(cue));assert.equal(result.accepted,true);assert.equal(result.cueCount,4);assert.equal(seen.length,1);assert.deepEqual(scheduled.map(item=>item.ms),[1500,3000,4500]);

@@ -45,13 +45,17 @@ test('standalone Academy retains course and quiz handlers',()=>{
 test('native Academy owns a bounded live Sinbad board-teaching stage',()=>{
   assert.match(academyHtml,/id="academyTeachingStage"/);assert.match(academyHtml,/captain-sinbad-board-teaching\.png/);
   assert.match(academyHtml,/sinbad-character-engine\.js\?v=82017/);
-  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82017/);
+  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82018/);
   assert.match(academyApp,/function teachLessonAtBoard\(lesson\)/);
   assert.match(academyApp,/\.join\('\\n\\n'\)\.slice\(0,500\)/);
-  assert.match(academyApp,/academyCharacterEngine\?\.dispatch\('TEACH_AT_BOARD'/);
-  assert.match(academyApp,/academyPerformanceDirector\?\.play\('board-teaching'/);
+  assert.match(academyApp,/const event=cue\.state==='walking'\?'WALK':'TEACH_AT_BOARD'/);
+  assert.match(academyApp,/academyPerformanceDirector\?\.play\('lesson-opening'/);
+  assert.match(academyApp,/captain-sinbad-walk-a-v1\.png/);assert.match(academyApp,/captain-sinbad-walk-b-v1\.png/);
+  assert.match(academyApp,/setTimeout\(\(\)=>\{if\(generation===academyBoardGeneration\)writeNext\(\);\},1680\)/);
   assert.match(academyApp,/generation!==academyBoardGeneration/);
   assert.match(academyApp,/function stopBoardTeaching\(\)/);
   assert.match(academyCss,/\.academy-teaching-stage\[hidden\]\{display:none\}/);
   assert.match(academyCss,/@media\(prefers-reduced-motion:reduce\)/);
+  assert.match(academyCss,/\.academy-sinbad\[data-state="walking"\] img\{animation:none/);
+  assert.match(worker,/sinbad-marine-v8\.20\.17-live-character-lesson-entry-v2/);
 });

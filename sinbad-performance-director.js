@@ -5,6 +5,16 @@
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
   'use strict';
   const PERFORMANCES=Object.freeze({
+    'lesson-opening':Object.freeze([
+      Object.freeze({at:0,state:'walking',gesture:'walk',gaze:'path',walkFrame:0}),
+      Object.freeze({at:280,state:'walking',gesture:'walk',gaze:'path',walkFrame:1}),
+      Object.freeze({at:560,state:'walking',gesture:'walk',gaze:'path',walkFrame:0}),
+      Object.freeze({at:840,state:'walking',gesture:'walk',gaze:'path',walkFrame:1}),
+      Object.freeze({at:1120,state:'walking',gesture:'walk',gaze:'path',walkFrame:0}),
+      Object.freeze({at:1400,state:'walking',gesture:'walk',gaze:'board',walkFrame:1}),
+      Object.freeze({at:1680,state:'board-teaching',gesture:'point-board',gaze:'board'}),
+      Object.freeze({at:3180,state:'board-teaching',gesture:'explain',gaze:'audience'})
+    ]),
     'board-teaching':Object.freeze([
       Object.freeze({at:0,gesture:'point-board',gaze:'board'}),
       Object.freeze({at:1500,gesture:'explain',gaze:'audience'}),
@@ -57,7 +67,8 @@
       cancel();
       if(!Object.hasOwn(PERFORMANCES,name))return Object.freeze({accepted:false,reason:'UNKNOWN_PERFORMANCE'});
       if(typeof emit!=='function')return Object.freeze({accepted:false,reason:'INVALID_EMITTER'});
-      const cues=reducedMotion?PERFORMANCES[name].slice(0,1):PERFORMANCES[name],run=generation;
+      const performance=PERFORMANCES[name];
+      const cues=reducedMotion?(name==='lesson-opening'?[Object.freeze({...performance.find(cue=>cue.state!=='walking'),at:0})]:performance.slice(0,1)):performance,run=generation;
       cues.forEach(cue=>{const deliver=()=>{if(run===generation)emit(cue);};if(cue.at===0)deliver();else timers.push(schedule(deliver,cue.at));});
       return Object.freeze({accepted:true,cueCount:cues.length,duration:cues.at(-1).at});
     };

@@ -3,6 +3,10 @@ const byId=id=>document.getElementById(id);
 const GEOMETRY_KEY='atlas_sinbad_academy_native_window';
 const academyCharacterEngine=window.SinbadCharacterEngine?.createCharacterEngine({initialState:'idle'})||null;
 const academyPerformanceDirector=window.SinbadPerformanceDirector?.createPerformanceDirector()||null;
+const ACADEMY_CHARACTER_ASSETS=Object.freeze({
+  walking:Object.freeze(['./assets/captain-sinbad/captain-sinbad-walk-a-v1.png','./assets/captain-sinbad/captain-sinbad-walk-b-v1.png']),
+  'board-teaching':'./assets/captain-sinbad/captain-sinbad-board-teaching.png'
+});
 let academyBoardGeneration=0;
 
 academyCharacterEngine?.subscribe(snapshot=>{
@@ -10,16 +14,23 @@ academyCharacterEngine?.subscribe(snapshot=>{
   avatar.dataset.state=snapshot.state;avatar.dataset.gesture=snapshot.gesture;avatar.dataset.gaze=snapshot.gaze;
 });
 
+function renderAcademyCharacterCue(cue,text){
+  const event=cue.state==='walking'?'WALK':'TEACH_AT_BOARD';
+  academyCharacterEngine?.dispatch(event,{boardText:text,...cue});
+  const image=byId('academySinbadImage');if(!image)return;
+  image.src=cue.state==='walking'?ACADEMY_CHARACTER_ASSETS.walking[cue.walkFrame===1?1:0]:ACADEMY_CHARACTER_ASSETS['board-teaching'];
+}
+
 function teachLessonAtBoard(lesson){
   const stage=byId('academyTeachingStage'),title=byId('academyTeachingTitle'),board=byId('academyTeachingText');
   if(!stage||!title||!board)return;
   const text=lesson.objectives.map((objective,index)=>`${index+1}. ${objective}`).join('\n\n').slice(0,500);
   const generation=++academyBoardGeneration;stage.hidden=false;title.textContent=lesson.title;board.textContent='';
   const reducedMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches===true;
-  academyPerformanceDirector?.play('board-teaching',cue=>academyCharacterEngine?.dispatch('TEACH_AT_BOARD',{boardText:text,...cue}),{reducedMotion});
-  if(!academyPerformanceDirector)academyCharacterEngine?.dispatch('TEACH_AT_BOARD',{boardText:text});
+  academyPerformanceDirector?.play('lesson-opening',cue=>renderAcademyCharacterCue(cue,text),{reducedMotion});
+  if(!academyPerformanceDirector)renderAcademyCharacterCue({state:'board-teaching',gesture:'point-board',gaze:'board'},text);
   if(reducedMotion){board.textContent=text;return;}
-  let index=0;const writeNext=()=>{if(generation!==academyBoardGeneration)return;board.textContent=text.slice(0,++index);if(index<text.length)setTimeout(writeNext,/\s/.test(text[index]||'')?28:14);};writeNext();
+  let index=0;const writeNext=()=>{if(generation!==academyBoardGeneration)return;board.textContent=text.slice(0,++index);if(index<text.length)setTimeout(writeNext,/\s/.test(text[index]||'')?28:14);};setTimeout(()=>{if(generation===academyBoardGeneration)writeNext();},1680);
 }
 function stopBoardTeaching(){academyBoardGeneration++;academyPerformanceDirector?.cancel();const stage=byId('academyTeachingStage');if(stage)stage.hidden=true;academyCharacterEngine?.dispatch('READY');}
 
