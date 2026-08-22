@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.17-live-character-text-presenting-v12';
+const CACHE='sinbad-marine-v8.20.17-live-character-semantic-presenting-v13';
 const ASSETS=[
   './',
   './index.html',

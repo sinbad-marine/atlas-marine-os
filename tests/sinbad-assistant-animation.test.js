@@ -170,7 +170,8 @@ test('voice-disabled toggles with the real voice switch, and startup state match
 
 test('audio ended/aborted resolves the avatar, while genuine text-only delivery gets a bounded presenting state',()=>{
   const fn=app.slice(app.indexOf('function finishSinbadVoice'),app.indexOf('function stopSinbadVoice'));
-  assert.match(fn,/setSinbadAssistantState\(forceState\|\|\(sinbadState\.voiceEnabled\?'idle':'voice-disabled'\)\);\s*\n\s*if\(forceState==='presenting'\)return;\s*\n\s*scheduleSinbadListening\(\);/);
+  assert.match(fn,/setSinbadAssistantState\(forceState\|\|\(sinbadState\.voiceEnabled\?'idle':'voice-disabled'\),isPresenting\?sinbadResponseOpeningCue:\{\}\);/);
+  assert.match(fn,/if\(isPresenting\)\{[\s\S]*return;[\s\S]*\}\s*scheduleSinbadListening\(\);/);
 });
 
 test('an aborted/superseded XTTS request cannot corrupt the animation state',()=>{
@@ -213,6 +214,8 @@ test('text-only answers are honestly presented without entering the speaking or 
   assert.match(app,/presenting:'captain-sinbad-idle-master\.png'/);
   assert.match(app,/if\(next==='presenting'\)sinbadAssistantTimers\.push\(setTimeout\(\(\)=>\{if\(sinbadAssistantState==='presenting'\)\{setSinbadAssistantState\(sinbadState\.voiceEnabled\?'idle':'voice-disabled'\);scheduleSinbadListening\(\);\}\},1800\)\);/);
   assert.match(app,/finishSinbadVoice\('presenting'\)/);
+  assert.match(app,/setSinbadAssistantState\(forceState\|\|\(sinbadState\.voiceEnabled\?'idle':'voice-disabled'\),isPresenting\?sinbadResponseOpeningCue:\{\}\);/);
+  assert.match(app,/if\(sinbadResponseOpeningCue\.responseKind\)setSinbadResponseKind\(sinbadResponseOpeningCue\.responseKind\);/);
   assert.doesNotMatch(css,/data-state="presenting"\]\[data-mouth-frame/);
   assert.match(css,/data-state="presenting"\] \.sinbad-status-light\{background:var\(--green\)\}/);
 });
@@ -461,7 +464,7 @@ test('round-table fix: finishSinbadVoice is the single idempotent end-of-turn pa
   const fn=app.slice(app.indexOf('function finishSinbadVoice'),app.indexOf('function stopSinbadVoice'));
   assert.match(fn,/function finishSinbadVoice\(forceState\)\{/);
   // must be an unconditional call, not `if(sinbadState.voiceEnabled)setSinbadAssistantState(...)`
-  assert.match(fn,/setSinbadAssistantState\(forceState\|\|\(sinbadState\.voiceEnabled\?'idle':'voice-disabled'\)\);/);
+  assert.match(fn,/setSinbadAssistantState\(forceState\|\|\(sinbadState\.voiceEnabled\?'idle':'voice-disabled'\),isPresenting\?sinbadResponseOpeningCue:\{\}\);/);
   assert.doesNotMatch(fn,/if\(sinbadState\.voiceEnabled\)setSinbadAssistantState/);
 });
 

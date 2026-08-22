@@ -780,8 +780,12 @@ function finishSinbadVoice(forceState){
   if(sinbadVoiceObjectUrl)URL.revokeObjectURL(sinbadVoiceObjectUrl);
   sinbadVoiceObjectUrl='';sinbadVoiceAudio=null;sinbadVoiceAbort=null;
   sinbadAwaitingAnswer=false;
-  setSinbadAssistantState(forceState||(sinbadState.voiceEnabled?'idle':'voice-disabled'));
-  if(forceState==='presenting')return;
+  const isPresenting=forceState==='presenting';
+  setSinbadAssistantState(forceState||(sinbadState.voiceEnabled?'idle':'voice-disabled'),isPresenting?sinbadResponseOpeningCue:{});
+  if(isPresenting){
+    if(sinbadResponseOpeningCue.responseKind)setSinbadResponseKind(sinbadResponseOpeningCue.responseKind);
+    return;
+  }
   scheduleSinbadListening();
 }
 function stopSinbadVoice(){
