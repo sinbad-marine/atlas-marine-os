@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gazeTransitionForCue,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gazeTransitionForCue,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -77,6 +77,16 @@ test('real recognition activity has restrained progress and pause cues',()=>{
   assert.equal(listeningCueForActivity('processed').cue.gesture,'nod');
   assert.equal(listeningCueForActivity('invented').reason,'UNKNOWN_LISTENING_ACTIVITY');
   assert.equal(listeningCueForActivity('interim',-1).reason,'INVALID_LISTENING_REVISION');
+});
+
+test('heard words select bounded semantic listening reactions without executing commands',()=>{
+  assert.deepEqual(listeningCueForText('Sinbad, neden böyle oldu?',1),{accepted:true,meaning:'question',cue:{gesture:'listen-follow',gaze:'audience',emotion:'curious',energy:.44}});
+  assert.equal(listeningCueForText('Dikkat, makine dairesinde yangın var.',2).meaning,'caution');
+  assert.equal(listeningCueForText('Dikkat, makine dairesinde yangın var.',2).cue.emotion,'concerned');
+  assert.equal(listeningCueForText('Teşekkür ederim, harika oldu.',3).meaning,'positive');
+  assert.equal(listeningCueForText('Bugün rotayı konuşalım.',0).meaning,'neutral');
+  assert.equal(listeningCueForText(' ',0).reason,'INVALID_LISTENING_TEXT');
+  assert.equal(listeningCueForText('Merhaba',-1).reason,'INVALID_LISTENING_REVISION');
 });
 
 test('real thinking work maps to distinct restrained and fail-closed stage cues',()=>{

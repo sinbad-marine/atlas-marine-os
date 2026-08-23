@@ -74,6 +74,15 @@ test('large Captain Sinbad portrait loads the four-layer articulated rig with it
   if(testInfo.project.name==='desktop-chromium')await avatar.screenshot({path:'test-results/sinbad-layered-rig-preview.png'});
   await page.evaluate(()=>setSinbadAssistantState('warning'));
   await expect(avatar.locator('.sinbad-rig-expression-concerned')).toHaveCSS('opacity','1');
+  const heardMeaning=await page.evaluate(()=>{
+    const result=SinbadPerformanceDirector.listeningCueForText('Dikkat, yangın var.',1);
+    setSinbadAssistantState('listening',{...result.cue,listeningActivity:'interim',listeningMeaning:result.meaning});
+    return result.meaning;
+  });
+  expect(heardMeaning).toBe('caution');
+  await expect(avatar).toHaveAttribute('data-listening-meaning','caution');
+  await expect(avatar).toHaveAttribute('data-gesture','hold');
+  await expect(avatar.locator('.sinbad-rig-expression-concerned')).toHaveCSS('opacity','1');
   await page.evaluate(()=>{setSinbadAssistantState('idle');document.querySelector('.sinbad-avatar.large')?.classList.add('sinbad-blinking');});
   await page.waitForTimeout(75);
   await expect(avatar.locator('.sinbad-rig-face-blink')).toHaveCSS('opacity','1');

@@ -100,6 +100,23 @@
       :LISTENING_ACTIVITY_CUES[activity];
     return Object.freeze({accepted:true,cue});
   }
+  function listeningCueForText(text,revision=0){
+    if(typeof text!=='string'||!text.trim())return Object.freeze({accepted:false,reason:'INVALID_LISTENING_TEXT'});
+    if(!Number.isSafeInteger(revision)||revision<0)return Object.freeze({accepted:false,reason:'INVALID_LISTENING_REVISION'});
+    const normalized=text.toLocaleLowerCase('tr-TR');
+    let cue,meaning;
+    if(/\b(dikkat|tehlike|acil|yangın|yardım|dur|mayday|danger|emergency|fire|help|stop)\b/iu.test(normalized)){
+      meaning='caution';cue={gesture:'hold',gaze:'audience',emotion:'concerned',energy:.34};
+    }else if(/[?？]\s*$/u.test(normalized)||/\b(mi|mı|mu|mü|neden|niçin|nasıl|hangi|kim|ne zaman|why|how|which|who|when)\b/iu.test(normalized)){
+      meaning='question';cue={gesture:'listen-follow',gaze:'audience',emotion:'curious',energy:.44};
+    }else if(/\b(teşekkür|sağ ol|harika|güzel|sevindim|thanks|thank you|great|wonderful)\b/iu.test(normalized)){
+      meaning='positive';cue={gesture:'nod',gaze:'audience',emotion:'warm',energy:.36};
+    }else{
+      const progress=listeningCueForActivity('interim',revision);
+      return Object.freeze({accepted:true,meaning:'neutral',cue:progress.cue});
+    }
+    return Object.freeze({accepted:true,meaning,cue:Object.freeze(cue)});
+  }
   const THINKING_STAGE_CUES=Object.freeze({
     analyzing:Object.freeze({gesture:'hold',gaze:'thought',emotion:'curious',energy:.32}),
     calculating:Object.freeze({gesture:'explain',gaze:'board',emotion:'confident',energy:.46}),
@@ -259,5 +276,5 @@
     };
     return Object.freeze({play,cancel});
   }
-  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gazeTransitionForCue,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
+  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gazeTransitionForCue,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
 });
