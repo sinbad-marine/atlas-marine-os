@@ -477,6 +477,9 @@ function commitSinbadPerformedGestureAction(action){
   sinbadPerformedGestureHistory=[...recorded.history];sinbadLastPerformedGestureAction=sinbadPerformedGestureHistory.at(-1)||null;return true;
 }
 function commitSinbadPreparedGesture(){const action=sinbadPreparedGestureAction;sinbadPreparedGestureAction=null;return commitSinbadPerformedGestureAction(action);}
+function presentSinbadBoardReference(text){
+  setSinbadAssistantState('presenting',{gesture:'point-board',gaze:'board',emotion:'confident',energy:.4,responseKind:'instruction'});commitSinbadPerformedGestureAction('point-board');addSinbadMessage('sinbad',text);return true;
+}
 function performSinbadDirectCharacterRequest(request){
   if(!request?.directCharacterReaction||request.action!=='walk')return Object.freeze({accepted:false,reason:'NOT_DIRECT_CHARACTER_REACTION'});
   stopSinbadGesturePerformance();
@@ -1698,11 +1701,11 @@ async function sendToSinbad(text){
   const resizedBoard=sinbadPerformanceDirector?.academyBoardResizeRequestForText?.(q,sinbadLastAcademyBoardAction,sinbadState.language||appLanguage);
   if(resizedBoard?.accepted){if(!resizedBoard.known){addSinbadMessage('sinbad',resizedBoard.text);return;}const delivered=sendShapeToSinbadAcademyBoard(resizedBoard.action.value,resizedBoard.action.size);addSinbadMessage('sinbad',delivered?resizedBoard.text:(sinbadState.language==='tr-TR'?'Academy tahtasına güvenli bağlantı kurulamadı.':'A safe Academy connection could not be established.'));return;}
   const recalledBoardSize=sinbadPerformanceDirector?.academyBoardSizeRecallAnswerForText?.(q,sinbadLastAcademyBoardAction,sinbadState.language||appLanguage);
-  if(recalledBoardSize?.accepted){addSinbadMessage('sinbad',recalledBoardSize.text);return;}
+  if(recalledBoardSize?.accepted){presentSinbadBoardReference(recalledBoardSize.text);return;}
   const repeatedBoard=sinbadPerformanceDirector?.academyBoardRepeatRequestForText?.(q,sinbadLastAcademyBoardAction,sinbadState.language||appLanguage);
   if(repeatedBoard?.accepted){if(!repeatedBoard.known){addSinbadMessage('sinbad',repeatedBoard.text);return;}const delivered=repeatedBoard.action.kind==='shape'?sendShapeToSinbadAcademyBoard(repeatedBoard.action.value,repeatedBoard.action.size||'standard'):sendTextToSinbadAcademyBoard(repeatedBoard.action.value);addSinbadMessage('sinbad',delivered?repeatedBoard.text:(sinbadState.language==='tr-TR'?'Academy tahtasına güvenli bağlantı kurulamadığı için işlemi tekrarlamadım.':'I did not repeat the action because a safe Academy board connection could not be established.'));return;}
   const recalledBoard=sinbadPerformanceDirector?.academyBoardRecallAnswerForText?.(q,sinbadLastAcademyBoardAction,sinbadState.language||appLanguage);
-  if(recalledBoard?.accepted){addSinbadMessage('sinbad',recalledBoard.text);return;}
+  if(recalledBoard?.accepted){presentSinbadBoardReference(recalledBoard.text);return;}
   const directReaction=performSinbadDirectCharacterRequest(sinbadRequestedGesture);
   if(directReaction.accepted){addSinbadMessage('sinbad',directReaction.text);return;}
   if(sinbadRequestedGesture?.directAcademyBoard){const request=sinbadRequestedGesture,delivered=request.boardShape?sendShapeToSinbadAcademyBoard(request.boardShape):sendTextToSinbadAcademyBoard(request.boardText),ack=sinbadPerformanceDirector?.gestureAcknowledgementForRequest?.(request,sinbadState.language||appLanguage);sinbadRequestedGesture=null;sinbadRequestedGestureSequence=[];if(delivered&&ack?.accepted){commitSinbadPerformedGestureAction('point-board');sinbadAwaitingAnswer=false;addSinbadMessage('sinbad',ack.text);return;}}
