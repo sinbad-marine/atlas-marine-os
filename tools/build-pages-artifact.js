@@ -6,11 +6,17 @@ const path=require('node:path');
 const crypto=require('node:crypto');
 
 const ROOT=path.resolve(__dirname,'..');
+const WEB_VISUAL_SOURCE='sinbad-ai-core/visual-library/assets';
+const visualSourceRoot=path.join(ROOT,...WEB_VISUAL_SOURCE.split('/'));
+const VISUAL_RELEASE_FILES=Object.freeze(fs.readdirSync(visualSourceRoot,{recursive:true,withFileTypes:true})
+  .filter(entry=>entry.isFile()&&!entry.isSymbolicLink())
+  .map(entry=>`visual-library/assets/${path.relative(visualSourceRoot,path.join(entry.parentPath,entry.name)).split(path.sep).join('/')}`)
+  .sort());
 const RELEASE_FILES=Object.freeze([
   'index.html','styles.css','app.js','academy.html','academy.css','academy-window.js',
   'academy-professor.html','academy-professor.css','academy-professor-guidance.css','academy-professor.js','sinbad-professor.js','academy-professor-v3.html','academy-professor-handsfree.css','academy-professor-handsfree.js','academy-professor-native.html','academy-professor-native.css','academy-professor-native.js','sinbad-speaker-identity.js','pilot-data.js','route-data.js',
   'resource-data.js','store-data.js',
-  'official-publications.js','sinbad-core.js','sinbad-training-data.js',
+  'official-publications.js','sinbad-core.js','sinbad-visuals.js','sinbad-training-data.js',
   'sinbad-academy.js','sinbad-navigation.js','sinbad-navigation-assistant.js',
   'sinbad-route-visualizer.js','sinbad-character-engine.js','sinbad-character-rig.js',
   'sinbad-performance-director.js','sw.js','manifest.webmanifest','icon-192.png',
@@ -22,12 +28,13 @@ const RELEASE_FILES=Object.freeze([
   ,'assets/captain-sinbad/captain-sinbad-idle-blink-v1.png','assets/captain-sinbad/captain-sinbad-speaking-mbp-v1.png'
   ,'assets/captain-sinbad/captain-sinbad-speaking-o-v1.png','assets/captain-sinbad/captain-sinbad-laughing-v1.png'
   ,'assets/captain-sinbad/captain-sinbad-walk-a-v1.png','assets/captain-sinbad/captain-sinbad-walk-b-v1.png'
-  ,'assets/captain-sinbad/captain-sinbad-board-teaching.png'
+  ,'assets/captain-sinbad/captain-sinbad-board-teaching.png',...VISUAL_RELEASE_FILES
 ]);
 const SOURCE_OVERRIDES=Object.freeze({
   'vendor/supabase-2.112.3.js':'node_modules/@supabase/supabase-js/dist/umd/supabase.js',
   'vendor/mammoth-1.12.1.min.js':'node_modules/mammoth/mammoth.browser.min.js',
-  'vendor/tesseract-5.1.1.min.js':'node_modules/tesseract.js/dist/tesseract.min.js'
+  'vendor/tesseract-5.1.1.min.js':'node_modules/tesseract.js/dist/tesseract.min.js',
+  ...Object.fromEntries(VISUAL_RELEASE_FILES.map(name=>[name,`sinbad-ai-core/${name}`]))
 });
 
 const sha256=buffer=>crypto.createHash('sha256').update(buffer).digest('hex');

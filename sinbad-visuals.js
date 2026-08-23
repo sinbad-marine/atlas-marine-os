@@ -1,12 +1,12 @@
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.SinbadVisuals=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
   'use strict';
-  const BASE='./sinbad-ai-core/visual-library/assets/bowditch/';
+  const BASE='./visual-library/assets/bowditch/';
   const BRIDGE='http://127.0.0.1:31983';
   const SOURCES=[
     {url:`${BASE}volume-1-manifest.json`,base:BASE},
     {url:`${BASE}volume-2-manifest.json`,base:BASE},
     {url:`${BASE}fallback-manifest.json`,base:BASE},
-    {url:'./sinbad-ai-core/visual-library/assets/nga-chart-no-1/manifest.json',base:'./sinbad-ai-core/visual-library/assets/nga-chart-no-1/'}
+    {url:'./visual-library/assets/nga-chart-no-1/manifest.json',base:'./visual-library/assets/nga-chart-no-1/'}
   ];
   const ALIASES=Object.freeze({şamandıra:'buoy',samandira:'buoy',akıntı:'current',akinti:'current',gelgit:'tide',fener:'light',ışık:'light',isik:'light',pusula:'compass',harita:'chart',sembol:'symbol',kardinal:'cardinal',batık:'wreck',batik:'wreck',kerteriz:'bearing',işaret:'mark',isaret:'mark',kısaltma:'abbreviation',kisaltma:'abbreviation',yıldız:'star',yildiz:'star',göksel:'celestial',goksel:'celestial',radar:'radar'});
   let cache=null;
