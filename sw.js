@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.20-private-source-access-full-catalog-v1';
+const CACHE='sinbad-marine-v8.20.19-private-source-access-full-catalog-v1';
 const ASSETS=[
   './',
   './index.html',
