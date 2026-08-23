@@ -338,6 +338,9 @@ test('live Sinbad chat writes bounded plain text on the real Academy board',asyn
   await expect(page.locator('.sinbad-avatar.large')).toHaveAttribute('data-gesture','shake-head-left');
   await expect(page.locator('.sinbad-avatar.large')).toHaveAttribute('data-gesture','point-board',{timeout:1200});
   await expect(page.locator('.sinbad-avatar.large')).toHaveAttribute('data-gaze','board');
+  await page.locator('#sinbadInput').fill('Yönü gösterir.');await page.locator('#sendSinbad').click();
+  await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Doğru. Cevabın tahtadaki şekille uyuşuyor.');
+  await expect(page.locator('.sinbad-avatar.large')).toHaveAttribute('data-gesture','nod');
   await page.locator('#sinbadInput').fill('Tahtayı temizle.');await page.locator('#sendSinbad').click();
   await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Academy tahtasını temizliyorum.');
   await expect(classroom.locator('#academyTeachingStage')).toHaveAttribute('data-board-drawing-phase','erasing');
