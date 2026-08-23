@@ -1059,6 +1059,40 @@ function addSinbadMessage(role,text,visuals=[]){
   saveSinbadMessages();renderSinbadMessages();
 }
 
+function sinbadSourceButton(label,action,ariaLabel=label){
+  const control=document.createElement('button');control.type='button';control.className='btn sinbad-source-control';control.textContent=label;control.setAttribute('aria-label',ariaLabel);control.addEventListener('click',action);return control;
+}
+async function renderSinbadSourcePage(view){
+  const generation=(view.generation||0)+1;view.generation=generation;
+  view.page=Math.max(1,Math.min(view.page,view.pdf.numPages));view.scale=Math.max(.7,Math.min(view.scale,2.6));
+  const page=await view.pdf.getPage(view.page),viewport=page.getViewport({scale:view.scale});
+  if(generation!==view.generation)return;
+  view.canvas.width=Math.ceil(viewport.width);view.canvas.height=Math.ceil(viewport.height);view.canvas.style.width=`${Math.ceil(viewport.width)}px`;view.canvas.setAttribute('aria-label',`${view.title} sayfa ${view.page}`);
+  await page.render({canvasContext:view.canvas.getContext('2d'),viewport}).promise;
+  if(generation!==view.generation)return;
+  view.caption.textContent=`${view.filename||view.title} · sayfa ${view.page}/${view.pdf.numPages} · %${Math.round(view.scale*100)}`;
+  view.pageOutput.textContent=`${view.page} / ${view.pdf.numPages}`;view.previous.disabled=view.page<=1;view.next.disabled=view.page>=view.pdf.numPages;
+}
+function createSinbadSourceViewer(view,{dialog=false}={}){
+  const root=document.createElement('div');root.className=dialog?'sinbad-source-viewer sinbad-source-viewer-full':'sinbad-source-viewer';
+  const toolbar=document.createElement('div');toolbar.className='sinbad-source-toolbar';toolbar.setAttribute('role','toolbar');toolbar.setAttribute('aria-label','Kaynak sayfası kontrolleri');
+  view.previous=sinbadSourceButton('←',()=>{view.page--;renderSinbadSourcePage(view);},'Önceki sayfa');
+  view.next=sinbadSourceButton('→',()=>{view.page++;renderSinbadSourcePage(view);},'Sonraki sayfa');
+  view.pageOutput=document.createElement('output');view.pageOutput.className='sinbad-source-page-output';view.pageOutput.setAttribute('aria-live','polite');
+  toolbar.append(view.previous,view.pageOutput,view.next,sinbadSourceButton('−',()=>{view.scale-=.2;renderSinbadSourcePage(view);},'Uzaklaştır'),sinbadSourceButton('100%',()=>{view.scale=1;renderSinbadSourcePage(view);},'Yakınlaştırmayı sıfırla'),sinbadSourceButton('+',()=>{view.scale+=.2;renderSinbadSourcePage(view);},'Yakınlaştır'));
+  if(!dialog)toolbar.append(sinbadSourceButton('Tam ekran',()=>openSinbadSourceDialog(view),'Kaynak sayfasını tam ekran aç'));
+  const viewport=document.createElement('div');viewport.className='sinbad-source-page-viewport';view.canvas=document.createElement('canvas');viewport.append(view.canvas);
+  view.caption=document.createElement('small');view.caption.className='sinbad-source-caption';root.append(toolbar,viewport,view.caption);return root;
+}
+function openSinbadSourceDialog(sourceView){
+  document.querySelector('.sinbad-source-dialog')?.remove();
+  const returnFocus=document.activeElement,dialog=document.createElement('dialog');dialog.className='sinbad-source-dialog';dialog.setAttribute('aria-label',`${sourceView.title} kaynak görüntüleyici`);
+  const header=document.createElement('header'),title=document.createElement('strong');title.textContent=sourceView.title;
+  const close=sinbadSourceButton('Kapat',()=>dialog.close(),'Tam ekran görüntüleyiciyi kapat');header.append(title,close);
+  const view={pdf:sourceView.pdf,filename:sourceView.filename,title:sourceView.title,page:sourceView.page,scale:Math.max(1.35,sourceView.scale)};dialog.append(header,createSinbadSourceViewer(view,{dialog:true}));
+  dialog.addEventListener('keydown',event=>{if(event.key==='ArrowLeft'){event.preventDefault();view.page--;renderSinbadSourcePage(view);}else if(event.key==='ArrowRight'){event.preventDefault();view.page++;renderSinbadSourcePage(view);}else if(event.key==='+'||event.key==='='){event.preventDefault();view.scale+=.2;renderSinbadSourcePage(view);}else if(event.key==='-'){event.preventDefault();view.scale-=.2;renderSinbadSourcePage(view);}else if(event.key==='0'){event.preventDefault();view.scale=1;renderSinbadSourcePage(view);}});
+  dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});dialog.addEventListener('close',()=>{dialog.remove();returnFocus?.focus?.();},{once:true});document.body.append(dialog);dialog.showModal();renderSinbadSourcePage(view);
+}
 async function openSinbadSourceVisual(button){
   const documentId=button?.dataset?.documentId,pageNumber=Math.max(1,Number(button?.dataset?.page)||1);
   const card=button?.closest('.sinbad-source-visual'),stage=card?.querySelector('.sinbad-source-visual-stage');
@@ -1071,11 +1105,8 @@ async function openSinbadSourceVisual(button){
     const {data:blob,error:downloadError}=await cloudClient.storage.from(documentRow.bucket_id).download(documentRow.object_path);
     if(downloadError||!blob)throw downloadError||new Error('Kaynak indirilemedi.');
     const pdfjs=await ensurePdfJs(),pdf=await pdfjs.getDocument({data:await blob.arrayBuffer()}).promise;
-    const safePage=Math.min(pageNumber,pdf.numPages),page=await pdf.getPage(safePage),viewport=page.getViewport({scale:1.35});
-    const canvas=document.createElement('canvas');canvas.width=Math.ceil(viewport.width);canvas.height=Math.ceil(viewport.height);canvas.setAttribute('aria-label',`${button.dataset.title||'Kaynak'} sayfa ${safePage}`);
-    await page.render({canvasContext:canvas.getContext('2d'),viewport}).promise;
-    const caption=document.createElement('small');caption.textContent=`${documentRow.original_filename||button.dataset.title} · sayfa ${safePage}/${pdf.numPages}`;
-    stage.replaceChildren(canvas,caption);button.textContent='Sayfayı yenile';
+    const view={pdf,filename:documentRow.original_filename,title:button.dataset.title||'Kaynak',page:Math.min(pageNumber,pdf.numPages),scale:1.15};
+    stage.replaceChildren(createSinbadSourceViewer(view));await renderSinbadSourcePage(view);button.textContent='Sayfayı yenile';
   }catch(error){stage.replaceChildren(Object.assign(document.createElement('span'),{textContent:`Görsel açılamadı: ${error.message||error}`}));}
   finally{button.disabled=false;}
 }
