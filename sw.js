@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.19-store-v2';
+const CACHE='sinbad-marine-v8.20.19-full-catalog-v3';
 const ASSETS=[
   './',
   './index.html',

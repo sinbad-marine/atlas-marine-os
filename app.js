@@ -290,10 +290,13 @@ const storeCartSet=v=>set('atlas_store_cart',v);
 function storeCartAdd(id){const cart=storeCartGet();const line=cart.find(x=>x.id===id);if(line)line.qty+=1;else cart.push({id,qty:1});storeCartSet(cart);renderStoreCart()}
 function storeCartUpdateQty(id,delta){const cart=storeCartGet();const line=cart.find(x=>x.id===id);if(!line)return;line.qty+=delta;const next=cart.filter(x=>x.qty>0);storeCartSet(next);renderStoreCart()}
 function storeCartRemove(id){storeCartSet(storeCartGet().filter(x=>x.id!==id));renderStoreCart()}
-function setupStore(){
+function renderStoreCategories(){
  const cats=['Tümü',...new Set(STORE_DATA.map(x=>x.category))];
  $('storeCategories').innerHTML=cats.map(c=>`<button type="button" class="store-chip${(c==='Tümü'&&!storeActiveCategory)||c===storeActiveCategory?' active':''}" data-cat="${c==='Tümü'?'':esc(c)}">${esc(c)}</button>`).join('');
- $('storeCategories').querySelectorAll('.store-chip').forEach(btn=>btn.addEventListener('click',()=>{storeActiveCategory=btn.dataset.cat;setupStore();renderStoreGrid()}));
+}
+function setupStore(){
+ renderStoreCategories();
+ $('storeCategories').addEventListener('click',event=>{const btn=event.target.closest('.store-chip');if(!btn)return;storeActiveCategory=btn.dataset.cat;renderStoreCategories();renderStoreGrid()});
  $('storeSearch').addEventListener('input',renderStoreGrid);
  $('storeCartFab').addEventListener('click',()=>{$('storeCartOverlay').classList.add('open');$('storeCartDrawer').classList.add('open')});
  $('storeCartClose').addEventListener('click',storeCloseCart);
@@ -308,7 +311,8 @@ function storeCloseCart(){$('storeCartOverlay').classList.remove('open');$('stor
 function renderStoreGrid(){
  const q=($('storeSearch').value||'').toLowerCase();
  const rows=STORE_DATA.filter(x=>(!storeActiveCategory||x.category===storeActiveCategory)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));
- $('storeGrid').innerHTML=rows.length?rows.map(x=>`<article class="store-card">${x.badge?`<span class="store-badge-tag">${esc(x.badge)}</span>`:''}<div class="store-icon-tile">${x.icon||'⚓'}</div><div class="store-card-category">${esc(x.category)}</div><h3>${esc(x.name)}</h3><p class="store-card-desc">${esc(x.description)}</p><div class="store-card-footer"><div class="store-price">${storeTRY(x.price)}<small>KDV dahil</small></div><button type="button" class="store-add-btn" data-id="${esc(x.id)}">Sepete Ekle</button></div></article>`).join(''):'<p class="empty">Bu kategoride/aramada ürün bulunamadı.</p>';
+ $('storeResultCount').textContent=`${rows.length} ürün gösteriliyor · Toplam ${STORE_DATA.length} ürün`;
+ $('storeGrid').innerHTML=rows.length?rows.map(x=>`<article class="store-card">${x.badge?`<span class="store-badge-tag">${esc(x.badge)}</span>`:''}<div class="store-image-tile"><img src="${esc(x.image)}" alt="${esc(x.name)}" loading="lazy" referrerpolicy="no-referrer"></div><div class="store-card-category">${esc(x.category)}</div><h3>${esc(x.name)}</h3><p class="store-card-desc">${esc(x.description)}</p><div class="store-card-footer"><div class="store-price">${Number.isFinite(x.price)?storeTRY(x.price):'Güncel fiyat'}<small>${Number.isFinite(x.price)?'Siparişte teyit edilir':'Teklif ile bildirilir'}</small></div><button type="button" class="store-add-btn" data-id="${esc(x.id)}">${Number.isFinite(x.price)?'Sepete Ekle':'Teklif İste'}</button></div></article>`).join(''):'<p class="empty">Bu kategoride/aramada ürün bulunamadı.</p>';
  $('storeGrid').querySelectorAll('.store-add-btn').forEach(btn=>btn.addEventListener('click',()=>{storeCartAdd(btn.dataset.id);btn.textContent='Eklendi ✓';btn.classList.add('in-cart');setTimeout(()=>{btn.textContent='Sepete Ekle';btn.classList.remove('in-cart')},1100)}));
 }
 function renderStoreCart(){
@@ -316,19 +320,19 @@ function renderStoreCart(){
  const lines=cart.map(item=>({...item,product:STORE_DATA.find(p=>p.id===item.id)})).filter(x=>x.product);
  const count=lines.reduce((a,x)=>a+x.qty,0);
  $('storeCartCount').textContent=count;
- $('storeCartItems').innerHTML=lines.length?lines.map(x=>`<div class="store-cart-item"><div class="store-cart-item-icon">${x.product.icon||'⚓'}</div><div><h4>${esc(x.product.name)}</h4><div class="store-qty-row"><button type="button" class="store-qty-btn" data-id="${esc(x.id)}" data-d="-1">−</button><span>${x.qty}</span><button type="button" class="store-qty-btn" data-id="${esc(x.id)}" data-d="1">+</button></div></div><div><div class="store-cart-item-price">${storeTRY(x.product.price*x.qty)}</div><button type="button" class="store-cart-remove" data-id="${esc(x.id)}">Kaldır</button></div></div>`).join(''):'<div class="store-cart-empty">Sepetiniz boş.<br>Mağazadan ürün ekleyin.</div>';
+ $('storeCartItems').innerHTML=lines.length?lines.map(x=>`<div class="store-cart-item"><div class="store-cart-item-icon"><img src="${esc(x.product.image)}" alt="" loading="lazy" referrerpolicy="no-referrer"></div><div><h4>${esc(x.product.name)}</h4><div class="store-qty-row"><button type="button" class="store-qty-btn" data-id="${esc(x.id)}" data-d="-1">−</button><span>${x.qty}</span><button type="button" class="store-qty-btn" data-id="${esc(x.id)}" data-d="1">+</button></div></div><div><div class="store-cart-item-price">${Number.isFinite(x.product.price)?storeTRY(x.product.price*x.qty):'Fiyat teyidi'}</div><button type="button" class="store-cart-remove" data-id="${esc(x.id)}">Kaldır</button></div></div>`).join(''):'<div class="store-cart-empty">Sepetiniz boş.<br>Mağazadan ürün ekleyin.</div>';
  $('storeCartItems').querySelectorAll('.store-qty-btn').forEach(btn=>btn.addEventListener('click',()=>storeCartUpdateQty(btn.dataset.id,Number(btn.dataset.d))));
  $('storeCartItems').querySelectorAll('.store-cart-remove').forEach(btn=>btn.addEventListener('click',()=>storeCartRemove(btn.dataset.id)));
- const subtotal=lines.reduce((a,x)=>a+x.product.price*x.qty,0);
+ const subtotal=lines.reduce((a,x)=>a+(Number.isFinite(x.product.price)?x.product.price*x.qty:0),0);
  $('storeCartSubtotal').textContent=storeTRY(subtotal);
 }
 function storeBuildOrderText(){
  const cart=storeCartGet();
  const lines=cart.map(item=>({...item,product:STORE_DATA.find(p=>p.id===item.id)})).filter(x=>x.product);
- const subtotal=lines.reduce((a,x)=>a+x.product.price*x.qty,0);
+ const subtotal=lines.reduce((a,x)=>a+(Number.isFinite(x.product.price)?x.product.price*x.qty:0),0);
  const name=$('storeName').value.trim(),phone=$('storePhone').value.trim(),email=$('storeEmail').value.trim(),delivery=$('storeDelivery').value.trim(),note=$('storeNote').value.trim();
- const itemLines=lines.map(x=>`• ${x.product.name} x${x.qty} — ${storeTRY(x.product.price*x.qty)}`).join('\n');
- return `SİNBAD MARINE STORE — Sipariş Talebi\n\nMüşteri: ${name||'—'}\nTelefon: ${phone||'—'}\nE-posta: ${email||'—'}\nTeslimat/Yat: ${delivery||'—'}\n\nÜrünler:\n${itemLines||'—'}\n\nAra Toplam: ${storeTRY(subtotal)}\nNot: ${note||'—'}\n\n(Bu bir ön sipariş talebidir; ödeme talimatları ayrıca iletilecektir.)`;
+ const itemLines=lines.map(x=>`• ${x.product.name} x${x.qty} — ${Number.isFinite(x.product.price)?storeTRY(x.product.price*x.qty):'Güncel fiyat teyidi'}`).join('\n');
+ return `SİNBAD MARINE STORE — Sipariş / Teklif Talebi\n\nMüşteri: ${name||'—'}\nTelefon: ${phone||'—'}\nE-posta: ${email||'—'}\nTeslimat/Yat: ${delivery||'—'}\n\nÜrünler:\n${itemLines||'—'}\n\nFiyatı görünen ürünler toplamı: ${storeTRY(subtotal)}\nNot: ${note||'—'}\n\n(Stok, teknik özellik, güncel fiyat ve ödeme talimatları sipariş onayında SDM tedarik süreciyle teyit edilir.)`;
 }
 function openStoreCheckout(){
  if(!storeCartGet().length)return;
