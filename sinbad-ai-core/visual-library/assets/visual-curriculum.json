@@ -37,7 +37,7 @@
       "file": "assets/curated-safety/manifest.json"
     }
   ],
-  "topicCount": 5688,
+  "topicCount": 5721,
   "topics": [
     {
       "topicId": "topic:20e7f550122ee415de2b",
@@ -487,6 +487,16 @@
       "topicId": "topic:54e3cbbe85edea1576b1",
       "topic": "acil durum konum belirleme telsiz şamandırası",
       "visualNeed": "chart-or-symbol",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:9460aa6d656631ceab41",
+      "topic": "acil kaçış solunum cihazı",
+      "visualNeed": "review-required",
       "sourceIds": [
         "curated-safety"
       ],
@@ -7895,6 +7905,16 @@
       "status": "existing-needs-quality-review"
     },
     {
+      "topicId": "topic:3fdde460e77c8ad452f7",
+      "topic": "cold water survival suit",
+      "visualNeed": "procedure-sequence",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
       "topicId": "topic:724e01f8cc3ad2e7b17f",
       "topic": "colder",
       "visualNeed": "review-required",
@@ -10839,6 +10859,26 @@
         "bowditch-volume-2"
       ],
       "existingVisualCount": 3,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:8b16aee80cb68c528e01",
+      "topic": "dalma giysisi",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:8d82b15096b7a16c9fe8",
+      "topic": "dalma giysisini",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
       "status": "existing-needs-quality-review"
     },
     {
@@ -15279,6 +15319,16 @@
       "status": "existing-needs-quality-review"
     },
     {
+      "topicId": "topic:716ebaee1b7f374ae853",
+      "topic": "eebd",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
       "topicId": "topic:d42782270b7a8c4f2aa8",
       "topic": "eelgrass",
       "visualNeed": "review-required",
@@ -15909,6 +15959,16 @@
         "bowditch-volume-1"
       ],
       "existingVisualCount": 11,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:ab8f549cdef36829fa90",
+      "topic": "emergency escape breathing device",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
       "status": "existing-needs-quality-review"
     },
     {
@@ -16760,6 +16820,16 @@
       "visualNeed": "review-required",
       "sourceIds": [
         "nga-chart-no-1"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:277097b7a24497778cbd",
+      "topic": "escape breathing device",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
       ],
       "existingVisualCount": 1,
       "status": "existing-needs-quality-review"
@@ -18697,6 +18767,36 @@
       "status": "existing-needs-quality-review"
     },
     {
+      "topicId": "topic:a5bdc3fc750d99db0a64",
+      "topic": "filika indirme tatbikatı",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:5f086c3fd4bb24e9af91",
+      "topic": "filika mataforası",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:c87ee0c90cb18ceaddde",
+      "topic": "filikaları indirmeye hazır",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
       "topicId": "topic:dcd32479a72e55b29a03",
       "topic": "fill",
       "visualNeed": "review-required",
@@ -18836,6 +18936,26 @@
       "visualNeed": "review-required",
       "sourceIds": [
         "nga-chart-no-1"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:824b65b099eda8b139d2",
+      "topic": "firefighting team",
+      "visualNeed": "procedure-sequence",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:16a2cc86cfec8c828f4f",
+      "topic": "fireman outfit",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
       ],
       "existingVisualCount": 1,
       "status": "existing-needs-quality-review"
@@ -20490,6 +20610,16 @@
       "topicId": "topic:2433cba686ab1d517a1a",
       "topic": "gemi epirb",
       "visualNeed": "photograph",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:17381d51dfb7cc82d505",
+      "topic": "gemi yangın ekibi",
+      "visualNeed": "review-required",
       "sourceIds": [
         "curated-safety"
       ],
@@ -22504,6 +22634,46 @@
       "status": "existing-needs-quality-review"
     },
     {
+      "topicId": "topic:f0284aa0b72817ce380e",
+      "topic": "helicopter evacuation",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:01733f198fd1adb29e87",
+      "topic": "helicopter rescue hoist",
+      "visualNeed": "procedure-sequence",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:f513f9ad5c37cebd5f8f",
+      "topic": "helikopter tahliyesi",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:da428431a527b2469f27",
+      "topic": "helikopterle kurtarma",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
       "topicId": "topic:7d16b274a072abf1da4f",
       "topic": "helipad",
       "visualNeed": "review-required",
@@ -24209,6 +24379,16 @@
         "bowditch-volume-2"
       ],
       "existingVisualCount": 8,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:61675d249eba59292af1",
+      "topic": "immersion suit",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
       "status": "existing-needs-quality-review"
     },
     {
@@ -26494,6 +26674,16 @@
       "status": "existing-needs-quality-review"
     },
     {
+      "topicId": "topic:127a02e9a12241ef8310",
+      "topic": "kaçış solunum cihazı",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
       "topicId": "topic:5c342dcea03c1131faa3",
       "topic": "kaing",
       "visualNeed": "review-required",
@@ -26952,6 +27142,16 @@
     {
       "topicId": "topic:ddfe8f391d1e5e419592",
       "topic": "kurtarma botunun geri alınması",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:13c37aeac717eed61663",
+      "topic": "kurtarma vinci",
       "visualNeed": "review-required",
       "sourceIds": [
         "curated-safety"
@@ -27962,6 +28162,36 @@
       "topicId": "topic:55b2784500c84f2ad461",
       "topic": "lifeboat",
       "visualNeed": "photograph",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:9f854ab194928fa496a1",
+      "topic": "lifeboat davit",
+      "visualNeed": "photograph",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:ae585c153ce700d3838d",
+      "topic": "lifeboat launching drill",
+      "visualNeed": "procedure-sequence",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:5d36682bb36bd942fb82",
+      "topic": "lifeboats ready to launch",
+      "visualNeed": "procedure-sequence",
       "sourceIds": [
         "curated-safety"
       ],
@@ -43950,6 +44180,16 @@
       "status": "existing-needs-quality-review"
     },
     {
+      "topicId": "topic:846589deb30a3bb33c20",
+      "topic": "sar hoist",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
       "topicId": "topic:cc2c0e702e0aca5aea38",
       "topic": "sart",
       "visualNeed": "photograph",
@@ -44122,6 +44362,16 @@
       "visualNeed": "review-required",
       "sourceIds": [
         "bowditch-volume-1"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:b31f5d7bbed42bf2f80c",
+      "topic": "scba",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
       ],
       "existingVisualCount": 1,
       "status": "existing-needs-quality-review"
@@ -44461,6 +44711,16 @@
     {
       "topicId": "topic:a1b8d3bc2541b883b11e",
       "topic": "search and rescue boat",
+      "visualNeed": "procedure-sequence",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:c57504e28c4f6eba7027",
+      "topic": "search and rescue swimmer",
       "visualNeed": "procedure-sequence",
       "sourceIds": [
         "curated-safety"
@@ -44818,6 +45078,16 @@
         "nga-chart-no-1"
       ],
       "existingVisualCount": 6,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:23b026b42a44a924f4e1",
+      "topic": "self contained breathing apparatus",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
       "status": "existing-needs-quality-review"
     },
     {
@@ -45587,6 +45857,16 @@
       "visualNeed": "photograph",
       "sourceIds": [
         "bowditch-volume-1"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:5a7cbb6f607e72ac735b",
+      "topic": "shipboard firefighting",
+      "visualNeed": "procedure-sequence",
+      "sourceIds": [
+        "curated-safety"
       ],
       "existingVisualCount": 1,
       "status": "existing-needs-quality-review"
@@ -46952,6 +47232,16 @@
       "status": "existing-needs-quality-review"
     },
     {
+      "topicId": "topic:821a4ace1ff2dd0bc25b",
+      "topic": "soğuk su hayatta kalma giysisi",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
       "topicId": "topic:8fd3b2cf1f64f4220be6",
       "topic": "sol-",
       "visualNeed": "review-required",
@@ -47012,6 +47302,16 @@
         "bowditch-volume-2"
       ],
       "existingVisualCount": 3,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:d8cd9790db5342899234",
+      "topic": "solunum cihazlı yangın ekibi",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
       "status": "existing-needs-quality-review"
     },
     {
@@ -49746,6 +50046,16 @@
       "status": "existing-needs-quality-review"
     },
     {
+      "topicId": "topic:92fd0520436b83e8a97a",
+      "topic": "survival suit",
+      "visualNeed": "procedure-sequence",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
       "topicId": "topic:f41de3bd3f207aaa3ea1",
       "topic": "surylghg",
       "visualNeed": "review-required",
@@ -50629,6 +50939,16 @@
       "visualNeed": "review-required",
       "sourceIds": [
         "bowditch-volume-1"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:88684739d4cfb552a934",
+      "topic": "terk giysisi",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
       ],
       "existingVisualCount": 1,
       "status": "existing-needs-quality-review"
@@ -57976,6 +58296,16 @@
         "nga-chart-no-1"
       ],
       "existingVisualCount": 3,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:7af72955bb158072fb47",
+      "topic": "yangıncı teçhizatı",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
       "status": "existing-needs-quality-review"
     },
     {
