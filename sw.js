@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.19-professor-phase-2-character-engine-v1';
+const CACHE='sinbad-marine-v8.20.19-private-source-access-v1';
 const ASSETS=[
   './',
   './index.html',

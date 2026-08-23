@@ -40,6 +40,19 @@ test('speaker labels update only when their value changes and cannot create a mu
   assert.match(js,/if\(node\.textContent!==label\)node\.textContent=label/);
 });
 
+test('private publication UI fails closed while Professor lesson text remains exportable',()=>{
+  assert.match(html,/data-source-access="restricted"/);
+  for(const id of ['downloadLessonNotes','printLessonNotes','lessonExportStatus'])assert.match(html,new RegExp(`id=["']${id}["']`));
+  assert.match(js,/\['owner','developer'\]\.includes\(data\.role\)/);
+  assert.match(js,/document\.querySelectorAll\('\.academy-visuals'\)\.forEach\(node=>node\.remove\(\)\)/);
+  assert.match(js,/function lessonNotes\(\)/);
+  assert.match(js,/\.academy-message\.sinbad p/);
+  assert.match(js,/sinbad-ders-notlari-/);
+  assert.match(js,/popup\.print\(\)/);
+  assert.doesNotMatch(js,/cloudClient\.storage|\.storage\.from/);
+  assert.match(css,/body\[data-source-access="restricted"\] \.academy-visuals\{display:none!important\}/);
+});
+
 test('native Professor and consented identity module remain available from the offline shell',()=>{
   for(const file of ['academy-professor-native.html','academy-professor-native.css','academy-professor-native.js','sinbad-speaker-identity.js'])assert.match(worker,new RegExp(file.replaceAll('.','\\.')));
   assert.match(worker,/endsWith\('\/academy-professor-native\.html'\).*pageKey='\.\/academy-professor-native\.html'/s);
