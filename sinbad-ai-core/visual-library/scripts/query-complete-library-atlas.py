@@ -40,6 +40,15 @@ IMO_A760_ALIASES = {
     "yangın söndürücü": "fes-fire-extinguisher", "yangin sondurucu": "fes-fire-extinguisher",
     "yangın hortumu": "fes-fire-hose-reel", "yangin hortumu": "fes-fire-hose-reel",
     "yangın alarm butonu": "fes-fire-alarm-call-point", "yangin alarm butonu": "fes-fire-alarm-call-point",
+    "sigara içilmez": "pss-no-smoking", "sigara icilmez": "pss-no-smoking",
+    "açık alev yasak": "pss-no-open-flame", "acik alev yasak": "pss-no-open-flame",
+    "yanıcı madde": "wss-flammable-material", "yanici madde": "wss-flammable-material",
+    "elektrik tehlikesi": "wss-electricity", "biyolojik tehlike": "wss-biological-hazard",
+    "baret tak": "mss-wear-head-protection", "koruyucu gözlük": "mss-wear-eye-protection",
+    "koruyucu gozluk": "mss-wear-eye-protection", "emniyet kemerini bağla": "mss-fasten-safety-belts",
+    "emniyet kemerini bagla": "mss-fasten-safety-belts",
+    "filikayı suya indir": "mss-lower-lifeboat-to-water", "filikayi suya indir": "mss-lower-lifeboat-to-water",
+    "can salını suya indir": "mss-lower-liferaft-to-water", "can salini suya indir": "mss-lower-liferaft-to-water",
 }
 
 IMO_A1116_LSS_PAGES = {
@@ -71,6 +80,37 @@ IMO_A1116_SAFETY_PAGES = {
     "fes-fixed-fire-extinguishing-bottle": 9, "fes-remote-release-station": 9, "fes-fire-monitor": 9,
 }
 
+IMO_A1116_OPERATIONAL_PAGES = {
+    **{f"pss-{name}": page for page, names in {
+        6: ["general-prohibition", "no-smoking", "no-open-flame"],
+        7: ["no-thoroughfare", "not-drinking-water", "no-access-industrial-vehicles"],
+        8: ["no-access-active-cardiac-devices", "no-metallic-articles-or-watches", "do-not-touch"],
+        9: ["do-not-extinguish-with-water", "no-activated-mobile-phones", "no-access-metallic-implants", "no-reaching-in"],
+        10: ["no-pushing", "no-sitting", "no-stepping-on-surface", "do-not-use-lift-in-fire"],
+        11: ["no-dogs", "no-eating-or-drinking", "do-not-obstruct", "do-not-walk-or-stand-here"],
+    }.items() for name in names},
+    **{f"wss-{name}": page for page, names in {
+        6: ["general-warning", "explosive-material", "radioactive-material"],
+        7: ["laser-beam", "non-ionizing-radiation", "magnetic-field"],
+        8: ["floor-level-obstacle", "drop-fall", "biological-hazard"],
+        9: ["low-temperature", "slippery-surface", "electricity", "guard-dog"],
+        10: ["industrial-vehicles", "overhead-load", "toxic-material", "hot-surface"],
+        11: ["automatic-start-up", "crushing", "overhead-obstacle"],
+        12: ["flammable-material", "sharp-element"],
+    }.items() for name in names},
+    **{f"mss-{name}": page for page, names in {
+        6: ["general-mandatory-action", "refer-to-instruction-manual", "wear-ear-protection"],
+        7: ["wear-eye-protection", "connect-earth-terminal", "disconnect-mains-plug"],
+        8: ["opaque-eye-protection", "wear-safety-footwear", "wear-protective-gloves"],
+        9: ["wear-protective-clothing", "wash-your-hands", "use-handrail", "wear-face-shield"],
+        10: ["wear-head-protection", "wear-high-visibility-clothing", "wear-mask", "wear-respiratory-protection"],
+        11: ["wear-safety-harness", "wear-welding-mask"],
+        12: ["fasten-safety-belts", "close-and-secure-hatches", "start-engine", "lower-lifeboat-to-water",
+             "lower-liferaft-to-water", "lower-rescue-boat-to-water", "release-falls", "start-water-spray",
+             "start-air-supply", "release-lifeboat-gripes"],
+    }.items() for name in names},
+}
+
 
 def curated_symbol_root() -> Path:
     return Path(__file__).resolve().parents[1] / "assets" / "curated-imo-symbols"
@@ -79,15 +119,22 @@ def curated_symbol_root() -> Path:
 def curated_symbol_collections():
     assets = Path(__file__).resolve().parents[1] / "assets"
     return (
+        (assets / "curated-imo-a1116-operational", "imo-a1116-", IMO_A1116_OPERATIONAL_PAGES,
+         "IMO Resolution A.1116(30)",
+         "https://wwwcdn.imo.org/localresources/en/KnowledgeCentre/IndexofIMOResolutions/AssemblyDocuments/A.1116%2830%29.pdf", 400,
+         "imo-a1116-operational"),
         (assets / "curated-imo-a1116-safety", "imo-a1116-", IMO_A1116_SAFETY_PAGES,
          "IMO Resolution A.1116(30)",
-         "https://wwwcdn.imo.org/localresources/en/KnowledgeCentre/IndexofIMOResolutions/AssemblyDocuments/A.1116%2830%29.pdf", 300),
+         "https://wwwcdn.imo.org/localresources/en/KnowledgeCentre/IndexofIMOResolutions/AssemblyDocuments/A.1116%2830%29.pdf", 300,
+         "imo-a1116-safety"),
         (assets / "curated-imo-a1116-lss", "imo-a1116-lss-", IMO_A1116_LSS_PAGES,
          "IMO Resolution A.1116(30)",
-         "https://wwwcdn.imo.org/localresources/en/KnowledgeCentre/IndexofIMOResolutions/AssemblyDocuments/A.1116%2830%29.pdf", 200),
+         "https://wwwcdn.imo.org/localresources/en/KnowledgeCentre/IndexofIMOResolutions/AssemblyDocuments/A.1116%2830%29.pdf", 200,
+         "imo-a1116-lss"),
         (assets / "curated-imo-symbols", "imo-a760-", IMO_A760_PAGES,
          "IMO Resolution A.760(18)",
-         "https://wwwcdn.imo.org/localresources/en/KnowledgeCentre/IndexofIMOResolutions/AssemblyDocuments/A.760%2818%29.pdf", 100),
+         "https://wwwcdn.imo.org/localresources/en/KnowledgeCentre/IndexofIMOResolutions/AssemblyDocuments/A.760%2818%29.pdf", 100,
+         "imo-a760"),
     )
 
 
@@ -102,22 +149,18 @@ def curated_symbol_query(value: str, limit: int) -> list[dict]:
             needles.update(canonical.split("-"))
             preferred.add(canonical)
     scored = []
-    for root, prefix, pages, title, source_url, priority in curated_symbol_collections():
+    for root, prefix, pages, title, source_url, priority, collection_id in curated_symbol_collections():
         for path in root.glob(f"{prefix}*.webp"):
             name = path.stem.removeprefix(prefix)
-            score = len(needles.intersection(name.split("-"))) + (100 if name in preferred else 0)
+            score = len(needles.intersection(name.split("-"))) + (1000 if name in preferred else 0)
             if score:
-                scored.append((score + priority, name, path, pages, title, source_url, prefix))
+                scored.append((score + priority, name, path, pages, title, source_url, collection_id))
     result = []
-    for _score, name, path, pages, title, source_url, prefix in sorted(scored, key=lambda item: (-item[0], item[1]))[:limit]:
+    for _score, name, path, pages, title, source_url, collection_id in sorted(scored, key=lambda item: (-item[0], item[1]))[:limit]:
         digest = __import__("hashlib").sha256(path.read_bytes()).hexdigest()
         page = pages[name]
-        if prefix == "imo-a1116-":
-            resolution, document_hash = "imo-a1116-safety", "imo-resolution-a1116-30"
-        elif prefix == "imo-a1116-lss-":
-            resolution, document_hash = "imo-a1116-lss", "imo-resolution-a1116-30"
-        else:
-            resolution, document_hash = "imo-a760", "imo-resolution-a760-18"
+        resolution = collection_id
+        document_hash = "imo-resolution-a760-18" if collection_id == "imo-a760" else "imo-resolution-a1116-30"
         result.append({
             "visual_key": f"curated:{resolution}:{name}", "visual_type": "object",
             "document_hash": document_hash, "page_number": page,
@@ -227,7 +270,7 @@ def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = Fa
 def resolve_asset(db: sqlite3.Connection, atlas: Path, digest: str) -> dict:
     if not re.fullmatch(r"[0-9a-f]{64}", digest):
         raise RuntimeError("INVALID_ASSET_HASH")
-    for root, prefix, _pages, _title, _source_url, _priority in curated_symbol_collections():
+    for root, prefix, _pages, _title, _source_url, _priority, _collection_id in curated_symbol_collections():
         for path in root.glob(f"{prefix}*.webp"):
             if __import__("hashlib").sha256(path.read_bytes()).hexdigest() == digest:
                 return {"asset_hash": digest, "file": str(path), "width": None, "height": None,
