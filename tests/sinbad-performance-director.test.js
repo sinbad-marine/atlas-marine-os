@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,recordVerifiedGesture,gestureHistoryAnswerForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -283,6 +283,19 @@ test('relative gesture commands resolve only against a verified previous action'
   const ambiguous=gestureRequestForText('Öbür elini göster.',{lastAction:'show-palm'});
   assert.equal(ambiguous.supported,false);assert.equal(ambiguous.reason,'NO_VERIFIED_GESTURE_REFERENCE');
   assert.equal(gestureRequestForText('Do it again.').supported,false);
+});
+
+test('performed gesture history is bounded, verified and answers ordered follow-ups',()=>{
+  let history=[];
+  for(const action of ['smile','show-right-hand','raise-left-hand','look-left','nod']){
+    const recorded=recordVerifiedGesture(history,action,{limit:4});assert.equal(recorded.accepted,true);history=[...recorded.history];
+  }
+  assert.deepEqual(history,['show-right-hand','raise-left-hand','look-left','nod']);
+  const answer=gestureHistoryAnswerForText('Önce ne yaptın, sonra ne yaptın?',history,'tr-TR');
+  assert.equal(answer.known,true);assert.deepEqual(answer.actions,['look-left','nod']);assert.match(answer.text,/Önce başımı sola çevirdim; ardından başımı eğdim\./);
+  assert.equal(gestureHistoryAnswerForText('Son iki hareketin neydi?',[],'tr-TR').known,false);
+  assert.equal(recordVerifiedGesture(history,'teleport').reason,'UNVERIFIED_GESTURE_ACTION');
+  assert.equal(recordVerifiedGesture(history,'smile',{limit:99}).reason,'INVALID_GESTURE_HISTORY');
 });
 
 test('object and board gestures receive finite interruptible gaze transitions',()=>{

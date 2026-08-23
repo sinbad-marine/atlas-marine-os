@@ -418,6 +418,7 @@ let sinbadTextPresentationCues=[];
 let sinbadRequestedGesture=null;
 let sinbadRequestedGestureSequence=[];
 let sinbadLastPerformedGestureAction=null;
+let sinbadPerformedGestureHistory=[];
 let sinbadExplicitGestureHoldBoundaries=0;
 let sinbadLastSpeechMeaningKind='conversation';
 let sinbadSpeechMeaningTransitionTimer=null;
@@ -457,7 +458,8 @@ function prepareSinbadResponsePerformance(text){
   });
   if(sinbadRequestedGesture?.supported&&sinbadTextPresentationCues.length){
     sinbadTextPresentationCues[0]=Object.freeze({...sinbadTextPresentationCues[0],...sinbadRequestedGesture.cue,responseKind:sinbadTextPresentationCues[0].responseKind});
-    sinbadLastPerformedGestureAction=sinbadRequestedGesture.action;
+    const recorded=sinbadPerformanceDirector?.recordVerifiedGesture?.(sinbadPerformedGestureHistory,sinbadRequestedGesture.action,{limit:4});
+    if(recorded?.accepted){sinbadPerformedGestureHistory=[...recorded.history];sinbadLastPerformedGestureAction=sinbadPerformedGestureHistory.at(-1)||null;}
   }
   sinbadResponseOpeningCue=sinbadTextPresentationCues[0]||semantic;
   clearTimeout(sinbadSpeechMeaningTransitionTimer);sinbadSpeechMeaningTransitionTimer=null;
@@ -1646,6 +1648,8 @@ async function sendToSinbad(text){
   const effectiveQuestion=turnDirective.accepted?turnDirective.question:q;
   addSinbadMessage('user',q);
   $('sinbadInput').value='';
+  const recalledSequence=sinbadPerformanceDirector?.gestureHistoryAnswerForText?.(q,sinbadPerformedGestureHistory,sinbadState.language||appLanguage);
+  if(recalledSequence?.accepted){speakSinbad(recalledSequence.text,()=>addSinbadMessage('sinbad',recalledSequence.text));return;}
   const recalledGesture=sinbadPerformanceDirector?.gestureRecallAnswerForText?.(q,sinbadLastPerformedGestureAction,sinbadState.language||appLanguage);
   if(recalledGesture?.accepted){speakSinbad(recalledGesture.text,()=>addSinbadMessage('sinbad',recalledGesture.text));return;}
   if(window.SinbadRouteVisualizer?.isPlotRequest?.(q)){

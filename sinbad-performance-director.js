@@ -429,6 +429,29 @@
     };
     return Object.freeze({accepted:true,known:true,action:lastAction,text:prefixes[lastAction]});
   }
+  function recordVerifiedGesture(history,action,{limit=4}={}){
+    if(!Array.isArray(history)||!Number.isInteger(limit)||limit<1||limit>8)return Object.freeze({accepted:false,reason:'INVALID_GESTURE_HISTORY'});
+    const verified=gestureAcknowledgementForRequest({accepted:true,supported:true,action},'en-US');
+    if(!verified.accepted)return Object.freeze({accepted:false,reason:'UNVERIFIED_GESTURE_ACTION'});
+    const retained=history.filter(item=>typeof item==='string'&&gestureAcknowledgementForRequest({accepted:true,supported:true,action:item},'en-US').accepted);
+    return Object.freeze({accepted:true,history:Object.freeze([...retained,action].slice(-limit))});
+  }
+  function gestureHistoryAnswerForText(text,history,language='tr-TR'){
+    if(typeof text!=='string'||!text.trim())return Object.freeze({accepted:false,reason:'INVALID_HISTORY_TEXT'});
+    const normalized=text.toLocaleLowerCase('tr-TR');
+    if(!/(son\s+iki\s+hareketin\s+neydi|önce\s+ne\s+yaptın.*sonra\s+ne\s+yaptın|what\s+were\s+your\s+last\s+two\s+movements|what\s+did\s+you\s+do\s+first.*(?:then|next))/iu.test(normalized))return Object.freeze({accepted:false,reason:'NO_GESTURE_HISTORY_REQUEST'});
+    const turkish=String(language).toLocaleLowerCase('en-US').startsWith('tr');
+    const actions=Array.isArray(history)?history.slice(-2):[];
+    const labels=turkish?{
+      'show-palm':'avucumu açıp gösterdim','show-right-hand':'sağ avucumu gösterdim','raise-left-hand':'sol elimi kaldırdım','look-left':'başımı sola çevirdim','look-right':'başımı sağa çevirdim',nod:'başımı eğdim',smile:'gülümsedim','point-board':'tahtayı işaret ettim','show-listening':'seni dinlediğimi gösterdim'
+    }:{
+      'show-palm':'opened and showed my palm','show-right-hand':'showed my right palm','raise-left-hand':'raised my left hand','look-left':'turned my head left','look-right':'turned my head right',nod:'nodded',smile:'smiled','point-board':'pointed to the board','show-listening':'showed that I was listening'
+    };
+    const known=actions.filter(action=>Object.hasOwn(labels,action));
+    if(known.length<2)return Object.freeze({accepted:true,known:false,text:turkish?'Sıralı yanıt için henüz iki doğrulanmış hareket kaydım yok.':'I do not yet have two verified movements recorded for a sequence answer.'});
+    const answer=turkish?`Önce ${labels[known[0]]}; ardından ${labels[known[1]]}.`:`First I ${labels[known[0]]}; then I ${labels[known[1]]}.`;
+    return Object.freeze({accepted:true,known:true,actions:Object.freeze(known),text:answer});
+  }
   function gestureSequenceForRequest(action){
     const sequences={
       'show-palm':[
@@ -482,5 +505,5 @@
     };
     return Object.freeze({play,cancel});
   }
-  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
+  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,recordVerifiedGesture,gestureHistoryAnswerForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
 });
