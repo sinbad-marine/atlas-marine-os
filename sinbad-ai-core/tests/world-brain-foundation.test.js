@@ -12,6 +12,7 @@ const profiles=require('../world-brain/content-profiles.js');
 const acquisition=require('../world-brain/acquisition-plan.js');
 const kiwix=require('../world-brain/kiwix-search-provider.js');
 const fs=require('node:fs');
+const {spawnSync}=require('node:child_process');
 
 function manifestFor(bytes,overrides={}){
   return {schemaVersion:pack.VERSION,packId:'history-core-tr',title:'History Core',domain:'history',language:'tr-TR',license:'CC-BY-4.0',source:'https://example.test/history',publisher:'Example Publisher',edition:'2026.1',snapshotDate:'2026-08-01',contentHash:pack.contentHash(bytes),tags:['history'],...overrides};
@@ -146,4 +147,38 @@ test('live Bridge routes durable questions to loopback Kiwix and blocks stale or
   assert.match(bridge,/offline-world-rag/);
   assert.match(bridge,/KIWIX_LOOPBACK_ONLY/);
   assert.doesNotMatch(bridge,/--address=(?:all|ipv4|ipv6)/);
+});
+
+function routeQwen(question,options={}){
+  const router=fs.realpathSync('bridge/qwen-tier-router.ps1').replaceAll("'","''");
+  const payload=Buffer.from(JSON.stringify({question,...options}),'utf8').toString('base64');
+  const script=`. '${router}'; $p=[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('${payload}'))|ConvertFrom-Json; Select-SinbadModelTier -Question $p.question -HistoryCount ([int]$p.historyCount) -EvidenceLength ([int]$p.evidenceLength) -RequestedDepth ([string]$p.depth) -FastModel 'qwen3:4b' -DeepModel 'qwen3:14b' -AvailableModels @('qwen3:4b','qwen3:14b') | ConvertTo-Json -Depth 6 -Compress`;
+  const run=spawnSync('pwsh',['-NoProfile','-Command',script],{encoding:'utf8'});
+  assert.equal(run.status,0,run.stderr);
+  return JSON.parse(run.stdout.trim());
+}
+
+test('two-tier Qwen router keeps ordinary offline questions on the fast local model',()=>{
+  const result=routeQwen('Osmanlı İmparatorluğu hangi yüzyılda kuruldu?');
+  assert.equal(result.tier,'fast');
+  assert.equal(result.model,'qwen3:4b');
+  assert.deepEqual(result.reasons,['default-fast-path']);
+});
+
+test('two-tier Qwen router sends explicit deep technical work to the deep local model',()=>{
+  const result=routeQwen('Bu rota planını risk değerlendirmesiyle derinlemesine analiz et.',{depth:'deep',evidenceLength:8000,historyCount:9});
+  assert.equal(result.tier,'deep');
+  assert.equal(result.model,'qwen3:14b');
+  assert.ok(result.complexityScore>=2);
+});
+
+test('two-tier Qwen router records a safe fallback when the preferred model is unavailable',()=>{
+  const router=fs.realpathSync('bridge/qwen-tier-router.ps1').replaceAll("'","''");
+  const script=`. '${router}'; Select-SinbadModelTier -Question 'Kısa soru' -FastModel 'qwen3:4b' -DeepModel 'qwen3:14b' -AvailableModels @('qwen3:14b') | ConvertTo-Json -Depth 6 -Compress`;
+  const run=spawnSync('pwsh',['-NoProfile','-Command',script],{encoding:'utf8'});
+  assert.equal(run.status,0,run.stderr);
+  const result=JSON.parse(run.stdout.trim());
+  assert.equal(result.model,'qwen3:14b');
+  assert.equal(result.fallbackUsed,true);
+  assert.ok(result.reasons.includes('preferred-model-unavailable'));
 });

@@ -2,6 +2,7 @@ param(
   [int]$Port = 31983,
   [string]$ExchangeRoot = '',
   [string]$AiModel = 'qwen3:14b',
+  [string]$FastAiModel = 'qwen3:4b',
   [string]$XttsExecutable = '',
   [string]$XttsModelPath = '',
   [string]$XttsConfigPath = '',
@@ -14,6 +15,9 @@ param(
 
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Net.Http
+$tierRouterPath = Join-Path $PSScriptRoot 'qwen-tier-router.ps1'
+if (-not (Test-Path -LiteralPath $tierRouterPath -PathType Leaf)) { throw 'SINBAD_QWEN_TIER_ROUTER_MISSING' }
+. $tierRouterPath
 $bridgeRoot = if ([string]::IsNullOrWhiteSpace($ExchangeRoot)) { Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'Sinbad Bridge' } else { $ExchangeRoot }
 $routeRoot = Join-Path $bridgeRoot 'Routes'
 $libraryRoot = Join-Path $bridgeRoot 'Library'
@@ -59,7 +63,7 @@ $listener.Start()
 Write-Host "Sinbad Bridge is online: http://127.0.0.1:$Port" -ForegroundColor Green
 Write-Host "GPX exchange folder: $routeRoot"
 Write-Host "Offline library folder: $libraryRoot"
-Write-Host "Offline AI model: $AiModel"
+Write-Host "Offline AI models: fast=$FastAiModel deep=$AiModel"
 Write-Host "Offline world knowledge: $KiwixUrl"
 Write-Host "XTTS persistent worker: http://127.0.0.1:$XttsWorkerPort"
 Write-Host 'Keep this window open while using the Bridge. Press Ctrl+C to stop.'
@@ -270,9 +274,9 @@ function Get-OllamaStatus {
   try {
     $tags = Invoke-LocalJsonGet 'http://127.0.0.1:11434/api/tags'
     $models = @($tags.models | ForEach-Object { $_.name })
-    return @{ online=$true; model=$AiModel; installed=($models -contains $AiModel); models=$models }
+    return @{ online=$true; model=$AiModel; installed=($models -contains $AiModel); models=$models; routing=@{ fast=$FastAiModel; deep=$AiModel; fastInstalled=($models -contains $FastAiModel); deepInstalled=($models -contains $AiModel) } }
   } catch {
-    return @{ online=$false; model=$AiModel; installed=$false; models=@() }
+    return @{ online=$false; model=$AiModel; installed=$false; models=@(); routing=@{ fast=$FastAiModel; deep=$AiModel; fastInstalled=$false; deepInstalled=$false } }
   }
 }
 
@@ -488,11 +492,15 @@ When OFFLINE ENCYCLOPEDIA EXCERPTS are supplied, use them as dated reference evi
   if ($kiwix.state -eq 'BLOCKED_STALE_OR_HIGH_RISK') { $evidence.Add("OFFLINE KNOWLEDGE POLICY: BLOCKED_STALE_OR_HIGH_RISK`n$($kiwix.reason)") }
   $userContent = if ($evidence.Count) { "$question`n`n$($evidence -join "`n`n")" } else { $question }
   $messages += @{ role='user'; content=$userContent }
-  $request = @{ model=$AiModel; messages=$messages; stream=$false; think=$false; keep_alive='30m'; options=@{ temperature=0.35; num_ctx=32768 } }
+  $ollama = Get-OllamaStatus
+  $evidenceLength = ($evidence -join "`n`n").Length
+  $selection = Select-SinbadModelTier -Question $question -HistoryCount $history.Count -EvidenceLength $evidenceLength -RequestedDepth ([string]$payload.depth) -FastModel $FastAiModel -DeepModel $AiModel -AvailableModels @($ollama.models)
+  $contextWindow = if ($selection.tier -eq 'deep') { 32768 } else { 8192 }
+  $request = @{ model=$selection.model; messages=$messages; stream=$false; think=$false; keep_alive='30m'; options=@{ temperature=0.35; num_ctx=$contextWindow } }
   $result = Invoke-LocalJsonPost 'http://127.0.0.1:11434/api/chat' ($request | ConvertTo-Json -Depth 12 -Compress)
   if ([string]::IsNullOrWhiteSpace($result.message.content)) { throw 'The local AI returned no answer.' }
   $mode = if ($context -and $kiwix.context) {'offline-owner-and-world-rag'} elseif ($context) {'offline-local-rag'} elseif ($kiwix.context) {'offline-world-rag'} elseif ($kiwix.state -eq 'BLOCKED_STALE_OR_HIGH_RISK') {'offline-current-claim-blocked'} else {'offline-local-ai'}
-  return @{ answer=$result.message.content; model=$result.model; mode=$mode; knowledge=@{ state=$kiwix.state; results=$kiwix.results; reason=$kiwix.reason } }
+  return @{ answer=$result.message.content; model=$result.model; modelTier=$selection.tier; routing=@{ preferredModel=$selection.preferredModel; selectedModel=$selection.model; fallbackUsed=$selection.fallbackUsed; complexityScore=$selection.complexityScore; reasons=$selection.reasons }; mode=$mode; knowledge=@{ state=$kiwix.state; results=$kiwix.results; reason=$kiwix.reason } }
 }
 
 if (Test-Path -LiteralPath $indexPath) {
@@ -546,7 +554,7 @@ try {
       if ($method -eq 'GET' -and $path -eq '/status') {
         $count = @(Get-ChildItem -LiteralPath $routeRoot -Filter '*.gpx' -File -ErrorAction SilentlyContinue).Count
         $kiwixState = try { $xml=Invoke-LocalTextGet "$KiwixUrl/search?books.filter.lang=tur&pattern=Sinbad&pageLength=1&format=xml" 2; if($xml -match '<rss'){'READY'}else{'INVALID_RESPONSE'} } catch {'UNAVAILABLE'}
-        Write-HttpResponse $stream 200 'OK' (Json @{ name='Sinbad Bridge'; version='0.4.0'; routes=$count; exchangeFolder=$routeRoot; libraryFolder=$libraryRoot; library=(Get-LibraryStatus); ai=(Get-OllamaStatus); worldKnowledge=@{ provider='kiwix'; endpoint=$KiwixUrl; state=$kiwixState; snapshot='wikipedia_tr_top_mini_2026-04' } }); continue
+        Write-HttpResponse $stream 200 'OK' (Json @{ name='Sinbad Bridge'; version='0.5.0'; routes=$count; exchangeFolder=$routeRoot; libraryFolder=$libraryRoot; library=(Get-LibraryStatus); ai=(Get-OllamaStatus); worldKnowledge=@{ provider='kiwix'; endpoint=$KiwixUrl; state=$kiwixState; snapshot='wikipedia_tr_top_mini_2026-04' } }); continue
       }
       if ($method -eq 'GET' -and $path -eq '/library/status') { Write-HttpResponse $stream 200 'OK' (Json (Get-LibraryStatus)); continue }
       if ($method -eq 'GET' -and $path -eq '/studio/status') { Write-HttpResponse $stream 200 'OK' (Json (Get-StudioCapabilityStatus)); continue }
