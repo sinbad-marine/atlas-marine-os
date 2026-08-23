@@ -314,6 +314,7 @@
   function gestureRequestForText(text){
     if(typeof text!=='string'||!text.trim())return Object.freeze({accepted:false,reason:'INVALID_REQUEST_TEXT'});
     const normalized=text.toLocaleLowerCase('tr-TR');
+    if(/((?:avucunda|avucunun\s+içinde|elinde).*(?:ne\s+var|bir\s+şey\s+mi\s+var)|(?:what|anything|something).*(?:in|on).*(?:your\s+)?(?:hand|palm))/iu.test(normalized))return Object.freeze({accepted:true,action:'show-palm',supported:true,semantic:'palm-object-query',responsePolicy:'replace',cue:Object.freeze({gesture:'show-palm',gaze:'palm',emotion:'attentive',energy:.4})});
     if(/(sağ\s+(?:elini|kolunu|avucunu).*(?:göster|kaldır|aç)|(?:show|raise|open).*(?:your\s+)?right\s+(?:hand|arm|palm))/iu.test(normalized))return Object.freeze({accepted:true,action:'show-right-hand',supported:true,cue:Object.freeze({gesture:'show-palm',gaze:'audience',emotion:'warm',energy:.4})});
     if(/(sol\s+(?:elini|kolunu|avucunu).*(?:göster|kaldır|aç)|(?:show|raise|open).*(?:your\s+)?left\s+(?:hand|arm|palm))/iu.test(normalized))return Object.freeze({accepted:true,action:'raise-left-hand',supported:true,cue:Object.freeze({gesture:'raise-left',gaze:'audience',emotion:'attentive',energy:.38})});
     if(/(başını\s+sola\s+(?:çevir|döndür)|(?:turn|look).*(?:your\s+)?head.*left)/iu.test(normalized))return Object.freeze({accepted:true,action:'look-left',supported:true,cue:Object.freeze({gesture:'look-left',gaze:'audience',emotion:'attentive',energy:.24})});
@@ -343,6 +344,7 @@
     if(request.supported!==true){
       return Object.freeze({accepted:true,supported:false,action:request.action||'unknown',text:turkish?'Bu hareketi henüz güvenilir biçimde yapamıyorum.':'I cannot perform that movement reliably yet.'});
     }
+    if(request.semantic==='palm-object-query')return Object.freeze({accepted:true,supported:true,action:'show-palm',text:turkish?'Avucumu açıp gösteriyorum; mevcut karakter görünümünde avucumda bir nesne gösterilmiyor.':'I am opening my palm; the current character view shows no object in it.'});
     const copy=turkish?{
       'show-palm':'Avucumu açıp gösteriyorum.',
       'show-right-hand':'Sağ avucumu açıp gösteriyorum.',
@@ -371,7 +373,8 @@
     if(typeof responseText!=='string'||!responseText.trim())return Object.freeze({accepted:false,reason:'INVALID_RESPONSE_TEXT'});
     const acknowledgement=gestureAcknowledgementForRequest(request,language);
     if(!acknowledgement.accepted)return Object.freeze({accepted:true,grounded:false,text:responseText});
-    return Object.freeze({accepted:true,grounded:true,supported:acknowledgement.supported,action:acknowledgement.action,text:`${acknowledgement.text} ${responseText}`.trim()});
+    const text=request.responsePolicy==='replace'?acknowledgement.text:`${acknowledgement.text} ${responseText}`.trim();
+    return Object.freeze({accepted:true,grounded:true,supported:acknowledgement.supported,action:acknowledgement.action,text});
   }
   function gestureRecallAnswerForText(text,lastAction,language='tr-TR'){
     if(typeof text!=='string'||!text.trim())return Object.freeze({accepted:false,reason:'INVALID_RECALL_TEXT'});

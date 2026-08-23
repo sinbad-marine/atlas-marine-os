@@ -246,6 +246,16 @@ test('spoken gesture acknowledgement is grounded in the action the rig can actua
   assert.match(groundResponseWithGesture('Here is the answer.',gestureRequestForText('Show your right hand.'),'en-US').text,/^I am opening and showing my right palm\./);
 });
 
+test('a direct question about Sinbad body state replaces unrelated model text with a visible grounded answer',()=>{
+  const request=gestureRequestForText('Sinbad avucunun içinde bir şey mi var? Avucunu açar mısın?');
+  assert.equal(request.semantic,'palm-object-query');assert.equal(request.responsePolicy,'replace');assert.equal(request.cue.gaze,'palm');
+  const grounded=groundResponseWithGesture('Atlas kitaplığında güçlü bir eşleşme bulamadım.',request,'tr-TR');
+  assert.equal(grounded.text,'Avucumu açıp gösteriyorum; mevcut karakter görünümünde avucumda bir nesne gösterilmiyor.');
+  assert.doesNotMatch(grounded.text,/Atlas kitaplığında/);
+  const english=groundResponseWithGesture('No library match.',gestureRequestForText('Is there anything in your palm?'),'en-US');
+  assert.match(english.text,/shows no object/);assert.doesNotMatch(english.text,/library/i);
+});
+
 test('unimplemented physical requests are acknowledged without inventing an action',()=>{
   const writing=gestureRequestForText('Tahtaya bir daire çiz.');
   assert.equal(writing.accepted,true);assert.equal(writing.supported,false);assert.equal(writing.reason,'GESTURE_NOT_IMPLEMENTED');
