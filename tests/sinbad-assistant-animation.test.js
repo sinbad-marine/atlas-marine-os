@@ -537,7 +537,7 @@ test('round-table fix: stopSinbadLipSyncAnalyser disconnects the previous source
 
 test('round-table fix: the avatar image swap uses a generation token so a slow/stale image load from a superseded state change can never flip opacity back on',()=>{
   assert.match(app,/let sinbadAvatarImageGeneration=0;/);
-  const fn=app.slice(app.indexOf('function setSinbadAssistantState'),app.indexOf('function setSinbadAssistantState')+2600);
+  const fn=app.slice(app.indexOf('function setSinbadAssistantState'),app.indexOf('function setSinbadVoiceUI'));
   assert.match(fn,/const generation=\+\+sinbadAvatarImageGeneration;/);
   assert.match(fn,/img\.onload=\(\)=>\{if\(generation===sinbadAvatarImageGeneration\)img\.style\.opacity='1';\};/);
 });
@@ -681,6 +681,8 @@ test('show-palm reuses the verified real open-hand artwork, removes the large-av
   assert.match(css,/\.sinbad-avatar\[data-gesture="show-palm"\]\{animation:sinbadStageShowPalm 1\.35s ease-out both\}/);
   assert.match(css,/@keyframes sinbadStageShowPalm\{/);
   assert.doesNotMatch(app,/show-palm.*\.png/);
+  assert.match(app,/gazeTransitionForCue\?\.\(performance,\{reducedMotion:reducedGazeMotion\}\)/);
+  assert.match(css,/data-gaze="palm"\]\{--sinbad-gaze-offset:-1\.35deg\}/);
 });
 
 test('thinking animation reports only real asynchronous work stages and removes the old artificial delay',()=>{

@@ -205,6 +205,16 @@
     }
     return Object.freeze({accepted:false,reason:'NO_GESTURE_REQUEST'});
   }
+  function gazeTransitionForCue(cue,{reducedMotion=false}={}){
+    if(!cue||typeof cue!=='object')return Object.freeze({accepted:false,reason:'INVALID_GAZE_CUE'});
+    const target=['audience','thought','board','path','palm'].includes(cue.gaze)?cue.gaze:'audience';
+    let cues;
+    if(reducedMotion)cues=[Object.freeze({at:0,gaze:target})];
+    else if(cue.gesture==='show-palm')cues=[Object.freeze({at:0,gaze:'palm'}),Object.freeze({at:520,gaze:'audience'})];
+    else if(cue.gesture==='point-board')cues=[Object.freeze({at:0,gaze:'board'}),Object.freeze({at:900,gaze:'audience'}),Object.freeze({at:1600,gaze:'board'})];
+    else cues=[Object.freeze({at:0,gaze:target})];
+    return Object.freeze({accepted:true,cues:Object.freeze(cues),duration:cues.at(-1).at});
+  }
   function createPerformanceDirector(options={}){
     const schedule=options.setTimeout||setTimeout,cancelSchedule=options.clearTimeout||clearTimeout;
     let generation=0,timers=[];
@@ -220,5 +230,5 @@
     };
     return Object.freeze({play,cancel});
   }
-  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,createImprovisationDirector,createPerformanceDirector});
+  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gazeTransitionForCue,createImprovisationDirector,createPerformanceDirector});
 });

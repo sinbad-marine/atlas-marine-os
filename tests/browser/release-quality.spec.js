@@ -49,8 +49,11 @@ test('large Captain Sinbad portrait loads the four-layer articulated rig with it
   const restingArm=await avatar.locator('.sinbad-rig-right-arm').evaluate(element=>getComputedStyle(element).transform);
   await page.evaluate(()=>setSinbadAssistantState('speaking',{gesture:'show-palm',motionProfile:'lively'}));
   await page.waitForTimeout(150);
+  await expect(avatar).toHaveAttribute('data-gaze','palm');
   const showingPalm=await avatar.locator('.sinbad-rig-right-arm').evaluate(element=>getComputedStyle(element).transform);
   expect(showingPalm).not.toBe(restingArm);
+  await page.waitForTimeout(450);
+  await expect(avatar).toHaveAttribute('data-gaze','audience');
   await page.evaluate(()=>setSinbadMouthFrame('closed'));
   await expect(avatar.locator('.sinbad-rig-face-closed')).toHaveCSS('opacity','1');
   await page.evaluate(()=>setSinbadMouthFrame('wide'));

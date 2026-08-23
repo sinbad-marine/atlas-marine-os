@@ -592,6 +592,9 @@ function startSinbadWalkCycle(generation){
 function setSinbadAssistantState(state,detail={}){
   const next=SINBAD_ASSISTANT_STATES.includes(state)?state:'idle';
   const performance=sinbadCharacterEngine?.setState(next,detail)?.snapshot||{state:next,emotion:'neutral',gesture:'rest',gaze:'audience'};
+  const reducedGazeMotion=detail.reducedMotion===true||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches||document.documentElement.classList.contains('sinbad-force-reduced-motion');
+  const gazePlan=sinbadPerformanceDirector?.gazeTransitionForCue?.(performance,{reducedMotion:reducedGazeMotion});
+  const initialGaze=gazePlan?.accepted?gazePlan.cues[0].gaze:performance.gaze;
   const changed=next!==sinbadAssistantState;
   sinbadAssistantState=next;
   sinbadAssistantLastDetail=detail||{};
@@ -606,7 +609,7 @@ function setSinbadAssistantState(state,detail={}){
     el.dataset.state=next;
     el.dataset.emotion=performance.emotion;
     el.dataset.gesture=performance.gesture;
-    el.dataset.gaze=performance.gaze;
+    el.dataset.gaze=initialGaze;
     if(detail.motionProfile)el.dataset.motionProfile=detail.motionProfile;
     else delete el.dataset.motionProfile;
     if(next==='listening'&&detail.listeningActivity)el.dataset.listeningActivity=detail.listeningActivity;
@@ -645,6 +648,10 @@ function setSinbadAssistantState(state,detail={}){
   if(next==='walking'){startSinbadWalkCycle(generation);sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='walking')setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');},2240));}
   if(next==='warning')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='warning')setSinbadAssistantState('idle');},4200));
   if(next==='error')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='error')setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');},6000));
+  if(gazePlan?.accepted)gazePlan.cues.slice(1).forEach(cue=>sinbadAssistantTimers.push(setTimeout(()=>{
+    if(generation!==sinbadAvatarImageGeneration||sinbadAssistantState!==next)return;
+    sinbadAssistantElements().forEach(el=>el.dataset.gaze=cue.gaze);
+  },cue.at)));
   scheduleSinbadBlink();
   return next;
 }

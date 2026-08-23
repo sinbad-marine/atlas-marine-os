@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,createImprovisationDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gazeTransitionForCue,createImprovisationDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -157,4 +157,14 @@ test('explicit gesture requests override improvisation only when a real supporte
   assert.equal(listening.action,'show-listening');assert.equal(listening.cue.gesture,'listen-lean');
   assert.equal(gestureRequestForText('Bugün hava güzel.').reason,'NO_GESTURE_REQUEST');
   assert.equal(gestureRequestForText(' ').reason,'INVALID_REQUEST_TEXT');
+});
+
+test('object and board gestures receive finite interruptible gaze transitions',()=>{
+  const palm=gazeTransitionForCue({gesture:'show-palm',gaze:'audience'});
+  assert.equal(palm.accepted,true);assert.deepEqual(palm.cues.map(cue=>cue.gaze),['palm','audience']);assert.equal(palm.duration,520);
+  const board=gazeTransitionForCue({gesture:'point-board',gaze:'board'});
+  assert.deepEqual(board.cues.map(cue=>cue.gaze),['board','audience','board']);assert.ok(board.duration<=1600);
+  const reduced=gazeTransitionForCue({gesture:'show-palm',gaze:'audience'},{reducedMotion:true});
+  assert.deepEqual(reduced.cues.map(cue=>cue.gaze),['audience']);assert.equal(Object.isFrozen(reduced.cues),true);
+  assert.equal(gazeTransitionForCue(null).reason,'INVALID_GAZE_CUE');
 });
