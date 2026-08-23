@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "sinbad-curated-safety-visuals/1",
+  "collection": "Verified maritime safety photographs",
+  "visuals": [
+    {
+      "file": "lifebuoy-scarborough.jpg",
+      "sha256": "a8f4b84c1ca499755f5005cf0ba3174bbcc5d9eadfca849c9c691cc135837141",
+      "width": 3840,
+      "height": 2160,
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Scarborough_Harbour_Lifebuoy.jpg",
+      "occurrences": [
+        {
+          "pdfPage": 1,
+          "headings": ["Can simidi (lifebuoy)"],
+          "topics": ["lifebuoy", "life buoy", "life ring", "can simidi", "can simit", "man overboard", "rescue equipment"],
+          "context": "Gerçek can simidi fotoğrafı. Scarborough Harbour; Partonez; CC BY-SA 4.0."
+        }
+      ]
+    },
+    {
+      "file": "inflatable-life-raft-us-navy.jpg",
+      "sha256": "88053bb4876ffc0219dab3a9be59d42434641804083ae10cc4fc1b6738d01811",
+      "width": 3000,
+      "height": 2016,
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Inflating_a_life_raft_120406-N-NB694-014.jpg",
+      "occurrences": [
+        {
+          "pdfPage": 1,
+          "headings": ["Şişirilebilir can salı (inflatable liferaft)"],
+          "topics": ["liferaft", "life raft", "inflatable life raft", "can salı", "şişme can salı", "survival craft", "rescue equipment"],
+          "context": "Gerçek şişirilebilir can salı fotoğrafı. Official U.S. Navy photograph 120406-N-NB694-014; United States public domain."
+        }
+      ]
+    }
+  ]
+}
