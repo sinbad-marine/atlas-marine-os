@@ -30,3 +30,16 @@ about the present are made.
 
 Personal learner memory is stored separately from world knowledge. This prevents a
 student preference or a model-generated sentence from silently becoming a fact.
+
+## Content acquisition
+
+`source-catalog.js` is a deny-by-default registry of candidate upstream
+collections. A listed source is not automatically downloaded or trusted. Each
+candidate records its official catalog, language, license, freshness class,
+update cadence and visual-licensing policy. Sources needing work-by-work or
+image-by-image rights checks cannot be globally enabled.
+
+`content-profiles.js` defines four storage levels: `light`, `standard`,
+`academy` and `archive`. Current politics, economics, sport, news and popular
+culture are never presented as timeless offline facts; they require dated
+update packs or a live source.

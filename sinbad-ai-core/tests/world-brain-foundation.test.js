@@ -7,6 +7,8 @@ const freshness=require('../world-brain/freshness-policy.js');
 const pack=require('../world-brain/knowledge-pack.js');
 const router=require('../world-brain/topic-router.js');
 const catalogModule=require('../world-brain/knowledge-catalog.js');
+const sources=require('../world-brain/source-catalog.js');
+const profiles=require('../world-brain/content-profiles.js');
 
 function manifestFor(bytes,overrides={}){
   return {schemaVersion:pack.VERSION,packId:'history-core-tr',title:'History Core',domain:'history',language:'tr-TR',license:'CC-BY-4.0',source:'https://example.test/history',publisher:'Example Publisher',edition:'2026.1',snapshotDate:'2026-08-01',contentHash:pack.contentHash(bytes),tags:['history'],...overrides};
@@ -84,4 +86,29 @@ test('catalog answer plan keeps stable knowledge and blocks stale current affair
   assert.equal(historyPlan.eligible.length,1);
   assert.equal(newsPlan.eligible.length,0);
   assert.equal(newsPlan.requiresLiveSource,true);
+});
+
+test('upstream source catalog is deny-by-default and records rights and freshness',()=>{
+  assert.ok(sources.SOURCES.length>=5);
+  for(const source of sources.SOURCES){
+    assert.equal(source.enabled,false);
+    assert.ok(source.license);
+    assert.ok(source.updateCadence);
+    assert.ok(source.officialCatalog.startsWith('https://'));
+  }
+  assert.equal(sources.getSource('kiwix-wikipedia-tr-mini').recommendedProfile,'light');
+  assert.equal(sources.getSource('project-gutenberg-curated').requiresPerItemLicense,true);
+});
+
+test('unsafe bulk enabling and unlicensed image sources fail closed',()=>{
+  const perItem={...sources.getSource('wikimedia-curated-visuals'),enabled:true};
+  assert.throws(()=>sources.validateSource(perItem),/cannot be globally enabled/);
+  const unsafe={...sources.getSource('kiwix-wikipedia-tr-mini'),enabled:true,containsImages:true,imageLicensePolicy:'NONE'};
+  assert.throws(()=>sources.validateSource(unsafe),/image license policy/);
+});
+
+test('content profiles scale from a small offline brain to a curated academy',()=>{
+  assert.deepEqual(profiles.listProfiles().map(item=>item.id),['light','standard','academy','archive']);
+  assert.equal(profiles.getProfile('academy').images,'curated-and-attributed');
+  assert.equal(profiles.getProfile('missing'),null);
 });
