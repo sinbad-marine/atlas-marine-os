@@ -62,6 +62,7 @@
       const heard=(lastFinal.trim()||liveTranscript.trim()),question=wakeArmed?questionAfterWake(heard):'';
       listening=false;clearTimer('silence');lastFinal='';liveTranscript='';
       if(!enabled)return;
+      if(awaitingAnswer)return;
       if(wakeArmed&&question)return submitTranscript(question);
       if(wakeArmed){setStatus('Uyandım Kaptan. Sorunuzu dinliyorum…');return scheduleListening(80)}
       setStatus('Uyku modundayım. Bana “Kaptan Sinbad” diye seslenin.');scheduleListening(120);
