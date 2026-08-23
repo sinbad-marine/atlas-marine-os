@@ -746,6 +746,8 @@ test('a supported explicit gesture request overrides only the opening cue and un
   assert.match(app,/gestureRequestForText\(question\)/);
   assert.match(app,/groundResponseWithGesture\?\.\(text,sinbadRequestedGesture,sinbadState\.language\|\|appLanguage\)/);
   assert.match(app,/const answer=groundSinbadResponseToRequestedGesture\(await sinbadLocalAnswer\(effectiveQuestion\)\)/);
+  assert.match(app,/sinbadLastPerformedGestureAction=sinbadRequestedGesture\.action/);
+  assert.match(app,/gestureRecallAnswerForText\?\.\(q,sinbadLastPerformedGestureAction,sinbadState\.language\|\|appLanguage\)/);
   assert.match(app,/if\(sinbadRequestedGesture\?\.supported&&sinbadTextPresentationCues\.length\)/);
   assert.match(app,/\.\.\.sinbadRequestedGesture\.cue,responseKind:sinbadTextPresentationCues\[0\]\.responseKind/);
   assert.match(app,/sinbadRequestedGesture=null;/);

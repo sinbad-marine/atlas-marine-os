@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -253,6 +253,16 @@ test('unimplemented physical requests are acknowledged without inventing an acti
   assert.equal(grounded.grounded,true);assert.equal(grounded.supported,false);assert.match(grounded.text,/^Bu hareketi henüz güvenilir biçimde yapamıyorum\./);
   assert.equal(gestureAcknowledgementForRequest({accepted:true,supported:true,action:'teleport'}).reason,'UNMAPPED_GESTURE_ACTION');
   assert.equal(groundResponseWithGesture('',writing).reason,'INVALID_RESPONSE_TEXT');
+});
+
+test('follow-up body questions answer only from a verified performed-action record',()=>{
+  const known=gestureRecallAnswerForText('Hangi elini kaldırdın?','raise-left-hand','tr-TR');
+  assert.deepEqual(known,{accepted:true,known:true,action:'raise-left-hand',text:'Sol elimi kaldırıp gösterdim.'});
+  const english=gestureRecallAnswerForText('Which hand did you show?','show-right-hand','en-US');
+  assert.match(english.text,/right palm/);assert.equal(english.known,true);
+  const unknown=gestureRecallAnswerForText('Az önce ne yaptın?',null,'tr-TR');
+  assert.equal(unknown.accepted,true);assert.equal(unknown.known,false);assert.match(unknown.text,/doğrulanmış bir hareket kaydım/);
+  assert.equal(gestureRecallAnswerForText('Bugün ne öğreneceğiz?','raise-left-hand').reason,'NO_GESTURE_RECALL_REQUEST');
 });
 
 test('object and board gestures receive finite interruptible gaze transitions',()=>{

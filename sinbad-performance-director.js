@@ -373,6 +373,38 @@
     if(!acknowledgement.accepted)return Object.freeze({accepted:true,grounded:false,text:responseText});
     return Object.freeze({accepted:true,grounded:true,supported:acknowledgement.supported,action:acknowledgement.action,text:`${acknowledgement.text} ${responseText}`.trim()});
   }
+  function gestureRecallAnswerForText(text,lastAction,language='tr-TR'){
+    if(typeof text!=='string'||!text.trim())return Object.freeze({accepted:false,reason:'INVALID_RECALL_TEXT'});
+    const normalized=text.toLocaleLowerCase('tr-TR');
+    const asksWhichHand=/(hangi\s+(?:elini|avucunu).*(?:kaldırdın|gösterdin|açtın)|which\s+(?:hand|palm).*(?:raise|show|open))/iu.test(normalized);
+    const asksLastAction=/(az önce\s+ne\s+yaptın|son\s+hareketin\s+neydi|what\s+did\s+you\s+(?:just\s+)?do|what\s+was\s+your\s+last\s+movement)/iu.test(normalized);
+    if(!asksWhichHand&&!asksLastAction)return Object.freeze({accepted:false,reason:'NO_GESTURE_RECALL_REQUEST'});
+    const acknowledgement=gestureAcknowledgementForRequest({accepted:true,supported:true,action:lastAction},language);
+    const turkish=String(language).toLocaleLowerCase('en-US').startsWith('tr');
+    if(!lastAction||!acknowledgement.accepted)return Object.freeze({accepted:true,known:false,text:turkish?'Bu oturumda doğrulanmış bir hareket kaydım henüz yok.':'I do not have a verified movement recorded in this session yet.'});
+    const prefixes=turkish?{
+      'show-palm':'Avucumu açıp gösterdim.',
+      'show-right-hand':'Sağ avucumu açıp gösterdim.',
+      'raise-left-hand':'Sol elimi kaldırıp gösterdim.',
+      'look-left':'Başımı sola çevirdim.',
+      'look-right':'Başımı sağa çevirdim.',
+      nod:'Başımı eğdim.',
+      smile:'Gülümsedim.',
+      'point-board':'Tahtayı işaret ettim.',
+      'show-listening':'Seni dinlediğimi gösterdim.'
+    }:{
+      'show-palm':'I opened and showed my palm.',
+      'show-right-hand':'I opened and showed my right palm.',
+      'raise-left-hand':'I raised and showed my left hand.',
+      'look-left':'I turned my head to the left.',
+      'look-right':'I turned my head to the right.',
+      nod:'I nodded.',
+      smile:'I smiled.',
+      'point-board':'I pointed to the board.',
+      'show-listening':'I showed that I was listening.'
+    };
+    return Object.freeze({accepted:true,known:true,action:lastAction,text:prefixes[lastAction]});
+  }
   function gestureSequenceForRequest(action){
     const sequences={
       'show-palm':[
@@ -426,5 +458,5 @@
     };
     return Object.freeze({play,cancel});
   }
-  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
+  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
 });
