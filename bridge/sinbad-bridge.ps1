@@ -107,23 +107,20 @@ function Invoke-LocalTextGet([string]$uri, [int]$timeoutSeconds = 8) {
 }
 
 function Invoke-LocalJsonPost([string]$uri, [string]$json) {
-  $info = [Diagnostics.ProcessStartInfo]::new()
-  $info.FileName = 'curl.exe'
-  $info.Arguments = "--noproxy * --silent --show-error --max-time 600 -H `"Content-Type: application/json`" --data-binary @- $uri"
-  $info.UseShellExecute = $false
-  $info.CreateNoWindow = $true
-  $info.RedirectStandardInput = $true
-  $info.RedirectStandardOutput = $true
-  $info.RedirectStandardError = $true
-  $info.StandardOutputEncoding = [Text.Encoding]::UTF8
-  $process = [Diagnostics.Process]::Start($info)
-  $process.StandardInput.Write($json)
-  $process.StandardInput.Close()
-  $output = $process.StandardOutput.ReadToEnd()
-  $errorText = $process.StandardError.ReadToEnd()
-  $process.WaitForExit()
-  if ($process.ExitCode -ne 0) { throw "Local AI request failed: $errorText" }
-  return ($output | ConvertFrom-Json)
+  $parsed = [Uri]$uri
+  if ($parsed.Scheme -ne 'http' -or $parsed.Host -notin @('127.0.0.1','localhost')) { throw 'LOCAL_AI_ENDPOINT_DENIED' }
+  $client = [Net.Http.HttpClient]::new()
+  try {
+    $client.Timeout = [TimeSpan]::FromSeconds(600)
+    $content = [Net.Http.StringContent]::new($json, [Text.Encoding]::UTF8, 'application/json')
+    $response = $client.PostAsync($parsed, $content).GetAwaiter().GetResult()
+    $output = $response.Content.ReadAsStringAsync().GetAwaiter().GetResult()
+    if (-not $response.IsSuccessStatusCode) { throw "Local AI request failed (HTTP $([int]$response.StatusCode)): $output" }
+    return ($output | ConvertFrom-Json)
+  } finally {
+    if ($content) { $content.Dispose() }
+    $client.Dispose()
+  }
 }
 
 function Write-HttpResponse($stream, [int]$status, [string]$statusText, [string]$body, [string]$contentType = 'application/json; charset=utf-8') {
@@ -475,14 +472,110 @@ function Get-KiwixKnowledge([string]$question) {
   }
 }
 
+function Invoke-QwenFinalAnswerRetry($selection, [string]$question, [string]$privateDraft) {
+  if ([string]::IsNullOrWhiteSpace($privateDraft)) { throw 'The local AI returned no answer.' }
+  # A long evidence-grounded turn can spend its whole first generation in
+  # Qwen's private thinking channel. Keep only the conclusion-bearing tail of
+  # that local draft and ask for one bounded final-answer pass. The private
+  # draft is never copied into the Bridge response.
+  $draftLimit = 6000
+  $boundedDraft = if ($privateDraft.Length -gt $draftLimit) { $privateDraft.Substring($privateDraft.Length - $draftLimit) } else { $privateDraft }
+  $retryMessages = @(
+    @{ role='system'; content='Produce the final answer only. Use the same language as the original question. Do not mention or reveal the private draft. Be accurate, concise, and preserve any source qualifications found in the draft.' },
+    @{ role='user'; content="ORIGINAL QUESTION:`n$question`n`nPRIVATE LOCAL DRAFT:`n$boundedDraft`n`nFINAL ANSWER:" }
+  )
+  $retryRequest = @{ model=$selection.model; messages=$retryMessages; stream=$false; think=$true; keep_alive='30m'; options=@{ temperature=0.2; num_ctx=8192; num_predict=1024 } }
+  $retryResult = Invoke-LocalJsonPost 'http://127.0.0.1:11434/api/chat' ($retryRequest | ConvertTo-Json -Depth 12 -Compress)
+  $finalAnswer = [string]$retryResult.message.content
+  if ([string]::IsNullOrWhiteSpace($finalAnswer)) { throw 'The local AI returned no answer after a bounded final-answer retry.' }
+  return [pscustomobject]@{ answer=$finalAnswer.Trim(); model=[string]$retryResult.model }
+}
+
+function Convert-ToSafeQwenChatText([string]$text) {
+  if ([string]::IsNullOrEmpty($text)) { return '' }
+  # Raw ChatML is used only to bypass the broken qwen3:4b Ollama template.
+  # Neutralize its reserved delimiters so library or user text cannot inject
+  # a new role into the local prompt.
+  return $text.Replace('<|im_start|>', '[im_start]').Replace('<|im_end|>', '[im_end]')
+}
+
+function Invoke-QwenFastFinalAnswer($selection, $messages) {
+  $parts = New-Object System.Collections.Generic.List[string]
+  foreach ($message in @($messages)) {
+    $role = if ([string]$message.role -eq 'assistant') { 'assistant' } elseif ([string]$message.role -eq 'system') { 'system' } else { 'user' }
+    $content = if ($role -eq 'system') {
+      'You are Captain Sinbad. Reply directly, accurately and concisely in the user language. Keep supplied source qualifications and cite their titles. Never invent current weather, navigation warnings, regulations or vessel data. Never reveal private reasoning. Never take external actions.'
+    } else { [string]$message.content }
+    $safeContent = Convert-ToSafeQwenChatText $content
+    $parts.Add("<|im_start|>$role`n$safeContent<|im_end|>")
+  }
+  # The installed stock qwen3:4b template opens a thinking block even when
+  # think=false.  Raw generation plus a pre-closed private block avoids that
+  # template.  Qwen may still generate a bounded private draft; only text
+  # after its final closing tag is eligible to cross the Bridge boundary.
+  $prompt = ($parts -join "`n") + "`n<|im_start|>assistant`n<think>`n`n</think>`n`n"
+  $fastRequest = @{
+    model=$selection.model
+    prompt=$prompt
+    raw=$true
+    stream=$false
+    keep_alive='30m'
+    options=@{ temperature=0.2; num_ctx=8192; num_predict=512; stop=@('<|im_end|>','<|im_start|>') }
+  }
+  $fastResult = Invoke-LocalJsonPost 'http://127.0.0.1:11434/api/generate' ($fastRequest | ConvertTo-Json -Depth 12 -Compress)
+  $raw = [string]$fastResult.response
+  $closingTag = '</think>'
+  $closingIndex = $raw.LastIndexOf($closingTag, [StringComparison]::OrdinalIgnoreCase)
+  if ($closingIndex -lt 0) { throw 'FAST_FINAL_NOT_READY' }
+  $finalAnswer = $raw.Substring($closingIndex + $closingTag.Length).Trim()
+  if ([string]::IsNullOrWhiteSpace($finalAnswer)) { throw 'FAST_FINAL_NOT_READY' }
+  if ($finalAnswer -match '(?is)<think>|</think>') { throw 'FAST_FINAL_BOUNDARY_VIOLATION' }
+  return [pscustomobject]@{ answer=$finalAnswer; model=[string]$fastResult.model }
+}
+
+function Test-SinbadDirectFastQuestion([string]$question) {
+  $text = $question.Trim().ToLowerInvariant()
+  if ($text.Length -gt 120) { return $false }
+  if ($text -match '^(merhaba|selam|günaydın|iyi (akşamlar|geceler)|hello|hi|hallo)[.!? ]*$') { return $true }
+  # A bounded arithmetic expression with an optional natural-language suffix
+  # is stable knowledge and needs neither the 90k-chunk owner index nor Kiwix.
+  return $text -match '^\s*[-+]?\d+(?:[.,]\d+)?(?:\s*[-+*x×÷/]\s*[-+]?\d+(?:[.,]\d+)?)+\s*(?:kaç eder|nedir|sonucu(?: nedir)?|equals?|gleich)?\s*[?!.]*\s*$'
+}
+
+function Resolve-SinbadDirectStableAnswer([string]$question) {
+  $text = $question.Trim()
+  $lower = $text.ToLowerInvariant()
+  if ($lower -match '^(merhaba|selam|günaydın|iyi (akşamlar|geceler))[.!? ]*$') {
+    return 'Merhaba kaptan. Nasıl yardımcı olabilirim?'
+  }
+  if ($lower -match '^(hello|hi)[.!? ]*$') { return 'Hello, Captain. How can I help?' }
+  if ($lower -match '^hallo[.!? ]*$') { return 'Hallo, Kapitän. Wie kann ich helfen?' }
+  if ($lower -notmatch '^\s*(?<expression>[-+]?\d+(?:[.,]\d+)?(?:\s*[-+*x×÷/]\s*[-+]?\d+(?:[.,]\d+)?)+)\s*(?:kaç eder|nedir|sonucu(?: nedir)?|equals?|gleich)?\s*[?!.]*\s*$') { return '' }
+  $displayExpression = $Matches.expression.Trim()
+  $safeExpression = $displayExpression.Replace('×','*').Replace('÷','/').Replace('x','*').Replace(',','.')
+  try {
+    $table = [System.Data.DataTable]::new()
+    $value = $table.Compute($safeExpression,$null)
+    $formatted = [Convert]::ToString($value,[Globalization.CultureInfo]::InvariantCulture)
+    if ($lower -match 'gleich') { return "$displayExpression ergibt $formatted." }
+    if ($lower -match 'equals?') { return "$displayExpression equals $formatted." }
+    return "$displayExpression eşittir $formatted."
+  } catch { return '' }
+}
+
 function Invoke-SinbadLocalAi($payload) {
   $question = [string]$payload.question
   if ([string]::IsNullOrWhiteSpace($question)) { throw 'A question is required.' }
+  $stableAnswer = Resolve-SinbadDirectStableAnswer $question
+  if (-not [string]::IsNullOrWhiteSpace($stableAnswer)) {
+    return @{ answer=$stableAnswer; model='sinbad-deterministic-core'; modelTier='instant'; routing=@{ preferredModel='sinbad-deterministic-core'; selectedModel='sinbad-deterministic-core'; fallbackUsed=$false; fastFinalPathUsed=$false; finalAnswerRetryUsed=$false; complexityScore=0; reasons=@('stable-direct-answer') }; mode='offline-deterministic'; knowledge=@{ state='NOT_REQUIRED'; results=0; reason='stable-direct-answer' } }
+  }
   $history = @($payload.history | ForEach-Object {
     @{ role=if ($_.role -eq 'assistant' -or $_.role -eq 'sinbad') {'assistant'} else {'user'}; content=[string]$_.content }
   } | Select-Object -Last 10)
-  $context = Get-LocalLibraryContext $question
-  $kiwix = Get-KiwixKnowledge $question
+  $directFastQuestion = Test-SinbadDirectFastQuestion $question
+  $context = if ($directFastQuestion) { '' } else { Get-LocalLibraryContext $question }
+  $kiwix = if ($directFastQuestion) { [pscustomobject]@{ state='NOT_REQUIRED'; context=''; reason='stable-direct-question'; results=0 } } else { Get-KiwixKnowledge $question }
   $system = @'
 You are Captain Sinbad, the offline assistant of Atlas Marine OS. Be a warm, intelligent companion and a practical marine guide. Your primary working languages are Turkish, English and German. Detect which of these languages the user is writing in and reply naturally in the same language unless the user requests another language. You can translate accurately among Turkish, English and German, preserving maritime and technical terminology. Use complete, natural answers and conversation history. You can help with seamanship education, passage-plan drafts, checklists, documents, software and programming. Never invent live weather, current Notices to Mariners, chart corrections, port status, coordinates, depths or regulations. Clearly say when internet, current official publications or vessel-specific data are required. You are planning and decision support, not certified ECDIS. For code changes, explain the plan and create a reviewable draft; never publish, delete data, spend money or change credentials without explicit owner approval.
 When LOCAL OWNER LIBRARY EXCERPTS are supplied, reason from them, distinguish quoted evidence from your inference, and cite the source title in the answer. Never claim a source says something absent from the excerpts.
@@ -503,11 +596,36 @@ When OFFLINE ENCYCLOPEDIA EXCERPTS are supplied, use them as dated reference evi
   # API to suppress thinking can therefore discard the whole generation and
   # expose an empty content field. Keep thinking server-side, then return only
   # message.content below; internal reasoning never crosses the Bridge API.
-  $request = @{ model=$selection.model; messages=$messages; stream=$false; think=$true; keep_alive='30m'; options=@{ temperature=0.35; num_ctx=$contextWindow } }
-  $result = Invoke-LocalJsonPost 'http://127.0.0.1:11434/api/chat' ($request | ConvertTo-Json -Depth 12 -Compress)
-  if ([string]::IsNullOrWhiteSpace($result.message.content)) { throw 'The local AI returned no answer.' }
+  $answer = ''
+  $answerModel = ''
+  $finalAnswerRetryUsed = $false
+  $fastFinalPathUsed = $false
+  if ($selection.tier -eq 'fast') {
+    try {
+      $fastFinal = Invoke-QwenFastFinalAnswer $selection $messages
+      $answer = $fastFinal.answer
+      $answerModel = $fastFinal.model
+      $fastFinalPathUsed = $true
+    } catch {
+      # Preserve correctness if the bounded fast pass does not reach a final
+      # answer.  The existing separated-thinking path remains the fail-safe.
+    }
+  }
+  if ([string]::IsNullOrWhiteSpace($answer)) {
+    $predictBudget = if ($selection.tier -eq 'fast') { 1024 } else { 2048 }
+    $request = @{ model=$selection.model; messages=$messages; stream=$false; think=$true; keep_alive='30m'; options=@{ temperature=0.35; num_ctx=$contextWindow; num_predict=$predictBudget } }
+    $result = Invoke-LocalJsonPost 'http://127.0.0.1:11434/api/chat' ($request | ConvertTo-Json -Depth 12 -Compress)
+    $answer = [string]$result.message.content
+    $answerModel = [string]$result.model
+    if ([string]::IsNullOrWhiteSpace($answer)) {
+      $recovery = Invoke-QwenFinalAnswerRetry $selection $question ([string]$result.message.thinking)
+      $answer = $recovery.answer
+      $answerModel = $recovery.model
+      $finalAnswerRetryUsed = $true
+    }
+  }
   $mode = if ($context -and $kiwix.context) {'offline-owner-and-world-rag'} elseif ($context) {'offline-local-rag'} elseif ($kiwix.context) {'offline-world-rag'} elseif ($kiwix.state -eq 'BLOCKED_STALE_OR_HIGH_RISK') {'offline-current-claim-blocked'} else {'offline-local-ai'}
-  return @{ answer=$result.message.content; model=$result.model; modelTier=$selection.tier; routing=@{ preferredModel=$selection.preferredModel; selectedModel=$selection.model; fallbackUsed=$selection.fallbackUsed; complexityScore=$selection.complexityScore; reasons=$selection.reasons }; mode=$mode; knowledge=@{ state=$kiwix.state; results=$kiwix.results; reason=$kiwix.reason } }
+  return @{ answer=$answer; model=$answerModel; modelTier=$selection.tier; routing=@{ preferredModel=$selection.preferredModel; selectedModel=$selection.model; fallbackUsed=$selection.fallbackUsed; fastFinalPathUsed=$fastFinalPathUsed; finalAnswerRetryUsed=$finalAnswerRetryUsed; complexityScore=$selection.complexityScore; reasons=$selection.reasons }; mode=$mode; knowledge=@{ state=$kiwix.state; results=$kiwix.results; reason=$kiwix.reason } }
 }
 
 if (Test-Path -LiteralPath $indexPath) {
