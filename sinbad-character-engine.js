@@ -7,7 +7,7 @@
 
   const STATES=Object.freeze(['idle','listening','thinking','preparing-voice','presenting','speaking','laughing','walking','success','warning','error','voice-disabled','board-teaching']);
   const EMOTIONS=Object.freeze(['neutral','attentive','curious','warm','joyful','confident','concerned']);
-  const GESTURES=Object.freeze(['rest','open-hand','show-palm','raise-left','look-left','look-right','explain','laugh','walk','point-board','nod','listen-lean','hold']);
+  const GESTURES=Object.freeze(['rest','open-hand','show-palm','raise-left','look-left','look-right','explain','laugh','walk','point-board','nod','listen-lean','listen-orient','listen-follow','hold']);
   const DEFAULT_PERFORMANCE=Object.freeze({
     idle:{emotion:'warm',gesture:'rest',gaze:'audience'},
     listening:{emotion:'attentive',gesture:'listen-lean',gaze:'audience'},

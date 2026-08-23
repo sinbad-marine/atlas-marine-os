@@ -69,9 +69,10 @@ test('caution cadence never turns a safety statement into a playful question cue
 
 test('real recognition activity has restrained progress and pause cues',()=>{
   assert.equal(listeningCueForActivity('ready').cue.gesture,'listen-lean');
-  assert.equal(listeningCueForActivity('sound').cue.gesture,'open-hand');
+  assert.equal(listeningCueForActivity('sound').cue.gesture,'listen-orient');
+  assert.equal(listeningCueForActivity('speech').cue.gesture,'listen-follow');
   assert.equal(listeningCueForActivity('speech').cue.energy,.46);
-  assert.deepEqual([0,1,2,3].map(revision=>listeningCueForActivity('interim',revision).cue.gesture),['listen-lean','listen-lean','hold','listen-lean']);
+  assert.deepEqual([0,1,2,3].map(revision=>listeningCueForActivity('interim',revision).cue.gesture),['listen-follow','listen-follow','hold','listen-follow']);
   assert.equal(listeningCueForActivity('pause').cue.gaze,'thought');
   assert.equal(listeningCueForActivity('processed').cue.gesture,'nod');
   assert.equal(listeningCueForActivity('invented').reason,'UNKNOWN_LISTENING_ACTIVITY');

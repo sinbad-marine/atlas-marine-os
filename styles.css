@@ -185,6 +185,8 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="show-palm"]{animation:sinbadStageShowPalm 1.35s ease-out both}
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="hold"]{animation:sinbadStageHold 1.1s ease-out both}
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="listen-lean"]{animation:sinbadStageListen 2.4s ease-in-out infinite}
+  html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="listen-orient"]{animation:sinbadStageListenOrient .48s ease-out both}
+  html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="listen-follow"]{animation:sinbadStageListenFollow 1.6s ease-in-out infinite}
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-listening-activity="speech"]{filter:drop-shadow(0 0 8px rgba(85,214,190,.42))}
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="nod"]{animation:sinbadStageNod .8s ease-out both}
   html:not(.sinbad-tab-hidden):not(.sinbad-force-reduced-motion) .sinbad-avatar[data-gesture="laugh"]{animation:sinbadStageLaugh .72s ease-in-out 2}
@@ -194,6 +196,8 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
   @keyframes sinbadStageShowPalm{0%{transform:translateX(0) scale(var(--sinbad-motion-scale-down,.985))}48%{transform:translateX(var(--sinbad-motion-travel,5px)) scale(var(--sinbad-motion-scale-up,1.015))}100%{transform:translateX(0) scale(1)}}
   @keyframes sinbadStageHold{0%{transform:translateY(0)}45%{transform:translateY(var(--sinbad-motion-fall,1.5px)) scale(var(--sinbad-motion-scale-down,.992))}100%{transform:translateY(0)}}
   @keyframes sinbadStageListen{0%,100%{transform:translateX(0)}50%{transform:translateX(2px)}}
+  @keyframes sinbadStageListenOrient{0%{transform:translateX(0) rotate(0)}65%{transform:translateX(-1.5px) rotate(-.45deg)}100%{transform:translateX(-1px) rotate(-.3deg)}}
+  @keyframes sinbadStageListenFollow{0%,100%{transform:translateY(0)}50%{transform:translateY(-1px) rotate(.18deg)}}
   @keyframes sinbadStageNod{0%,100%{transform:translateY(0)}45%{transform:translateY(var(--sinbad-motion-nod,4px))}}
   @keyframes sinbadStageLaugh{0%,100%{transform:translateY(0) rotate(0)}45%{transform:translateY(-3px) rotate(-.55deg)}}
   /* Real per-word cue from SpeechSynthesisUtterance's own onboundary event

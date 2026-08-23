@@ -87,8 +87,8 @@
   }
   const LISTENING_ACTIVITY_CUES=Object.freeze({
     ready:Object.freeze({gesture:'listen-lean',gaze:'audience',emotion:'attentive',energy:.24}),
-    sound:Object.freeze({gesture:'open-hand',gaze:'audience',emotion:'attentive',energy:.34}),
-    speech:Object.freeze({gesture:'listen-lean',gaze:'audience',emotion:'attentive',energy:.46}),
+    sound:Object.freeze({gesture:'listen-orient',gaze:'audience',emotion:'attentive',energy:.34}),
+    speech:Object.freeze({gesture:'listen-follow',gaze:'audience',emotion:'attentive',energy:.46}),
     pause:Object.freeze({gesture:'hold',gaze:'thought',emotion:'attentive',energy:.28}),
     processed:Object.freeze({gesture:'nod',gaze:'audience',emotion:'warm',energy:.36})
   });
@@ -96,7 +96,7 @@
     if(!Object.hasOwn(LISTENING_ACTIVITY_CUES,activity)&&activity!=='interim')return Object.freeze({accepted:false,reason:'UNKNOWN_LISTENING_ACTIVITY'});
     if(!Number.isSafeInteger(revision)||revision<0)return Object.freeze({accepted:false,reason:'INVALID_LISTENING_REVISION'});
     const cue=activity==='interim'
-      ?Object.freeze({gesture:revision%3===2?'hold':'listen-lean',gaze:'audience',emotion:'attentive',energy:revision%3===2?.38:.52})
+      ?Object.freeze({gesture:revision%3===2?'hold':'listen-follow',gaze:'audience',emotion:'attentive',energy:revision%3===2?.38:.52})
       :LISTENING_ACTIVITY_CUES[activity];
     return Object.freeze({accepted:true,cue});
   }

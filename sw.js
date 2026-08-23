@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.17-direct-body-language-v30';
+const CACHE='sinbad-marine-v8.20.18-live-listening-v31';
 const ASSETS=[
   './',
   './index.html',

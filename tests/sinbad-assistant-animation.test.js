@@ -120,6 +120,8 @@ test('SpeechRecognition lifecycle drives listening, not a fake button-press stat
   assert.match(app,/if\(hasFinal\)listeningCue\('processed',progressBucket\)/);
   assert.match(app,/else if\(progressBucket>listeningProgressBucket\)/);
   assert.match(css,/data-listening-activity="speech"/);
+  assert.match(css,/data-gesture="listen-orient"/);
+  assert.match(css,/data-gesture="listen-follow"/);
 });
 
 test('walking uses two real alpha PNG frames and a bounded user-triggered cycle',()=>{
