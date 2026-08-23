@@ -14,7 +14,8 @@ Yerel kütüphane ilk sürümde `.txt`, `.md`, `.csv` ve `.json` dosyalarını t
 
 ## Çalıştırma
 
-1. Ollama ve `qwen3:14b` modeli kurulu olmalıdır.
+1. Ollama ile `qwen3:4b` (hızlı günlük yanıtlar) ve `qwen3:14b` (derin analiz) modellerinin kurulması önerilir.
+   Bridge sorunun karmaşıklığını yerel ve deterministik olarak değerlendirir; uygun model yoksa kurulu olan diğer modele güvenli biçimde döner.
 2. `start-sinbad-bridge.cmd` dosyasına çift tıklayın veya otomatik başlatmayı kullanın.
 3. `Sinbad Bridge is online` mesajından sonra web uygulamasını açın.
 
