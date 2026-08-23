@@ -36,9 +36,26 @@ def test_escape_emergency_and_fire_queries_stay_in_their_categories():
     assert extinguisher[0]["visual_key"] == "curated:imo-a1116-safety:fes-fire-extinguisher"
 
 
+def test_prohibition_warning_and_mandatory_queries_use_exact_current_symbols():
+    no_smoking = MODULE.curated_symbol_query("sigara içilmez işareti", 3)
+    flammable = MODULE.curated_symbol_query("yanıcı madde sembolü", 3)
+    helmet = MODULE.curated_symbol_query("baret tak işareti", 3)
+    assert no_smoking[0]["visual_key"] == "curated:imo-a1116-operational:pss-no-smoking"
+    assert flammable[0]["visual_key"] == "curated:imo-a1116-operational:wss-flammable-material"
+    assert helmet[0]["visual_key"] == "curated:imo-a1116-operational:mss-wear-head-protection"
+
+
+def test_lifeboat_launch_sequence_symbol_is_available_without_displacing_photos():
+    symbol = MODULE.curated_symbol_query("filikayı suya indir sembolü", 3)
+    assert symbol[0]["visual_key"] == "curated:imo-a1116-operational:mss-lower-lifeboat-to-water"
+    assert MODULE.curated_symbol_query("filikanın fotoğrafını göster", 3) == []
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
     test_epirb_and_sart_resolve_to_distinct_official_symbols()
     test_escape_emergency_and_fire_queries_stay_in_their_categories()
-    print("4 IMO symbol query tests passed")
+    test_prohibition_warning_and_mandatory_queries_use_exact_current_symbols()
+    test_lifeboat_launch_sequence_symbol_is_available_without_displacing_photos()
+    print("6 IMO symbol query tests passed")
