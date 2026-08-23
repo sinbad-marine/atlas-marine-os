@@ -197,6 +197,19 @@ test('improvisation exhausts a shuffled context bag before reusing a variant',()
   assert.notEqual(next,cycle.at(-1));
 });
 
+test('improvisation avoids repeating the same physical gesture across response kinds',()=>{
+  const samples=[0,0,0,0,.34,0];
+  const director=createImprovisationDirector({entropy:()=>samples.shift()??0});
+  const question=director.choose('question','answer');
+  const conversation=director.choose('conversation','answer');
+  const explanation=director.choose('explanation','speech');
+  assert.equal(question.cue.gesture,'open-hand');
+  assert.notEqual(conversation.cue.gesture,question.cue.gesture);
+  assert.notEqual(explanation.cue.gesture,conversation.cue.gesture);
+  director.reset();
+  assert.equal(director.choose('question','answer').cue.gesture,'open-hand');
+});
+
 test('each gesture receives one of six non-repeating bounded motion profiles',()=>{
   const director=createImprovisationDirector({entropy:()=>0});
   const profiles=Array.from({length:MOTION_PROFILES.length},()=>director.choose('conversation').cue.motionProfile);

@@ -271,6 +271,7 @@
   function createImprovisationDirector(options={}){
     const entropy=typeof options.entropy==='function'?options.entropy:defaultEntropy;
     const histories=new Map();
+    let lastGesture=null;
     const choose=(responseKind,context='answer')=>{
       if(!Object.hasOwn(IMPROVISATION_POOLS,responseKind))return Object.freeze({accepted:false,reason:'UNKNOWN_RESPONSE_KIND'});
       const key=`${context}:${responseKind}`,pool=IMPROVISATION_POOLS[responseKind];
@@ -279,14 +280,18 @@
       if(!history.profileRemaining.length)history.profileRemaining=MOTION_PROFILES.filter(profile=>profile!==history.lastProfile);
       const sample=Number(entropy()),profileSample=Number(entropy());
       if(!Number.isFinite(sample)||sample<0||sample>=1||!Number.isFinite(profileSample)||profileSample<0||profileSample>=1)return Object.freeze({accepted:false,reason:'INVALID_ENTROPY'});
-      const index=Math.min(history.remaining.length-1,Math.floor(sample*history.remaining.length));
+      const gestureChoices=history.remaining.filter(cue=>cue.gesture!==lastGesture);
+      const eligible=gestureChoices.length?gestureChoices:history.remaining;
+      const selectedIndex=Math.min(eligible.length-1,Math.floor(sample*eligible.length));
+      const selected=eligible[selectedIndex];
+      const index=history.remaining.indexOf(selected);
       const profileIndex=Math.min(history.profileRemaining.length-1,Math.floor(profileSample*history.profileRemaining.length));
       const [baseCue]=history.remaining.splice(index,1),[motionProfile]=history.profileRemaining.splice(profileIndex,1);
       const cue=Object.freeze({...baseCue,motionProfile});
-      history.last=cue.variantId;history.lastProfile=motionProfile;histories.set(key,history);
+      history.last=cue.variantId;history.lastProfile=motionProfile;lastGesture=cue.gesture;histories.set(key,history);
       return Object.freeze({accepted:true,cue});
     };
-    const reset=()=>histories.clear();
+    const reset=()=>{histories.clear();lastGesture=null;};
     return Object.freeze({choose,reset});
   }
   function createSpeechGestureDirector(options={}){
