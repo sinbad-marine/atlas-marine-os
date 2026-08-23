@@ -147,9 +147,111 @@ test('live Bridge routes durable questions to loopback Kiwix and blocks stale or
   assert.match(bridge,/offline-world-rag/);
   assert.match(bridge,/KIWIX_LOOPBACK_ONLY/);
   assert.match(bridge,/stream=\$false; think=\$true/);
-  assert.match(bridge,/answer=\$result\.message\.content/);
+  assert.match(bridge,/function Invoke-QwenFinalAnswerRetry/);
+  assert.match(bridge,/\$draftLimit = 6000/);
+  assert.match(bridge,/finalAnswerRetryUsed=\$finalAnswerRetryUsed/);
+  assert.match(bridge,/answer=\$answer/);
   assert.doesNotMatch(bridge,/answer=\$result\.message\.thinking/);
+  assert.doesNotMatch(bridge,/answer=\$privateDraft/);
   assert.doesNotMatch(bridge,/--address=(?:all|ipv4|ipv6)/);
+});
+
+test('Qwen empty-final recovery is bounded and never returns private thinking',()=>{
+  const bridge=fs.readFileSync('bridge/sinbad-bridge.ps1','utf8');
+  const start=bridge.indexOf('function Invoke-QwenFinalAnswerRetry');
+  const end=bridge.indexOf('\nfunction Invoke-SinbadLocalAi',start);
+  const retry=bridge.slice(start,end);
+  assert.match(retry,/Substring\(\$privateDraft\.Length - \$draftLimit\)/);
+  assert.match(retry,/num_ctx=8192; num_predict=1024/);
+  assert.match(retry,/\$retryResult\.message\.content/);
+  assert.doesNotMatch(retry,/return .*thinking/);
+  assert.doesNotMatch(retry,/answer=\$boundedDraft/);
+});
+
+test('Qwen fast final path is bounded, neutralizes ChatML injection and returns only post-thinking content',()=>{
+  const bridge=fs.readFileSync('bridge/sinbad-bridge.ps1','utf8');
+  const start=bridge.indexOf('function Convert-ToSafeQwenChatText');
+  const end=bridge.indexOf('\nfunction Invoke-SinbadLocalAi',start);
+  const fast=bridge.slice(start,end);
+  assert.match(fast,/Replace\('<\|im_start\|>'/);
+  assert.match(fast,/Replace\('<\|im_end\|>'/);
+  assert.match(fast,/api\/generate/);
+  assert.match(fast,/raw=\$true/);
+  assert.match(fast,/num_ctx=8192; num_predict=512/);
+  assert.match(fast,/LastIndexOf\(\$closingTag/);
+  assert.match(fast,/Substring\(\$closingIndex \+ \$closingTag\.Length\)/);
+  assert.match(fast,/FAST_FINAL_BOUNDARY_VIOLATION/);
+  assert.doesNotMatch(fast,/answer=\$raw/);
+});
+
+test('ordinary fast turns use the bounded final path while deep turns retain separated thinking',()=>{
+  const bridge=fs.readFileSync('bridge/sinbad-bridge.ps1','utf8');
+  const start=bridge.indexOf('function Invoke-SinbadLocalAi');
+  const end=bridge.indexOf('\nif (Test-Path -LiteralPath $indexPath)',start);
+  const runtime=bridge.slice(start,end);
+  assert.match(runtime,/if \(\$selection\.tier -eq 'fast'\)/);
+  assert.match(runtime,/Invoke-QwenFastFinalAnswer \$selection \$messages/);
+  assert.match(runtime,/fastFinalPathUsed=\$fastFinalPathUsed/);
+  assert.match(runtime,/\$predictBudget = if \(\$selection\.tier -eq 'fast'\) \{ 1024 \} else \{ 2048 \}/);
+  assert.match(runtime,/think=\$true/);
+});
+
+test('stable direct questions bypass irrelevant library and Kiwix retrieval on the fast path',()=>{
+  const bridge=fs.readFileSync('bridge/sinbad-bridge.ps1','utf8');
+  const classifierStart=bridge.indexOf('function Test-SinbadDirectFastQuestion');
+  const runtimeStart=bridge.indexOf('function Invoke-SinbadLocalAi',classifierStart);
+  const classifier=bridge.slice(classifierStart,runtimeStart);
+  const runtimeEnd=bridge.indexOf('\nif (Test-Path -LiteralPath $indexPath)',runtimeStart);
+  const runtime=bridge.slice(runtimeStart,runtimeEnd);
+  assert.match(classifier,/Length -gt 120/);
+  assert.match(classifier,/merhaba\|selam/);
+  assert.match(classifier,/hello\|hi/);
+  assert.match(classifier,/kaç eder\|nedir\|sonucu/);
+  assert.match(runtime,/\$directFastQuestion = Test-SinbadDirectFastQuestion \$question/);
+  assert.match(runtime,/if \(\$directFastQuestion\) \{ '' \} else \{ Get-LocalLibraryContext \$question \}/);
+  assert.match(runtime,/state='NOT_REQUIRED'/);
+  assert.match(runtime,/reason='stable-direct-question'/);
+});
+
+test('greetings and bounded arithmetic use an instant deterministic answer without model reasoning',()=>{
+  const bridge=fs.readFileSync('bridge/sinbad-bridge.ps1','utf8');
+  const resolverStart=bridge.indexOf('function Resolve-SinbadDirectStableAnswer');
+  const runtimeStart=bridge.indexOf('function Invoke-SinbadLocalAi',resolverStart);
+  const resolver=bridge.slice(resolverStart,runtimeStart);
+  const runtimeEnd=bridge.indexOf('\nif (Test-Path -LiteralPath $indexPath)',runtimeStart);
+  const runtime=bridge.slice(runtimeStart,runtimeEnd);
+  assert.match(resolver,/System\.Data\.DataTable/);
+  assert.match(resolver,/Replace\('×','\*'\).*Replace\('÷','\/'\)/);
+  assert.match(resolver,/Merhaba kaptan/);
+  assert.match(resolver,/Hello, Captain/);
+  assert.match(resolver,/Hallo, Kapitän/);
+  assert.match(runtime,/\$stableAnswer = Resolve-SinbadDirectStableAnswer \$question/);
+  assert.match(runtime,/model='sinbad-deterministic-core'/);
+  assert.match(runtime,/modelTier='instant'/);
+  assert.match(runtime,/mode='offline-deterministic'/);
+  assert.match(runtime,/reasons=@\('stable-direct-answer'\)/);
+});
+
+test('fast answer system prompt remains concise while preserving safety and source qualifications',()=>{
+  const bridge=fs.readFileSync('bridge/sinbad-bridge.ps1','utf8');
+  const start=bridge.indexOf('function Invoke-QwenFastFinalAnswer');
+  const end=bridge.indexOf('\nfunction Test-SinbadDirectFastQuestion',start);
+  const fast=bridge.slice(start,end);
+  assert.match(fast,/Reply directly, accurately and concisely in the user language/);
+  assert.match(fast,/Keep supplied source qualifications and cite their titles/);
+  assert.match(fast,/Never reveal private reasoning/);
+  assert.match(fast,/Never take external actions/);
+});
+
+test('local AI transport is UTF-8 loopback-only and preserves HTTP failures',()=>{
+  const bridge=fs.readFileSync('bridge/sinbad-bridge.ps1','utf8');
+  const start=bridge.indexOf('function Invoke-LocalJsonPost');
+  const end=bridge.indexOf('\nfunction Write-HttpResponse',start);
+  const transport=bridge.slice(start,end);
+  assert.match(transport,/LOCAL_AI_ENDPOINT_DENIED/);
+  assert.match(transport,/StringContent.*Encoding\]::UTF8/);
+  assert.match(transport,/IsSuccessStatusCode/);
+  assert.doesNotMatch(transport,/curl\.exe/);
 });
 
 function routeQwen(question,options={}){
