@@ -366,7 +366,7 @@ test('board shape explanation is grounded in the verified allowlisted shape',()=
 test('board shape checks ask and assess only against a verified bounded answer key',()=>{
   const prompt=academyBoardShapeCheckForText('Bu şekille ilgili bana soru sor.',{kind:'shape',value:'arrow'},'tr-TR');assert.equal(prompt.known,true);assert.deepEqual(prompt.check,{shape:'arrow',expected:'direction'});
   assert.equal(academyBoardShapeCheckAnswerForText('Yönü gösterir.',prompt.check,'tr-TR').correct,true);
-  assert.equal(academyBoardShapeCheckAnswerForText('Üç kenarı vardır.',prompt.check,'tr-TR').correct,false);
+  const wrong=academyBoardShapeCheckAnswerForText('Üç kenarı vardır.',prompt.check,'tr-TR');assert.equal(wrong.correct,false);assert.match(wrong.text,/Okun uç kısmı yönü gösterir/);
   assert.equal(academyBoardShapeCheckAnswerForText('Geç.',prompt.check,'tr-TR').cancelled,true);
   assert.equal(academyBoardShapeCheckForText('Bu şekille ilgili bana soru sor.',null,'tr-TR').known,false);
 });
