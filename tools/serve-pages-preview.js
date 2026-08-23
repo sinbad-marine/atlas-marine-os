@@ -8,7 +8,7 @@ const {ROOT,buildPagesArtifact}=require('./build-pages-artifact.js');
 const HOST='127.0.0.1';
 const PORT=4173;
 const target=path.join(ROOT,'.release',`playwright-pages-${process.pid}`);
-const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.webmanifest':'application/manifest+json; charset=utf-8','.png':'image/png'};
+const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.webmanifest':'application/manifest+json; charset=utf-8','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp'};
 
 async function start(){
   await buildPagesArtifact(target);

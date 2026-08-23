@@ -1097,7 +1097,9 @@ function saveSinbadMessages(){
 }
 function sinbadVisualCards(visuals=[]){
   if(!Array.isArray(visuals)||!visuals.length)return '';
-  return `<div class="sinbad-source-visuals">${visuals.slice(0,3).map((visual,index)=>`
+  const safeAsset=/^(?:\.\/visual-library\/assets\/(?:bowditch\/(?:assets\/[a-f0-9]{64}\.[a-z0-9]+|fallback-pages\/volume-[12]-page-[0-9]+\.png)|nga-chart-no-1\/page-[0-9]{3}\.png|curated-safety\/(?:lifebuoy-scarborough|inflatable-life-raft-us-navy|sart-radar-transponder|fully-enclosed-lifeboat|life-jacket-inspection-uscg)\.jpg)|http:\/\/127\.0\.0\.1:31983\/visuals\/assets\/[a-f0-9]{64}\.webp)$/u;
+  return `<div class="sinbad-source-visuals">${visuals.slice(0,3).map((visual,index)=>safeAsset.test(visual.src||'')?`
+    <figure class="sinbad-answer-visual"><img src="${esc(visual.src)}" alt="${esc(visual.alt||'Official maritime visual')}" loading="lazy"><figcaption>${esc(visual.caption||'Official maritime visual')}</figcaption></figure>`:`
     <article class="sinbad-source-visual" data-visual-index="${index}">
       <div><strong>${esc(visual.title||'Atlas Cloud source')}</strong><small>${esc(visual.sourceId||'Source')} · page ${esc(visual.page)}</small></div>
       <button type="button" class="btn sinbad-open-source-visual" data-document-id="${esc(visual.documentId)}" data-page="${esc(visual.page)}" data-title="${esc(visual.title||'Atlas Cloud source')}">Kaynak sayfasını göster</button>
@@ -1161,6 +1163,7 @@ function openSinbadSourceDialog(sourceView){
   dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});dialog.addEventListener('close',()=>{dialog.remove();returnFocus?.focus?.();},{once:true});document.body.append(dialog);dialog.showModal();renderSinbadSourcePage(view);
 }
 async function openSinbadSourceVisual(button){
+  if(!roleCanAccessPrivateSources()){alert('Private source pages are restricted to the workspace Owner and explicitly authorized Developers.');return;}
   const documentId=button?.dataset?.documentId,pageNumber=Math.max(1,Number(button?.dataset?.page)||1);
   const card=button?.closest('.sinbad-source-visual'),stage=card?.querySelector('.sinbad-source-visual-stage');
   if(!documentId||!stage||!cloudClient||!selectedWorkspaceId)return;
@@ -1463,7 +1466,8 @@ async function sendToSinbad(text){
   setTimeout(async()=>{
     const answer=await sinbadLocalAnswer(q);
     $('sinbadThinking').classList.add('hidden');
-    speakSinbad(answer,()=>addSinbadMessage('sinbad',answer,consumeSinbadSourceVisuals()));
+    const atlasVisuals=await window.SinbadVisuals?.select?.(q,answer,{max:1})||[];
+    speakSinbad(answer,()=>addSinbadMessage('sinbad',answer,[...consumeSinbadSourceVisuals(),...atlasVisuals].slice(0,3)));
   },650);
 }
 $('sendSinbad').addEventListener('click',()=>{window.speechSynthesis?.resume();sendToSinbad($('sinbadInput').value);});
@@ -2061,6 +2065,10 @@ function roleCanManageLibrary(){
   return ['owner','administrator','captain'].includes(currentWorkspaceRole);
 }
 
+function roleCanAccessPrivateSources(){
+  return ['owner','developer'].includes(currentWorkspaceRole);
+}
+
 function roleCanManageMembers(){
   return currentWorkspaceRole==='owner';
 }
@@ -2412,6 +2420,10 @@ async function uploadCloudFiles(){
   $('cloudFileInput').value='';
 }
 async function loadCloudFiles(){
+  if(!roleCanAccessPrivateSources()){
+    $('cloudFileList').textContent='Private library source identities and original files are restricted to the workspace Owner and explicitly authorized Developers.';
+    return;
+  }
   if(!cloudClient || !selectedWorkspaceId)return;
   const bucket=$('cloudBucketSelect').value;
   const search=($('cloudFileSearch')?.value||'').trim();
@@ -2454,6 +2466,7 @@ async function repairCloudDocumentKnowledge(documentId,bucket,path,filename){
   }
 }
 async function openCloudFile(bucket,path,filename=''){
+  if(!roleCanAccessPrivateSources()){alert('Private source access is restricted to the workspace Owner and explicitly authorized Developers.');return;}
   if(bucket==='nautical-charts'){
     openWorkspace('enc-viewer');
     initEncViewer();
@@ -2492,6 +2505,7 @@ async function saveMemberRole(userId){
 
 
 async function downloadCloudFile(bucket,path,filename='atlas-file'){
+  if(!roleCanAccessPrivateSources()){alert('Private source downloads are restricted to the workspace Owner and explicitly authorized Developers.');return;}
   const {data,error}=await cloudClient.storage.from(bucket).download(path);
   if(error){alert(error.message);return;}
   const url=URL.createObjectURL(data);
@@ -2502,6 +2516,7 @@ async function downloadCloudFile(bucket,path,filename='atlas-file'){
 
 
 async function shareCloudFile(bucket,path,filename='atlas-file'){
+  if(!roleCanAccessPrivateSources()){alert('Private source sharing is restricted to the workspace Owner and explicitly authorized Developers.');return;}
   const {data,error}=await cloudClient.storage.from(bucket).createSignedUrl(path,600);
   if(error){alert(error.message);return;}
   if(navigator.share){

@@ -52,6 +52,7 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
 .chat-bubble.user{align-self:flex-end;background:#203747;border:1px solid var(--line)}
 .chat-bubble.sinbad{align-self:flex-start;background:rgba(226,191,114,.10);border:1px solid #6e5a2f}
 .chat-bubble .speaker{display:block;color:var(--gold);font-size:12px;font-weight:700;margin-bottom:5px}
+.sinbad-answer-visual{margin:12px 0 0;white-space:normal}.sinbad-answer-visual img{display:block;max-width:100%;max-height:420px;border-radius:10px;border:1px solid var(--line);background:#fff;object-fit:contain}.sinbad-answer-visual figcaption{margin-top:6px;color:var(--muted);font-size:12px;line-height:1.35}
 .sinbad-source-visuals{display:grid;gap:10px;margin-top:12px;white-space:normal}
 .sinbad-source-visual{display:grid;gap:8px;padding:10px;border:1px solid var(--line);border-radius:12px;background:rgba(7,23,35,.68)}
 .sinbad-source-visual>div:first-child{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}

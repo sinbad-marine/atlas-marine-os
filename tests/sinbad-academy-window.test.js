@@ -49,12 +49,14 @@ test('standalone Academy is a live free-form voice and text classroom, not a req
   assert.match(academyHtml,/Optional guided lesson shortcuts — no selection required/);
   assert.match(academyApp,/async function askSinbad\(question\)/);
   assert.match(academyApp,/functions\.invoke\('sinbad-answer'/);
-  assert.match(academyApp,/includeSourceVisuals:true/);
+  assert.match(academyApp,/includeSourceVisuals:false,suppressSourceVisuals:true/);
+  assert.match(academyApp,/window\.SinbadVisuals\?\.select/);
+  assert.match(academyApp,/SinbadVisuals\?\.select\?\.\(question,answer,\{max:1\}\)/);
   assert.match(academyApp,/SpeechRecognition\|\|window\.webkitSpeechRecognition/);
   assert.match(academyApp,/academyChatForm/);
 });
 
-test('Captain Sinbad teaches with real state art, browser voice and verified source-page visuals',()=>{
+test('Captain Sinbad teaches with real state art, browser voice and verified atlas images',()=>{
   assert.match(academyHtml,/id="academySinbadAvatar"/);
   assert.match(academyHtml,/id="academyVoiceToggle"/);
   assert.match(academyHtml,/id="academyReplayVoice"/);
@@ -64,8 +66,12 @@ test('Captain Sinbad teaches with real state art, browser voice and verified sou
   assert.match(academyApp,/captain-sinbad-listening\.png/);
   assert.match(academyApp,/new SpeechSynthesisUtterance/);
   assert.match(academyApp,/function renderVisuals\(visuals\)/);
-  assert.match(academyApp,/cloudClient\.storage\.from\(doc\.bucket_id\)\.download/);
-  assert.match(academyApp,/#page=\$\{Math\.max/);
+  assert.match(academyHtml,/sinbad-visuals\.js\?v=8233/);
+  assert.match(academyApp,/academy-atlas-visual/);
+  assert.match(academyApp,/visuals\.filter\(visual=>safeAsset\.test/);
+  assert.doesNotMatch(academyApp,/cloudClient\.storage\.from\(doc\.bucket_id\)\.download/);
+  assert.doesNotMatch(academyApp,/#page=\$\{Math\.max/);
+  assert.match(academyCss,/\.academy-atlas-visual img/);
   assert.match(academyCss,/\[data-state="speaking"\]/);
   assert.match(academyCss,/@media\(prefers-reduced-motion:reduce\)/);
 });

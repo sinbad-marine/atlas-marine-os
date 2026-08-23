@@ -8,7 +8,8 @@ param(
   [string]$XttsSpeakerWav = '',
   [string]$OpenCpnExecutable = '',
   [int]$XttsWorkerPort = 31984,
-  [string]$KiwixUrl = 'http://127.0.0.1:8181'
+  [string]$KiwixUrl = 'http://127.0.0.1:8181',
+  [string]$VisualAtlasRoot = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -18,6 +19,14 @@ $routeRoot = Join-Path $bridgeRoot 'Routes'
 $libraryRoot = Join-Path $bridgeRoot 'Library'
 $importRoot = Join-Path $libraryRoot 'Imported'
 $indexPath = Join-Path $libraryRoot '.sinbad-index.json'
+$visualAtlasCandidates = @(
+  $(if (-not [string]::IsNullOrWhiteSpace($VisualAtlasRoot)) { $VisualAtlasRoot }),
+  (Join-Path $env:USERPROFILE 'Documents\Sinbad Visual Library'),
+  (Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'Sinbad Visual Library')
+) | Where-Object { -not [string]::IsNullOrWhiteSpace([string]$_) } | Select-Object -Unique
+$visualAtlasRoot = @($visualAtlasCandidates | Where-Object { Test-Path -LiteralPath (Join-Path $_ 'catalog.sqlite') } | Select-Object -First 1)[0]
+if ([string]::IsNullOrWhiteSpace([string]$visualAtlasRoot)) { $visualAtlasRoot = [string]$visualAtlasCandidates[0] }
+$visualQueryScript = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..\sinbad-ai-core\visual-library\scripts\query-complete-library-atlas.py'))
 $userProfileRoot = [Environment]::GetFolderPath('UserProfile')
 if ([string]::IsNullOrWhiteSpace($userProfileRoot)) { $userProfileRoot = [Environment]::GetEnvironmentVariable('USERPROFILE') }
 if ([string]::IsNullOrWhiteSpace($userProfileRoot)) { throw 'SINBAD_USER_PROFILE_UNAVAILABLE' }
@@ -189,6 +198,36 @@ function Get-StudioCapabilityStatus {
 }
 
 function Json($value) { return ($value | ConvertTo-Json -Depth 8 -Compress) }
+
+function Invoke-VisualAtlasHelper([string[]]$arguments) {
+  if (-not (Test-Path -LiteralPath (Join-Path $visualAtlasRoot 'catalog.sqlite'))) { throw 'Visual atlas catalogue is unavailable.' }
+  if (-not (Test-Path -LiteralPath $visualQueryScript)) { throw 'Visual atlas query helper is unavailable.' }
+  $python = Get-Command python.exe -ErrorAction SilentlyContinue
+  if (-not $python) { throw 'Python is required for visual atlas queries.' }
+  $quoted = @("`"$visualQueryScript`"", '--atlas', "`"$visualAtlasRoot`"") + $arguments
+  $info = [Diagnostics.ProcessStartInfo]::new()
+  $info.FileName = $python.Source
+  $info.Arguments = ($quoted -join ' ')
+  $info.UseShellExecute = $false
+  $info.CreateNoWindow = $true
+  $info.RedirectStandardOutput = $true
+  $info.RedirectStandardError = $true
+  $info.StandardOutputEncoding = [Text.Encoding]::UTF8
+  $process = [Diagnostics.Process]::Start($info)
+  $output = $process.StandardOutput.ReadToEnd()
+  $errorText = $process.StandardError.ReadToEnd()
+  if (-not $process.WaitForExit(15000)) { try { $process.Kill() } catch {}; throw 'Visual atlas query timed out.' }
+  if ($process.ExitCode -ne 0) { throw "Visual atlas query failed: $errorText" }
+  return ($output | ConvertFrom-Json)
+}
+
+function Search-VisualAtlas($payload) {
+  $text = "$([string]$payload.query) $([string]$payload.answer)".Trim()
+  if ([string]::IsNullOrWhiteSpace($text)) { throw 'A visual search query is required.' }
+  $encoded = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($text))
+  $limit = [Math]::Max(1, [Math]::Min(3, [int]$payload.limit))
+  return Invoke-VisualAtlasHelper @('--query-base64', $encoded, '--limit', [string]$limit)
+}
 
 function Get-OpenCpnRestKey {
   if (-not (Test-Path -LiteralPath $openCpnConfigPath -PathType Leaf)) { return '' }
@@ -534,6 +573,18 @@ try {
       if ($method -eq 'POST' -and $path -eq '/ai/chat') {
         $payload = $body | ConvertFrom-Json
         Write-HttpResponse $stream 200 'OK' (Json (Invoke-SinbadLocalAi $payload)); continue
+      }
+      if ($method -eq 'POST' -and $path -eq '/visuals/search') {
+        $payload = $body | ConvertFrom-Json
+        Write-HttpResponse $stream 200 'OK' (Json (Search-VisualAtlas $payload)); continue
+      }
+      if ($method -eq 'GET' -and $path -eq '/visuals/status') {
+        Write-HttpResponse $stream 200 'OK' (Json (Invoke-VisualAtlasHelper @('--status'))); continue
+      }
+      if ($method -eq 'GET' -and $path -match '^/visuals/assets/([0-9a-f]{64})\.webp$') {
+        $asset = Invoke-VisualAtlasHelper @('--asset-hash', $Matches[1])
+        $bytes = [IO.File]::ReadAllBytes([string]$asset.absolutePath)
+        Write-HttpBytes $stream 200 'OK' $bytes 'image/webp'; continue
       }
       if ($method -eq 'GET' -and $path -eq '/routes') {
         $routes = Get-ChildItem -LiteralPath $routeRoot -Filter '*.gpx' -File -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | ForEach-Object { @{ name=$_.Name; size=$_.Length; modified=$_.LastWriteTime.ToString('o') } }

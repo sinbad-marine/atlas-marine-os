@@ -35,7 +35,7 @@
         <section class="academy-chat" aria-label="Live Sinbad classroom">
           <div class="academy-chat-heading"><div><strong>Live lesson with Captain Sinbad</strong><small id="academyCloudStatus">Connecting to Atlas knowledge…</small></div><span class="academy-live-badge"><i></i> LIVE CLASS</span></div>
           <div id="academyMessages" class="academy-messages" role="log" aria-live="polite" aria-relevant="additions">
-            <article class="academy-message sinbad"><strong>Captain Sinbad</strong><p>Welcome aboard. Ask any maritime question by writing or speaking. I will teach from the approved Atlas library and show verified source pages when available.</p></article>
+            <article class="academy-message sinbad"><strong>Captain Sinbad</strong><p>Welcome aboard. Ask any maritime question by writing or speaking. I will teach from the approved Atlas library and show verified maritime images when available.</p></article>
           </div>
           <form id="academyChatForm" class="academy-composer">
             <label class="sr-only" for="academyQuestion">Ask Captain Sinbad</label>
@@ -43,7 +43,7 @@
             <button type="button" class="btn academy-mic" id="academyMic" aria-pressed="false" title="Ask by voice">🎙 Speak</button>
             <button type="submit" class="btn primary" id="academySend">Ask Sinbad</button>
           </form>
-          <div class="academy-chat-hint">Enter sends · Shift+Enter creates a new line · source-page visuals remain tied to their original documents.</div>
+          <div class="academy-chat-hint">Enter sends · Shift+Enter creates a new line · matching maritime images retain publication and page provenance.</div>
         </section>
         <details class="academy-guided-tools">
           <summary>Optional guided lesson shortcuts — no selection required</summary>
@@ -70,10 +70,11 @@
   <script src="./sinbad-academy.js?v=8180"></script>
   <script src="./supabase/functions/sinbad-answer/core-decision.js?v=82019"></script>
   <script src="./sinbad-core.js?v=82019"></script>
+  <script src="./sinbad-visuals.js?v=8233"></script>
   <script src="./vendor/supabase-2.112.3.js"></script>
   <script src="./sinbad-character-engine.js?v=82019"></script>
   <script src="./sinbad-character-rig.js?v=82019"></script>
   <script src="./sinbad-performance-director.js?v=82019"></script>
-  <script src="./academy-window.js?v=82019"></script>
+  <script src="./academy-window.js?v=8233"></script>
 </body>
 </html>

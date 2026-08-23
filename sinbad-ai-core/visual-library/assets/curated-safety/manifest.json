@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "sinbad-curated-safety-visuals/1",
+  "collection": "Verified maritime safety photographs",
+  "visuals": [
+    {
+      "file": "lifebuoy-scarborough.jpg",
+      "sha256": "a8f4b84c1ca499755f5005cf0ba3174bbcc5d9eadfca849c9c691cc135837141",
+      "width": 3840,
+      "height": 2160,
+      "contentClass": "photograph",
+      "qualityStatus": "approved",
+      "negativeTraits": [],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Scarborough_Harbour_Lifebuoy.jpg",
+      "occurrences": [
+        {
+          "pdfPage": 1,
+          "headings": ["Can simidi (lifebuoy)"],
+          "topics": ["lifebuoy", "life buoy", "life ring", "can simidi", "can simit", "man overboard", "rescue equipment"],
+          "context": "Gerçek can simidi fotoğrafı. Scarborough Harbour; Partonez; CC BY-SA 4.0.",
+          "sourceLabel": "Wikimedia Commons · CC BY-SA 4.0"
+        }
+      ]
+    },
+    {
+      "file": "inflatable-life-raft-us-navy.jpg",
+      "sha256": "88053bb4876ffc0219dab3a9be59d42434641804083ae10cc4fc1b6738d01811",
+      "width": 3000,
+      "height": 2016,
+      "contentClass": "photograph",
+      "qualityStatus": "approved",
+      "negativeTraits": [],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Inflating_a_life_raft_120406-N-NB694-014.jpg",
+      "occurrences": [
+        {
+          "pdfPage": 1,
+          "headings": ["Şişirilebilir can salı (inflatable liferaft)"],
+          "topics": ["liferaft", "life raft", "inflatable life raft", "can salı", "şişme can salı", "survival craft", "rescue equipment"],
+          "context": "Gerçek şişirilebilir can salı fotoğrafı. Official U.S. Navy photograph 120406-N-NB694-014; United States public domain.",
+          "sourceLabel": "U.S. Navy · public domain"
+        }
+      ]
+    },
+    {
+      "file": "sart-radar-transponder.jpg",
+      "sha256": "85d252226c12b158318542914efc4ca2406665177b77febfe320f60f39c5e0a8",
+      "width": 1024,
+      "height": 2444,
+      "contentClass": "photograph",
+      "qualityStatus": "approved",
+      "negativeTraits": [],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:SART_radar_transponder.jpg",
+      "occurrences": [{"pdfPage": 1, "headings": ["SART radar transponderi"], "topics": ["sart", "radar transponder", "search and rescue transponder", "arama kurtarma transponderi"], "context": "Gemide kullanılan gerçek SART cihazı. Ulf Larsen; CC BY-SA 3.0.", "sourceLabel": "Wikimedia Commons · CC BY-SA 3.0"}]
+    },
+    {
+      "file": "fully-enclosed-lifeboat.jpg",
+      "sha256": "b2a23a5150abefc3619b782c507cd135c6818ff830bb2b0db6499d1dd4f91f04",
+      "width": 1728,
+      "height": 2304,
+      "contentClass": "photograph",
+      "qualityStatus": "approved",
+      "negativeTraits": [],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Fully_enclosed_lifeboat_yellow.jpg",
+      "occurrences": [{"pdfPage": 1, "headings": ["Tam kapalı filika"], "topics": ["lifeboat", "fully enclosed lifeboat", "rescue boat", "filika", "kapalı filika"], "context": "Gemideki tam kapalı sarı filika. Joymaster; public domain dedication.", "sourceLabel": "Wikimedia Commons · public domain"}]
+    },
+    {
+      "file": "life-jacket-inspection-uscg.jpg",
+      "sha256": "88e4ee30ddd5a054fc79b3cc5681b5bf89d346d0aff29475a62e1f7128a97471",
+      "width": 3000,
+      "height": 1945,
+      "contentClass": "photograph",
+      "qualityStatus": "approved",
+      "negativeTraits": [],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Richard_Weiss,_a_member_of_Coast_Guard_Auxiliary_Flotilla_8-2_located_in_Cape_May,_inspects_a_life_jacket_during_a_vessel_safety_check.jpg",
+      "occurrences": [{"pdfPage": 1, "headings": ["Can yeleği emniyet kontrolü"], "topics": ["life jacket", "lifejacket", "personal flotation device", "pfd", "can yeleği", "can yelegi"], "context": "Can yeleğinin tekne emniyet kontrolü sırasında incelenmesi. Petty Officer 3rd Class Jonathan Lindberg; U.S. Coast Guard public domain.", "sourceLabel": "U.S. Coast Guard · public domain"}]
+    }
+  ]
+}
