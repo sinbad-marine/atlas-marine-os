@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.23-turn-directives-v36';
+const CACHE='sinbad-marine-v8.20.24-pause-buffer-v37';
 const ASSETS=[
   './',
   './index.html',

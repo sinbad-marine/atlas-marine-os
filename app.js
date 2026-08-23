@@ -1094,6 +1094,11 @@ let sinbadHandsFreeEnabled=false;
 let sinbadWakeActive=false;
 let sinbadAwaitingAnswer=false;
 let sinbadRestartTimer=null;
+let sinbadPendingSpeechTurn='';
+let sinbadTurnFinalizationTimer=null;
+let sinbadTurnStartedAt=0;
+const SINBAD_TURN_PAUSE_MS=700;
+const SINBAD_TURN_MAX_MS=2800;
 const SINBAD_SPEECH_TEXT={
  'tr-TR':{listen:'Dinliyorum… Konuşabilirsiniz.',ready:'🎙️ Sinbad’a Konuş',stop:'⏹ Dinlemeyi Durdur',heard:'Sizi duydum. Sorunuz gönderiliyor…',unsupported:'Bu tarayıcı sesli soru özelliğini desteklemiyor. iPhone/iPad’de güncel Safari, Android’de güncel Chrome kullanın.',denied:'Mikrofon izni verilmedi. Tarayıcı adres çubuğundaki izinlerden mikrofonu açın.',test:'Ses açık Kaptan. Sizi dinlemeye hazırım.'},
  'en-US':{listen:'Listening… You may speak.',ready:'🎙️ Speak to Sinbad',stop:'⏹ Stop listening',heard:'I heard you. Sending your question…',unsupported:'This browser does not support voice questions. Use current Safari on iPhone/iPad or current Chrome on Android.',denied:'Microphone permission was not granted. Enable it in the browser site permissions.',test:'Voice is on, Captain. I am ready to listen.'},
@@ -1110,6 +1115,25 @@ function setListeningUI(message='',visible=false){
   const button=$('startSinbadListening'),status=$('sinbadListeningStatus');if(!button||!status)return;
   button.textContent=sinbadHandsFreeEnabled?speechCopy().stop:speechCopy().ready;button.setAttribute('aria-pressed',String(sinbadHandsFreeEnabled));
   status.textContent=message||speechCopy().listen;status.classList.toggle('hidden',!visible);
+}
+function clearSinbadTurnFinalization({discard=false}={}){
+  clearTimeout(sinbadTurnFinalizationTimer);sinbadTurnFinalizationTimer=null;
+  if(discard){sinbadPendingSpeechTurn='';sinbadTurnStartedAt=0;}
+}
+function finalizeSinbadSpeechTurn(){
+  const heard=sinbadPendingSpeechTurn.trim();clearSinbadTurnFinalization({discard:true});if(!heard)return;
+  const wakeMatch=heard.match(/(?:hey|hei|hej|эй|يا)?\s*(?:sinbad|sindbad|simbad)/iu);
+  let command='';
+  if(wakeMatch){sinbadWakeActive=true;command=heard.slice((wakeMatch.index||0)+wakeMatch[0].length).replace(/^[,.:;!?\s-]+/,'').trim();}
+  else if(sinbadWakeActive)command=heard;
+  if(command){sinbadWakeActive=false;sinbadAwaitingAnswer=true;const activeRecognition=sinbadRecognition;sinbadRecognition=null;sinbadIsListening=false;activeRecognition?.abort();$('sinbadInput').value=command;setListeningUI(speechCopy().heard,true);setTimeout(()=>sendToSinbad(command),250);}
+  else {if(wakeMatch)setListeningUI(speechCopy().listen,true);else $('sinbadInput').value='';if(sinbadAssistantState==='listening')setSinbadAssistantState('idle');scheduleSinbadListening(wakeMatch?150:500);}
+}
+function scheduleSinbadTurnFinalization(){
+  clearTimeout(sinbadTurnFinalizationTimer);
+  const elapsed=sinbadTurnStartedAt?Date.now()-sinbadTurnStartedAt:0;
+  const delay=elapsed>=SINBAD_TURN_MAX_MS?120:SINBAD_TURN_PAUSE_MS;
+  sinbadTurnFinalizationTimer=setTimeout(finalizeSinbadSpeechTurn,delay);
 }
 function scheduleSinbadListening(delay=500){
   clearTimeout(sinbadRestartTimer);
@@ -1128,31 +1152,27 @@ function beginSinbadRecognition(){
   const listeningCue=(activity,revision=0,heardText='')=>{if(sinbadRecognition!==recognition)return;const semantic=heardText?(listeningReactions?.select(heardText,revision)||sinbadPerformanceDirector?.listeningCueForText?.(heardText,revision)):null;const cue=semantic?.accepted&&semantic.meaning!=='neutral'?semantic:sinbadPerformanceDirector?.listeningCueForActivity(activity,revision);setSinbadAssistantState('listening',{...(cue?.accepted?cue.cue:{}),listeningActivity:activity,listeningMeaning:semantic?.accepted?semantic.meaning:'neutral',listeningReaction:semantic?.reactionId||'steady'});};
   sinbadRecognition.onstart=()=>{if(sinbadRecognition!==recognition)return;sinbadIsListening=true;setListeningUI(sinbadWakeActive?speechCopy().listen:handsFreeMessage(),true);listeningCue('ready');};
   sinbadRecognition.onsoundstart=()=>listeningCue('sound');
-  sinbadRecognition.onspeechstart=()=>listeningCue('speech');
+  sinbadRecognition.onspeechstart=()=>{clearSinbadTurnFinalization();listeningCue('speech');};
   sinbadRecognition.onspeechend=()=>listeningCue('pause');
-  sinbadRecognition.onresult=event=>{if(sinbadRecognition!==recognition)return;let interim='',hasFinal=false;for(let i=event.resultIndex;i<event.results.length;i++){const part=event.results[i][0].transcript;if(event.results[i].isFinal){finalTranscript+=part;hasFinal=true;}else interim+=part;}const heardSoFar=(finalTranscript||interim).trim();$('sinbadInput').value=heardSoFar;const progressBucket=Math.floor(heardSoFar.length/12);if(hasFinal)listeningCue('processed',progressBucket,heardSoFar);else if(progressBucket>listeningProgressBucket){listeningProgressBucket=progressBucket;listeningCue('interim',progressBucket,heardSoFar);}};
+  sinbadRecognition.onresult=event=>{if(sinbadRecognition!==recognition)return;let interim='',hasFinal=false;for(let i=event.resultIndex;i<event.results.length;i++){const part=event.results[i][0].transcript;if(event.results[i].isFinal){finalTranscript+=part;hasFinal=true;}else interim+=part;}const current=(finalTranscript||interim).trim(),heardSoFar=[sinbadPendingSpeechTurn,current].filter(Boolean).join(' ').trim();$('sinbadInput').value=heardSoFar;const progressBucket=Math.floor(heardSoFar.length/12);if(hasFinal)listeningCue('processed',progressBucket,heardSoFar);else if(progressBucket>listeningProgressBucket){listeningProgressBucket=progressBucket;listeningCue('interim',progressBucket,heardSoFar);}};
   sinbadRecognition.onerror=event=>{if(sinbadRecognition!==recognition)return;sinbadIsListening=false;if(event.error==='not-allowed'||event.error==='service-not-allowed'){sinbadHandsFreeEnabled=false;setListeningUI(speechCopy().denied,true);return;}if(!['no-speech','aborted'].includes(event.error))setListeningUI(`Microphone: ${event.error}`,true);};
   sinbadRecognition.onend=()=>{
     if(sinbadRecognition!==recognition)return;
     sinbadRecognition=null;
     sinbadIsListening=false;const heard=finalTranscript.trim();
-    const wakeMatch=heard.match(/(?:hey|hei|hej|эй|يا)?\s*(?:sinbad|sindbad|simbad)/iu);
-    let command='';
-    if(wakeMatch){sinbadWakeActive=true;command=heard.slice((wakeMatch.index||0)+wakeMatch[0].length).replace(/^[,.:;!?\s-]+/,'').trim();}
-    else if(sinbadWakeActive)command=heard;
-    if(command){sinbadWakeActive=false;sinbadAwaitingAnswer=true;$('sinbadInput').value=command;setListeningUI(speechCopy().heard,true);setTimeout(()=>sendToSinbad(command),250);}
-    else {if(wakeMatch)setListeningUI(speechCopy().listen,true);else $('sinbadInput').value='';if(sinbadAssistantState==='listening')setSinbadAssistantState('idle');scheduleSinbadListening(wakeMatch?150:500);}
+    if(heard){sinbadPendingSpeechTurn=[sinbadPendingSpeechTurn,heard].filter(Boolean).join(' ').trim();if(!sinbadTurnStartedAt)sinbadTurnStartedAt=Date.now();scheduleSinbadTurnFinalization();if(Date.now()-sinbadTurnStartedAt<SINBAD_TURN_MAX_MS)scheduleSinbadListening(90);}
+    else if(!sinbadPendingSpeechTurn){if(sinbadAssistantState==='listening')setSinbadAssistantState('idle');scheduleSinbadListening();}
   };
   try{sinbadRecognition.start();}catch(error){sinbadIsListening=false;setListeningUI(error.message||String(error),true);}
 }
 function startSinbadListening(){
   const interruptingVoice=sinbadAssistantState==='speaking'||sinbadAssistantState==='preparing-voice'||window.speechSynthesis?.speaking||(sinbadVoiceAudio&&!sinbadVoiceAudio.paused);
   if(interruptingVoice){
-    interruptSinbadVoiceForUser();sinbadAwaitingAnswer=false;sinbadHandsFreeEnabled=true;sinbadWakeActive=true;
+    clearSinbadTurnFinalization({discard:true});interruptSinbadVoiceForUser();sinbadAwaitingAnswer=false;sinbadHandsFreeEnabled=true;sinbadWakeActive=true;
     clearTimeout(sinbadRestartTimer);sinbadRecognition?.abort();setListeningUI(speechCopy().listen,true);beginSinbadRecognition();return;
   }
-  if(sinbadHandsFreeEnabled){sinbadHandsFreeEnabled=false;sinbadWakeActive=false;clearTimeout(sinbadRestartTimer);sinbadRecognition?.abort();setListeningUI('',false);return;}
-  sinbadHandsFreeEnabled=true;sinbadWakeActive=false;setListeningUI(handsFreeMessage(),true);beginSinbadRecognition();
+  if(sinbadHandsFreeEnabled){sinbadHandsFreeEnabled=false;sinbadWakeActive=false;clearSinbadTurnFinalization({discard:true});clearTimeout(sinbadRestartTimer);sinbadRecognition?.abort();setListeningUI('',false);return;}
+  clearSinbadTurnFinalization({discard:true});sinbadHandsFreeEnabled=true;sinbadWakeActive=false;setListeningUI(handsFreeMessage(),true);beginSinbadRecognition();
 }
 
 
@@ -1495,6 +1515,7 @@ async function sinbadOfflineAiAnswer(question){
 }
 async function sendToSinbad(text){
   const q=(text||'').trim(); if(!q)return;
+  clearSinbadTurnFinalization({discard:true});
   // A new question always takes the floor immediately. This cancels queued
   // teaching pauses and any utterance still reading the previous answer.
   interruptSinbadVoiceForUser();

@@ -119,6 +119,35 @@ test('large Captain Sinbad portrait loads the four-layer articulated rig with it
   await expect(page.locator('#startSinbadListening')).toHaveAttribute('aria-pressed','true');
 });
 
+test('a short speech pause joins one user turn instead of submitting mid-sentence',async({page})=>{
+  await stubBridge(page);
+  await page.goto('/');
+  await page.evaluate(()=>{
+    document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');
+    window.__sinbadRecognitionStubs=[];
+    class RecognitionStub{
+      constructor(){window.__sinbadRecognitionStubs.push(this);}
+      start(){this.onstart?.();}
+      abort(){this.onend?.();}
+      stop(){this.onend?.();}
+    }
+    Object.defineProperty(window,'SpeechRecognition',{value:RecognitionStub,configurable:true});
+    Object.defineProperty(window,'webkitSpeechRecognition',{value:RecognitionStub,configurable:true});
+    startSinbadListening();
+    const first=window.__sinbadRecognitionStubs[0],results=[[{transcript:'Hey Sinbad rotayı'}]];results[0].isFinal=true;
+    first.onspeechstart?.();first.onresult?.({resultIndex:0,results});first.onend?.();
+  });
+  await page.waitForTimeout(300);
+  await expect(page.locator('#sinbadMessages .chat-bubble.user')).toHaveCount(0);
+  await page.waitForFunction(()=>window.__sinbadRecognitionStubs?.length>=2);
+  await page.evaluate(()=>{
+    const second=window.__sinbadRecognitionStubs[1],results=[[{transcript:'göster'}]];results[0].isFinal=true;
+    second.onspeechstart?.();second.onresult?.({resultIndex:0,results});second.onend?.();
+  });
+  await page.waitForTimeout(1100);
+  await expect(page.locator('#sinbadMessages .chat-bubble.user').last()).toContainText('rotayı göster');
+});
+
 test('Sinbad Academy opens outside the main app as a standalone classroom window',async({page})=>{
   await stubBridge(page);
   await page.goto('/');

@@ -113,7 +113,7 @@ test('laughing is a real illustrated, labelled and time-bounded reaction',()=>{
 test('SpeechRecognition lifecycle drives listening, not a fake button-press state',()=>{
   assert.match(app,/sinbadRecognition\.onstart=\(\)=>\{if\(sinbadRecognition!==recognition\)return;sinbadIsListening=true;/);
   assert.match(app,/sinbadRecognition\.onsoundstart=\(\)=>listeningCue\('sound'\)/);
-  assert.match(app,/sinbadRecognition\.onspeechstart=\(\)=>listeningCue\('speech'\)/);
+  assert.match(app,/sinbadRecognition\.onspeechstart=\(\)=>\{clearSinbadTurnFinalization\(\);listeningCue\('speech'\);\}/);
   assert.match(app,/sinbadRecognition\.onspeechend=\(\)=>listeningCue\('pause'\)/);
   assert.match(app,/listeningCueForText\?\.\(heardText,revision\)/);
   assert.match(app,/createListeningReactionDirector\?\.\(\)/);
@@ -127,6 +127,18 @@ test('SpeechRecognition lifecycle drives listening, not a fake button-press stat
   assert.match(css,/data-listening-activity="speech"/);
   assert.match(css,/data-gesture="listen-orient"/);
   assert.match(css,/data-gesture="listen-follow"/);
+});
+
+test('short natural pauses are buffered into one bounded user turn',()=>{
+  assert.match(app,/const SINBAD_TURN_PAUSE_MS=700;/);
+  assert.match(app,/const SINBAD_TURN_MAX_MS=2800;/);
+  assert.match(app,/onspeechstart=\(\)=>\{clearSinbadTurnFinalization\(\);listeningCue\('speech'\);\}/);
+  assert.match(app,/heardSoFar=\[sinbadPendingSpeechTurn,current\]\.filter\(Boolean\)\.join\(' '\)\.trim\(\)/);
+  assert.match(app,/sinbadPendingSpeechTurn=\[sinbadPendingSpeechTurn,heard\]\.filter\(Boolean\)\.join\(' '\)\.trim\(\)/);
+  assert.match(app,/scheduleSinbadTurnFinalization\(\)/);
+  assert.match(app,/scheduleSinbadListening\(90\)/);
+  assert.match(app,/elapsed>=SINBAD_TURN_MAX_MS\?120:SINBAD_TURN_PAUSE_MS/);
+  assert.match(app,/const activeRecognition=sinbadRecognition;sinbadRecognition=null;sinbadIsListening=false;activeRecognition\?\.abort\(\)/);
 });
 
 test('walking uses two real alpha PNG frames and a bounded user-triggered cycle',()=>{
@@ -407,7 +419,7 @@ test('onboundary drives a real per-word cue (not a fabricated continuous loop, a
 
 test('a new question immediately cancels the previous spoken answer and invalidates queued teaching pauses',()=>{
   const send=app.slice(app.indexOf('async function sendToSinbad'),app.indexOf("$('sendSinbad').addEventListener"));
-  assert.match(send,/const q=\(text\|\|'\'\)\.trim\(\); if\(!q\)return;\s*\n\s*\/\/[^\n]*\n(?:\s*\/\/[^\n]*\n)*\s*interruptSinbadVoiceForUser\(\);/);
+  assert.match(send,/const q=\(text\|\|'\'\)\.trim\(\); if\(!q\)return;\s*\n\s*clearSinbadTurnFinalization\(\{discard:true\}\);\s*\n\s*\/\/[^\n]*\n(?:\s*\/\/[^\n]*\n)*\s*interruptSinbadVoiceForUser\(\);/);
   const stop=app.slice(app.indexOf('function stopSinbadVoice'),app.indexOf('let sinbadStandardBoundaryTimer'));
   assert.match(stop,/sinbadStandardSpeechGeneration\+\+;/);
   assert.match(stop,/window\.speechSynthesis\?\.cancel\(\);/);
