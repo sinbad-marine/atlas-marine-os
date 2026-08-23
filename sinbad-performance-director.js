@@ -499,6 +499,16 @@
     if(!name)return Object.freeze({accepted:true,known:false,text:turkish?'Son tahta şekli doğrulanmış izin listesinde bulunmuyor.':'The last board shape is not in the verified allowlist.'});
     return Object.freeze({accepted:true,known:true,kind:'shape',value:lastBoardAction.value,text:turkish?`En son Academy tahtasına bir ${name} çizdim.`:`I last drew a ${name} on the Academy board.`});
   }
+  function academyBoardRepeatRequestForText(text,lastBoardAction,language='tr-TR'){
+    if(typeof text!=='string'||!text.trim())return Object.freeze({accepted:false,reason:'INVALID_BOARD_REPEAT_TEXT'});
+    const normalized=text.trim().toLocaleLowerCase('tr-TR');
+    if(!/(?:onu|bunu|tahtadakini|son çizdiğini|son yazdığını).*(?:tekrar|yeniden).*(?:çiz|yaz|göster)|(?:tekrar|yeniden).*(?:onu|bunu|tahtadakini|son çizdiğini|son yazdığını).*(?:çiz|yaz|göster)|(?:draw|write|show) (?:that|it|the last one) again/iu.test(normalized))return Object.freeze({accepted:false,reason:'NO_BOARD_REPEAT_REQUEST'});
+    const turkish=String(language).toLocaleLowerCase('en-US').startsWith('tr');
+    if(!lastBoardAction||!['shape','text'].includes(lastBoardAction.kind)||typeof lastBoardAction.value!=='string'||!lastBoardAction.value)return Object.freeze({accepted:true,known:false,text:turkish?'Tekrarlayabileceğim doğrulanmış bir Academy tahta işlemim yok.':'I do not have a verified Academy board action that I can repeat.'});
+    if(lastBoardAction.kind==='shape'&&!['circle','triangle','rectangle','arrow','axes'].includes(lastBoardAction.value))return Object.freeze({accepted:true,known:false,text:turkish?'Son tahta şekli güvenli çizim listemde bulunmuyor.':'The last board shape is not in my safe drawing allowlist.'});
+    const action=Object.freeze({kind:lastBoardAction.kind,value:lastBoardAction.value.slice(0,200)});
+    return Object.freeze({accepted:true,known:true,action,text:turkish?'Doğrulanmış son tahta işlemini yeniden uyguluyorum.':'I am applying the last verified board action again.'});
+  }
   function recordVerifiedGesture(history,action,{limit=4}={}){
     if(!Array.isArray(history)||!Number.isInteger(limit)||limit<1||limit>8)return Object.freeze({accepted:false,reason:'INVALID_GESTURE_HISTORY'});
     const verified=gestureAcknowledgementForRequest({accepted:true,supported:true,action},'en-US');
@@ -627,5 +637,5 @@
     };
     return Object.freeze({play,cancel});
   }
-  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,academyBoardRecallAnswerForText,recordVerifiedGesture,gestureHistoryAnswerForText,gestureStopRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
+  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,academyBoardRecallAnswerForText,academyBoardRepeatRequestForText,recordVerifiedGesture,gestureHistoryAnswerForText,gestureStopRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
 });

@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,academyBoardRecallAnswerForText,recordVerifiedGesture,gestureHistoryAnswerForText,gestureStopRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,academyBoardRecallAnswerForText,academyBoardRepeatRequestForText,recordVerifiedGesture,gestureHistoryAnswerForText,gestureStopRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -324,6 +324,14 @@ test('board follow-ups answer only from a successfully applied Academy action',(
   const unknown=academyBoardRecallAnswerForText('Tahtaya en son ne yazdın?',null,'tr-TR');assert.equal(unknown.known,false);assert.match(unknown.text,/başarıyla uygulanmış/);
   assert.equal(academyBoardRecallAnswerForText('Bugün ne öğreneceğiz?',{kind:'shape',value:'circle'}).reason,'NO_BOARD_RECALL_REQUEST');
   assert.equal(academyBoardRecallAnswerForText('Tahtaya en son ne çizdin?',{kind:'shape',value:'hexagon'}).known,false);
+});
+
+test('board follow-ups repeat only a verified bounded Academy action',()=>{
+  const shape=academyBoardRepeatRequestForText('Onu tekrar çiz.',{kind:'shape',value:'arrow'},'tr-TR');assert.equal(shape.known,true);assert.deepEqual(shape.action,{kind:'shape',value:'arrow'});
+  const writing=academyBoardRepeatRequestForText('Write that again.',{kind:'text',value:'Pruva 090'},'en-US');assert.equal(writing.known,true);assert.deepEqual(writing.action,{kind:'text',value:'Pruva 090'});
+  assert.equal(academyBoardRepeatRequestForText('Onu tekrar çiz.',null,'tr-TR').known,false);
+  assert.equal(academyBoardRepeatRequestForText('Onu tekrar çiz.',{kind:'shape',value:'hexagon'},'tr-TR').known,false);
+  assert.equal(academyBoardRepeatRequestForText('Bugün ne öğreneceğiz?',{kind:'shape',value:'arrow'}).reason,'NO_BOARD_REPEAT_REQUEST');
 });
 
 test('relative gesture commands resolve only against a verified previous action',()=>{

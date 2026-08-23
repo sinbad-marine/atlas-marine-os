@@ -1692,6 +1692,8 @@ async function sendToSinbad(text){
   $('sinbadInput').value='';
   const stopGesture=sinbadPerformanceDirector?.gestureStopRequestForText?.(q,sinbadState.language||appLanguage);
   if(stopGesture?.accepted){stopSinbadGesturePerformance();addSinbadMessage('sinbad',stopGesture.text);return;}
+  const repeatedBoard=sinbadPerformanceDirector?.academyBoardRepeatRequestForText?.(q,sinbadLastAcademyBoardAction,sinbadState.language||appLanguage);
+  if(repeatedBoard?.accepted){if(!repeatedBoard.known){addSinbadMessage('sinbad',repeatedBoard.text);return;}const delivered=repeatedBoard.action.kind==='shape'?sendShapeToSinbadAcademyBoard(repeatedBoard.action.value):sendTextToSinbadAcademyBoard(repeatedBoard.action.value);addSinbadMessage('sinbad',delivered?repeatedBoard.text:(sinbadState.language==='tr-TR'?'Academy tahtasına güvenli bağlantı kurulamadığı için işlemi tekrarlamadım.':'I did not repeat the action because a safe Academy board connection could not be established.'));return;}
   const recalledBoard=sinbadPerformanceDirector?.academyBoardRecallAnswerForText?.(q,sinbadLastAcademyBoardAction,sinbadState.language||appLanguage);
   if(recalledBoard?.accepted){addSinbadMessage('sinbad',recalledBoard.text);return;}
   const directReaction=performSinbadDirectCharacterRequest(sinbadRequestedGesture);

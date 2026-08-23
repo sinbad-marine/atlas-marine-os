@@ -308,5 +308,8 @@ test('live Sinbad chat writes bounded plain text on the real Academy board',asyn
   const shapePhases=await classroom.evaluate(()=>window.__shapePhaseTrace);expect(shapePhases).toContain('check-in');expect(shapePhases.at(-1)).toBe('complete');
   await page.locator('#sinbadInput').fill('Az önce tahtaya ne çizdin?');await page.locator('#sendSinbad').click();
   await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('En son Academy tahtasına bir ok çizdim.');
+  await page.locator('#sinbadInput').fill('Onu tekrar çiz.');await page.locator('#sendSinbad').click();
+  await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Doğrulanmış son tahta işlemini yeniden uyguluyorum.');
+  await expect(classroom.locator('#academyTeachingStage')).toHaveAttribute('data-board-drawing-phase','complete',{timeout:3000});
   await classroom.close();
 });
