@@ -36,6 +36,10 @@ test('Turkish speech removes grouped-thousands dots before native TTS',()=>{
   assert.match(js,/new NativeUtterance\(normalizeTurkishSpeech\(text\)\)/);
 });
 
+test('speaker labels update only when their value changes and cannot create a mutation loop',()=>{
+  assert.match(js,/if\(node\.textContent!==label\)node\.textContent=label/);
+});
+
 test('native Professor and consented identity module remain available from the offline shell',()=>{
   for(const file of ['academy-professor-native.html','academy-professor-native.css','academy-professor-native.js','sinbad-speaker-identity.js'])assert.match(worker,new RegExp(file.replaceAll('.','\\.')));
   assert.match(worker,/endsWith\('\/academy-professor-native\.html'\).*pageKey='\.\/academy-professor-native\.html'/s);
