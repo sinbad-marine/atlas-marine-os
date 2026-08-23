@@ -240,6 +240,8 @@ test('explicit gesture requests override improvisation only when a real supporte
   assert.equal(gestureRequestForText('Başını eğ.').cue.gesture,'nod');
   assert.equal(gestureRequestForText('Gülümse lütfen.').action,'smile');
   assert.equal(gestureRequestForText('Sinbad biraz gülsene.').action,'laugh');
+  const walk=gestureRequestForText('Sinbad biraz yürü.');assert.equal(walk.action,'walk');assert.equal(walk.directCharacterReaction,true);
+  assert.equal(gestureRequestForText('Sinbad dans et.').supported,false);
   assert.equal(gestureRequestForText('Bugün hava güzel.').reason,'NO_GESTURE_REQUEST');
   assert.equal(gestureRequestForText(' ').reason,'INVALID_REQUEST_TEXT');
 });

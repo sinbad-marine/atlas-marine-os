@@ -476,6 +476,16 @@ function commitSinbadPerformedGestureAction(action){
   sinbadPerformedGestureHistory=[...recorded.history];sinbadLastPerformedGestureAction=sinbadPerformedGestureHistory.at(-1)||null;return true;
 }
 function commitSinbadPreparedGesture(){const action=sinbadPreparedGestureAction;sinbadPreparedGestureAction=null;return commitSinbadPerformedGestureAction(action);}
+function performSinbadDirectCharacterRequest(request){
+  if(!request?.directCharacterReaction||request.action!=='walk')return Object.freeze({accepted:false,reason:'NOT_DIRECT_CHARACTER_REACTION'});
+  stopSinbadGesturePerformance();
+  const reaction=window.SinbadCharacterController?.react?.('walk');
+  if(!reaction?.accepted)return Object.freeze({accepted:false,reason:reaction?.reason||'CHARACTER_REACTION_REJECTED'});
+  const acknowledgement=sinbadPerformanceDirector?.gestureAcknowledgementForRequest?.(request,sinbadState.language||appLanguage);
+  sinbadRequestedGesture=null;sinbadRequestedGestureSequence=[];sinbadPreparedGestureAction=null;
+  commitSinbadPerformedGestureAction('walk');sinbadAwaitingAnswer=false;
+  return Object.freeze({accepted:true,text:acknowledgement?.accepted?acknowledgement.text:(sinbadState.language==='tr-TR'?'Kısa bir yürüyüş yapıyorum.':'I am taking a short walk.')});
+}
 function stopSinbadGesturePerformance(){
   sinbadRequestedGesture=null;sinbadRequestedGestureSequence=[];sinbadPreparedGestureAction=null;sinbadExplicitGestureHoldBoundaries=0;
   clearTimeout(sinbadSpeechMeaningTransitionTimer);sinbadSpeechMeaningTransitionTimer=null;stopSinbadVoice();
@@ -1667,6 +1677,8 @@ async function sendToSinbad(text){
   $('sinbadInput').value='';
   const stopGesture=sinbadPerformanceDirector?.gestureStopRequestForText?.(q,sinbadState.language||appLanguage);
   if(stopGesture?.accepted){stopSinbadGesturePerformance();addSinbadMessage('sinbad',stopGesture.text);return;}
+  const directReaction=performSinbadDirectCharacterRequest(sinbadRequestedGesture);
+  if(directReaction.accepted){addSinbadMessage('sinbad',directReaction.text);return;}
   const recalledSequence=sinbadPerformanceDirector?.gestureHistoryAnswerForText?.(q,sinbadPerformedGestureHistory,sinbadState.language||appLanguage);
   if(recalledSequence?.accepted){speakSinbad(recalledSequence.text,()=>addSinbadMessage('sinbad',recalledSequence.text));return;}
   const recalledGesture=sinbadPerformanceDirector?.gestureRecallAnswerForText?.(q,sinbadLastPerformedGestureAction,sinbadState.language||appLanguage);

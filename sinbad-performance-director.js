@@ -329,6 +329,7 @@
       nod:Object.freeze({gesture:'nod',gaze:'audience',emotion:'warm',energy:.28}),
       smile:Object.freeze({gesture:'rest',gaze:'audience',emotion:'warm',energy:.24}),
       laugh:Object.freeze({gesture:'laugh',gaze:'audience',emotion:'joyful',energy:.64}),
+      walk:Object.freeze({gesture:'walk',gaze:'path',emotion:'warm',energy:.62}),
       'point-board':Object.freeze({gesture:'point-board',gaze:'board',emotion:'confident',energy:.42}),
       'show-listening':Object.freeze({gesture:'listen-lean',gaze:'audience',emotion:'attentive',energy:.38})
     };
@@ -369,7 +370,8 @@
     if(/(beni dinliyor musun|dinlediğini göster|are you listening|show .*listening)/iu.test(normalized)){
       return Object.freeze({accepted:true,action:'show-listening',supported:true,cue:Object.freeze({gesture:'listen-lean',gaze:'audience',emotion:'attentive',energy:.38})});
     }
-    if(/(yürü|koş|zıpla|dans et|walk|run|jump|dance)/iu.test(normalized)){
+    if(/(?:^|\s)(?:yürü|biraz\s+yürü|walk|take\s+a\s+walk)(?:[.!?]|$)/iu.test(normalized))return Object.freeze({accepted:true,action:'walk',supported:true,responsePolicy:'replace',directCharacterReaction:true,cue:Object.freeze({gesture:'walk',gaze:'path',emotion:'warm',energy:.62})});
+    if(/(koş|zıpla|dans et|run|jump|dance)/iu.test(normalized)){
       return Object.freeze({accepted:true,action:'unsupported-body-action',supported:false,reason:'GESTURE_NOT_IMPLEMENTED'});
     }
     return Object.freeze({accepted:false,reason:'NO_GESTURE_REQUEST'});
@@ -395,6 +397,7 @@
       nod:'Başımı eğerek yanıt veriyorum.',
       smile:'Gülümsüyorum.',
       laugh:'Kısa bir kahkahayla sana eşlik ediyorum.',
+      walk:'Kısa ve kontrollü bir yürüyüş yapıyorum.',
       'point-board':'Tahtayı işaret ediyorum.',
       'show-listening':'Seni dikkatle dinliyorum.'
     }:{
@@ -407,6 +410,7 @@
       nod:'I am nodding as I respond.',
       smile:'I am smiling.',
       laugh:'I am joining you with a brief laugh.',
+      walk:'I am taking a short, controlled walk.',
       'point-board':'I am pointing to the board.',
       'show-listening':'I am listening carefully.'
     };
@@ -439,6 +443,7 @@
       nod:'Başımı eğdim.',
       smile:'Gülümsedim.',
       laugh:'Kısa bir kahkaha attım.',
+      walk:'Kısa bir yürüyüş yaptım.',
       'point-board':'Tahtayı işaret ettim.',
       'show-listening':'Seni dinlediğimi gösterdim.'
     }:{
@@ -451,6 +456,7 @@
       nod:'I nodded.',
       smile:'I smiled.',
       laugh:'I gave a brief laugh.',
+      walk:'I took a short walk.',
       'point-board':'I pointed to the board.',
       'show-listening':'I showed that I was listening.'
     };
@@ -470,9 +476,9 @@
     const turkish=String(language).toLocaleLowerCase('en-US').startsWith('tr');
     const actions=Array.isArray(history)?history.slice(-2):[];
     const labels=turkish?{
-      'show-palm':'avucumu açıp gösterdim','show-right-hand':'sağ avucumu gösterdim','raise-left-hand':'sol elimi kaldırdım',wave:'sana el salladım','look-left':'başımı sola çevirdim','look-right':'başımı sağa çevirdim',nod:'başımı eğdim',smile:'gülümsedim',laugh:'kısa bir kahkaha attım','point-board':'tahtayı işaret ettim','show-listening':'seni dinlediğimi gösterdim'
+      'show-palm':'avucumu açıp gösterdim','show-right-hand':'sağ avucumu gösterdim','raise-left-hand':'sol elimi kaldırdım',wave:'sana el salladım','look-left':'başımı sola çevirdim','look-right':'başımı sağa çevirdim',nod:'başımı eğdim',smile:'gülümsedim',laugh:'kısa bir kahkaha attım',walk:'kısa bir yürüyüş yaptım','point-board':'tahtayı işaret ettim','show-listening':'seni dinlediğimi gösterdim'
     }:{
-      'show-palm':'opened and showed my palm','show-right-hand':'showed my right palm','raise-left-hand':'raised my left hand',wave:'waved to you','look-left':'turned my head left','look-right':'turned my head right',nod:'nodded',smile:'smiled',laugh:'gave a brief laugh','point-board':'pointed to the board','show-listening':'showed that I was listening'
+      'show-palm':'opened and showed my palm','show-right-hand':'showed my right palm','raise-left-hand':'raised my left hand',wave:'waved to you','look-left':'turned my head left','look-right':'turned my head right',nod:'nodded',smile:'smiled',laugh:'gave a brief laugh',walk:'took a short walk','point-board':'pointed to the board','show-listening':'showed that I was listening'
     };
     const known=actions.filter(action=>Object.hasOwn(labels,action));
     if(known.length<2)return Object.freeze({accepted:true,known:false,text:turkish?'Sıralı yanıt için henüz iki doğrulanmış hareket kaydım yok.':'I do not yet have two verified movements recorded for a sequence answer.'});

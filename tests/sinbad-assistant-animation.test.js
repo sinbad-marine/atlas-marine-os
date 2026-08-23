@@ -155,6 +155,16 @@ test('walking uses two real alpha PNG frames and a bounded user-triggered cycle'
   assert.match(html,/id="testSinbadWalk"/);assert.match(sw,/captain-sinbad-walk-a-v1\.png/);assert.match(sw,/captain-sinbad-walk-b-v1\.png/);
 });
 
+test('a supported chat walk request uses the bounded character controller and records only acceptance',()=>{
+  assert.match(app,/function performSinbadDirectCharacterRequest\(request\)/);
+  assert.match(app,/if\(!request\?\.directCharacterReaction\|\|request\.action!=='walk'\)return Object\.freeze/);
+  assert.match(app,/stopSinbadGesturePerformance\(\);\s*\n\s*const reaction=window\.SinbadCharacterController/);
+  assert.match(app,/SinbadCharacterController\?\.react\?\.\('walk'\)/);
+  assert.match(app,/if\(!reaction\?\.accepted\)return Object\.freeze/);
+  assert.match(app,/commitSinbadPerformedGestureAction\('walk'\)/);
+  assert.match(app,/const directReaction=performSinbadDirectCharacterRequest\(sinbadRequestedGesture\)/);
+});
+
 test('sending a question drives thinking, synced with the existing #sinbadThinking bubble',()=>{
   const sendToSinbad=app.slice(app.indexOf('async function sendToSinbad'),app.indexOf("$('sendSinbad').addEventListener"));
   assert.match(sendToSinbad,/setSinbadThinkingStage\('analyzing'\);\s*\n\s*\$\('sinbadThinking'\)\.classList\.remove\('hidden'\);/);

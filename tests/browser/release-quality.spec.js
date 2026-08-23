@@ -181,6 +181,11 @@ test('live Sinbad chat grounds body answers in the gesture actually shown',async
   await expect(answer).toContainText('Kısa bir kahkahayla sana eşlik ediyorum.');
   await expect(avatar).toHaveAttribute('data-gesture','laugh',{timeout:2500});
   await expect(avatar.locator('.sinbad-rig-expression-delighted')).toHaveCSS('opacity','1');
+
+  await ask('Sinbad biraz yürü.');
+  await expect(answer).toContainText('Kısa ve kontrollü bir yürüyüş yapıyorum.');
+  await expect(avatar).toHaveAttribute('data-state','walking');
+  await expect(avatar).toHaveAttribute('data-gesture','walk');
 });
 
 test('idle Sinbad performs a sparse real micro-motion and yields immediately to work',async({page})=>{
