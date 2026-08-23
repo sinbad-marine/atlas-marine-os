@@ -1219,6 +1219,13 @@ function openSinbadProfessorWindow(){
   if(!sinbadProfessorNativeWindow){alert('Sinbad Professor penceresi engellendi. Bu site için açılır pencerelere izin verip yeniden deneyin.');return;}
   sinbadProfessorNativeWindow.focus();
 }
+
+function openSinbadProfessorHandsFreeWindow(){
+  const width=Math.max(960,Math.min(screen.availWidth||1500,1680)),height=Math.max(680,Math.min(screen.availHeight||920,1040));
+  sinbadProfessorNativeWindow=window.open('./academy-professor-v3.html','sinbadProfessorWorkspace',`popup=yes,left=0,top=0,width=${width},height=${height},resizable=yes,scrollbars=yes`);
+  if(!sinbadProfessorNativeWindow){alert('Sinbad Professor penceresi tarayıcı tarafından engellendi. Bu site için açılır pencerelere izin verin.');return}
+  sinbadProfessorNativeWindow.focus();
+}
 function renderAcademyLesson(){
   const category=$('academyModule')?.value,lesson=window.SinbadAcademy?.lesson(category,window.SINBAD_TRAINING_DATA),output=$('academyOutput');
   if(!lesson||!output)return;
@@ -1420,7 +1427,7 @@ $('bridgeGpxFile')?.addEventListener('change',event=>importBridgeGpxFile(event.t
 $('syncSinbadMemory')?.addEventListener('click',syncSinbadOfflineMemory);
 addBridgeWaypoint({name:'Departure'});addBridgeWaypoint({name:'Destination'});checkBridgeStatus();setInterval(checkBridgeStatus,30000);
 $('openSinbadAcademyClassroom')?.addEventListener('click',openSinbadAcademyWindow);
-$('openSinbadProfessorWorkspace')?.addEventListener('click',openSinbadProfessorWindow);
+$('openSinbadProfessorWorkspace')?.addEventListener('click',openSinbadProfessorHandsFreeWindow);
 renderOfficialSources();
 setSinbadVoiceUI();
 setListeningUI();
