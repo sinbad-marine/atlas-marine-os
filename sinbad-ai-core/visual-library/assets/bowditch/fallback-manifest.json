@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "sinbad-bowditch-visual-atlas/1",
+  "volume": 2,
+  "sourceDocument": "NGA_American_Practical_Navigator_2024_Vol_2_LowRes.pdf",
+  "sourceDocumentSha256": "d3c5979f526b545831f9544ae3d91f7c2ebdf692338239585c121f4e95b32575",
+  "sourceUrl": "https://msi.nga.mil/api/publications/download?key=16693975/SFH00000/Bowditch_Vol_2_LoRes.pdf&type=view",
+  "pageCount": 544,
+  "uniqueVisualCount": 1,
+  "occurrenceCount": 1,
+  "failureCount": 0,
+  "visuals": [
+    {
+      "visualId": "bowditch:4a6d4884426bf2dbe9312b30984f4db59c1f7c2e0c6c7e70dc4bd71e4da0ef35",
+      "sha256": "4a6d4884426bf2dbe9312b30984f4db59c1f7c2e0c6c7e70dc4bd71e4da0ef35",
+      "file": "fallback-pages/volume-2-page-392.png",
+      "mediaType": "image/png",
+      "width": 1530,
+      "height": 1980,
+      "sourceDocument": "NGA_American_Practical_Navigator_2024_Vol_2_LowRes.pdf",
+      "sourceDocumentSha256": "d3c5979f526b545831f9544ae3d91f7c2ebdf692338239585c121f4e95b32575",
+      "sourceUrl": "https://msi.nga.mil/api/publications/download?key=16693975/SFH00000/Bowditch_Vol_2_LoRes.pdf&type=view",
+      "occurrences": [
+        {
+          "volume": 2,
+          "pdfPage": 392,
+          "imageNumber": 1,
+          "headings": ["APPENDIX I: EXTRACTS FROM 2020 TIDAL CURRENT TABLES"],
+          "topics": ["tidal current", "current diagram", "new york harbor", "ambrose channel", "speed lines", "northbound", "southbound"],
+          "context": "Current Diagram - New York Harbor via Ambrose Channel. Predicted current times and speed lines for northbound and southbound flow."
+        }
+      ]
+    }
+  ],
+  "failures": []
+}
