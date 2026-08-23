@@ -295,9 +295,13 @@ test('live Sinbad chat writes bounded plain text on the real Academy board',asyn
   await expect(classroom.locator('#academyTeachingText svg[data-board-shape="triangle"] path')).toBeVisible();
   await expect(classroom.locator('#academyTeachingText path')).toHaveCSS('stroke-dashoffset','0px',{timeout:3000});
   await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Academy tahtasına bir üçgen çiziyorum.');
+  await classroom.evaluate(()=>{window.__shapeFrameTrace=[];const image=document.querySelector('#academySinbadImage');new MutationObserver(()=>window.__shapeFrameTrace.push(image.getAttribute('src'))).observe(image,{attributes:true,attributeFilter:['src']});});
   await page.locator('#sinbadInput').fill('Tahtaya bir ok çiz.');
   await page.locator('#sendSinbad').click();
   await expect(classroom.locator('#academyTeachingText svg[data-board-shape="arrow"] path')).toBeVisible();
   await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Academy tahtasına bir ok çiziyorum.');
+  await expect(classroom.locator('#academyTeachingStage')).toHaveAttribute('data-board-drawing-phase','complete',{timeout:3000});
+  await expect(classroom.locator('#academySinbadImage')).toHaveAttribute('src',/captain-sinbad-board-teaching\.png$/u);
+  const shapeFrames=await classroom.evaluate(()=>window.__shapeFrameTrace);expect(shapeFrames.some(src=>src.includes('writing-contact-v1.png'))).toBe(true);expect(shapeFrames.some(src=>src.includes('writing-lift-v1.png'))).toBe(true);
   await classroom.close();
 });
