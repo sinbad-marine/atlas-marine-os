@@ -408,6 +408,7 @@ let sinbadAssistantLastDetail={};
 const sinbadCharacterEngine=window.SinbadCharacterEngine?.createCharacterEngine({initialState:'idle'})||null;
 const sinbadCharacterRig=window.SinbadCharacterRig||null;
 const sinbadPerformanceDirector=window.SinbadPerformanceDirector||null;
+const sinbadVisemePlanner=window.SinbadVisemePlanner||null;
 const sinbadImprovisationDirector=sinbadPerformanceDirector?.createImprovisationDirector?.()||null;
 let sinbadSpeechPerformanceMode='warm';
 let sinbadResponseOpeningCue={gesture:'open-hand',gaze:'audience',emotion:'warm',energy:.36,responseKind:'conversation'};
@@ -843,7 +844,9 @@ let sinbadStandardMouthSequence=0;
 const SINBAD_STANDARD_VISEME_CADENCE=Object.freeze(['closed','open','wide','open','round','open','wide','open']);
 function sinbadStandardVoiceTick(boundaryEvent,spokenText){
   sinbadAssistantElements().forEach(el=>el.classList.add('sinbad-voice-tick'));
-  setSinbadMouthFrame(SINBAD_STANDARD_VISEME_CADENCE[++sinbadStandardMouthSequence%SINBAD_STANDARD_VISEME_CADENCE.length]);
+  const sequenceStep=++sinbadStandardMouthSequence;
+  const planned=sinbadVisemePlanner?.visemeForBoundary({text:spokenText,charIndex:boundaryEvent?.charIndex,step:sequenceStep});
+  setSinbadMouthFrame(planned?.accepted?planned.frame:SINBAD_STANDARD_VISEME_CADENCE[sequenceStep%SINBAD_STANDARD_VISEME_CADENCE.length]);
   const performanceCue=sinbadSpeechBoundaryCue(boundaryEvent,spokenText,sinbadStandardMouthSequence-1);
   if(performanceCue.gesture&&sinbadAssistantState==='speaking')sinbadAssistantElements().forEach(el=>{
     el.dataset.gesture=performanceCue.gesture;el.dataset.gaze=performanceCue.gaze;el.dataset.emotion=performanceCue.emotion||'warm';

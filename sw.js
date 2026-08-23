@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.17-live-character-viseme-rig-v25';
+const CACHE='sinbad-marine-v8.20.17-speech-aware-visemes-v26';
 const ASSETS=[
   './',
   './index.html',
@@ -10,6 +10,7 @@ const ASSETS=[
   './sinbad-character-engine.js',
   './sinbad-performance-director.js',
   './sinbad-character-rig.js',
+  './sinbad-viseme-planner.js',
   './pilot-data.js',
   './route-data.js',
   './official-publications.js',

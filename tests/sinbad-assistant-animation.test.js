@@ -93,7 +93,8 @@ test('real phoneme frames follow audio amplitude or genuine speech boundaries an
   }
   assert.match(app,/const SINBAD_SPEECH_ASSETS=Object\.freeze\(\{closed:'captain-sinbad-speaking-mbp-v1\.png',open:'captain-sinbad-speaking\.png',wide:'captain-sinbad-speaking\.png',round:'captain-sinbad-speaking-o-v1\.png'\}\);/);
   assert.match(app,/setSinbadMouthFrame\(amp<\.1\?'closed':amp<\.44\?'open':'wide'\)/);
-  assert.match(app,/SINBAD_STANDARD_VISEME_CADENCE\[\+\+sinbadStandardMouthSequence%SINBAD_STANDARD_VISEME_CADENCE\.length\]/);
+  assert.match(app,/sinbadVisemePlanner\?\.visemeForBoundary\(\{text:spokenText,charIndex:boundaryEvent\?\.charIndex,step:sequenceStep\}\)/);
+  assert.match(app,/planned\?\.accepted\?planned\.frame:SINBAD_STANDARD_VISEME_CADENCE\[sequenceStep%SINBAD_STANDARD_VISEME_CADENCE\.length\]/);
   assert.match(app,/setSinbadMouthFrame\('closed'\)/);
   assert.match(css,/data-mouth-frame="round"/);
 });

@@ -27,7 +27,7 @@ test('builds an allowlisted hash-bound Pages artifact without private surfaces',
 
 test('Pages release contains every live character runtime and referenced animation frame',()=>{
   const required=[
-    'sinbad-character-engine.js','sinbad-character-rig.js','sinbad-performance-director.js',
+    'sinbad-character-engine.js','sinbad-character-rig.js','sinbad-viseme-planner.js','sinbad-performance-director.js',
     'captain-sinbad-idle-blink-v1.png','captain-sinbad-speaking-mbp-v1.png','captain-sinbad-speaking-o-v1.png',
     'captain-sinbad-laughing-v1.png','captain-sinbad-walk-a-v1.png','captain-sinbad-walk-b-v1.png',
     'captain-sinbad-writing-contact-v1.png','captain-sinbad-writing-lift-v1.png',
