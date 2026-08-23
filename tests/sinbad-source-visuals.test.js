@@ -5,6 +5,7 @@ const fs=require('node:fs');
 const app=fs.readFileSync('app.js','utf8');
 const edge=fs.readFileSync('supabase/functions/sinbad-answer/index.ts','utf8');
 const css=fs.readFileSync('styles.css','utf8');
+const storagePolicy=fs.readFileSync('supabase/migrations/20260823_private_source_storage_access.sql','utf8');
 
 test('cloud retrieval exposes bounded PDF page visuals only to owner and developer roles',()=>{
   assert.match(edge,/const wantsSourceVisuals = \(question: string\)/);
@@ -42,6 +43,13 @@ test('Atlas document centre also blocks private source browsing and transfer out
   assert.match(app,/async function openCloudFile\(bucket,path,filename=''\)\{\s*if\(!roleCanAccessPrivateSources\(\)\)/);
   assert.match(app,/async function downloadCloudFile\(bucket,path,filename='atlas-file'\)\{\s*if\(!roleCanAccessPrivateSources\(\)\)/);
   assert.match(app,/async function shareCloudFile\(bucket,path,filename='atlas-file'\)\{\s*if\(!roleCanAccessPrivateSources\(\)\)/);
+});
+
+test('Storage RLS limits original library bytes to owner and authorized developer roles',()=>{
+  assert.match(storagePolicy,/alter policy atlas_storage_select_member\s+on storage\.objects/i);
+  assert.match(storagePolicy,/array\['atlas-documents'::text, 'nautical-publications'::text\]/);
+  assert.match(storagePolicy,/array\['owner'::workspace_role, 'developer'::workspace_role\]/);
+  assert.match(storagePolicy,/bucket_id <> all \(array\['atlas-documents'::text, 'nautical-publications'::text\]\)/);
 });
 
 test('Sinbad chat renders source pages from authenticated Atlas storage, not invented image URLs',()=>{
