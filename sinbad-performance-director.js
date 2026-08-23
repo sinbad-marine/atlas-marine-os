@@ -323,6 +323,7 @@
       'show-palm':Object.freeze({gesture:'show-palm',gaze:'audience',emotion:'warm',energy:.4}),
       'show-right-hand':Object.freeze({gesture:'show-palm',gaze:'audience',emotion:'warm',energy:.4}),
       'raise-left-hand':Object.freeze({gesture:'raise-left',gaze:'audience',emotion:'attentive',energy:.38}),
+      wave:Object.freeze({gesture:'wave-right',gaze:'audience',emotion:'warm',energy:.46}),
       'look-left':Object.freeze({gesture:'look-left',gaze:'audience',emotion:'attentive',energy:.24}),
       'look-right':Object.freeze({gesture:'look-right',gaze:'audience',emotion:'attentive',energy:.24}),
       nod:Object.freeze({gesture:'nod',gaze:'audience',emotion:'warm',energy:.28}),
@@ -349,6 +350,7 @@
     if(/((?:avucunda|avucunun\s+içinde|elinde).*(?:ne\s+var|bir\s+şey\s+mi\s+var)|(?:what|anything|something).*(?:in|on).*(?:your\s+)?(?:hand|palm))/iu.test(normalized))return Object.freeze({accepted:true,action:'show-palm',supported:true,semantic:'palm-object-query',responsePolicy:'replace',cue:Object.freeze({gesture:'show-palm',gaze:'palm',emotion:'attentive',energy:.4})});
     if(/(sağ\s+(?:elini|kolunu|avucunu).*(?:göster|kaldır|aç)|(?:show|raise|open).*(?:your\s+)?right\s+(?:hand|arm|palm))/iu.test(normalized))return Object.freeze({accepted:true,action:'show-right-hand',supported:true,cue:Object.freeze({gesture:'show-palm',gaze:'audience',emotion:'warm',energy:.4})});
     if(/(sol\s+(?:elini|kolunu|avucunu).*(?:göster|kaldır|aç)|(?:show|raise|open).*(?:your\s+)?left\s+(?:hand|arm|palm))/iu.test(normalized))return Object.freeze({accepted:true,action:'raise-left-hand',supported:true,cue:Object.freeze({gesture:'raise-left',gaze:'audience',emotion:'attentive',energy:.38})});
+    if(/((?:bana\s+)?(?:elini|el)\s+(?:salla|sallar\s+mısın)|(?:merhaba|selam)\s+(?:deyip\s+)?el\s+salla|wave\s+(?:your\s+hand|at\s+me|hello))/iu.test(normalized))return Object.freeze({accepted:true,action:'wave',supported:true,responsePolicy:'replace',cue:Object.freeze({gesture:'wave-right',gaze:'audience',emotion:'warm',energy:.46})});
     if(/(başını\s+sola\s+(?:çevir|döndür)|(?:turn|look).*(?:your\s+)?head.*left)/iu.test(normalized))return Object.freeze({accepted:true,action:'look-left',supported:true,cue:Object.freeze({gesture:'look-left',gaze:'audience',emotion:'attentive',energy:.24})});
     if(/(başını\s+sağa\s+(?:çevir|döndür)|(?:turn|look).*(?:your\s+)?head.*right)/iu.test(normalized))return Object.freeze({accepted:true,action:'look-right',supported:true,cue:Object.freeze({gesture:'look-right',gaze:'audience',emotion:'attentive',energy:.24})});
     if(/(başını\s+(?:eğ|salla)|(?:nod|bow)(?:\s+your)?\s+head)/iu.test(normalized))return Object.freeze({accepted:true,action:'nod',supported:true,cue:Object.freeze({gesture:'nod',gaze:'audience',emotion:'warm',energy:.28})});
@@ -385,6 +387,7 @@
       'show-palm':'Avucumu açıp gösteriyorum.',
       'show-right-hand':'Sağ avucumu açıp gösteriyorum.',
       'raise-left-hand':'Sol elimi kaldırıp gösteriyorum.',
+      wave:'Sana gülümseyerek el sallıyorum.',
       'look-left':'Başımı sola çeviriyorum.',
       'look-right':'Başımı sağa çeviriyorum.',
       nod:'Başımı eğerek yanıt veriyorum.',
@@ -395,6 +398,7 @@
       'show-palm':'I am opening my palm and showing it to you.',
       'show-right-hand':'I am opening and showing my right palm.',
       'raise-left-hand':'I am raising and showing my left hand.',
+      wave:'I am smiling and waving to you.',
       'look-left':'I am turning my head to the left.',
       'look-right':'I am turning my head to the right.',
       nod:'I am nodding as I respond.',
@@ -425,6 +429,7 @@
       'show-palm':'Avucumu açıp gösterdim.',
       'show-right-hand':'Sağ avucumu açıp gösterdim.',
       'raise-left-hand':'Sol elimi kaldırıp gösterdim.',
+      wave:'Sana el salladım.',
       'look-left':'Başımı sola çevirdim.',
       'look-right':'Başımı sağa çevirdim.',
       nod:'Başımı eğdim.',
@@ -435,6 +440,7 @@
       'show-palm':'I opened and showed my palm.',
       'show-right-hand':'I opened and showed my right palm.',
       'raise-left-hand':'I raised and showed my left hand.',
+      wave:'I waved to you.',
       'look-left':'I turned my head to the left.',
       'look-right':'I turned my head to the right.',
       nod:'I nodded.',
@@ -458,9 +464,9 @@
     const turkish=String(language).toLocaleLowerCase('en-US').startsWith('tr');
     const actions=Array.isArray(history)?history.slice(-2):[];
     const labels=turkish?{
-      'show-palm':'avucumu açıp gösterdim','show-right-hand':'sağ avucumu gösterdim','raise-left-hand':'sol elimi kaldırdım','look-left':'başımı sola çevirdim','look-right':'başımı sağa çevirdim',nod:'başımı eğdim',smile:'gülümsedim','point-board':'tahtayı işaret ettim','show-listening':'seni dinlediğimi gösterdim'
+      'show-palm':'avucumu açıp gösterdim','show-right-hand':'sağ avucumu gösterdim','raise-left-hand':'sol elimi kaldırdım',wave:'sana el salladım','look-left':'başımı sola çevirdim','look-right':'başımı sağa çevirdim',nod:'başımı eğdim',smile:'gülümsedim','point-board':'tahtayı işaret ettim','show-listening':'seni dinlediğimi gösterdim'
     }:{
-      'show-palm':'opened and showed my palm','show-right-hand':'showed my right palm','raise-left-hand':'raised my left hand','look-left':'turned my head left','look-right':'turned my head right',nod:'nodded',smile:'smiled','point-board':'pointed to the board','show-listening':'showed that I was listening'
+      'show-palm':'opened and showed my palm','show-right-hand':'showed my right palm','raise-left-hand':'raised my left hand',wave:'waved to you','look-left':'turned my head left','look-right':'turned my head right',nod:'nodded',smile:'smiled','point-board':'pointed to the board','show-listening':'showed that I was listening'
     };
     const known=actions.filter(action=>Object.hasOwn(labels,action));
     if(known.length<2)return Object.freeze({accepted:true,known:false,text:turkish?'Sıralı yanıt için henüz iki doğrulanmış hareket kaydım yok.':'I do not yet have two verified movements recorded for a sequence answer.'});
@@ -490,6 +496,14 @@
         {at:0,gesture:'rest',gaze:'audience',emotion:'attentive',energy:.26},
         {at:240,gesture:'raise-left',gaze:'left-palm',emotion:'attentive',energy:.38},
         {at:760,gesture:'raise-left',gaze:'audience',emotion:'warm',energy:.32}
+      ],
+      wave:[
+        {at:0,gesture:'open-hand',gaze:'audience',emotion:'warm',energy:.32},
+        {at:220,gesture:'wave-right',gaze:'audience',emotion:'warm',energy:.46},
+        {at:520,gesture:'wave-right-away',gaze:'audience',emotion:'warm',energy:.42},
+        {at:920,gesture:'wave-right',gaze:'audience',emotion:'warm',energy:.46},
+        {at:1220,gesture:'wave-right-away',gaze:'audience',emotion:'warm',energy:.42},
+        {at:1600,gesture:'open-hand',gaze:'audience',emotion:'warm',energy:.3}
       ],
       'point-board':[
         {at:0,gesture:'explain',gaze:'audience',emotion:'confident',energy:.34},

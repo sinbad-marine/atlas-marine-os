@@ -24,6 +24,8 @@
     'open-hand':{leftArm:.18,rightArm:.58},
     'show-palm':{headYaw:-.08,leftArm:.08,rightArm:.9},
     'raise-left':{headYaw:.08,leftArm:.82,rightArm:.06},
+    'wave-right':{headYaw:-.08,headPitch:.06,bodyLean:-.03,leftArm:.04,rightArm:.94},
+    'wave-right-away':{headYaw:.04,headPitch:.03,bodyLean:.03,leftArm:.04,rightArm:.68},
     'look-left':{headYaw:-.52,leftArm:.04,rightArm:.04},
     'look-right':{headYaw:.52,leftArm:.04,rightArm:.04},
     explain:{leftArm:.38,rightArm:.52},
