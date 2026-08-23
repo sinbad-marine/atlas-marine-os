@@ -4,7 +4,7 @@
   if(root)root.SinbadCharacterRig=api;
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
   'use strict';
-  const RIG_VERSION='sinbad-2d-rig/2';
+  const RIG_VERSION='sinbad-2d-rig/3';
   const CONTROL_LIMITS=Object.freeze({blink:[0,1],mouthOpen:[0,1],smile:[-1,1],headYaw:[-1,1],headPitch:[-1,1],bodyLean:[-1,1],leftArm:[-1,1],rightArm:[-1,1],energy:[0,1]});
   const STATE_POSES=Object.freeze({
     idle:{smile:.18,energy:.18},listening:{headPitch:.12,bodyLean:.16,smile:.08,energy:.3},
@@ -62,5 +62,14 @@
     const result=normalizeControls(controls);if(!result.accepted)return result;const c=result.controls;
     return Object.freeze({accepted:true,variables:Object.freeze({'--sinbad-rig-blink':String(c.blink),'--sinbad-rig-mouth':String(c.mouthOpen),'--sinbad-rig-smile':String(c.smile),'--sinbad-rig-head-x':`${(c.headYaw*2.2).toFixed(2)}deg`,'--sinbad-rig-head-y':`${(c.headPitch*2.2).toFixed(2)}deg`,'--sinbad-rig-lean':`${(c.bodyLean*1.8).toFixed(2)}deg`,'--sinbad-rig-left-arm':`${(c.leftArm*14).toFixed(2)}deg`,'--sinbad-rig-right-arm':`${(c.rightArm*14).toFixed(2)}deg`,'--sinbad-rig-energy':String(c.energy)})});
   }
-  return Object.freeze({RIG_VERSION,CONTROL_LIMITS,STATE_POSES,GESTURE_POSES,neutralControls,normalizeControls,poseForState,poseForPerformance,cssVariables});
+  function transitionForControls(previous,next,{urgent=false,reducedMotion=false}={}){
+    const from=normalizeControls(previous),to=normalizeControls(next);
+    if(!from.accepted||!to.accepted)return Object.freeze({accepted:false,reason:'INVALID_TRANSITION_CONTROLS'});
+    const channels=['headYaw','headPitch','bodyLean','leftArm','rightArm'];
+    const maxDelta=Math.max(...channels.map(name=>Math.abs(to.controls[name]-from.controls[name])));
+    const durationMs=reducedMotion?0:urgent?180:Math.round(Math.max(280,Math.min(1200,280+maxDelta*1000)));
+    const scale=maxDelta<.18?'micro':maxDelta<.55?'measured':'broad';
+    return Object.freeze({accepted:true,durationMs,maxDelta:Number(maxDelta.toFixed(3)),scale,urgent:Boolean(urgent)});
+  }
+  return Object.freeze({RIG_VERSION,CONTROL_LIMITS,STATE_POSES,GESTURE_POSES,neutralControls,normalizeControls,poseForState,poseForPerformance,cssVariables,transitionForControls});
 });
