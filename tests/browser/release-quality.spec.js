@@ -106,8 +106,8 @@ test('hands-free Professor runs an explicit listen-send-answer-listen loop witho
     class FakeRecognition{
       constructor(){window.__fakeRecognition=this;this.started=0;}
       start(){this.started+=1;this.onstart?.();}
-      abort(){this.onend?.();}
       stop(){this.onend?.();}
+      abort(){this.onend?.();}
       finish(text){this.onresult?.({resultIndex:0,results:Object.assign([{0:{transcript:text},isFinal:true}],{length:1})});this.onend?.();}
     }
     window.SpeechRecognition=FakeRecognition;
@@ -132,7 +132,9 @@ test('student can interrupt Sinbad narration with a name-gated follow-up',async(
     class FakeRecognition{
       constructor(){(window.__recognitions||(window.__recognitions=[])).push(this);this.started=0;}
       start(){this.started+=1;this.onstart?.();}
+      stop(){this.onend?.();}
       abort(){this.onend?.();}
+      interim(text){this.onresult?.({resultIndex:0,results:Object.assign([{0:{transcript:text},isFinal:false}],{length:1})});}
       finish(text){this.onresult?.({resultIndex:0,results:Object.assign([{0:{transcript:text},isFinal:true}],{length:1})});this.onend?.();}
     }
     class FakeUtterance{constructor(text){this.text=text;}}
@@ -147,7 +149,9 @@ test('student can interrupt Sinbad narration with a name-gated follow-up',async(
   await expect(page.locator('#handsfreeStatus')).toContainText('Dinliyorum');
   await page.evaluate(()=>window.__recognitions[0].finish('Gelgit nasıl oluşur?'));
   await expect(page.locator('#handsfreeStatus')).toContainText('Sinbad anlatıyor');
-  await page.evaluate(()=>window.__recognitions[0].finish('Sinbad bunu daha detaylı anlat'));
+  await page.evaluate(()=>window.__recognitions[0].interim('Sinbad bunu daha detaylı anlat'));
+  await expect(page.locator('#handsfreeStatus')).toContainText(/anlatımı durdurdum|Araya giriş/);
+  await page.waitForTimeout(1200);
   const classroom=page.frameLocator('#phaseOneClassroom');
   await expect(classroom.locator('.academy-message.user')).toHaveCount(2);
   await expect(classroom.locator('.academy-message.user').last()).toContainText('Sinbad bunu daha detaylı anlat');

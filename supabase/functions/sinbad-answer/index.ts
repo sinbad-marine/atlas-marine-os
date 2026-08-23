@@ -49,10 +49,11 @@ const splitAnswerAndSpokenSummary = (raw: string) => {
   // browser then builds a complete-sentence fallback from the full answer.
   const words = spokenSummary.split(/\s+/).filter(Boolean).length;
   const sentences = spokenSummary.match(/[^.!?…]+[.!?…]+|[^.!?…]+$/gu)?.filter(Boolean).length || 0;
-  return { answer, spokenSummary: words >= 20 && words <= 150 && sentences >= 2 && sentences <= 8 ? spokenSummary : '' };
+  return { answer, spokenSummary: words >= 3 && words <= 90 && sentences >= 1 && sentences <= 4 ? spokenSummary : '' };
 };
 
 const needsFreshData = (question: string) => serverCoreDecision(question).needsLiveData;
+const isSimpleGreeting = (question: string) => /^(?:selam|selamlar|merhaba|günaydın|gunaydin|iyi\s+(?:günler|gunler|akşamlar|aksamlar)|hello|hi|hey)(?:\s+(?:sinbad|simbad|sinbat|kaptan|captain))*[!.?\s]*$/iu.test(question.trim());
 
 const wantsSourceVisuals = (question: string) => /(görsel|gorsel|şekil|sekil|diyagram|diagram|çizim|cizim|resim|figure|illustration|visual|show.*image|with.*image)/iu.test(question);
 const isContextualFollowUp = (question: string) => /(bununla|bunun hakkında|bu konu|bu anlattığın|onunla|onun hakkında|yukarıdaki|önceki|bahsettiğin|about this|about that|this topic|that topic|the above|previous)/iu.test(question);
@@ -112,6 +113,12 @@ Deno.serve(async req => {
       .maybeSingle();
     if (!membership) return json({ error: 'Workspace access denied' }, 403);
 
+    if (isSimpleGreeting(question)) {
+      const english = language.toLowerCase().startsWith('en');
+      const answer = english ? 'Hello Captain, I am listening.' : 'Selam Kaptan, sizi dinliyorum.';
+      return json({ answer, spokenSummary: answer, sources: [], visuals: [], mode: 'local-greeting', ...decisionSupport });
+    }
+
     if (coreDecision.emergency || coreDecision.risk === 'high' || coreDecision.risk === 'critical') {
       const english = language.toLowerCase().startsWith('en');
       const answer = coreDecision.emergency
@@ -127,15 +134,14 @@ Deno.serve(async req => {
       : question;
     const queryTerms = words(retrievalQuestion);
     const expandedTitleTerms = titleTerms(queryTerms);
-    const titleRows: any[] = [];
-    for (const term of expandedTitleTerms.slice(0, 18)) {
+    const titleRows = (await Promise.all(expandedTitleTerms.slice(0, 18).map(async term => {
       const { data, error } = await db.from('document_knowledge')
         .select('id,title,classification,document_id,source_mime_type')
         .eq('workspace_id', workspaceId)
         .ilike('title', `%${term.replace(/[%_]/g, '')}%`)
         .limit(8);
-      if (!error && data) titleRows.push(...data);
-    }
+      return !error && data ? data : [];
+    }))).flat() as any[];
 
     const titleMatches = [...new Map(titleRows.map(row => [row.id, row])).values()]
       .map((row: any) => {
@@ -159,14 +165,15 @@ Deno.serve(async req => {
     }
 
     if (!rows.length) {
-      for (const term of queryTerms.slice(0, 5)) {
+      const contentRows = await Promise.all(queryTerms.slice(0, 5).map(async term => {
         const { data, error } = await db.from('document_knowledge_chunks')
           .select('content,chunk_index,document_knowledge!inner(title,classification,workspace_id,document_id,source_mime_type)')
           .eq('document_knowledge.workspace_id', workspaceId)
           .ilike('content', `%${term}%`)
           .limit(6);
-        if (!error && data) rows.push(...data);
-      }
+        return !error && data ? data : [];
+      }));
+      rows.push(...contentRows.flat());
     }
 
     const rankedRows = rows.map(row => {
@@ -226,7 +233,7 @@ For passage planning, collision avoidance, stability, weather, chart work or oth
 
 If web search results are available, cite them using the citations supplied by the tool. Never claim to have searched the web unless the tool was actually used.
 
-After the complete written answer, always add the exact marker <<<SPOKEN_SUMMARY>>> and then a coherent spoken teaching summary in the same language. The spoken summary must contain 3 to 6 complete sentences and roughly 60 to 110 words. Teach the central idea, the essential supporting points, and any critical safety caveat. Do not merely copy the first characters, do not use markdown, do not include citations, and never cut a sentence short.`;
+After the complete written answer, always add the exact marker <<<SPOKEN_SUMMARY>>> and then a coherent spoken summary in the same language. For simple or conversational questions use 1 or 2 short sentences. For teaching questions use 2 to 4 complete sentences and roughly 25 to 70 words. Never introduce Atlas Marine, advertise the platform, recite capabilities or give an opening speech unless the user explicitly asks. Teach only the central idea and any essential safety caveat. Do not merely copy the first characters, do not use markdown, do not include citations, and never cut a sentence short.`;
 
     const userInput = unique.length
       ? `${question}\n\nAPPROVED PRIVATE LIBRARY SOURCES\n${context}${visuals.length ? `\n\nVERIFIED SOURCE PAGE VISUALS\n${visuals.map((visual: any) => `${visual.sourceId}: ${visual.title}, page ${visual.page}`).join('\n')}\nTell the user these original publication pages are attached below the answer. Do not claim that no visual is available.` : ''}`
@@ -237,9 +244,9 @@ After the complete written answer, always add the exact marker <<<SPOKEN_SUMMARY
       instructions: system,
       input,
       reasoning: { effort: 'low' },
-      text: { verbosity: 'medium' },
+      text: { verbosity: 'low' },
       store: false,
-      max_output_tokens: 2200,
+      max_output_tokens: 1400,
       safety_identifier: `sinbad-${user.id}`
     };
     if (allowWebSearch) requestBody.tools = [{ type: 'web_search' }];
