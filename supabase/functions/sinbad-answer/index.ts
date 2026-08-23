@@ -118,6 +118,7 @@ Deno.serve(async req => {
     const language = String(body.language || 'tr-TR').slice(0, 12);
     const allowWebSearch = body.allowWebSearch === true;
     const includeSourceVisuals = body.includeSourceVisuals === true;
+    const suppressSourceVisuals = body.suppressSourceVisuals === true;
     const coreEnvelope = body.coreEnvelope;
     const history = normalizeCoreHistory(coreEnvelope?.history, 10);
     if (!workspaceId || !question) return json({ error: 'workspaceId and question are required' }, 400);
@@ -157,7 +158,7 @@ Deno.serve(async req => {
     }
 
     const previousUserMessage = [...history].reverse().find((item: any) => item.role === 'user')?.content || '';
-    const sourceVisualsRequested = includeSourceVisuals || wantsSourceVisuals(question);
+    const sourceVisualsRequested = !suppressSourceVisuals && (includeSourceVisuals || wantsSourceVisuals(question));
     const retrievalQuestion = sourceVisualsRequested && isContextualFollowUp(question) && previousUserMessage
       ? `${previousUserMessage} ${question}`
       : question;

@@ -12,7 +12,8 @@ test('cloud retrieval exposes bounded PDF page visuals only to owner and develop
   assert.match(edge,/const isContextualFollowUp = \(question: string\)/);
   assert.match(edge,/previousUserMessage/);
   assert.match(edge,/includeSourceVisuals = body\.includeSourceVisuals === true/);
-  assert.match(edge,/sourceVisualsRequested = includeSourceVisuals \|\| wantsSourceVisuals\(question\)/);
+  assert.match(edge,/suppressSourceVisuals = body\.suppressSourceVisuals === true/);
+  assert.match(edge,/sourceVisualsRequested = !suppressSourceVisuals && \(includeSourceVisuals \|\| wantsSourceVisuals\(question\)\)/);
   assert.match(edge,/canAccessPrivateSources = membership\.role === 'owner' \|\| membership\.role === 'developer'/);
   assert.match(edge,/visuals = canAccessPrivateSources && sourceVisualsRequested/);
   assert.match(edge,/responseSources = canAccessPrivateSources \? sources : \[\]/);

@@ -1097,7 +1097,7 @@ function saveSinbadMessages(){
 }
 function sinbadVisualCards(visuals=[]){
   if(!Array.isArray(visuals)||!visuals.length)return '';
-  const safeAsset=/^(?:\.\/visual-library\/assets\/(?:bowditch\/(?:assets\/[a-f0-9]{64}\.[a-z0-9]+|fallback-pages\/volume-[12]-page-[0-9]+\.png)|nga-chart-no-1\/page-[0-9]{3}\.png)|http:\/\/127\.0\.0\.1:31983\/visuals\/assets\/[a-f0-9]{64}\.webp)$/u;
+  const safeAsset=/^(?:\.\/visual-library\/assets\/(?:bowditch\/(?:assets\/[a-f0-9]{64}\.[a-z0-9]+|fallback-pages\/volume-[12]-page-[0-9]+\.png)|nga-chart-no-1\/page-[0-9]{3}\.png|curated-safety\/(?:lifebuoy-scarborough|inflatable-life-raft-us-navy)\.jpg)|http:\/\/127\.0\.0\.1:31983\/visuals\/assets\/[a-f0-9]{64}\.webp)$/u;
   return `<div class="sinbad-source-visuals">${visuals.slice(0,3).map((visual,index)=>safeAsset.test(visual.src||'')?`
     <figure class="sinbad-answer-visual"><img src="${esc(visual.src)}" alt="${esc(visual.alt||'Official maritime visual')}" loading="lazy"><figcaption>${esc(visual.caption||'Official maritime visual')}</figcaption></figure>`:`
     <article class="sinbad-source-visual" data-visual-index="${index}">
