@@ -419,6 +419,7 @@ let sinbadRequestedGesture=null;
 let sinbadRequestedGestureSequence=[];
 let sinbadLastPerformedGestureAction=null;
 let sinbadLastAcademyBoardAction=null;
+let sinbadPendingAcademyBoardCheck=null;
 let sinbadPerformedGestureHistory=[];
 let sinbadPreparedGestureAction=null;
 let sinbadExplicitGestureHoldBoundaries=0;
@@ -1560,7 +1561,7 @@ function clearSinbadAcademyBoard(){return queueSinbadAcademyBoardPayload({versio
 window.addEventListener('message',event=>{
   if(event.origin!==location.origin||event.source!==sinbadAcademyNativeWindow||event.data?.version!==1)return;
   if(event.data.type==='SINBAD_ACADEMY_READY'&&sinbadAcademyPendingBoardPayload){sinbadAcademyNativeWindow.postMessage(sinbadAcademyPendingBoardPayload,location.origin);sinbadAcademyPendingBoardPayload=null;return;}
-  const action=event.data.type==='SINBAD_ACADEMY_BOARD_APPLIED'?event.data.action:null;if(action?.kind==='clear'&&action.value==='board')sinbadLastAcademyBoardAction=null;else if(action&&['shape','text'].includes(action.kind)&&typeof action.value==='string'&&action.value)sinbadLastAcademyBoardAction=Object.freeze({kind:action.kind,value:action.value.slice(0,200),...(action.kind==='shape'&&['small','standard','large'].includes(action.size)?{size:action.size}:{})});
+  const action=event.data.type==='SINBAD_ACADEMY_BOARD_APPLIED'?event.data.action:null;if(action?.kind==='clear'&&action.value==='board'){sinbadLastAcademyBoardAction=null;sinbadPendingAcademyBoardCheck=null;}else if(action&&['shape','text'].includes(action.kind)&&typeof action.value==='string'&&action.value)sinbadLastAcademyBoardAction=Object.freeze({kind:action.kind,value:action.value.slice(0,200),...(action.kind==='shape'&&['small','standard','large'].includes(action.size)?{size:action.size}:{})});
 });
 function renderAcademyLesson(){
   const category=$('academyModule')?.value,lesson=window.SinbadAcademy?.lesson(category,window.SINBAD_TRAINING_DATA),output=$('academyOutput');
@@ -1710,6 +1711,9 @@ async function sendToSinbad(text){
   if(repeatedBoard?.accepted){if(!repeatedBoard.known){addSinbadMessage('sinbad',repeatedBoard.text);return;}const delivered=repeatedBoard.action.kind==='shape'?sendShapeToSinbadAcademyBoard(repeatedBoard.action.value,repeatedBoard.action.size||'standard'):sendTextToSinbadAcademyBoard(repeatedBoard.action.value);addSinbadMessage('sinbad',delivered?repeatedBoard.text:(sinbadState.language==='tr-TR'?'Academy tahtasına güvenli bağlantı kurulamadığı için işlemi tekrarlamadım.':'I did not repeat the action because a safe Academy board connection could not be established.'));return;}
   const recalledBoard=sinbadPerformanceDirector?.academyBoardRecallAnswerForText?.(q,sinbadLastAcademyBoardAction,sinbadState.language||appLanguage);
   if(recalledBoard?.accepted){presentSinbadBoardReference(recalledBoard.text);return;}
+  if(sinbadPendingAcademyBoardCheck){const assessed=sinbadPerformanceDirector?.academyBoardShapeCheckAnswerForText?.(q,sinbadPendingAcademyBoardCheck,sinbadState.language||appLanguage);if(assessed?.accepted){sinbadPendingAcademyBoardCheck=null;presentSinbadBoardReference(assessed.text);return;}}
+  const boardCheck=sinbadPerformanceDirector?.academyBoardShapeCheckForText?.(q,sinbadLastAcademyBoardAction,sinbadState.language||appLanguage);
+  if(boardCheck?.accepted){sinbadPendingAcademyBoardCheck=boardCheck.known?boardCheck.check:null;presentSinbadBoardReference(boardCheck.text);return;}
   const directReaction=performSinbadDirectCharacterRequest(sinbadRequestedGesture);
   if(directReaction.accepted){addSinbadMessage('sinbad',directReaction.text);return;}
   if(sinbadRequestedGesture?.directAcademyBoard){const request=sinbadRequestedGesture,delivered=request.boardShape?sendShapeToSinbadAcademyBoard(request.boardShape):sendTextToSinbadAcademyBoard(request.boardText),ack=sinbadPerformanceDirector?.gestureAcknowledgementForRequest?.(request,sinbadState.language||appLanguage);sinbadRequestedGesture=null;sinbadRequestedGestureSequence=[];if(delivered&&ack?.accepted){commitSinbadPerformedGestureAction('point-board');sinbadAwaitingAnswer=false;addSinbadMessage('sinbad',ack.text);return;}}

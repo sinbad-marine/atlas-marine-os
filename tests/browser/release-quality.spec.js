@@ -327,6 +327,10 @@ test('live Sinbad chat writes bounded plain text on the real Academy board',asyn
   await page.locator('#sinbadInput').fill('Bu şekli açıkla.');await page.locator('#sendSinbad').click();
   await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('gövdesi bir doğrultuyu, uç kısmı ise yönü gösterir');
   await expect(page.locator('.sinbad-avatar.large')).toHaveAttribute('data-gaze','board');
+  await page.locator('#sinbadInput').fill('Bu şekille ilgili bana soru sor.');await page.locator('#sendSinbad').click();
+  await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Okun uç kısmı neyi gösterir?');
+  await page.locator('#sinbadInput').fill('Yönü gösterir.');await page.locator('#sendSinbad').click();
+  await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Doğru. Cevabın tahtadaki şekille uyuşuyor.');
   await page.locator('#sinbadInput').fill('Tahtayı temizle.');await page.locator('#sendSinbad').click();
   await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Academy tahtasını temizliyorum.');
   await expect(classroom.locator('#academyTeachingStage')).toHaveAttribute('data-board-drawing-phase','erasing');
