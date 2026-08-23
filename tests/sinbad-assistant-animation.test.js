@@ -245,6 +245,14 @@ test('idle micro-motion is sparse, interruptible and disabled for hidden or redu
   assert.match(app,/scheduleSinbadBlink\(\);scheduleSinbadIdleMotion\(\)/);
 });
 
+test('live speech and text cues update real rig controls instead of labels alone',()=>{
+  assert.match(app,/function applySinbadLivePerformanceCue\(cue,\{speechBoundary=''\}=\{\}\)/);
+  assert.match(app,/poseForPerformance\?\.\(sinbadAssistantState,cue\.gesture/);
+  assert.match(app,/Object\.entries\(rigCss\.variables\)\.forEach\(\(\[name,value\]\)=>el\.style\.setProperty\(name,value\)\)/);
+  assert.match(app,/applySinbadLivePerformanceCue\(performanceCue,\{speechBoundary:performanceCue\.cadence\|\|'word'\}\)/);
+  assert.match(app,/sinbadTextPresentationCues\.slice\(1\)[\s\S]*applySinbadLivePerformanceCue\(cue\)/);
+});
+
 test('text-only answers are honestly presented without entering the speaking or mouth-animation state',()=>{
   assert.match(app,/presenting:'Yanıtı ekranda sunuyor'/);
   assert.match(app,/presenting:'captain-sinbad-idle-master\.png'/);
@@ -427,7 +435,7 @@ test('onboundary drives a real per-word cue (not a fabricated continuous loop, a
   assert.match(fn,/if\(run\.pauseAfter\)setTimeout\(speakNext,run\.pauseAfter\);/);
   assert.match(fn,/else speakNext\(\);/);
   assert.match(app,/function sinbadStandardVoiceTick\(boundaryEvent,spokenText\)\{/);
-  assert.match(app,/el\.dataset\.speechBoundary=performanceCue\.cadence\|\|'word'/);
+  assert.match(app,/applySinbadLivePerformanceCue\(performanceCue,\{speechBoundary:performanceCue\.cadence\|\|'word'\}\)/);
   assert.match(app,/function sinbadSpeechBoundaryCue\(boundaryEvent,text,index\)\{/);
   assert.match(css,/\.sinbad-avatar\.sinbad-voice-tick \.sinbad-avatar-img\{transform:scale\(1\.018\)/);
 });

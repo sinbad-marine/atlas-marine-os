@@ -482,6 +482,21 @@ function setSinbadResponseKind(kind){
   if(changed){const label=$('sinbadAvatarStatus');if(label)label.textContent=copy[kind];}
   return true;
 }
+function applySinbadLivePerformanceCue(cue,{speechBoundary=''}={}){
+  if(!cue||typeof cue!=='object'||!cue.gesture)return false;
+  const defaultEnergy=sinbadCharacterRig?.STATE_POSES[sinbadAssistantState]?.energy??0;
+  const requestedEnergy=Number(cue.energy??defaultEnergy);
+  const rigPose=sinbadCharacterRig?.poseForPerformance?.(sinbadAssistantState,cue.gesture,{energy:Math.max(0,Math.min(1,Number.isFinite(requestedEnergy)?requestedEnergy:defaultEnergy))});
+  const rigCss=rigPose?.accepted?sinbadCharacterRig.cssVariables(rigPose.controls):null;
+  if(!rigCss?.accepted)return false;
+  sinbadAssistantElements().forEach(el=>{
+    el.dataset.gesture=cue.gesture;el.dataset.gaze=cue.gaze||'audience';el.dataset.emotion=cue.emotion||'warm';
+    if(cue.motionProfile)el.dataset.motionProfile=cue.motionProfile;
+    if(speechBoundary)el.dataset.speechBoundary=speechBoundary;
+    Object.entries(rigCss.variables).forEach(([name,value])=>el.style.setProperty(name,value));
+  });
+  return true;
+}
 function sinbadAssistantElements(){return document.querySelectorAll('.sinbad-avatar');}
 function ensureSinbadArticulatedRig(){
   document.querySelectorAll('.sinbad-avatar.large .sinbad-rig-stage').forEach(stage=>{
@@ -880,7 +895,7 @@ function finishSinbadVoice(forceState){
     if(sinbadResponseOpeningCue.responseKind)setSinbadResponseKind(sinbadResponseOpeningCue.responseKind);
     sinbadTextPresentationCues.slice(1).forEach(cue=>sinbadAssistantTimers.push(setTimeout(()=>{
       if(sinbadAssistantState!=='presenting')return;
-      sinbadAssistantElements().forEach(el=>{el.dataset.gesture=cue.gesture;el.dataset.gaze=cue.gaze;el.dataset.emotion=cue.emotion;if(cue.motionProfile)el.dataset.motionProfile=cue.motionProfile;});
+      applySinbadLivePerformanceCue(cue);
       if(cue.responseKind)setSinbadResponseKind(cue.responseKind);
     },cue.at)));
     return;
@@ -919,10 +934,7 @@ function sinbadStandardVoiceTick(boundaryEvent,spokenText){
     clearTimeout(sinbadSpeechMeaningTransitionTimer);sinbadSpeechMeaningTransitionTimer=null;sinbadLastSpeechMeaningKind=performanceCue.responseKind;
     if(transition.immediate)setSinbadAssistantState('speaking',transition.targetCue);
     else{setSinbadAssistantState('speaking',transition.bridgeCue);sinbadSpeechMeaningTransitionTimer=setTimeout(()=>{if(sinbadAssistantState==='speaking'&&sinbadLastSpeechMeaningKind===performanceCue.responseKind)setSinbadAssistantState('speaking',transition.targetCue);},transition.durationMs);}
-  }else if(performanceCue.gesture&&sinbadAssistantState==='speaking')sinbadAssistantElements().forEach(el=>{
-    el.dataset.gesture=performanceCue.gesture;el.dataset.gaze=performanceCue.gaze;el.dataset.emotion=performanceCue.emotion||'warm';
-    el.dataset.speechBoundary=performanceCue.cadence||'word';
-  });
+  }else if(performanceCue.gesture&&sinbadAssistantState==='speaking')applySinbadLivePerformanceCue(performanceCue,{speechBoundary:performanceCue.cadence||'word'});
   if(performanceCue.responseKind)setSinbadResponseKind(performanceCue.responseKind);
   clearTimeout(sinbadStandardBoundaryTimer);
   sinbadStandardBoundaryTimer=setTimeout(()=>{sinbadAssistantElements().forEach(el=>el.classList.remove('sinbad-voice-tick'));setSinbadMouthFrame('closed');},160);

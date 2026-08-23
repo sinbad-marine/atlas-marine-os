@@ -62,6 +62,13 @@ test('large Captain Sinbad portrait loads the four-layer articulated rig with it
   expect(raisedLeftArm).not.toBe(restingLeftArm);
   await page.waitForTimeout(450);
   await expect(avatar).toHaveAttribute('data-gaze','audience');
+  await page.evaluate(()=>applySinbadLivePerformanceCue({gesture:'show-palm',gaze:'palm',emotion:'warm',energy:.4},{speechBoundary:'word'}));
+  await page.waitForTimeout(700);
+  await expect(avatar).toHaveAttribute('data-gesture','show-palm');
+  await expect(avatar).toHaveAttribute('data-gaze','palm');
+  await expect(avatar).toHaveAttribute('data-speech-boundary','word');
+  const liveCueArm=await avatar.locator('.sinbad-rig-right-arm').evaluate(element=>getComputedStyle(element).transform);
+  expect(liveCueArm).not.toBe(restingArm);
   await page.evaluate(()=>setSinbadMouthFrame('closed'));
   await expect(avatar.locator('.sinbad-rig-face-closed')).toHaveCSS('opacity','1');
   await page.evaluate(()=>setSinbadMouthFrame('wide'));
