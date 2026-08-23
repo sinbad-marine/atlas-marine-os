@@ -311,9 +311,30 @@
     const reset=()=>{remainingWords=0;improvisation.reset();};
     return Object.freeze({select,reset});
   }
-  function gestureRequestForText(text){
+  function gestureRequestForText(text,context={}){
     if(typeof text!=='string'||!text.trim())return Object.freeze({accepted:false,reason:'INVALID_REQUEST_TEXT'});
     const normalized=text.toLocaleLowerCase('tr-TR');
+    const contextualActions={
+      'show-palm':Object.freeze({gesture:'show-palm',gaze:'audience',emotion:'warm',energy:.4}),
+      'show-right-hand':Object.freeze({gesture:'show-palm',gaze:'audience',emotion:'warm',energy:.4}),
+      'raise-left-hand':Object.freeze({gesture:'raise-left',gaze:'audience',emotion:'attentive',energy:.38}),
+      'look-left':Object.freeze({gesture:'look-left',gaze:'audience',emotion:'attentive',energy:.24}),
+      'look-right':Object.freeze({gesture:'look-right',gaze:'audience',emotion:'attentive',energy:.24}),
+      nod:Object.freeze({gesture:'nod',gaze:'audience',emotion:'warm',energy:.28}),
+      smile:Object.freeze({gesture:'rest',gaze:'audience',emotion:'warm',energy:.24}),
+      'point-board':Object.freeze({gesture:'point-board',gaze:'board',emotion:'confident',energy:.42}),
+      'show-listening':Object.freeze({gesture:'listen-lean',gaze:'audience',emotion:'attentive',energy:.38})
+    };
+    const lastAction=typeof context?.lastAction==='string'?context.lastAction:null;
+    if(/(aynı\s+hareketi.*(?:tekrar|yine|yap)|(?:do|show)\s+(?:it|that)\s+again|repeat\s+(?:that|the\s+movement))/iu.test(normalized)){
+      if(lastAction&&Object.hasOwn(contextualActions,lastAction))return Object.freeze({accepted:true,action:lastAction,supported:true,contextual:true,cue:contextualActions[lastAction]});
+      return Object.freeze({accepted:true,action:'repeat-last-action',supported:false,contextual:true,reason:'NO_VERIFIED_GESTURE_REFERENCE'});
+    }
+    if(/((?:öbür|diğer)\s+(?:elini|avucunu).*(?:göster|kaldır|aç)|(?:show|raise|open).*(?:the\s+)?other\s+(?:hand|palm))/iu.test(normalized)){
+      const action=lastAction==='show-right-hand'?'raise-left-hand':lastAction==='raise-left-hand'?'show-right-hand':null;
+      if(action)return Object.freeze({accepted:true,action,supported:true,contextual:true,cue:contextualActions[action]});
+      return Object.freeze({accepted:true,action:'show-other-hand',supported:false,contextual:true,reason:'NO_VERIFIED_GESTURE_REFERENCE'});
+    }
     if(/((?:avucunda|avucunun\s+içinde|elinde).*(?:ne\s+var|bir\s+şey\s+mi\s+var)|(?:what|anything|something).*(?:in|on).*(?:your\s+)?(?:hand|palm))/iu.test(normalized))return Object.freeze({accepted:true,action:'show-palm',supported:true,semantic:'palm-object-query',responsePolicy:'replace',cue:Object.freeze({gesture:'show-palm',gaze:'palm',emotion:'attentive',energy:.4})});
     if(/(sağ\s+(?:elini|kolunu|avucunu).*(?:göster|kaldır|aç)|(?:show|raise|open).*(?:your\s+)?right\s+(?:hand|arm|palm))/iu.test(normalized))return Object.freeze({accepted:true,action:'show-right-hand',supported:true,cue:Object.freeze({gesture:'show-palm',gaze:'audience',emotion:'warm',energy:.4})});
     if(/(sol\s+(?:elini|kolunu|avucunu).*(?:göster|kaldır|aç)|(?:show|raise|open).*(?:your\s+)?left\s+(?:hand|arm|palm))/iu.test(normalized))return Object.freeze({accepted:true,action:'raise-left-hand',supported:true,cue:Object.freeze({gesture:'raise-left',gaze:'audience',emotion:'attentive',energy:.38})});

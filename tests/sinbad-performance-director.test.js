@@ -275,6 +275,16 @@ test('follow-up body questions answer only from a verified performed-action reco
   assert.equal(gestureRecallAnswerForText('Bugün ne öğreneceğiz?','raise-left-hand').reason,'NO_GESTURE_RECALL_REQUEST');
 });
 
+test('relative gesture commands resolve only against a verified previous action',()=>{
+  const other=gestureRequestForText('Şimdi öbür elini göster.',{lastAction:'show-right-hand'});
+  assert.equal(other.supported,true);assert.equal(other.contextual,true);assert.equal(other.action,'raise-left-hand');
+  const repeated=gestureRequestForText('Aynı hareketi tekrar yap.',{lastAction:'look-left'});
+  assert.equal(repeated.action,'look-left');assert.equal(repeated.cue.gesture,'look-left');
+  const ambiguous=gestureRequestForText('Öbür elini göster.',{lastAction:'show-palm'});
+  assert.equal(ambiguous.supported,false);assert.equal(ambiguous.reason,'NO_VERIFIED_GESTURE_REFERENCE');
+  assert.equal(gestureRequestForText('Do it again.').supported,false);
+});
+
 test('object and board gestures receive finite interruptible gaze transitions',()=>{
   const palm=gazeTransitionForCue({gesture:'show-palm',gaze:'audience'});
   assert.equal(palm.accepted,true);assert.deepEqual(palm.cues.map(cue=>cue.gaze),['palm','audience']);assert.equal(palm.duration,520);

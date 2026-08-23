@@ -425,7 +425,7 @@ function prepareSinbadSpeechPerformance(question){
   sinbadSpeechGestureDirector?.reset();
   const decision=window.SinbadCore?.analyzeQuery?.(question)||{};
   sinbadSpeechPerformanceMode=sinbadPerformanceDirector?.speechModeForDecision(decision)||'warm';
-  const request=sinbadPerformanceDirector?.gestureRequestForText(question);
+  const request=sinbadPerformanceDirector?.gestureRequestForText(question,{lastAction:sinbadLastPerformedGestureAction});
   sinbadRequestedGesture=request?.accepted?request:null;
   const sequence=sinbadRequestedGesture?.supported?sinbadPerformanceDirector?.gestureSequenceForRequest?.(sinbadRequestedGesture.action):null;
   sinbadRequestedGestureSequence=sequence?.accepted?[...sequence.cues]:[];
