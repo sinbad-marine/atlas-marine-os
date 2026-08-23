@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#071827">
+  <title>Sinbad Professor — Bağımsız Sınıf</title>
+  <link rel="stylesheet" href="./academy.css?v=82021"><link rel="stylesheet" href="./academy-professor.css?v=82021"><link rel="stylesheet" href="./academy-professor-guidance.css?v=82021"><link rel="stylesheet" href="./academy-professor-handsfree.css?v=82021"><link rel="stylesheet" href="./academy-professor-native.css?v=82021">
+</head>
+<body>
+  <main class="native-classroom-shell">
+    <header class="native-command-bar">
+      <div class="native-brand"><span aria-hidden="true">⚓</span><div><strong>Sinbad Professor</strong><small>Bağımsız canlı sınıf</small></div></div>
+      <div class="native-listen-state"><i></i><span id="nativeCompactStatus">Hazır</span></div>
+      <button id="openProfessorMenu" class="native-menu-button" type="button" aria-controls="professorMenu" aria-expanded="false" aria-label="Sınıf araçları menüsünü aç">☰</button>
+    </header>
+
+    <section class="native-stage">
+      <aside class="native-instructor">
+        <div class="academy-instructor-stage" id="academyInstructorStage" data-state="idle">
+          <span class="academy-presence-ring" aria-hidden="true"></span>
+          <img id="academySinbadAvatar" src="./assets/captain-sinbad/captain-sinbad-idle-master.png" alt="Denizcilik eğitmeni Kaptan Sinbad">
+          <div class="academy-speaking-bars" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+        </div>
+        <h1>Kaptan Sinbad</h1><p id="academyInstructorStatus" role="status" aria-live="polite">Derse hazır</p>
+      </aside>
+
+      <section class="native-learning-space">
+        <section class="native-blackboard" id="professorBlackboard" data-owner="auto" aria-labelledby="blackboardTitle">
+          <div><span>DERS TAHTASI</span><strong id="blackboardTitle">Anlatım özeti</strong></div>
+          <p id="professorBlackboardText">Sorunuzu sorun; Sinbad anlatırken temel noktalar burada görünecek.</p>
+        </section>
+
+        <section class="academy-chat native-chat" aria-label="Sinbad ile canlı ders">
+          <div class="academy-chat-heading"><div><strong>Canlı ders</strong><small id="academyCloudStatus">Atlas bilgisine bağlanıyor…</small></div><span class="academy-live-badge"><i></i> CANLI</span></div>
+          <div id="academyMessages" class="academy-messages" role="log" aria-live="polite" aria-relevant="additions">
+            <article class="academy-message sinbad"><strong>Kaptan Sinbad</strong><p>Hazırım Kaptan. Ne öğrenmek istersiniz?</p></article>
+          </div>
+          <form id="academyChatForm" class="academy-composer">
+            <label class="sr-only" for="academyQuestion">Kaptan Sinbad’a sorun</label>
+            <textarea id="academyQuestion" rows="2" placeholder="Denizcilikle ilgili sorunuzu yazın…" required></textarea>
+            <button type="button" class="btn academy-mic" id="academyMic" aria-pressed="false" title="Sesle sor">🎙 Konuş</button>
+            <button type="submit" class="btn primary" id="academySend">Sinbad’a sor</button>
+          </form>
+        </section>
+      </section>
+    </section>
+
+    <div id="nativeMenuBackdrop" class="native-menu-backdrop" hidden></div>
+    <aside id="professorMenu" class="native-drawer" aria-label="Sınıf araçları" aria-hidden="true">
+      <header><div><strong>Sınıf araçları</strong><small>Yalnızca gerektiğinde açılır</small></div><button id="closeProfessorMenu" type="button" aria-label="Menüyü kapat">×</button></header>
+      <section class="handsfree-console"><div><span>CANLI DİYALOG</span><strong>Eller serbest konuşma</strong><p id="handsfreeStatus" role="status" aria-live="polite">Kapalı — başlatmak için düğmeye basın.</p></div><button id="toggleHandsFree" type="button" aria-pressed="false">🎧 Eller serbest: Kapalı</button><small>Sinbad konuşurken “Sinbad…” diyerek araya girebilirsiniz. Ses kaydı saklanmaz.</small></section>
+      <section class="native-tool-card"><h2>Ses</h2><div class="native-button-row"><button class="btn" id="academyVoiceToggle" type="button" aria-pressed="true">🔊 Ses: Açık</button><button class="btn" id="academyReplayVoice" type="button" disabled>↻ Tekrarla</button><button class="btn" id="academyStopVoice" type="button" disabled>■ Durdur</button></div></section>
+      <details class="native-tool-card"><summary>İsteğe bağlı konu ve alıştırmalar</summary><section class="academy-controls"><label>Konu<select id="academyModule"><option value="chart-reading">Harita okuma ve hidrografi</option><option value="tides-water-levels">Gelgit ve su seviyeleri</option><option value="currents-set-drift">Akıntı, set ve drift</option><option value="colregs-navigation-rules">COLREG ve seyir kuralları</option><option value="electronic-navigation">Elektronik seyir</option><option value="marine-weather">Deniz meteorolojisi</option></select></label><div class="academy-actions"><button class="btn" id="startAcademyLesson" type="button">Dersi aç</button><button class="btn" id="startAcademyQuiz" type="button">Soru çöz</button></div></section><section id="academyOutput" class="academy-board" aria-live="polite">Konu seçimi zorunlu değildir.</section></details>
+      <section class="adaptive-coach native-tool-card" id="adaptiveCoach" aria-live="polite"><div><span>ÖĞRENME REHBERİ</span><strong id="coachNextLesson">Önce değerlendirme yapın</strong><p id="coachReason"></p></div><button id="coachOpenRecommended" type="button" disabled>Önerilen dersi aç</button></section>
+      <section class="native-tool-card identity"><label for="learnerName">Öğrenci adı</label><div><input id="learnerName" maxlength="80" value="Captain"><button id="saveLearnerName" type="button">Kaydet</button></div></section>
+      <section class="native-tool-card summary"><h2>Öğrenme profili</h2><dl><div><dt>Seviye</dt><dd id="learnerLevel">Foundation</dd></div><div><dt>Kanıt</dt><dd id="learnerEvidence">0</dd></div><div><dt>Öncelik</dt><dd id="learnerPriority">Not assessed</dd></div><div><dt>En güçlü</dt><dd id="learnerStrongest">Not assessed</dd></div></dl></section>
+      <section class="native-tool-card chat-reflection" id="chatReflection" hidden><h2>Ders değerlendirmesi</h2><p id="reflectionPrompt"></p><div><button id="reflectionUnderstood" type="button">Anladım</button><button id="reflectionReview" type="button">Tekrar gerekli</button></div></section>
+      <section class="native-tool-card reflection-check" id="reflectionCheck" hidden><h2>Anlama kontrolü</h2><p id="reflectionCheckStatus"></p><strong id="reflectionCheckQuestion"></strong><div id="reflectionCheckChoices" class="reflection-check-choices"></div></section>
+      <section class="native-tool-card diagnostic"><h2>Başlangıç değerlendirmesi</h2><p id="diagnosticStatus">Altı kısa soru ilk çalışma düzeyini belirler.</p><button id="startDiagnostic" type="button">Değerlendirmeyi başlat</button><div id="diagnosticQuestion" hidden></div></section>
+      <section class="native-tool-card"><h2>Konu durumu</h2><div id="masteryList" class="mastery-list"></div></section>
+      <section class="native-tool-card"><h2>Çalışma planı</h2><ol id="studyPlan" class="study-plan"></ol></section>
+      <section class="native-tool-card"><h2>Tekrar programı</h2><div id="reviewSchedule" class="review-schedule"></div></section>
+      <section class="native-tool-card progress-report"><h2>İlerleme raporu</h2><dl><div><dt>Genel</dt><dd id="reportMastery">0%</dd></div><div><dt>Konular</dt><dd id="reportCoverage">0 / 6</dd></div><div><dt>Kanıt</dt><dd id="reportEvidence">0</dd></div></dl><button id="downloadProgressReport" type="button">Raporu indir</button></section>
+      <section class="native-tool-card profile-backup"><h2>Özel yedek</h2><div><button id="exportProfile" type="button">Yedeği indir</button><label class="import-button">Yedeği yükle<input id="importProfile" type="file" accept="application/json,.json"></label></div><small id="profileBackupStatus"></small></section>
+      <section class="native-tool-card evidence-ledger"><h2>Profil neden değişti?</h2><div id="evidenceLedger" class="evidence-ledger-list"></div><button id="resetLearnerProfile" class="danger-button" type="button">Yerel profili sıfırla</button><small id="resetProfileStatus"></small></section>
+      <section class="native-tool-card recommendation"><h2>Sonraki ders</h2><strong id="nextLesson">Önce bir soru tamamlayın</strong><button id="openRecommended" type="button" disabled>Dersi aç</button></section>
+      <button id="closeAcademyWindow" class="native-close-classroom" type="button">Sınıf penceresini kapat</button>
+    </aside>
+    <div id="phaseOneClassroom" hidden aria-hidden="true"></div>
+  </main>
+  <script src="./academy-professor-native.js?v=82021"></script>
+  <script src="./sinbad-training-data.js?v=8180"></script><script src="./sinbad-academy.js?v=8180"></script><script src="./supabase/functions/sinbad-answer/core-decision.js?v=82020"></script><script src="./sinbad-core.js?v=82019"></script><script src="./vendor/supabase-2.112.3.js"></script><script src="./sinbad-character-engine.js?v=82019"></script><script src="./sinbad-character-rig.js?v=82019"></script><script src="./sinbad-performance-director.js?v=82019"></script><script src="./academy-window.js?v=82019"></script><script src="./sinbad-professor.js?v=82019"></script><script src="./academy-professor.js?v=82019"></script><script src="./academy-professor-handsfree.js?v=82020"></script>
+</body>
+</html>

@@ -1222,7 +1222,7 @@ function openSinbadProfessorWindow(){
 
 function openSinbadProfessorHandsFreeWindow(){
   const width=Math.max(960,Math.min(screen.availWidth||1500,1680)),height=Math.max(680,Math.min(screen.availHeight||920,1040));
-  sinbadProfessorNativeWindow=window.open('./academy-professor-v3.html','sinbadProfessorWorkspace',`popup=yes,left=0,top=0,width=${width},height=${height},resizable=yes,scrollbars=yes`);
+  sinbadProfessorNativeWindow=window.open('./academy-professor-native.html','sinbadProfessorClassroom',`popup=yes,left=0,top=0,width=${width},height=${height},resizable=yes,scrollbars=yes`);
   if(!sinbadProfessorNativeWindow){alert('Sinbad Professor penceresi tarayıcı tarafından engellendi. Bu site için açılır pencerelere izin verin.');return}
   sinbadProfessorNativeWindow.focus();
 }

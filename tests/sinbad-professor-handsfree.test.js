@@ -55,7 +55,7 @@ test('student can interrupt narration with a name-gated barge-in question',()=>{
 });
 
 test('main app opens the resizable hands-free Professor window and Pages ships its assets',()=>{
-  assert.match(main,/window\.open\('\.\/academy-professor-v3\.html','sinbadProfessorWorkspace'/);
+  assert.match(main,/window\.open\('\.\/academy-professor-native\.html','sinbadProfessorClassroom'/);
   assert.match(main,/resizable=yes/);
-  for(const file of ['academy-professor-v3.html','academy-professor-handsfree.css','academy-professor-handsfree.js'])assert.match(release,new RegExp(file.replaceAll('.','\\.')));
+  for(const file of ['academy-professor-v3.html','academy-professor-handsfree.css','academy-professor-handsfree.js','academy-professor-native.html','academy-professor-native.css','academy-professor-native.js'])assert.match(release,new RegExp(file.replaceAll('.','\\.')));
 });
