@@ -28,10 +28,18 @@ IMO_A760_PAGES = {
 IMO_A760_ALIASES = {
     "filika": "lifeboat", "kurtarma botu": "rescue-boat", "can salı": "liferaft",
     "can sali": "liferaft", "can simidi": "lifebuoy", "can yeleği": "lifejacket",
-    "can yelegi": "lifejacket", "toplanma istasyonu": "muster-station",
+    "can yelegi": "lifejacket", "toplanma istasyonu": "mes-shipboard-assembly-station",
     "binme istasyonu": "embarkation-station", "dalma giysisi": "immersion-suit",
     "çocuk can yeleği": "child-lifejacket", "cocuk can yelegi": "child-lifejacket",
     "sart": "search-and-rescue-transponder", "radar transponder": "search-and-rescue-transponder",
+    "acil çıkış": "mes-emergency-exit", "acil cikis": "mes-emergency-exit",
+    "ilk yardım": "ees-first-aid", "ilk yardim": "ees-first-aid",
+    "acil telefon": "ees-emergency-telephone", "göz duşu": "ees-eyewash-station",
+    "goz dusu": "ees-eyewash-station", "sedye": "ees-stretcher",
+    "eebd": "ees-emergency-escape-breathing-device",
+    "yangın söndürücü": "fes-fire-extinguisher", "yangin sondurucu": "fes-fire-extinguisher",
+    "yangın hortumu": "fes-fire-hose-reel", "yangin hortumu": "fes-fire-hose-reel",
+    "yangın alarm butonu": "fes-fire-alarm-call-point", "yangin alarm butonu": "fes-fire-alarm-call-point",
 }
 
 IMO_A1116_LSS_PAGES = {
@@ -47,6 +55,22 @@ IMO_A1116_LSS_PAGES = {
     "marine-evacuation-chute": 11,
 }
 
+IMO_A1116_SAFETY_PAGES = {
+    "mes-shipboard-assembly-station": 6, "mes-emergency-exit-left": 6, "mes-emergency-exit-right": 6,
+    "mes-door-slides-right-to-open": 7, "mes-door-slides-left-to-open": 7, "mes-turn-anticlockwise-to-open": 7,
+    "mes-turn-clockwise-to-open": 8, "mes-door-pull-left-to-open": 8, "mes-door-pull-right-to-open": 8,
+    "mes-push-door-right-to-open": 9, "mes-push-door-left-to-open": 9,
+    "ees-first-aid": 6, "ees-emergency-telephone": 6, "ees-eyewash-station": 6,
+    "ees-safety-shower": 7, "ees-stretcher": 7, "ees-medical-grab-bag": 7,
+    "ees-oxygen-resuscitator": 8, "ees-emergency-escape-breathing-device": 8, "ees-doctor": 8,
+    "ees-automated-external-defibrillator": 9, "ees-safety-equipment": 9,
+    "ees-shipboard-general-alarm": 9, "ees-break-to-obtain-access": 9,
+    "fes-fire-extinguisher": 6, "fes-fire-hose-reel": 6, "fes-collection-of-firefighting-equipment": 6,
+    "fes-fire-alarm-call-point": 7, "fes-fixed-fire-extinguishing-battery": 7, "fes-wheeled-fire-extinguisher": 7,
+    "fes-portable-foam-applicator": 8, "fes-water-fog-applicator": 8, "fes-fixed-fire-extinguishing-installation": 8,
+    "fes-fixed-fire-extinguishing-bottle": 9, "fes-remote-release-station": 9, "fes-fire-monitor": 9,
+}
+
 
 def curated_symbol_root() -> Path:
     return Path(__file__).resolve().parents[1] / "assets" / "curated-imo-symbols"
@@ -55,6 +79,9 @@ def curated_symbol_root() -> Path:
 def curated_symbol_collections():
     assets = Path(__file__).resolve().parents[1] / "assets"
     return (
+        (assets / "curated-imo-a1116-safety", "imo-a1116-", IMO_A1116_SAFETY_PAGES,
+         "IMO Resolution A.1116(30)",
+         "https://wwwcdn.imo.org/localresources/en/KnowledgeCentre/IndexofIMOResolutions/AssemblyDocuments/A.1116%2830%29.pdf", 300),
         (assets / "curated-imo-a1116-lss", "imo-a1116-lss-", IMO_A1116_LSS_PAGES,
          "IMO Resolution A.1116(30)",
          "https://wwwcdn.imo.org/localresources/en/KnowledgeCentre/IndexofIMOResolutions/AssemblyDocuments/A.1116%2830%29.pdf", 200),
@@ -85,8 +112,12 @@ def curated_symbol_query(value: str, limit: int) -> list[dict]:
     for _score, name, path, pages, title, source_url, prefix in sorted(scored, key=lambda item: (-item[0], item[1]))[:limit]:
         digest = __import__("hashlib").sha256(path.read_bytes()).hexdigest()
         page = pages[name]
-        resolution = "imo-a1116-lss" if prefix == "imo-a1116-lss-" else "imo-a760"
-        document_hash = "imo-resolution-a1116-30" if prefix == "imo-a1116-lss-" else "imo-resolution-a760-18"
+        if prefix == "imo-a1116-":
+            resolution, document_hash = "imo-a1116-safety", "imo-resolution-a1116-30"
+        elif prefix == "imo-a1116-lss-":
+            resolution, document_hash = "imo-a1116-lss", "imo-resolution-a1116-30"
+        else:
+            resolution, document_hash = "imo-a760", "imo-resolution-a760-18"
         result.append({
             "visual_key": f"curated:{resolution}:{name}", "visual_type": "object",
             "document_hash": document_hash, "page_number": page,

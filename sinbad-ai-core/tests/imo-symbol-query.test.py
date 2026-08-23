@@ -27,8 +27,18 @@ def test_epirb_and_sart_resolve_to_distinct_official_symbols():
     assert epirb[0]["asset_hash"] != sart[0]["asset_hash"]
 
 
+def test_escape_emergency_and_fire_queries_stay_in_their_categories():
+    assembly = MODULE.curated_symbol_query("toplanma istasyonu sembolü", 3)
+    eebd = MODULE.curated_symbol_query("EEBD işareti", 3)
+    extinguisher = MODULE.curated_symbol_query("yangın söndürücü sembolü", 3)
+    assert assembly[0]["visual_key"] == "curated:imo-a1116-safety:mes-shipboard-assembly-station"
+    assert eebd[0]["visual_key"] == "curated:imo-a1116-safety:ees-emergency-escape-breathing-device"
+    assert extinguisher[0]["visual_key"] == "curated:imo-a1116-safety:fes-fire-extinguisher"
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
     test_epirb_and_sart_resolve_to_distinct_official_symbols()
-    print("3 IMO symbol query tests passed")
+    test_escape_emergency_and_fire_queries_stay_in_their_categories()
+    print("4 IMO symbol query tests passed")
