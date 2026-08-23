@@ -41,11 +41,21 @@ test('named-source misses recover through title-matched knowledge chunks',()=>{
 
 test('server RAG resolves named publications by title before synthesis',()=>{
   assert.match(edge,/from\('document_knowledge'\)[\s\S]*?ilike\('title'/);
-  assert.match(edge,/title\.includes\(term\) \? 1 : 0/);
+  assert.match(edge,/sourceTitleScore\(String\(row\.title \|\| ''\), retrievalQuestion, expandedTitleTerms\)/);
   assert.match(edge,/b\.score - a\.score/);
   assert.match(edge,/\.in\('knowledge_id', titleMatches\.map/);
-  assert.match(edge,/title\.includes\(term\) \? 3 : 0/);
+  assert.match(edge,/namedSourceBonus \+ queryTerms\.reduce/);
   assert.match(edge,/APPROVED PRIVATE LIBRARY SOURCES/);
+});
+
+test('an explicitly named publication is locked before generic session-title matches',()=>{
+  assert.match(edge,/const normalizedSourceName =/);
+  assert.match(edge,/normalizedQuestion\.includes\(normalizedTitle\)/);
+  assert.match(edge,/exactNamedSource \? 1000 : 0/);
+  assert.match(edge,/exactNamedTitleMatches\.length \? exactNamedTitleMatches : scoredTitleMatches/);
+  assert.match(app,/function normalizeSinbadSourceName\(value\)/);
+  assert.match(app,/const exactNamedTitleMatches=scoredTitleMatches\.filter/);
+  assert.match(app,/exactNamedTitleMatches\.length\?exactNamedTitleMatches:scoredTitleMatches/);
 });
 
 test('server title lookup expands bounded multilingual maritime aliases',()=>{

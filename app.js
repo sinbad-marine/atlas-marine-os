@@ -2208,6 +2208,8 @@ function cloudAnswerPassesCoreGate(data,envelope){
 }
 let sinbadPendingSourceVisuals=[];
 function consumeSinbadSourceVisuals(){const visuals=sinbadPendingSourceVisuals;sinbadPendingSourceVisuals=[];return visuals;}
+function normalizeSinbadSourceName(value){return String(value||'').toLocaleLowerCase('tr-TR').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/\.(?:pdf|pptx?|docx?)$/i,'').replace(/[^a-z0-9çğıöşüа-яёء-ي]+/gi,' ').trim().replace(/\s+/g,' ');}
+function scoreSinbadSourceTitle(title,question,terms){const normalizedTitle=normalizeSinbadSourceName(title),normalizedQuestion=normalizeSinbadSourceName(question),exactNamedSource=normalizedTitle.length>=6&&normalizedQuestion.includes(normalizedTitle),termScore=terms.reduce((score,term)=>score+(normalizedTitle.includes(normalizeSinbadSourceName(term))?1:0),0);return {score:termScore+(exactNamedSource?1000:0),exactNamedSource};}
 async function sinbadCloudKnowledgeAnswer(question){
   sinbadPendingSourceVisuals=[];
   if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId)return null;
@@ -2248,7 +2250,9 @@ async function sinbadCloudKnowledgeAnswer(question){
       const {data,error}=await cloudClient.from('document_knowledge').select('id,title,classification').eq('workspace_id',selectedWorkspaceId).ilike('title',`%${term.replace(/[%_]/g,'')}%`).limit(6);
       if(error)throw error;if(data)titleRows.push(...data);
     }
-    const titleMatches=[...new Map(titleRows.map(row=>[row.id,row])).values()].slice(0,8);
+    const scoredTitleMatches=[...new Map(titleRows.map(row=>[row.id,row])).values()].map(row=>({row,...scoreSinbadSourceTitle(row.title,question,terms)})).sort((a,b)=>b.score-a.score||String(a.row.title).localeCompare(String(b.row.title)));
+    const exactNamedTitleMatches=scoredTitleMatches.filter(match=>match.exactNamedSource);
+    const titleMatches=(exactNamedTitleMatches.length?exactNamedTitleMatches:scoredTitleMatches).slice(0,8).map(match=>match.row);
     let data=[];
     if(titleMatches.length){
       const {data:chunks,error}=await cloudClient.from('document_knowledge_chunks').select('knowledge_id,content,chunk_index').in('knowledge_id',titleMatches.map(row=>row.id)).limit(500);
@@ -2261,7 +2265,7 @@ async function sinbadCloudKnowledgeAnswer(question){
       if(result.error)throw result.error;data=result.data||[];
     }
     if(!data.length){if(status)status.textContent='Atlas Cloud has no answer · trying offline brain';return null;}
-    const ranked=data.map(row=>({row,score:terms.reduce((n,t)=>n+(row.content.toLocaleLowerCase(language).includes(t)?1:0),0)})).sort((a,b)=>b.score-a.score).slice(0,4);
+    const ranked=data.map(row=>({row,score:scoreSinbadSourceTitle(row.document_knowledge.title,question,terms).score+terms.reduce((n,t)=>n+(row.content.toLocaleLowerCase(language).includes(t)?1:0),0)})).sort((a,b)=>b.score-a.score).slice(0,4);
     const excerpts=ranked.map(({row})=>{const lower=row.content.toLocaleLowerCase(language),positions=terms.map(t=>lower.indexOf(t)).filter(n=>n>=0),at=positions.length?Math.min(...positions):0;return `• ${row.document_knowledge.title} [${row.document_knowledge.classification}]\n${row.content.slice(Math.max(0,at-180),at+650).replace(/\s+/g,' ').trim()}`;});
     if(status)status.textContent='Classified cloud archive active';
     return `Relevant classified Atlas Cloud passages:\n\n${excerpts.join('\n\n')}\n\nVerify critical navigation and safety decisions against the original publication.`;
