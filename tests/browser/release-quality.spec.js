@@ -166,6 +166,12 @@ test('live Sinbad chat grounds body answers in the gesture actually shown',async
   await ask('Şimdi öbür elini göster.');
   await expect(answer).toContainText('Sol elimi kaldırıp gösteriyorum.');
   await expect(avatar).toHaveAttribute('data-gesture','raise-left');
+
+  await ask('Önce sağ elini göster, sonra sol elini kaldır.');
+  await expect(answer).toContainText('Önce sağ avucumu, ardından sol elimi gösteriyorum.');
+  await expect(avatar).toHaveAttribute('data-gesture','raise-left',{timeout:2500});
+  await ask('Son iki hareketin neydi?');
+  await expect(answer).toContainText('Önce sağ avucumu gösterdim; ardından sol elimi kaldırdım.');
 });
 
 test('idle Sinbad performs a sparse real micro-motion and yields immediately to work',async({page})=>{

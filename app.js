@@ -429,7 +429,7 @@ function prepareSinbadSpeechPerformance(question){
   sinbadSpeechPerformanceMode=sinbadPerformanceDirector?.speechModeForDecision(decision)||'warm';
   const request=sinbadPerformanceDirector?.gestureRequestForText(question,{lastAction:sinbadLastPerformedGestureAction});
   sinbadRequestedGesture=request?.accepted?request:null;
-  const sequence=sinbadRequestedGesture?.supported?sinbadPerformanceDirector?.gestureSequenceForRequest?.(sinbadRequestedGesture.action):null;
+  const sequence=sinbadRequestedGesture?.supported?sinbadPerformanceDirector?.gestureSequenceForRequest?.(sinbadRequestedGesture.action,{actions:sinbadRequestedGesture.actions}):null;
   sinbadRequestedGestureSequence=sequence?.accepted?[...sequence.cues]:[];
   sinbadExplicitGestureHoldBoundaries=sinbadRequestedGesture?.supported?2:0;
 }
@@ -459,7 +459,7 @@ function prepareSinbadResponsePerformance(text){
   });
   if(sinbadRequestedGesture?.supported&&sinbadTextPresentationCues.length){
     sinbadTextPresentationCues[0]=Object.freeze({...sinbadTextPresentationCues[0],...sinbadRequestedGesture.cue,responseKind:sinbadTextPresentationCues[0].responseKind});
-    sinbadPreparedGestureAction=sinbadRequestedGesture.action;
+    sinbadPreparedGestureAction=sinbadRequestedGesture.compound?null:sinbadRequestedGesture.action;
   }else{
     sinbadPreparedGestureAction=null;
   }
@@ -469,13 +469,13 @@ function prepareSinbadResponsePerformance(text){
   sinbadRequestedGesture=null;
   return sinbadResponseOpeningCue;
 }
-function commitSinbadPreparedGesture(){
-  const action=sinbadPreparedGestureAction;sinbadPreparedGestureAction=null;
+function commitSinbadPerformedGestureAction(action){
   if(!action)return false;
   const recorded=sinbadPerformanceDirector?.recordVerifiedGesture?.(sinbadPerformedGestureHistory,action,{limit:4});
   if(!recorded?.accepted)return false;
   sinbadPerformedGestureHistory=[...recorded.history];sinbadLastPerformedGestureAction=sinbadPerformedGestureHistory.at(-1)||null;return true;
 }
+function commitSinbadPreparedGesture(){const action=sinbadPreparedGestureAction;sinbadPreparedGestureAction=null;return commitSinbadPerformedGestureAction(action);}
 function stopSinbadGesturePerformance(){
   sinbadRequestedGesture=null;sinbadRequestedGestureSequence=[];sinbadPreparedGestureAction=null;sinbadExplicitGestureHoldBoundaries=0;
   clearTimeout(sinbadSpeechMeaningTransitionTimer);sinbadSpeechMeaningTransitionTimer=null;stopSinbadVoice();
@@ -483,10 +483,10 @@ function stopSinbadGesturePerformance(){
 }
 function playSinbadRequestedGestureSequence(){
   const cues=sinbadRequestedGestureSequence;sinbadRequestedGestureSequence=[];
-  if(cues.length<2||sinbadAssistantState!=='speaking')return false;
+  const presentationState=sinbadAssistantState;if(cues.length<2||!['speaking','presenting'].includes(presentationState))return false;
   const play=index=>{
-    if(sinbadAssistantState!=='speaking'||index>=cues.length)return;
-    const cue=cues[index];setSinbadAssistantState('speaking',{...sinbadResponseOpeningCue,...cue,responseKind:sinbadResponseOpeningCue.responseKind});
+    if(sinbadAssistantState!==presentationState||index>=cues.length)return;
+    const cue=cues[index];setSinbadAssistantState(presentationState,{...sinbadResponseOpeningCue,...cue,responseKind:sinbadResponseOpeningCue.responseKind});if(cue.actionStart)commitSinbadPerformedGestureAction(cue.actionStart);
     if(index+1<cues.length){const delay=Math.max(1,cues[index+1].at-cue.at);sinbadAssistantTimers.push(setTimeout(()=>play(index+1),delay));}
   };
   play(0);return true;
@@ -934,6 +934,7 @@ function finishSinbadVoice(forceState){
   setSinbadAssistantState(forceState||(sinbadState.voiceEnabled?'idle':'voice-disabled'),isPresenting?sinbadResponseOpeningCue:{});
   if(isPresenting){
     commitSinbadPreparedGesture();
+    playSinbadRequestedGestureSequence();
     if(sinbadResponseOpeningCue.responseKind)setSinbadResponseKind(sinbadResponseOpeningCue.responseKind);
     sinbadTextPresentationCues.slice(1).forEach(cue=>sinbadAssistantTimers.push(setTimeout(()=>{
       if(sinbadAssistantState!=='presenting')return;

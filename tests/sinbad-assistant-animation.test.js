@@ -746,7 +746,7 @@ test('a supported explicit gesture request overrides only the opening cue and un
   assert.match(app,/gestureRequestForText\(question,\{lastAction:sinbadLastPerformedGestureAction\}\)/);
   assert.match(app,/groundResponseWithGesture\?\.\(text,sinbadRequestedGesture,sinbadState\.language\|\|appLanguage\)/);
   assert.match(app,/const answer=groundSinbadResponseToRequestedGesture\(await sinbadLocalAnswer\(effectiveQuestion\)\)/);
-  assert.match(app,/sinbadPreparedGestureAction=sinbadRequestedGesture\.action/);
+  assert.match(app,/sinbadPreparedGestureAction=sinbadRequestedGesture\.compound\?null:sinbadRequestedGesture\.action/);
   assert.match(app,/function commitSinbadPreparedGesture\(\)/);
   assert.match(app,/recordVerifiedGesture\?\.\(sinbadPerformedGestureHistory,action,\{limit:4\}\)/);
   assert.match(app,/sinbadLastPerformedGestureAction=sinbadPerformedGestureHistory\.at\(-1\)\|\|null/);
@@ -761,17 +761,19 @@ test('a supported explicit gesture request overrides only the opening cue and un
   assert.match(app,/sinbadRequestedGesture=null;/);
   assert.match(app,/sinbadExplicitGestureHoldBoundaries=sinbadRequestedGesture\?\.supported\?2:0/);
   assert.match(app,/if\(sinbadExplicitGestureHoldBoundaries>0\)\{sinbadExplicitGestureHoldBoundaries--;return Object\.freeze\(\{\.\.\.semantic,gesture:null\}\);\}/);
-  const prepare=app.slice(app.indexOf('function prepareSinbadResponsePerformance'),app.indexOf('function commitSinbadPreparedGesture'));
+  const prepare=app.slice(app.indexOf('function prepareSinbadResponsePerformance'),app.indexOf('function commitSinbadPerformedGestureAction'));
   assert.doesNotMatch(prepare,/recordVerifiedGesture/);
   assert.match(app,/if\(isPresenting\)\{\s*\n\s*commitSinbadPreparedGesture\(\);/);
 });
 
 test('supported requests play a bounded real gesture sequence on actual voice start',()=>{
-  assert.match(app,/gestureSequenceForRequest\?\.\(sinbadRequestedGesture\.action\)/);
+  assert.match(app,/gestureSequenceForRequest\?\.\(sinbadRequestedGesture\.action,\{actions:sinbadRequestedGesture\.actions\}\)/);
   assert.match(app,/function playSinbadRequestedGestureSequence\(\)/);
-  assert.match(app,/if\(cues\.length<2\|\|sinbadAssistantState!=='speaking'\)return false/);
+  assert.match(app,/if\(cues\.length<2\|\|!\['speaking','presenting'\]\.includes\(presentationState\)\)return false/);
   assert.match(app,/Math\.max\(1,cues\[index\+1\]\.at-cue\.at\)/);
   assert.match(app,/setSinbadAssistantState\('speaking',sinbadResponseOpeningCue\);commitSinbadPreparedGesture\(\);playSinbadRequestedGestureSequence\(\)/);
+  assert.match(app,/if\(cue\.actionStart\)commitSinbadPerformedGestureAction\(cue\.actionStart\)/);
+  assert.match(app,/sinbadPreparedGestureAction=sinbadRequestedGesture\.compound\?null:sinbadRequestedGesture\.action/);
 });
 
 test('show-palm reuses the verified real open-hand artwork, removes the large-avatar crop and stays bounded',()=>{

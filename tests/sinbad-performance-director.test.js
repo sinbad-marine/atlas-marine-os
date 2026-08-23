@@ -238,6 +238,17 @@ test('supported physical requests expand into bounded interruptible gesture sequ
   assert.equal(gestureSequenceForRequest('smile').reason,'NO_GESTURE_SEQUENCE');
 });
 
+test('an explicit two-hand instruction becomes one bounded ordered gesture plan',()=>{
+  const request=gestureRequestForText('Önce sağ elini göster, sonra sol elini kaldır.');
+  assert.equal(request.compound,true);assert.deepEqual(request.actions,['show-right-hand','raise-left-hand']);assert.equal(request.responsePolicy,'replace');
+  const plan=gestureSequenceForRequest(request.action,{actions:request.actions});
+  assert.equal(plan.accepted,true);assert.ok(plan.duration<=2400);assert.deepEqual(plan.actions,request.actions);
+  assert.deepEqual(plan.cues.filter(cue=>cue.actionStart).map(cue=>cue.actionStart),request.actions);
+  assert.ok(plan.cues.every((cue,index)=>index===0||cue.at>=plan.cues[index-1].at));
+  assert.match(groundResponseWithGesture('irrelevant',request,'tr-TR').text,/^Önce sağ avucumu, ardından sol elimi/);
+  assert.equal(gestureSequenceForRequest('two-hand-sequence',{actions:['show-right-hand','show-right-hand']}).reason,'INVALID_COMPOUND_GESTURE');
+});
+
 test('spoken gesture acknowledgement is grounded in the action the rig can actually perform',()=>{
   const palm=gestureRequestForText('Sinbad avucunu açar mısın?');
   assert.deepEqual(gestureAcknowledgementForRequest(palm,'tr-TR'),{accepted:true,supported:true,action:'show-palm',text:'Avucumu açıp gösteriyorum.'});

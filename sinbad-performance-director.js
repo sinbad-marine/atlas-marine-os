@@ -326,6 +326,12 @@
       'show-listening':Object.freeze({gesture:'listen-lean',gaze:'audience',emotion:'attentive',energy:.38})
     };
     const lastAction=typeof context?.lastAction==='string'?context.lastAction:null;
+    const rightThenLeft=/(?:önce\s+)?sağ\s+(?:elini|avucunu).*(?:göster|kaldır|aç).*sonra\s+sol\s+(?:elini|avucunu).*(?:göster|kaldır|aç)|(?:first\s+)?(?:show|raise|open).*(?:right\s+(?:hand|palm)).*(?:then|next).*(?:show|raise|open).*(?:left\s+(?:hand|palm))/iu.test(normalized);
+    const leftThenRight=/(?:önce\s+)?sol\s+(?:elini|avucunu).*(?:göster|kaldır|aç).*sonra\s+sağ\s+(?:elini|avucunu).*(?:göster|kaldır|aç)|(?:first\s+)?(?:show|raise|open).*(?:left\s+(?:hand|palm)).*(?:then|next).*(?:show|raise|open).*(?:right\s+(?:hand|palm))/iu.test(normalized);
+    if(rightThenLeft||leftThenRight){
+      const actions=rightThenLeft?['show-right-hand','raise-left-hand']:['raise-left-hand','show-right-hand'];
+      return Object.freeze({accepted:true,action:'two-hand-sequence',actions:Object.freeze(actions),supported:true,compound:true,semantic:'compound-two-hand',responsePolicy:'replace',cue:contextualActions[actions[0]]});
+    }
     if(/(aynı\s+hareketi.*(?:tekrar|yine|yap)|(?:do|show)\s+(?:it|that)\s+again|repeat\s+(?:that|the\s+movement))/iu.test(normalized)){
       if(lastAction&&Object.hasOwn(contextualActions,lastAction))return Object.freeze({accepted:true,action:lastAction,supported:true,contextual:true,cue:contextualActions[lastAction]});
       return Object.freeze({accepted:true,action:'repeat-last-action',supported:false,contextual:true,reason:'NO_VERIFIED_GESTURE_REFERENCE'});
@@ -366,6 +372,10 @@
       return Object.freeze({accepted:true,supported:false,action:request.action||'unknown',text:turkish?'Bu hareketi henüz güvenilir biçimde yapamıyorum.':'I cannot perform that movement reliably yet.'});
     }
     if(request.semantic==='palm-object-query')return Object.freeze({accepted:true,supported:true,action:'show-palm',text:turkish?'Avucumu açıp gösteriyorum; mevcut karakter görünümünde avucumda bir nesne gösterilmiyor.':'I am opening my palm; the current character view shows no object in it.'});
+    if(request.semantic==='compound-two-hand'&&Array.isArray(request.actions)&&request.actions.length===2){
+      const rightFirst=request.actions[0]==='show-right-hand';
+      return Object.freeze({accepted:true,supported:true,action:'two-hand-sequence',text:turkish?(rightFirst?'Önce sağ avucumu, ardından sol elimi gösteriyorum.':'Önce sol elimi, ardından sağ avucumu gösteriyorum.'):(rightFirst?'First I am showing my right palm, then my left hand.':'First I am showing my left hand, then my right palm.')});
+    }
     const copy=turkish?{
       'show-palm':'Avucumu açıp gösteriyorum.',
       'show-right-hand':'Sağ avucumu açıp gösteriyorum.',
@@ -459,7 +469,7 @@
     const turkish=String(language).toLocaleLowerCase('en-US').startsWith('tr');
     return Object.freeze({accepted:true,action:'stop-motion',text:turkish?'Hareketi durdurdum ve nötr poza döndüm.':'I stopped the movement and returned to a neutral pose.'});
   }
-  function gestureSequenceForRequest(action){
+  function gestureSequenceForRequest(action,{actions}={}){
     const sequences={
       'show-palm':[
         {at:0,gesture:'open-hand',gaze:'audience',emotion:'warm',energy:.3},
@@ -482,6 +492,16 @@
         {at:1000,gesture:'point-board',gaze:'audience',emotion:'warm',energy:.34}
       ]
     };
+    if(action==='two-hand-sequence'){
+      if(!Array.isArray(actions)||actions.length!==2||new Set(actions).size!==2||!actions.every(item=>['show-right-hand','raise-left-hand'].includes(item)))return Object.freeze({accepted:false,reason:'INVALID_COMPOUND_GESTURE'});
+      const cues=[];let offset=0;
+      actions.forEach((item,index)=>{
+        const source=sequences[item];
+        source.forEach((cue,cueIndex)=>cues.push(Object.freeze({...cue,at:cue.at+offset,...(cueIndex===1?{actionStart:item}:{})})));
+        if(index===0)offset=source.at(-1).at+360;
+      });
+      return Object.freeze({accepted:true,cues:Object.freeze(cues),duration:cues.at(-1).at,actions:Object.freeze([...actions])});
+    }
     if(!Object.hasOwn(sequences,action))return Object.freeze({accepted:false,reason:'NO_GESTURE_SEQUENCE'});
     const cues=sequences[action].map(cue=>Object.freeze(cue));
     return Object.freeze({accepted:true,cues:Object.freeze(cues),duration:cues.at(-1).at});
