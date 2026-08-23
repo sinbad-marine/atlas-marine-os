@@ -32,7 +32,8 @@ test('Pages release contains every live character runtime and referenced animati
     'captain-sinbad-laughing-v1.png','captain-sinbad-walk-a-v1.png','captain-sinbad-walk-b-v1.png',
     'captain-sinbad-writing-contact-v1.png','captain-sinbad-writing-lift-v1.png',
     'captain-sinbad-rig-head-v1.png','captain-sinbad-rig-torso-v1.png',
-    'captain-sinbad-rig-left-arm-v1.png','captain-sinbad-rig-right-arm-v1.png'
+    'captain-sinbad-rig-left-arm-v1.png','captain-sinbad-rig-right-arm-v1.png',
+    'captain-sinbad-rig-face-blink-v1.png','captain-sinbad-rig-face-open-v1.png','captain-sinbad-rig-face-round-v1.png'
   ];
   for(const name of required)assert.equal(builder.RELEASE_FILES.some(file=>file.endsWith(name)),true,name);
   assert.equal(builder.RELEASE_FILES.some(file=>file.endsWith('captain-sinbad-hero-portrait.png')),false,'unused portrait must not inflate the release');

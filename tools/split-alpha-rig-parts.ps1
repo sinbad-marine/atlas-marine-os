@@ -1,6 +1,7 @@
 param(
   [Parameter(Mandatory=$true)][string]$InputPath,
-  [Parameter(Mandatory=$true)][string]$OutputDirectory
+  [Parameter(Mandatory=$true)][string]$OutputDirectory,
+  [ValidateSet('Body','Face')][string]$Profile='Body'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -20,7 +21,7 @@ public static class SinbadAlphaRigSplitter {
     public int Id, MinX, MinY, MaxX, MaxY, Count;
   }
 
-  public static string[] Split(string inputPath, string outputDirectory) {
+  public static string[] Split(string inputPath, string outputDirectory, string profile) {
     using (var image = new Bitmap(inputPath)) {
       var rect = new Rectangle(0, 0, image.Width, image.Height);
       var data = image.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
@@ -56,14 +57,22 @@ public static class SinbadAlphaRigSplitter {
         }
         if (part.Count >= 1000) parts.Add(part);
       }
-      if (parts.Count != 4) throw new InvalidOperationException("Expected 4 substantial alpha components, found " + parts.Count + ".");
+      int expected=profile=="Face"?3:4;
+      if (parts.Count != expected) throw new InvalidOperationException("Expected " + expected + " substantial alpha components for " + profile + ", found " + parts.Count + ".");
       parts.Sort((a,b) => a.MinY != b.MinY ? a.MinY.CompareTo(b.MinY) : a.MinX.CompareTo(b.MinX));
-      Part headPart=parts[0];
-      var lower=parts.GetRange(1,3); lower.Sort((a,b)=>a.MinX.CompareTo(b.MinX));
-      Part[] ordered={headPart,lower[0],lower[1],lower[2]};
-      // Screen-left is Sinbad's anatomical right arm; screen-right is his left.
-      string[] names={"captain-sinbad-rig-head-v1.png","captain-sinbad-rig-right-arm-v1.png","captain-sinbad-rig-torso-v1.png","captain-sinbad-rig-left-arm-v1.png"};
-      var output=new string[4];
+      Part[] ordered;
+      string[] names;
+      if(profile=="Face"){
+        parts.Sort((a,b)=>a.MinX.CompareTo(b.MinX)); ordered=parts.ToArray();
+        names=new[]{"captain-sinbad-rig-face-blink-v1.png","captain-sinbad-rig-face-open-v1.png","captain-sinbad-rig-face-round-v1.png"};
+      }else{
+        Part headPart=parts[0];
+        var lower=parts.GetRange(1,3); lower.Sort((a,b)=>a.MinX.CompareTo(b.MinX));
+        ordered=new[]{headPart,lower[0],lower[1],lower[2]};
+        // Screen-left is Sinbad's anatomical right arm; screen-right is his left.
+        names=new[]{"captain-sinbad-rig-head-v1.png","captain-sinbad-rig-right-arm-v1.png","captain-sinbad-rig-torso-v1.png","captain-sinbad-rig-left-arm-v1.png"};
+      }
+      var output=new string[ordered.Length];
       for(int i=0;i<ordered.Length;i++){
         Part p=ordered[i]; const int pad=12;
         int left=Math.Max(0,p.MinX-pad), top=Math.Max(0,p.MinY-pad);
@@ -95,4 +104,4 @@ public static class SinbadAlphaRigSplitter {
 $inputFull = [System.IO.Path]::GetFullPath($InputPath)
 $outputFull = [System.IO.Path]::GetFullPath($OutputDirectory)
 if (-not [System.IO.Directory]::Exists($outputFull)) { throw "Output directory does not exist: $outputFull" }
-[SinbadAlphaRigSplitter]::Split($inputFull, $outputFull) | ForEach-Object { Write-Output $_ }
+[SinbadAlphaRigSplitter]::Split($inputFull, $outputFull, $Profile) | ForEach-Object { Write-Output $_ }

@@ -386,6 +386,7 @@ const SINBAD_BLINK_ASSET='captain-sinbad-idle-blink-v1.png';
 const SINBAD_SPEECH_ASSETS=Object.freeze({closed:'captain-sinbad-speaking-mbp-v1.png',open:'captain-sinbad-speaking.png',round:'captain-sinbad-speaking-o-v1.png'});
 const SINBAD_WALK_ASSETS=Object.freeze(['captain-sinbad-walk-a-v1.png','captain-sinbad-walk-b-v1.png']);
 const SINBAD_RIG_PART_ASSETS=Object.freeze(['captain-sinbad-rig-head-v1.png','captain-sinbad-rig-torso-v1.png','captain-sinbad-rig-left-arm-v1.png','captain-sinbad-rig-right-arm-v1.png']);
+const SINBAD_RIG_FACE_ASSETS=Object.freeze(['captain-sinbad-rig-face-blink-v1.png','captain-sinbad-rig-face-open-v1.png','captain-sinbad-rig-face-round-v1.png']);
 const SINBAD_STATE_ASSET={
   idle:'captain-sinbad-idle-master.png',
   listening:'captain-sinbad-listening.png',
@@ -458,8 +459,8 @@ function setSinbadResponseKind(kind){
 function sinbadAssistantElements(){return document.querySelectorAll('.sinbad-avatar');}
 function ensureSinbadArticulatedRig(){
   document.querySelectorAll('.sinbad-avatar.large .sinbad-rig-stage').forEach(stage=>{
-    const avatar=stage.closest('.sinbad-avatar'),parts=[...stage.querySelectorAll('.sinbad-rig-part')];
-    if(!avatar||parts.length!==SINBAD_RIG_PART_ASSETS.length)return;
+    const avatar=stage.closest('.sinbad-avatar'),parts=[...stage.querySelectorAll('.sinbad-rig-part,.sinbad-rig-face-frame')];
+    if(!avatar||parts.length!==SINBAD_RIG_PART_ASSETS.length+SINBAD_RIG_FACE_ASSETS.length)return;
     let remaining=parts.length,failed=false;
     const settled=ok=>{failed=failed||!ok;remaining--;if(remaining===0){if(!failed)avatar.dataset.rigReady='true';else delete avatar.dataset.rigReady;}};
     parts.forEach(part=>{
@@ -480,6 +481,7 @@ function preloadSinbadAvatarAssets(){
   Object.values(SINBAD_SPEECH_ASSETS).forEach(file=>{const img=new Image();img.src=SINBAD_AVATAR_ASSET_BASE+file;});
   SINBAD_WALK_ASSETS.forEach(file=>{const img=new Image();img.src=SINBAD_AVATAR_ASSET_BASE+file;});
   SINBAD_RIG_PART_ASSETS.forEach(file=>{const img=new Image();img.src=SINBAD_AVATAR_ASSET_BASE+file;});
+  SINBAD_RIG_FACE_ASSETS.forEach(file=>{const img=new Image();img.src=SINBAD_AVATAR_ASSET_BASE+file;});
 }
 let sinbadBlinkTimer=null;
 function sinbadBlinkAllowed(){
