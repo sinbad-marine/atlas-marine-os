@@ -28,6 +28,8 @@
     'wave-right-away':{headYaw:.04,headPitch:.03,bodyLean:.03,leftArm:.04,rightArm:.68},
     'look-left':{headYaw:-.52,leftArm:.04,rightArm:.04},
     'look-right':{headYaw:.52,leftArm:.04,rightArm:.04},
+    'shake-head-left':{headYaw:-.36,headPitch:-.03,leftArm:.06,rightArm:.06},
+    'shake-head-right':{headYaw:.36,headPitch:-.03,leftArm:.06,rightArm:.06},
     explain:{leftArm:.38,rightArm:.52},
     laugh:{headPitch:-.12,leftArm:.56,rightArm:.64},
     walk:{leftArm:-.32,rightArm:.32},
