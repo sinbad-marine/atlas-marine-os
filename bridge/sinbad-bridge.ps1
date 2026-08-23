@@ -222,11 +222,14 @@ function Invoke-VisualAtlasHelper([string[]]$arguments) {
 }
 
 function Search-VisualAtlas($payload) {
-  $text = "$([string]$payload.query) $([string]$payload.answer)".Trim()
+  # Visual intent belongs to the user's question. The generated answer contains
+  # broad explanatory vocabulary that can drown the requested object in FTS.
+  $text = ([string]$payload.query).Trim()
+  if ([string]::IsNullOrWhiteSpace($text)) { $text = ([string]$payload.answer).Trim() }
   if ([string]::IsNullOrWhiteSpace($text)) { throw 'A visual search query is required.' }
   $encoded = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($text))
   $limit = [Math]::Max(1, [Math]::Min(3, [int]$payload.limit))
-  return Invoke-VisualAtlasHelper @('--query-base64', $encoded, '--limit', [string]$limit)
+  return Invoke-VisualAtlasHelper @('--query-base64', $encoded, '--limit', [string]$limit, '--object-only')
 }
 
 function Get-OpenCpnRestKey {
