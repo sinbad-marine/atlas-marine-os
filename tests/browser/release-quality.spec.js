@@ -95,6 +95,18 @@ test('large Captain Sinbad portrait loads the four-layer articulated rig with it
   await page.evaluate(()=>{setSinbadAssistantState('idle');document.querySelector('.sinbad-avatar.large')?.classList.add('sinbad-blinking');});
   await page.waitForTimeout(75);
   await expect(avatar.locator('.sinbad-rig-face-blink')).toHaveCSS('opacity','1');
+  const turnTaking=await page.evaluate(()=>{
+    const messageCount=document.querySelectorAll('#sinbadMessages > *').length;
+    class RecognitionStub{start(){this.onstart?.();}abort(){this.onend?.();}stop(){this.onend?.();}}
+    Object.defineProperty(window,'SpeechRecognition',{value:RecognitionStub,configurable:true});
+    Object.defineProperty(window,'webkitSpeechRecognition',{value:RecognitionStub,configurable:true});
+    setSinbadAssistantState('speaking',{gesture:'explain',emotion:'warm'});
+    startSinbadListening();
+    return {messageCount,afterCount:document.querySelectorAll('#sinbadMessages > *').length};
+  });
+  expect(turnTaking.afterCount).toBe(turnTaking.messageCount);
+  await expect(avatar).toHaveAttribute('data-state','listening');
+  await expect(page.locator('#startSinbadListening')).toHaveAttribute('aria-pressed','true');
 });
 
 test('Sinbad Academy opens outside the main app as a standalone classroom window',async({page})=>{

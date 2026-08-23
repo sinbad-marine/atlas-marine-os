@@ -1134,6 +1134,11 @@ function beginSinbadRecognition(){
   try{sinbadRecognition.start();}catch(error){sinbadIsListening=false;setListeningUI(error.message||String(error),true);}
 }
 function startSinbadListening(){
+  const interruptingVoice=sinbadAssistantState==='speaking'||sinbadAssistantState==='preparing-voice'||window.speechSynthesis?.speaking||(sinbadVoiceAudio&&!sinbadVoiceAudio.paused);
+  if(interruptingVoice){
+    stopSinbadVoice();sinbadAwaitingAnswer=false;sinbadHandsFreeEnabled=true;sinbadWakeActive=true;
+    clearTimeout(sinbadRestartTimer);sinbadRecognition?.abort();setListeningUI(speechCopy().listen,true);beginSinbadRecognition();return;
+  }
   if(sinbadHandsFreeEnabled){sinbadHandsFreeEnabled=false;sinbadWakeActive=false;clearTimeout(sinbadRestartTimer);sinbadRecognition?.abort();setListeningUI('',false);return;}
   sinbadHandsFreeEnabled=true;sinbadWakeActive=false;setListeningUI(handsFreeMessage(),true);beginSinbadRecognition();
 }

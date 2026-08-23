@@ -600,6 +600,15 @@ test('Sinbad usability layout keeps a compact sticky profile, responsive tab rai
   assert.match(css,/@media\(max-width:600px\)\{\.sinbad-workspace-tabs\{position:static;display:flex;overflow-x:auto/);
 });
 
+test('an explicit microphone press safely interrupts Sinbad and gives the turn to the user',()=>{
+  const fn=app.slice(app.indexOf('function startSinbadListening'),app.indexOf('function saveSinbadMessages'));
+  assert.match(fn,/const interruptingVoice=sinbadAssistantState==='speaking'\|\|sinbadAssistantState==='preparing-voice'/);
+  assert.match(fn,/if\(interruptingVoice\)\{/);
+  assert.match(fn,/stopSinbadVoice\(\);sinbadAwaitingAnswer=false;sinbadHandsFreeEnabled=true;sinbadWakeActive=true;/);
+  assert.match(fn,/setListeningUI\(speechCopy\(\)\.listen,true\);beginSinbadRecognition\(\);return;/);
+  assert.doesNotMatch(fn,/sinbadMessages[^;]*=/);
+});
+
 test('rig head, lean and gaze outputs drive the real portrait while caution hold has a distinct bounded gesture',()=>{
   assert.match(css,/transform:rotate\(calc\(var\(--sinbad-rig-head-x,0deg\) \+ var\(--sinbad-rig-lean,0deg\) \+ var\(--sinbad-gaze-offset,0deg\)\)\)/);
   assert.match(css,/\.sinbad-avatar\[data-gaze="thought"\]\{--sinbad-gaze-offset:-\.7deg\}/);
