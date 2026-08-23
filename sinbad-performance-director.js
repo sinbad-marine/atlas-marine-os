@@ -110,6 +110,17 @@
     const pauseMs={slow:1100,measured:850,conversational:700,fast:550}[pace];
     return Object.freeze({accepted:true,pace,words,wpm,pauseMs});
   }
+  function listeningCueForPace(pace){
+    const cues={
+      'short-fragment':Object.freeze({gesture:'listen-follow',gaze:'audience',emotion:'attentive',energy:.42}),
+      slow:Object.freeze({gesture:'hold',gaze:'thought',emotion:'attentive',energy:.26}),
+      measured:Object.freeze({gesture:'listen-lean',gaze:'audience',emotion:'attentive',energy:.32}),
+      conversational:Object.freeze({gesture:'listen-follow',gaze:'audience',emotion:'attentive',energy:.38}),
+      fast:Object.freeze({gesture:'listen-orient',gaze:'audience',emotion:'attentive',energy:.4})
+    };
+    if(!Object.hasOwn(cues,pace))return Object.freeze({accepted:false,reason:'UNKNOWN_SPEECH_PACE'});
+    return Object.freeze({accepted:true,cue:cues[pace]});
+  }
   function listeningCueForText(text,revision=0){
     if(typeof text!=='string'||!text.trim())return Object.freeze({accepted:false,reason:'INVALID_LISTENING_TEXT'});
     if(!Number.isSafeInteger(revision)||revision<0)return Object.freeze({accepted:false,reason:'INVALID_LISTENING_REVISION'});
@@ -320,5 +331,5 @@
     };
     return Object.freeze({play,cancel});
   }
-  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,listeningPauseForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gazeTransitionForCue,createListeningReactionDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
+  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gazeTransitionForCue,createListeningReactionDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
 });

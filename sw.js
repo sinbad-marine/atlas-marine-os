@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.25-adaptive-turn-pacing-v38';
+const CACHE='sinbad-marine-v8.20.26-paced-body-language-v39';
 const ASSETS=[
   './',
   './index.html',

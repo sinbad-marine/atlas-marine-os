@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,listeningPauseForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gazeTransitionForCue,createListeningReactionDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gazeTransitionForCue,createListeningReactionDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -87,6 +87,15 @@ test('turn pause follows measured speech pace within humane safety bounds',()=>{
   assert.equal(listeningPauseForPace('bir iki üç dört beş',900).pauseMs,550);
   assert.equal(listeningPauseForPace(' ',1000).reason,'INVALID_SPEECH_SAMPLE');
   assert.equal(listeningPauseForPace('merhaba',0).reason,'INVALID_SPEECH_DURATION');
+});
+
+test('continuation body language visibly follows the measured speaking pace',()=>{
+  assert.equal(listeningCueForPace('short-fragment').cue.gesture,'listen-follow');
+  assert.equal(listeningCueForPace('slow').cue.gaze,'thought');
+  assert.equal(listeningCueForPace('measured').cue.gesture,'listen-lean');
+  assert.equal(listeningCueForPace('conversational').cue.gesture,'listen-follow');
+  assert.equal(listeningCueForPace('fast').cue.gesture,'listen-orient');
+  assert.equal(listeningCueForPace('invented').reason,'UNKNOWN_SPEECH_PACE');
 });
 
 test('heard words select bounded semantic listening reactions without executing commands',()=>{

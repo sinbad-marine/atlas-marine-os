@@ -139,6 +139,8 @@ test('a short speech pause joins one user turn instead of submitting mid-sentenc
   });
   await page.waitForTimeout(300);
   await expect(page.locator('#sinbadMessages .chat-bubble.user')).toHaveCount(0);
+  await expect(page.locator('.sinbad-avatar.large')).toHaveAttribute('data-listening-activity','continuation');
+  await expect(page.locator('.sinbad-avatar.large')).toHaveAttribute('data-listening-pace','fast');
   await page.waitForFunction(()=>window.__sinbadRecognitionStubs?.length>=2);
   await page.evaluate(()=>{
     const second=window.__sinbadRecognitionStubs[1],results=[[{transcript:'göster'}]];results[0].isFinal=true;

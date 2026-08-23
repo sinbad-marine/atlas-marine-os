@@ -139,6 +139,9 @@ test('short natural pauses are buffered into one bounded user turn',()=>{
   assert.match(app,/scheduleSinbadListening\(90\)/);
   assert.match(app,/listeningPauseForPace\?\.\(heard,durationMs\)/);
   assert.match(app,/pace\?\.accepted\?pace\.pauseMs:SINBAD_TURN_PAUSE_MS/);
+  assert.match(app,/listeningCueForPace\?\.\(sinbadPendingSpeechPace\)/);
+  assert.match(app,/listeningActivity:'continuation'/);
+  assert.match(app,/el\.dataset\.listeningPace=detail\.listeningPace/);
   assert.match(app,/elapsed>=SINBAD_TURN_MAX_MS\?120:sinbadTurnPauseMs/);
   assert.match(app,/const activeRecognition=sinbadRecognition;sinbadRecognition=null;sinbadIsListening=false;activeRecognition\?\.abort\(\)/);
 });
