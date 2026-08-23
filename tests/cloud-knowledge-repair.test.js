@@ -83,7 +83,7 @@ test('visual teaching requests return only verified indexed PDF pages',()=>{
   assert.match(edge,/sources\.filter\(\(source: any\) => source\.documentId && source\.page && \/pdf\/i\.test/);
   assert.match(edge,/kind: 'pdf-page'/);
   assert.match(edge,/VERIFIED SOURCE PAGE VISUALS/);
-  assert.match(edge,/return json\(\{ answer, spokenSummary, sources, visuals,/);
+  assert.match(edge,/return json\(\{ answer: deliveredAnswer, spokenSummary: deliveredSpokenSummary, sources: responseSources, visuals,/);
 });
 
 test('Sinbad renders source visuals as authenticated on-demand PDF pages',()=>{

@@ -1094,6 +1094,7 @@ function openSinbadSourceDialog(sourceView){
   dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});dialog.addEventListener('close',()=>{dialog.remove();returnFocus?.focus?.();},{once:true});document.body.append(dialog);dialog.showModal();renderSinbadSourcePage(view);
 }
 async function openSinbadSourceVisual(button){
+  if(!roleCanAccessPrivateSources()){alert('Private source pages are restricted to the workspace Owner and explicitly authorized Developers.');return;}
   const documentId=button?.dataset?.documentId,pageNumber=Math.max(1,Number(button?.dataset?.page)||1);
   const card=button?.closest('.sinbad-source-visual'),stage=card?.querySelector('.sinbad-source-visual-stage');
   if(!documentId||!stage||!cloudClient||!selectedWorkspaceId)return;

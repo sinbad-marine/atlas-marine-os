@@ -56,6 +56,7 @@ test('Sinbad chat renders source pages from authenticated Atlas storage, not inv
   assert.match(app,/function sinbadVisualCards\(visuals=\[\]\)/);
   assert.match(app,/visuals\.slice\(0,3\)/);
   assert.match(app,/async function openSinbadSourceVisual\(button\)/);
+  assert.match(app,/async function openSinbadSourceVisual\(button\)\{\s*if\(!roleCanAccessPrivateSources\(\)\)/);
   assert.match(app,/from\('documents'\)\.select\('bucket_id,object_path,original_filename,mime_type'\)/);
   assert.match(app,/cloudClient\.storage\.from\(documentRow\.bucket_id\)\.download\(documentRow\.object_path\)/);
   assert.match(app,/view\.pdf\.getPage\(view\.page\)/);
