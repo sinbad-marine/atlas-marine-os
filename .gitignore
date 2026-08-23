@@ -7,5 +7,6 @@ node_modules/
 playwright-report/
 test-results/
 debug.log
+.knowledge-cache/
 __pycache__/
 *.pyc
