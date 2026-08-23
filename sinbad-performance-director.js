@@ -537,6 +537,13 @@
         {at:1100,gesture:'shake-head-left',gaze:'audience',emotion:'attentive',energy:.3},
         {at:1600,gesture:'rest',gaze:'audience',emotion:'warm',energy:.24}
       ],
+      nod:[
+        {at:0,gesture:'rest',gaze:'audience',emotion:'attentive',energy:.24},
+        {at:200,gesture:'nod',gaze:'audience',emotion:'warm',energy:.32},
+        {at:560,gesture:'nod-up',gaze:'audience',emotion:'warm',energy:.28},
+        {at:900,gesture:'nod',gaze:'audience',emotion:'warm',energy:.3},
+        {at:1260,gesture:'rest',gaze:'audience',emotion:'warm',energy:.24}
+      ],
       'point-board':[
         {at:0,gesture:'explain',gaze:'audience',emotion:'confident',energy:.34},
         {at:300,gesture:'point-board',gaze:'board',emotion:'confident',energy:.42},

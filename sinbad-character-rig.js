@@ -35,6 +35,7 @@
     walk:{leftArm:-.32,rightArm:.32},
     'point-board':{headYaw:.24,leftArm:.1,rightArm:.86},
     nod:{headPitch:.24},
+    'nod-up':{headPitch:-.12,bodyLean:-.02,leftArm:.05,rightArm:.05},
     'listen-lean':{headPitch:.14,bodyLean:.18},
     'listen-orient':{headYaw:-.12,headPitch:.1,bodyLean:.12,leftArm:.04,rightArm:.04},
     'listen-follow':{headPitch:.18,bodyLean:.16,leftArm:.08,rightArm:.06},

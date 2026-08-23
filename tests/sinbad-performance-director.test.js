@@ -256,6 +256,7 @@ test('supported physical requests expand into bounded interruptible gesture sequ
   const wave=gestureSequenceForRequest('wave');assert.deepEqual(wave.cues.map(cue=>cue.gesture),['open-hand','wave-right','wave-right-away','wave-right','wave-right-away','open-hand']);assert.ok(wave.duration<=1800);
   const laugh=gestureSequenceForRequest('laugh');assert.deepEqual(laugh.cues.map(cue=>cue.gesture),['rest','laugh','nod','laugh','rest']);assert.ok(laugh.duration<=1500);
   const no=gestureSequenceForRequest('shake-head');assert.deepEqual(no.cues.map(cue=>cue.gesture),['rest','shake-head-left','shake-head-right','shake-head-left','rest']);assert.ok(no.duration<=1800);
+  const yes=gestureSequenceForRequest('nod');assert.deepEqual(yes.cues.map(cue=>cue.gesture),['rest','nod','nod-up','nod','rest']);assert.ok(yes.duration<=1400);
   assert.equal(gestureSequenceForRequest('smile').reason,'NO_GESTURE_SEQUENCE');
 });
 
