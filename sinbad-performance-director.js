@@ -323,6 +323,7 @@
       'show-palm':Object.freeze({gesture:'show-palm',gaze:'audience',emotion:'warm',energy:.4}),
       'show-right-hand':Object.freeze({gesture:'show-palm',gaze:'audience',emotion:'warm',energy:.4}),
       'raise-left-hand':Object.freeze({gesture:'raise-left',gaze:'audience',emotion:'attentive',energy:.38}),
+      'show-both-hands':Object.freeze({gesture:'show-both-hands',gaze:'audience',emotion:'warm',energy:.44}),
       wave:Object.freeze({gesture:'wave-right',gaze:'audience',emotion:'warm',energy:.46}),
       'look-left':Object.freeze({gesture:'look-left',gaze:'audience',emotion:'attentive',energy:.24}),
       'look-right':Object.freeze({gesture:'look-right',gaze:'audience',emotion:'attentive',energy:.24}),
@@ -341,6 +342,7 @@
       const actions=rightThenLeft?['show-right-hand','raise-left-hand']:['raise-left-hand','show-right-hand'];
       return Object.freeze({accepted:true,action:'two-hand-sequence',actions:Object.freeze(actions),supported:true,compound:true,semantic:'compound-two-hand',responsePolicy:'replace',cue:contextualActions[actions[0]]});
     }
+    if(/((?:iki|her\s+iki)\s+(?:elini|avucunu|kolunu).*(?:aynı\s+anda\s+)?(?:göster|kaldır|aç)|(?:show|raise|open).*(?:both|two).*(?:hands|palms|arms))/iu.test(normalized))return Object.freeze({accepted:true,action:'show-both-hands',supported:true,responsePolicy:'replace',cue:contextualActions['show-both-hands']});
     if(/(aynı\s+hareketi.*(?:tekrar|yine|yap)|(?:do|show)\s+(?:it|that)\s+again|repeat\s+(?:that|the\s+movement))/iu.test(normalized)){
       if(lastAction&&Object.hasOwn(contextualActions,lastAction))return Object.freeze({accepted:true,action:lastAction,supported:true,contextual:true,cue:contextualActions[lastAction]});
       return Object.freeze({accepted:true,action:'repeat-last-action',supported:false,contextual:true,reason:'NO_VERIFIED_GESTURE_REFERENCE'});
@@ -393,6 +395,7 @@
       'show-palm':'Avucumu açıp gösteriyorum.',
       'show-right-hand':'Sağ avucumu açıp gösteriyorum.',
       'raise-left-hand':'Sol elimi kaldırıp gösteriyorum.',
+      'show-both-hands':'İki elimi aynı anda açıp gösteriyorum.',
       wave:'Sana gülümseyerek el sallıyorum.',
       'look-left':'Başımı sola çeviriyorum.',
       'look-right':'Başımı sağa çeviriyorum.',
@@ -407,6 +410,7 @@
       'show-palm':'I am opening my palm and showing it to you.',
       'show-right-hand':'I am opening and showing my right palm.',
       'raise-left-hand':'I am raising and showing my left hand.',
+      'show-both-hands':'I am opening and showing both hands at once.',
       wave:'I am smiling and waving to you.',
       'look-left':'I am turning my head to the left.',
       'look-right':'I am turning my head to the right.',
@@ -441,6 +445,7 @@
       'show-palm':'Avucumu açıp gösterdim.',
       'show-right-hand':'Sağ avucumu açıp gösterdim.',
       'raise-left-hand':'Sol elimi kaldırıp gösterdim.',
+      'show-both-hands':'İki elimi aynı anda gösterdim.',
       wave:'Sana el salladım.',
       'look-left':'Başımı sola çevirdim.',
       'look-right':'Başımı sağa çevirdim.',
@@ -455,6 +460,7 @@
       'show-palm':'I opened and showed my palm.',
       'show-right-hand':'I opened and showed my right palm.',
       'raise-left-hand':'I raised and showed my left hand.',
+      'show-both-hands':'I showed both hands at once.',
       wave:'I waved to you.',
       'look-left':'I turned my head to the left.',
       'look-right':'I turned my head to the right.',
@@ -482,9 +488,9 @@
     const turkish=String(language).toLocaleLowerCase('en-US').startsWith('tr');
     const actions=Array.isArray(history)?history.slice(-2):[];
     const labels=turkish?{
-      'show-palm':'avucumu açıp gösterdim','show-right-hand':'sağ avucumu gösterdim','raise-left-hand':'sol elimi kaldırdım',wave:'sana el salladım','look-left':'başımı sola çevirdim','look-right':'başımı sağa çevirdim','shake-head':'başımı iki yana salladım',nod:'başımı eğdim',smile:'gülümsedim',laugh:'kısa bir kahkaha attım',walk:'kısa bir yürüyüş yaptım','point-board':'tahtayı işaret ettim','show-listening':'seni dinlediğimi gösterdim'
+      'show-palm':'avucumu açıp gösterdim','show-right-hand':'sağ avucumu gösterdim','raise-left-hand':'sol elimi kaldırdım','show-both-hands':'iki elimi aynı anda gösterdim',wave:'sana el salladım','look-left':'başımı sola çevirdim','look-right':'başımı sağa çevirdim','shake-head':'başımı iki yana salladım',nod:'başımı eğdim',smile:'gülümsedim',laugh:'kısa bir kahkaha attım',walk:'kısa bir yürüyüş yaptım','point-board':'tahtayı işaret ettim','show-listening':'seni dinlediğimi gösterdim'
     }:{
-      'show-palm':'opened and showed my palm','show-right-hand':'showed my right palm','raise-left-hand':'raised my left hand',wave:'waved to you','look-left':'turned my head left','look-right':'turned my head right','shake-head':'shook my head from side to side',nod:'nodded',smile:'smiled',laugh:'gave a brief laugh',walk:'took a short walk','point-board':'pointed to the board','show-listening':'showed that I was listening'
+      'show-palm':'opened and showed my palm','show-right-hand':'showed my right palm','raise-left-hand':'raised my left hand','show-both-hands':'showed both hands at once',wave:'waved to you','look-left':'turned my head left','look-right':'turned my head right','shake-head':'shook my head from side to side',nod:'nodded',smile:'smiled',laugh:'gave a brief laugh',walk:'took a short walk','point-board':'pointed to the board','show-listening':'showed that I was listening'
     };
     const known=actions.filter(action=>Object.hasOwn(labels,action));
     if(known.length<2)return Object.freeze({accepted:true,known:false,text:turkish?'Sıralı yanıt için henüz iki doğrulanmış hareket kaydım yok.':'I do not yet have two verified movements recorded for a sequence answer.'});
@@ -514,6 +520,12 @@
         {at:0,gesture:'rest',gaze:'audience',emotion:'attentive',energy:.26},
         {at:240,gesture:'raise-left',gaze:'left-palm',emotion:'attentive',energy:.38},
         {at:760,gesture:'raise-left',gaze:'audience',emotion:'warm',energy:.32}
+      ],
+      'show-both-hands':[
+        {at:0,gesture:'rest',gaze:'audience',emotion:'attentive',energy:.24},
+        {at:260,gesture:'open-hand',gaze:'audience',emotion:'warm',energy:.32},
+        {at:620,gesture:'show-both-hands',gaze:'audience',emotion:'warm',energy:.44},
+        {at:1320,gesture:'rest',gaze:'audience',emotion:'warm',energy:.24}
       ],
       wave:[
         {at:0,gesture:'open-hand',gaze:'audience',emotion:'warm',energy:.32},

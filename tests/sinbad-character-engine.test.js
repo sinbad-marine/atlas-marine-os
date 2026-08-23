@@ -17,6 +17,7 @@ test('character engine accepts the real open-palm pose and rejects invented gest
   const engine=createCharacterEngine();
   assert.equal(engine.setState('presenting',{gesture:'show-palm'}).snapshot.gesture,'show-palm');
   assert.equal(engine.setState('presenting',{gesture:'raise-left'}).snapshot.gesture,'raise-left');
+  assert.equal(engine.setState('presenting',{gesture:'show-both-hands'}).snapshot.gesture,'show-both-hands');
   assert.equal(engine.setState('presenting',{gesture:'wave-right'}).snapshot.gesture,'wave-right');
   assert.equal(engine.setState('presenting',{gesture:'wave-right-away'}).snapshot.gesture,'wave-right-away');
   assert.equal(engine.setState('presenting',{gesture:'look-left'}).snapshot.gesture,'look-left');
