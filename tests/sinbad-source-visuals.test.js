@@ -35,9 +35,12 @@ test('Sinbad chat renders source pages from authenticated Atlas storage, not inv
   assert.match(app,/async function openSinbadSourceVisual\(button\)/);
   assert.match(app,/from\('documents'\)\.select\('bucket_id,object_path,original_filename,mime_type'\)/);
   assert.match(app,/cloudClient\.storage\.from\(documentRow\.bucket_id\)\.download\(documentRow\.object_path\)/);
-  assert.match(app,/pdf\.getPage\(safePage\)/);
+  assert.match(app,/view\.pdf\.getPage\(view\.page\)/);
+  assert.match(app,/function openSinbadSourceDialog\(sourceView\)/);
+  assert.match(app,/event\.key==='ArrowLeft'/);
   assert.doesNotMatch(app,/sinbad-source-visual[^\n]*https?:\/\//);
-  assert.match(css,/\.sinbad-source-visual-stage canvas/);
+  assert.match(css,/\.sinbad-source-page-viewport canvas/);
+  assert.match(css,/\.sinbad-source-dialog::backdrop/);
 });
 
 test('visual references are attached only to the matching assistant answer',()=>{
