@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.19-private-source-access-v1';
+const CACHE='sinbad-marine-v8.20.20-private-source-access-full-catalog-v1';
 const ASSETS=[
   './',
   './index.html',
@@ -24,6 +24,8 @@ const ASSETS=[
   './sinbad-character-rig.js',
   './pilot-data.js',
   './route-data.js',
+  './resource-data.js',
+  './store-data.js',
   './official-publications.js',
   './supabase/functions/sinbad-answer/core-decision.js',
   './sinbad-core.js',
