@@ -105,9 +105,14 @@ function drawAllowedShapeAtBoard(shape){
   line.style.transition='stroke-dashoffset 1100ms ease-in-out';requestAnimationFrame(()=>requestAnimationFrame(()=>{if(generation===academyBoardGeneration)line.style.strokeDashoffset='0';}));
   return true;
 }
-function clearAcademyBoard(){
-  const stage=byId('academyTeachingStage'),board=byId('academyTeachingText');if(!stage||!board)return false;
-  academyBoardGeneration++;academyPerformanceDirector?.cancel();board.replaceChildren();stage.dataset.boardDrawingPhase='clear';renderAcademyCharacterCue({state:'board-teaching',gesture:'explain',gaze:'audience'},'');return true;
+function clearAcademyBoard(onApplied){
+  const stage=byId('academyTeachingStage'),board=byId('academyTeachingText'),image=byId('academySinbadImage');if(!stage||!board||!image)return false;
+  const generation=++academyBoardGeneration;academyPerformanceDirector?.cancel();stage.hidden=false;stage.dataset.boardDrawingPhase='erasing';academyCharacterEngine?.dispatch('TEACH_AT_BOARD',{boardText:'',gesture:'write-contact',gaze:'board'});image.src=ACADEMY_CHARACTER_ASSETS.writing.contact;
+  const finish=()=>{if(generation!==academyBoardGeneration)return;board.replaceChildren();stage.dataset.boardDrawingPhase='clear';image.src=ACADEMY_CHARACTER_ASSETS.writing.ready;academyCharacterEngine?.dispatch('TEACH_AT_BOARD',{boardText:'',gesture:'explain',gaze:'audience'});onApplied?.();};
+  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches===true){finish();return true;}
+  setTimeout(()=>{if(generation===academyBoardGeneration)image.src=ACADEMY_CHARACTER_ASSETS.writing.lift;},180);
+  setTimeout(()=>{if(generation===academyBoardGeneration)image.src=ACADEMY_CHARACTER_ASSETS.writing.contact;},360);
+  setTimeout(finish,620);return true;
 }
 function stopBoardTeaching(){academyBoardGeneration++;academyPerformanceDirector?.cancel();const stage=byId('academyTeachingStage');if(stage)stage.hidden=true;const board=byId('academyTeachingText');board?.querySelector('.academy-chalk-cursor')?.remove();academyCharacterEngine?.dispatch('READY');}
 
@@ -149,7 +154,7 @@ window.addEventListener('message',event=>{
   let appliedAction=null;
   if(message.type==='SINBAD_ACADEMY_WRITE_BOARD'&&typeof message.text==='string'&&message.text.trim()&&message.text.length<=200&&writeCustomTextAtBoard(message.text))appliedAction=Object.freeze({kind:'text',value:message.text.trim()});
   if(message.type==='SINBAD_ACADEMY_DRAW_SHAPE'&&['circle','triangle','rectangle','arrow','axes'].includes(message.shape)&&drawAllowedShapeAtBoard(message.shape))appliedAction=Object.freeze({kind:'shape',value:message.shape});
-  if(message.type==='SINBAD_ACADEMY_CLEAR_BOARD'&&clearAcademyBoard())appliedAction=Object.freeze({kind:'clear',value:'board'});
+  if(message.type==='SINBAD_ACADEMY_CLEAR_BOARD'){clearAcademyBoard(()=>window.opener.postMessage({version:1,type:'SINBAD_ACADEMY_BOARD_APPLIED',action:{kind:'clear',value:'board'}},location.origin));return;}
   if(appliedAction)window.opener.postMessage({version:1,type:'SINBAD_ACADEMY_BOARD_APPLIED',action:appliedAction},location.origin);
 });
 window.opener?.postMessage({version:1,type:'SINBAD_ACADEMY_READY'},location.origin);
