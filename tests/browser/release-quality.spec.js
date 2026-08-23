@@ -341,6 +341,12 @@ test('live Sinbad chat writes bounded plain text on the real Academy board',asyn
   await page.locator('#sinbadInput').fill('Yönü gösterir.');await page.locator('#sendSinbad').click();
   await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Doğru. Cevabın tahtadaki şekille uyuşuyor.');
   await expect(page.locator('.sinbad-avatar.large')).toHaveAttribute('data-gesture','nod');
+  await page.locator('#sinbadInput').fill('Bu şekille ilgili bana soru sor.');await page.locator('#sendSinbad').click();
+  await page.locator('#sinbadInput').fill('Üç kenarı vardır.');await page.locator('#sendSinbad').click();
+  await page.locator('#sinbadInput').fill('Yine üç kenarı vardır.');await page.locator('#sendSinbad').click();
+  await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Soruyu burada kapatıyorum.');
+  await page.locator('#sinbadInput').fill('Merhaba');await page.locator('#sendSinbad').click();
+  await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Merhaba Kaptan. Sinbad aktif.');
   await page.locator('#sinbadInput').fill('Tahtayı temizle.');await page.locator('#sendSinbad').click();
   await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Academy tahtasını temizliyorum.');
   await expect(classroom.locator('#academyTeachingStage')).toHaveAttribute('data-board-drawing-phase','erasing');
