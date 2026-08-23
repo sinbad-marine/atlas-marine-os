@@ -74,3 +74,30 @@ test('simple greetings return immediately without retrieval or an advertising mo
   assert.match(edge,/mode: 'local-greeting'/);
   assert.ok(edge.indexOf('if (isSimpleGreeting(question))')<edge.indexOf('const expandedTitleTerms = titleTerms(queryTerms)'));
 });
+
+test('visual teaching requests return only verified indexed PDF pages',()=>{
+  assert.match(edge,/const wantsSourceVisuals =/);
+  assert.match(edge,/const pageForChunk =/);
+  assert.ok(edge.includes('const pagePattern = /\\[Page\\s+(\\d+)\\]/gi;'));
+  assert.match(edge,/sources\.filter\(\(source: any\) => source\.documentId && source\.page && \/pdf\/i\.test/);
+  assert.match(edge,/kind: 'pdf-page'/);
+  assert.match(edge,/VERIFIED SOURCE PAGE VISUALS/);
+  assert.match(edge,/return json\(\{ answer, spokenSummary, sources, visuals,/);
+});
+
+test('Sinbad renders source visuals as authenticated on-demand PDF pages',()=>{
+  assert.match(app,/function sinbadVisualCards\(visuals=\[\]\)/);
+  assert.match(app,/data-document-id="\$\{esc\(visual\.documentId\)\}"/);
+  assert.match(app,/async function openSinbadSourceVisual\(button\)/);
+  assert.match(app,/from\('documents'\).*eq\('workspace_id',selectedWorkspaceId\).*eq\('id',documentId\)/s);
+  assert.match(app,/storage\.from\(documentRow\.bucket_id\)\.download\(documentRow\.object_path\)/);
+  assert.match(app,/view\.pdf\.getPage\(view\.page\)/);
+  assert.match(app,/page\.render\(\{canvasContext:view\.canvas\.getContext\('2d'\),viewport\}\)/);
+});
+
+test('source visual viewer supports pagination, zoom, fullscreen and keyboard navigation',()=>{
+  assert.match(app,/function createSinbadSourceViewer\(view,\{dialog=false\}=\{\}\)/);
+  assert.match(app,/function openSinbadSourceDialog\(sourceView\)/);
+  assert.match(app,/Önceki sayfa/);assert.match(app,/Sonraki sayfa/);assert.match(app,/Yakınlaştırmayı sıfırla/);
+  assert.match(app,/event\.key==='ArrowLeft'/);assert.match(app,/event\.key==='ArrowRight'/);assert.match(app,/dialog\.showModal\(\)/);
+});
