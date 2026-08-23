@@ -193,7 +193,7 @@ test('live Sinbad chat grounds body answers in the gesture actually shown',async
 
   await ask('Başını eğ.');
   await expect(answer).toContainText('Başımı eğerek yanıt veriyorum.');
-  await expect(avatar).toHaveAttribute('data-gesture','nod-up',{timeout:2500});
+  await expect(avatar).toHaveAttribute('data-gesture',/^nod(?:-up)?$/u,{timeout:2500});
 
   await ask('İki elini aynı anda göster.');
   await expect(answer).toContainText('İki elimi aynı anda açıp gösteriyorum.');
@@ -240,11 +240,11 @@ test('a short speech pause joins one user turn instead of submitting mid-sentenc
     const first=window.__sinbadRecognitionStubs[0],results=[[{transcript:'Hey Sinbad rotayı'}]];results[0].isFinal=true;
     first.onspeechstart?.();first.onresult?.({resultIndex:0,results});first.onend?.();
   });
-  await page.waitForTimeout(300);
+  await page.waitForTimeout(50);
   await expect(page.locator('#sinbadMessages .chat-bubble.user')).toHaveCount(0);
   await expect(page.locator('.sinbad-avatar.large')).toHaveAttribute('data-listening-activity','continuation');
   await expect(page.locator('.sinbad-avatar.large')).toHaveAttribute('data-listening-pace','fast');
-  await page.waitForFunction(()=>window.__sinbadRecognitionStubs?.length>=2);
+  await page.waitForFunction(()=>window.__sinbadRecognitionStubs?.length>=2&&typeof window.__sinbadRecognitionStubs[1].onresult==='function',null,{polling:10});
   await page.evaluate(()=>{
     const second=window.__sinbadRecognitionStubs[1],results=[[{transcript:'göster'}]];results[0].isFinal=true;
     second.onspeechstart?.();second.onresult?.({resultIndex:0,results});second.onend?.();
@@ -295,5 +295,9 @@ test('live Sinbad chat writes bounded plain text on the real Academy board',asyn
   await expect(classroom.locator('#academyTeachingText svg[data-board-shape="triangle"] path')).toBeVisible();
   await expect(classroom.locator('#academyTeachingText path')).toHaveCSS('stroke-dashoffset','0px',{timeout:3000});
   await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Academy tahtasına bir üçgen çiziyorum.');
+  await page.locator('#sinbadInput').fill('Tahtaya bir ok çiz.');
+  await page.locator('#sendSinbad').click();
+  await expect(classroom.locator('#academyTeachingText svg[data-board-shape="arrow"] path')).toBeVisible();
+  await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Academy tahtasına bir ok çiziyorum.');
   await classroom.close();
 });

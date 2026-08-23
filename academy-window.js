@@ -75,7 +75,9 @@ function drawAllowedShapeAtBoard(shape){
   const definitions=Object.freeze({
     circle:Object.freeze({element:'circle',attributes:Object.freeze({cx:'120',cy:'90',r:'62'}),length:'390',label:'Sinbad drew a circle'}),
     triangle:Object.freeze({element:'path',attributes:Object.freeze({d:'M120 24 L202 154 L38 154 Z'}),length:'470',label:'Sinbad drew a triangle'}),
-    rectangle:Object.freeze({element:'path',attributes:Object.freeze({d:'M38 34 H202 V146 H38 Z'}),length:'555',label:'Sinbad drew a rectangle'})
+    rectangle:Object.freeze({element:'path',attributes:Object.freeze({d:'M38 34 H202 V146 H38 Z'}),length:'555',label:'Sinbad drew a rectangle'}),
+    arrow:Object.freeze({element:'path',attributes:Object.freeze({d:'M32 90 H194 M164 60 L194 90 L164 120'}),length:'250',label:'Sinbad drew an arrow'}),
+    axes:Object.freeze({element:'path',attributes:Object.freeze({d:'M26 90 H214 M188 74 L214 90 L188 106 M120 158 V22 M104 48 L120 22 L136 48'}),length:'475',label:'Sinbad drew coordinate axes'})
   }),definition=definitions[shape];
   if(!definition)return false;
   const stage=byId('academyTeachingStage'),title=byId('academyTeachingTitle'),board=byId('academyTeachingText');if(!stage||!title||!board)return false;
@@ -125,6 +127,6 @@ window.addEventListener('message',event=>{
   if(event.origin!==location.origin||event.source!==window.opener)return;
   const message=event.data;if(!message||message.version!==1)return;
   if(message.type==='SINBAD_ACADEMY_WRITE_BOARD'&&typeof message.text==='string'&&message.text.trim()&&message.text.length<=200)writeCustomTextAtBoard(message.text);
-  if(message.type==='SINBAD_ACADEMY_DRAW_SHAPE'&&['circle','triangle','rectangle'].includes(message.shape))drawAllowedShapeAtBoard(message.shape);
+  if(message.type==='SINBAD_ACADEMY_DRAW_SHAPE'&&['circle','triangle','rectangle','arrow','axes'].includes(message.shape))drawAllowedShapeAtBoard(message.shape);
 });
 window.opener?.postMessage({version:1,type:'SINBAD_ACADEMY_READY'},location.origin);

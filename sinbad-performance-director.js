@@ -372,6 +372,8 @@
     if(/(?:tahta(?:ya|da)\s+(?:bir\s+)?daire\s+çiz|draw\s+(?:a\s+)?circle\s+(?:on|onto)\s+(?:the\s+)?(?:board|blackboard))/iu.test(normalized))return Object.freeze({accepted:true,action:'draw-board-shape',supported:true,directAcademyBoard:true,responsePolicy:'replace',boardShape:'circle',cue:Object.freeze({gesture:'point-board',gaze:'board',emotion:'confident',energy:.44})});
     if(/(?:tahta(?:ya|da)\s+(?:bir\s+)?üçgen\s+çiz|draw\s+(?:a\s+)?triangle\s+(?:on|onto)\s+(?:the\s+)?(?:board|blackboard))/iu.test(normalized))return Object.freeze({accepted:true,action:'draw-board-shape',supported:true,directAcademyBoard:true,responsePolicy:'replace',boardShape:'triangle',cue:Object.freeze({gesture:'point-board',gaze:'board',emotion:'confident',energy:.44})});
     if(/(?:tahta(?:ya|da)\s+(?:bir\s+)?(?:dikdörtgen|kare)\s+çiz|draw\s+(?:a\s+)?(?:rectangle|square)\s+(?:on|onto)\s+(?:the\s+)?(?:board|blackboard))/iu.test(normalized))return Object.freeze({accepted:true,action:'draw-board-shape',supported:true,directAcademyBoard:true,responsePolicy:'replace',boardShape:'rectangle',cue:Object.freeze({gesture:'point-board',gaze:'board',emotion:'confident',energy:.44})});
+    if(/(?:tahta(?:ya|da)\s+(?:bir\s+)?ok\s+çiz|draw\s+(?:an?\s+)?arrow\s+(?:on|onto)\s+(?:the\s+)?(?:board|blackboard))/iu.test(normalized))return Object.freeze({accepted:true,action:'draw-board-shape',supported:true,directAcademyBoard:true,responsePolicy:'replace',boardShape:'arrow',cue:Object.freeze({gesture:'point-board',gaze:'board',emotion:'confident',energy:.44})});
+    if(/(?:tahta(?:ya|da)\s+(?:(?:bir\s+)?koordinat\s+)?eksen(?:leri)?\s+çiz|draw\s+(?:the\s+)?(?:coordinate\s+)?axes\s+(?:on|onto)\s+(?:the\s+)?(?:board|blackboard))/iu.test(normalized))return Object.freeze({accepted:true,action:'draw-board-shape',supported:true,directAcademyBoard:true,responsePolicy:'replace',boardShape:'axes',cue:Object.freeze({gesture:'point-board',gaze:'board',emotion:'confident',energy:.44})});
     if(/(tahta(?:ya|da|yı)?.*(?:yaz|çiz)|(?:write|draw).*(?:board|blackboard))/iu.test(normalized)){
       return Object.freeze({accepted:true,action:'write-board',supported:false,reason:'GESTURE_NOT_IMPLEMENTED'});
     }
@@ -400,7 +402,7 @@
     }
     if(request.directAcademyBoard&&request.action==='write-board')return Object.freeze({accepted:true,supported:true,action:'write-board',text:turkish?`Academy tahtasına “${request.boardText}” yazıyorum.`:`I am writing “${request.boardText}” on the Academy board.`});
     if(request.directAcademyBoard&&request.action==='draw-board-shape'){
-      const names=turkish?{circle:'daire',triangle:'üçgen',rectangle:'dikdörtgen'}:{circle:'circle',triangle:'triangle',rectangle:'rectangle'},name=names[request.boardShape];
+      const names=turkish?{circle:'daire',triangle:'üçgen',rectangle:'dikdörtgen',arrow:'ok',axes:'koordinat eksenleri'}:{circle:'circle',triangle:'triangle',rectangle:'rectangle',arrow:'arrow',axes:'coordinate axes'},name=names[request.boardShape];
       if(name)return Object.freeze({accepted:true,supported:true,action:'draw-board-shape',text:turkish?`Academy tahtasına bir ${name} çiziyorum.`:`I am drawing a ${name} on the Academy board.`});
     }
     const copy=turkish?{

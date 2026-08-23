@@ -1549,7 +1549,7 @@ function queueSinbadAcademyBoardPayload(payload){
   return true;
 }
 function sendTextToSinbadAcademyBoard(text){const clean=typeof text==='string'?text.trim().slice(0,200):'';return clean?queueSinbadAcademyBoardPayload({version:1,type:'SINBAD_ACADEMY_WRITE_BOARD',text:clean}):false;}
-function sendShapeToSinbadAcademyBoard(shape){return ['circle','triangle','rectangle'].includes(shape)?queueSinbadAcademyBoardPayload({version:1,type:'SINBAD_ACADEMY_DRAW_SHAPE',shape}):false;}
+function sendShapeToSinbadAcademyBoard(shape){return ['circle','triangle','rectangle','arrow','axes'].includes(shape)?queueSinbadAcademyBoardPayload({version:1,type:'SINBAD_ACADEMY_DRAW_SHAPE',shape}):false;}
 window.addEventListener('message',event=>{
   if(event.origin!==location.origin||event.source!==sinbadAcademyNativeWindow||event.data?.version!==1||event.data?.type!=='SINBAD_ACADEMY_READY'||!sinbadAcademyPendingBoardPayload)return;
   sinbadAcademyNativeWindow.postMessage(sinbadAcademyPendingBoardPayload,location.origin);sinbadAcademyPendingBoardPayload=null;

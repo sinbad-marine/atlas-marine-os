@@ -80,8 +80,8 @@ test('main chat can send only bounded same-origin plain text to the Academy boar
   assert.match(academyApp,/event\.origin!==location\.origin\|\|event\.source!==window\.opener/);
   assert.match(academyApp,/message\.text\.length<=200/);assert.match(academyApp,/writeCustomTextAtBoard\(message\.text\)/);assert.match(academyApp,/type:'SINBAD_ACADEMY_READY'/);
   assert.match(app,/function sendShapeToSinbadAcademyBoard\(shape\)/);assert.match(academyApp,/function drawAllowedShapeAtBoard\(shape\)/);
-  assert.match(academyApp,/\['circle','triangle','rectangle'\]\.includes\(message\.shape\)/);assert.match(academyApp,/createElementNS\('http:\/\/www\.w3\.org\/2000\/svg','svg'\)/);
-  assert.match(academyApp,/triangle:Object\.freeze/);assert.match(academyApp,/rectangle:Object\.freeze/);assert.match(academyApp,/svg\.dataset\.boardShape=shape/);
+  assert.match(academyApp,/\['circle','triangle','rectangle','arrow','axes'\]\.includes\(message\.shape\)/);assert.match(academyApp,/createElementNS\('http:\/\/www\.w3\.org\/2000\/svg','svg'\)/);
+  for(const shape of ['triangle','rectangle','arrow','axes'])assert.match(academyApp,new RegExp(`${shape}:Object\\.freeze`));assert.match(academyApp,/svg\.dataset\.boardShape=shape/);
 });
 
 test('real transparent writing frames follow measured board progress and settle to explanation',()=>{

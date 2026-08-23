@@ -234,6 +234,10 @@ test('explicit gesture requests override improvisation only when a real supporte
   const circle=gestureRequestForText('Tahtaya bir daire çiz.');assert.equal(circle.supported,true);assert.equal(circle.directAcademyBoard,true);assert.equal(circle.boardShape,'circle');
   assert.equal(gestureRequestForText('Tahtaya bir üçgen çiz.').boardShape,'triangle');
   assert.equal(gestureRequestForText('Draw a rectangle on the board.').boardShape,'rectangle');
+  assert.equal(gestureRequestForText('Tahtaya bir ok çiz.').boardShape,'arrow');
+  assert.equal(gestureRequestForText('Tahtaya koordinat eksenleri çiz.').boardShape,'axes');
+  assert.equal(gestureRequestForText('Tahtaya bir ok çiz.').boardShape,'arrow');
+  assert.equal(gestureRequestForText('Tahtaya koordinat eksenleri çiz.').boardShape,'axes');
   const listening=gestureRequestForText('Beni dinliyor musun?');
   assert.equal(listening.action,'show-listening');assert.equal(listening.cue.gesture,'listen-lean');
   assert.equal(gestureRequestForText('Sağ elini göster.').action,'show-right-hand');
