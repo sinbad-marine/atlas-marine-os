@@ -73,6 +73,14 @@ test('board writing progress drives a real chalk cursor and bounded character di
   assert.match(academyCss,/\.academy-chalk-cursor\{/);assert.match(academyCss,/@keyframes academyChalkPulse/);
 });
 
+test('main chat can send only bounded same-origin plain text to the Academy board',()=>{
+  assert.match(app,/function sendTextToSinbadAcademyBoard\(text\)/);
+  assert.match(app,/slice\(0,200\)/);assert.match(app,/type:'SINBAD_ACADEMY_WRITE_BOARD'/);assert.match(app,/type!=='SINBAD_ACADEMY_READY'/);assert.match(app,/postMessage\(sinbadAcademyPendingBoardPayload,location\.origin\)/);
+  assert.match(academyApp,/function writeCustomTextAtBoard\(rawText\)/);
+  assert.match(academyApp,/event\.origin!==location\.origin\|\|event\.source!==window\.opener/);
+  assert.match(academyApp,/message\.text\.length>200/);assert.match(academyApp,/writeCustomTextAtBoard\(message\.text\)/);assert.match(academyApp,/type:'SINBAD_ACADEMY_READY'/);
+});
+
 test('real transparent writing frames follow measured board progress and settle to explanation',()=>{
   for(const file of ['captain-sinbad-writing-contact-v1.png','captain-sinbad-writing-lift-v1.png']){
     const path=`assets/captain-sinbad/${file}`,bytes=fs.readFileSync(path);assert.equal(bytes.toString('ascii',1,4),'PNG');assert.equal(bytes[25],6);assert.match(worker,new RegExp(file.replaceAll('.','\\.')));

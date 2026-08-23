@@ -318,7 +318,7 @@
   }
   function gestureRequestForText(text,context={}){
     if(typeof text!=='string'||!text.trim())return Object.freeze({accepted:false,reason:'INVALID_REQUEST_TEXT'});
-    const normalized=text.toLocaleLowerCase('tr-TR');
+    const source=text.trim(),normalized=source.toLocaleLowerCase('tr-TR');
     const contextualActions={
       'show-palm':Object.freeze({gesture:'show-palm',gaze:'audience',emotion:'warm',energy:.4}),
       'show-right-hand':Object.freeze({gesture:'show-palm',gaze:'audience',emotion:'warm',energy:.4}),
@@ -365,6 +365,10 @@
     if(/(avuc(?:unu|unda|unun)|avuç|palm|open (?:your )?hand|show (?:me )?(?:your )?hand)/iu.test(normalized)){
       return Object.freeze({accepted:true,action:'show-palm',supported:true,cue:Object.freeze({gesture:'show-palm',gaze:'audience',emotion:'warm',energy:.4})});
     }
+    const turkishBoardText=source.match(/tahta(?:ya|da)\s+(.{1,200}?)\s+yaz(?:ar\s+mısın)?[.!? ]*$/iu)?.[1]?.trim();
+    const englishBoardText=source.match(/write\s+(.{1,200}?)\s+(?:on|onto)\s+(?:the\s+)?(?:board|blackboard)[.!? ]*$/iu)?.[1]?.trim();
+    const boardText=turkishBoardText||englishBoardText;
+    if(boardText)return Object.freeze({accepted:true,action:'write-board',supported:true,directAcademyBoard:true,responsePolicy:'replace',boardText,cue:Object.freeze({gesture:'point-board',gaze:'board',emotion:'confident',energy:.42})});
     if(/(tahta(?:ya|da|yı)?.*(?:yaz|çiz)|(?:write|draw).*(?:board|blackboard))/iu.test(normalized)){
       return Object.freeze({accepted:true,action:'write-board',supported:false,reason:'GESTURE_NOT_IMPLEMENTED'});
     }
@@ -391,6 +395,7 @@
       const rightFirst=request.actions[0]==='show-right-hand';
       return Object.freeze({accepted:true,supported:true,action:'two-hand-sequence',text:turkish?(rightFirst?'Önce sağ avucumu, ardından sol elimi gösteriyorum.':'Önce sol elimi, ardından sağ avucumu gösteriyorum.'):(rightFirst?'First I am showing my right palm, then my left hand.':'First I am showing my left hand, then my right palm.')});
     }
+    if(request.directAcademyBoard&&request.action==='write-board')return Object.freeze({accepted:true,supported:true,action:'write-board',text:turkish?`Academy tahtasına “${request.boardText}” yazıyorum.`:`I am writing “${request.boardText}” on the Academy board.`});
     const copy=turkish?{
       'show-palm':'Avucumu açıp gösteriyorum.',
       'show-right-hand':'Sağ avucumu açıp gösteriyorum.',

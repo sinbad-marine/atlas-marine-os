@@ -268,3 +268,22 @@ test('Sinbad Academy opens outside the main app as a standalone classroom window
   await expect(classroom.locator('#academyOutput')).toContainText('Learning objectives');
   await classroom.close();
 });
+
+test('live Sinbad chat writes bounded plain text on the real Academy board',async({page})=>{
+  await stubBridge(page);
+  await page.goto('/');
+  await page.evaluate(()=>{
+    document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');
+    document.querySelector('#sinbad')?.classList.add('active');sinbadState.voiceEnabled=false;
+  });
+  const popupPromise=page.waitForEvent('popup');
+  await page.locator('#sinbadInput').fill('Tahtaya Pruva 090 yaz.');
+  await page.locator('#sendSinbad').click();
+  const classroom=await popupPromise;
+  await classroom.waitForLoadState();
+  await expect(classroom.locator('#academyTeachingStage')).toBeVisible();
+  await expect(classroom.locator('#academyTeachingText')).toContainText('Pruva 090',{timeout:5000});
+  await expect(classroom.locator('.academy-sinbad')).toHaveAttribute('data-state','board-teaching');
+  await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Academy tahtasına “Pruva 090” yazıyorum.');
+  await classroom.close();
+});

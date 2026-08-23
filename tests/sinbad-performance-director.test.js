@@ -230,6 +230,8 @@ test('explicit gesture requests override improvisation only when a real supporte
   assert.equal(palm.supported,true);assert.equal(palm.action,'show-palm');assert.equal(palm.cue.gesture,'show-palm');
   const board=gestureRequestForText('Bunu tahtada göster.');
   assert.equal(board.supported,true);assert.equal(board.cue.gesture,'point-board');assert.equal(board.cue.gaze,'board');
+  const writing=gestureRequestForText('Tahtaya Pruva 090 yaz.');assert.equal(writing.supported,true);assert.equal(writing.directAcademyBoard,true);assert.equal(writing.boardText,'Pruva 090');
+  assert.equal(gestureRequestForText('Tahtaya bir daire çiz.').supported,false);
   const listening=gestureRequestForText('Beni dinliyor musun?');
   assert.equal(listening.action,'show-listening');assert.equal(listening.cue.gesture,'listen-lean');
   assert.equal(gestureRequestForText('Sağ elini göster.').action,'show-right-hand');

@@ -61,6 +61,16 @@ function teachLessonAtBoard(lesson){
   if(reducedMotion){board.textContent=text;return;}
   let index=0,lastCueBucket=-1,lastFrameKey='ready';const writeNext=()=>{if(generation!==academyBoardGeneration)return;index++;lastCueBucket=directAcademyWritingGesture(index,text,lastCueBucket);lastFrameKey=renderAcademyWritingFrame(index,text,lastFrameKey);renderAcademyBoardProgress(board,text,index,index>=text.length);if(index<text.length)setTimeout(writeNext,/\s/.test(text[index]||'')?55:/[.!?;:]/u.test(text[index]||'')?130:30);else renderAcademyCharacterCue({state:'board-teaching',gesture:'explain',gaze:'audience'},text);};setTimeout(()=>{if(generation===academyBoardGeneration)writeNext();},1680);
 }
+function writeCustomTextAtBoard(rawText){
+  const stage=byId('academyTeachingStage'),title=byId('academyTeachingTitle'),board=byId('academyTeachingText');
+  const text=typeof rawText==='string'?rawText.trim().slice(0,200):'';
+  if(!stage||!title||!board||!text)return false;
+  const generation=++academyBoardGeneration;stage.hidden=false;title.textContent="Captain Sinbad's board";board.textContent='';
+  const reducedMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches===true;
+  renderAcademyCharacterCue({state:'board-teaching',gesture:'point-board',gaze:'board'},text);
+  if(reducedMotion){board.textContent=text;return true;}
+  let index=0,lastCueBucket=-1,lastFrameKey='ready';const writeNext=()=>{if(generation!==academyBoardGeneration)return;index++;lastCueBucket=directAcademyWritingGesture(index,text,lastCueBucket);lastFrameKey=renderAcademyWritingFrame(index,text,lastFrameKey);renderAcademyBoardProgress(board,text,index,index>=text.length);if(index<text.length)setTimeout(writeNext,/\s/.test(text[index]||'')?55:/[.!?;:]/u.test(text[index]||'')?130:30);else renderAcademyCharacterCue({state:'board-teaching',gesture:'explain',gaze:'audience'},text);};setTimeout(writeNext,320);return true;
+}
 function stopBoardTeaching(){academyBoardGeneration++;academyPerformanceDirector?.cancel();const stage=byId('academyTeachingStage');if(stage)stage.hidden=true;const board=byId('academyTeachingText');board?.querySelector('.academy-chalk-cursor')?.remove();academyCharacterEngine?.dispatch('READY');}
 
 function saveWindowGeometry(){
@@ -95,3 +105,9 @@ byId('startAcademyLesson').addEventListener('click',renderLesson);
 byId('startAcademyQuiz').addEventListener('click',renderQuiz);
 byId('closeAcademyWindow').addEventListener('click',()=>{saveWindowGeometry();window.close();});
 window.addEventListener('beforeunload',saveWindowGeometry);
+window.addEventListener('message',event=>{
+  if(event.origin!==location.origin||event.source!==window.opener)return;
+  const message=event.data;if(!message||message.version!==1||message.type!=='SINBAD_ACADEMY_WRITE_BOARD'||typeof message.text!=='string'||!message.text.trim()||message.text.length>200)return;
+  writeCustomTextAtBoard(message.text);
+});
+window.opener?.postMessage({version:1,type:'SINBAD_ACADEMY_READY'},location.origin);

@@ -1534,13 +1534,25 @@ function academyOfflineAnswer(query){
   return SinbadAcademy.answer(query,SINBAD_TRAINING_DATA)?.text||null;
 }
 let sinbadAcademyNativeWindow=null;
+let sinbadAcademyPendingBoardPayload=null;
 function openSinbadAcademyWindow(){
-  if(sinbadAcademyNativeWindow&&!sinbadAcademyNativeWindow.closed){sinbadAcademyNativeWindow.focus();return;}
+  if(sinbadAcademyNativeWindow&&!sinbadAcademyNativeWindow.closed){sinbadAcademyNativeWindow.focus();return sinbadAcademyNativeWindow;}
   const width=Math.max(900,screen.availWidth||1200),height=Math.max(650,screen.availHeight||800);
   sinbadAcademyNativeWindow=window.open('./academy.html','sinbadAcademyClassroom',`popup=yes,left=0,top=0,width=${width},height=${height},resizable=yes,scrollbars=yes`);
-  if(!sinbadAcademyNativeWindow){alert('Sinbad Academy penceresi engellendi. Bu site için açılır pencerelere izin verip yeniden deneyin.');return;}
-  sinbadAcademyNativeWindow.focus();
+  if(!sinbadAcademyNativeWindow){alert('Sinbad Academy penceresi engellendi. Bu site için açılır pencerelere izin verip yeniden deneyin.');return null;}
+  sinbadAcademyNativeWindow.focus();return sinbadAcademyNativeWindow;
 }
+function sendTextToSinbadAcademyBoard(text){
+  const clean=typeof text==='string'?text.trim().slice(0,200):'';if(!clean)return false;
+  const classroom=openSinbadAcademyWindow();if(!classroom)return false;
+  sinbadAcademyPendingBoardPayload=Object.freeze({version:1,type:'SINBAD_ACADEMY_WRITE_BOARD',text:clean});
+  try{if(classroom.location.origin===location.origin&&classroom.location.pathname.endsWith('/academy.html')&&classroom.document.readyState==='complete'){classroom.postMessage(sinbadAcademyPendingBoardPayload,location.origin);sinbadAcademyPendingBoardPayload=null;}}catch{}
+  return true;
+}
+window.addEventListener('message',event=>{
+  if(event.origin!==location.origin||event.source!==sinbadAcademyNativeWindow||event.data?.version!==1||event.data?.type!=='SINBAD_ACADEMY_READY'||!sinbadAcademyPendingBoardPayload)return;
+  sinbadAcademyNativeWindow.postMessage(sinbadAcademyPendingBoardPayload,location.origin);sinbadAcademyPendingBoardPayload=null;
+});
 function renderAcademyLesson(){
   const category=$('academyModule')?.value,lesson=window.SinbadAcademy?.lesson(category,window.SINBAD_TRAINING_DATA),output=$('academyOutput');
   if(!lesson||!output)return;
@@ -1679,6 +1691,7 @@ async function sendToSinbad(text){
   if(stopGesture?.accepted){stopSinbadGesturePerformance();addSinbadMessage('sinbad',stopGesture.text);return;}
   const directReaction=performSinbadDirectCharacterRequest(sinbadRequestedGesture);
   if(directReaction.accepted){addSinbadMessage('sinbad',directReaction.text);return;}
+  if(sinbadRequestedGesture?.directAcademyBoard){const request=sinbadRequestedGesture,delivered=sendTextToSinbadAcademyBoard(request.boardText),ack=sinbadPerformanceDirector?.gestureAcknowledgementForRequest?.(request,sinbadState.language||appLanguage);sinbadRequestedGesture=null;sinbadRequestedGestureSequence=[];if(delivered&&ack?.accepted){commitSinbadPerformedGestureAction('point-board');sinbadAwaitingAnswer=false;addSinbadMessage('sinbad',ack.text);return;}}
   const recalledSequence=sinbadPerformanceDirector?.gestureHistoryAnswerForText?.(q,sinbadPerformedGestureHistory,sinbadState.language||appLanguage);
   if(recalledSequence?.accepted){speakSinbad(recalledSequence.text,()=>addSinbadMessage('sinbad',recalledSequence.text));return;}
   const recalledGesture=sinbadPerformanceDirector?.gestureRecallAnswerForText?.(q,sinbadLastPerformedGestureAction,sinbadState.language||appLanguage);
