@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gazeTransitionForCue,createListeningReactionDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -207,6 +207,15 @@ test('explicit gesture requests override improvisation only when a real supporte
   assert.equal(gestureRequestForText('Gülümse lütfen.').action,'smile');
   assert.equal(gestureRequestForText('Bugün hava güzel.').reason,'NO_GESTURE_REQUEST');
   assert.equal(gestureRequestForText(' ').reason,'INVALID_REQUEST_TEXT');
+});
+
+test('supported physical requests expand into bounded interruptible gesture sequences',()=>{
+  const palm=gestureSequenceForRequest('show-palm');
+  assert.equal(palm.accepted,true);assert.deepEqual(palm.cues.map(cue=>cue.gesture),['open-hand','show-palm','show-palm']);
+  assert.deepEqual(palm.cues.map(cue=>cue.gaze),['audience','palm','audience']);assert.ok(palm.duration<=1200);assert.ok(Object.isFrozen(palm.cues));
+  const left=gestureSequenceForRequest('raise-left-hand');assert.deepEqual(left.cues.map(cue=>cue.gaze),['audience','left-palm','audience']);
+  const board=gestureSequenceForRequest('point-board');assert.equal(board.cues[1].gaze,'board');assert.ok(board.duration<=1200);
+  assert.equal(gestureSequenceForRequest('smile').reason,'NO_GESTURE_SEQUENCE');
 });
 
 test('object and board gestures receive finite interruptible gaze transitions',()=>{

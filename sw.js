@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.26-paced-body-language-v39';
+const CACHE='sinbad-marine-v8.20.27-gesture-sequences-v40';
 const ASSETS=[
   './',
   './index.html',

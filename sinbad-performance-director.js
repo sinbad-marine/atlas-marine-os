@@ -305,6 +305,33 @@
     }
     return Object.freeze({accepted:false,reason:'NO_GESTURE_REQUEST'});
   }
+  function gestureSequenceForRequest(action){
+    const sequences={
+      'show-palm':[
+        {at:0,gesture:'open-hand',gaze:'audience',emotion:'warm',energy:.3},
+        {at:260,gesture:'show-palm',gaze:'palm',emotion:'attentive',energy:.4},
+        {at:820,gesture:'show-palm',gaze:'audience',emotion:'warm',energy:.34}
+      ],
+      'show-right-hand':[
+        {at:0,gesture:'open-hand',gaze:'audience',emotion:'warm',energy:.3},
+        {at:240,gesture:'show-palm',gaze:'palm',emotion:'attentive',energy:.4},
+        {at:780,gesture:'show-palm',gaze:'audience',emotion:'warm',energy:.34}
+      ],
+      'raise-left-hand':[
+        {at:0,gesture:'rest',gaze:'audience',emotion:'attentive',energy:.26},
+        {at:240,gesture:'raise-left',gaze:'left-palm',emotion:'attentive',energy:.38},
+        {at:760,gesture:'raise-left',gaze:'audience',emotion:'warm',energy:.32}
+      ],
+      'point-board':[
+        {at:0,gesture:'explain',gaze:'audience',emotion:'confident',energy:.34},
+        {at:300,gesture:'point-board',gaze:'board',emotion:'confident',energy:.42},
+        {at:1000,gesture:'point-board',gaze:'audience',emotion:'warm',energy:.34}
+      ]
+    };
+    if(!Object.hasOwn(sequences,action))return Object.freeze({accepted:false,reason:'NO_GESTURE_SEQUENCE'});
+    const cues=sequences[action].map(cue=>Object.freeze(cue));
+    return Object.freeze({accepted:true,cues:Object.freeze(cues),duration:cues.at(-1).at});
+  }
   function gazeTransitionForCue(cue,{reducedMotion=false}={}){
     if(!cue||typeof cue!=='object')return Object.freeze({accepted:false,reason:'INVALID_GAZE_CUE'});
     const target=['audience','thought','board','path','palm','left-palm'].includes(cue.gaze)?cue.gaze:'audience';
@@ -331,5 +358,5 @@
     };
     return Object.freeze({play,cancel});
   }
-  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gazeTransitionForCue,createListeningReactionDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
+  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
 });

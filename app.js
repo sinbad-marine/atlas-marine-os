@@ -415,6 +415,7 @@ let sinbadSpeechPerformanceMode='warm';
 let sinbadResponseOpeningCue={gesture:'open-hand',gaze:'audience',emotion:'warm',energy:.36,responseKind:'conversation'};
 let sinbadTextPresentationCues=[];
 let sinbadRequestedGesture=null;
+let sinbadRequestedGestureSequence=[];
 let sinbadExplicitGestureHoldBoundaries=0;
 function prepareSinbadSpeechPerformance(question){
   sinbadSpeechGestureDirector?.reset();
@@ -422,6 +423,8 @@ function prepareSinbadSpeechPerformance(question){
   sinbadSpeechPerformanceMode=sinbadPerformanceDirector?.speechModeForDecision(decision)||'warm';
   const request=sinbadPerformanceDirector?.gestureRequestForText(question);
   sinbadRequestedGesture=request?.accepted?request:null;
+  const sequence=sinbadRequestedGesture?.supported?sinbadPerformanceDirector?.gestureSequenceForRequest?.(sinbadRequestedGesture.action):null;
+  sinbadRequestedGestureSequence=sequence?.accepted?[...sequence.cues]:[];
   sinbadExplicitGestureHoldBoundaries=sinbadRequestedGesture?.supported?2:0;
 }
 function sinbadSpeechPerformanceCue(index){
@@ -450,6 +453,16 @@ function prepareSinbadResponsePerformance(text){
   sinbadResponseOpeningCue=sinbadTextPresentationCues[0]||semantic;
   sinbadRequestedGesture=null;
   return sinbadResponseOpeningCue;
+}
+function playSinbadRequestedGestureSequence(){
+  const cues=sinbadRequestedGestureSequence;sinbadRequestedGestureSequence=[];
+  if(cues.length<2||sinbadAssistantState!=='speaking')return false;
+  const play=index=>{
+    if(sinbadAssistantState!=='speaking'||index>=cues.length)return;
+    const cue=cues[index];setSinbadAssistantState('speaking',{...sinbadResponseOpeningCue,...cue,responseKind:sinbadResponseOpeningCue.responseKind});
+    if(index+1<cues.length){const delay=Math.max(1,cues[index+1].at-cue.at);sinbadAssistantTimers.push(setTimeout(()=>play(index+1),delay));}
+  };
+  play(0);return true;
 }
 function setSinbadThinkingStage(stage){
   const result=sinbadPerformanceDirector?.thinkingCueForStage(stage);
@@ -969,7 +982,7 @@ function speakSinbadStandard(text,onVoiceReady){
     utterance.rate=profile.rate;utterance.pitch=profile.pitch;utterance.volume=profile.volume;
     // Only the real 'speaking has actually started' signal flips the avatar -
     // never the moment we merely queued/prepared the utterance.
-    utterance.onstart=()=>{if(myGeneration!==sinbadStandardSpeechGeneration)return;announce();setSinbadAssistantState('speaking',sinbadResponseOpeningCue);};
+    utterance.onstart=()=>{if(myGeneration!==sinbadStandardSpeechGeneration)return;announce();setSinbadAssistantState('speaking',sinbadResponseOpeningCue);playSinbadRequestedGestureSequence();};
     utterance.onboundary=event=>{if(myGeneration===sinbadStandardSpeechGeneration)sinbadStandardVoiceTick(event,run.text);};
     utterance.onend=()=>{
       if(myGeneration!==sinbadStandardSpeechGeneration)return;
@@ -1019,6 +1032,7 @@ function playSinbadCloneBlob(blob,controller){
     audio.addEventListener('playing',()=>{
       if(sinbadVoiceAbort!==controller)return;
       setSinbadAssistantState('speaking',sinbadResponseOpeningCue);
+      playSinbadRequestedGestureSequence();
       startSinbadLipSyncAnalyser(audio);
     },{once:true});
     audio.onended=()=>{cleanup();resolve();};
