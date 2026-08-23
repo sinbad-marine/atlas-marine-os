@@ -407,7 +407,7 @@ test('onboundary drives a real per-word cue (not a fabricated continuous loop, a
 
 test('a new question immediately cancels the previous spoken answer and invalidates queued teaching pauses',()=>{
   const send=app.slice(app.indexOf('async function sendToSinbad'),app.indexOf("$('sendSinbad').addEventListener"));
-  assert.match(send,/const q=\(text\|\|'\'\)\.trim\(\); if\(!q\)return;\s*\n\s*\/\/[^\n]*\n(?:\s*\/\/[^\n]*\n)*\s*stopSinbadVoice\(\);/);
+  assert.match(send,/const q=\(text\|\|'\'\)\.trim\(\); if\(!q\)return;\s*\n\s*\/\/[^\n]*\n(?:\s*\/\/[^\n]*\n)*\s*interruptSinbadVoiceForUser\(\);/);
   const stop=app.slice(app.indexOf('function stopSinbadVoice'),app.indexOf('let sinbadStandardBoundaryTimer'));
   assert.match(stop,/sinbadStandardSpeechGeneration\+\+;/);
   assert.match(stop,/window\.speechSynthesis\?\.cancel\(\);/);
@@ -604,9 +604,20 @@ test('an explicit microphone press safely interrupts Sinbad and gives the turn t
   const fn=app.slice(app.indexOf('function startSinbadListening'),app.indexOf('function saveSinbadMessages'));
   assert.match(fn,/const interruptingVoice=sinbadAssistantState==='speaking'\|\|sinbadAssistantState==='preparing-voice'/);
   assert.match(fn,/if\(interruptingVoice\)\{/);
-  assert.match(fn,/stopSinbadVoice\(\);sinbadAwaitingAnswer=false;sinbadHandsFreeEnabled=true;sinbadWakeActive=true;/);
+  assert.match(fn,/interruptSinbadVoiceForUser\(\);sinbadAwaitingAnswer=false;sinbadHandsFreeEnabled=true;sinbadWakeActive=true;/);
   assert.match(fn,/setListeningUI\(speechCopy\(\)\.listen,true\);beginSinbadRecognition\(\);return;/);
   assert.doesNotMatch(fn,/sinbadMessages[^;]*=/);
+});
+
+test('interrupted delivery is marked and model history stays bounded without auto-resume instructions',()=>{
+  assert.match(app,/let sinbadActiveResponseText='';/);
+  assert.match(app,/function interruptSinbadVoiceForUser\(\)\{/);
+  assert.match(app,/const interruptedText=active\?sinbadActiveResponseText:'';/);
+  assert.match(app,/if\(interruptedText\)markSinbadResponseInterrupted\(interruptedText\)/);
+  assert.match(app,/delivery:'interrupted',interruptedAt:new Date\(\)\.toISOString\(\)/);
+  assert.match(app,/sinbadState\.messages\.slice\(-12,end\)/);
+  assert.match(app,/Voice presentation was interrupted by the user; keep the conversational context, do not automatically resume/);
+  assert.equal((app.match(/const history=sinbadHistoryForModel\(/g)||[]).length,3);
 });
 
 test('rig head, lean and gaze outputs drive the real portrait while caution hold has a distinct bounded gesture',()=>{

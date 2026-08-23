@@ -825,6 +825,7 @@ function pickSinbadTurkishVoice(voices){
 let sinbadVoiceAudio=null;
 let sinbadVoiceObjectUrl='';
 let sinbadVoiceAbort=null;
+let sinbadActiveResponseText='';
 // The single idempotent end-of-turn path for both voice providers. Always
 // resolves the avatar out of thinking/preparing-voice/speaking - never
 // leaves it stuck on an early return, error, or timeout. `forceState` lets a
@@ -834,6 +835,7 @@ let sinbadVoiceAbort=null;
 function finishSinbadVoice(forceState){
   if(sinbadVoiceObjectUrl)URL.revokeObjectURL(sinbadVoiceObjectUrl);
   sinbadVoiceObjectUrl='';sinbadVoiceAudio=null;sinbadVoiceAbort=null;
+  sinbadActiveResponseText='';
   sinbadAwaitingAnswer=false;
   const isPresenting=forceState==='presenting';
   setSinbadAssistantState(forceState||(sinbadState.voiceEnabled?'idle':'voice-disabled'),isPresenting?sinbadResponseOpeningCue:{});
@@ -854,8 +856,16 @@ function stopSinbadVoice(){
   if(sinbadVoiceAudio){sinbadVoiceAudio.pause();sinbadVoiceAudio.src='';}
   if(sinbadVoiceObjectUrl)URL.revokeObjectURL(sinbadVoiceObjectUrl);
   sinbadVoiceObjectUrl='';sinbadVoiceAudio=null;
+  sinbadActiveResponseText='';
   window.speechSynthesis?.cancel();
   if(sinbadAssistantState==='speaking'||sinbadAssistantState==='preparing-voice')setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');
+}
+function interruptSinbadVoiceForUser(){
+  const active=sinbadAssistantState==='speaking'||sinbadAssistantState==='preparing-voice'||window.speechSynthesis?.speaking||(sinbadVoiceAudio&&!sinbadVoiceAudio.paused);
+  const interruptedText=active?sinbadActiveResponseText:'';
+  stopSinbadVoice();
+  if(interruptedText)markSinbadResponseInterrupted(interruptedText);
+  return Boolean(active);
 }
 let sinbadStandardBoundaryTimer=null;
 let sinbadStandardMouthSequence=0;
@@ -890,6 +900,7 @@ function speakSinbadStandard(text,onVoiceReady){
   const announce=()=>{if(!announced){announced=true;onVoiceReady?.();}};
   const status=$('sinbadKnowledgeStatus');
   if(!sinbadState.voiceEnabled||!('speechSynthesis'in window)){announce();finishSinbadVoice('presenting');return;}
+  sinbadActiveResponseText=String(text||'').trim();
   const voices=speechSynthesis.getVoices();
   if(!voices.length){
     let settled=false;
@@ -1026,6 +1037,7 @@ async function speakSinbadXttsClone(text,onVoiceReady){
   stopSinbadVoice();
   const cleanText=String(text).replace(/[•*_#]/g,' ').trim();
   if(!cleanText){finishSinbadVoice();return;}
+  sinbadActiveResponseText=String(text||'').trim();
   const chunks=splitSinbadCloneChunks(cleanText);
   const status=$('sinbadKnowledgeStatus');
   const controller=new AbortController();sinbadVoiceAbort=controller;
@@ -1136,7 +1148,7 @@ function beginSinbadRecognition(){
 function startSinbadListening(){
   const interruptingVoice=sinbadAssistantState==='speaking'||sinbadAssistantState==='preparing-voice'||window.speechSynthesis?.speaking||(sinbadVoiceAudio&&!sinbadVoiceAudio.paused);
   if(interruptingVoice){
-    stopSinbadVoice();sinbadAwaitingAnswer=false;sinbadHandsFreeEnabled=true;sinbadWakeActive=true;
+    interruptSinbadVoiceForUser();sinbadAwaitingAnswer=false;sinbadHandsFreeEnabled=true;sinbadWakeActive=true;
     clearTimeout(sinbadRestartTimer);sinbadRecognition?.abort();setListeningUI(speechCopy().listen,true);beginSinbadRecognition();return;
   }
   if(sinbadHandsFreeEnabled){sinbadHandsFreeEnabled=false;sinbadWakeActive=false;clearTimeout(sinbadRestartTimer);sinbadRecognition?.abort();setListeningUI('',false);return;}
@@ -1176,6 +1188,26 @@ function renderSinbadMessages(){
 function addSinbadMessage(role,text,visuals=[]){
   sinbadState.messages.push({role,text,visuals:Array.isArray(visuals)?visuals.slice(0,3):[],at:new Date().toISOString()});
   saveSinbadMessages();renderSinbadMessages();
+}
+function markSinbadResponseInterrupted(text){
+  const clean=String(text||'').trim();if(!clean)return false;
+  for(let index=sinbadState.messages.length-1;index>=0;index--){
+    const message=sinbadState.messages[index];
+    if(message.role!=='sinbad')continue;
+    if(message.text!==clean)return false;
+    sinbadState.messages[index]={...message,delivery:'interrupted',interruptedAt:new Date().toISOString()};
+    saveSinbadMessages();renderSinbadMessages();return true;
+  }
+  return false;
+}
+function sinbadHistoryForModel(excludeCurrentUser=true){
+  const end=excludeCurrentUser?-1:undefined;
+  return sinbadState.messages.slice(-12,end).map(message=>({
+    role:message.role==='sinbad'?'assistant':'user',
+    content:message.role==='sinbad'&&message.delivery==='interrupted'
+      ?`[Voice presentation was interrupted by the user; keep the conversational context, do not automatically resume.]\n${message.text}`
+      :message.text
+  }));
 }
 
 async function openSinbadSourceVisual(button){
@@ -1432,7 +1464,7 @@ async function sinbadOfflineAiAnswer(question){
   try{
     setSinbadThinkingStage('retrieving');
     if(status)status.textContent='Connecting to Sinbad offline brain…';
-    const history=sinbadState.messages.slice(-12,-1).map(message=>({role:message.role==='sinbad'?'assistant':'user',content:message.text}));
+    const history=sinbadHistoryForModel(true);
     const coreEnvelope=window.SinbadCore?.aiEnvelope?.(question,history);
     const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/chat`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question,language:sinbadState.language||appLanguage,history,coreEnvelope})});
     if(!response.ok)throw new Error(`Offline brain returned ${response.status}`);
@@ -1450,7 +1482,7 @@ async function sendToSinbad(text){
   const q=(text||'').trim(); if(!q)return;
   // A new question always takes the floor immediately. This cancels queued
   // teaching pauses and any utterance still reading the previous answer.
-  stopSinbadVoice();
+  interruptSinbadVoiceForUser();
   prepareSinbadSpeechPerformance(q);
   sinbadModelSpokenSummary='';
   if(pendingSinbadWebQuestion&&/^(izin ver|evet|ara|webde ara|allow|yes|search|разрешаю|да|autoriser|oui|erlauben|ja|اسمح|نعم|permitir|sí|consenti|sì)[.! ]*$/iu.test(q)){
@@ -2317,7 +2349,7 @@ async function sinbadCloudKnowledgeAnswer(question){
   const status=$('sinbadKnowledgeStatus');if(status)status.textContent='Searching Atlas Cloud…';
   try{
     const language=sinbadState.language||appLanguage;
-    const history=sinbadState.messages.slice(-12,-1).map(message=>({role:message.role==='sinbad'?'assistant':'user',content:message.text}));
+    const history=sinbadHistoryForModel(true);
     const coreEnvelope=window.SinbadCore?.aiEnvelope?.(question,history);
     const invocation=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language,coreEnvelope}});
     const aiError=invocation.error;let trustedAiData=invocation.data;
@@ -2375,7 +2407,7 @@ async function performSinbadWebSearch(){
   setSinbadThinkingStage('retrieving');
   $('sinbadThinking').classList.remove('hidden');
   try{
-    const history=sinbadState.messages.slice(-12).map(message=>({role:message.role==='sinbad'?'assistant':'user',content:message.text}));
+    const history=sinbadHistoryForModel(false);
     const coreEnvelope=window.SinbadCore?.aiEnvelope?.(question,history);
     const {data,error}=await cloudClient.functions.invoke('sinbad-answer',{body:{workspaceId:selectedWorkspaceId,question,language:sinbadState.language,allowWebSearch:true,coreEnvelope}});if(error)throw error;
     if(!cloudAnswerPassesCoreGate(data,coreEnvelope))throw new Error('Core safety gate rejected the cloud response');
