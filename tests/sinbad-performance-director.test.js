@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,recordVerifiedGesture,gestureHistoryAnswerForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,recordVerifiedGesture,gestureHistoryAnswerForText,gestureStopRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -296,6 +296,13 @@ test('performed gesture history is bounded, verified and answers ordered follow-
   assert.equal(gestureHistoryAnswerForText('Son iki hareketin neydi?',[],'tr-TR').known,false);
   assert.equal(recordVerifiedGesture(history,'teleport').reason,'UNVERIFIED_GESTURE_ACTION');
   assert.equal(recordVerifiedGesture(history,'smile',{limit:99}).reason,'INVALID_GESTURE_HISTORY');
+});
+
+test('explicit stop commands are narrow, deterministic and do not misread ordinary uses of dur',()=>{
+  assert.deepEqual(gestureStopRequestForText('Sinbad, elini indir.','tr-TR'),{accepted:true,action:'stop-motion',text:'Hareketi durdurdum ve nötr poza döndüm.'});
+  assert.match(gestureStopRequestForText('Stop moving.','en-US').text,/neutral pose/);
+  assert.equal(gestureStopRequestForText('Bu ders ne kadar sürer?').reason,'NO_GESTURE_STOP_REQUEST');
+  assert.equal(gestureStopRequestForText(' ').reason,'INVALID_STOP_TEXT');
 });
 
 test('object and board gestures receive finite interruptible gaze transitions',()=>{

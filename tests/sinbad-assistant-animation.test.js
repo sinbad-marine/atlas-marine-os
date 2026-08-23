@@ -751,6 +751,10 @@ test('a supported explicit gesture request overrides only the opening cue and un
   assert.match(app,/recordVerifiedGesture\?\.\(sinbadPerformedGestureHistory,action,\{limit:4\}\)/);
   assert.match(app,/sinbadLastPerformedGestureAction=sinbadPerformedGestureHistory\.at\(-1\)\|\|null/);
   assert.match(app,/gestureHistoryAnswerForText\?\.\(q,sinbadPerformedGestureHistory,sinbadState\.language\|\|appLanguage\)/);
+  assert.match(app,/gestureStopRequestForText\?\.\(q,sinbadState\.language\|\|appLanguage\)/);
+  assert.match(app,/function stopSinbadGesturePerformance\(\)/);
+  assert.match(app,/sinbadRequestedGesture=null;sinbadRequestedGestureSequence=\[\];sinbadPreparedGestureAction=null;sinbadExplicitGestureHoldBoundaries=0/);
+  assert.match(app,/setSinbadAssistantState\(sinbadState\.voiceEnabled\?'idle':'voice-disabled',\{gesture:'rest',gaze:'audience',emotion:'neutral',energy:0\}\)/);
   assert.match(app,/gestureRecallAnswerForText\?\.\(q,sinbadLastPerformedGestureAction,sinbadState\.language\|\|appLanguage\)/);
   assert.match(app,/if\(sinbadRequestedGesture\?\.supported&&sinbadTextPresentationCues\.length\)/);
   assert.match(app,/\.\.\.sinbadRequestedGesture\.cue,responseKind:sinbadTextPresentationCues\[0\]\.responseKind/);

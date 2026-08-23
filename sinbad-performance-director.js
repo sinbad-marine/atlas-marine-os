@@ -452,6 +452,13 @@
     const answer=turkish?`Önce ${labels[known[0]]}; ardından ${labels[known[1]]}.`:`First I ${labels[known[0]]}; then I ${labels[known[1]]}.`;
     return Object.freeze({accepted:true,known:true,actions:Object.freeze(known),text:answer});
   }
+  function gestureStopRequestForText(text,language='tr-TR'){
+    if(typeof text!=='string'||!text.trim())return Object.freeze({accepted:false,reason:'INVALID_STOP_TEXT'});
+    const normalized=text.trim().toLocaleLowerCase('tr-TR');
+    if(!/^(?:sinbad[,\s]+)?(?:dur|hareketi\s+durdur|hareket\s+etme|elini\s+indir|nötr\s+poza\s+dön|stop\s+moving|stop\s+the\s+movement|lower\s+your\s+hand|return\s+to\s+neutral)[.! ]*$/iu.test(normalized))return Object.freeze({accepted:false,reason:'NO_GESTURE_STOP_REQUEST'});
+    const turkish=String(language).toLocaleLowerCase('en-US').startsWith('tr');
+    return Object.freeze({accepted:true,action:'stop-motion',text:turkish?'Hareketi durdurdum ve nötr poza döndüm.':'I stopped the movement and returned to a neutral pose.'});
+  }
   function gestureSequenceForRequest(action){
     const sequences={
       'show-palm':[
@@ -505,5 +512,5 @@
     };
     return Object.freeze({play,cancel});
   }
-  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,recordVerifiedGesture,gestureHistoryAnswerForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
+  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,recordVerifiedGesture,gestureHistoryAnswerForText,gestureStopRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
 });

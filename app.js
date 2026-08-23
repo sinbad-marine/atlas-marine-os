@@ -476,6 +476,11 @@ function commitSinbadPreparedGesture(){
   if(!recorded?.accepted)return false;
   sinbadPerformedGestureHistory=[...recorded.history];sinbadLastPerformedGestureAction=sinbadPerformedGestureHistory.at(-1)||null;return true;
 }
+function stopSinbadGesturePerformance(){
+  sinbadRequestedGesture=null;sinbadRequestedGestureSequence=[];sinbadPreparedGestureAction=null;sinbadExplicitGestureHoldBoundaries=0;
+  clearTimeout(sinbadSpeechMeaningTransitionTimer);sinbadSpeechMeaningTransitionTimer=null;stopSinbadVoice();
+  setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled',{gesture:'rest',gaze:'audience',emotion:'neutral',energy:0});sinbadAwaitingAnswer=false;return true;
+}
 function playSinbadRequestedGestureSequence(){
   const cues=sinbadRequestedGestureSequence;sinbadRequestedGestureSequence=[];
   if(cues.length<2||sinbadAssistantState!=='speaking')return false;
@@ -1659,6 +1664,8 @@ async function sendToSinbad(text){
   const effectiveQuestion=turnDirective.accepted?turnDirective.question:q;
   addSinbadMessage('user',q);
   $('sinbadInput').value='';
+  const stopGesture=sinbadPerformanceDirector?.gestureStopRequestForText?.(q,sinbadState.language||appLanguage);
+  if(stopGesture?.accepted){stopSinbadGesturePerformance();addSinbadMessage('sinbad',stopGesture.text);return;}
   const recalledSequence=sinbadPerformanceDirector?.gestureHistoryAnswerForText?.(q,sinbadPerformedGestureHistory,sinbadState.language||appLanguage);
   if(recalledSequence?.accepted){speakSinbad(recalledSequence.text,()=>addSinbadMessage('sinbad',recalledSequence.text));return;}
   const recalledGesture=sinbadPerformanceDirector?.gestureRecallAnswerForText?.(q,sinbadLastPerformedGestureAction,sinbadState.language||appLanguage);

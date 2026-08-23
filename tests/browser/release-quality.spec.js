@@ -152,6 +152,10 @@ test('live Sinbad chat grounds body answers in the gesture actually shown',async
   await expect(answer).not.toContainText('güçlü bir eşleşme bulamadım');
   await expect(avatar).toHaveAttribute('data-gesture','show-palm');
 
+  await ask('Sinbad, elini indir.');
+  await expect(answer).toContainText('Hareketi durdurdum ve nötr poza döndüm.');
+  await expect(avatar).toHaveAttribute('data-gesture','rest');
+
   await ask('Tahtaya bir daire çiz.');
   await expect(answer).toContainText('Bu hareketi henüz güvenilir biçimde yapamıyorum.');
   await expect(avatar).not.toHaveAttribute('data-gesture','point-board');
