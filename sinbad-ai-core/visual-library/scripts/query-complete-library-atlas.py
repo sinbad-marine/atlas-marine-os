@@ -21,12 +21,22 @@ def terms(value: str) -> list[str]:
         "kisaltma": "abbreviation", "yangın": "fire", "yangin": "fire", "çapa": "anchor",
         "capa": "anchor", "halat": "rope", "dümen": "rudder", "dumen": "rudder",
     }
+    request_words = {
+        "göster", "goster", "gösterin", "gosterin", "gösterir", "gosterir",
+        "gösterme", "gosterme", "görsel", "gorsel", "görseli", "gorseli",
+        "görselini", "gorselini", "resim", "resmi", "resmini", "fotoğraf",
+        "fotograf", "fotoğrafı", "fotografi", "fotoğrafını", "fotografini",
+        "cihaz", "cihazı", "cihazi", "cihazını", "cihazini", "ekipman",
+        "show", "display", "image", "picture", "photo", "photograph", "please",
+    }
     normalized = value.casefold()
     found: list[str] = []
     lifebuoy_phrase = bool(re.search(r"\bcan\s+simid[uiı]\w*", normalized))
     if lifebuoy_phrase:
         return ["lifebuoy", "life ring", "life-saving appliance"]
     for word in re.findall(r"[^\W\d_][\w-]{2,}", normalized, re.UNICODE):
+        if word in request_words:
+            continue
         if lifebuoy_phrase and word in {"can", "simidi", "simidu", "simidı"}:
             continue
         for candidate in (word, aliases.get(word)):
