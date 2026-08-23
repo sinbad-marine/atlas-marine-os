@@ -135,6 +135,35 @@ test('large Captain Sinbad portrait loads the four-layer articulated rig with it
   await expect(page.locator('#startSinbadListening')).toHaveAttribute('aria-pressed','true');
 });
 
+test('live Sinbad chat grounds body answers in the gesture actually shown',async({page})=>{
+  await stubBridge(page);
+  await page.goto('/');
+  await page.evaluate(()=>{
+    document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');
+    document.querySelector('#sinbad')?.classList.add('active');
+    sinbadState.voiceEnabled=false;
+  });
+  const avatar=page.locator('.sinbad-avatar.large');
+  const answer=page.locator('#sinbadMessages .chat-bubble.sinbad').last();
+  const ask=async text=>{await page.locator('#sinbadInput').fill(text);await page.locator('#sendSinbad').click();};
+
+  await ask('Sinbad avucunun içinde bir şey mi var?');
+  await expect(answer).toContainText('Avucumu açıp gösteriyorum; mevcut karakter görünümünde avucumda bir nesne gösterilmiyor.');
+  await expect(answer).not.toContainText('güçlü bir eşleşme bulamadım');
+  await expect(avatar).toHaveAttribute('data-gesture','show-palm');
+
+  await ask('Tahtaya bir daire çiz.');
+  await expect(answer).toContainText('Bu hareketi henüz güvenilir biçimde yapamıyorum.');
+  await expect(avatar).not.toHaveAttribute('data-gesture','point-board');
+
+  await ask('Sağ elini göster.');
+  await expect(answer).toContainText('Sağ avucumu açıp gösteriyorum.');
+  await expect(avatar).toHaveAttribute('data-gesture','show-palm');
+  await ask('Şimdi öbür elini göster.');
+  await expect(answer).toContainText('Sol elimi kaldırıp gösteriyorum.');
+  await expect(avatar).toHaveAttribute('data-gesture','raise-left');
+});
+
 test('idle Sinbad performs a sparse real micro-motion and yields immediately to work',async({page})=>{
   await stubBridge(page);
   await page.goto('/');
