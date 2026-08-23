@@ -534,6 +534,19 @@
     const labels=turkish?{small:'küçük',standard:'normal',large:'büyük'}:{small:'small',standard:'standard',large:'large'},label=labels[lastBoardAction.size];
     return Object.freeze({accepted:true,known:true,size:lastBoardAction.size,text:turkish?`Son şekli ${label} boyutta çizdim.`:`I drew the last shape at ${label} size.`});
   }
+  function academyBoardShapeExplanationForText(text,lastBoardAction,language='tr-TR'){
+    if(typeof text!=='string'||!text.trim())return Object.freeze({accepted:false,reason:'INVALID_BOARD_EXPLANATION_TEXT'});
+    const normalized=text.trim().toLocaleLowerCase('tr-TR');
+    if(!/(?:bu|tahtadaki|son) şekli (?:açıkla|anlat)|(?:explain|describe) (?:this|the|that|last) shape/iu.test(normalized))return Object.freeze({accepted:false,reason:'NO_BOARD_EXPLANATION_REQUEST'});
+    const turkish=String(language).toLocaleLowerCase('en-US').startsWith('tr');
+    if(!lastBoardAction||lastBoardAction.kind!=='shape'||!['circle','triangle','rectangle','arrow','axes'].includes(lastBoardAction.value))return Object.freeze({accepted:true,known:false,text:turkish?'Açıklayabileceğim doğrulanmış bir Academy tahta şekli yok.':'I do not have a verified Academy board shape that I can explain.'});
+    const explanations=turkish?{
+      circle:'Bu bir dairedir: merkezi çevreleyen kesintisiz bir eğrisi vardır ve köşesi yoktur.',triangle:'Bu bir üçgendir: üç kenarı ve üç köşesi vardır.',rectangle:'Bu bir dikdörtgendir: karşılıklı kenarları eşit ve paralel olan dört dik açılı bir şekildir.',arrow:'Bu bir oktur: gövdesi bir doğrultuyu, uç kısmı ise yönü gösterir.',axes:'Bunlar koordinat eksenleridir: yatay ve düşey doğrultular bir referans sistemi oluşturur.'
+    }:{
+      circle:'This is a circle: it has one continuous curve around its centre and no corners.',triangle:'This is a triangle: it has three sides and three corners.',rectangle:'This is a rectangle: it has four right angles with opposite sides equal and parallel.',arrow:'This is an arrow: its shaft establishes a line and its head indicates direction.',axes:'These are coordinate axes: the horizontal and vertical directions form a reference system.'
+    };
+    return Object.freeze({accepted:true,known:true,shape:lastBoardAction.value,text:explanations[lastBoardAction.value]});
+  }
   function recordVerifiedGesture(history,action,{limit=4}={}){
     if(!Array.isArray(history)||!Number.isInteger(limit)||limit<1||limit>8)return Object.freeze({accepted:false,reason:'INVALID_GESTURE_HISTORY'});
     const verified=gestureAcknowledgementForRequest({accepted:true,supported:true,action},'en-US');
@@ -662,5 +675,5 @@
     };
     return Object.freeze({play,cancel});
   }
-  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,academyBoardRecallAnswerForText,academyBoardRepeatRequestForText,academyBoardClearRequestForText,academyBoardResizeRequestForText,academyBoardSizeRecallAnswerForText,recordVerifiedGesture,gestureHistoryAnswerForText,gestureStopRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
+  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,academyBoardRecallAnswerForText,academyBoardRepeatRequestForText,academyBoardClearRequestForText,academyBoardResizeRequestForText,academyBoardSizeRecallAnswerForText,academyBoardShapeExplanationForText,recordVerifiedGesture,gestureHistoryAnswerForText,gestureStopRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
 });

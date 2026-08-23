@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,academyBoardRecallAnswerForText,academyBoardRepeatRequestForText,academyBoardClearRequestForText,academyBoardResizeRequestForText,academyBoardSizeRecallAnswerForText,recordVerifiedGesture,gestureHistoryAnswerForText,gestureStopRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,academyBoardRecallAnswerForText,academyBoardRepeatRequestForText,academyBoardClearRequestForText,academyBoardResizeRequestForText,academyBoardSizeRecallAnswerForText,academyBoardShapeExplanationForText,recordVerifiedGesture,gestureHistoryAnswerForText,gestureStopRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -353,6 +353,14 @@ test('board size follow-ups answer only from the verified applied size',()=>{
   assert.match(academyBoardSizeRecallAnswerForText('What size did you draw?',{kind:'shape',value:'circle',size:'small'},'en-US').text,/small size/);
   assert.equal(academyBoardSizeRecallAnswerForText('Hangi boyutta çizdin?',{kind:'shape',value:'arrow'},'tr-TR').known,false);
   assert.equal(academyBoardSizeRecallAnswerForText('Bugün ne çizeceğiz?',{kind:'shape',value:'arrow',size:'large'}).reason,'NO_BOARD_SIZE_RECALL_REQUEST');
+});
+
+test('board shape explanation is grounded in the verified allowlisted shape',()=>{
+  const arrow=academyBoardShapeExplanationForText('Bu şekli açıkla.',{kind:'shape',value:'arrow'},'tr-TR');assert.equal(arrow.known,true);assert.match(arrow.text,/yönü gösterir/);
+  assert.match(academyBoardShapeExplanationForText('Explain this shape.',{kind:'shape',value:'triangle'},'en-US').text,/three sides/);
+  assert.equal(academyBoardShapeExplanationForText('Bu şekli açıkla.',null,'tr-TR').known,false);
+  assert.equal(academyBoardShapeExplanationForText('Bu şekli açıkla.',{kind:'shape',value:'hexagon'},'tr-TR').known,false);
+  assert.equal(academyBoardShapeExplanationForText('Bugün ne öğreneceğiz?',{kind:'shape',value:'arrow'}).reason,'NO_BOARD_EXPLANATION_REQUEST');
 });
 
 test('relative gesture commands resolve only against a verified previous action',()=>{
