@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.19-semantic-listening-v32';
+const CACHE='sinbad-marine-v8.20.20-varied-listening-v33';
 const ASSETS=[
   './',
   './index.html',

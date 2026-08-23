@@ -623,6 +623,8 @@ function setSinbadAssistantState(state,detail={}){
     else delete el.dataset.listeningActivity;
     if(next==='listening'&&detail.listeningMeaning)el.dataset.listeningMeaning=detail.listeningMeaning;
     else delete el.dataset.listeningMeaning;
+    if(next==='listening'&&detail.listeningReaction)el.dataset.listeningReaction=detail.listeningReaction;
+    else delete el.dataset.listeningReaction;
     if(next==='thinking'&&detail.thinkingStage)el.dataset.thinkingStage=detail.thinkingStage;
     else delete el.dataset.thinkingStage;
     if(next==='speaking'&&detail.responseKind)el.dataset.responseKind=detail.responseKind;
@@ -1108,9 +1110,10 @@ function beginSinbadRecognition(){
   if(!sinbadHandsFreeEnabled||sinbadIsListening||sinbadAwaitingAnswer)return;
   sinbadRecognition=new Recognition();sinbadRecognition.lang=sinbadState.language;sinbadRecognition.continuous=false;sinbadRecognition.interimResults=true;sinbadRecognition.maxAlternatives=1;
   const recognition=sinbadRecognition;
+  const listeningReactions=sinbadPerformanceDirector?.createListeningReactionDirector?.();
   let finalTranscript='';
   let listeningProgressBucket=-1;
-  const listeningCue=(activity,revision=0,heardText='')=>{if(sinbadRecognition!==recognition)return;const semantic=heardText?sinbadPerformanceDirector?.listeningCueForText?.(heardText,revision):null;const cue=semantic?.accepted&&semantic.meaning!=='neutral'?semantic:sinbadPerformanceDirector?.listeningCueForActivity(activity,revision);setSinbadAssistantState('listening',{...(cue?.accepted?cue.cue:{}),listeningActivity:activity,listeningMeaning:semantic?.accepted?semantic.meaning:'neutral'});};
+  const listeningCue=(activity,revision=0,heardText='')=>{if(sinbadRecognition!==recognition)return;const semantic=heardText?(listeningReactions?.select(heardText,revision)||sinbadPerformanceDirector?.listeningCueForText?.(heardText,revision)):null;const cue=semantic?.accepted&&semantic.meaning!=='neutral'?semantic:sinbadPerformanceDirector?.listeningCueForActivity(activity,revision);setSinbadAssistantState('listening',{...(cue?.accepted?cue.cue:{}),listeningActivity:activity,listeningMeaning:semantic?.accepted?semantic.meaning:'neutral',listeningReaction:semantic?.reactionId||'steady'});};
   sinbadRecognition.onstart=()=>{if(sinbadRecognition!==recognition)return;sinbadIsListening=true;setListeningUI(sinbadWakeActive?speechCopy().listen:handsFreeMessage(),true);listeningCue('ready');};
   sinbadRecognition.onsoundstart=()=>listeningCue('sound');
   sinbadRecognition.onspeechstart=()=>listeningCue('speech');

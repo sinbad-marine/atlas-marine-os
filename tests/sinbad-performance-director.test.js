@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gazeTransitionForCue,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gazeTransitionForCue,createListeningReactionDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -87,6 +87,20 @@ test('heard words select bounded semantic listening reactions without executing 
   assert.equal(listeningCueForText('Bugün rotayı konuşalım.',0).meaning,'neutral');
   assert.equal(listeningCueForText(' ',0).reason,'INVALID_LISTENING_TEXT');
   assert.equal(listeningCueForText('Merhaba',-1).reason,'INVALID_LISTENING_REVISION');
+});
+
+test('semantic listening reactions vary without immediate repetition and remain safety-bounded',()=>{
+  const samples=[.01,.01,.01,.01,.01,.01];let index=0;
+  const director=createListeningReactionDirector({entropy:()=>samples[index++]});
+  const questions=[0,1,2].map(revision=>director.select('Bunu nasıl yapacağız?',revision));
+  assert.equal(new Set(questions.map(item=>item.reactionId)).size,3);
+  assert.ok(questions.every(item=>item.meaning==='question'&&item.cue.emotion==='curious'));
+  const cautions=[director.select('Dikkat, yangın var.',3),director.select('Dikkat, yangın var.',4)];
+  assert.notEqual(cautions[0].reactionId,cautions[1].reactionId);
+  assert.ok(cautions.every(item=>item.cue.emotion==='concerned'&&!['laugh','walk','open-hand'].includes(item.cue.gesture)));
+  assert.equal(Object.isFrozen(LISTENING_MEANING_POOLS),true);
+  assert.equal(director.select('Sıradan bir cümle.',5).meaning,'neutral');
+  assert.equal(createListeningReactionDirector({entropy:()=>1}).select('Neden?',0).reason,'INVALID_ENTROPY');
 });
 
 test('real thinking work maps to distinct restrained and fail-closed stage cues',()=>{

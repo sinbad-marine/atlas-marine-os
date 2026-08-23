@@ -117,6 +117,40 @@
     }
     return Object.freeze({accepted:true,meaning,cue:Object.freeze(cue)});
   }
+  const LISTENING_MEANING_POOLS=Object.freeze({
+    caution:Object.freeze([
+      Object.freeze({reactionId:'caution-hold',gesture:'hold',gaze:'audience',emotion:'concerned',energy:.34}),
+      Object.freeze({reactionId:'caution-orient',gesture:'listen-orient',gaze:'audience',emotion:'concerned',energy:.32})
+    ]),
+    question:Object.freeze([
+      Object.freeze({reactionId:'question-follow',gesture:'listen-follow',gaze:'audience',emotion:'curious',energy:.44}),
+      Object.freeze({reactionId:'question-orient',gesture:'listen-orient',gaze:'audience',emotion:'curious',energy:.38}),
+      Object.freeze({reactionId:'question-hold',gesture:'hold',gaze:'thought',emotion:'curious',energy:.32})
+    ]),
+    positive:Object.freeze([
+      Object.freeze({reactionId:'positive-nod',gesture:'nod',gaze:'audience',emotion:'warm',energy:.36}),
+      Object.freeze({reactionId:'positive-follow',gesture:'listen-follow',gaze:'audience',emotion:'warm',energy:.34})
+    ])
+  });
+  function createListeningReactionDirector(options={}){
+    const entropy=typeof options.entropy==='function'?options.entropy:defaultEntropy;
+    const remaining=new Map(),last=new Map();
+    const select=(text,revision=0)=>{
+      const semantic=listeningCueForText(text,revision);
+      if(!semantic.accepted||semantic.meaning==='neutral')return semantic;
+      const pool=LISTENING_MEANING_POOLS[semantic.meaning];
+      let choices=remaining.get(semantic.meaning)||[];
+      if(!choices.length)choices=pool.length>1?pool.filter(item=>item.reactionId!==last.get(semantic.meaning)):[...pool];
+      const sample=Number(entropy());
+      if(!Number.isFinite(sample)||sample<0||sample>=1)return Object.freeze({accepted:false,reason:'INVALID_ENTROPY'});
+      const index=Math.min(choices.length-1,Math.floor(sample*choices.length));
+      const [reaction]=choices.splice(index,1);remaining.set(semantic.meaning,choices);last.set(semantic.meaning,reaction.reactionId);
+      const {reactionId,...cue}=reaction;
+      return Object.freeze({accepted:true,meaning:semantic.meaning,reactionId,cue:Object.freeze(cue)});
+    };
+    const reset=()=>{remaining.clear();last.clear();};
+    return Object.freeze({select,reset});
+  }
   const THINKING_STAGE_CUES=Object.freeze({
     analyzing:Object.freeze({gesture:'hold',gaze:'thought',emotion:'curious',energy:.32}),
     calculating:Object.freeze({gesture:'explain',gaze:'board',emotion:'confident',energy:.46}),
@@ -276,5 +310,5 @@
     };
     return Object.freeze({play,cancel});
   }
-  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gazeTransitionForCue,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
+  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gazeTransitionForCue,createListeningReactionDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
 });

@@ -116,7 +116,10 @@ test('SpeechRecognition lifecycle drives listening, not a fake button-press stat
   assert.match(app,/sinbadRecognition\.onspeechstart=\(\)=>listeningCue\('speech'\)/);
   assert.match(app,/sinbadRecognition\.onspeechend=\(\)=>listeningCue\('pause'\)/);
   assert.match(app,/listeningCueForText\?\.\(heardText,revision\)/);
+  assert.match(app,/createListeningReactionDirector\?\.\(\)/);
+  assert.match(app,/listeningReactions\?\.select\(heardText,revision\)/);
   assert.match(app,/semantic\?\.accepted&&semantic\.meaning!=='neutral'/);
+  assert.match(app,/listeningReaction:semantic\?\.reactionId\|\|'steady'/);
   assert.match(app,/const progressBucket=Math\.floor\(heardSoFar\.length\/12\)/);
   assert.match(app,/if\(hasFinal\)listeningCue\('processed',progressBucket,heardSoFar\)/);
   assert.match(app,/listeningCue\('interim',progressBucket,heardSoFar\)/);
