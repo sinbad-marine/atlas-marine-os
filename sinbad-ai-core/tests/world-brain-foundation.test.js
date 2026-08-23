@@ -10,6 +10,7 @@ const catalogModule=require('../world-brain/knowledge-catalog.js');
 const sources=require('../world-brain/source-catalog.js');
 const profiles=require('../world-brain/content-profiles.js');
 const acquisition=require('../world-brain/acquisition-plan.js');
+const kiwix=require('../world-brain/kiwix-search-provider.js');
 
 function manifestFor(bytes,overrides={}){
   return {schemaVersion:pack.VERSION,packId:'history-core-tr',title:'History Core',domain:'history',language:'tr-TR',license:'CC-BY-4.0',source:'https://example.test/history',publisher:'Example Publisher',edition:'2026.1',snapshotDate:'2026-08-01',contentHash:pack.contentHash(bytes),tags:['history'],...overrides};
@@ -124,4 +125,13 @@ test('initial Turkish offline artifact is pinned but cannot download without exa
   const approved=acquisition.approve(plan,`DOWNLOAD:${plan.artifact.fileName}`);
   assert.equal(approved.state,acquisition.STATES.APPROVED);
   assert.equal(approved.safety.downloadStarted,false);
+});
+
+test('Kiwix search provider is loopback-only and uses the documented XML search API',()=>{
+  const url=kiwix.searchUrl('http://127.0.0.1:8181/','Osmanlı tarihi',{pageLength:99});
+  assert.match(url,/127\.0\.0\.1:8181\/search/);
+  assert.match(url,/pattern=Osmanl%C4%B1\+tarihi/);
+  assert.match(url,/pageLength=20/);
+  assert.match(url,/format=xml/);
+  assert.throws(()=>kiwix.searchUrl('https://example.com/','test'),/loopback-only/);
 });
