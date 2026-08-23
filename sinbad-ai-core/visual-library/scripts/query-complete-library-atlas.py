@@ -11,6 +11,70 @@ import sys
 from pathlib import Path
 
 
+IMO_A760_PAGES = {
+    "lifeboat": 6, "rescue-boat": 6, "liferaft": 6,
+    "davit-launched-liferaft": 7, "embarkation-ladder": 7,
+    "evacuation-slide": 7, "lifebuoy": 7,
+    "lifebuoy-with-line": 8, "lifebuoy-with-light": 8,
+    "lifebuoy-with-light-and-smoke": 8, "lifejacket": 8,
+    "emergency-exit-indicator": 9, "exit": 9, "emergency-exit": 9,
+    "muster-station": 10, "embarkation-station": 10, "direction-indicator": 10,
+    "radar-transponder-sart": 11, "survival-craft-pyrotechnics": 11,
+    "rocket-parachute-flares": 11, "line-throwing-appliance": 11,
+    "child-lifejacket": 12, "immersion-suit": 12,
+    "survival-craft-portable-radio": 12, "epirb": 12,
+}
+
+IMO_A760_ALIASES = {
+    "filika": "lifeboat", "kurtarma botu": "rescue-boat", "can salı": "liferaft",
+    "can sali": "liferaft", "can simidi": "lifebuoy", "can yeleği": "lifejacket",
+    "can yelegi": "lifejacket", "toplanma istasyonu": "muster-station",
+    "binme istasyonu": "embarkation-station", "dalma giysisi": "immersion-suit",
+    "çocuk can yeleği": "child-lifejacket", "cocuk can yelegi": "child-lifejacket",
+    "sart": "radar-transponder-sart", "radar transponder": "radar-transponder-sart",
+}
+
+
+def curated_symbol_root() -> Path:
+    return Path(__file__).resolve().parents[1] / "assets" / "curated-imo-symbols"
+
+
+def curated_symbol_query(value: str, limit: int) -> list[dict]:
+    normalized = value.casefold()
+    if not any(token in normalized for token in ("symbol", "sembol", "işaret", "isaret", "pictogram", "piktogram")):
+        return []
+    needles = set(re.findall(r"[^\W\d_][\w-]{2,}", normalized, re.UNICODE))
+    preferred = set()
+    for phrase, canonical in IMO_A760_ALIASES.items():
+        if phrase in normalized:
+            needles.update(canonical.split("-"))
+            preferred.add(canonical)
+    scored = []
+    root = curated_symbol_root()
+    for path in root.glob("imo-a760-*.webp"):
+        name = path.stem.removeprefix("imo-a760-")
+        score = len(needles.intersection(name.split("-"))) + (100 if name in preferred else 0)
+        if score:
+            scored.append((score, name, path))
+    result = []
+    for _score, name, path in sorted(scored, key=lambda item: (-item[0], item[1]))[:limit]:
+        digest = __import__("hashlib").sha256(path.read_bytes()).hexdigest()
+        page = IMO_A760_PAGES[name]
+        result.append({
+            "visual_key": f"curated:imo-a760:{name}", "visual_type": "object",
+            "document_hash": "imo-resolution-a760-18", "page_number": page,
+            "image_number": None, "asset_hash": digest,
+            "file": str(path), "title": "IMO Resolution A.760(18)", "volume": None,
+            "heading": name.replace("-", " ").title(),
+            "context": "Official IMO symbol related to life-saving appliances and arrangements.",
+            "topics": [name, "IMO A.760(18)", "life-saving appliance symbol"],
+            "sourcePaths": ["https://wwwcdn.imo.org/localresources/en/KnowledgeCentre/IndexofIMOResolutions/AssemblyDocuments/A.760%2818%29.pdf"],
+            "rank": -1000.0,
+            "assetUrl": f"http://127.0.0.1:31983/visuals/assets/{digest}.webp",
+        })
+    return result
+
+
 def terms(value: str) -> list[str]:
     aliases = {
         "şamandıra": "buoy", "samandira": "buoy",
@@ -33,7 +97,10 @@ def terms(value: str) -> list[str]:
     found: list[str] = []
     lifebuoy_phrase = bool(re.search(r"\bcan\s+simid[uiı]\w*", normalized))
     if lifebuoy_phrase:
-        return ["lifebuoy", "life ring", "life-saving appliance"]
+        result = ["lifebuoy", "life ring", "life-saving appliance"]
+        if "sembol" in normalized or "symbol" in normalized:
+            result.append("symbol")
+        return result
     for word in re.findall(r"[^\W\d_][\w-]{2,}", normalized, re.UNICODE):
         if word in request_words:
             continue
@@ -50,6 +117,9 @@ def table_exists(db: sqlite3.Connection, name: str) -> bool:
 
 
 def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = False) -> list[dict]:
+    curated = curated_symbol_query(value, limit)
+    if curated:
+        return curated
     wanted = terms(value)
     if not wanted:
         return []
@@ -62,7 +132,7 @@ def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = Fa
                       title,volume,heading,context,topics,source_paths,bm25(visual_search) rank
                from visual_search where visual_search match ?""" + type_clause + """
                order by rank,case visual_type when 'object' then 0 when 'table' then 1 when 'vector' then 1 else 2 end limit ?""",
-            (expression, limit),
+            (expression, limit - len(curated)),
         ).fetchall()
     else:
         clauses = " or ".join("lower(coalesce(p.heading,'')||' '||p.context||' '||p.topics) like ?" for _ in wanted)
@@ -93,12 +163,16 @@ def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = Fa
         item["topics"] = json.loads(item["topics"] or "[]")
         item["assetUrl"] = f"http://127.0.0.1:31983/visuals/assets/{item['asset_hash']}.webp"
         result.append(item)
-    return result
+    return curated + result[:limit - len(curated)]
 
 
 def resolve_asset(db: sqlite3.Connection, atlas: Path, digest: str) -> dict:
     if not re.fullmatch(r"[0-9a-f]{64}", digest):
         raise RuntimeError("INVALID_ASSET_HASH")
+    for path in curated_symbol_root().glob("imo-a760-*.webp"):
+        if __import__("hashlib").sha256(path.read_bytes()).hexdigest() == digest:
+            return {"asset_hash": digest, "file": str(path), "width": None, "height": None,
+                    "visual_type": "object", "absolutePath": str(path.resolve())}
     statements = [
         "select asset_hash,file,width,height,'page' visual_type from page_plates where asset_hash=?",
         "select asset_hash,file,width,height,'object' visual_type from embedded_visuals where asset_hash=? and status='ready'",
