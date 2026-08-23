@@ -100,6 +100,16 @@
       :LISTENING_ACTIVITY_CUES[activity];
     return Object.freeze({accepted:true,cue});
   }
+  function listeningPauseForPace(text,durationMs){
+    if(typeof text!=='string'||!text.trim())return Object.freeze({accepted:false,reason:'INVALID_SPEECH_SAMPLE'});
+    if(!Number.isFinite(durationMs)||durationMs<=0)return Object.freeze({accepted:false,reason:'INVALID_SPEECH_DURATION'});
+    const words=text.trim().split(/\s+/u).slice(0,80).length;
+    if(words<=2)return Object.freeze({accepted:true,pace:'short-fragment',words,wpm:null,pauseMs:850});
+    const wpm=Math.round(words/(Math.max(250,durationMs)/60000));
+    const pace=wpm<90?'slow':wpm<150?'measured':wpm<220?'conversational':'fast';
+    const pauseMs={slow:1100,measured:850,conversational:700,fast:550}[pace];
+    return Object.freeze({accepted:true,pace,words,wpm,pauseMs});
+  }
   function listeningCueForText(text,revision=0){
     if(typeof text!=='string'||!text.trim())return Object.freeze({accepted:false,reason:'INVALID_LISTENING_TEXT'});
     if(!Number.isSafeInteger(revision)||revision<0)return Object.freeze({accepted:false,reason:'INVALID_LISTENING_REVISION'});
@@ -310,5 +320,5 @@
     };
     return Object.freeze({play,cancel});
   }
-  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gazeTransitionForCue,createListeningReactionDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
+  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,listeningPauseForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gazeTransitionForCue,createListeningReactionDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
 });

@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gazeTransitionForCue,createListeningReactionDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,listeningPauseForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gazeTransitionForCue,createListeningReactionDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -77,6 +77,16 @@ test('real recognition activity has restrained progress and pause cues',()=>{
   assert.equal(listeningCueForActivity('processed').cue.gesture,'nod');
   assert.equal(listeningCueForActivity('invented').reason,'UNKNOWN_LISTENING_ACTIVITY');
   assert.equal(listeningCueForActivity('interim',-1).reason,'INVALID_LISTENING_REVISION');
+});
+
+test('turn pause follows measured speech pace within humane safety bounds',()=>{
+  assert.deepEqual(listeningPauseForPace('bu kısa',300),{accepted:true,pace:'short-fragment',words:2,wpm:null,pauseMs:850});
+  assert.equal(listeningPauseForPace('bir iki üç dört beş',4000).pauseMs,1100);
+  assert.equal(listeningPauseForPace('bir iki üç dört beş',2500).pauseMs,850);
+  assert.equal(listeningPauseForPace('bir iki üç dört beş',1600).pauseMs,700);
+  assert.equal(listeningPauseForPace('bir iki üç dört beş',900).pauseMs,550);
+  assert.equal(listeningPauseForPace(' ',1000).reason,'INVALID_SPEECH_SAMPLE');
+  assert.equal(listeningPauseForPace('merhaba',0).reason,'INVALID_SPEECH_DURATION');
 });
 
 test('heard words select bounded semantic listening reactions without executing commands',()=>{

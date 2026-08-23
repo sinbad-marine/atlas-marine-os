@@ -113,7 +113,7 @@ test('laughing is a real illustrated, labelled and time-bounded reaction',()=>{
 test('SpeechRecognition lifecycle drives listening, not a fake button-press state',()=>{
   assert.match(app,/sinbadRecognition\.onstart=\(\)=>\{if\(sinbadRecognition!==recognition\)return;sinbadIsListening=true;/);
   assert.match(app,/sinbadRecognition\.onsoundstart=\(\)=>listeningCue\('sound'\)/);
-  assert.match(app,/sinbadRecognition\.onspeechstart=\(\)=>\{clearSinbadTurnFinalization\(\);listeningCue\('speech'\);\}/);
+  assert.match(app,/sinbadRecognition\.onspeechstart=\(\)=>\{clearSinbadTurnFinalization\(\);sinbadSpeechSegmentStartedAt=Date\.now\(\);listeningCue\('speech'\);\}/);
   assert.match(app,/sinbadRecognition\.onspeechend=\(\)=>listeningCue\('pause'\)/);
   assert.match(app,/listeningCueForText\?\.\(heardText,revision\)/);
   assert.match(app,/createListeningReactionDirector\?\.\(\)/);
@@ -132,12 +132,14 @@ test('SpeechRecognition lifecycle drives listening, not a fake button-press stat
 test('short natural pauses are buffered into one bounded user turn',()=>{
   assert.match(app,/const SINBAD_TURN_PAUSE_MS=700;/);
   assert.match(app,/const SINBAD_TURN_MAX_MS=2800;/);
-  assert.match(app,/onspeechstart=\(\)=>\{clearSinbadTurnFinalization\(\);listeningCue\('speech'\);\}/);
+  assert.match(app,/onspeechstart=\(\)=>\{clearSinbadTurnFinalization\(\);sinbadSpeechSegmentStartedAt=Date\.now\(\);listeningCue\('speech'\);\}/);
   assert.match(app,/heardSoFar=\[sinbadPendingSpeechTurn,current\]\.filter\(Boolean\)\.join\(' '\)\.trim\(\)/);
   assert.match(app,/sinbadPendingSpeechTurn=\[sinbadPendingSpeechTurn,heard\]\.filter\(Boolean\)\.join\(' '\)\.trim\(\)/);
   assert.match(app,/scheduleSinbadTurnFinalization\(\)/);
   assert.match(app,/scheduleSinbadListening\(90\)/);
-  assert.match(app,/elapsed>=SINBAD_TURN_MAX_MS\?120:SINBAD_TURN_PAUSE_MS/);
+  assert.match(app,/listeningPauseForPace\?\.\(heard,durationMs\)/);
+  assert.match(app,/pace\?\.accepted\?pace\.pauseMs:SINBAD_TURN_PAUSE_MS/);
+  assert.match(app,/elapsed>=SINBAD_TURN_MAX_MS\?120:sinbadTurnPauseMs/);
   assert.match(app,/const activeRecognition=sinbadRecognition;sinbadRecognition=null;sinbadIsListening=false;activeRecognition\?\.abort\(\)/);
 });
 

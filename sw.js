@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.24-pause-buffer-v37';
+const CACHE='sinbad-marine-v8.20.25-adaptive-turn-pacing-v38';
 const ASSETS=[
   './',
   './index.html',

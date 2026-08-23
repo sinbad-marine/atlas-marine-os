@@ -144,7 +144,7 @@ test('a short speech pause joins one user turn instead of submitting mid-sentenc
     const second=window.__sinbadRecognitionStubs[1],results=[[{transcript:'göster'}]];results[0].isFinal=true;
     second.onspeechstart?.();second.onresult?.({resultIndex:0,results});second.onend?.();
   });
-  await page.waitForTimeout(1100);
+  await page.waitForTimeout(1300);
   await expect(page.locator('#sinbadMessages .chat-bubble.user').last()).toContainText('rotayı göster');
 });
 
