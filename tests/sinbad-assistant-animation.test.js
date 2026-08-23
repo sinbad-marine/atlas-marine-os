@@ -618,6 +618,12 @@ test('interrupted delivery is marked and model history stays bounded without aut
   assert.match(app,/sinbadState\.messages\.slice\(-12,end\)/);
   assert.match(app,/Voice presentation was interrupted by the user; keep the conversational context, do not automatically resume/);
   assert.equal((app.match(/const history=sinbadHistoryForModel\(/g)||[]).length,3);
+  assert.match(app,/function resolveSinbadTurnDirective\(text\)\{/);
+  assert.match(app,/message\.role==='sinbad'&&message\.delivery==='interrupted'/);
+  assert.match(app,/action='continue'/);assert.match(app,/action='restart'/);assert.match(app,/action='summarize'/);
+  assert.match(app,/do not claim to resume audio/);
+  assert.match(app,/const effectiveQuestion=turnDirective\.accepted\?turnDirective\.question:q/);
+  assert.match(app,/sinbadLocalAnswer\(effectiveQuestion\)/);
 });
 
 test('rig head, lean and gaze outputs drive the real portrait while caution hold has a distinct bounded gesture',()=>{

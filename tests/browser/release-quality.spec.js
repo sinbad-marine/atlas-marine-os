@@ -99,16 +99,21 @@ test('large Captain Sinbad portrait loads the four-layer articulated rig with it
     addSinbadMessage('sinbad','Bu yanıtın sesli sunumu kullanıcı tarafından kesilecek.');
     const marked=markSinbadResponseInterrupted('Bu yanıtın sesli sunumu kullanıcı tarafından kesilecek.');
     const preservedContext=sinbadHistoryForModel(false).at(-1)?.content||'';
+    const directives=['devam et','baştan anlat','kısaca özetle'].map(text=>resolveSinbadTurnDirective(text));
+    const ambiguous=resolveSinbadTurnDirective('Devam dostum, başka bir konuya geçelim.');
     const messageCount=document.querySelectorAll('#sinbadMessages > *').length;
     class RecognitionStub{start(){this.onstart?.();}abort(){this.onend?.();}stop(){this.onend?.();}}
     Object.defineProperty(window,'SpeechRecognition',{value:RecognitionStub,configurable:true});
     Object.defineProperty(window,'webkitSpeechRecognition',{value:RecognitionStub,configurable:true});
     setSinbadAssistantState('speaking',{gesture:'explain',emotion:'warm'});
     startSinbadListening();
-    return {marked,preservedContext,messageCount,afterCount:document.querySelectorAll('#sinbadMessages > *').length};
+    return {marked,preservedContext,directives,ambiguous,messageCount,afterCount:document.querySelectorAll('#sinbadMessages > *').length};
   });
   expect(turnTaking.marked).toBe(true);
   expect(turnTaking.preservedContext).toContain('do not automatically resume');
+  expect(turnTaking.directives.map(item=>item.action)).toEqual(['continue','restart','summarize']);
+  expect(turnTaking.directives[0].question).toContain('do not claim to resume audio');
+  expect(turnTaking.ambiguous.reason).toBe('NO_TURN_DIRECTIVE');
   expect(turnTaking.afterCount).toBe(turnTaking.messageCount);
   await expect(avatar).toHaveAttribute('data-state','listening');
   await expect(page.locator('#startSinbadListening')).toHaveAttribute('aria-pressed','true');

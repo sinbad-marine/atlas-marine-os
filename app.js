@@ -1209,6 +1209,21 @@ function sinbadHistoryForModel(excludeCurrentUser=true){
       :message.text
   }));
 }
+function resolveSinbadTurnDirective(text){
+  if(typeof text!=='string'||!text.trim())return Object.freeze({accepted:false,reason:'INVALID_TURN_DIRECTIVE'});
+  const interrupted=[...sinbadState.messages.slice(-12)].reverse().find(message=>message.role==='sinbad'&&message.delivery==='interrupted');
+  if(!interrupted)return Object.freeze({accepted:false,reason:'NO_INTERRUPTED_CONTEXT'});
+  const normalized=text.trim().toLocaleLowerCase('tr-TR');
+  let action,instruction;
+  if(/^(?:devam(?: et)?|kaldığın yerden devam(?: et)?|continue|go on)[.! ]*$/iu.test(normalized)){
+    action='continue';instruction='Continue the previously interrupted answer from its conversational context. Do not repeat completed points and do not claim to resume audio.';
+  }else if(/^(?:baştan anlat|yeniden anlat|en baştan|start over|explain again)[.! ]*$/iu.test(normalized)){
+    action='restart';instruction='Explain the previously interrupted answer again from the beginning as a new response.';
+  }else if(/^(?:kısaca özetle|özetle|kısa anlat|summari[sz]e|briefly)[.! ]*$/iu.test(normalized)){
+    action='summarize';instruction='Give a concise summary of the previously interrupted answer as a new response.';
+  }else return Object.freeze({accepted:false,reason:'NO_TURN_DIRECTIVE'});
+  return Object.freeze({accepted:true,action,question:`${instruction}\nUser turn directive: ${text.trim()}`});
+}
 
 async function openSinbadSourceVisual(button){
   const documentId=button?.dataset?.documentId,pageNumber=Math.max(1,Number(button?.dataset?.page)||1);
@@ -1491,6 +1506,8 @@ async function sendToSinbad(text){
   if(pendingSinbadWebQuestion&&/^(izin verme|hayır|arama|no|do not search|нет|non|nein|لا|hayır|no buscar|non cercare)[.! ]*$/iu.test(q)){
     pendingSinbadWebQuestion='';$('sinbadWebConsent').classList.add('hidden');const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];addSinbadMessage('user',q);addSinbadMessage('sinbad',copy.denied);sinbadAwaitingAnswer=false;speakSinbad(copy.denied);return;
   }
+  const turnDirective=resolveSinbadTurnDirective(q);
+  const effectiveQuestion=turnDirective.accepted?turnDirective.question:q;
   addSinbadMessage('user',q);
   $('sinbadInput').value='';
   if(window.SinbadRouteVisualizer?.isPlotRequest?.(q)){
@@ -1502,7 +1519,7 @@ async function sendToSinbad(text){
   setSinbadThinkingStage('analyzing');
   $('sinbadThinking').classList.remove('hidden');
   try{
-    const answer=await sinbadLocalAnswer(q);
+    const answer=await sinbadLocalAnswer(effectiveQuestion);
     setSinbadThinkingStage('composing');
     speakSinbad(answer,()=>addSinbadMessage('sinbad',answer,consumeSinbadSourceVisuals()));
   }catch(error){
