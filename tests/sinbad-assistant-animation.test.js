@@ -674,6 +674,8 @@ test('a supported explicit gesture request overrides only the opening cue and un
   assert.match(app,/if\(sinbadRequestedGesture\?\.supported&&sinbadTextPresentationCues\.length\)/);
   assert.match(app,/\.\.\.sinbadRequestedGesture\.cue,responseKind:sinbadTextPresentationCues\[0\]\.responseKind/);
   assert.match(app,/sinbadRequestedGesture=null;/);
+  assert.match(app,/sinbadExplicitGestureHoldBoundaries=sinbadRequestedGesture\?\.supported\?2:0/);
+  assert.match(app,/if\(sinbadExplicitGestureHoldBoundaries>0\)\{sinbadExplicitGestureHoldBoundaries--;return Object\.freeze\(\{\.\.\.semantic,gesture:null\}\);\}/);
 });
 
 test('show-palm reuses the verified real open-hand artwork, removes the large-avatar crop and stays bounded',()=>{

@@ -415,12 +415,14 @@ let sinbadSpeechPerformanceMode='warm';
 let sinbadResponseOpeningCue={gesture:'open-hand',gaze:'audience',emotion:'warm',energy:.36,responseKind:'conversation'};
 let sinbadTextPresentationCues=[];
 let sinbadRequestedGesture=null;
+let sinbadExplicitGestureHoldBoundaries=0;
 function prepareSinbadSpeechPerformance(question){
   sinbadSpeechGestureDirector?.reset();
   const decision=window.SinbadCore?.analyzeQuery?.(question)||{};
   sinbadSpeechPerformanceMode=sinbadPerformanceDirector?.speechModeForDecision(decision)||'warm';
   const request=sinbadPerformanceDirector?.gestureRequestForText(question);
   sinbadRequestedGesture=request?.accepted?request:null;
+  sinbadExplicitGestureHoldBoundaries=sinbadRequestedGesture?.supported?2:0;
 }
 function sinbadSpeechPerformanceCue(index){
   const sequence=sinbadSpeechPerformanceMode==='caution'?'speaking-caution':sinbadSpeechPerformanceMode==='instructional'?'speaking-instructional':'speaking';
@@ -429,6 +431,7 @@ function sinbadSpeechPerformanceCue(index){
 function sinbadSpeechBoundaryCue(boundaryEvent,text,index){
   const result=sinbadPerformanceDirector?.speechCueForBoundary({name:boundaryEvent?.name,charIndex:boundaryEvent?.charIndex,text,wordIndex:index,mode:sinbadSpeechPerformanceMode});
   const semantic=result?.accepted?result.cue:sinbadSpeechPerformanceCue(index);
+  if(sinbadExplicitGestureHoldBoundaries>0){sinbadExplicitGestureHoldBoundaries--;return Object.freeze({...semantic,gesture:null});}
   const selected=sinbadSpeechGestureDirector?.select(semantic);
   return selected?.accepted?selected.cue:semantic;
 }

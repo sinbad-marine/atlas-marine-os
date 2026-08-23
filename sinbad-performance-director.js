@@ -216,6 +216,12 @@
   function gestureRequestForText(text){
     if(typeof text!=='string'||!text.trim())return Object.freeze({accepted:false,reason:'INVALID_REQUEST_TEXT'});
     const normalized=text.toLocaleLowerCase('tr-TR');
+    if(/(sağ\s+(?:elini|kolunu|avucunu).*(?:göster|kaldır|aç)|(?:show|raise|open).*(?:your\s+)?right\s+(?:hand|arm|palm))/iu.test(normalized))return Object.freeze({accepted:true,action:'show-right-hand',supported:true,cue:Object.freeze({gesture:'show-palm',gaze:'audience',emotion:'warm',energy:.4})});
+    if(/(sol\s+(?:elini|kolunu|avucunu).*(?:göster|kaldır|aç)|(?:show|raise|open).*(?:your\s+)?left\s+(?:hand|arm|palm))/iu.test(normalized))return Object.freeze({accepted:true,action:'raise-left-hand',supported:true,cue:Object.freeze({gesture:'raise-left',gaze:'audience',emotion:'attentive',energy:.38})});
+    if(/(başını\s+sola\s+(?:çevir|döndür)|(?:turn|look).*(?:your\s+)?head.*left)/iu.test(normalized))return Object.freeze({accepted:true,action:'look-left',supported:true,cue:Object.freeze({gesture:'look-left',gaze:'audience',emotion:'attentive',energy:.24})});
+    if(/(başını\s+sağa\s+(?:çevir|döndür)|(?:turn|look).*(?:your\s+)?head.*right)/iu.test(normalized))return Object.freeze({accepted:true,action:'look-right',supported:true,cue:Object.freeze({gesture:'look-right',gaze:'audience',emotion:'attentive',energy:.24})});
+    if(/(başını\s+(?:eğ|salla)|(?:nod|bow)(?:\s+your)?\s+head)/iu.test(normalized))return Object.freeze({accepted:true,action:'nod',supported:true,cue:Object.freeze({gesture:'nod',gaze:'audience',emotion:'warm',energy:.28})});
+    if(/(gülümse|tebessüm\s+et|smile)/iu.test(normalized))return Object.freeze({accepted:true,action:'smile',supported:true,cue:Object.freeze({gesture:'rest',gaze:'audience',emotion:'warm',energy:.24})});
     if(/(avuc(?:unu|unda|unun)|avuç|palm|open (?:your )?hand|show (?:me )?(?:your )?hand)/iu.test(normalized)){
       return Object.freeze({accepted:true,action:'show-palm',supported:true,cue:Object.freeze({gesture:'show-palm',gaze:'audience',emotion:'warm',energy:.4})});
     }
@@ -229,10 +235,11 @@
   }
   function gazeTransitionForCue(cue,{reducedMotion=false}={}){
     if(!cue||typeof cue!=='object')return Object.freeze({accepted:false,reason:'INVALID_GAZE_CUE'});
-    const target=['audience','thought','board','path','palm'].includes(cue.gaze)?cue.gaze:'audience';
+    const target=['audience','thought','board','path','palm','left-palm'].includes(cue.gaze)?cue.gaze:'audience';
     let cues;
     if(reducedMotion)cues=[Object.freeze({at:0,gaze:target})];
     else if(cue.gesture==='show-palm')cues=[Object.freeze({at:0,gaze:'palm'}),Object.freeze({at:520,gaze:'audience'})];
+    else if(cue.gesture==='raise-left')cues=[Object.freeze({at:0,gaze:'left-palm'}),Object.freeze({at:520,gaze:'audience'})];
     else if(cue.gesture==='point-board')cues=[Object.freeze({at:0,gaze:'board'}),Object.freeze({at:900,gaze:'audience'}),Object.freeze({at:1600,gaze:'board'})];
     else cues=[Object.freeze({at:0,gaze:target})];
     return Object.freeze({accepted:true,cues:Object.freeze(cues),duration:cues.at(-1).at});

@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.17-prosody-gestures-v29';
+const CACHE='sinbad-marine-v8.20.17-direct-body-language-v30';
 const ASSETS=[
   './',
   './index.html',

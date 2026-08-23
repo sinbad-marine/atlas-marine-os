@@ -16,6 +16,9 @@ test('laugh is an explicit bounded reaction state',()=>{
 test('character engine accepts the real open-palm pose and rejects invented gestures',()=>{
   const engine=createCharacterEngine();
   assert.equal(engine.setState('presenting',{gesture:'show-palm'}).snapshot.gesture,'show-palm');
+  assert.equal(engine.setState('presenting',{gesture:'raise-left'}).snapshot.gesture,'raise-left');
+  assert.equal(engine.setState('presenting',{gesture:'look-left'}).snapshot.gesture,'look-left');
+  assert.equal(engine.setState('presenting',{gesture:'look-right'}).snapshot.gesture,'look-right');
   assert.equal(engine.setState('presenting',{gesture:'teleport'}).snapshot.gesture,'open-hand');
 });
 

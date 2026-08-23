@@ -155,6 +155,12 @@ test('explicit gesture requests override improvisation only when a real supporte
   assert.equal(board.supported,true);assert.equal(board.cue.gesture,'point-board');assert.equal(board.cue.gaze,'board');
   const listening=gestureRequestForText('Beni dinliyor musun?');
   assert.equal(listening.action,'show-listening');assert.equal(listening.cue.gesture,'listen-lean');
+  assert.equal(gestureRequestForText('Sağ elini göster.').action,'show-right-hand');
+  assert.equal(gestureRequestForText('Sol elini kaldır.').cue.gesture,'raise-left');
+  assert.equal(gestureRequestForText('Başını sola çevir.').cue.gesture,'look-left');
+  assert.equal(gestureRequestForText('Başını sağa döndür.').cue.gesture,'look-right');
+  assert.equal(gestureRequestForText('Başını eğ.').cue.gesture,'nod');
+  assert.equal(gestureRequestForText('Gülümse lütfen.').action,'smile');
   assert.equal(gestureRequestForText('Bugün hava güzel.').reason,'NO_GESTURE_REQUEST');
   assert.equal(gestureRequestForText(' ').reason,'INVALID_REQUEST_TEXT');
 });
@@ -166,6 +172,7 @@ test('object and board gestures receive finite interruptible gaze transitions',(
   assert.deepEqual(board.cues.map(cue=>cue.gaze),['board','audience','board']);assert.ok(board.duration<=1600);
   const reduced=gazeTransitionForCue({gesture:'show-palm',gaze:'audience'},{reducedMotion:true});
   assert.deepEqual(reduced.cues.map(cue=>cue.gaze),['audience']);assert.equal(Object.isFrozen(reduced.cues),true);
+  assert.deepEqual(gazeTransitionForCue({gesture:'raise-left',gaze:'audience'}).cues.map(cue=>cue.gaze),['left-palm','audience']);
   assert.equal(gazeTransitionForCue(null).reason,'INVALID_GAZE_CUE');
 });
 
