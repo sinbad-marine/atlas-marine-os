@@ -89,6 +89,8 @@ test('main chat can send only bounded same-origin plain text to the Academy boar
   assert.equal((academyApp.match(/'check-in','audience'/g)||[]).length,3);
   assert.match(academyApp,/type:'SINBAD_ACADEMY_BOARD_APPLIED'/);assert.match(app,/event\.data\.type==='SINBAD_ACADEMY_BOARD_APPLIED'/);
   assert.match(app,/academyBoardRecallAnswerForText\?\.\(q,sinbadLastAcademyBoardAction/);
+  assert.match(academyApp,/function clearAcademyBoard\(\)/);assert.match(academyApp,/type==='SINBAD_ACADEMY_CLEAR_BOARD'/);assert.match(app,/function clearSinbadAcademyBoard\(\)/);
+  assert.match(app,/action\?\.kind==='clear'.*sinbadLastAcademyBoardAction=null/);
 });
 
 test('real transparent writing frames follow measured board progress and settle to explanation',()=>{

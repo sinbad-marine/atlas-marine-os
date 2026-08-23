@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,academyBoardRecallAnswerForText,academyBoardRepeatRequestForText,recordVerifiedGesture,gestureHistoryAnswerForText,gestureStopRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,academyBoardRecallAnswerForText,academyBoardRepeatRequestForText,academyBoardClearRequestForText,recordVerifiedGesture,gestureHistoryAnswerForText,gestureStopRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -332,6 +332,13 @@ test('board follow-ups repeat only a verified bounded Academy action',()=>{
   assert.equal(academyBoardRepeatRequestForText('Onu tekrar çiz.',null,'tr-TR').known,false);
   assert.equal(academyBoardRepeatRequestForText('Onu tekrar çiz.',{kind:'shape',value:'hexagon'},'tr-TR').known,false);
   assert.equal(academyBoardRepeatRequestForText('Bugün ne öğreneceğiz?',{kind:'shape',value:'arrow'}).reason,'NO_BOARD_REPEAT_REQUEST');
+});
+
+test('board clearing is a narrow explicit action and ordinary deletion text is ignored',()=>{
+  assert.deepEqual(academyBoardClearRequestForText('Tahtayı temizle.','tr-TR'),{accepted:true,action:'clear-board',text:'Academy tahtasını temizliyorum.'});
+  assert.equal(academyBoardClearRequestForText('Clear the board.','en-US').accepted,true);
+  assert.equal(academyBoardClearRequestForText('Dosyayı sil.','tr-TR').reason,'NO_BOARD_CLEAR_REQUEST');
+  assert.equal(academyBoardClearRequestForText('Tahtadaki problemi açıkla.','tr-TR').reason,'NO_BOARD_CLEAR_REQUEST');
 });
 
 test('relative gesture commands resolve only against a verified previous action',()=>{

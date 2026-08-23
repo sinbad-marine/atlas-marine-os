@@ -509,6 +509,13 @@
     const action=Object.freeze({kind:lastBoardAction.kind,value:lastBoardAction.value.slice(0,200)});
     return Object.freeze({accepted:true,known:true,action,text:turkish?'Doğrulanmış son tahta işlemini yeniden uyguluyorum.':'I am applying the last verified board action again.'});
   }
+  function academyBoardClearRequestForText(text,language='tr-TR'){
+    if(typeof text!=='string'||!text.trim())return Object.freeze({accepted:false,reason:'INVALID_BOARD_CLEAR_TEXT'});
+    const normalized=text.trim().toLocaleLowerCase('tr-TR');
+    if(!/(?:tahta(?:yı|daki(?:ni)?)|çizdiğini|yazdığını).*(?:temizle|sil)|(?:temizle|sil).*(?:tahta(?:yı|dakini)|çizdiğini|yazdığını)|(?:clear|erase) (?:the )?board/iu.test(normalized))return Object.freeze({accepted:false,reason:'NO_BOARD_CLEAR_REQUEST'});
+    const turkish=String(language).toLocaleLowerCase('en-US').startsWith('tr');
+    return Object.freeze({accepted:true,action:'clear-board',text:turkish?'Academy tahtasını temizliyorum.':'I am clearing the Academy board.'});
+  }
   function recordVerifiedGesture(history,action,{limit=4}={}){
     if(!Array.isArray(history)||!Number.isInteger(limit)||limit<1||limit>8)return Object.freeze({accepted:false,reason:'INVALID_GESTURE_HISTORY'});
     const verified=gestureAcknowledgementForRequest({accepted:true,supported:true,action},'en-US');
@@ -637,5 +644,5 @@
     };
     return Object.freeze({play,cancel});
   }
-  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,academyBoardRecallAnswerForText,academyBoardRepeatRequestForText,recordVerifiedGesture,gestureHistoryAnswerForText,gestureStopRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
+  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,academyBoardRecallAnswerForText,academyBoardRepeatRequestForText,academyBoardClearRequestForText,recordVerifiedGesture,gestureHistoryAnswerForText,gestureStopRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
 });

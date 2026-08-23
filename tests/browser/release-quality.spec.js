@@ -311,5 +311,10 @@ test('live Sinbad chat writes bounded plain text on the real Academy board',asyn
   await page.locator('#sinbadInput').fill('Onu tekrar çiz.');await page.locator('#sendSinbad').click();
   await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Doğrulanmış son tahta işlemini yeniden uyguluyorum.');
   await expect(classroom.locator('#academyTeachingStage')).toHaveAttribute('data-board-drawing-phase','complete',{timeout:3000});
+  await page.locator('#sinbadInput').fill('Tahtayı temizle.');await page.locator('#sendSinbad').click();
+  await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Academy tahtasını temizliyorum.');
+  await expect(classroom.locator('#academyTeachingText')).toBeEmpty();
+  await page.locator('#sinbadInput').fill('Az önce tahtaya ne çizdin?');await page.locator('#sendSinbad').click();
+  await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('başarıyla uygulanmış bir işlem kaydım yok');
   await classroom.close();
 });

@@ -1551,10 +1551,11 @@ function queueSinbadAcademyBoardPayload(payload){
 }
 function sendTextToSinbadAcademyBoard(text){const clean=typeof text==='string'?text.trim().slice(0,200):'';return clean?queueSinbadAcademyBoardPayload({version:1,type:'SINBAD_ACADEMY_WRITE_BOARD',text:clean}):false;}
 function sendShapeToSinbadAcademyBoard(shape){return ['circle','triangle','rectangle','arrow','axes'].includes(shape)?queueSinbadAcademyBoardPayload({version:1,type:'SINBAD_ACADEMY_DRAW_SHAPE',shape}):false;}
+function clearSinbadAcademyBoard(){return queueSinbadAcademyBoardPayload({version:1,type:'SINBAD_ACADEMY_CLEAR_BOARD'});}
 window.addEventListener('message',event=>{
   if(event.origin!==location.origin||event.source!==sinbadAcademyNativeWindow||event.data?.version!==1)return;
   if(event.data.type==='SINBAD_ACADEMY_READY'&&sinbadAcademyPendingBoardPayload){sinbadAcademyNativeWindow.postMessage(sinbadAcademyPendingBoardPayload,location.origin);sinbadAcademyPendingBoardPayload=null;return;}
-  const action=event.data.type==='SINBAD_ACADEMY_BOARD_APPLIED'?event.data.action:null;if(action&&['shape','text'].includes(action.kind)&&typeof action.value==='string'&&action.value)sinbadLastAcademyBoardAction=Object.freeze({kind:action.kind,value:action.value.slice(0,200)});
+  const action=event.data.type==='SINBAD_ACADEMY_BOARD_APPLIED'?event.data.action:null;if(action?.kind==='clear'&&action.value==='board')sinbadLastAcademyBoardAction=null;else if(action&&['shape','text'].includes(action.kind)&&typeof action.value==='string'&&action.value)sinbadLastAcademyBoardAction=Object.freeze({kind:action.kind,value:action.value.slice(0,200)});
 });
 function renderAcademyLesson(){
   const category=$('academyModule')?.value,lesson=window.SinbadAcademy?.lesson(category,window.SINBAD_TRAINING_DATA),output=$('academyOutput');
@@ -1692,6 +1693,8 @@ async function sendToSinbad(text){
   $('sinbadInput').value='';
   const stopGesture=sinbadPerformanceDirector?.gestureStopRequestForText?.(q,sinbadState.language||appLanguage);
   if(stopGesture?.accepted){stopSinbadGesturePerformance();addSinbadMessage('sinbad',stopGesture.text);return;}
+  const clearedBoard=sinbadPerformanceDirector?.academyBoardClearRequestForText?.(q,sinbadState.language||appLanguage);
+  if(clearedBoard?.accepted){const delivered=clearSinbadAcademyBoard();addSinbadMessage('sinbad',delivered?clearedBoard.text:(sinbadState.language==='tr-TR'?'Academy tahtasına güvenli bağlantı kurulamadığı için tahtayı temizlemedim.':'I did not clear the board because a safe Academy connection could not be established.'));return;}
   const repeatedBoard=sinbadPerformanceDirector?.academyBoardRepeatRequestForText?.(q,sinbadLastAcademyBoardAction,sinbadState.language||appLanguage);
   if(repeatedBoard?.accepted){if(!repeatedBoard.known){addSinbadMessage('sinbad',repeatedBoard.text);return;}const delivered=repeatedBoard.action.kind==='shape'?sendShapeToSinbadAcademyBoard(repeatedBoard.action.value):sendTextToSinbadAcademyBoard(repeatedBoard.action.value);addSinbadMessage('sinbad',delivered?repeatedBoard.text:(sinbadState.language==='tr-TR'?'Academy tahtasına güvenli bağlantı kurulamadığı için işlemi tekrarlamadım.':'I did not repeat the action because a safe Academy board connection could not be established.'));return;}
   const recalledBoard=sinbadPerformanceDirector?.academyBoardRecallAnswerForText?.(q,sinbadLastAcademyBoardAction,sinbadState.language||appLanguage);
