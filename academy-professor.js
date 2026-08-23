@@ -29,7 +29,7 @@ function downloadProfile(){const data=SinbadProfessor.exportProfile(profile),blo
 async function restoreProfile(file){if(!file)return;$('profileBackupStatus').textContent='Checking backup…';try{if(file.size>262144)throw new Error('Profile backup is too large');profile=SinbadProfessor.importProfile(await file.text());saveProfile();render();renderPlan();renderReviews();renderProgressReport();renderEvidenceLog();$('profileBackupStatus').textContent='Profile restored on this device.'}catch(error){$('profileBackupStatus').textContent=`Restore stopped: ${error.message||error}`}finally{$('importProfile').value=''}}
 function resetProfile(){if(!window.confirm('Reset the local Sinbad Professor learning profile on this device?'))return;const displayName=profile.displayName,preferredLanguage=profile.preferredLanguage;profile=SinbadProfessor.createProfile({displayName,preferredLanguage});coachNote='';pendingReflection=null;lastReflectedQuestion='';saveProfile();$('chatReflection').hidden=true;$('reflectionCheck').hidden=true;render();renderCoach();renderPlan();renderReviews();renderProgressReport();renderEvidenceLog();$('resetProfileStatus').textContent='Local learning profile reset. Atlas documents and chats were not changed.'}
 function downloadProgressReport(){const report=SinbadProfessor.progressReport(profile,TOPICS),blob=new Blob([JSON.stringify(report,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=`sinbad-progress-${profile.learnerId}.json`;link.click();setTimeout(()=>URL.revokeObjectURL(url),0)}
-$('saveLearnerName').addEventListener('click',()=>{profile=SinbadProfessor.normalizeProfile({...profile,displayName:$('learnerName').value});saveProfile();localStorage.setItem('sinbad_learner_title',$('learnerTitle')?.value||'');render()});
+$('saveLearnerName').addEventListener('click',()=>{profile=SinbadProfessor.normalizeProfile({...profile,displayName:$('learnerName').value});saveProfile();render()});
 $('startDiagnostic').addEventListener('click',startDiagnostic);
 $('exportProfile').addEventListener('click',downloadProfile);
 $('importProfile').addEventListener('change',event=>restoreProfile(event.target.files?.[0]));
@@ -40,5 +40,4 @@ $('resetLearnerProfile').addEventListener('click',resetProfile);
 function openRecommendedLesson(){if(!recommended)return;const doc=$('phaseOneClassroom').contentDocument,module=doc?.getElementById('academyModule');if(module){module.value=recommended.id;doc.getElementById('startAcademyLesson')?.click();$('phaseOneClassroom').focus()}}
 $('openRecommended').addEventListener('click',openRecommendedLesson);
 $('coachOpenRecommended').addEventListener('click',openRecommendedLesson);
-if($('learnerTitle'))$('learnerTitle').value=localStorage.getItem('sinbad_learner_title')||'';
 connectClassroom();render();renderCoach();renderPlan();renderReviews();renderProgressReport();renderEvidenceLog();
