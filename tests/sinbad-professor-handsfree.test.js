@@ -33,9 +33,20 @@ test('turn-taking prevents Sinbad speech from feeding back into recognition',()=
   assert.match(app,/sinbadIsSpeaking\(\)/);
   assert.match(app,/awaitingAnswer=true;stopRecognition\(\)/);
   assert.match(app,/stage\.dataset\.state==='speaking'/);
-  assert.match(app,/const deadline=Date\.now\(\)\+8000/);
+  assert.match(app,/deadline=Date\.now\(\)\+8000/);
   assert.match(app,/awaitingAnswer=false/);
   assert.match(app,/scheduleListening\(250\)/);
+});
+
+test('student can interrupt narration with a name-gated barge-in question',()=>{
+  assert.match(html,/araya girmek için “Sinbad…” diye başlayın/);
+  assert.match(app,/function startInterruptionListening\(\)/);
+  assert.match(app,/function isInterruption\(text\)/);
+  assert.match(app,/sinbad\|simbad\|sinbat\|sin bat\|isim bat/);
+  assert.match(app,/function interruptSinbad\(text\)/);
+  assert.match(app,/academyStopVoice/);
+  assert.match(app,/listeningPurpose==='interrupt'/);
+  assert.match(app,/answerTurn!==turnGeneration/);
 });
 
 test('main app opens the resizable hands-free Professor window and Pages ships its assets',()=>{

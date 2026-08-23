@@ -126,3 +126,29 @@ test('hands-free Professor runs an explicit listen-send-answer-listen loop witho
   await expect(page.locator('#toggleHandsFree')).toHaveAttribute('aria-pressed','false');
   await expect(page.locator('#handsfreeStatus')).toContainText('mikrofon dinlemiyor');
 });
+
+test('student can interrupt Sinbad narration with a name-gated follow-up',async({page})=>{
+  await page.addInitScript(()=>{
+    class FakeRecognition{
+      constructor(){(window.__recognitions||(window.__recognitions=[])).push(this);this.started=0;}
+      start(){this.started+=1;this.onstart?.();}
+      abort(){this.onend?.();}
+      finish(text){this.onresult?.({resultIndex:0,results:Object.assign([{0:{transcript:text},isFinal:true}],{length:1})});this.onend?.();}
+    }
+    class FakeUtterance{constructor(text){this.text=text;}}
+    window.SpeechRecognition=FakeRecognition;
+    window.SpeechSynthesisUtterance=FakeUtterance;
+    Object.defineProperty(window,'speechSynthesis',{configurable:true,value:{speaking:false,getVoices:()=>[{lang:'tr-TR',name:'Test'}],cancel(){this.speaking=false;},speak(utterance){this.speaking=true;this.utterance=utterance;}}});
+    localStorage.setItem('atlas_selected_workspace','workspace-test');
+  });
+  await page.route('**/vendor/supabase-2.112.3.js',route=>route.fulfill({contentType:'application/javascript',body:`window.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:{user:{id:'test-user'}}}}),onAuthStateChange:()=>({})},functions:{invoke:async(_name,request)=>({data:{answer:'İlk açıklama devam ediyor.',spokenSummary:'İlk açıklama devam ediyor.',visuals:[],coreGateVersion:request.body.coreEnvelope.gateVersion,permission:'DECISION_SUPPORT_ONLY',executionPerformed:false},error:null})}})};`}));
+  await page.goto('/academy-professor-v3.html');
+  await page.locator('#toggleHandsFree').click();
+  await expect(page.locator('#handsfreeStatus')).toContainText('Dinliyorum');
+  await page.evaluate(()=>window.__recognitions[0].finish('Gelgit nasıl oluşur?'));
+  await expect(page.locator('#handsfreeStatus')).toContainText('Sinbad anlatıyor');
+  await page.evaluate(()=>window.__recognitions[0].finish('Sinbad bunu daha detaylı anlat'));
+  const classroom=page.frameLocator('#phaseOneClassroom');
+  await expect(classroom.locator('.academy-message.user')).toHaveCount(2);
+  await expect(classroom.locator('.academy-message.user').last()).toContainText('Sinbad bunu daha detaylı anlat');
+});
