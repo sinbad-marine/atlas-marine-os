@@ -232,6 +232,8 @@ test('explicit gesture requests override improvisation only when a real supporte
   assert.equal(board.supported,true);assert.equal(board.cue.gesture,'point-board');assert.equal(board.cue.gaze,'board');
   const writing=gestureRequestForText('Tahtaya Pruva 090 yaz.');assert.equal(writing.supported,true);assert.equal(writing.directAcademyBoard,true);assert.equal(writing.boardText,'Pruva 090');
   const circle=gestureRequestForText('Tahtaya bir daire çiz.');assert.equal(circle.supported,true);assert.equal(circle.directAcademyBoard,true);assert.equal(circle.boardShape,'circle');
+  assert.equal(gestureRequestForText('Tahtaya bir üçgen çiz.').boardShape,'triangle');
+  assert.equal(gestureRequestForText('Draw a rectangle on the board.').boardShape,'rectangle');
   const listening=gestureRequestForText('Beni dinliyor musun?');
   assert.equal(listening.action,'show-listening');assert.equal(listening.cue.gesture,'listen-lean');
   assert.equal(gestureRequestForText('Sağ elini göster.').action,'show-right-hand');
@@ -294,7 +296,7 @@ test('a direct question about Sinbad body state replaces unrelated model text wi
 });
 
 test('unimplemented physical requests are acknowledged without inventing an action',()=>{
-  const writing=gestureRequestForText('Tahtaya bir üçgen çiz.');
+  const writing=gestureRequestForText('Tahtaya bir altıgen çiz.');
   assert.equal(writing.accepted,true);assert.equal(writing.supported,false);assert.equal(writing.reason,'GESTURE_NOT_IMPLEMENTED');
   const grounded=groundResponseWithGesture('İstersen konuyu açıklayabilirim.',writing,'tr-TR');
   assert.equal(grounded.grounded,true);assert.equal(grounded.supported,false);assert.match(grounded.text,/^Bu hareketi henüz güvenilir biçimde yapamıyorum\./);
