@@ -32,6 +32,21 @@ const TITLE_ALIASES: Record<string, string[]> = {
   labour: ['çalışma', 'calisma', 'iş', 'is'], weather: ['hava', 'meteoroloji'], current: ['akıntı', 'akinti'], tide: ['gelgit']
 };
 const titleTerms = (terms: string[]) => [...new Set(terms.flatMap(term => [term, ...(TITLE_ALIASES[term] || [])]))].slice(0, 30);
+const normalizedSourceName = (value: string) => String(value || '')
+  .toLocaleLowerCase('tr-TR')
+  .normalize('NFKD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .replace(/\.(?:pdf|pptx?|docx?)$/iu, '')
+  .replace(/[^a-z0-9çğıöşüа-яёء-ي]+/giu, ' ')
+  .trim()
+  .replace(/\s+/g, ' ');
+const sourceTitleScore = (title: string, question: string, terms: string[]) => {
+  const normalizedTitle = normalizedSourceName(title);
+  const normalizedQuestion = normalizedSourceName(question);
+  const exactNamedSource = normalizedTitle.length >= 6 && normalizedQuestion.includes(normalizedTitle);
+  const termScore = terms.reduce((total, term) => total + (normalizedTitle.includes(normalizedSourceName(term)) ? 1 : 0), 0);
+  return { score: termScore + (exactNamedSource ? 1000 : 0), exactNamedSource };
+};
 
 const extractText = (response: any) => response?.output_text || response?.output
   ?.flatMap((item: any) => item?.content || [])
@@ -143,13 +158,17 @@ Deno.serve(async req => {
       return !error && data ? data : [];
     }))).flat() as any[];
 
-    const titleMatches = [...new Map(titleRows.map(row => [row.id, row])).values()]
+    const scoredTitleMatches = [...new Map(titleRows.map(row => [row.id, row])).values()]
       .map((row: any) => {
-        const title = String(row.title || '').toLocaleLowerCase('tr-TR');
-        const score = expandedTitleTerms.reduce((total, term) => total + (title.includes(term) ? 1 : 0), 0);
-        return { row, score };
+        const { score, exactNamedSource } = sourceTitleScore(String(row.title || ''), retrievalQuestion, expandedTitleTerms);
+        return { row, score, exactNamedSource };
       })
-      .sort((a: any, b: any) => b.score - a.score || String(a.row.title).localeCompare(String(b.row.title)))
+      .sort((a: any, b: any) => b.score - a.score || String(a.row.title).localeCompare(String(b.row.title)));
+    const exactNamedTitleMatches = scoredTitleMatches.filter((match: any) => match.exactNamedSource);
+    // If the user explicitly names a publication, lock retrieval to that
+    // publication. Common words such as "PPT" and "Session" must never let
+    // another course deck outrank the requested source.
+    const titleMatches = (exactNamedTitleMatches.length ? exactNamedTitleMatches : scoredTitleMatches)
       .slice(0, 8)
       .map(({ row }: any) => row) as any[];
     const rows: any[] = [];
@@ -179,7 +198,8 @@ Deno.serve(async req => {
     const rankedRows = rows.map(row => {
       const haystack = `${row.document_knowledge?.title || ''} ${row.content || ''}`.toLocaleLowerCase('tr-TR');
       const title = String(row.document_knowledge?.title || '').toLocaleLowerCase('tr-TR');
-      const score = queryTerms.reduce((total, term) => total + (haystack.includes(term) ? 1 : 0) + (title.includes(term) ? 3 : 0), 0);
+      const namedSourceBonus = sourceTitleScore(title, retrievalQuestion, expandedTitleTerms).exactNamedSource ? 1000 : 0;
+      const score = namedSourceBonus + queryTerms.reduce((total, term) => total + (haystack.includes(term) ? 1 : 0) + (title.includes(term) ? 3 : 0), 0);
       return { row, score };
     }).sort((a, b) => b.score - a.score);
     const unique = [...new Map(rankedRows.map(({ row }) => [`${row.document_knowledge.title}:${row.chunk_index}`, row])).values()].slice(0, 8) as any[];
