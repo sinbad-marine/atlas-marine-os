@@ -78,7 +78,9 @@ test('main chat can send only bounded same-origin plain text to the Academy boar
   assert.match(app,/slice\(0,200\)/);assert.match(app,/type:'SINBAD_ACADEMY_WRITE_BOARD'/);assert.match(app,/type!=='SINBAD_ACADEMY_READY'/);assert.match(app,/postMessage\(sinbadAcademyPendingBoardPayload,location\.origin\)/);
   assert.match(academyApp,/function writeCustomTextAtBoard\(rawText\)/);
   assert.match(academyApp,/event\.origin!==location\.origin\|\|event\.source!==window\.opener/);
-  assert.match(academyApp,/message\.text\.length>200/);assert.match(academyApp,/writeCustomTextAtBoard\(message\.text\)/);assert.match(academyApp,/type:'SINBAD_ACADEMY_READY'/);
+  assert.match(academyApp,/message\.text\.length<=200/);assert.match(academyApp,/writeCustomTextAtBoard\(message\.text\)/);assert.match(academyApp,/type:'SINBAD_ACADEMY_READY'/);
+  assert.match(app,/function sendShapeToSinbadAcademyBoard\(shape\)/);assert.match(academyApp,/function drawAllowedShapeAtBoard\(shape\)/);
+  assert.match(academyApp,/message\.type==='SINBAD_ACADEMY_DRAW_SHAPE'&&message\.shape==='circle'/);assert.match(academyApp,/createElementNS\('http:\/\/www\.w3\.org\/2000\/svg','svg'\)/);
 });
 
 test('real transparent writing frames follow measured board progress and settle to explanation',()=>{

@@ -71,6 +71,17 @@ function writeCustomTextAtBoard(rawText){
   if(reducedMotion){board.textContent=text;return true;}
   let index=0,lastCueBucket=-1,lastFrameKey='ready';const writeNext=()=>{if(generation!==academyBoardGeneration)return;index++;lastCueBucket=directAcademyWritingGesture(index,text,lastCueBucket);lastFrameKey=renderAcademyWritingFrame(index,text,lastFrameKey);renderAcademyBoardProgress(board,text,index,index>=text.length);if(index<text.length)setTimeout(writeNext,/\s/.test(text[index]||'')?55:/[.!?;:]/u.test(text[index]||'')?130:30);else renderAcademyCharacterCue({state:'board-teaching',gesture:'explain',gaze:'audience'},text);};setTimeout(writeNext,320);return true;
 }
+function drawAllowedShapeAtBoard(shape){
+  if(shape!=='circle')return false;
+  const stage=byId('academyTeachingStage'),title=byId('academyTeachingTitle'),board=byId('academyTeachingText');if(!stage||!title||!board)return false;
+  const generation=++academyBoardGeneration;stage.hidden=false;title.textContent="Captain Sinbad's board";board.replaceChildren();
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 240 180');svg.setAttribute('role','img');svg.setAttribute('aria-label','Sinbad drew a circle');svg.style.cssText='display:block;width:min(100%,360px);height:auto;margin:0 auto;overflow:visible';
+  const circle=document.createElementNS(svg.namespaceURI,'circle');circle.setAttribute('cx','120');circle.setAttribute('cy','90');circle.setAttribute('r','62');circle.setAttribute('fill','none');circle.setAttribute('stroke','#f2f4df');circle.setAttribute('stroke-width','6');circle.setAttribute('stroke-linecap','round');circle.style.strokeDasharray='390';circle.style.strokeDashoffset='390';svg.append(circle);board.append(svg);
+  renderAcademyCharacterCue({state:'board-teaching',gesture:'write-contact',gaze:'board'},'circle');
+  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches===true){circle.style.strokeDashoffset='0';renderAcademyCharacterCue({state:'board-teaching',gesture:'explain',gaze:'audience'},'circle');return true;}
+  circle.style.transition='stroke-dashoffset 1100ms ease-in-out';requestAnimationFrame(()=>requestAnimationFrame(()=>{if(generation===academyBoardGeneration)circle.style.strokeDashoffset='0';}));
+  setTimeout(()=>{if(generation===academyBoardGeneration)renderAcademyCharacterCue({state:'board-teaching',gesture:'explain',gaze:'audience'},'circle');},1250);return true;
+}
 function stopBoardTeaching(){academyBoardGeneration++;academyPerformanceDirector?.cancel();const stage=byId('academyTeachingStage');if(stage)stage.hidden=true;const board=byId('academyTeachingText');board?.querySelector('.academy-chalk-cursor')?.remove();academyCharacterEngine?.dispatch('READY');}
 
 function saveWindowGeometry(){
@@ -107,7 +118,8 @@ byId('closeAcademyWindow').addEventListener('click',()=>{saveWindowGeometry();wi
 window.addEventListener('beforeunload',saveWindowGeometry);
 window.addEventListener('message',event=>{
   if(event.origin!==location.origin||event.source!==window.opener)return;
-  const message=event.data;if(!message||message.version!==1||message.type!=='SINBAD_ACADEMY_WRITE_BOARD'||typeof message.text!=='string'||!message.text.trim()||message.text.length>200)return;
-  writeCustomTextAtBoard(message.text);
+  const message=event.data;if(!message||message.version!==1)return;
+  if(message.type==='SINBAD_ACADEMY_WRITE_BOARD'&&typeof message.text==='string'&&message.text.trim()&&message.text.length<=200)writeCustomTextAtBoard(message.text);
+  if(message.type==='SINBAD_ACADEMY_DRAW_SHAPE'&&message.shape==='circle')drawAllowedShapeAtBoard(message.shape);
 });
 window.opener?.postMessage({version:1,type:'SINBAD_ACADEMY_READY'},location.origin);

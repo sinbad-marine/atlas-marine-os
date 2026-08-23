@@ -369,6 +369,7 @@
     const englishBoardText=source.match(/write\s+(.{1,200}?)\s+(?:on|onto)\s+(?:the\s+)?(?:board|blackboard)[.!? ]*$/iu)?.[1]?.trim();
     const boardText=turkishBoardText||englishBoardText;
     if(boardText)return Object.freeze({accepted:true,action:'write-board',supported:true,directAcademyBoard:true,responsePolicy:'replace',boardText,cue:Object.freeze({gesture:'point-board',gaze:'board',emotion:'confident',energy:.42})});
+    if(/(?:tahta(?:ya|da)\s+(?:bir\s+)?daire\s+çiz|draw\s+(?:a\s+)?circle\s+(?:on|onto)\s+(?:the\s+)?(?:board|blackboard))/iu.test(normalized))return Object.freeze({accepted:true,action:'draw-board-shape',supported:true,directAcademyBoard:true,responsePolicy:'replace',boardShape:'circle',cue:Object.freeze({gesture:'point-board',gaze:'board',emotion:'confident',energy:.44})});
     if(/(tahta(?:ya|da|yı)?.*(?:yaz|çiz)|(?:write|draw).*(?:board|blackboard))/iu.test(normalized)){
       return Object.freeze({accepted:true,action:'write-board',supported:false,reason:'GESTURE_NOT_IMPLEMENTED'});
     }
@@ -396,6 +397,7 @@
       return Object.freeze({accepted:true,supported:true,action:'two-hand-sequence',text:turkish?(rightFirst?'Önce sağ avucumu, ardından sol elimi gösteriyorum.':'Önce sol elimi, ardından sağ avucumu gösteriyorum.'):(rightFirst?'First I am showing my right palm, then my left hand.':'First I am showing my left hand, then my right palm.')});
     }
     if(request.directAcademyBoard&&request.action==='write-board')return Object.freeze({accepted:true,supported:true,action:'write-board',text:turkish?`Academy tahtasına “${request.boardText}” yazıyorum.`:`I am writing “${request.boardText}” on the Academy board.`});
+    if(request.directAcademyBoard&&request.action==='draw-board-shape'&&request.boardShape==='circle')return Object.freeze({accepted:true,supported:true,action:'draw-board-shape',text:turkish?'Academy tahtasına bir daire çiziyorum.':'I am drawing a circle on the Academy board.'});
     const copy=turkish?{
       'show-palm':'Avucumu açıp gösteriyorum.',
       'show-right-hand':'Sağ avucumu açıp gösteriyorum.',

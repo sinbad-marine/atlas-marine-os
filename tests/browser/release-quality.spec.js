@@ -156,7 +156,7 @@ test('live Sinbad chat grounds body answers in the gesture actually shown',async
   await expect(answer).toContainText('Hareketi durdurdum ve nötr poza döndüm.');
   await expect(avatar).toHaveAttribute('data-gesture','rest');
 
-  await ask('Tahtaya bir daire çiz.');
+  await ask('Tahtaya bir üçgen çiz.');
   await expect(answer).toContainText('Bu hareketi henüz güvenilir biçimde yapamıyorum.');
   await expect(avatar).not.toHaveAttribute('data-gesture','point-board');
 
@@ -285,5 +285,10 @@ test('live Sinbad chat writes bounded plain text on the real Academy board',asyn
   await expect(classroom.locator('#academyTeachingText')).toContainText('Pruva 090',{timeout:5000});
   await expect(classroom.locator('.academy-sinbad')).toHaveAttribute('data-state','board-teaching');
   await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Academy tahtasına “Pruva 090” yazıyorum.');
+  await page.locator('#sinbadInput').fill('Tahtaya bir daire çiz.');
+  await page.locator('#sendSinbad').click();
+  await expect(classroom.locator('#academyTeachingText svg[aria-label="Sinbad drew a circle"]')).toBeVisible();
+  await expect(classroom.locator('#academyTeachingText circle')).toHaveCSS('stroke-dashoffset','0px',{timeout:3000});
+  await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Academy tahtasına bir daire çiziyorum.');
   await classroom.close();
 });
