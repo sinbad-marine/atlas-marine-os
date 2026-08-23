@@ -9,6 +9,7 @@ const router=require('../world-brain/topic-router.js');
 const catalogModule=require('../world-brain/knowledge-catalog.js');
 const sources=require('../world-brain/source-catalog.js');
 const profiles=require('../world-brain/content-profiles.js');
+const acquisition=require('../world-brain/acquisition-plan.js');
 
 function manifestFor(bytes,overrides={}){
   return {schemaVersion:pack.VERSION,packId:'history-core-tr',title:'History Core',domain:'history',language:'tr-TR',license:'CC-BY-4.0',source:'https://example.test/history',publisher:'Example Publisher',edition:'2026.1',snapshotDate:'2026-08-01',contentHash:pack.contentHash(bytes),tags:['history'],...overrides};
@@ -111,4 +112,16 @@ test('content profiles scale from a small offline brain to a curated academy',()
   assert.deepEqual(profiles.listProfiles().map(item=>item.id),['light','standard','academy','archive']);
   assert.equal(profiles.getProfile('academy').images,'curated-and-attributed');
   assert.equal(profiles.getProfile('missing'),null);
+});
+
+test('initial Turkish offline artifact is pinned but cannot download without exact approval',()=>{
+  const plan=acquisition.build();
+  assert.equal(plan.state,acquisition.STATES.AWAITING_APPROVAL);
+  assert.equal(plan.artifact.reportedSize,'124M');
+  assert.equal(plan.safety.downloadStarted,false);
+  assert.match(plan.artifact.url,/^https:\/\/download\.kiwix\.org\//);
+  assert.throws(()=>acquisition.approve(plan,'yes'),/exact artifact confirmation/);
+  const approved=acquisition.approve(plan,`DOWNLOAD:${plan.artifact.fileName}`);
+  assert.equal(approved.state,acquisition.STATES.APPROVED);
+  assert.equal(approved.safety.downloadStarted,false);
 });

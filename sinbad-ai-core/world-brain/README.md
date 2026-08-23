@@ -43,3 +43,9 @@ image-by-image rights checks cannot be globally enabled.
 `academy` and `archive`. Current politics, economics, sport, news and popular
 culture are never presented as timeless offline facts; they require dated
 update packs or a live source.
+
+`acquisition-plan.js` pins the exact official artifact before any network or
+installation action. The initial light candidate is the 124 MB Turkish
+Wikipedia top-mini snapshot. It cannot enter the approved state without an
+exact artifact confirmation, and installation must still verify its downloaded
+hash before catalog registration.
