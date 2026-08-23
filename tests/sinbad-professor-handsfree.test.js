@@ -47,6 +47,11 @@ test('student can interrupt narration with a name-gated barge-in question',()=>{
   assert.match(app,/academyStopVoice/);
   assert.match(app,/listeningPurpose==='interrupt'/);
   assert.match(app,/answerTurn!==turnGeneration/);
+  assert.match(app,/function armBargeIn\(text\)/);
+  assert.match(app,/Sizi duydum; anlatımı durdurdum/);
+  assert.match(app,/scheduleBargeInFinish/);
+  assert.match(app,/bargeTimer=setTimeout/);
+  assert.match(app,/lastFinal\.trim\(\)\|\|liveTranscript\.trim\(\)/);
 });
 
 test('main app opens the resizable hands-free Professor window and Pages ships its assets',()=>{

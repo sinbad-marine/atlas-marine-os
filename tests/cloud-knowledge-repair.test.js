@@ -9,7 +9,8 @@ const edge=fs.readFileSync('supabase/functions/sinbad-answer/index.ts','utf8');
 
 test('cloud AI returns a separate semantic spoken teaching summary instead of forcing the browser to clip the written answer',()=>{
   assert.match(edge,/const SPOKEN_SUMMARY_MARKER = '<<<SPOKEN_SUMMARY>>>';/);
-  assert.match(edge,/3 to 6 complete sentences and roughly 60 to 110 words/);
+  assert.match(edge,/For simple or conversational questions use 1 or 2 short sentences/);
+  assert.match(edge,/Never introduce Atlas Marine, advertise the platform/);
   assert.match(edge,/Do not merely copy the first characters/);
   assert.match(edge,/return json\(\{ answer, spokenSummary, sources,/);
   assert.match(app,/sinbadModelSpokenSummary=String\(trustedAiData\.spokenSummary\|\|''\)\.trim\(\)/);
@@ -53,5 +54,13 @@ test('server title lookup expands bounded multilingual maritime aliases',()=>{
   assert.match(edge,/construction: \['inşa', 'insa'/);
   assert.match(edge,/ships: \['gemi', 'gemileri'/);
   assert.match(edge,/const expandedTitleTerms = titleTerms\(queryTerms\)/);
-  assert.match(edge,/for \(const term of expandedTitleTerms\.slice\(0, 18\)\)/);
+  assert.match(edge,/Promise\.all\(expandedTitleTerms\.slice\(0, 18\)\.map/);
+  assert.match(edge,/Promise\.all\(queryTerms\.slice\(0, 5\)\.map/);
+});
+
+test('simple greetings return immediately without retrieval or an advertising monologue',()=>{
+  assert.match(edge,/const isSimpleGreeting =/);
+  assert.match(edge,/Selam Kaptan, sizi dinliyorum\./);
+  assert.match(edge,/mode: 'local-greeting'/);
+  assert.ok(edge.indexOf('if (isSimpleGreeting(question))')<edge.indexOf('const expandedTitleTerms = titleTerms(queryTerms)'));
 });
