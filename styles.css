@@ -56,8 +56,11 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
 .sinbad-source-visual{display:grid;gap:8px;padding:10px;border:1px solid var(--line);border-radius:12px;background:rgba(7,23,35,.68)}
 .sinbad-source-visual>div:first-child{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
 .sinbad-source-visual small{color:var(--muted)}
-.sinbad-source-visual-stage{display:grid;gap:7px;max-width:min(720px,76vw);overflow:auto}
-.sinbad-source-visual-stage canvas{display:block;width:100%;height:auto;border-radius:8px;background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.28)}
+.chat-bubble.sinbad:has(.sinbad-source-visuals){max-width:min(96%,980px)}
+.sinbad-source-visual-stage{display:grid;gap:7px;max-width:min(900px,82vw);overflow:auto}
+.sinbad-source-viewer{display:grid;gap:8px;min-width:0}.sinbad-source-toolbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;position:sticky;top:0;z-index:2;padding:7px;border-radius:9px;background:#091d2d;border:1px solid var(--line)}
+.sinbad-source-control{min-width:42px;padding:7px 10px}.sinbad-source-page-output{min-width:64px;text-align:center;color:var(--gold);font-weight:800}.sinbad-source-page-viewport{max-height:58vh;overflow:auto;overscroll-behavior:contain;border-radius:8px;background:#172735;padding:8px}.sinbad-source-page-viewport canvas{display:block;max-width:none;height:auto;margin:auto;border-radius:6px;background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.28)}.sinbad-source-caption{display:block;color:var(--muted)}
+.sinbad-source-dialog{width:min(96vw,1280px);height:min(94vh,920px);max-width:none;max-height:none;padding:0;border:1px solid var(--gold);border-radius:16px;background:#071b2a;color:#fff;box-shadow:0 24px 80px rgba(0,0,0,.7)}.sinbad-source-dialog::backdrop{background:rgba(0,8,14,.82);backdrop-filter:blur(3px)}.sinbad-source-dialog>header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line);background:#091d2d}.sinbad-source-viewer-full{height:calc(100% - 66px);padding:12px;grid-template-rows:auto minmax(0,1fr) auto}.sinbad-source-viewer-full .sinbad-source-page-viewport{max-height:none;height:100%}
 .chat-input-row{display:grid;grid-template-columns:1fr auto;gap:10px;margin-top:0}
 .chat-input-row textarea{min-height:76px;background:#091d2d;color:white;border:1px solid var(--line);border-radius:12px;padding:12px;font-size:16px}
 .quick-prompts{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 12px}
