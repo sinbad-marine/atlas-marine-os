@@ -31,12 +31,37 @@ IMO_A760_ALIASES = {
     "can yelegi": "lifejacket", "toplanma istasyonu": "muster-station",
     "binme istasyonu": "embarkation-station", "dalma giysisi": "immersion-suit",
     "çocuk can yeleği": "child-lifejacket", "cocuk can yelegi": "child-lifejacket",
-    "sart": "radar-transponder-sart", "radar transponder": "radar-transponder-sart",
+    "sart": "search-and-rescue-transponder", "radar transponder": "search-and-rescue-transponder",
+}
+
+IMO_A1116_LSS_PAGES = {
+    "lifeboat": 6, "rescue-boat": 6, "liferaft": 6,
+    "davit-launched-liferaft": 7, "lifebuoy": 7, "lifebuoy-with-line": 7,
+    "lifebuoy-with-light": 8, "lifebuoy-with-line-and-light": 8,
+    "lifebuoy-with-light-and-smoke": 8, "lifejacket": 9,
+    "child-lifejacket": 9, "infant-lifejacket": 9,
+    "search-and-rescue-transponder": 9, "survival-craft-distress-signal": 10,
+    "rocket-parachute-flare": 10, "line-throwing-appliance": 10,
+    "two-way-vhf-radiotelephone": 10, "epirb": 11,
+    "embarkation-ladder": 11, "marine-evacuation-slide": 11,
+    "marine-evacuation-chute": 11,
 }
 
 
 def curated_symbol_root() -> Path:
     return Path(__file__).resolve().parents[1] / "assets" / "curated-imo-symbols"
+
+
+def curated_symbol_collections():
+    assets = Path(__file__).resolve().parents[1] / "assets"
+    return (
+        (assets / "curated-imo-a1116-lss", "imo-a1116-lss-", IMO_A1116_LSS_PAGES,
+         "IMO Resolution A.1116(30)",
+         "https://wwwcdn.imo.org/localresources/en/KnowledgeCentre/IndexofIMOResolutions/AssemblyDocuments/A.1116%2830%29.pdf", 200),
+        (assets / "curated-imo-symbols", "imo-a760-", IMO_A760_PAGES,
+         "IMO Resolution A.760(18)",
+         "https://wwwcdn.imo.org/localresources/en/KnowledgeCentre/IndexofIMOResolutions/AssemblyDocuments/A.760%2818%29.pdf", 100),
+    )
 
 
 def curated_symbol_query(value: str, limit: int) -> list[dict]:
@@ -50,25 +75,27 @@ def curated_symbol_query(value: str, limit: int) -> list[dict]:
             needles.update(canonical.split("-"))
             preferred.add(canonical)
     scored = []
-    root = curated_symbol_root()
-    for path in root.glob("imo-a760-*.webp"):
-        name = path.stem.removeprefix("imo-a760-")
-        score = len(needles.intersection(name.split("-"))) + (100 if name in preferred else 0)
-        if score:
-            scored.append((score, name, path))
+    for root, prefix, pages, title, source_url, priority in curated_symbol_collections():
+        for path in root.glob(f"{prefix}*.webp"):
+            name = path.stem.removeprefix(prefix)
+            score = len(needles.intersection(name.split("-"))) + (100 if name in preferred else 0)
+            if score:
+                scored.append((score + priority, name, path, pages, title, source_url, prefix))
     result = []
-    for _score, name, path in sorted(scored, key=lambda item: (-item[0], item[1]))[:limit]:
+    for _score, name, path, pages, title, source_url, prefix in sorted(scored, key=lambda item: (-item[0], item[1]))[:limit]:
         digest = __import__("hashlib").sha256(path.read_bytes()).hexdigest()
-        page = IMO_A760_PAGES[name]
+        page = pages[name]
+        resolution = "imo-a1116-lss" if prefix == "imo-a1116-lss-" else "imo-a760"
+        document_hash = "imo-resolution-a1116-30" if prefix == "imo-a1116-lss-" else "imo-resolution-a760-18"
         result.append({
-            "visual_key": f"curated:imo-a760:{name}", "visual_type": "object",
-            "document_hash": "imo-resolution-a760-18", "page_number": page,
+            "visual_key": f"curated:{resolution}:{name}", "visual_type": "object",
+            "document_hash": document_hash, "page_number": page,
             "image_number": None, "asset_hash": digest,
-            "file": str(path), "title": "IMO Resolution A.760(18)", "volume": None,
+            "file": str(path), "title": title, "volume": None,
             "heading": name.replace("-", " ").title(),
             "context": "Official IMO symbol related to life-saving appliances and arrangements.",
-            "topics": [name, "IMO A.760(18)", "life-saving appliance symbol"],
-            "sourcePaths": ["https://wwwcdn.imo.org/localresources/en/KnowledgeCentre/IndexofIMOResolutions/AssemblyDocuments/A.760%2818%29.pdf"],
+            "topics": [name, title, "life-saving appliance symbol"],
+            "sourcePaths": [source_url],
             "rank": -1000.0,
             "assetUrl": f"http://127.0.0.1:31983/visuals/assets/{digest}.webp",
         })
@@ -169,10 +196,11 @@ def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = Fa
 def resolve_asset(db: sqlite3.Connection, atlas: Path, digest: str) -> dict:
     if not re.fullmatch(r"[0-9a-f]{64}", digest):
         raise RuntimeError("INVALID_ASSET_HASH")
-    for path in curated_symbol_root().glob("imo-a760-*.webp"):
-        if __import__("hashlib").sha256(path.read_bytes()).hexdigest() == digest:
-            return {"asset_hash": digest, "file": str(path), "width": None, "height": None,
-                    "visual_type": "object", "absolutePath": str(path.resolve())}
+    for root, prefix, _pages, _title, _source_url, _priority in curated_symbol_collections():
+        for path in root.glob(f"{prefix}*.webp"):
+            if __import__("hashlib").sha256(path.read_bytes()).hexdigest() == digest:
+                return {"asset_hash": digest, "file": str(path), "width": None, "height": None,
+                        "visual_type": "object", "absolutePath": str(path.resolve())}
     statements = [
         "select asset_hash,file,width,height,'page' visual_type from page_plates where asset_hash=?",
         "select asset_hash,file,width,height,'object' visual_type from embedded_visuals where asset_hash=? and status='ready'",

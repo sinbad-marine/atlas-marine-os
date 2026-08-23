@@ -11,8 +11,8 @@ SPEC.loader.exec_module(MODULE)
 
 def test_turkish_lifebuoy_symbol_prefers_exact_official_crop():
     results = MODULE.curated_symbol_query("can simidi sembolünü göster", 3)
-    assert results[0]["visual_key"] == "curated:imo-a760:lifebuoy"
-    assert all(item["title"] == "IMO Resolution A.760(18)" for item in results)
+    assert results[0]["visual_key"] == "curated:imo-a1116-lss:lifebuoy"
+    assert results[0]["title"] == "IMO Resolution A.1116(30)"
 
 
 def test_object_photo_request_does_not_route_to_symbol_collection():
@@ -22,8 +22,8 @@ def test_object_photo_request_does_not_route_to_symbol_collection():
 def test_epirb_and_sart_resolve_to_distinct_official_symbols():
     epirb = MODULE.curated_symbol_query("EPIRB sembolü", 3)
     sart = MODULE.curated_symbol_query("SART işareti", 3)
-    assert epirb[0]["visual_key"] == "curated:imo-a760:epirb"
-    assert sart[0]["visual_key"] == "curated:imo-a760:radar-transponder-sart"
+    assert epirb[0]["visual_key"] == "curated:imo-a1116-lss:epirb"
+    assert sart[0]["visual_key"] == "curated:imo-a1116-lss:search-and-rescue-transponder"
     assert epirb[0]["asset_hash"] != sart[0]["asset_hash"]
 
 
