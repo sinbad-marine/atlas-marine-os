@@ -418,6 +418,8 @@ let sinbadTextPresentationCues=[];
 let sinbadRequestedGesture=null;
 let sinbadRequestedGestureSequence=[];
 let sinbadExplicitGestureHoldBoundaries=0;
+let sinbadLastSpeechMeaningKind='conversation';
+let sinbadSpeechMeaningTransitionTimer=null;
 function prepareSinbadSpeechPerformance(question){
   sinbadSpeechGestureDirector?.reset();
   const decision=window.SinbadCore?.analyzeQuery?.(question)||{};
@@ -452,6 +454,8 @@ function prepareSinbadResponsePerformance(text){
     sinbadTextPresentationCues[0]=Object.freeze({...sinbadTextPresentationCues[0],...sinbadRequestedGesture.cue,responseKind:sinbadTextPresentationCues[0].responseKind});
   }
   sinbadResponseOpeningCue=sinbadTextPresentationCues[0]||semantic;
+  clearTimeout(sinbadSpeechMeaningTransitionTimer);sinbadSpeechMeaningTransitionTimer=null;
+  sinbadLastSpeechMeaningKind=sinbadResponseOpeningCue.responseKind||'conversation';
   sinbadRequestedGesture=null;
   return sinbadResponseOpeningCue;
 }
@@ -865,6 +869,7 @@ let sinbadActiveResponseText='';
 // voice this turn"); otherwise it falls back to the real persistent voice
 // preference so a transient hiccup never misrepresents that preference.
 function finishSinbadVoice(forceState){
+  clearTimeout(sinbadSpeechMeaningTransitionTimer);sinbadSpeechMeaningTransitionTimer=null;
   if(sinbadVoiceObjectUrl)URL.revokeObjectURL(sinbadVoiceObjectUrl);
   sinbadVoiceObjectUrl='';sinbadVoiceAudio=null;sinbadVoiceAbort=null;
   sinbadActiveResponseText='';
@@ -883,6 +888,7 @@ function finishSinbadVoice(forceState){
   scheduleSinbadListening();
 }
 function stopSinbadVoice(){
+  clearTimeout(sinbadSpeechMeaningTransitionTimer);sinbadSpeechMeaningTransitionTimer=null;
   sinbadStandardSpeechGeneration++;
   sinbadVoiceAbort?.abort();sinbadVoiceAbort=null;
   if(sinbadVoiceAudio){sinbadVoiceAudio.pause();sinbadVoiceAudio.src='';}
@@ -908,7 +914,12 @@ function sinbadStandardVoiceTick(boundaryEvent,spokenText){
   const planned=sinbadVisemePlanner?.visemeForBoundary({text:spokenText,charIndex:boundaryEvent?.charIndex,step:sequenceStep});
   setSinbadMouthFrame(planned?.accepted?planned.frame:SINBAD_STANDARD_VISEME_CADENCE[sequenceStep%SINBAD_STANDARD_VISEME_CADENCE.length]);
   const performanceCue=sinbadSpeechBoundaryCue(boundaryEvent,spokenText,sinbadStandardMouthSequence-1);
-  if(performanceCue.gesture&&sinbadAssistantState==='speaking')sinbadAssistantElements().forEach(el=>{
+  const transition=performanceCue.gesture?sinbadPerformanceDirector?.speechTransitionForKinds?.(sinbadLastSpeechMeaningKind,performanceCue):null;
+  if(transition?.accepted&&transition.changed&&sinbadAssistantState==='speaking'){
+    clearTimeout(sinbadSpeechMeaningTransitionTimer);sinbadSpeechMeaningTransitionTimer=null;sinbadLastSpeechMeaningKind=performanceCue.responseKind;
+    if(transition.immediate)setSinbadAssistantState('speaking',transition.targetCue);
+    else{setSinbadAssistantState('speaking',transition.bridgeCue);sinbadSpeechMeaningTransitionTimer=setTimeout(()=>{if(sinbadAssistantState==='speaking'&&sinbadLastSpeechMeaningKind===performanceCue.responseKind)setSinbadAssistantState('speaking',transition.targetCue);},transition.durationMs);}
+  }else if(performanceCue.gesture&&sinbadAssistantState==='speaking')sinbadAssistantElements().forEach(el=>{
     el.dataset.gesture=performanceCue.gesture;el.dataset.gaze=performanceCue.gaze;el.dataset.emotion=performanceCue.emotion||'warm';
     el.dataset.speechBoundary=performanceCue.cadence||'word';
   });

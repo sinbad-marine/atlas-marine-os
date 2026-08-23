@@ -122,10 +122,20 @@ test('large Captain Sinbad portrait loads the four-layer articulated rig with it
 test('idle Sinbad performs a sparse real micro-motion and yields immediately to work',async({page})=>{
   await stubBridge(page);
   await page.goto('/');
-  await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');setSinbadAssistantState('idle');});
+  await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');document.querySelector('#sinbad')?.classList.add('active');setSinbadAssistantState('idle');});
   await page.waitForFunction(()=>Boolean(document.querySelector('.sinbad-avatar.large')?.dataset.idleMotion),null,{timeout:12000});
   const avatar=page.locator('.sinbad-avatar.large');
   await expect(avatar).toHaveAttribute('data-idle-motion',/^(breathe|look-left|look-right)$/);
+  await expect(avatar).toHaveAttribute('data-gesture',/^idle-(breathe|look-left|look-right)$/);
+  await page.waitForTimeout(150);
+  const idleVisual=await avatar.locator('.sinbad-rig-head-base').evaluate(element=>({
+    transform:getComputedStyle(element).transform,
+    headX:getComputedStyle(element).getPropertyValue('--sinbad-rig-head-x'),
+    headY:getComputedStyle(element).getPropertyValue('--sinbad-rig-head-y'),
+    lean:getComputedStyle(element).getPropertyValue('--sinbad-rig-lean')
+  }));
+  expect(idleVisual.transform).not.toBe('none');
+  expect([idleVisual.headX,idleVisual.headY,idleVisual.lean].some(value=>!/^0(?:\.00)?deg$/.test(value))).toBe(true);
   await page.evaluate(()=>setSinbadAssistantState('thinking',{thinkingStage:'analyzing'}));
   await expect(avatar).toHaveAttribute('data-state','thinking');
   await expect(avatar).not.toHaveAttribute('data-idle-motion',/.+/);

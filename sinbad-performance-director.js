@@ -85,6 +85,13 @@
     }
     return Object.freeze({accepted:true,cue:Object.freeze(cue)});
   }
+  function speechTransitionForKinds(previousKind,nextCue){
+    if(typeof previousKind!=='string'||!nextCue||typeof nextCue!=='object'||typeof nextCue.responseKind!=='string')return Object.freeze({accepted:false,reason:'INVALID_SPEECH_TRANSITION'});
+    if(previousKind===nextCue.responseKind)return Object.freeze({accepted:true,changed:false,targetCue:nextCue});
+    if(nextCue.responseKind==='caution')return Object.freeze({accepted:true,changed:true,immediate:true,durationMs:0,targetCue:nextCue});
+    const bridgeCue=Object.freeze({gesture:'hold',gaze:previousKind==='caution'?'audience':'thought',emotion:'attentive',energy:.24,responseKind:nextCue.responseKind,cadence:'transition'});
+    return Object.freeze({accepted:true,changed:true,immediate:false,durationMs:180,bridgeCue,targetCue:nextCue});
+  }
   const LISTENING_ACTIVITY_CUES=Object.freeze({
     ready:Object.freeze({gesture:'listen-lean',gaze:'audience',emotion:'attentive',energy:.24}),
     sound:Object.freeze({gesture:'listen-orient',gaze:'audience',emotion:'attentive',energy:.34}),
@@ -377,5 +384,5 @@
     };
     return Object.freeze({play,cancel});
   }
-  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
+  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
 });

@@ -24,6 +24,11 @@ test('character engine accepts the real open-palm pose and rejects invented gest
   assert.equal(engine.setState('presenting',{gesture:'teleport'}).snapshot.gesture,'open-hand');
 });
 
+test('character engine preserves the three real idle micro-poses',()=>{
+  const engine=createCharacterEngine();
+  for(const gesture of ['idle-breathe','idle-look-left','idle-look-right'])assert.equal(engine.setState('idle',{gesture}).snapshot.gesture,gesture);
+});
+
 test('walk is an explicit interruptible performance state',()=>{
   const engine=createCharacterEngine();const result=engine.dispatch('WALK');assert.equal(result.accepted,true);assert.equal(result.snapshot.state,'walking');assert.equal(result.snapshot.gesture,'walk');assert.equal(result.snapshot.canInterrupt,true);
 });

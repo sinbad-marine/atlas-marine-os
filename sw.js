@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.28-idle-micro-motion-v41';
+const CACHE='sinbad-marine-v8.20.29-semantic-motion-bridges-v42';
 const ASSETS=[
   './',
   './index.html',

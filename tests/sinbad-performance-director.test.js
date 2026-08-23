@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -159,6 +159,16 @@ test('speech boundaries follow the meaning of each real sentence instead of free
   assert.equal(warning.responseKind,'caution');assert.equal(warning.emotion,'concerned');
   assert.equal(explanation.responseKind,'conversation');assert.equal(explanation.emotion,'warm');
   assert.equal(question.responseKind,'question');assert.equal(question.emotion,'curious');
+});
+
+test('meaning changes use a brief bridge while safety escalation remains immediate',()=>{
+  const normal={gesture:'open-hand',gaze:'audience',emotion:'warm',responseKind:'conversation'};
+  const caution={gesture:'hold',gaze:'audience',emotion:'concerned',responseKind:'caution'};
+  const question={gesture:'open-hand',gaze:'audience',emotion:'curious',responseKind:'question'};
+  assert.equal(speechTransitionForKinds('conversation',normal).changed,false);
+  const escalation=speechTransitionForKinds('conversation',caution);assert.equal(escalation.immediate,true);assert.equal(escalation.durationMs,0);
+  const recovery=speechTransitionForKinds('caution',question);assert.equal(recovery.immediate,false);assert.equal(recovery.durationMs,180);assert.equal(recovery.bridgeCue.gesture,'hold');
+  assert.equal(speechTransitionForKinds('',null).reason,'INVALID_SPEECH_TRANSITION');
 });
 
 test('text-only presentation follows at most three real sentence meanings on a bounded timeline',()=>{

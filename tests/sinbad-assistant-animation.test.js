@@ -783,3 +783,11 @@ test('live speech boundaries expose sentence-level meaning so expression can cha
   assert.match(css,/data-response-kind="completion"/);
   assert.match(css,/data-response-kind="explanation"/);
 });
+
+test('sentence meaning transitions bridge gently but safety escalation stays immediate',()=>{
+  assert.match(app,/speechTransitionForKinds\?\.\(sinbadLastSpeechMeaningKind,performanceCue\)/);
+  assert.match(app,/if\(transition\.immediate\)setSinbadAssistantState\('speaking',transition\.targetCue\)/);
+  assert.match(app,/setSinbadAssistantState\('speaking',transition\.bridgeCue\)/);
+  assert.match(app,/sinbadLastSpeechMeaningKind===performanceCue\.responseKind/);
+  assert.match(app,/clearTimeout\(sinbadSpeechMeaningTransitionTimer\)/);
+});
