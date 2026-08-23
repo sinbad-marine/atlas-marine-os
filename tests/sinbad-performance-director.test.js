@@ -239,6 +239,7 @@ test('explicit gesture requests override improvisation only when a real supporte
   assert.equal(gestureRequestForText('Başını sağa döndür.').cue.gesture,'look-right');
   assert.equal(gestureRequestForText('Başını eğ.').cue.gesture,'nod');
   assert.equal(gestureRequestForText('Gülümse lütfen.').action,'smile');
+  assert.equal(gestureRequestForText('Sinbad biraz gülsene.').action,'laugh');
   assert.equal(gestureRequestForText('Bugün hava güzel.').reason,'NO_GESTURE_REQUEST');
   assert.equal(gestureRequestForText(' ').reason,'INVALID_REQUEST_TEXT');
 });
@@ -250,6 +251,7 @@ test('supported physical requests expand into bounded interruptible gesture sequ
   const left=gestureSequenceForRequest('raise-left-hand');assert.deepEqual(left.cues.map(cue=>cue.gaze),['audience','left-palm','audience']);
   const board=gestureSequenceForRequest('point-board');assert.equal(board.cues[1].gaze,'board');assert.ok(board.duration<=1200);
   const wave=gestureSequenceForRequest('wave');assert.deepEqual(wave.cues.map(cue=>cue.gesture),['open-hand','wave-right','wave-right-away','wave-right','wave-right-away','open-hand']);assert.ok(wave.duration<=1800);
+  const laugh=gestureSequenceForRequest('laugh');assert.deepEqual(laugh.cues.map(cue=>cue.gesture),['rest','laugh','nod','laugh','rest']);assert.ok(laugh.duration<=1500);
   assert.equal(gestureSequenceForRequest('smile').reason,'NO_GESTURE_SEQUENCE');
 });
 
