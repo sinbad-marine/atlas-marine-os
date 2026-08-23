@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,recordVerifiedGesture,gestureHistoryAnswerForText,gestureStopRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,academyBoardRecallAnswerForText,recordVerifiedGesture,gestureHistoryAnswerForText,gestureStopRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -316,6 +316,14 @@ test('follow-up body questions answer only from a verified performed-action reco
   const unknown=gestureRecallAnswerForText('Az önce ne yaptın?',null,'tr-TR');
   assert.equal(unknown.accepted,true);assert.equal(unknown.known,false);assert.match(unknown.text,/doğrulanmış bir hareket kaydım/);
   assert.equal(gestureRecallAnswerForText('Bugün ne öğreneceğiz?','raise-left-hand').reason,'NO_GESTURE_RECALL_REQUEST');
+});
+
+test('board follow-ups answer only from a successfully applied Academy action',()=>{
+  const shape=academyBoardRecallAnswerForText('Az önce tahtaya ne çizdin?',{kind:'shape',value:'arrow'},'tr-TR');assert.equal(shape.known,true);assert.equal(shape.text,'En son Academy tahtasına bir ok çizdim.');
+  const writing=academyBoardRecallAnswerForText('What did you last write on the board?',{kind:'text',value:'Pruva 090'},'en-US');assert.match(writing.text,/Pruva 090/);assert.equal(writing.kind,'text');
+  const unknown=academyBoardRecallAnswerForText('Tahtaya en son ne yazdın?',null,'tr-TR');assert.equal(unknown.known,false);assert.match(unknown.text,/başarıyla uygulanmış/);
+  assert.equal(academyBoardRecallAnswerForText('Bugün ne öğreneceğiz?',{kind:'shape',value:'circle'}).reason,'NO_BOARD_RECALL_REQUEST');
+  assert.equal(academyBoardRecallAnswerForText('Tahtaya en son ne çizdin?',{kind:'shape',value:'hexagon'}).known,false);
 });
 
 test('relative gesture commands resolve only against a verified previous action',()=>{

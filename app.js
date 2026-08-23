@@ -418,6 +418,7 @@ let sinbadTextPresentationCues=[];
 let sinbadRequestedGesture=null;
 let sinbadRequestedGestureSequence=[];
 let sinbadLastPerformedGestureAction=null;
+let sinbadLastAcademyBoardAction=null;
 let sinbadPerformedGestureHistory=[];
 let sinbadPreparedGestureAction=null;
 let sinbadExplicitGestureHoldBoundaries=0;
@@ -1551,8 +1552,9 @@ function queueSinbadAcademyBoardPayload(payload){
 function sendTextToSinbadAcademyBoard(text){const clean=typeof text==='string'?text.trim().slice(0,200):'';return clean?queueSinbadAcademyBoardPayload({version:1,type:'SINBAD_ACADEMY_WRITE_BOARD',text:clean}):false;}
 function sendShapeToSinbadAcademyBoard(shape){return ['circle','triangle','rectangle','arrow','axes'].includes(shape)?queueSinbadAcademyBoardPayload({version:1,type:'SINBAD_ACADEMY_DRAW_SHAPE',shape}):false;}
 window.addEventListener('message',event=>{
-  if(event.origin!==location.origin||event.source!==sinbadAcademyNativeWindow||event.data?.version!==1||event.data?.type!=='SINBAD_ACADEMY_READY'||!sinbadAcademyPendingBoardPayload)return;
-  sinbadAcademyNativeWindow.postMessage(sinbadAcademyPendingBoardPayload,location.origin);sinbadAcademyPendingBoardPayload=null;
+  if(event.origin!==location.origin||event.source!==sinbadAcademyNativeWindow||event.data?.version!==1)return;
+  if(event.data.type==='SINBAD_ACADEMY_READY'&&sinbadAcademyPendingBoardPayload){sinbadAcademyNativeWindow.postMessage(sinbadAcademyPendingBoardPayload,location.origin);sinbadAcademyPendingBoardPayload=null;return;}
+  const action=event.data.type==='SINBAD_ACADEMY_BOARD_APPLIED'?event.data.action:null;if(action&&['shape','text'].includes(action.kind)&&typeof action.value==='string'&&action.value)sinbadLastAcademyBoardAction=Object.freeze({kind:action.kind,value:action.value.slice(0,200)});
 });
 function renderAcademyLesson(){
   const category=$('academyModule')?.value,lesson=window.SinbadAcademy?.lesson(category,window.SINBAD_TRAINING_DATA),output=$('academyOutput');
@@ -1690,6 +1692,8 @@ async function sendToSinbad(text){
   $('sinbadInput').value='';
   const stopGesture=sinbadPerformanceDirector?.gestureStopRequestForText?.(q,sinbadState.language||appLanguage);
   if(stopGesture?.accepted){stopSinbadGesturePerformance();addSinbadMessage('sinbad',stopGesture.text);return;}
+  const recalledBoard=sinbadPerformanceDirector?.academyBoardRecallAnswerForText?.(q,sinbadLastAcademyBoardAction,sinbadState.language||appLanguage);
+  if(recalledBoard?.accepted){addSinbadMessage('sinbad',recalledBoard.text);return;}
   const directReaction=performSinbadDirectCharacterRequest(sinbadRequestedGesture);
   if(directReaction.accepted){addSinbadMessage('sinbad',directReaction.text);return;}
   if(sinbadRequestedGesture?.directAcademyBoard){const request=sinbadRequestedGesture,delivered=request.boardShape?sendShapeToSinbadAcademyBoard(request.boardShape):sendTextToSinbadAcademyBoard(request.boardText),ack=sinbadPerformanceDirector?.gestureAcknowledgementForRequest?.(request,sinbadState.language||appLanguage);sinbadRequestedGesture=null;sinbadRequestedGestureSequence=[];if(delivered&&ack?.accepted){commitSinbadPerformedGestureAction('point-board');sinbadAwaitingAnswer=false;addSinbadMessage('sinbad',ack.text);return;}}

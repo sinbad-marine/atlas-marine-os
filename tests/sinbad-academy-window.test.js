@@ -75,7 +75,7 @@ test('board writing progress drives a real chalk cursor and bounded character di
 
 test('main chat can send only bounded same-origin plain text to the Academy board',()=>{
   assert.match(app,/function sendTextToSinbadAcademyBoard\(text\)/);
-  assert.match(app,/slice\(0,200\)/);assert.match(app,/type:'SINBAD_ACADEMY_WRITE_BOARD'/);assert.match(app,/type!=='SINBAD_ACADEMY_READY'/);assert.match(app,/postMessage\(sinbadAcademyPendingBoardPayload,location\.origin\)/);
+  assert.match(app,/slice\(0,200\)/);assert.match(app,/type:'SINBAD_ACADEMY_WRITE_BOARD'/);assert.match(app,/event\.data\.type==='SINBAD_ACADEMY_READY'/);assert.match(app,/postMessage\(sinbadAcademyPendingBoardPayload,location\.origin\)/);
   assert.match(academyApp,/function writeCustomTextAtBoard\(rawText\)/);
   assert.match(academyApp,/event\.origin!==location\.origin\|\|event\.source!==window\.opener/);
   assert.match(academyApp,/message\.text\.length<=200/);assert.match(academyApp,/writeCustomTextAtBoard\(message\.text\)/);assert.match(academyApp,/type:'SINBAD_ACADEMY_READY'/);
@@ -87,6 +87,8 @@ test('main chat can send only bounded same-origin plain text to the Academy boar
   for(const rhythm of ['steady','measured','lively'])assert.match(academyApp,new RegExp(`id:'${rhythm}'`));
   assert.match(academyApp,/function selectAcademyShapeDrawingRhythm\(\)/);assert.match(academyApp,/index>=academyLastShapeDrawingRhythm/);assert.match(academyApp,/stage\.dataset\.boardDrawingRhythm=rhythm\.id/);
   assert.equal((academyApp.match(/'check-in','audience'/g)||[]).length,3);
+  assert.match(academyApp,/type:'SINBAD_ACADEMY_BOARD_APPLIED'/);assert.match(app,/event\.data\.type==='SINBAD_ACADEMY_BOARD_APPLIED'/);
+  assert.match(app,/academyBoardRecallAnswerForText\?\.\(q,sinbadLastAcademyBoardAction/);
 });
 
 test('real transparent writing frames follow measured board progress and settle to explanation',()=>{

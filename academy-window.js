@@ -142,7 +142,9 @@ window.addEventListener('beforeunload',saveWindowGeometry);
 window.addEventListener('message',event=>{
   if(event.origin!==location.origin||event.source!==window.opener)return;
   const message=event.data;if(!message||message.version!==1)return;
-  if(message.type==='SINBAD_ACADEMY_WRITE_BOARD'&&typeof message.text==='string'&&message.text.trim()&&message.text.length<=200)writeCustomTextAtBoard(message.text);
-  if(message.type==='SINBAD_ACADEMY_DRAW_SHAPE'&&['circle','triangle','rectangle','arrow','axes'].includes(message.shape))drawAllowedShapeAtBoard(message.shape);
+  let appliedAction=null;
+  if(message.type==='SINBAD_ACADEMY_WRITE_BOARD'&&typeof message.text==='string'&&message.text.trim()&&message.text.length<=200&&writeCustomTextAtBoard(message.text))appliedAction=Object.freeze({kind:'text',value:message.text.trim()});
+  if(message.type==='SINBAD_ACADEMY_DRAW_SHAPE'&&['circle','triangle','rectangle','arrow','axes'].includes(message.shape)&&drawAllowedShapeAtBoard(message.shape))appliedAction=Object.freeze({kind:'shape',value:message.shape});
+  if(appliedAction)window.opener.postMessage({version:1,type:'SINBAD_ACADEMY_BOARD_APPLIED',action:appliedAction},location.origin);
 });
 window.opener?.postMessage({version:1,type:'SINBAD_ACADEMY_READY'},location.origin);
