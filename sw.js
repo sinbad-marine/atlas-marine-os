@@ -12,6 +12,10 @@ const ASSETS=[
   './academy-professor-v3.html',
   './academy-professor-handsfree.css',
   './academy-professor-handsfree.js',
+  './academy-professor-native.html',
+  './academy-professor-native.css',
+  './academy-professor-native.js',
+  './sinbad-speaker-identity.js',
   './sinbad-professor.js',
   './styles.css',
   './app.js',
@@ -77,6 +81,7 @@ self.addEventListener('fetch',event=>{
     let pageKey=url.pathname.endsWith('/academy.html')?'./academy.html':'./index.html';
     if(url.pathname.endsWith('/academy-professor.html'))pageKey='./academy-professor.html';
     if(url.pathname.endsWith('/academy-professor-v3.html'))pageKey='./academy-professor-v3.html';
+    if(url.pathname.endsWith('/academy-professor-native.html'))pageKey='./academy-professor-native.html';
     event.respondWith(
       fetch(request)
         .then(response=>{
