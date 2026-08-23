@@ -383,10 +383,10 @@ const SINBAD_RESPONSE_KIND_LABELS={
 // Distinct status colour/text still applies (see CSS + sinbadAvatarStatus label).
 const SINBAD_AVATAR_ASSET_BASE='./assets/captain-sinbad/';
 const SINBAD_BLINK_ASSET='captain-sinbad-idle-blink-v1.png';
-const SINBAD_SPEECH_ASSETS=Object.freeze({closed:'captain-sinbad-speaking-mbp-v1.png',open:'captain-sinbad-speaking.png',round:'captain-sinbad-speaking-o-v1.png'});
+const SINBAD_SPEECH_ASSETS=Object.freeze({closed:'captain-sinbad-speaking-mbp-v1.png',open:'captain-sinbad-speaking.png',wide:'captain-sinbad-speaking.png',round:'captain-sinbad-speaking-o-v1.png'});
 const SINBAD_WALK_ASSETS=Object.freeze(['captain-sinbad-walk-a-v1.png','captain-sinbad-walk-b-v1.png']);
 const SINBAD_RIG_PART_ASSETS=Object.freeze(['captain-sinbad-rig-head-v1.png','captain-sinbad-rig-torso-v1.png','captain-sinbad-rig-left-arm-v1.png','captain-sinbad-rig-right-arm-v1.png']);
-const SINBAD_RIG_FACE_ASSETS=Object.freeze(['captain-sinbad-rig-face-blink-v1.png','captain-sinbad-rig-face-open-v1.png','captain-sinbad-rig-face-round-v1.png']);
+const SINBAD_RIG_FACE_ASSETS=Object.freeze(['captain-sinbad-rig-face-blink-v1.png','captain-sinbad-rig-face-closed-v1.png','captain-sinbad-rig-face-open-v1.png','captain-sinbad-rig-face-wide-v1.png','captain-sinbad-rig-face-round-v1.png']);
 const SINBAD_STATE_ASSET={
   idle:'captain-sinbad-idle-master.png',
   listening:'captain-sinbad-listening.png',
@@ -566,7 +566,7 @@ async function startSinbadLipSyncAnalyser(audio){
       let sum=0;for(let i=0;i<data.length;i++)sum+=data[i];
       const amp=Math.min(1,(sum/data.length)/72);
       sinbadAssistantElements().forEach(el=>el.style.setProperty('--sinbad-voice-amp',amp.toFixed(3)));
-      setSinbadMouthFrame(amp<.12?'closed':amp<.48?'open':'round');
+      setSinbadMouthFrame(amp<.1?'closed':amp<.44?'open':'wide');
       sinbadLipSyncRaf=requestAnimationFrame(tick);
     };
     tick();
@@ -840,9 +840,10 @@ function stopSinbadVoice(){
 }
 let sinbadStandardBoundaryTimer=null;
 let sinbadStandardMouthSequence=0;
+const SINBAD_STANDARD_VISEME_CADENCE=Object.freeze(['closed','open','wide','open','round','open','wide','open']);
 function sinbadStandardVoiceTick(boundaryEvent,spokenText){
   sinbadAssistantElements().forEach(el=>el.classList.add('sinbad-voice-tick'));
-  setSinbadMouthFrame(++sinbadStandardMouthSequence%3===0?'round':'open');
+  setSinbadMouthFrame(SINBAD_STANDARD_VISEME_CADENCE[++sinbadStandardMouthSequence%SINBAD_STANDARD_VISEME_CADENCE.length]);
   const performanceCue=sinbadSpeechBoundaryCue(boundaryEvent,spokenText,sinbadStandardMouthSequence-1);
   if(performanceCue.gesture&&sinbadAssistantState==='speaking')sinbadAssistantElements().forEach(el=>{
     el.dataset.gesture=performanceCue.gesture;el.dataset.gaze=performanceCue.gaze;el.dataset.emotion=performanceCue.emotion||'warm';

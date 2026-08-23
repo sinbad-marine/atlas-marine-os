@@ -26,6 +26,7 @@ const RELEASE_FILES=Object.freeze([
   ,'assets/captain-sinbad/captain-sinbad-rig-head-v1.png','assets/captain-sinbad/captain-sinbad-rig-torso-v1.png'
   ,'assets/captain-sinbad/captain-sinbad-rig-left-arm-v1.png','assets/captain-sinbad/captain-sinbad-rig-right-arm-v1.png'
   ,'assets/captain-sinbad/captain-sinbad-rig-face-blink-v1.png','assets/captain-sinbad/captain-sinbad-rig-face-open-v1.png'
+  ,'assets/captain-sinbad/captain-sinbad-rig-face-closed-v1.png','assets/captain-sinbad/captain-sinbad-rig-face-wide-v1.png'
   ,'assets/captain-sinbad/captain-sinbad-rig-face-round-v1.png'
 ]);
 const SOURCE_OVERRIDES=Object.freeze({

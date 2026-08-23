@@ -1,7 +1,7 @@
 param(
   [Parameter(Mandatory=$true)][string]$InputPath,
   [Parameter(Mandatory=$true)][string]$OutputDirectory,
-  [ValidateSet('Body','Face')][string]$Profile='Body'
+  [ValidateSet('Body','Face','Viseme')][string]$Profile='Body'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -57,7 +57,7 @@ public static class SinbadAlphaRigSplitter {
         }
         if (part.Count >= 1000) parts.Add(part);
       }
-      int expected=profile=="Face"?3:4;
+      int expected=profile=="Face"?3:(profile=="Viseme"?2:4);
       if (parts.Count != expected) throw new InvalidOperationException("Expected " + expected + " substantial alpha components for " + profile + ", found " + parts.Count + ".");
       parts.Sort((a,b) => a.MinY != b.MinY ? a.MinY.CompareTo(b.MinY) : a.MinX.CompareTo(b.MinX));
       Part[] ordered;
@@ -65,6 +65,9 @@ public static class SinbadAlphaRigSplitter {
       if(profile=="Face"){
         parts.Sort((a,b)=>a.MinX.CompareTo(b.MinX)); ordered=parts.ToArray();
         names=new[]{"captain-sinbad-rig-face-blink-v1.png","captain-sinbad-rig-face-open-v1.png","captain-sinbad-rig-face-round-v1.png"};
+      }else if(profile=="Viseme"){
+        parts.Sort((a,b)=>a.MinX.CompareTo(b.MinX)); ordered=parts.ToArray();
+        names=new[]{"captain-sinbad-rig-face-closed-v1.png","captain-sinbad-rig-face-wide-v1.png"};
       }else{
         Part headPart=parts[0];
         var lower=parts.GetRange(1,3); lower.Sort((a,b)=>a.MinX.CompareTo(b.MinX));

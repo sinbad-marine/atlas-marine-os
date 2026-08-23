@@ -43,7 +43,7 @@ test('large Captain Sinbad portrait loads the four-layer articulated rig with it
   const avatar=page.locator('.sinbad-avatar.large');
   await expect(avatar).toHaveAttribute('data-rig-ready','true');
   await expect(avatar.locator('.sinbad-rig-part')).toHaveCount(4);
-  await expect(avatar.locator('.sinbad-rig-face-frame')).toHaveCount(3);
+  await expect(avatar.locator('.sinbad-rig-face-frame')).toHaveCount(5);
   await expect(avatar.locator('.sinbad-rig-stage')).toHaveCSS('opacity','1');
   await expect(avatar.locator(':scope > .sinbad-avatar-img').first()).toHaveCSS('opacity','0');
   const restingArm=await avatar.locator('.sinbad-rig-right-arm').evaluate(element=>getComputedStyle(element).transform);
@@ -51,6 +51,10 @@ test('large Captain Sinbad portrait loads the four-layer articulated rig with it
   await page.waitForTimeout(150);
   const showingPalm=await avatar.locator('.sinbad-rig-right-arm').evaluate(element=>getComputedStyle(element).transform);
   expect(showingPalm).not.toBe(restingArm);
+  await page.evaluate(()=>setSinbadMouthFrame('closed'));
+  await expect(avatar.locator('.sinbad-rig-face-closed')).toHaveCSS('opacity','1');
+  await page.evaluate(()=>setSinbadMouthFrame('wide'));
+  await expect(avatar.locator('.sinbad-rig-face-wide')).toHaveCSS('opacity','1');
   await page.evaluate(()=>setSinbadMouthFrame('round'));
   await page.waitForTimeout(75);
   await expect(avatar.locator('.sinbad-rig-face-round')).toHaveCSS('opacity','1');

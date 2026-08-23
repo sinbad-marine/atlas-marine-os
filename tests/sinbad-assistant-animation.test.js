@@ -91,9 +91,9 @@ test('real phoneme frames follow audio amplitude or genuine speech boundaries an
   for(const file of ['captain-sinbad-speaking-mbp-v1.png','captain-sinbad-speaking-o-v1.png']){
     assert.ok(fs.existsSync(`assets/captain-sinbad/${file}`));assert.match(sw,new RegExp(file.replaceAll('.','\\.')));
   }
-  assert.match(app,/const SINBAD_SPEECH_ASSETS=Object\.freeze\(\{closed:'captain-sinbad-speaking-mbp-v1\.png',open:'captain-sinbad-speaking\.png',round:'captain-sinbad-speaking-o-v1\.png'\}\);/);
-  assert.match(app,/setSinbadMouthFrame\(amp<\.12\?'closed':amp<\.48\?'open':'round'\)/);
-  assert.match(app,/setSinbadMouthFrame\(\+\+sinbadStandardMouthSequence%3===0\?'round':'open'\)/);
+  assert.match(app,/const SINBAD_SPEECH_ASSETS=Object\.freeze\(\{closed:'captain-sinbad-speaking-mbp-v1\.png',open:'captain-sinbad-speaking\.png',wide:'captain-sinbad-speaking\.png',round:'captain-sinbad-speaking-o-v1\.png'\}\);/);
+  assert.match(app,/setSinbadMouthFrame\(amp<\.1\?'closed':amp<\.44\?'open':'wide'\)/);
+  assert.match(app,/SINBAD_STANDARD_VISEME_CADENCE\[\+\+sinbadStandardMouthSequence%SINBAD_STANDARD_VISEME_CADENCE\.length\]/);
   assert.match(app,/setSinbadMouthFrame\('closed'\)/);
   assert.match(css,/data-mouth-frame="round"/);
 });
@@ -641,7 +641,7 @@ test('large live portrait activates four real alpha rig layers only after every 
 });
 
 test('every live rig part is a non-empty RGBA PNG rather than a baked checkerboard RGB image',()=>{
-  for(const name of ['head','torso','left-arm','right-arm','face-blink','face-open','face-round']){
+  for(const name of ['head','torso','left-arm','right-arm','face-blink','face-closed','face-open','face-wide','face-round']){
     const bytes=fs.readFileSync(`assets/captain-sinbad/captain-sinbad-rig-${name}-v1.png`);
     assert.equal(bytes.subarray(0,8).toString('hex'),'89504e470d0a1a0a',name);
     assert.ok(bytes.readUInt32BE(16)>100,name);
@@ -652,10 +652,14 @@ test('every live rig part is a non-empty RGBA PNG rather than a baked checkerboa
 
 test('layered face frames follow real blink and mouth events without replacing the rig body',()=>{
   assert.match(html,/sinbad-rig-face-blink-v1\.png/);
+  assert.match(html,/sinbad-rig-face-closed-v1\.png/);
   assert.match(html,/sinbad-rig-face-open-v1\.png/);
+  assert.match(html,/sinbad-rig-face-wide-v1\.png/);
   assert.match(html,/sinbad-rig-face-round-v1\.png/);
   assert.match(css,/sinbad-blinking \.sinbad-rig-face-blink\{opacity:1\}/);
+  assert.match(css,/data-mouth-frame="closed"\] \.sinbad-rig-face-closed\{opacity:1\}/);
   assert.match(css,/data-mouth-frame="open"\] \.sinbad-rig-face-open\{opacity:1\}/);
+  assert.match(css,/data-mouth-frame="wide"\] \.sinbad-rig-face-wide\{opacity:1\}/);
   assert.match(css,/data-mouth-frame="round"\] \.sinbad-rig-face-round\{opacity:1\}/);
   assert.match(app,/parts\.length!==SINBAD_RIG_PART_ASSETS\.length\+SINBAD_RIG_FACE_ASSETS\.length/);
 });
