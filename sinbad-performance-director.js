@@ -525,6 +525,15 @@
     const size=large?'large':'small',action=Object.freeze({kind:'shape',value:lastBoardAction.value,size});
     return Object.freeze({accepted:true,known:true,action,text:turkish?`Doğrulanmış son şekli daha ${large?'büyük':'küçük'} çiziyorum.`:`I am drawing the last verified shape ${large?'larger':'smaller'}.`});
   }
+  function academyBoardSizeRecallAnswerForText(text,lastBoardAction,language='tr-TR'){
+    if(typeof text!=='string'||!text.trim())return Object.freeze({accepted:false,reason:'INVALID_BOARD_SIZE_RECALL_TEXT'});
+    const normalized=text.trim().toLocaleLowerCase('tr-TR');
+    if(!/(?:hangi|ne) boyut(?:ta|unda).*(?:çizdin|şekil)|(?:çizdiğin|tahtadaki) şekil ne kadar (?:büyük|küçük)|what size did you draw|how (?:large|small) is (?:the|that) shape/iu.test(normalized))return Object.freeze({accepted:false,reason:'NO_BOARD_SIZE_RECALL_REQUEST'});
+    const turkish=String(language).toLocaleLowerCase('en-US').startsWith('tr');
+    if(!lastBoardAction||lastBoardAction.kind!=='shape'||!['small','standard','large'].includes(lastBoardAction.size))return Object.freeze({accepted:true,known:false,text:turkish?'Boyutu doğrulanmış bir Academy tahta şekli kaydım yok.':'I do not have an Academy board shape with a verified size recorded.'});
+    const labels=turkish?{small:'küçük',standard:'normal',large:'büyük'}:{small:'small',standard:'standard',large:'large'},label=labels[lastBoardAction.size];
+    return Object.freeze({accepted:true,known:true,size:lastBoardAction.size,text:turkish?`Son şekli ${label} boyutta çizdim.`:`I drew the last shape at ${label} size.`});
+  }
   function recordVerifiedGesture(history,action,{limit=4}={}){
     if(!Array.isArray(history)||!Number.isInteger(limit)||limit<1||limit>8)return Object.freeze({accepted:false,reason:'INVALID_GESTURE_HISTORY'});
     const verified=gestureAcknowledgementForRequest({accepted:true,supported:true,action},'en-US');
@@ -653,5 +662,5 @@
     };
     return Object.freeze({play,cancel});
   }
-  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,academyBoardRecallAnswerForText,academyBoardRepeatRequestForText,academyBoardClearRequestForText,academyBoardResizeRequestForText,recordVerifiedGesture,gestureHistoryAnswerForText,gestureStopRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
+  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,academyBoardRecallAnswerForText,academyBoardRepeatRequestForText,academyBoardClearRequestForText,academyBoardResizeRequestForText,academyBoardSizeRecallAnswerForText,recordVerifiedGesture,gestureHistoryAnswerForText,gestureStopRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
 });
