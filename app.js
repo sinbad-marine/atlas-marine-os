@@ -478,7 +478,9 @@ function commitSinbadPerformedGestureAction(action){
 }
 function commitSinbadPreparedGesture(){const action=sinbadPreparedGestureAction;sinbadPreparedGestureAction=null;return commitSinbadPerformedGestureAction(action);}
 function presentSinbadBoardReference(text){
-  setSinbadAssistantState('presenting',{gesture:'point-board',gaze:'board',emotion:'confident',energy:.4,responseKind:'instruction'});commitSinbadPerformedGestureAction('point-board');addSinbadMessage('sinbad',text);return true;
+  const improvised=sinbadImprovisationDirector?.choose?.('explanation','board-reference'),source=improvised?.accepted?improvised.cue:null;
+  const gesture=source?.gesture==='hold'?'point-board':source?.gesture||'point-board',cue={gesture,gaze:'board',emotion:source?.emotion||'confident',energy:source?.energy??.4,responseKind:'instruction',...(source?.motionProfile?{motionProfile:source.motionProfile}:{})};
+  setSinbadAssistantState('presenting',cue);if(gesture==='point-board')commitSinbadPerformedGestureAction('point-board');addSinbadMessage('sinbad',text);return true;
 }
 function performSinbadDirectCharacterRequest(request){
   if(!request?.directCharacterReaction||request.action!=='walk')return Object.freeze({accepted:false,reason:'NOT_DIRECT_CHARACTER_REACTION'});

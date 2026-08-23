@@ -317,8 +317,13 @@ test('live Sinbad chat writes bounded plain text on the real Academy board',asyn
   await expect(classroom.locator('#academyTeachingStage')).toHaveAttribute('data-board-drawing-phase','complete',{timeout:3000});
   await page.locator('#sinbadInput').fill('Hangi boyutta çizdin?');await page.locator('#sendSinbad').click();
   await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Son şekli büyük boyutta çizdim.');
-  await expect(page.locator('.sinbad-avatar.large')).toHaveAttribute('data-gesture','point-board');
+  await expect(page.locator('.sinbad-avatar.large')).toHaveAttribute('data-gesture',/^(?:point-board|explain|open-hand|nod)$/u);
   await expect(page.locator('.sinbad-avatar.large')).toHaveAttribute('data-gaze','board');
+  await expect(page.locator('.sinbad-avatar.large')).toHaveAttribute('data-motion-profile',/^(?:measured|lively|thoughtful|crisp|gentle|deliberate)$/u);
+  const firstBoardReferenceGesture=await page.locator('.sinbad-avatar.large').getAttribute('data-gesture');
+  await page.locator('#sinbadInput').fill('Az önce tahtaya ne çizdin?');await page.locator('#sendSinbad').click();
+  await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('En son Academy tahtasına bir ok çizdim.');
+  expect(await page.locator('.sinbad-avatar.large').getAttribute('data-gesture')).not.toBe(firstBoardReferenceGesture);
   await page.locator('#sinbadInput').fill('Tahtayı temizle.');await page.locator('#sendSinbad').click();
   await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Academy tahtasını temizliyorum.');
   await expect(classroom.locator('#academyTeachingStage')).toHaveAttribute('data-board-drawing-phase','erasing');
