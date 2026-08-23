@@ -37,7 +37,7 @@
       "file": "assets/curated-safety/manifest.json"
     }
   ],
-  "topicCount": 5660,
+  "topicCount": 5688,
   "topics": [
     {
       "topicId": "topic:20e7f550122ee415de2b",
@@ -484,6 +484,16 @@
       "status": "existing-needs-quality-review"
     },
     {
+      "topicId": "topic:54e3cbbe85edea1576b1",
+      "topic": "acil durum konum belirleme telsiz şamandırası",
+      "visualNeed": "chart-or-symbol",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
       "topicId": "topic:39bd59dcef197040a2d9",
       "topic": "acoustical",
       "visualNeed": "review-required",
@@ -658,6 +668,16 @@
         "bowditch-volume-2"
       ],
       "existingVisualCount": 10,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:ce7388a4b09b102b16ee",
+      "topic": "açılmış can salı",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
       "status": "existing-needs-quality-review"
     },
     {
@@ -2710,6 +2730,16 @@
         "bowditch-volume-1"
       ],
       "existingVisualCount": 9,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:2a0129c9e3281e3b72ed",
+      "topic": "arama kurtarma botu",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
       "status": "existing-needs-quality-review"
     },
     {
@@ -6011,8 +6041,48 @@
       "status": "existing-needs-quality-review"
     },
     {
+      "topicId": "topic:7ef21cd2377e7f827e9c",
+      "topic": "can salı konteyneri",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:dd2fa26155c0db1fe25e",
+      "topic": "can salı podu",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:098d753704d6075c8a71",
+      "topic": "can salı podunu",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
       "topicId": "topic:3a9449006865a14f475f",
       "topic": "can simidi",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:4a911a1fa38e2b772b05",
+      "topic": "can simidi ışığı",
       "visualNeed": "review-required",
       "sourceIds": [
         "curated-safety"
@@ -11611,6 +11681,26 @@
       "status": "existing-needs-quality-review"
     },
     {
+      "topicId": "topic:6c2ff3bda25af591068e",
+      "topic": "deniz tahliye sistemi",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:e35f2f530865784141f7",
+      "topic": "denize adam düştü ekipmanı",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
       "topicId": "topic:0e7519a5980a644d51c0",
       "topic": "denominator",
       "visualNeed": "review-required",
@@ -13214,6 +13304,16 @@
       "visualNeed": "review-required",
       "sourceIds": [
         "bowditch-volume-1"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:84a07533d73453f36149",
+      "topic": "distress marker light",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
       ],
       "existingVisualCount": 1,
       "status": "existing-needs-quality-review"
@@ -15812,6 +15912,16 @@
       "status": "existing-needs-quality-review"
     },
     {
+      "topicId": "topic:b5bca4cdb65f135be8fe",
+      "topic": "emergency position indicating radio beacon",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
       "topicId": "topic:06964dd2fac36383601c",
       "topic": "emission",
       "visualNeed": "review-required",
@@ -16256,9 +16366,10 @@
       "topic": "epirb",
       "visualNeed": "photograph",
       "sourceIds": [
-        "bowditch-volume-1"
+        "bowditch-volume-1",
+        "curated-safety"
       ],
-      "existingVisualCount": 2,
+      "existingVisualCount": 3,
       "status": "existing-needs-quality-review"
     },
     {
@@ -20371,6 +20482,16 @@
       "visualNeed": "review-required",
       "sourceIds": [
         "bowditch-volume-1"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:2433cba686ab1d517a1a",
+      "topic": "gemi epirb",
+      "visualNeed": "photograph",
+      "sourceIds": [
+        "curated-safety"
       ],
       "existingVisualCount": 1,
       "status": "existing-needs-quality-review"
@@ -24813,6 +24934,16 @@
       "status": "existing-needs-quality-review"
     },
     {
+      "topicId": "topic:254a88f1cfa6bb903212",
+      "topic": "inflated life raft",
+      "visualNeed": "photograph",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
       "topicId": "topic:22fefa8cf4bda9184634",
       "topic": "influence",
       "visualNeed": "review-required",
@@ -26809,6 +26940,26 @@
       "status": "existing-needs-quality-review"
     },
     {
+      "topicId": "topic:8b6fdeed3656a12e98cb",
+      "topic": "kurtarma botu",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:ddfe8f391d1e5e419592",
+      "topic": "kurtarma botunun geri alınması",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
       "topicId": "topic:269bf98a669ddab77dea",
       "topic": "l-band",
       "visualNeed": "review-required",
@@ -27768,6 +27919,36 @@
       "status": "existing-needs-quality-review"
     },
     {
+      "topicId": "topic:fcfdbb21278f98df791e",
+      "topic": "life raft container",
+      "visualNeed": "photograph",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:0fc42bf5c0b47c65590e",
+      "topic": "life raft equipment",
+      "visualNeed": "photograph",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:e7b7e3adecfd2964abd3",
+      "topic": "life raft pod",
+      "visualNeed": "photograph",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
       "topicId": "topic:ec8f5540924c26cb8209",
       "topic": "life ring",
       "visualNeed": "review-required",
@@ -27790,6 +27971,16 @@
     {
       "topicId": "topic:71eb5c7ecd8b0bf446f2",
       "topic": "lifebuoy",
+      "visualNeed": "photograph",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:35db27a30ce8b6325128",
+      "topic": "lifebuoy light",
       "visualNeed": "photograph",
       "sourceIds": [
         "curated-safety"
@@ -29626,6 +29817,16 @@
       "status": "existing-needs-quality-review"
     },
     {
+      "topicId": "topic:801a85657db3f5942e51",
+      "topic": "man overboard equipment",
+      "visualNeed": "procedure-sequence",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
       "topicId": "topic:2d7632b98ddce00b8d0d",
       "topic": "man-made",
       "visualNeed": "review-required",
@@ -29880,6 +30081,16 @@
         "nga-chart-no-1"
       ],
       "existingVisualCount": 93,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:7fa4e53bc93fa231e35c",
+      "topic": "marine evacuation system",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
       "status": "existing-needs-quality-review"
     },
     {
@@ -30647,6 +30858,16 @@
       "status": "existing-needs-quality-review"
     },
     {
+      "topicId": "topic:f1308241eb02418033bc",
+      "topic": "mes",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
       "topicId": "topic:ab530a13e45914982b79",
       "topic": "message",
       "visualNeed": "review-required",
@@ -31368,6 +31589,26 @@
         "bowditch-volume-1"
       ],
       "existingVisualCount": 2,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:c6f5a531655ca4326bd3",
+      "topic": "mob ekipmanı",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:9c3a00f85e643ff3e0ff",
+      "topic": "mob marker light",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
       "status": "existing-needs-quality-review"
     },
     {
@@ -34634,6 +34875,16 @@
         "nga-chart-no-1"
       ],
       "existingVisualCount": 12,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:1a19a6e5f5bc1fb67365",
+      "topic": "open life raft",
+      "visualNeed": "photograph",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
       "status": "existing-needs-quality-review"
     },
     {
@@ -41786,6 +42037,16 @@
       "sourceIds": [
         "curated-safety"
       ],
+      "existingVisualCount": 2,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:e62ec5aacbf933882ced",
+      "topic": "rescue boat retrieval",
+      "visualNeed": "procedure-sequence",
+      "sourceIds": [
+        "curated-safety"
+      ],
       "existingVisualCount": 1,
       "status": "existing-needs-quality-review"
     },
@@ -44195,6 +44456,16 @@
         "bowditch-volume-1"
       ],
       "existingVisualCount": 3,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:a1b8d3bc2541b883b11e",
+      "topic": "search and rescue boat",
+      "visualNeed": "procedure-sequence",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
       "status": "existing-needs-quality-review"
     },
     {
@@ -49718,6 +49989,16 @@
         "nga-chart-no-1"
       ],
       "existingVisualCount": 28,
+      "status": "existing-needs-quality-review"
+    },
+    {
+      "topicId": "topic:9103614bf9abbb8be6d7",
+      "topic": "şişirilmiş can salı",
+      "visualNeed": "review-required",
+      "sourceIds": [
+        "curated-safety"
+      ],
+      "existingVisualCount": 1,
       "status": "existing-needs-quality-review"
     },
     {

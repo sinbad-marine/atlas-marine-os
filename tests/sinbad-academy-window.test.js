@@ -66,7 +66,7 @@ test('Captain Sinbad teaches with real state art, browser voice and verified atl
   assert.match(academyApp,/captain-sinbad-listening\.png/);
   assert.match(academyApp,/new SpeechSynthesisUtterance/);
   assert.match(academyApp,/function renderVisuals\(visuals\)/);
-  assert.match(academyHtml,/sinbad-visuals\.js\?v=8233/);
+  assert.match(academyHtml,/sinbad-visuals\.js\?v=8234/);
   assert.match(academyApp,/academy-atlas-visual/);
   assert.match(academyApp,/visuals\.filter\(visual=>safeAsset\.test/);
   assert.doesNotMatch(academyApp,/cloudClient\.storage\.from\(doc\.bucket_id\)\.download/);

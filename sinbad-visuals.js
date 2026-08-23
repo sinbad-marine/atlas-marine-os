@@ -9,7 +9,7 @@
     {url:'./visual-library/assets/curated-safety/manifest.json',base:'./visual-library/assets/curated-safety/'},
     {url:'./visual-library/assets/nga-chart-no-1/manifest.json',base:'./visual-library/assets/nga-chart-no-1/'}
   ];
-  const ALIASES=Object.freeze({şamandıra:'buoy',samandira:'buoy',akıntı:'current',akinti:'current',gelgit:'tide',fener:'light',ışık:'light',isik:'light',pusula:'compass',harita:'chart',sembol:'symbol',kardinal:'cardinal',batık:'wreck',batik:'wreck',kerteriz:'bearing',işaret:'mark',isaret:'mark',kısaltma:'abbreviation',kisaltma:'abbreviation',yıldız:'star',yildiz:'star',göksel:'celestial',goksel:'celestial',radar:'radar',simidi:'lifebuoy',simit:'lifebuoy',salı:'liferaft',sali:'liferaft',filika:'lifeboat',yeleği:'lifejacket',yelegi:'lifejacket'});
+  const ALIASES=Object.freeze({şamandıra:'buoy',samandira:'buoy',akıntı:'current',akinti:'current',gelgit:'tide',fener:'light',ışık:'light',isik:'light',pusula:'compass',harita:'chart',sembol:'symbol',kardinal:'cardinal',batık:'wreck',batik:'wreck',kerteriz:'bearing',işaret:'mark',isaret:'mark',kısaltma:'abbreviation',kisaltma:'abbreviation',yıldız:'star',yildiz:'star',göksel:'celestial',goksel:'celestial',radar:'radar',epırb:'epirb',simidi:'lifebuoy',simit:'lifebuoy',salı:'liferaft',sali:'liferaft',filika:'lifeboat',yeleği:'lifejacket',yelegi:'lifejacket'});
   let cache=null;
   function normalize(value){return String(value||'').toLocaleLowerCase('tr-TR').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9çğıöşü ]/gi,' ');}
   function tokens(value){return [...new Set(normalize(value).split(/\s+/).filter(word=>word.length>2).flatMap(word=>[word,ALIASES[word]].filter(Boolean)))];}
