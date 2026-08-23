@@ -6,6 +6,11 @@ const taxonomy=require('../world-brain/knowledge-taxonomy.js');
 const freshness=require('../world-brain/freshness-policy.js');
 const pack=require('../world-brain/knowledge-pack.js');
 const router=require('../world-brain/topic-router.js');
+const catalogModule=require('../world-brain/knowledge-catalog.js');
+
+function manifestFor(bytes,overrides={}){
+  return {schemaVersion:pack.VERSION,packId:'history-core-tr',title:'History Core',domain:'history',language:'tr-TR',license:'CC-BY-4.0',source:'https://example.test/history',publisher:'Example Publisher',edition:'2026.1',snapshotDate:'2026-08-01',contentHash:pack.contentHash(bytes),tags:['history'],...overrides};
+}
 
 test('persona stays model-independent and requires honesty and source disclosure',()=>{
   const profile=persona.buildSystemProfile({language:'tr-TR',audience:'academy'});
@@ -42,7 +47,7 @@ test('undated offline knowledge fails closed',()=>{
 
 test('knowledge packs require an allowlisted license and complete identity',()=>{
   const bytes=Buffer.from('Open history knowledge.');
-  const manifest={schemaVersion:pack.VERSION,packId:'history-core-tr',title:'History Core',domain:'history',language:'tr-TR',license:'CC-BY-4.0',source:'https://example.test/history',publisher:'Example Publisher',edition:'2026.1',snapshotDate:'2026-08-01',contentHash:pack.contentHash(bytes),tags:['history']};
+  const manifest=manifestFor(bytes);
   const result=pack.validate(manifest);
   assert.equal(result.pack.domain,'history');
   assert.equal(result.installable,true);
@@ -55,4 +60,28 @@ test('topic router selects multiple relevant domains without invoking a model',(
   assert.deepEqual(result.map(item=>item.domain.id),['history','literature']);
   assert.equal(result[0].score,1);
   assert.equal(router.route('Bunu açıklar mısın?')[0].domain.id,'reference');
+});
+
+test('catalog installs immutable packs idempotently and rejects changed content',()=>{
+  let tick=0;const catalog=catalogModule.create({now:()=>`2026-08-23T00:00:0${tick++}.000Z`});
+  const bytes=Buffer.from('Open history knowledge.');
+  const manifest=manifestFor(bytes);
+  assert.equal(catalog.install(manifest,bytes).status,'INSTALLED');
+  assert.equal(catalog.install(manifest,bytes).status,'ALREADY_INSTALLED');
+  assert.equal(catalog.snapshot().packs.length,1);
+  assert.throws(()=>catalog.install(manifest,Buffer.from('changed')),error=>error.code==='PACK_HASH_MISMATCH');
+  assert.throws(()=>catalog.remove('history-core-tr'),error=>error.code==='PACK_REMOVAL_NOT_AUTHORIZED');
+});
+
+test('catalog answer plan keeps stable knowledge and blocks stale current affairs',()=>{
+  const catalog=catalogModule.create({now:()=> '2026-08-23T00:00:00.000Z'});
+  const history=Buffer.from('History corpus');
+  const news=Buffer.from('News corpus');
+  catalog.install(manifestFor(history,{contentHash:pack.contentHash(history)}),history);
+  catalog.install(manifestFor(news,{packId:'media-news-tr',title:'News Snapshot',domain:'media',source:'https://example.test/news',snapshotDate:'2026-08-10',contentHash:pack.contentHash(news),tags:['news']}),news);
+  const historyPlan=catalog.plan('Osmanlı tarihi nedir?',{now:'2026-08-23'});
+  const newsPlan=catalog.plan('Bugünün haber ve magazin gündemi nedir?',{now:'2026-08-23'});
+  assert.equal(historyPlan.eligible.length,1);
+  assert.equal(newsPlan.eligible.length,0);
+  assert.equal(newsPlan.requiresLiveSource,true);
 });

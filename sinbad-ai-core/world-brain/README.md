@@ -15,7 +15,9 @@ without pretending that an offline snapshot is omniscient or current.
    and a SHA-256 content identity before a pack can enter the library.
 5. `topic-router.js` selects the relevant knowledge domains before retrieval, so a
    large offline corpus does not become an unranked document dump.
-6. The existing library ingestion, provenance, retrieval, verification and citation
+6. `knowledge-catalog.js` installs content-hash-bound packs without overwrite,
+   creates deterministic snapshots and excludes stale packs from an answer plan.
+7. The existing library ingestion, provenance, retrieval, verification and citation
    pipeline remains the factual boundary. Model memory is not treated as a source.
 
 ## Knowledge packs
