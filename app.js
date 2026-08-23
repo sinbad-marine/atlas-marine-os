@@ -32,8 +32,8 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&
 
 document.querySelectorAll('[data-open]').forEach(x=>x.onclick=()=>openWorkspace(x.dataset.open));
 document.querySelectorAll('.close').forEach(x=>x.onclick=closeWorkspaces);
-function openWorkspace(id){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');$(id).scrollIntoView({behavior:'smooth'});renderAll();if(id==='enc-viewer')initEncViewer();if(id==='navigation-plot')initNavigationPlot();if(id==='studio-console')refreshStudioCapability()}
-function closeWorkspaces(){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));scrollTo({top:0,behavior:'smooth'})}
+function openWorkspace(id){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');$(id).scrollIntoView({behavior:'smooth'});document.body.classList.toggle('store-active',id==='store');renderAll();if(id==='enc-viewer')initEncViewer();if(id==='navigation-plot')initNavigationPlot();if(id==='studio-console')refreshStudioCapability()}
+function closeWorkspaces(){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));document.body.classList.remove('store-active');scrollTo({top:0,behavior:'smooth'})}
 
 let encMap=null,encChartLayer=null,encBathymetryLayer=null,encSeamarkLayer=null;
 let navigationPlotMap=null,navigationPlotSource=null,navigationPlotRoute=null;
@@ -278,7 +278,69 @@ function setupPilot(){[...new Set(PILOT_DATA.map(x=>x.country))].sort().forEach(
 function renderPilot(){const q=$('pilotSearch').value.toLowerCase(),c=$('countryFilter').value,t=$('typeFilter').value;const rows=PILOT_DATA.filter(x=>(!c||x.country===c)&&(!t||x.type===t)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));$('pilotGrid').innerHTML=rows.map(x=>`<article class="record"><h3>${esc(x.name)}</h3><div class="muted">${esc(x.country)} • ${esc(x.region)}</div><p>${esc(x.approach)}</p><p class="warning">${esc(x.captainNote)}</p></article>`).join('')}
 function setupRoutes(){[...new Set(ROUTE_DATA.map(x=>x.type))].forEach(x=>$('routeType').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`));[...new Set(ROUTE_DATA.map(x=>x.status))].forEach(x=>$('routeStatus').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`))}
 function renderRoutes(){const q=$('routeSearch').value.toLowerCase(),t=$('routeType').value,s=$('routeStatus').value;const rows=ROUTE_DATA.filter(x=>(!t||x.type===t)&&(!s||x.status===s)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));$('routeGrid').innerHTML=rows.map(x=>`<article class="record"><h3>${esc(x.title)}</h3><div class="muted">${esc(x.type)} • ${esc(x.status)}</div><p>${x.stops.map(esc).join(' → ')}</p></article>`).join('')}
+function setupResources(){[...new Set(RESOURCE_DATA.map(x=>x.category))].sort().forEach(x=>$('resourceCategory').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`));[...new Set(RESOURCE_DATA.map(x=>x.region))].forEach(x=>$('resourceRegion').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`))}
+function renderResources(){const q=$('resourceSearch').value.toLowerCase(),c=$('resourceCategory').value,r=$('resourceRegion').value;const rows=RESOURCE_DATA.filter(x=>(!c||x.category===c)&&(!r||x.region===r)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));$('resourceGrid').innerHTML=rows.map(x=>`<article class="record"><h3>${esc(x.name)}</h3><div class="muted">${esc(x.category)} • ${esc(x.region)}</div><p>${esc(x.description)}</p>${x.highlights&&x.highlights.length?`<div>${x.highlights.map(h=>`<span class="badge">${esc(h)}</span>`).join('')}</div>`:''}${x.services&&x.services.length?`<p class="muted">${esc(x.services.join(' • '))}</p>`:''}${x.captainNote&&x.captainNote!=='—'?`<p class="warning">${esc(x.captainNote)}</p>`:''}</article>`).join('')}
 
+
+// --- Sinbad Marine Store ---
+let storeActiveCategory='';
+const storeTRY=n=>'₺'+Number(n).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const storeCartGet=()=>get('atlas_store_cart');
+const storeCartSet=v=>set('atlas_store_cart',v);
+function storeCartAdd(id){const cart=storeCartGet();const line=cart.find(x=>x.id===id);if(line)line.qty+=1;else cart.push({id,qty:1});storeCartSet(cart);renderStoreCart()}
+function storeCartUpdateQty(id,delta){const cart=storeCartGet();const line=cart.find(x=>x.id===id);if(!line)return;line.qty+=delta;const next=cart.filter(x=>x.qty>0);storeCartSet(next);renderStoreCart()}
+function storeCartRemove(id){storeCartSet(storeCartGet().filter(x=>x.id!==id));renderStoreCart()}
+function setupStore(){
+ const cats=['Tümü',...new Set(STORE_DATA.map(x=>x.category))];
+ $('storeCategories').innerHTML=cats.map(c=>`<button type="button" class="store-chip${(c==='Tümü'&&!storeActiveCategory)||c===storeActiveCategory?' active':''}" data-cat="${c==='Tümü'?'':esc(c)}">${esc(c)}</button>`).join('');
+ $('storeCategories').querySelectorAll('.store-chip').forEach(btn=>btn.addEventListener('click',()=>{storeActiveCategory=btn.dataset.cat;setupStore();renderStoreGrid()}));
+ $('storeSearch').addEventListener('input',renderStoreGrid);
+ $('storeCartFab').addEventListener('click',()=>{$('storeCartOverlay').classList.add('open');$('storeCartDrawer').classList.add('open')});
+ $('storeCartClose').addEventListener('click',storeCloseCart);
+ $('storeCartOverlay').addEventListener('click',storeCloseCart);
+ $('storeCheckoutBtn').addEventListener('click',openStoreCheckout);
+ $('storeCheckoutClose').addEventListener('click',()=>$('storeCheckoutOverlay').classList.remove('open'));
+ $('storeSendWhatsapp').addEventListener('click',()=>storeSendOrder('whatsapp'));
+ $('storeSendEmail').addEventListener('click',()=>storeSendOrder('email'));
+ renderStoreGrid();renderStoreCart();
+}
+function storeCloseCart(){$('storeCartOverlay').classList.remove('open');$('storeCartDrawer').classList.remove('open')}
+function renderStoreGrid(){
+ const q=($('storeSearch').value||'').toLowerCase();
+ const rows=STORE_DATA.filter(x=>(!storeActiveCategory||x.category===storeActiveCategory)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));
+ $('storeGrid').innerHTML=rows.length?rows.map(x=>`<article class="store-card">${x.badge?`<span class="store-badge-tag">${esc(x.badge)}</span>`:''}<div class="store-icon-tile">${x.icon||'⚓'}</div><div class="store-card-category">${esc(x.category)}</div><h3>${esc(x.name)}</h3><p class="store-card-desc">${esc(x.description)}</p><div class="store-card-footer"><div class="store-price">${storeTRY(x.price)}<small>KDV dahil</small></div><button type="button" class="store-add-btn" data-id="${esc(x.id)}">Sepete Ekle</button></div></article>`).join(''):'<p class="empty">Bu kategoride/aramada ürün bulunamadı.</p>';
+ $('storeGrid').querySelectorAll('.store-add-btn').forEach(btn=>btn.addEventListener('click',()=>{storeCartAdd(btn.dataset.id);btn.textContent='Eklendi ✓';btn.classList.add('in-cart');setTimeout(()=>{btn.textContent='Sepete Ekle';btn.classList.remove('in-cart')},1100)}));
+}
+function renderStoreCart(){
+ const cart=storeCartGet();
+ const lines=cart.map(item=>({...item,product:STORE_DATA.find(p=>p.id===item.id)})).filter(x=>x.product);
+ const count=lines.reduce((a,x)=>a+x.qty,0);
+ $('storeCartCount').textContent=count;
+ $('storeCartItems').innerHTML=lines.length?lines.map(x=>`<div class="store-cart-item"><div class="store-cart-item-icon">${x.product.icon||'⚓'}</div><div><h4>${esc(x.product.name)}</h4><div class="store-qty-row"><button type="button" class="store-qty-btn" data-id="${esc(x.id)}" data-d="-1">−</button><span>${x.qty}</span><button type="button" class="store-qty-btn" data-id="${esc(x.id)}" data-d="1">+</button></div></div><div><div class="store-cart-item-price">${storeTRY(x.product.price*x.qty)}</div><button type="button" class="store-cart-remove" data-id="${esc(x.id)}">Kaldır</button></div></div>`).join(''):'<div class="store-cart-empty">Sepetiniz boş.<br>Mağazadan ürün ekleyin.</div>';
+ $('storeCartItems').querySelectorAll('.store-qty-btn').forEach(btn=>btn.addEventListener('click',()=>storeCartUpdateQty(btn.dataset.id,Number(btn.dataset.d))));
+ $('storeCartItems').querySelectorAll('.store-cart-remove').forEach(btn=>btn.addEventListener('click',()=>storeCartRemove(btn.dataset.id)));
+ const subtotal=lines.reduce((a,x)=>a+x.product.price*x.qty,0);
+ $('storeCartSubtotal').textContent=storeTRY(subtotal);
+}
+function storeBuildOrderText(){
+ const cart=storeCartGet();
+ const lines=cart.map(item=>({...item,product:STORE_DATA.find(p=>p.id===item.id)})).filter(x=>x.product);
+ const subtotal=lines.reduce((a,x)=>a+x.product.price*x.qty,0);
+ const name=$('storeName').value.trim(),phone=$('storePhone').value.trim(),email=$('storeEmail').value.trim(),delivery=$('storeDelivery').value.trim(),note=$('storeNote').value.trim();
+ const itemLines=lines.map(x=>`• ${x.product.name} x${x.qty} — ${storeTRY(x.product.price*x.qty)}`).join('\n');
+ return `SİNBAD MARINE STORE — Sipariş Talebi\n\nMüşteri: ${name||'—'}\nTelefon: ${phone||'—'}\nE-posta: ${email||'—'}\nTeslimat/Yat: ${delivery||'—'}\n\nÜrünler:\n${itemLines||'—'}\n\nAra Toplam: ${storeTRY(subtotal)}\nNot: ${note||'—'}\n\n(Bu bir ön sipariş talebidir; ödeme talimatları ayrıca iletilecektir.)`;
+}
+function openStoreCheckout(){
+ if(!storeCartGet().length)return;
+ $('storeCheckoutSummary').textContent=storeBuildOrderText();
+ $('storeCheckoutOverlay').classList.add('open');
+}
+function storeSendOrder(channel){
+ const text=storeBuildOrderText();
+ $('storeCheckoutSummary').textContent=text;
+ if(channel==='whatsapp')window.open(`https://wa.me/?text=${encodeURIComponent(text)}`,'_blank');
+ else window.open(`mailto:?subject=${encodeURIComponent('Sinbad Marine Store — Sipariş Talebi')}&body=${encodeURIComponent(text)}`,'_blank');
+}
 
 $('saveVessel').onclick=()=>{const a=get('atlas_fleet');a.unshift({name:$('vName').value,type:$('vType').value,flag:$('vFlag').value,loa:$('vLoa').value,beam:$('vBeam').value,draft:$('vDraft').value,cruise:$('vCruise').value,fuel:$('vFuel').value,water:$('vWater').value,notes:$('vNotes').value});set('atlas_fleet',a);renderFleet()}
 function renderFleet(){const a=get('atlas_fleet');$('fleetList').innerHTML=a.map(v=>`<article class="record"><h3>${esc(v.name)}</h3><p>${esc(v.type)} • ${esc(v.flag)} • Draft ${esc(v.draft)} m</p></article>`).join('')||'<div class="empty">No vessel records.</div>'}
@@ -297,15 +359,16 @@ async function renderSummary(){
  $('sumCharts').textContent=rows.filter(x=>x.folder==='Nautical Charts').length;
  $('sumStorage').textContent=(rows.reduce((a,x)=>a+x.size,0)/1048576).toFixed(1)+' MB';
 }
-async function renderAll(){renderFleet();renderCrew();renderPilot();renderRoutes();await renderDocuments();await renderSummary()}
+async function renderAll(){renderFleet();renderCrew();renderPilot();renderRoutes();renderResources();await renderDocuments();await renderSummary()}
 
 
 ['pilotSearch','countryFilter','typeFilter'].forEach(id=>$(id).addEventListener(id==='pilotSearch'?'input':'change',renderPilot));
 ['routeSearch','routeType','routeStatus'].forEach(id=>$(id).addEventListener(id==='routeSearch'?'input':'change',renderRoutes));
+['resourceSearch','resourceCategory','resourceRegion'].forEach(id=>$(id).addEventListener(id==='resourceSearch'?'input':'change',renderResources));
 
 
 document.addEventListener('DOMContentLoaded',async()=>{
- setupDocumentFilters();setupPilot();setupRoutes();
+ setupDocumentFilters();setupPilot();setupRoutes();setupResources();setupStore();
  try{
   await ensureDB();
   await renderAll();

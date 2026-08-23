@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.19-professor-phase-2-character-engine-v1';
+const CACHE='sinbad-marine-v8.20.19-store-v2';
 const ASSETS=[
   './',
   './index.html',
@@ -24,6 +24,8 @@ const ASSETS=[
   './sinbad-character-rig.js',
   './pilot-data.js',
   './route-data.js',
+  './resource-data.js',
+  './store-data.js',
   './official-publications.js',
   './supabase/functions/sinbad-answer/core-decision.js',
   './sinbad-core.js',
