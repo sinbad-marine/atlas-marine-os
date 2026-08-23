@@ -51,6 +51,7 @@ test('standalone Academy is a live free-form voice and text classroom, not a req
   assert.match(academyApp,/functions\.invoke\('sinbad-answer'/);
   assert.match(academyApp,/includeSourceVisuals:false,suppressSourceVisuals:true/);
   assert.match(academyApp,/window\.SinbadVisuals\?\.select/);
+  assert.match(academyApp,/SinbadVisuals\?\.select\?\.\(question,answer,\{max:1\}\)/);
   assert.match(academyApp,/SpeechRecognition\|\|window\.webkitSpeechRecognition/);
   assert.match(academyApp,/academyChatForm/);
 });
@@ -65,7 +66,7 @@ test('Captain Sinbad teaches with real state art, browser voice and verified atl
   assert.match(academyApp,/captain-sinbad-listening\.png/);
   assert.match(academyApp,/new SpeechSynthesisUtterance/);
   assert.match(academyApp,/function renderVisuals\(visuals\)/);
-  assert.match(academyHtml,/sinbad-visuals\.js\?v=8232/);
+  assert.match(academyHtml,/sinbad-visuals\.js\?v=8233/);
   assert.match(academyApp,/academy-atlas-visual/);
   assert.match(academyApp,/visuals\.filter\(visual=>safeAsset\.test/);
   assert.doesNotMatch(academyApp,/cloudClient\.storage\.from\(doc\.bucket_id\)\.download/);
