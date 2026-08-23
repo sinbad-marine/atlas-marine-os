@@ -9,6 +9,12 @@ const ACADEMY_CHARACTER_ASSETS=Object.freeze({
   'board-teaching':'./assets/captain-sinbad/captain-sinbad-board-teaching.png'
 });
 let academyBoardGeneration=0;
+const ACADEMY_SHAPE_DRAWING_RHYTHMS=Object.freeze([
+  Object.freeze({id:'steady',frames:Object.freeze([[0,'contact','write-contact','contact'],[260,'lift','write-lift','lift'],[440,'contact','write-contact','contact'],[720,'lift','write-lift','lift'],[880,'contact','write-contact','contact'],[1250,'ready','explain','complete','audience']])}),
+  Object.freeze({id:'measured',frames:Object.freeze([[0,'contact','write-contact','contact'],[340,'lift','write-lift','lift'],[510,'contact','write-contact','contact'],[760,'lift','write-lift','lift'],[930,'contact','write-contact','contact'],[1250,'ready','explain','complete','audience']])}),
+  Object.freeze({id:'lively',frames:Object.freeze([[0,'contact','write-contact','contact'],[210,'lift','write-lift','lift'],[380,'contact','write-contact','contact'],[610,'lift','write-lift','lift'],[820,'contact','write-contact','contact'],[1250,'ready','explain','complete','audience']])})
+]);
+let academyLastShapeDrawingRhythm=-1;
 
 academyCharacterEngine?.subscribe(snapshot=>{
   const avatar=byId('academyTeachingStage')?.querySelector('.academy-sinbad');if(!avatar)return;
@@ -71,11 +77,15 @@ function writeCustomTextAtBoard(rawText){
   if(reducedMotion){board.textContent=text;return true;}
   let index=0,lastCueBucket=-1,lastFrameKey='ready';const writeNext=()=>{if(generation!==academyBoardGeneration)return;index++;lastCueBucket=directAcademyWritingGesture(index,text,lastCueBucket);lastFrameKey=renderAcademyWritingFrame(index,text,lastFrameKey);renderAcademyBoardProgress(board,text,index,index>=text.length);if(index<text.length)setTimeout(writeNext,/\s/.test(text[index]||'')?55:/[.!?;:]/u.test(text[index]||'')?130:30);else renderAcademyCharacterCue({state:'board-teaching',gesture:'explain',gaze:'audience'},text);};setTimeout(writeNext,320);return true;
 }
+function selectAcademyShapeDrawingRhythm(){
+  const count=ACADEMY_SHAPE_DRAWING_RHYTHMS.length,entropy=globalThis.crypto?.getRandomValues?globalThis.crypto.getRandomValues(new Uint32Array(1))[0]:Math.floor(Math.random()*0x100000000);let index=count===1?0:entropy%(academyLastShapeDrawingRhythm<0?count:count-1);if(academyLastShapeDrawingRhythm>=0&&index>=academyLastShapeDrawingRhythm)index++;academyLastShapeDrawingRhythm=index;return ACADEMY_SHAPE_DRAWING_RHYTHMS[index];
+}
 function animateAllowedShapeDrawing(generation,shape,reducedMotion=false){
   const stage=byId('academyTeachingStage'),image=byId('academySinbadImage');if(!stage||!image)return;
+  const rhythm=selectAcademyShapeDrawingRhythm();stage.dataset.boardDrawingRhythm=rhythm.id;
   const renderFrame=(frameKey,gesture,phase,gaze='board')=>{if(generation!==academyBoardGeneration)return;stage.dataset.boardDrawingPhase=phase;image.src=ACADEMY_CHARACTER_ASSETS.writing[frameKey];academyCharacterEngine?.dispatch('TEACH_AT_BOARD',{boardText:shape,gesture,gaze});};
   if(reducedMotion){renderFrame('ready','explain','complete','audience');return;}
-  [[0,'contact','write-contact','contact'],[260,'lift','write-lift','lift'],[440,'contact','write-contact','contact'],[720,'lift','write-lift','lift'],[880,'contact','write-contact','contact'],[1250,'ready','explain','complete','audience']].forEach(([delay,frameKey,gesture,phase,gaze])=>setTimeout(()=>renderFrame(frameKey,gesture,phase,gaze),delay));
+  rhythm.frames.forEach(([delay,frameKey,gesture,phase,gaze])=>setTimeout(()=>renderFrame(frameKey,gesture,phase,gaze),delay));
 }
 function drawAllowedShapeAtBoard(shape){
   const definitions=Object.freeze({
