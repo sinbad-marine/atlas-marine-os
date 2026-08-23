@@ -86,6 +86,7 @@ test('main chat can send only bounded same-origin plain text to the Academy boar
   assert.match(academyApp,/\[260,'lift','write-lift','lift'\]/);assert.match(academyApp,/\[880,'contact','write-contact','contact'\]/);assert.match(academyApp,/\[1250,'ready','explain','complete','audience'\]/);
   for(const rhythm of ['steady','measured','lively'])assert.match(academyApp,new RegExp(`id:'${rhythm}'`));
   assert.match(academyApp,/function selectAcademyShapeDrawingRhythm\(\)/);assert.match(academyApp,/index>=academyLastShapeDrawingRhythm/);assert.match(academyApp,/stage\.dataset\.boardDrawingRhythm=rhythm\.id/);
+  assert.equal((academyApp.match(/'check-in','audience'/g)||[]).length,3);
 });
 
 test('real transparent writing frames follow measured board progress and settle to explanation',()=>{

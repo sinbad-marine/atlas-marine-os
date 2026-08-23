@@ -10,9 +10,9 @@ const ACADEMY_CHARACTER_ASSETS=Object.freeze({
 });
 let academyBoardGeneration=0;
 const ACADEMY_SHAPE_DRAWING_RHYTHMS=Object.freeze([
-  Object.freeze({id:'steady',frames:Object.freeze([[0,'contact','write-contact','contact'],[260,'lift','write-lift','lift'],[440,'contact','write-contact','contact'],[720,'lift','write-lift','lift'],[880,'contact','write-contact','contact'],[1250,'ready','explain','complete','audience']])}),
-  Object.freeze({id:'measured',frames:Object.freeze([[0,'contact','write-contact','contact'],[340,'lift','write-lift','lift'],[510,'contact','write-contact','contact'],[760,'lift','write-lift','lift'],[930,'contact','write-contact','contact'],[1250,'ready','explain','complete','audience']])}),
-  Object.freeze({id:'lively',frames:Object.freeze([[0,'contact','write-contact','contact'],[210,'lift','write-lift','lift'],[380,'contact','write-contact','contact'],[610,'lift','write-lift','lift'],[820,'contact','write-contact','contact'],[1250,'ready','explain','complete','audience']])})
+  Object.freeze({id:'steady',frames:Object.freeze([[0,'contact','write-contact','contact'],[260,'lift','write-lift','lift'],[440,'contact','write-contact','contact'],[720,'ready','explain','check-in','audience'],[880,'contact','write-contact','contact'],[1250,'ready','explain','complete','audience']])}),
+  Object.freeze({id:'measured',frames:Object.freeze([[0,'contact','write-contact','contact'],[340,'ready','explain','check-in','audience'],[510,'contact','write-contact','contact'],[760,'lift','write-lift','lift'],[930,'contact','write-contact','contact'],[1250,'ready','explain','complete','audience']])}),
+  Object.freeze({id:'lively',frames:Object.freeze([[0,'contact','write-contact','contact'],[210,'lift','write-lift','lift'],[380,'contact','write-contact','contact'],[610,'ready','explain','check-in','audience'],[820,'contact','write-contact','contact'],[1250,'ready','explain','complete','audience']])})
 ]);
 let academyLastShapeDrawingRhythm=-1;
 
