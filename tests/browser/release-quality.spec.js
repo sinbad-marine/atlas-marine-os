@@ -100,3 +100,29 @@ test('Professor Phase 2 opens separately, embeds the frozen classroom and starts
   expect(errors).toEqual([]);
   await professor.close();
 });
+
+test('hands-free Professor runs an explicit listen-send-answer-listen loop without audio recording',async({page})=>{
+  await page.addInitScript(()=>{
+    class FakeRecognition{
+      constructor(){window.__fakeRecognition=this;this.started=0;}
+      start(){this.started+=1;this.onstart?.();}
+      abort(){this.onend?.();}
+      stop(){this.onend?.();}
+      finish(text){this.onresult?.({resultIndex:0,results:Object.assign([{0:{transcript:text},isFinal:true}],{length:1})});this.onend?.();}
+    }
+    window.SpeechRecognition=FakeRecognition;
+  });
+  await page.goto('/academy-professor-v3.html');
+  await expect(page.getByRole('heading',{name:/Professor Workspace/})).toBeVisible();
+  await expect(page.locator('#toggleHandsFree')).toHaveAttribute('aria-pressed','false');
+  await page.locator('#toggleHandsFree').click();
+  await expect(page.locator('#toggleHandsFree')).toHaveAttribute('aria-pressed','true');
+  await expect(page.locator('#handsfreeStatus')).toContainText('Dinliyorum');
+  await page.evaluate(()=>window.__fakeRecognition.finish('Gelgit nasıl oluşur?'));
+  const classroom=page.frameLocator('#phaseOneClassroom');
+  await expect(classroom.locator('#academyMessages')).toContainText('Gelgit nasıl oluşur?');
+  await expect(page.locator('#handsfreeStatus')).toContainText(/Yeni sorunuzu dinliyorum|Dinliyorum/);
+  await page.locator('#toggleHandsFree').click();
+  await expect(page.locator('#toggleHandsFree')).toHaveAttribute('aria-pressed','false');
+  await expect(page.locator('#handsfreeStatus')).toContainText('mikrofon dinlemiyor');
+});
