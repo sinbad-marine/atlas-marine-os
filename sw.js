@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.17-semantic-gaze-v28';
+const CACHE='sinbad-marine-v8.20.17-prosody-gestures-v29';
 const ASSETS=[
   './',
   './index.html',

@@ -700,6 +700,9 @@ test('thinking animation reports only real asynchronous work stages and removes 
 });
 
 test('live speech boundaries expose sentence-level meaning so expression can change during one answer',()=>{
+  assert.match(app,/createSpeechGestureDirector\?\.\(\)/);
+  assert.match(app,/sinbadSpeechGestureDirector\?\.reset\(\)/);
+  assert.match(app,/sinbadSpeechGestureDirector\?\.select\(semantic\)/);
   assert.match(app,/function setSinbadResponseKind\(kind\)\{/);
   assert.match(app,/if\(!Object\.hasOwn\(copy,kind\)\)return false;/);
   assert.match(app,/if\(performanceCue\.responseKind\)setSinbadResponseKind\(performanceCue\.responseKind\);/);

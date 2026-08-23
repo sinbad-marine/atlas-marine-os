@@ -191,6 +191,28 @@
     const reset=()=>histories.clear();
     return Object.freeze({choose,reset});
   }
+  function createSpeechGestureDirector(options={}){
+    const entropy=typeof options.entropy==='function'?options.entropy:defaultEntropy;
+    const improvisation=createImprovisationDirector({entropy});
+    let remainingWords=0;
+    const select=cue=>{
+      if(!cue||typeof cue!=='object'||typeof cue.cadence!=='string')return Object.freeze({accepted:false,reason:'INVALID_SPEECH_CUE'});
+      const emphasized=['opening','pause','sentence-end','question'].includes(cue.cadence);
+      if(!emphasized&&cue.cadence==='word'&&remainingWords>0){remainingWords--;return Object.freeze({accepted:true,change:false,cue:Object.freeze({...cue,gesture:null})});}
+      if(!emphasized&&cue.cadence!=='word')return Object.freeze({accepted:true,change:false,cue:Object.freeze({...cue,gesture:null})});
+      if(emphasized)remainingWords=2;
+      else{
+        const sample=Number(entropy());
+        if(!Number.isFinite(sample)||sample<0||sample>=1)return Object.freeze({accepted:false,reason:'INVALID_ENTROPY'});
+        remainingWords=2+Math.floor(sample*3);
+      }
+      const improvised=improvisation.choose(cue.responseKind,'speech');
+      if(!improvised.accepted)return Object.freeze({accepted:false,reason:improvised.reason});
+      return Object.freeze({accepted:true,change:true,cue:Object.freeze({...cue,...improvised.cue,responseKind:cue.responseKind,cadence:cue.cadence})});
+    };
+    const reset=()=>{remainingWords=0;improvisation.reset();};
+    return Object.freeze({select,reset});
+  }
   function gestureRequestForText(text){
     if(typeof text!=='string'||!text.trim())return Object.freeze({accepted:false,reason:'INVALID_REQUEST_TEXT'});
     const normalized=text.toLocaleLowerCase('tr-TR');
@@ -230,5 +252,5 @@
     };
     return Object.freeze({play,cancel});
   }
-  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gazeTransitionForCue,createImprovisationDirector,createPerformanceDirector});
+  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gazeTransitionForCue,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
 });

@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gazeTransitionForCue,createImprovisationDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gazeTransitionForCue,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -167,4 +167,19 @@ test('object and board gestures receive finite interruptible gaze transitions',(
   const reduced=gazeTransitionForCue({gesture:'show-palm',gaze:'audience'},{reducedMotion:true});
   assert.deepEqual(reduced.cues.map(cue=>cue.gaze),['audience']);assert.equal(Object.isFrozen(reduced.cues),true);
   assert.equal(gazeTransitionForCue(null).reason,'INVALID_GAZE_CUE');
+});
+
+test('live speech gestures follow emphasis and variable bounded gaps without immediate repetition',()=>{
+  const director=createSpeechGestureDirector({entropy:()=>0});
+  const opening=director.select({cadence:'opening',responseKind:'conversation',gesture:'open-hand',gaze:'audience',emotion:'warm'});
+  const word1=director.select({cadence:'word',responseKind:'conversation',gesture:'explain',gaze:'audience',emotion:'warm'});
+  const word2=director.select({cadence:'word',responseKind:'conversation',gesture:'explain',gaze:'audience',emotion:'warm'});
+  const word3=director.select({cadence:'word',responseKind:'conversation',gesture:'explain',gaze:'audience',emotion:'warm'});
+  assert.equal(opening.change,true);assert.equal(word1.change,false);assert.equal(word2.change,false);assert.equal(word3.change,true);
+  assert.notEqual(opening.cue.variantId,word3.cue.variantId);
+  const caution=director.select({cadence:'pause',responseKind:'caution',gesture:'hold',gaze:'audience',emotion:'concerned'});
+  assert.equal(caution.change,true);assert.equal(['hold','open-hand','nod'].includes(caution.cue.gesture),true);assert.notEqual(caution.cue.emotion,'joyful');
+  director.reset();assert.equal(director.select({cadence:'opening',responseKind:'conversation'}).change,true);
+  assert.equal(createSpeechGestureDirector({entropy:()=>1}).select({cadence:'word',responseKind:'conversation'}).reason,'INVALID_ENTROPY');
+  assert.equal(director.select(null).reason,'INVALID_SPEECH_CUE');
 });
