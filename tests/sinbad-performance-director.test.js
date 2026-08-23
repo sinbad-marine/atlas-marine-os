@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -236,6 +236,23 @@ test('supported physical requests expand into bounded interruptible gesture sequ
   const left=gestureSequenceForRequest('raise-left-hand');assert.deepEqual(left.cues.map(cue=>cue.gaze),['audience','left-palm','audience']);
   const board=gestureSequenceForRequest('point-board');assert.equal(board.cues[1].gaze,'board');assert.ok(board.duration<=1200);
   assert.equal(gestureSequenceForRequest('smile').reason,'NO_GESTURE_SEQUENCE');
+});
+
+test('spoken gesture acknowledgement is grounded in the action the rig can actually perform',()=>{
+  const palm=gestureRequestForText('Sinbad avucunu açar mısın?');
+  assert.deepEqual(gestureAcknowledgementForRequest(palm,'tr-TR'),{accepted:true,supported:true,action:'show-palm',text:'Avucumu açıp gösteriyorum.'});
+  const grounded=groundResponseWithGesture('Sorunu da yanıtlayayım.',gestureRequestForText('Sol elini kaldır.'),'tr-TR');
+  assert.equal(grounded.grounded,true);assert.equal(grounded.action,'raise-left-hand');assert.match(grounded.text,/^Sol elimi kaldırıp gösteriyorum\./);
+  assert.match(groundResponseWithGesture('Here is the answer.',gestureRequestForText('Show your right hand.'),'en-US').text,/^I am opening and showing my right palm\./);
+});
+
+test('unimplemented physical requests are acknowledged without inventing an action',()=>{
+  const writing=gestureRequestForText('Tahtaya bir daire çiz.');
+  assert.equal(writing.accepted,true);assert.equal(writing.supported,false);assert.equal(writing.reason,'GESTURE_NOT_IMPLEMENTED');
+  const grounded=groundResponseWithGesture('İstersen konuyu açıklayabilirim.',writing,'tr-TR');
+  assert.equal(grounded.grounded,true);assert.equal(grounded.supported,false);assert.match(grounded.text,/^Bu hareketi henüz güvenilir biçimde yapamıyorum\./);
+  assert.equal(gestureAcknowledgementForRequest({accepted:true,supported:true,action:'teleport'}).reason,'UNMAPPED_GESTURE_ACTION');
+  assert.equal(groundResponseWithGesture('',writing).reason,'INVALID_RESPONSE_TEXT');
 });
 
 test('object and board gestures receive finite interruptible gaze transitions',()=>{

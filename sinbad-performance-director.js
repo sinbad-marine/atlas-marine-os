@@ -323,13 +323,55 @@
     if(/(avuc(?:unu|unda|unun)|avuç|palm|open (?:your )?hand|show (?:me )?(?:your )?hand)/iu.test(normalized)){
       return Object.freeze({accepted:true,action:'show-palm',supported:true,cue:Object.freeze({gesture:'show-palm',gaze:'audience',emotion:'warm',energy:.4})});
     }
+    if(/(tahta(?:ya|da|yı)?.*(?:yaz|çiz)|(?:write|draw).*(?:board|blackboard))/iu.test(normalized)){
+      return Object.freeze({accepted:true,action:'write-board',supported:false,reason:'GESTURE_NOT_IMPLEMENTED'});
+    }
     if(/(tahta(?:yı|ya|da)?|yazı tahtası|board|blackboard)/iu.test(normalized)){
       return Object.freeze({accepted:true,action:'point-board',supported:true,cue:Object.freeze({gesture:'point-board',gaze:'board',emotion:'confident',energy:.42})});
     }
     if(/(beni dinliyor musun|dinlediğini göster|are you listening|show .*listening)/iu.test(normalized)){
       return Object.freeze({accepted:true,action:'show-listening',supported:true,cue:Object.freeze({gesture:'listen-lean',gaze:'audience',emotion:'attentive',energy:.38})});
     }
+    if(/(yürü|koş|zıpla|dans et|walk|run|jump|dance)/iu.test(normalized)){
+      return Object.freeze({accepted:true,action:'unsupported-body-action',supported:false,reason:'GESTURE_NOT_IMPLEMENTED'});
+    }
     return Object.freeze({accepted:false,reason:'NO_GESTURE_REQUEST'});
+  }
+  function gestureAcknowledgementForRequest(request,language='tr-TR'){
+    if(!request||typeof request!=='object'||request.accepted!==true)return Object.freeze({accepted:false,reason:'INVALID_GESTURE_REQUEST'});
+    const turkish=String(language).toLocaleLowerCase('en-US').startsWith('tr');
+    if(request.supported!==true){
+      return Object.freeze({accepted:true,supported:false,action:request.action||'unknown',text:turkish?'Bu hareketi henüz güvenilir biçimde yapamıyorum.':'I cannot perform that movement reliably yet.'});
+    }
+    const copy=turkish?{
+      'show-palm':'Avucumu açıp gösteriyorum.',
+      'show-right-hand':'Sağ avucumu açıp gösteriyorum.',
+      'raise-left-hand':'Sol elimi kaldırıp gösteriyorum.',
+      'look-left':'Başımı sola çeviriyorum.',
+      'look-right':'Başımı sağa çeviriyorum.',
+      nod:'Başımı eğerek yanıt veriyorum.',
+      smile:'Gülümsüyorum.',
+      'point-board':'Tahtayı işaret ediyorum.',
+      'show-listening':'Seni dikkatle dinliyorum.'
+    }:{
+      'show-palm':'I am opening my palm and showing it to you.',
+      'show-right-hand':'I am opening and showing my right palm.',
+      'raise-left-hand':'I am raising and showing my left hand.',
+      'look-left':'I am turning my head to the left.',
+      'look-right':'I am turning my head to the right.',
+      nod:'I am nodding as I respond.',
+      smile:'I am smiling.',
+      'point-board':'I am pointing to the board.',
+      'show-listening':'I am listening carefully.'
+    };
+    if(!Object.hasOwn(copy,request.action))return Object.freeze({accepted:false,reason:'UNMAPPED_GESTURE_ACTION'});
+    return Object.freeze({accepted:true,supported:true,action:request.action,text:copy[request.action]});
+  }
+  function groundResponseWithGesture(responseText,request,language='tr-TR'){
+    if(typeof responseText!=='string'||!responseText.trim())return Object.freeze({accepted:false,reason:'INVALID_RESPONSE_TEXT'});
+    const acknowledgement=gestureAcknowledgementForRequest(request,language);
+    if(!acknowledgement.accepted)return Object.freeze({accepted:true,grounded:false,text:responseText});
+    return Object.freeze({accepted:true,grounded:true,supported:acknowledgement.supported,action:acknowledgement.action,text:`${acknowledgement.text} ${responseText}`.trim()});
   }
   function gestureSequenceForRequest(action){
     const sequences={
@@ -384,5 +426,5 @@
     };
     return Object.freeze({play,cancel});
   }
-  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
+  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
 });

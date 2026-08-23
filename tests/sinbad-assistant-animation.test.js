@@ -744,6 +744,8 @@ test('layered face frames follow real blink and mouth events without replacing t
 
 test('a supported explicit gesture request overrides only the opening cue and unsupported poses are never fabricated',()=>{
   assert.match(app,/gestureRequestForText\(question\)/);
+  assert.match(app,/groundResponseWithGesture\?\.\(text,sinbadRequestedGesture,sinbadState\.language\|\|appLanguage\)/);
+  assert.match(app,/const answer=groundSinbadResponseToRequestedGesture\(await sinbadLocalAnswer\(effectiveQuestion\)\)/);
   assert.match(app,/if\(sinbadRequestedGesture\?\.supported&&sinbadTextPresentationCues\.length\)/);
   assert.match(app,/\.\.\.sinbadRequestedGesture\.cue,responseKind:sinbadTextPresentationCues\[0\]\.responseKind/);
   assert.match(app,/sinbadRequestedGesture=null;/);

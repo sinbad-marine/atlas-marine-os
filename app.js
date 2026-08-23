@@ -430,6 +430,10 @@ function prepareSinbadSpeechPerformance(question){
   sinbadRequestedGestureSequence=sequence?.accepted?[...sequence.cues]:[];
   sinbadExplicitGestureHoldBoundaries=sinbadRequestedGesture?.supported?2:0;
 }
+function groundSinbadResponseToRequestedGesture(text){
+  const grounded=sinbadPerformanceDirector?.groundResponseWithGesture?.(text,sinbadRequestedGesture,sinbadState.language||appLanguage);
+  return grounded?.accepted?grounded.text:text;
+}
 function sinbadSpeechPerformanceCue(index){
   const sequence=sinbadSpeechPerformanceMode==='caution'?'speaking-caution':sinbadSpeechPerformanceMode==='instructional'?'speaking-instructional':'speaking';
   const result=sinbadPerformanceDirector?.cueAt(sequence,index);return result?.accepted?result.cue:{};
@@ -1649,7 +1653,7 @@ async function sendToSinbad(text){
   setSinbadThinkingStage('analyzing');
   $('sinbadThinking').classList.remove('hidden');
   try{
-    const answer=await sinbadLocalAnswer(effectiveQuestion);
+    const answer=groundSinbadResponseToRequestedGesture(await sinbadLocalAnswer(effectiveQuestion));
     setSinbadThinkingStage('composing');
     speakSinbad(answer,()=>addSinbadMessage('sinbad',answer,consumeSinbadSourceVisuals()));
   }catch(error){
