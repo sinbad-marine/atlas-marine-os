@@ -146,6 +146,9 @@ test('live Bridge routes durable questions to loopback Kiwix and blocks stale or
   assert.match(bridge,/BLOCKED_STALE_OR_HIGH_RISK/);
   assert.match(bridge,/offline-world-rag/);
   assert.match(bridge,/KIWIX_LOOPBACK_ONLY/);
+  assert.match(bridge,/stream=\$false; think=\$true/);
+  assert.match(bridge,/answer=\$result\.message\.content/);
+  assert.doesNotMatch(bridge,/answer=\$result\.message\.thinking/);
   assert.doesNotMatch(bridge,/--address=(?:all|ipv4|ipv6)/);
 });
 
