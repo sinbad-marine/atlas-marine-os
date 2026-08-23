@@ -235,6 +235,16 @@ test('a visible, aria-live status line exists for the large avatar so state is n
   assert.match(app,/if\(label&&\(changed\|\|next==='thinking'\)\)label\.textContent=statusText;/);
 });
 
+test('idle micro-motion is sparse, interruptible and disabled for hidden or reduced-motion views',()=>{
+  assert.match(app,/createIdleBehaviorDirector\?\.\(\)/);
+  assert.match(app,/sinbadAssistantState==='idle'&&document\.visibilityState!=='hidden'/);
+  assert.match(app,/prefers-reduced-motion: reduce/);
+  assert.match(app,/setTimeout\(\(\)=>\{if\(sinbadIdleMotionAllowed\(\)\)setSinbadAssistantState\('idle',behavior\.cue\);\},behavior\.delayMs\)/);
+  assert.match(app,/if\(next==='idle'&&detail\.idleMotion\)el\.dataset\.idleMotion=detail\.idleMotion/);
+  assert.match(app,/sinbadAssistantLastDetail\.idleMotion===detail\.idleMotion/);
+  assert.match(app,/scheduleSinbadBlink\(\);scheduleSinbadIdleMotion\(\)/);
+});
+
 test('text-only answers are honestly presented without entering the speaking or mouth-animation state',()=>{
   assert.match(app,/presenting:'Yanıtı ekranda sunuyor'/);
   assert.match(app,/presenting:'captain-sinbad-idle-master\.png'/);

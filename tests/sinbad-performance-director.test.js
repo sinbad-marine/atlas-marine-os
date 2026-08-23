@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -96,6 +96,16 @@ test('continuation body language visibly follows the measured speaking pace',()=
   assert.equal(listeningCueForPace('conversational').cue.gesture,'listen-follow');
   assert.equal(listeningCueForPace('fast').cue.gesture,'listen-orient');
   assert.equal(listeningCueForPace('invented').reason,'UNKNOWN_SPEECH_PACE');
+});
+
+test('idle micro-behaviors are sparse, bounded and do not immediately repeat',()=>{
+  const director=createIdleBehaviorDirector({entropy:()=>0});
+  const first=director.select(),second=director.select(),third=director.select(),next=director.select();
+  assert.equal(IDLE_MICRO_CUES.length,3);assert.ok(Object.isFrozen(IDLE_MICRO_CUES));
+  assert.deepEqual([first.cue.idleMotion,second.cue.idleMotion,third.cue.idleMotion],['breathe','look-left','look-right']);
+  assert.notEqual(next.cue.idleMotion,third.cue.idleMotion);
+  assert.ok([first,second,third,next].every(item=>item.delayMs>=6500&&item.delayMs<=11000&&item.cue.holdMs<=1100&&item.cue.energy<=.12));
+  assert.equal(createIdleBehaviorDirector({entropy:()=>1}).select().reason,'INVALID_ENTROPY');
 });
 
 test('heard words select bounded semantic listening reactions without executing commands',()=>{

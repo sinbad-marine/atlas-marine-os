@@ -411,6 +411,7 @@ const sinbadPerformanceDirector=window.SinbadPerformanceDirector||null;
 const sinbadVisemePlanner=window.SinbadVisemePlanner||null;
 const sinbadImprovisationDirector=sinbadPerformanceDirector?.createImprovisationDirector?.()||null;
 const sinbadSpeechGestureDirector=sinbadPerformanceDirector?.createSpeechGestureDirector?.()||null;
+const sinbadIdleBehaviorDirector=sinbadPerformanceDirector?.createIdleBehaviorDirector?.()||null;
 let sinbadSpeechPerformanceMode='warm';
 let sinbadResponseOpeningCue={gesture:'open-hand',gaze:'audience',emotion:'warm',energy:.36,responseKind:'conversation'};
 let sinbadTextPresentationCues=[];
@@ -505,6 +506,16 @@ function preloadSinbadAvatarAssets(){
   SINBAD_RIG_FACE_ASSETS.forEach(file=>{const img=new Image();img.src=SINBAD_AVATAR_ASSET_BASE+file;});
 }
 let sinbadBlinkTimer=null;
+let sinbadIdleMotionTimer=null;
+function sinbadIdleMotionAllowed(){
+  return sinbadAssistantState==='idle'&&document.visibilityState!=='hidden'&&!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches&&!document.documentElement.classList.contains('sinbad-force-reduced-motion');
+}
+function scheduleSinbadIdleMotion(){
+  clearTimeout(sinbadIdleMotionTimer);sinbadIdleMotionTimer=null;
+  if(!sinbadIdleMotionAllowed())return;
+  const behavior=sinbadIdleBehaviorDirector?.select?.();if(!behavior?.accepted)return;
+  sinbadIdleMotionTimer=setTimeout(()=>{if(sinbadIdleMotionAllowed())setSinbadAssistantState('idle',behavior.cue);},behavior.delayMs);
+}
 function sinbadBlinkAllowed(){
   return ['idle','voice-disabled','success','warning','error'].includes(sinbadAssistantState)
     &&document.visibilityState!=='hidden'
@@ -610,6 +621,7 @@ function startSinbadWalkCycle(generation){
   sinbadAssistantTimers.push(setTimeout(tick,280));
 }
 function setSinbadAssistantState(state,detail={}){
+  clearTimeout(sinbadIdleMotionTimer);sinbadIdleMotionTimer=null;
   const next=SINBAD_ASSISTANT_STATES.includes(state)?state:'idle';
   const performance=sinbadCharacterEngine?.setState(next,detail)?.snapshot||{state:next,emotion:'neutral',gesture:'rest',gaze:'audience'};
   const reducedGazeMotion=detail.reducedMotion===true||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches||document.documentElement.classList.contains('sinbad-force-reduced-motion');
@@ -640,6 +652,8 @@ function setSinbadAssistantState(state,detail={}){
     else delete el.dataset.listeningReaction;
     if(next==='listening'&&detail.listeningPace)el.dataset.listeningPace=detail.listeningPace;
     else delete el.dataset.listeningPace;
+    if(next==='idle'&&detail.idleMotion)el.dataset.idleMotion=detail.idleMotion;
+    else delete el.dataset.idleMotion;
     if(next==='thinking'&&detail.thinkingStage)el.dataset.thinkingStage=detail.thinkingStage;
     else delete el.dataset.thinkingStage;
     if(next==='speaking'&&detail.responseKind)el.dataset.responseKind=detail.responseKind;
@@ -678,6 +692,8 @@ function setSinbadAssistantState(state,detail={}){
     if(generation!==sinbadAvatarImageGeneration||sinbadAssistantState!==next)return;
     sinbadAssistantElements().forEach(el=>el.dataset.gaze=cue.gaze);
   },cue.at)));
+  if(next==='idle'&&detail.idleMotion)sinbadIdleMotionTimer=setTimeout(()=>{if(sinbadAssistantState==='idle'&&sinbadAssistantLastDetail.idleMotion===detail.idleMotion)setSinbadAssistantState('idle');},detail.holdMs);
+  else if(next==='idle')scheduleSinbadIdleMotion();
   scheduleSinbadBlink();
   return next;
 }
@@ -690,12 +706,13 @@ window.SinbadCharacterController=Object.freeze({
     setSinbadAssistantState(state);return Object.freeze({accepted:true,state});
   }
 });
-ensureSinbadArticulatedRig();ensureSinbadBlinkLayers();ensureSinbadSpeechLayers();scheduleSinbadBlink();
+ensureSinbadArticulatedRig();ensureSinbadBlinkLayers();ensureSinbadSpeechLayers();scheduleSinbadBlink();scheduleSinbadIdleMotion();
 preloadSinbadAvatarAssets();
 if(typeof document!=='undefined'&&'visibilityState'in document){
   document.addEventListener('visibilitychange',()=>{
     document.documentElement.classList.toggle('sinbad-tab-hidden',document.visibilityState==='hidden');
     scheduleSinbadBlink();
+    scheduleSinbadIdleMotion();
   },{passive:true});
 }
 

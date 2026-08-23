@@ -18,6 +18,9 @@
   });
   const GESTURE_POSES=Object.freeze({
     rest:{leftArm:0,rightArm:0},
+    'idle-breathe':{headPitch:.03,bodyLean:.04,leftArm:.02,rightArm:.02},
+    'idle-look-left':{headYaw:-.18,bodyLean:-.04,leftArm:.02,rightArm:.02},
+    'idle-look-right':{headYaw:.18,bodyLean:.04,leftArm:.02,rightArm:.02},
     'open-hand':{leftArm:.18,rightArm:.58},
     'show-palm':{headYaw:-.08,leftArm:.08,rightArm:.9},
     'raise-left':{headYaw:.08,leftArm:.82,rightArm:.06},

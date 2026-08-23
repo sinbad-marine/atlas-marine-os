@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.27-gesture-sequences-v40';
+const CACHE='sinbad-marine-v8.20.28-idle-micro-motion-v41';
 const ASSETS=[
   './',
   './index.html',

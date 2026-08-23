@@ -119,6 +119,18 @@ test('large Captain Sinbad portrait loads the four-layer articulated rig with it
   await expect(page.locator('#startSinbadListening')).toHaveAttribute('aria-pressed','true');
 });
 
+test('idle Sinbad performs a sparse real micro-motion and yields immediately to work',async({page})=>{
+  await stubBridge(page);
+  await page.goto('/');
+  await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');setSinbadAssistantState('idle');});
+  await page.waitForFunction(()=>Boolean(document.querySelector('.sinbad-avatar.large')?.dataset.idleMotion),null,{timeout:12000});
+  const avatar=page.locator('.sinbad-avatar.large');
+  await expect(avatar).toHaveAttribute('data-idle-motion',/^(breathe|look-left|look-right)$/);
+  await page.evaluate(()=>setSinbadAssistantState('thinking',{thinkingStage:'analyzing'}));
+  await expect(avatar).toHaveAttribute('data-state','thinking');
+  await expect(avatar).not.toHaveAttribute('data-idle-motion',/.+/);
+});
+
 test('a short speech pause joins one user turn instead of submitting mid-sentence',async({page})=>{
   await stubBridge(page);
   await page.goto('/');
