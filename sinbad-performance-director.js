@@ -224,6 +224,12 @@
       Object.freeze({variantId:'question-explain',gesture:'explain',gaze:'audience',emotion:'curious',energy:.38}),
       Object.freeze({variantId:'question-nod',gesture:'nod',gaze:'audience',emotion:'attentive',energy:.32})
     ]),
+    correction:Object.freeze([
+      Object.freeze({variantId:'correction-shake',gesture:'shake-head-left',gaze:'audience',emotion:'attentive',energy:.32}),
+      Object.freeze({variantId:'correction-open',gesture:'open-hand',gaze:'audience',emotion:'attentive',energy:.34}),
+      Object.freeze({variantId:'correction-thought',gesture:'hold',gaze:'thought',emotion:'attentive',energy:.26}),
+      Object.freeze({variantId:'correction-explain',gesture:'explain',gaze:'board',emotion:'warm',energy:.36})
+    ]),
     completion:Object.freeze([
       Object.freeze({variantId:'completion-nod',gesture:'nod',gaze:'audience',emotion:'confident',energy:.4}),
       Object.freeze({variantId:'completion-open',gesture:'open-hand',gaze:'audience',emotion:'confident',energy:.38}),

@@ -197,6 +197,14 @@ test('improvisation exhausts a shuffled context bag before reusing a variant',()
   assert.notEqual(next,cycle.at(-1));
 });
 
+test('correction improvisation varies without ever signalling a correct answer',()=>{
+  const director=createImprovisationDirector({entropy:()=>0});
+  const gestures=Array.from({length:IMPROVISATION_POOLS.correction.length},()=>director.choose('correction','board-assessment').cue.gesture);
+  assert.equal(new Set(gestures).size,IMPROVISATION_POOLS.correction.length);
+  assert.ok(gestures.every(gesture=>['shake-head-left','open-hand','hold','explain'].includes(gesture)));
+  assert.equal(gestures.includes('nod'),false);
+});
+
 test('improvisation avoids repeating the same physical gesture across response kinds',()=>{
   const samples=[0,0,0,0,.34,0];
   const director=createImprovisationDirector({entropy:()=>samples.shift()??0});
