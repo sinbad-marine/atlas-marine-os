@@ -40,6 +40,7 @@
     const heard=liveTranscript.trim();
     if(!wakeArmed&&hasWakePhrase(heard)){
       armWake();
+      window.SinbadSpeakerIdentity?.identifyRecent?.().then(result=>{if(result.matched)setStatus(`Dinliyorum ${window.SinbadSpeakerIdentity.address(result.profile)}; sorunuzu tamamlayın…`)}).catch(()=>{});
       if(listeningPurpose==='interrupt'){turnGeneration+=1;awaitingAnswer=false;stopSinbadVoice();setStatus('Sizi duydum; anlatımı durdurdum. Sorunuzu tamamlayın…')}
       else setStatus('Dinliyorum Kaptan; sorunuzu tamamlayın…');
     }
@@ -76,7 +77,7 @@
     new MutationObserver(resumeWhenReady).observe(messages,{childList:true});
     setStatus(enabled?'Uyku modundayım. Bana “Kaptan Sinbad” diye seslenin.':'Kapalı — başlatmak için düğmeye basın.');if(enabled)scheduleListening(80);
   }
-  toggle.addEventListener('click',()=>{enabled=!enabled;setToggle();if(!enabled){awaitingAnswer=false;disarmWake();stopRecognition();setStatus('Kapalı — mikrofon dinlemiyor.')}else{setStatus('Uyku modu başlatılıyor…');scheduleListening(60)}});
+  toggle.addEventListener('click',()=>{enabled=!enabled;setToggle();if(!enabled){awaitingAnswer=false;disarmWake();stopRecognition();window.SinbadSpeakerIdentity?.stopMonitor?.();setStatus('Kapalı — mikrofon dinlemiyor.')}else{window.SinbadSpeakerIdentity?.monitorIfConsented?.().catch(()=>{});setStatus('Uyku modu başlatılıyor…');scheduleListening(60)}});
   frame.addEventListener('load',connectClassroom);window.addEventListener('beforeunload',()=>{clearAllTimers();stopRecognition()});
   setupRecognition();setToggle();if(frame.contentDocument?.readyState==='complete')connectClassroom();
 })();
