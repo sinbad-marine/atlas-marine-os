@@ -642,7 +642,7 @@ test('large live portrait activates four real alpha rig layers only after every 
 });
 
 test('every live rig part is a non-empty RGBA PNG rather than a baked checkerboard RGB image',()=>{
-  for(const name of ['head','torso','left-arm','right-arm','face-blink','face-closed','face-open','face-wide','face-round']){
+  for(const name of ['head','torso','left-arm','right-arm','face-blink','face-closed','face-open','face-wide','face-round','expression-concerned','expression-delighted']){
     const bytes=fs.readFileSync(`assets/captain-sinbad/captain-sinbad-rig-${name}-v1.png`);
     assert.equal(bytes.subarray(0,8).toString('hex'),'89504e470d0a1a0a',name);
     assert.ok(bytes.readUInt32BE(16)>100,name);
@@ -657,11 +657,15 @@ test('layered face frames follow real blink and mouth events without replacing t
   assert.match(html,/sinbad-rig-face-open-v1\.png/);
   assert.match(html,/sinbad-rig-face-wide-v1\.png/);
   assert.match(html,/sinbad-rig-face-round-v1\.png/);
+  assert.match(html,/sinbad-rig-expression-concerned-v1\.png/);
+  assert.match(html,/sinbad-rig-expression-delighted-v1\.png/);
   assert.match(css,/sinbad-blinking \.sinbad-rig-face-blink\{opacity:1\}/);
   assert.match(css,/data-mouth-frame="closed"\] \.sinbad-rig-face-closed\{opacity:1\}/);
   assert.match(css,/data-mouth-frame="open"\] \.sinbad-rig-face-open\{opacity:1\}/);
   assert.match(css,/data-mouth-frame="wide"\] \.sinbad-rig-face-wide\{opacity:1\}/);
   assert.match(css,/data-mouth-frame="round"\] \.sinbad-rig-face-round\{opacity:1\}/);
+  assert.match(css,/data-state="warning"\]\[data-emotion="concerned"\] \.sinbad-rig-expression-concerned/);
+  assert.match(css,/data-state="speaking"\]\[data-emotion="warm"\] \.sinbad-rig-expression-delighted/);
   assert.match(app,/parts\.length!==SINBAD_RIG_PART_ASSETS\.length\+SINBAD_RIG_FACE_ASSETS\.length/);
 });
 

@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.17-speech-aware-visemes-v26';
+const CACHE='sinbad-marine-v8.20.17-layered-expressions-v27';
 const ASSETS=[
   './',
   './index.html',
@@ -40,6 +40,8 @@ const ASSETS=[
   './assets/captain-sinbad/captain-sinbad-rig-face-open-v1.png',
   './assets/captain-sinbad/captain-sinbad-rig-face-wide-v1.png',
   './assets/captain-sinbad/captain-sinbad-rig-face-round-v1.png',
+  './assets/captain-sinbad/captain-sinbad-rig-expression-concerned-v1.png',
+  './assets/captain-sinbad/captain-sinbad-rig-expression-delighted-v1.png',
   './assets/captain-sinbad/captain-sinbad-idle-blink-v1.png',
   './assets/captain-sinbad/captain-sinbad-listening.png',
   './assets/captain-sinbad/captain-sinbad-thinking.png',

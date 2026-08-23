@@ -43,7 +43,7 @@ test('large Captain Sinbad portrait loads the four-layer articulated rig with it
   const avatar=page.locator('.sinbad-avatar.large');
   await expect(avatar).toHaveAttribute('data-rig-ready','true');
   await expect(avatar.locator('.sinbad-rig-part')).toHaveCount(4);
-  await expect(avatar.locator('.sinbad-rig-face-frame')).toHaveCount(5);
+  await expect(avatar.locator('.sinbad-rig-face-frame')).toHaveCount(7);
   await expect(avatar.locator('.sinbad-rig-stage')).toHaveCSS('opacity','1');
   await expect(avatar.locator(':scope > .sinbad-avatar-img').first()).toHaveCSS('opacity','0');
   const restingArm=await avatar.locator('.sinbad-rig-right-arm').evaluate(element=>getComputedStyle(element).transform);
@@ -58,8 +58,11 @@ test('large Captain Sinbad portrait loads the four-layer articulated rig with it
   await page.evaluate(()=>setSinbadMouthFrame('round'));
   await page.waitForTimeout(75);
   await expect(avatar.locator('.sinbad-rig-face-round')).toHaveCSS('opacity','1');
+  await expect(avatar.locator('.sinbad-rig-expression-delighted')).toHaveCSS('opacity','1');
   await expect(avatar.locator('.sinbad-rig-head-base')).toHaveCSS('opacity','0');
   if(testInfo.project.name==='desktop-chromium')await avatar.screenshot({path:'test-results/sinbad-layered-rig-preview.png'});
+  await page.evaluate(()=>setSinbadAssistantState('warning'));
+  await expect(avatar.locator('.sinbad-rig-expression-concerned')).toHaveCSS('opacity','1');
   await page.evaluate(()=>{setSinbadAssistantState('idle');document.querySelector('.sinbad-avatar.large')?.classList.add('sinbad-blinking');});
   await page.waitForTimeout(75);
   await expect(avatar.locator('.sinbad-rig-face-blink')).toHaveCSS('opacity','1');

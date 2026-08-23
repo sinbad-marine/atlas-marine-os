@@ -99,6 +99,13 @@ footer{text-align:center;color:var(--muted);padding:28px;font-size:13px}
 .sinbad-avatar.large[data-rig-ready="true"][data-state="speaking"][data-mouth-frame="open"] .sinbad-rig-face-open{opacity:1}
 .sinbad-avatar.large[data-rig-ready="true"][data-state="speaking"][data-mouth-frame="wide"] .sinbad-rig-face-wide{opacity:1}
 .sinbad-avatar.large[data-rig-ready="true"][data-state="speaking"][data-mouth-frame="round"] .sinbad-rig-face-round{opacity:1}
+.sinbad-rig-expression-frame{z-index:4;clip-path:inset(25% 13% 40% 13%);-webkit-mask-image:radial-gradient(ellipse 45% 32% at 50% 45%,#000 58%,transparent 100%);mask-image:radial-gradient(ellipse 45% 32% at 50% 45%,#000 58%,transparent 100%)}
+.sinbad-avatar.large[data-rig-ready="true"][data-state="speaking"][data-emotion="concerned"] .sinbad-rig-expression-concerned,
+.sinbad-avatar.large[data-rig-ready="true"][data-state="presenting"][data-emotion="concerned"] .sinbad-rig-expression-concerned,
+.sinbad-avatar.large[data-rig-ready="true"][data-state="warning"][data-emotion="concerned"] .sinbad-rig-expression-concerned,
+.sinbad-avatar.large[data-rig-ready="true"][data-state="error"][data-emotion="concerned"] .sinbad-rig-expression-concerned{opacity:1}
+.sinbad-avatar.large[data-rig-ready="true"][data-state="speaking"][data-emotion="warm"] .sinbad-rig-expression-delighted,
+.sinbad-avatar.large[data-rig-ready="true"][data-state="presenting"][data-emotion="warm"] .sinbad-rig-expression-delighted{opacity:1}
 .sinbad-rig-right-arm{z-index:1;width:48%;left:0;top:32%;transform-origin:86% 12%;transform:rotate(var(--sinbad-rig-right-arm,0deg))}
 .sinbad-rig-left-arm{z-index:1;width:37%;right:0;top:32%;transform-origin:14% 10%;transform:rotate(var(--sinbad-rig-left-arm,0deg))}
 .sinbad-avatar[data-gaze="thought"]{--sinbad-gaze-offset:-.7deg}

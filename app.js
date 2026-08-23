@@ -386,7 +386,7 @@ const SINBAD_BLINK_ASSET='captain-sinbad-idle-blink-v1.png';
 const SINBAD_SPEECH_ASSETS=Object.freeze({closed:'captain-sinbad-speaking-mbp-v1.png',open:'captain-sinbad-speaking.png',wide:'captain-sinbad-speaking.png',round:'captain-sinbad-speaking-o-v1.png'});
 const SINBAD_WALK_ASSETS=Object.freeze(['captain-sinbad-walk-a-v1.png','captain-sinbad-walk-b-v1.png']);
 const SINBAD_RIG_PART_ASSETS=Object.freeze(['captain-sinbad-rig-head-v1.png','captain-sinbad-rig-torso-v1.png','captain-sinbad-rig-left-arm-v1.png','captain-sinbad-rig-right-arm-v1.png']);
-const SINBAD_RIG_FACE_ASSETS=Object.freeze(['captain-sinbad-rig-face-blink-v1.png','captain-sinbad-rig-face-closed-v1.png','captain-sinbad-rig-face-open-v1.png','captain-sinbad-rig-face-wide-v1.png','captain-sinbad-rig-face-round-v1.png']);
+const SINBAD_RIG_FACE_ASSETS=Object.freeze(['captain-sinbad-rig-face-blink-v1.png','captain-sinbad-rig-face-closed-v1.png','captain-sinbad-rig-face-open-v1.png','captain-sinbad-rig-face-wide-v1.png','captain-sinbad-rig-face-round-v1.png','captain-sinbad-rig-expression-concerned-v1.png','captain-sinbad-rig-expression-delighted-v1.png']);
 const SINBAD_STATE_ASSET={
   idle:'captain-sinbad-idle-master.png',
   listening:'captain-sinbad-listening.png',
