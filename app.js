@@ -484,7 +484,7 @@ function presentSinbadBoardReference(text){
   setSinbadAssistantState('presenting',cue);if(gesture==='point-board')commitSinbadPerformedGestureAction('point-board');addSinbadMessage('sinbad',text);return true;
 }
 function presentSinbadBoardAssessment(assessment){
-  if(assessment.correct===true){setSinbadAssistantState('success',{gesture:'nod',gaze:'audience',emotion:'confident',energy:.38});commitSinbadPerformedGestureAction('nod');addSinbadMessage('sinbad',assessment.text);return true;}
+  if(assessment.correct===true){setSinbadAssistantState('success',{gesture:'nod',gaze:'audience',emotion:assessment.recovered?'joyful':'confident',energy:assessment.recovered?.44:.38});commitSinbadPerformedGestureAction('nod');addSinbadMessage('sinbad',assessment.text);if(assessment.recovered)sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='success')setSinbadAssistantState('presenting',{gesture:'open-hand',gaze:'audience',emotion:'joyful',energy:.4});},420));return true;}
   if(assessment.cancelled===true){setSinbadAssistantState('presenting',{gesture:'open-hand',gaze:'audience',emotion:'warm',energy:.3});addSinbadMessage('sinbad',assessment.text);return true;}
   setSinbadAssistantState('presenting',{gesture:'shake-head-left',gaze:'audience',emotion:'attentive',energy:.32});commitSinbadPerformedGestureAction('shake-head');addSinbadMessage('sinbad',assessment.text);
   sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='presenting')setSinbadAssistantState('presenting',{gesture:'point-board',gaze:'board',emotion:'confident',energy:.4});},520));return true;

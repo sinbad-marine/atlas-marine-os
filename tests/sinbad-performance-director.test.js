@@ -366,6 +366,7 @@ test('board shape explanation is grounded in the verified allowlisted shape',()=
 test('board shape checks ask and assess only against a verified bounded answer key',()=>{
   const prompt=academyBoardShapeCheckForText('Bu şekille ilgili bana soru sor.',{kind:'shape',value:'arrow'},'tr-TR');assert.equal(prompt.known,true);assert.deepEqual(prompt.check,{shape:'arrow',expected:'direction'});
   assert.equal(academyBoardShapeCheckAnswerForText('Yönü gösterir.',prompt.check,'tr-TR').correct,true);
+  const recovered=academyBoardShapeCheckAnswerForText('Yönü gösterir.',{...prompt.check,attempts:1},'tr-TR');assert.equal(recovered.correct,true);assert.equal(recovered.recovered,true);assert.match(recovered.text,/İkinci denemende cevabını düzelttin/);
   const wrong=academyBoardShapeCheckAnswerForText('Üç kenarı vardır.',prompt.check,'tr-TR');assert.equal(wrong.correct,false);assert.equal(wrong.retry,true);assert.match(wrong.text,/Okun uç kısmı yönü gösterir.*Bir kez daha deneyebilirsin/);
   const exhausted=academyBoardShapeCheckAnswerForText('Hâlâ üç kenarı vardır.',{...prompt.check,attempts:1},'tr-TR');assert.equal(exhausted.correct,false);assert.equal(exhausted.retry,false);assert.equal(exhausted.completed,true);assert.match(exhausted.text,/Doğru bilgi: Okun uç kısmı yönü gösterir.*Soruyu burada kapatıyorum/);
   assert.equal(academyBoardShapeCheckAnswerForText('Geç.',prompt.check,'tr-TR').cancelled,true);
