@@ -331,7 +331,14 @@ test('live Sinbad chat writes bounded plain text on the real Academy board',asyn
   await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Okun uç kısmı neyi gösterir?');
   await page.locator('#sinbadInput').fill('Yönü gösterir.');await page.locator('#sendSinbad').click();
   await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Doğru. Cevabın tahtadaki şekille uyuşuyor.');
-  await expect(page.locator('.sinbad-avatar.large')).toHaveAttribute('data-gesture','nod');
+  const firstCorrectGesture=await page.locator('.sinbad-avatar.large').getAttribute('data-gesture');
+  expect(['nod','open-hand','explain','rest']).toContain(firstCorrectGesture);
+  await page.locator('#sinbadInput').fill('Bu şekille ilgili bana soru sor.');await page.locator('#sendSinbad').click();
+  await page.locator('#sinbadInput').fill('Yönü gösterir.');await page.locator('#sendSinbad').click();
+  await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Doğru. Cevabın tahtadaki şekille uyuşuyor.');
+  const secondCorrectGesture=await page.locator('.sinbad-avatar.large').getAttribute('data-gesture');
+  expect(['nod','open-hand','explain','rest']).toContain(secondCorrectGesture);
+  expect(secondCorrectGesture).not.toBe(firstCorrectGesture);
   await page.locator('#sinbadInput').fill('Bu şekille ilgili bana soru sor.');await page.locator('#sendSinbad').click();
   await page.locator('#sinbadInput').fill('Üç kenarı vardır.');await page.locator('#sendSinbad').click();
   await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Okun uç kısmı yönü gösterir.');
