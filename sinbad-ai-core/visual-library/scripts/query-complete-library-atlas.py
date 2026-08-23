@@ -39,17 +39,18 @@ def table_exists(db: sqlite3.Connection, name: str) -> bool:
     return db.execute("select 1 from sqlite_master where name=?", (name,)).fetchone() is not None
 
 
-def query(db: sqlite3.Connection, value: str, limit: int) -> list[dict]:
+def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = False) -> list[dict]:
     wanted = terms(value)
     if not wanted:
         return []
     indexed = table_exists(db, "visual_search")
     if indexed:
         expression = " OR ".join(f'"{word.replace(chr(34), chr(34) * 2)}"' for word in wanted)
+        type_clause = " and visual_type='object'" if object_only else ""
         rows = db.execute(
             """select visual_key,visual_type,document_hash,page_number,image_number,asset_hash,file,
                       title,volume,heading,context,topics,source_paths,bm25(visual_search) rank
-               from visual_search where visual_search match ?
+               from visual_search where visual_search match ?""" + type_clause + """
                order by rank,case visual_type when 'object' then 0 when 'table' then 1 when 'vector' then 1 else 2 end limit ?""",
             (expression, limit),
         ).fetchall()
@@ -138,6 +139,7 @@ def main() -> None:
     mode.add_argument("--asset-hash")
     mode.add_argument("--status", action="store_true")
     parser.add_argument("--limit", type=int, default=3)
+    parser.add_argument("--object-only", action="store_true")
     args = parser.parse_args()
     atlas = args.atlas.resolve()
     catalog = (atlas / "catalog.sqlite").resolve().as_posix()
@@ -151,7 +153,7 @@ def main() -> None:
         query_value = args.query
         if args.query_base64:
             query_value = base64.b64decode(args.query_base64, validate=True).decode("utf-8")
-        output = {"visuals": query(db, query_value, max(1, min(args.limit, 10)))}
+        output = {"visuals": query(db, query_value, max(1, min(args.limit, 10)), args.object_only)}
     print(json.dumps(output, ensure_ascii=False, separators=(",", ":")))
 
 
