@@ -12,7 +12,7 @@ test('cloud AI returns a separate semantic spoken teaching summary instead of fo
   assert.match(edge,/For simple or conversational questions use 1 or 2 short sentences/);
   assert.match(edge,/Never introduce Atlas Marine, advertise the platform/);
   assert.match(edge,/Do not merely copy the first characters/);
-  assert.match(edge,/return json\(\{ answer, spokenSummary, sources,/);
+  assert.match(edge,/return json\(\{ answer: deliveredAnswer, spokenSummary: deliveredSpokenSummary, sources: responseSources,/);
   assert.match(app,/sinbadModelSpokenSummary=String\(trustedAiData\.spokenSummary\|\|''\)\.trim\(\)/);
 });
 
@@ -45,7 +45,8 @@ test('server RAG resolves named publications by title before synthesis',()=>{
   assert.match(edge,/b\.score - a\.score/);
   assert.match(edge,/\.in\('knowledge_id', titleMatches\.map/);
   assert.match(edge,/namedSourceBonus \+ queryTerms\.reduce/);
-  assert.match(edge,/APPROVED PRIVATE LIBRARY SOURCES/);
+  assert.match(edge,/APPROVED PRIVATE LIBRARY \$\{canAccessPrivateSources \? 'SOURCES' : 'EXCERPTS \(IDENTITY RESTRICTED\)'\}/);
+  assert.match(edge,/\[PRIVATE_EXCERPT_\$\{index \+ 1\}\]/);
 });
 
 test('an explicitly named publication is locked before generic session-title matches',()=>{
@@ -82,7 +83,7 @@ test('visual teaching requests return only verified indexed PDF pages',()=>{
   assert.match(edge,/sources\.filter\(\(source: any\) => source\.documentId && source\.page && \/pdf\/i\.test/);
   assert.match(edge,/kind: 'pdf-page'/);
   assert.match(edge,/VERIFIED SOURCE PAGE VISUALS/);
-  assert.match(edge,/return json\(\{ answer, spokenSummary, sources, visuals,/);
+  assert.match(edge,/return json\(\{ answer: deliveredAnswer, spokenSummary: deliveredSpokenSummary, sources: responseSources, visuals,/);
 });
 
 test('Sinbad renders source visuals as authenticated on-demand PDF pages',()=>{

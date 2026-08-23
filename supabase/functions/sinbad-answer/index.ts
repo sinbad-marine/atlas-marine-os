@@ -66,11 +66,16 @@ const splitAnswerAndSpokenSummary = (raw: string) => {
   const sentences = spokenSummary.match(/[^.!?…]+[.!?…]+|[^.!?…]+$/gu)?.filter(Boolean).length || 0;
   return { answer, spokenSummary: words >= 3 && words <= 90 && sentences >= 1 && sentences <= 4 ? spokenSummary : '' };
 };
+const stripPrivateCitationMarkers = (value: string) => String(value || '')
+  .replace(/\s*\[S\d+\]/giu, '')
+  .replace(/(?:^|\n)\s*(?:Kaynaklar|Sources)\s*:\s*(?:\n[^\n]*)+/giu, '')
+  .trim();
 
 const needsFreshData = (question: string) => serverCoreDecision(question).needsLiveData;
 const isSimpleGreeting = (question: string) => /^(?:selam|selamlar|merhaba|günaydın|gunaydin|iyi\s+(?:günler|gunler|akşamlar|aksamlar)|hello|hi|hey)(?:\s+(?:sinbad|simbad|sinbat|kaptan|captain))*[!.?\s]*$/iu.test(question.trim());
 
 const wantsSourceVisuals = (question: string) => /(görsel|gorsel|şekil|sekil|diyagram|diagram|çizim|cizim|resim|figure|illustration|visual|show.*image|with.*image)/iu.test(question);
+const wantsSourceDetails = (question: string) => /(kaynak(?:lar|ça)?\s*(?:nedir|neler|bilgisi|adı|ismi|göster|aç)|hangi\s+(?:kitap|yayın|pdf|kaynak)|source\s*(?:details?|name|page|show)|show\s+(?:the\s+)?source)/iu.test(question);
 const isContextualFollowUp = (question: string) => /(bununla|bunun hakkında|bu konu|bu anlattığın|onunla|onun hakkında|yukarıdaki|önceki|bahsettiğin|about this|about that|this topic|that topic|the above|previous)/iu.test(question);
 const pageForChunk = (content: string, terms: string[]) => {
   const text = String(content || '');
@@ -127,11 +132,20 @@ Deno.serve(async req => {
       .eq('is_active', true)
       .maybeSingle();
     if (!membership) return json({ error: 'Workspace access denied' }, 403);
+    const canAccessPrivateSources = membership.role === 'owner' || membership.role === 'developer';
+    const sourceAccess = canAccessPrivateSources ? 'privileged' : 'restricted';
+
+    if (!canAccessPrivateSources && wantsSourceDetails(question)) {
+      const answer = language.toLowerCase().startsWith('en')
+        ? 'Private library source identities and original publication pages are restricted to the workspace owner and explicitly authorized developers. I can still teach and explain the subject without exposing the publication.'
+        : 'Özel kütüphane kaynak kimlikleri ve yayının orijinal sayfaları yalnızca çalışma alanı sahibi ile açıkça yetkilendirilmiş geliştiricilere sunulur. Yayını açmadan konuyu anlatmaya ve açıklamaya devam edebilirim.';
+      return json({ answer, spokenSummary: answer, sources: [], visuals: [], sourceAccess, mode: 'source-access-restricted', ...decisionSupport });
+    }
 
     if (isSimpleGreeting(question)) {
       const english = language.toLowerCase().startsWith('en');
       const answer = english ? 'Hello Captain, I am listening.' : 'Selam Kaptan, sizi dinliyorum.';
-      return json({ answer, spokenSummary: answer, sources: [], visuals: [], mode: 'local-greeting', ...decisionSupport });
+      return json({ answer, spokenSummary: answer, sources: [], visuals: [], sourceAccess, mode: 'local-greeting', ...decisionSupport });
     }
 
     if (coreDecision.emergency || coreDecision.risk === 'high' || coreDecision.risk === 'critical') {
@@ -211,7 +225,7 @@ Deno.serve(async req => {
       mimeType: row.document_knowledge.source_mime_type || null,
       page: pageForChunk(String(row.content || ''), queryTerms)
     }));
-    const visuals = sourceVisualsRequested
+    const visuals = canAccessPrivateSources && sourceVisualsRequested
       ? sources.filter((source: any) => source.documentId && source.page && /pdf/i.test(String(source.mimeType || ''))).slice(0, 3).map((source: any) => ({
           sourceId: source.id,
           title: source.title,
@@ -223,12 +237,18 @@ Deno.serve(async req => {
     const context = unique.map((row: any, index: number) =>
       `[S${index + 1}] ${row.document_knowledge.title} — ${row.document_knowledge.classification}${pageForChunk(String(row.content || ''), queryTerms) ? ` — page ${pageForChunk(String(row.content || ''), queryTerms)}` : ''}\n${String(row.content).slice(0, 2200)}`
     ).join('\n\n');
+    const restrictedContext = unique.map((row: any, index: number) =>
+      `[PRIVATE_EXCERPT_${index + 1}] ${String(row.content).slice(0, 2200)}`
+    ).join('\n\n');
+    const modelContext = canAccessPrivateSources ? context : restrictedContext;
+    const responseSources = canAccessPrivateSources ? sources : [];
 
     if (!openaiKey) {
       if (unique.length) return json({
-        answer: `OpenAI bağlantısı henüz etkin değil. Kütüphanede bulduğum ilgili kaynaklar:\n\n${context}\n\nKritik seyir kararlarını güncel ve resmî kaynaklardan doğrulayın.`,
-        sources,
+        answer: canAccessPrivateSources ? `OpenAI bağlantısı henüz etkin değil. Kütüphanede bulduğum ilgili kaynaklar:\n\n${context}\n\nKritik seyir kararlarını güncel ve resmî kaynaklardan doğrulayın.` : 'Bu konu için özel kütüphanede ilgili içerik bulundu; ancak ders anlatımını oluşturacak model bağlantısı şu anda etkin değil.',
+        sources: responseSources,
         visuals,
+        sourceAccess,
         mode: 'retrieval-only',
         ...decisionSupport
       });
@@ -245,9 +265,9 @@ Deno.serve(async req => {
 
     const system = `You are Captain Sinbad, Atlas Marine OS's capable, warm and practical marine assistant. Reply naturally in ${language}; do not answer with fragments or artificially short phrases. Use conversation history to understand follow-up questions. Be concise for simple questions and detailed when the task needs it.
 
-You may use stable general maritime knowledge for education and planning support. When approved private library sources are supplied, prefer them and cite material claims as [S#]. Clearly label information not supported by those sources as general knowledge. Never invent source citations, coordinates, depths, chart corrections, Notices to Mariners, weather, port status, vessel data or regulations. Explain what information is missing when certainty is not possible.
+You may use stable general maritime knowledge for education and planning support. When approved private library sources are supplied, prefer them. ${canAccessPrivateSources ? 'Cite material claims as [S#] and provide source identity only when asked.' : 'Private source identity is access-restricted: never name, quote a title, cite, identify, link, describe a filename, mention a page number, or reveal document metadata. Teach only the derived subject matter without saying which private publication supplied it.'} Clearly label information not supported by those sources as general knowledge. Never invent source citations, coordinates, depths, chart corrections, Notices to Mariners, weather, port status, vessel data or regulations. Explain what information is missing when certainty is not possible.
 
-When the user asks for a source image or publication page, use only VERIFIED SOURCE PAGE VISUALS supplied in the request. If none are supplied, say only that no matching indexed source page was retrieved for this request. Do not invent a copyright or licensing restriction and do not claim the user's Atlas library lacks relevant publications.
+When the user asks for a source image or publication page, ${canAccessPrivateSources ? 'use only VERIFIED SOURCE PAGE VISUALS supplied in the request. If none are supplied, say only that no matching indexed source page was retrieved for this request.' : 'do not expose or offer any private publication page; explain that original source access is restricted while lesson explanations remain available.'} Do not invent a copyright or licensing restriction and do not claim the user's Atlas library lacks relevant publications.
 
 For passage planning, collision avoidance, stability, weather, chart work or other safety-critical topics, provide decision support only. Remind the user that the master remains responsible and that current corrected official charts, MSI/NAVTEX, Notices to Mariners, weather, port and pilot instructions must be checked. Never claim to be certified ECDIS or replace an approved navigation system. Do not repeat this warning for casual conversation.
 
@@ -256,7 +276,7 @@ If web search results are available, cite them using the citations supplied by t
 After the complete written answer, always add the exact marker <<<SPOKEN_SUMMARY>>> and then a coherent spoken summary in the same language. For simple or conversational questions use 1 or 2 short sentences. For teaching questions use 2 to 4 complete sentences and roughly 25 to 70 words. Never introduce Atlas Marine, advertise the platform, recite capabilities or give an opening speech unless the user explicitly asks. Teach only the central idea and any essential safety caveat. Do not merely copy the first characters, do not use markdown, do not include citations, and never cut a sentence short.`;
 
     const userInput = unique.length
-      ? `${question}\n\nAPPROVED PRIVATE LIBRARY SOURCES\n${context}${visuals.length ? `\n\nVERIFIED SOURCE PAGE VISUALS\n${visuals.map((visual: any) => `${visual.sourceId}: ${visual.title}, page ${visual.page}`).join('\n')}\nTell the user these original publication pages are attached below the answer. Do not claim that no visual is available.` : ''}`
+      ? `${question}\n\nAPPROVED PRIVATE LIBRARY ${canAccessPrivateSources ? 'SOURCES' : 'EXCERPTS (IDENTITY RESTRICTED)'}\n${modelContext}${visuals.length ? `\n\nVERIFIED SOURCE PAGE VISUALS\n${visuals.map((visual: any) => `${visual.sourceId}: ${visual.title}, page ${visual.page}`).join('\n')}\nTell the user these original publication pages are attached below the answer. Do not claim that no visual is available.` : ''}`
       : `${question}\n\nNo matching private-library passage was found. You may answer from stable general knowledge and must say when current or vessel-specific information is required.`;
     const input = [...history.map((item: any) => ({ role: item.role, content: `UNTRUSTED PRIOR CONVERSATION DATA: ${item.content}` })), { role: 'user', content: userInput }];
     const requestBody: any = {
@@ -280,10 +300,12 @@ After the complete written answer, always add the exact marker <<<SPOKEN_SUMMARY
     if (!response.ok) return json({ error: 'AI provider request failed', providerStatus: response.status, providerCode: payload?.error?.code || null }, 502);
     const rawAnswer = extractText(payload);
     const { answer, spokenSummary } = splitAnswerAndSpokenSummary(rawAnswer);
-    if (!answer) return json({ error: 'AI provider returned no answer' }, 502);
-    if (!answerIsSafe(answer)) return json({ error: 'AI provider answer crossed the decision-support boundary', code: 'UNSAFE_PROVIDER_ANSWER' }, 502);
-    if (spokenSummary && !answerIsSafe(spokenSummary)) return json({ error: 'AI provider spoken summary crossed the decision-support boundary', code: 'UNSAFE_PROVIDER_SUMMARY' }, 502);
-    return json({ answer, spokenSummary, sources, visuals, mode: allowWebSearch ? 'web-assisted' : unique.length ? 'private-rag' : 'general-ai', ...decisionSupport });
+    const deliveredAnswer = canAccessPrivateSources ? answer : stripPrivateCitationMarkers(answer);
+    const deliveredSpokenSummary = canAccessPrivateSources ? spokenSummary : stripPrivateCitationMarkers(spokenSummary);
+    if (!deliveredAnswer) return json({ error: 'AI provider returned no answer' }, 502);
+    if (!answerIsSafe(deliveredAnswer)) return json({ error: 'AI provider answer crossed the decision-support boundary', code: 'UNSAFE_PROVIDER_ANSWER' }, 502);
+    if (deliveredSpokenSummary && !answerIsSafe(deliveredSpokenSummary)) return json({ error: 'AI provider spoken summary crossed the decision-support boundary', code: 'UNSAFE_PROVIDER_SUMMARY' }, 502);
+    return json({ answer: deliveredAnswer, spokenSummary: deliveredSpokenSummary, sources: responseSources, visuals, sourceAccess, mode: allowWebSearch ? 'web-assisted' : unique.length ? 'private-rag' : 'general-ai', ...decisionSupport });
   } catch (error) {
     return json({ error: error instanceof Error ? error.message : 'Unexpected error' }, 500);
   }

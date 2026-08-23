@@ -1161,6 +1161,7 @@ function openSinbadSourceDialog(sourceView){
   dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});dialog.addEventListener('close',()=>{dialog.remove();returnFocus?.focus?.();},{once:true});document.body.append(dialog);dialog.showModal();renderSinbadSourcePage(view);
 }
 async function openSinbadSourceVisual(button){
+  if(!roleCanAccessPrivateSources()){alert('Private source pages are restricted to the workspace Owner and explicitly authorized Developers.');return;}
   const documentId=button?.dataset?.documentId,pageNumber=Math.max(1,Number(button?.dataset?.page)||1);
   const card=button?.closest('.sinbad-source-visual'),stage=card?.querySelector('.sinbad-source-visual-stage');
   if(!documentId||!stage||!cloudClient||!selectedWorkspaceId)return;
@@ -2061,6 +2062,10 @@ function roleCanManageLibrary(){
   return ['owner','administrator','captain'].includes(currentWorkspaceRole);
 }
 
+function roleCanAccessPrivateSources(){
+  return ['owner','developer'].includes(currentWorkspaceRole);
+}
+
 function roleCanManageMembers(){
   return currentWorkspaceRole==='owner';
 }
@@ -2412,6 +2417,10 @@ async function uploadCloudFiles(){
   $('cloudFileInput').value='';
 }
 async function loadCloudFiles(){
+  if(!roleCanAccessPrivateSources()){
+    $('cloudFileList').textContent='Private library source identities and original files are restricted to the workspace Owner and explicitly authorized Developers.';
+    return;
+  }
   if(!cloudClient || !selectedWorkspaceId)return;
   const bucket=$('cloudBucketSelect').value;
   const search=($('cloudFileSearch')?.value||'').trim();
@@ -2454,6 +2463,7 @@ async function repairCloudDocumentKnowledge(documentId,bucket,path,filename){
   }
 }
 async function openCloudFile(bucket,path,filename=''){
+  if(!roleCanAccessPrivateSources()){alert('Private source access is restricted to the workspace Owner and explicitly authorized Developers.');return;}
   if(bucket==='nautical-charts'){
     openWorkspace('enc-viewer');
     initEncViewer();
@@ -2492,6 +2502,7 @@ async function saveMemberRole(userId){
 
 
 async function downloadCloudFile(bucket,path,filename='atlas-file'){
+  if(!roleCanAccessPrivateSources()){alert('Private source downloads are restricted to the workspace Owner and explicitly authorized Developers.');return;}
   const {data,error}=await cloudClient.storage.from(bucket).download(path);
   if(error){alert(error.message);return;}
   const url=URL.createObjectURL(data);
@@ -2502,6 +2513,7 @@ async function downloadCloudFile(bucket,path,filename='atlas-file'){
 
 
 async function shareCloudFile(bucket,path,filename='atlas-file'){
+  if(!roleCanAccessPrivateSources()){alert('Private source sharing is restricted to the workspace Owner and explicitly authorized Developers.');return;}
   const {data,error}=await cloudClient.storage.from(bucket).createSignedUrl(path,600);
   if(error){alert(error.message);return;}
   if(navigator.share){

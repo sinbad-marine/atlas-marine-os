@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#071827">
   <title>Sinbad Professor — Bağımsız Sınıf</title>
-  <link rel="stylesheet" href="./academy.css?v=82021"><link rel="stylesheet" href="./academy-professor.css?v=82021"><link rel="stylesheet" href="./academy-professor-guidance.css?v=82021"><link rel="stylesheet" href="./academy-professor-handsfree.css?v=82021"><link rel="stylesheet" href="./academy-professor-native.css?v=82021">
+  <link rel="stylesheet" href="./academy.css?v=82021"><link rel="stylesheet" href="./academy-professor.css?v=82021"><link rel="stylesheet" href="./academy-professor-guidance.css?v=82021"><link rel="stylesheet" href="./academy-professor-handsfree.css?v=82021"><link rel="stylesheet" href="./academy-professor-native.css?v=82024">
 </head>
-<body>
+<body data-source-access="restricted">
   <main class="native-classroom-shell">
     <header class="native-command-bar">
       <div class="native-brand"><span aria-hidden="true">⚓</span><div><strong>Sinbad Professor</strong><small>Bağımsız canlı sınıf</small></div></div>
@@ -49,6 +49,7 @@
       <header><div><strong>Sınıf araçları</strong><small>Yalnızca gerektiğinde açılır</small></div><button id="closeProfessorMenu" type="button" aria-label="Menüyü kapat">×</button></header>
       <section class="handsfree-console"><div><span>CANLI DİYALOG</span><strong>Eller serbest konuşma</strong><p id="handsfreeStatus" role="status" aria-live="polite">Kapalı — başlatmak için düğmeye basın.</p></div><button id="toggleHandsFree" type="button" aria-pressed="false">🎧 Eller serbest: Kapalı</button><small>Sinbad yalnızca “Kaptan Sinbad” denince uyanır. Konuşmanız bitene kadar dinler; ortam konuşmalarını soru olarak göndermez. Ses kaydı saklanmaz.</small></section>
       <section class="native-tool-card"><h2>Ses</h2><div class="native-button-row"><button class="btn" id="academyVoiceToggle" type="button" aria-pressed="true">🔊 Ses: Açık</button><button class="btn" id="academyReplayVoice" type="button" disabled>↻ Tekrarla</button><button class="btn" id="academyStopVoice" type="button" disabled>■ Durdur</button></div></section>
+      <section class="native-tool-card lesson-export"><h2>Ders notları</h2><p>Yalnızca Sinbad’ın bu oturumdaki ders anlatımı dışa aktarılır; özel kütüphane yayınları ve kaynak sayfaları eklenmez.</p><div class="native-button-row"><button class="btn" id="downloadLessonNotes" type="button">↓ Ders notunu indir</button><button class="btn" id="printLessonNotes" type="button">🖨 Ders notunu yazdır</button></div><small id="lessonExportStatus" role="status" aria-live="polite"></small></section>
       <details class="native-tool-card"><summary>İsteğe bağlı konu ve alıştırmalar</summary><section class="academy-controls"><label>Konu<select id="academyModule"><option value="chart-reading">Harita okuma ve hidrografi</option><option value="tides-water-levels">Gelgit ve su seviyeleri</option><option value="currents-set-drift">Akıntı, set ve drift</option><option value="colregs-navigation-rules">COLREG ve seyir kuralları</option><option value="electronic-navigation">Elektronik seyir</option><option value="marine-weather">Deniz meteorolojisi</option></select></label><div class="academy-actions"><button class="btn" id="startAcademyLesson" type="button">Dersi aç</button><button class="btn" id="startAcademyQuiz" type="button">Soru çöz</button></div></section><section id="academyOutput" class="academy-board" aria-live="polite">Konu seçimi zorunlu değildir.</section></details>
       <section class="adaptive-coach native-tool-card" id="adaptiveCoach" aria-live="polite"><div><span>ÖĞRENME REHBERİ</span><strong id="coachNextLesson">Önce değerlendirme yapın</strong><p id="coachReason"></p></div><button id="coachOpenRecommended" type="button" disabled>Önerilen dersi aç</button></section>
       <section class="native-tool-card identity"><label for="learnerName">Öğrenci adı</label><div><input id="learnerName" maxlength="80" value="Öğrenci"><button id="saveLearnerName" type="button">Kaydet</button></div><label for="learnerTitle">Hitap / görev</label><select id="learnerTitle"><option value="">Yalnızca adı</option><option>Öğrenci</option><option>Kaptan</option><option>Zabit</option><option>Başmühendis</option><option>Mühendis</option><option>Öğretmen</option></select></section>
@@ -68,7 +69,7 @@
     </aside>
     <div id="phaseOneClassroom" hidden aria-hidden="true"></div>
   </main>
-  <script src="./academy-professor-native.js?v=82021"></script><script src="./sinbad-speaker-identity.js?v=82023"></script>
+  <script src="./academy-professor-native.js?v=82024"></script><script src="./sinbad-speaker-identity.js?v=82023"></script>
   <script src="./sinbad-training-data.js?v=8180"></script><script src="./sinbad-academy.js?v=8180"></script><script src="./supabase/functions/sinbad-answer/core-decision.js?v=82020"></script><script src="./sinbad-core.js?v=82019"></script><script src="./vendor/supabase-2.112.3.js"></script><script src="./sinbad-character-engine.js?v=82019"></script><script src="./sinbad-character-rig.js?v=82019"></script><script src="./sinbad-performance-director.js?v=82019"></script><script src="./academy-window.js?v=82019"></script><script src="./sinbad-professor.js?v=82019"></script><script src="./academy-professor.js?v=82019"></script><script src="./academy-professor-handsfree.js?v=82022"></script>
 </body>
 </html>
