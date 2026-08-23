@@ -499,7 +499,11 @@ When OFFLINE ENCYCLOPEDIA EXCERPTS are supplied, use them as dated reference evi
   $evidenceLength = ($evidence -join "`n`n").Length
   $selection = Select-SinbadModelTier -Question $question -HistoryCount $history.Count -EvidenceLength $evidenceLength -RequestedDepth ([string]$payload.depth) -FastModel $FastAiModel -DeepModel $AiModel -AvailableModels @($ollama.models)
   $contextWindow = if ($selection.tier -eq 'deep') { 32768 } else { 8192 }
-  $request = @{ model=$selection.model; messages=$messages; stream=$false; think=$false; keep_alive='30m'; options=@{ temperature=0.35; num_ctx=$contextWindow } }
+  # Qwen3's installed Ollama template always opens a <think> block. Asking the
+  # API to suppress thinking can therefore discard the whole generation and
+  # expose an empty content field. Keep thinking server-side, then return only
+  # message.content below; internal reasoning never crosses the Bridge API.
+  $request = @{ model=$selection.model; messages=$messages; stream=$false; think=$true; keep_alive='30m'; options=@{ temperature=0.35; num_ctx=$contextWindow } }
   $result = Invoke-LocalJsonPost 'http://127.0.0.1:11434/api/chat' ($request | ConvertTo-Json -Depth 12 -Compress)
   if ([string]::IsNullOrWhiteSpace($result.message.content)) { throw 'The local AI returned no answer.' }
   $mode = if ($context -and $kiwix.context) {'offline-owner-and-world-rag'} elseif ($context) {'offline-local-rag'} elseif ($kiwix.context) {'offline-world-rag'} elseif ($kiwix.state -eq 'BLOCKED_STALE_OR_HIGH_RISK') {'offline-current-claim-blocked'} else {'offline-local-ai'}
