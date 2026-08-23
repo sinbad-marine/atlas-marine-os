@@ -483,6 +483,15 @@ function setSinbadResponseKind(kind){
   return true;
 }
 let sinbadLastLiveRigControls=null;
+let sinbadLiveRigTransition=null;
+function currentSinbadLiveRigControls(now=performance.now()){
+  if(!sinbadLiveRigTransition)return sinbadLastLiveRigControls;
+  const {from,to,startedAt,durationMs}=sinbadLiveRigTransition;
+  const progress=durationMs<=0?1:Math.max(0,Math.min(1,(now-startedAt)/durationMs));
+  const current=sinbadCharacterRig?.interpolateControls?.(from,to,progress);
+  if(progress>=1)sinbadLiveRigTransition=null;
+  return current?.accepted?current.controls:sinbadLastLiveRigControls;
+}
 function applySinbadLivePerformanceCue(cue,{speechBoundary=''}={}){
   if(!cue||typeof cue!=='object'||!cue.gesture)return false;
   const defaultEnergy=sinbadCharacterRig?.STATE_POSES[sinbadAssistantState]?.energy??0;
@@ -490,16 +499,19 @@ function applySinbadLivePerformanceCue(cue,{speechBoundary=''}={}){
   const rigPose=sinbadCharacterRig?.poseForPerformance?.(sinbadAssistantState,cue.gesture,{energy:Math.max(0,Math.min(1,Number.isFinite(requestedEnergy)?requestedEnergy:defaultEnergy))});
   const rigCss=rigPose?.accepted?sinbadCharacterRig.cssVariables(rigPose.controls):null;
   if(!rigCss?.accepted)return false;
-  const previous=sinbadLastLiveRigControls||sinbadCharacterRig?.poseForState?.(sinbadAssistantState)?.controls||sinbadCharacterRig?.neutralControls?.();
+  const now=performance.now(),interrupted=Boolean(sinbadLiveRigTransition&&now<sinbadLiveRigTransition.startedAt+sinbadLiveRigTransition.durationMs);
+  const previous=currentSinbadLiveRigControls(now)||sinbadCharacterRig?.poseForState?.(sinbadAssistantState)?.controls||sinbadCharacterRig?.neutralControls?.();
   const reducedMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches||document.documentElement.classList.contains('sinbad-force-reduced-motion');
   const transition=sinbadCharacterRig?.transitionForControls?.(previous,rigPose.controls,{urgent:cue.responseKind==='caution'||sinbadAssistantState==='warning'||sinbadAssistantState==='error',reducedMotion});
   sinbadAssistantElements().forEach(el=>{
     el.dataset.gesture=cue.gesture;el.dataset.gaze=cue.gaze||'audience';el.dataset.emotion=cue.emotion||'warm';
     if(cue.motionProfile)el.dataset.motionProfile=cue.motionProfile;
     if(speechBoundary)el.dataset.speechBoundary=speechBoundary;
+    if(interrupted)el.dataset.motionInterrupted='true';else delete el.dataset.motionInterrupted;
     if(transition?.accepted)el.style.setProperty('--sinbad-motion-duration',`${transition.durationMs}ms`);
     Object.entries(rigCss.variables).forEach(([name,value])=>el.style.setProperty(name,value));
   });
+  if(transition?.accepted)sinbadLiveRigTransition={from:previous,to:rigPose.controls,startedAt:now,durationMs:transition.durationMs};
   sinbadLastLiveRigControls=rigPose.controls;
   return true;
 }
@@ -689,7 +701,7 @@ function setSinbadAssistantState(state,detail={}){
     const rigPose=sinbadCharacterRig?.poseForPerformance?.(next,performance.gesture,rigOverrides)||sinbadCharacterRig?.poseForState?.(next,rigOverrides);
     const rigCss=rigPose?.accepted?sinbadCharacterRig.cssVariables(rigPose.controls):null;
     el.style.removeProperty('--sinbad-motion-duration');
-    if(rigCss?.accepted){Object.entries(rigCss.variables).forEach(([name,value])=>el.style.setProperty(name,value));sinbadLastLiveRigControls=rigPose.controls;}
+    if(rigCss?.accepted){Object.entries(rigCss.variables).forEach(([name,value])=>el.style.setProperty(name,value));sinbadLastLiveRigControls=rigPose.controls;sinbadLiveRigTransition=null;delete el.dataset.motionInterrupted;}
     const img=el.querySelector('.sinbad-avatar-img');
     if(img&&!img.src.endsWith(asset)){
       img.style.opacity='0';

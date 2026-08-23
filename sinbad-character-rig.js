@@ -4,7 +4,7 @@
   if(root)root.SinbadCharacterRig=api;
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
   'use strict';
-  const RIG_VERSION='sinbad-2d-rig/3';
+  const RIG_VERSION='sinbad-2d-rig/4';
   const CONTROL_LIMITS=Object.freeze({blink:[0,1],mouthOpen:[0,1],smile:[-1,1],headYaw:[-1,1],headPitch:[-1,1],bodyLean:[-1,1],leftArm:[-1,1],rightArm:[-1,1],energy:[0,1]});
   const STATE_POSES=Object.freeze({
     idle:{smile:.18,energy:.18},listening:{headPitch:.12,bodyLean:.16,smile:.08,energy:.3},
@@ -71,5 +71,11 @@
     const scale=maxDelta<.18?'micro':maxDelta<.55?'measured':'broad';
     return Object.freeze({accepted:true,durationMs,maxDelta:Number(maxDelta.toFixed(3)),scale,urgent:Boolean(urgent)});
   }
-  return Object.freeze({RIG_VERSION,CONTROL_LIMITS,STATE_POSES,GESTURE_POSES,neutralControls,normalizeControls,poseForState,poseForPerformance,cssVariables,transitionForControls});
+  function interpolateControls(previous,next,progress){
+    const from=normalizeControls(previous),to=normalizeControls(next),amount=Number(progress);
+    if(!from.accepted||!to.accepted||!Number.isFinite(amount)||amount<0||amount>1)return Object.freeze({accepted:false,reason:'INVALID_INTERPOLATION'});
+    const controls=Object.fromEntries(Object.keys(CONTROL_LIMITS).map(name=>[name,from.controls[name]+(to.controls[name]-from.controls[name])*amount]));
+    return normalizeControls(controls);
+  }
+  return Object.freeze({RIG_VERSION,CONTROL_LIMITS,STATE_POSES,GESTURE_POSES,neutralControls,normalizeControls,poseForState,poseForPerformance,cssVariables,transitionForControls,interpolateControls});
 });

@@ -251,6 +251,9 @@ test('live speech and text cues update real rig controls instead of labels alone
   assert.match(app,/Object\.entries\(rigCss\.variables\)\.forEach\(\(\[name,value\]\)=>el\.style\.setProperty\(name,value\)\)/);
   assert.match(app,/transitionForControls\?\.\(previous,rigPose\.controls,\{urgent:cue\.responseKind==='caution'/);
   assert.match(app,/--sinbad-motion-duration',`\$\{transition\.durationMs\}ms`/);
+  assert.match(app,/function currentSinbadLiveRigControls\(now=performance\.now\(\)\)/);
+  assert.match(app,/interpolateControls\?\.\(from,to,progress\)/);
+  assert.match(app,/el\.dataset\.motionInterrupted='true'/);
   assert.match(app,/applySinbadLivePerformanceCue\(performanceCue,\{speechBoundary:performanceCue\.cadence\|\|'word'\}\)/);
   assert.match(app,/sinbadTextPresentationCues\.slice\(1\)[\s\S]*applySinbadLivePerformanceCue\(cue\)/);
 });
@@ -695,7 +698,7 @@ test('motion profiles vary bounded body travel, scale and tilt instead of changi
 
 test('live state applies the selected gesture through the versioned articulated rig contract',()=>{
   assert.match(app,/poseForPerformance\?\.\(next,performance\.gesture,rigOverrides\)\|\|sinbadCharacterRig\?\.poseForState\?\.\(next,rigOverrides\)/);
-  assert.match(rig,/const RIG_VERSION='sinbad-2d-rig\/3'/);
+  assert.match(rig,/const RIG_VERSION='sinbad-2d-rig\/4'/);
   assert.match(rig,/'--sinbad-rig-left-arm'/);
   assert.match(rig,/'--sinbad-rig-right-arm'/);
 });
