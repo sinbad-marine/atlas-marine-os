@@ -2,6 +2,7 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const html=fs.readFileSync('academy-professor-v3.html','utf8');
+const nativeHtml=fs.readFileSync('academy-professor-native.html','utf8');
 const app=fs.readFileSync('academy-professor-handsfree.js','utf8');
 const main=fs.readFileSync('app.js','utf8');
 const release=fs.readFileSync('tools/build-pages-artifact.js','utf8');
@@ -24,38 +25,53 @@ test('hands-free mode is explicit, stoppable and never stores audio',()=>{
 
 test('recognized final speech becomes a normal classroom question',()=>{
   assert.match(app,/recognition\.onresult/);
-  assert.match(app,/if\(event\.results\[i\]\.isFinal\)lastFinal\+=text/);
+  assert.match(app,/if\(event\.results\[i\]\.isFinal\)lastFinal\+=`\$\{text\} `/);
   assert.match(app,/input\.value=clean/);
   assert.match(app,/form\.requestSubmit\(\)/);
 });
 
 test('turn-taking prevents Sinbad speech from feeding back into recognition',()=>{
   assert.match(app,/sinbadIsSpeaking\(\)/);
-  assert.match(app,/awaitingAnswer=true;stopRecognition\(\)/);
+  assert.match(app,/awaitingAnswer=true;disarmWake\(\);stopRecognition\(\)/);
   assert.match(app,/stage\.dataset\.state==='speaking'/);
-  assert.match(app,/deadline=Date\.now\(\)\+8000/);
+  assert.match(app,/deadline=Date\.now\(\)\+3000/);
   assert.match(app,/awaitingAnswer=false/);
-  assert.match(app,/scheduleListening\(250\)/);
+  assert.match(app,/scheduleListening\(80\)/);
 });
 
-test('student can interrupt narration with a name-gated barge-in question',()=>{
-  assert.match(html,/araya girmek için “Sinbad…” diye başlayın/);
-  assert.match(app,/function startInterruptionListening\(\)/);
-  assert.match(app,/function isInterruption\(text\)/);
+test('only Captain Sinbad wakes the sleeping microphone and ambient speech is ignored',()=>{
+  assert.match(app,/function wakeMatch\(text\)/);
+  assert.match(app,/kaptan\|kapitan/);
   assert.match(app,/sinbad\|simbad\|sinbat\|sin bat\|isim bat/);
-  assert.match(app,/function interruptSinbad\(text\)/);
-  assert.match(app,/academyStopVoice/);
+  assert.match(app,/if\(!wakeArmed&&hasWakePhrase\(heard\)\)/);
+  assert.match(app,/if\(!wakeArmed\)\{setStatus\([^}]+return\}/);
+  assert.match(app,/questionAfterWake\(heard\)/);
+  assert.match(app,/Uyku modundayım/);
+});
+
+test('speech is submitted only after the user finishes and client restart delays are short',()=>{
+  assert.match(app,/END_OF_SPEECH_MS=900/);
+  assert.match(app,/recognition\.continuous=true/);
+  assert.match(app,/function finishAfterSilence\(\)/);
+  assert.match(app,/clearTimer\('silence'\)/);
+  assert.match(app,/if\(listening&&wakeArmed\)/);
+  assert.match(app,/recognition\.onend=/);
+  assert.match(app,/if\(wakeArmed&&question\)return submitTranscript\(question\)/);
+  assert.match(app,/scheduleListening\(80\)/);
+});
+
+test('student can interrupt narration only with the full wake phrase',()=>{
+  assert.match(nativeHtml,/“Kaptan Sinbad” denince uyanır/);
+  assert.match(app,/function startInterruptionListening\(\)/);
   assert.match(app,/listeningPurpose==='interrupt'/);
+  assert.match(app,/hasWakePhrase\(heard\)/);
+  assert.match(app,/academyStopVoice/);
   assert.match(app,/answerTurn!==turnGeneration/);
-  assert.match(app,/function armBargeIn\(text\)/);
   assert.match(app,/Sizi duydum; anlatımı durdurdum/);
-  assert.match(app,/scheduleBargeInFinish/);
-  assert.match(app,/bargeTimer=setTimeout/);
-  assert.match(app,/lastFinal\.trim\(\)\|\|liveTranscript\.trim\(\)/);
 });
 
 test('main app opens the resizable hands-free Professor window and Pages ships its assets',()=>{
-  assert.match(main,/window\.open\('\.\/academy-professor-v3\.html','sinbadProfessorWorkspace'/);
+  assert.match(main,/window\.open\('\.\/academy-professor-native\.html','sinbadProfessorClassroom'/);
   assert.match(main,/resizable=yes/);
-  for(const file of ['academy-professor-v3.html','academy-professor-handsfree.css','academy-professor-handsfree.js'])assert.match(release,new RegExp(file.replaceAll('.','\\.')));
+  for(const file of ['academy-professor-v3.html','academy-professor-handsfree.css','academy-professor-handsfree.js','academy-professor-native.html','academy-professor-native.css','academy-professor-native.js'])assert.match(release,new RegExp(file.replaceAll('.','\\.')));
 });
