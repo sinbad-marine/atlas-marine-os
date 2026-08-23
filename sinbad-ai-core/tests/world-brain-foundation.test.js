@@ -11,6 +11,7 @@ const sources=require('../world-brain/source-catalog.js');
 const profiles=require('../world-brain/content-profiles.js');
 const acquisition=require('../world-brain/acquisition-plan.js');
 const kiwix=require('../world-brain/kiwix-search-provider.js');
+const fs=require('node:fs');
 
 function manifestFor(bytes,overrides={}){
   return {schemaVersion:pack.VERSION,packId:'history-core-tr',title:'History Core',domain:'history',language:'tr-TR',license:'CC-BY-4.0',source:'https://example.test/history',publisher:'Example Publisher',edition:'2026.1',snapshotDate:'2026-08-01',contentHash:pack.contentHash(bytes),tags:['history'],...overrides};
@@ -134,4 +135,15 @@ test('Kiwix search provider is loopback-only and uses the documented XML search 
   assert.match(url,/pageLength=20/);
   assert.match(url,/format=xml/);
   assert.throws(()=>kiwix.searchUrl('https://example.com/','test'),/loopback-only/);
+});
+
+test('live Bridge routes durable questions to loopback Kiwix and blocks stale or high-risk evidence',()=>{
+  const bridge=fs.readFileSync('bridge/sinbad-bridge.ps1','utf8');
+  assert.match(bridge,/\[string\]\$KiwixUrl = 'http:\/\/127\.0\.0\.1:8181'/);
+  assert.match(bridge,/function Get-KiwixKnowledge/);
+  assert.match(bridge,/books\.filter\.lang=tur/);
+  assert.match(bridge,/BLOCKED_STALE_OR_HIGH_RISK/);
+  assert.match(bridge,/offline-world-rag/);
+  assert.match(bridge,/KIWIX_LOOPBACK_ONLY/);
+  assert.doesNotMatch(bridge,/--address=(?:all|ipv4|ipv6)/);
 });

@@ -7,7 +7,8 @@ param(
   [string]$XttsConfigPath = '',
   [string]$XttsSpeakerWav = '',
   [string]$OpenCpnExecutable = '',
-  [int]$XttsWorkerPort = 31984
+  [int]$XttsWorkerPort = 31984,
+  [string]$KiwixUrl = 'http://127.0.0.1:8181'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -50,6 +51,7 @@ Write-Host "Sinbad Bridge is online: http://127.0.0.1:$Port" -ForegroundColor Gr
 Write-Host "GPX exchange folder: $routeRoot"
 Write-Host "Offline library folder: $libraryRoot"
 Write-Host "Offline AI model: $AiModel"
+Write-Host "Offline world knowledge: $KiwixUrl"
 Write-Host "XTTS persistent worker: http://127.0.0.1:$XttsWorkerPort"
 Write-Host 'Keep this window open while using the Bridge. Press Ctrl+C to stop.'
 
@@ -67,6 +69,28 @@ function Invoke-LocalJsonGet([string]$uri) {
   $process.WaitForExit()
   if ($process.ExitCode -ne 0) { throw "Local service request failed: $errorText" }
   return ($output | ConvertFrom-Json)
+}
+
+function Invoke-LocalTextGet([string]$uri, [int]$timeoutSeconds = 8) {
+  $parsed = [Uri]$uri
+  if ($parsed.Scheme -ne 'http' -or $parsed.Host -notin @('127.0.0.1','localhost')) { throw 'LOCAL_KNOWLEDGE_ENDPOINT_DENIED' }
+  $info = [Diagnostics.ProcessStartInfo]::new()
+  $info.FileName = 'curl.exe'
+  $info.ArgumentList.Add('--noproxy'); $info.ArgumentList.Add('*')
+  $info.ArgumentList.Add('--silent'); $info.ArgumentList.Add('--show-error')
+  $info.ArgumentList.Add('--max-time'); $info.ArgumentList.Add([string]$timeoutSeconds)
+  $info.ArgumentList.Add($uri)
+  $info.UseShellExecute = $false
+  $info.CreateNoWindow = $true
+  $info.RedirectStandardOutput = $true
+  $info.RedirectStandardError = $true
+  $info.StandardOutputEncoding = [Text.Encoding]::UTF8
+  $process = [Diagnostics.Process]::Start($info)
+  $output = $process.StandardOutput.ReadToEnd()
+  $errorText = $process.StandardError.ReadToEnd()
+  $process.WaitForExit()
+  if ($process.ExitCode -ne 0) { throw "Local knowledge request failed: $errorText" }
+  return $output
 }
 
 function Invoke-LocalJsonPost([string]$uri, [string]$json) {
@@ -377,6 +401,34 @@ function Get-LocalLibraryContext([string]$question) {
   return (@($matches | Sort-Object score -Descending | Select-Object -First 6 | ForEach-Object { $_.citation }) -join "`n`n---`n`n")
 }
 
+function Get-KiwixKnowledge([string]$question) {
+  # Snapshot knowledge is useful for durable subjects, never for claims that
+  # can change operationally or cause harm when stale.
+  $volatileOrHighRisk = '(?i)(?<!\p{L})(bug[uü]n(?:k[uü])?|şimdi|g[uü]ncel|son dakika|canlı|hava durumu|weather|forecast|fiyat(?:ı|lar(?:ı)?)?|kur(?:u|lar(?:ı)?)?|d[oö]viz|borsa|hisse|kripto|seçim|başkan|cumhurbaşkanı|bakan|yasa|mevzuat|hukuk|ilaç|doz|teşhis|tedavi|acil|notices to mariners|chart correction|liman durumu)(?!\p{L})'
+  if ($question -match $volatileOrHighRisk) {
+    return [pscustomobject]@{ state='BLOCKED_STALE_OR_HIGH_RISK'; context=''; reason='Current or high-risk claims require current authoritative verification.'; results=0 }
+  }
+  try {
+    $base = [Uri]$KiwixUrl
+    if ($base.Scheme -ne 'http' -or $base.Host -notin @('127.0.0.1','localhost')) { throw 'KIWIX_LOOPBACK_ONLY' }
+    $query = [Uri]::EscapeDataString($question.Trim())
+    $uri = "$($base.GetLeftPart([UriPartial]::Authority))/search?books.filter.lang=tur&pattern=$query&pageLength=5&format=xml"
+    [xml]$document = Invoke-LocalTextGet $uri 8
+    $items = @($document.rss.channel.item | Select-Object -First 5)
+    if (-not $items.Count) { return [pscustomobject]@{ state='NO_MATCH'; context=''; reason='No indexed encyclopedia result matched.'; results=0 } }
+    $citations = foreach ($item in $items) {
+      $title = [Net.WebUtility]::HtmlDecode([string]$item.title)
+      $description = [regex]::Replace([Net.WebUtility]::HtmlDecode([string]$item.description), '<[^>]+>', ' ')
+      $description = [regex]::Replace($description, '\s+', ' ').Trim()
+      if ($description.Length -gt 900) { $description = $description.Substring(0,900) + '…' }
+      "SOURCE: Turkish Wikipedia — $title`nOFFLINE URI: $($item.link)`nEXCERPT: $description"
+    }
+    return [pscustomobject]@{ state='VERIFIED_OFFLINE_MATCH'; context=($citations -join "`n`n---`n`n"); reason=''; results=$items.Count }
+  } catch {
+    return [pscustomobject]@{ state='UNAVAILABLE'; context=''; reason=$_.Exception.Message; results=0 }
+  }
+}
+
 function Invoke-SinbadLocalAi($payload) {
   $question = [string]$payload.question
   if ([string]::IsNullOrWhiteSpace($question)) { throw 'A question is required.' }
@@ -384,17 +436,24 @@ function Invoke-SinbadLocalAi($payload) {
     @{ role=if ($_.role -eq 'assistant' -or $_.role -eq 'sinbad') {'assistant'} else {'user'}; content=[string]$_.content }
   } | Select-Object -Last 10)
   $context = Get-LocalLibraryContext $question
+  $kiwix = Get-KiwixKnowledge $question
   $system = @'
 You are Captain Sinbad, the offline assistant of Atlas Marine OS. Be a warm, intelligent companion and a practical marine guide. Your primary working languages are Turkish, English and German. Detect which of these languages the user is writing in and reply naturally in the same language unless the user requests another language. You can translate accurately among Turkish, English and German, preserving maritime and technical terminology. Use complete, natural answers and conversation history. You can help with seamanship education, passage-plan drafts, checklists, documents, software and programming. Never invent live weather, current Notices to Mariners, chart corrections, port status, coordinates, depths or regulations. Clearly say when internet, current official publications or vessel-specific data are required. You are planning and decision support, not certified ECDIS. For code changes, explain the plan and create a reviewable draft; never publish, delete data, spend money or change credentials without explicit owner approval.
 When LOCAL OWNER LIBRARY EXCERPTS are supplied, reason from them, distinguish quoted evidence from your inference, and cite the source title in the answer. Never claim a source says something absent from the excerpts.
+When OFFLINE ENCYCLOPEDIA EXCERPTS are supplied, use them as dated reference evidence, cite the article title, and never describe them as current. If OFFLINE KNOWLEDGE POLICY says BLOCKED_STALE_OR_HIGH_RISK, do not answer the volatile claim from memory: state what current authoritative source is required.
 '@
   $messages = @(@{ role='system'; content=$system }) + $history
-  $userContent = if ($context) { "$question`n`nLOCAL OWNER LIBRARY EXCERPTS:`n$context" } else { $question }
+  $evidence = New-Object System.Collections.Generic.List[string]
+  if ($context) { $evidence.Add("LOCAL OWNER LIBRARY EXCERPTS:`n$context") }
+  if ($kiwix.context) { $evidence.Add("OFFLINE ENCYCLOPEDIA EXCERPTS (Wikipedia Turkish snapshot 2026-04-12):`n$($kiwix.context)") }
+  if ($kiwix.state -eq 'BLOCKED_STALE_OR_HIGH_RISK') { $evidence.Add("OFFLINE KNOWLEDGE POLICY: BLOCKED_STALE_OR_HIGH_RISK`n$($kiwix.reason)") }
+  $userContent = if ($evidence.Count) { "$question`n`n$($evidence -join "`n`n")" } else { $question }
   $messages += @{ role='user'; content=$userContent }
   $request = @{ model=$AiModel; messages=$messages; stream=$false; think=$false; keep_alive='30m'; options=@{ temperature=0.35; num_ctx=32768 } }
   $result = Invoke-LocalJsonPost 'http://127.0.0.1:11434/api/chat' ($request | ConvertTo-Json -Depth 12 -Compress)
   if ([string]::IsNullOrWhiteSpace($result.message.content)) { throw 'The local AI returned no answer.' }
-  return @{ answer=$result.message.content; model=$result.model; mode=if ($context) {'offline-local-rag'} else {'offline-local-ai'} }
+  $mode = if ($context -and $kiwix.context) {'offline-owner-and-world-rag'} elseif ($context) {'offline-local-rag'} elseif ($kiwix.context) {'offline-world-rag'} elseif ($kiwix.state -eq 'BLOCKED_STALE_OR_HIGH_RISK') {'offline-current-claim-blocked'} else {'offline-local-ai'}
+  return @{ answer=$result.message.content; model=$result.model; mode=$mode; knowledge=@{ state=$kiwix.state; results=$kiwix.results; reason=$kiwix.reason } }
 }
 
 if (Test-Path -LiteralPath $indexPath) {
@@ -447,7 +506,8 @@ try {
       if ($method -eq 'OPTIONS') { Write-HttpResponse $stream 204 'No Content' ''; continue }
       if ($method -eq 'GET' -and $path -eq '/status') {
         $count = @(Get-ChildItem -LiteralPath $routeRoot -Filter '*.gpx' -File -ErrorAction SilentlyContinue).Count
-        Write-HttpResponse $stream 200 'OK' (Json @{ name='Sinbad Bridge'; version='0.3.0'; routes=$count; exchangeFolder=$routeRoot; libraryFolder=$libraryRoot; library=(Get-LibraryStatus); ai=(Get-OllamaStatus) }); continue
+        $kiwixState = try { $xml=Invoke-LocalTextGet "$KiwixUrl/search?books.filter.lang=tur&pattern=Sinbad&pageLength=1&format=xml" 2; if($xml -match '<rss'){'READY'}else{'INVALID_RESPONSE'} } catch {'UNAVAILABLE'}
+        Write-HttpResponse $stream 200 'OK' (Json @{ name='Sinbad Bridge'; version='0.4.0'; routes=$count; exchangeFolder=$routeRoot; libraryFolder=$libraryRoot; library=(Get-LibraryStatus); ai=(Get-OllamaStatus); worldKnowledge=@{ provider='kiwix'; endpoint=$KiwixUrl; state=$kiwixState; snapshot='wikipedia_tr_top_mini_2026-04' } }); continue
       }
       if ($method -eq 'GET' -and $path -eq '/library/status') { Write-HttpResponse $stream 200 'OK' (Json (Get-LibraryStatus)); continue }
       if ($method -eq 'GET' -and $path -eq '/studio/status') { Write-HttpResponse $stream 200 'OK' (Json (Get-StudioCapabilityStatus)); continue }
