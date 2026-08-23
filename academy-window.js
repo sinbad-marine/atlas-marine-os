@@ -87,18 +87,18 @@ function animateAllowedShapeDrawing(generation,shape,reducedMotion=false){
   if(reducedMotion){renderFrame('ready','explain','complete','audience');return;}
   rhythm.frames.forEach(([delay,frameKey,gesture,phase,gaze])=>setTimeout(()=>renderFrame(frameKey,gesture,phase,gaze),delay));
 }
-function drawAllowedShapeAtBoard(shape){
+function drawAllowedShapeAtBoard(shape,size='standard'){
   const definitions=Object.freeze({
     circle:Object.freeze({element:'circle',attributes:Object.freeze({cx:'120',cy:'90',r:'62'}),length:'390',label:'Sinbad drew a circle'}),
     triangle:Object.freeze({element:'path',attributes:Object.freeze({d:'M120 24 L202 154 L38 154 Z'}),length:'470',label:'Sinbad drew a triangle'}),
     rectangle:Object.freeze({element:'path',attributes:Object.freeze({d:'M38 34 H202 V146 H38 Z'}),length:'555',label:'Sinbad drew a rectangle'}),
     arrow:Object.freeze({element:'path',attributes:Object.freeze({d:'M32 90 H194 M164 60 L194 90 L164 120'}),length:'250',label:'Sinbad drew an arrow'}),
     axes:Object.freeze({element:'path',attributes:Object.freeze({d:'M26 90 H214 M188 74 L214 90 L188 106 M120 158 V22 M104 48 L120 22 L136 48'}),length:'475',label:'Sinbad drew coordinate axes'})
-  }),definition=definitions[shape];
-  if(!definition)return false;
+  }),definition=definitions[shape],safeSize=['small','standard','large'].includes(size)?size:null;
+  if(!definition||!safeSize)return false;
   const stage=byId('academyTeachingStage'),title=byId('academyTeachingTitle'),board=byId('academyTeachingText');if(!stage||!title||!board)return false;
   const generation=++academyBoardGeneration;stage.hidden=false;title.textContent="Captain Sinbad's board";board.replaceChildren();
-  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 240 180');svg.setAttribute('role','img');svg.setAttribute('aria-label',definition.label);svg.dataset.boardShape=shape;svg.style.cssText='display:block;width:min(100%,360px);height:auto;margin:0 auto;overflow:visible';
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 240 180');svg.setAttribute('role','img');svg.setAttribute('aria-label',definition.label);svg.dataset.boardShape=shape;svg.dataset.boardSize=safeSize;svg.style.cssText=`display:block;width:min(100%,${safeSize==='large'?430:safeSize==='small'?260:360}px);height:auto;margin:0 auto;overflow:visible`;
   const line=document.createElementNS(svg.namespaceURI,definition.element);for(const [name,value] of Object.entries(definition.attributes))line.setAttribute(name,value);line.setAttribute('fill','none');line.setAttribute('stroke','#f2f4df');line.setAttribute('stroke-width','6');line.setAttribute('stroke-linecap','round');line.setAttribute('stroke-linejoin','round');line.style.strokeDasharray=definition.length;line.style.strokeDashoffset=definition.length;svg.append(line);board.append(svg);
   const reducedMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches===true;animateAllowedShapeDrawing(generation,shape,reducedMotion);
   if(reducedMotion){line.style.strokeDashoffset='0';return true;}
@@ -153,7 +153,7 @@ window.addEventListener('message',event=>{
   const message=event.data;if(!message||message.version!==1)return;
   let appliedAction=null;
   if(message.type==='SINBAD_ACADEMY_WRITE_BOARD'&&typeof message.text==='string'&&message.text.trim()&&message.text.length<=200&&writeCustomTextAtBoard(message.text))appliedAction=Object.freeze({kind:'text',value:message.text.trim()});
-  if(message.type==='SINBAD_ACADEMY_DRAW_SHAPE'&&['circle','triangle','rectangle','arrow','axes'].includes(message.shape)&&drawAllowedShapeAtBoard(message.shape))appliedAction=Object.freeze({kind:'shape',value:message.shape});
+  if(message.type==='SINBAD_ACADEMY_DRAW_SHAPE'&&['circle','triangle','rectangle','arrow','axes'].includes(message.shape)&&['small','standard','large'].includes(message.size||'standard')&&drawAllowedShapeAtBoard(message.shape,message.size||'standard'))appliedAction=Object.freeze({kind:'shape',value:message.shape,size:message.size||'standard'});
   if(message.type==='SINBAD_ACADEMY_CLEAR_BOARD'){clearAcademyBoard(()=>window.opener.postMessage({version:1,type:'SINBAD_ACADEMY_BOARD_APPLIED',action:{kind:'clear',value:'board'}},location.origin));return;}
   if(appliedAction)window.opener.postMessage({version:1,type:'SINBAD_ACADEMY_BOARD_APPLIED',action:appliedAction},location.origin);
 });
