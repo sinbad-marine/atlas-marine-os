@@ -24,7 +24,8 @@
   }
   function teachingReplyStopped(reply){
     const cloudStatus=String($('academyCloudStatus')?.textContent||'').trim();
-    return cloudStatus==='Answer stopped safely'||/^Bu soruyu şu anda tamamlayamadım:/i.test(String(reply||''));
+    const replyText=String(reply||'').trim();
+    return !replyText||cloudStatus==='Answer stopped safely'||/^Bu soruyu şu anda tamamlayamadım:/i.test(replyText);
   }
   function observeTeachingReply(){
     if(!pendingTeaching||pendingTeaching.sessionId!==state?.session?.sessionId)return;const replies=[...$('academyMessages').querySelectorAll('.academy-message.sinbad p')];if(replies.length<=pendingTeaching.assistantCount)return;

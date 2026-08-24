@@ -125,6 +125,8 @@ test('tutor uses the structured Academy safe-stop state before unlocking assessm
   const observer=controller.match(/function observeTeachingReply\(\)\{[\s\S]*?\n  \}/)?.[0]||'';
   assert.match(helper,/academyCloudStatus/);
   assert.match(helper,/Answer stopped safely/);
+  assert.match(helper,/const replyText=String\(reply\|\|''\)\.trim\(\)/);
+  assert.match(helper,/return !replyText\|\|/);
   assert.match(observer,/if\(teachingReplyStopped\(reply\)\)/);
   assert.match(observer,/advance\.dataset\.action='retry'/);
   assert.doesNotMatch(helper,/SinbadTutorOrchestrator\.advance|recordEvidence|save\(\)/);
