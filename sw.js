@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.19-private-source-access-full-catalog-v1';
+const CACHE='sinbad-marine-v8.20.19-tutor-orchestrator-v1';
 const ASSETS=[
   './',
   './index.html',
@@ -17,6 +17,8 @@ const ASSETS=[
   './academy-professor-native.js',
   './sinbad-speaker-identity.js',
   './sinbad-professor.js',
+  './sinbad-tutor-orchestrator.js',
+  './sinbad-tutor-controller.js',
   './styles.css',
   './app.js',
   './sinbad-character-engine.js',
