@@ -142,6 +142,18 @@ def test_verified_lighthouse_photos_match_distinct_object_queries():
     assert all(item[0]["sourcePaths"][0].startswith("https://") for item in (lighthouse, optics, lightship))
 
 
+def test_verified_deck_equipment_photos_match_exact_hardware_queries():
+    windlass = MODULE.curated_deck_query("demir ırgatının fotoğrafını göster", 3)
+    winch = MODULE.curated_deck_query("bağlama vinci nasıl görünür", 3)
+    bitts = MODULE.curated_deck_query("gemi babasına halat volta fotoğrafı", 3)
+    fairlead = MODULE.curated_deck_query("ayarlanabilir kurtağzı görseli", 3)
+    assert windlass[0]["visual_key"] == "curated:deck:anchor-windlass"
+    assert winch[0]["visual_key"] == "curated:deck:mooring-winch"
+    assert bitts[0]["visual_key"] == "curated:deck:ship-bitts"
+    assert fairlead[0]["visual_key"] == "curated:deck:adjustable-fairlead"
+    assert all(item[0]["sourcePaths"][0].startswith("https://") for item in (windlass, winch, bitts, fairlead))
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -156,4 +168,5 @@ if __name__ == "__main__":
     test_verified_cardinal_buoy_photos_match_real_object_queries()
     test_verified_lateral_and_special_aids_match_exact_queries()
     test_verified_lighthouse_photos_match_distinct_object_queries()
-    print("13 curated visual query tests passed")
+    test_verified_deck_equipment_photos_match_exact_hardware_queries()
+    print("14 curated visual query tests passed")
