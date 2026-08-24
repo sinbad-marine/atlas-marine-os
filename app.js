@@ -1022,6 +1022,7 @@ let sinbadStandardMouthSequence=0;
 const SINBAD_STANDARD_VISEME_CADENCE=Object.freeze(['closed','open','wide','open','round','open','wide','open']);
 function resetSinbadStandardBoundaryVisuals(){
   clearTimeout(sinbadStandardBoundaryTimer);sinbadStandardBoundaryTimer=null;
+  sinbadStandardMouthSequence=0;
   sinbadAssistantElements().forEach(el=>el.classList.remove('sinbad-voice-tick'));
   setSinbadMouthFrame('closed');
 }

@@ -476,6 +476,7 @@ test('onboundary drives a real per-word cue (not a fabricated continuous loop, a
 test('voice completion and cancellation clear stale mouth-boundary timers before another turn',()=>{
   assert.match(app,/function resetSinbadStandardBoundaryVisuals\(\)\{/);
   assert.match(app,/clearTimeout\(sinbadStandardBoundaryTimer\);sinbadStandardBoundaryTimer=null/);
+  assert.match(app,/sinbadStandardMouthSequence=0/);
   assert.match(app,/classList\.remove\('sinbad-voice-tick'\)/);
   const finish=app.slice(app.indexOf('function finishSinbadVoice'),app.indexOf('function stopSinbadVoice'));
   const stop=app.slice(app.indexOf('function stopSinbadVoice'),app.indexOf('function interruptSinbadVoiceForUser'));

@@ -97,6 +97,7 @@ test('large Captain Sinbad portrait loads the four-layer articulated rig with it
     setSinbadMouthFrame('wide');
   });
   await expect(avatar).not.toHaveClass(/sinbad-blinking/);
+  expect(await page.evaluate(()=>sinbadStandardMouthSequence)).toBe(0);
   await page.waitForTimeout(220);
   await expect(avatar).toHaveAttribute('data-mouth-frame','wide');
   await page.evaluate(()=>{
