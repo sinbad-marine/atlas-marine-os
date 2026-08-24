@@ -275,6 +275,18 @@ def test_verified_hull_underwater_photos_match_exact_components():
     assert MODULE.curated_hull_underwater_query("radar ekranı",3)==[]
 
 
+def test_verified_vessel_type_photos_match_exact_ship_classes():
+    container=MODULE.curated_vessel_types_query("konteyner gemisinin fotoğrafını göster",3)
+    tanker=MODULE.curated_vessel_types_query("petrol tankeri nasıl görünür",3)
+    bulk=MODULE.curated_vessel_types_query("dökme yük gemisi fotoğrafı",3)
+    roro=MODULE.curated_vessel_types_query("Ro-Ro gemisinin rampasını göster",3)
+    assert container[0]["visual_key"]=="curated:vessel-types:container-ship-underway"
+    assert tanker[0]["visual_key"]=="curated:vessel-types:oil-tanker-underway"
+    assert bulk[0]["visual_key"]=="curated:vessel-types:bulk-carrier-moored"
+    assert roro[0]["visual_key"]=="curated:vessel-types:ro-ro-ship-ramp-deployed"
+    assert MODULE.curated_vessel_types_query("can simidi fotoğrafı",3)==[]
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -300,4 +312,5 @@ if __name__ == "__main__":
     test_verified_distress_signal_photos_match_exact_equipment()
     test_verified_oil_spill_response_photos_match_exact_systems()
     test_verified_hull_underwater_photos_match_exact_components()
-    print("24 curated visual query tests passed")
+    test_verified_vessel_type_photos_match_exact_ship_classes()
+    print("25 curated visual query tests passed")

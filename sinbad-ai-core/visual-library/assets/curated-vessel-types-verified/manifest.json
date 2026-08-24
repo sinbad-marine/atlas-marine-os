@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "sinbad-curated-vessel-types/1",
+  "licensePolicy": "Only individually verified CC0 or U.S. federal public-domain photographs are included.",
+  "visuals": [
+    {"id":"container-ship-underway","file":"container-ship-underway.webp","heading":"Container ship underway with stacked intermodal containers","topics":["container ship","containership","konteyner gemisi","konteyner taşıyan gemi","container vessel"],"sourceUrl":"https://commons.wikimedia.org/wiki/File:Container_ship_in_Koper_2013.jpg","credit":"Photo by Boris Macek","license":"CC0 1.0 Universal Public Domain Dedication"},
+    {"id":"oil-tanker-underway","file":"oil-tanker-underway.webp","heading":"Oil tanker AbQaiq underway near an offshore terminal","topics":["oil tanker","tanker ship","petrol tankeri","ham petrol tankeri","tanker gemisi"],"sourceUrl":"https://commons.wikimedia.org/wiki/File:Oeltanker_1.jpg","credit":"U.S. Navy photo by Photographer's Mate 2nd Class Andrew M. Meyers, VIRIN 030629-N-4790M-003","license":"Public domain - U.S. federal government work"},
+    {"id":"bulk-carrier-moored","file":"bulk-carrier-moored.webp","heading":"Bulk carrier Whistler moored at a sugar refinery","topics":["bulk carrier","dry bulk carrier","dökme yük gemisi","kuru yük gemisi","bulk cargo ship"],"sourceUrl":"https://commons.wikimedia.org/wiki/File:Bulk_Carrier_Whistler.jpg","credit":"Photo by PvOberstein","license":"CC0 1.0 Universal Public Domain Dedication"},
+    {"id":"ro-ro-ship-ramp-deployed","file":"ro-ro-ship-ramp-deployed.webp","heading":"Ro-Ro ship USNS Pililaau with roll-on/roll-off discharge facility deployed","topics":["ro-ro ship","roll-on roll-off ship","roro vessel","ro-ro gemisi","tekerlekli yük gemisi","gemi rampası"],"sourceUrl":"https://commons.wikimedia.org/wiki/File:US_Navy_080722-N-1424C-501_The_Military_Sealift_Command_large,_medium-speed_roll-on-roll-off_ship_USNS_Pililaau_(T-AKR_304)_is_anchored_off_the_coast_of_Red_Beach.jpg","credit":"U.S. Navy photo by Mass Communication Specialist 2nd Class Brian P. Caracci, VIRIN 080722-N-1424C-501","license":"Public domain - U.S. federal government work"}
+  ]
+}
