@@ -241,6 +241,16 @@ def test_verified_pilotage_access_photos_match_exact_operations():
     assert MODULE.curated_pilotage_access_query("can salı fotoğrafı",3)==[]
 
 
+def test_verified_distress_signal_photos_match_exact_equipment():
+    flare=MODULE.curated_distress_signals_query("MK-124 kırmızı imdat fişeği",3)
+    smoke=MODULE.curated_distress_signals_query("turuncu duman işareti nasıl görünür",3)
+    thrower=MODULE.curated_distress_signals_query("halat atma cihazı fotoğrafı",3)
+    assert flare[0]["visual_key"]=="curated:distress-signals:mk124-distress-signal"
+    assert smoke[0]["visual_key"]=="curated:distress-signals:orange-smoke-signal"
+    assert thrower[0]["visual_key"]=="curated:distress-signals:line-throwing-appliance"
+    assert MODULE.curated_distress_signals_query("radar ekranı fotoğrafı",3)==[]
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -263,4 +273,5 @@ if __name__ == "__main__":
     test_verified_firefighting_photos_match_exact_equipment_and_operations()
     test_verified_damage_control_photos_match_exact_hardware_and_actions()
     test_verified_pilotage_access_photos_match_exact_operations()
-    print("21 curated visual query tests passed")
+    test_verified_distress_signal_photos_match_exact_equipment()
+    print("22 curated visual query tests passed")
