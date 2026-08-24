@@ -67,7 +67,7 @@ test('guided tutor orchestrator is optional, drawer-contained and backed by asse
 
 test('tutor waits for a completed Sinbad reply and merges the latest learner profile',()=>{
   const controller=fs.readFileSync('sinbad-tutor-controller.js','utf8');
-  assert.match(controller,/pendingTeaching=\{sessionId:state\.session\.sessionId,assistantCount:/);
+  assert.match(controller,/pendingTeaching=\{sessionId,assistantCount:/);
   assert.match(controller,/Açıklama tamamlandı\. Hazır olduğunuzda bilgi kontrolüne geçin/);
   assert.match(controller,/Sinbad açıklamayı tamamlayamadı\. Başarı kaydı oluşturulmadı/);
   assert.match(controller,/new MutationObserver\(observeTeachingReply\)/);
@@ -106,4 +106,15 @@ test('missing knowledge checks stop the real session instead of only changing st
   assert.match(controller,/advance\(state\.session,loadProfile\(\),\{type:'ASSESSMENT_UNAVAILABLE'\}\)/);
   assert.match(controller,/ASSESSMENT_UNAVAILABLE/);
   assert.match(controller,/save\(\);syncSessionControls\(\);renderProgress\(\)/);
+});
+
+test('tutor teaching waits are bounded and timeouts never create progress evidence',()=>{
+  const controller=fs.readFileSync('sinbad-tutor-controller.js','utf8');
+  const timeoutHandler=controller.match(/function teachingTimedOut\(sessionId\)\{([\s\S]*?)\n  \}/)?.[1]||'';
+  assert.match(controller,/const TEACHING_TIMEOUT_MS=45000/);
+  assert.match(controller,/setTimeout\(\(\)=>teachingTimedOut\(sessionId\),TEACHING_TIMEOUT_MS\)/);
+  assert.match(controller,/Sinbad'ın açıklaması zamanında tamamlanamadı\. Oturum ilerletilmedi ve başarı kaydı oluşturulmadı\./);
+  assert.match(controller,/advance\.dataset\.action='retry'/);
+  assert.ok(timeoutHandler);
+  assert.doesNotMatch(timeoutHandler,/SinbadTutorOrchestrator\.advance|recordEvidence|save\(\)/);
 });
