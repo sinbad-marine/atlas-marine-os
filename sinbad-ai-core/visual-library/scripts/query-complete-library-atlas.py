@@ -622,6 +622,24 @@ def curated_distress_signals_query(value: str, limit: int) -> list[dict]:
     return result[:limit]
 
 
+def curated_oil_spill_response_query(value: str, limit: int) -> list[dict]:
+    root=Path(__file__).resolve().parents[1]/"assets"/"curated-oil-spill-response-verified"; manifest=root/"manifest.json"
+    if not manifest.is_file(): return []
+    normalized=value.casefold(); groups={
+        "containment-boom-deployment":("petrol bariyeri","yağ bariyeri","yag bariyeri","döküntü bariyeri","dokuntu bariyeri","oil containment boom","spill boom deployment"),
+        "weir-skimmer-operation":("weir skimmer","savaklı petrol skimmer","savakli petrol skimmer","petrol sıyırıcı","petrol siyirici","yağ toplama cihazı","yag toplama cihazi"),
+        "voss-skimming-vessel":("voss","vessel of opportunity skimming system","gemi petrol toplama sistemi","petrol müdahale gemisi","petrol mudahale gemisi"),
+        "dynamic-inclined-plane-skimmer":("dip 600","dynamic inclined plane skimmer","eğik düzlemli skimmer","egik duzlemli skimmer","petrol toplama tatbikatı","petrol toplama tatbikati")}
+    preferred={k for k,phrases in groups.items() if any(p in normalized for p in phrases)}
+    if not preferred:return []
+    result=[]
+    for item in json.loads(manifest.read_text(encoding="utf-8"))["visuals"]:
+        if item["id"] not in preferred:continue
+        path=root/item["file"]; digest=__import__("hashlib").sha256(path.read_bytes()).hexdigest()
+        result.append({"visual_key":f"curated:oil-spill-response:{item['id']}","visual_type":"object","document_hash":"curated-oil-spill-response-verified","page_number":None,"image_number":None,"asset_hash":digest,"file":str(path),"title":item["credit"],"volume":None,"heading":item["heading"],"context":f"Verified marine oil-spill-response photograph. {item['license']}","topics":item["topics"],"sourcePaths":[item["sourceUrl"]],"rank":-2500.0,"assetUrl":f"http://127.0.0.1:31983/visuals/assets/{digest}.webp"})
+    return result[:limit]
+
+
 def terms(value: str) -> list[str]:
     aliases = {
         "şamandıra": "buoy", "samandira": "buoy",
@@ -683,6 +701,9 @@ def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = Fa
     if curated:
         return curated
     curated = curated_distress_signals_query(value, limit)
+    if curated:
+        return curated
+    curated = curated_oil_spill_response_query(value, limit)
     if curated:
         return curated
     curated = curated_navigation_query(value, limit)
@@ -826,6 +847,10 @@ def resolve_asset(db: sqlite3.Connection, atlas: Path, digest: str) -> dict:
             return {"asset_hash":digest,"file":str(path),"width":None,"height":None,"visual_type":"object","absolutePath":str(path.resolve())}
     distress_signals_root=Path(__file__).resolve().parents[1]/"assets"/"curated-distress-signals-verified"
     for path in distress_signals_root.glob("*.webp"):
+        if __import__("hashlib").sha256(path.read_bytes()).hexdigest()==digest:
+            return {"asset_hash":digest,"file":str(path),"width":None,"height":None,"visual_type":"object","absolutePath":str(path.resolve())}
+    oil_spill_root=Path(__file__).resolve().parents[1]/"assets"/"curated-oil-spill-response-verified"
+    for path in oil_spill_root.glob("*.webp"):
         if __import__("hashlib").sha256(path.read_bytes()).hexdigest()==digest:
             return {"asset_hash":digest,"file":str(path),"width":None,"height":None,"visual_type":"object","absolutePath":str(path.resolve())}
     statements = [

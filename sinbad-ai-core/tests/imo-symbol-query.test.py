@@ -251,6 +251,18 @@ def test_verified_distress_signal_photos_match_exact_equipment():
     assert MODULE.curated_distress_signals_query("radar ekranı fotoğrafı",3)==[]
 
 
+def test_verified_oil_spill_response_photos_match_exact_systems():
+    boom=MODULE.curated_oil_spill_response_query("petrol bariyeri yerleştirme",3)
+    weir=MODULE.curated_oil_spill_response_query("Weir skimmer fotoğrafı",3)
+    voss=MODULE.curated_oil_spill_response_query("VOSS gemi petrol toplama sistemi",3)
+    dip=MODULE.curated_oil_spill_response_query("DIP 600 skimmer tatbikatı",3)
+    assert boom[0]["visual_key"]=="curated:oil-spill-response:containment-boom-deployment"
+    assert weir[0]["visual_key"]=="curated:oil-spill-response:weir-skimmer-operation"
+    assert voss[0]["visual_key"]=="curated:oil-spill-response:voss-skimming-vessel"
+    assert dip[0]["visual_key"]=="curated:oil-spill-response:dynamic-inclined-plane-skimmer"
+    assert MODULE.curated_oil_spill_response_query("can simidi fotoğrafı",3)==[]
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -274,4 +286,5 @@ if __name__ == "__main__":
     test_verified_damage_control_photos_match_exact_hardware_and_actions()
     test_verified_pilotage_access_photos_match_exact_operations()
     test_verified_distress_signal_photos_match_exact_equipment()
-    print("22 curated visual query tests passed")
+    test_verified_oil_spill_response_photos_match_exact_systems()
+    print("23 curated visual query tests passed")
