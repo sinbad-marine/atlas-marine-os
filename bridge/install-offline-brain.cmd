@@ -20,8 +20,12 @@ if not exist "%OLLAMA_EXE%" if /i not "%OLLAMA_EXE%"=="ollama.exe" (
   pause
   exit /b 1
 )
-echo Ollama found. Downloading the 9.3 GB qwen3:14b model...
+echo Ollama found. Downloading the fast qwen3:4b and deep qwen3:14b models...
 echo Keep this window open. Download time depends on your connection.
+"%OLLAMA_EXE%" pull qwen3:4b
+if errorlevel 1 (
+  echo WARNING: qwen3:4b download failed. Sinbad can still use qwen3:14b as a fallback.
+)
 "%OLLAMA_EXE%" pull qwen3:14b
 if errorlevel 1 (
   echo Model download failed. Check the internet connection and free disk space.

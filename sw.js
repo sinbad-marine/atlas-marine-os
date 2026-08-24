@@ -5,6 +5,20 @@ const ASSETS=[
   './academy.html',
   './academy.css',
   './academy-window.js',
+  './academy-professor.html',
+  './academy-professor.css',
+  './academy-professor-guidance.css',
+  './academy-professor.js',
+  './academy-professor-v3.html',
+  './academy-professor-handsfree.css',
+  './academy-professor-handsfree.js',
+  './academy-professor-native.html',
+  './academy-professor-native.css',
+  './academy-professor-native.js',
+  './sinbad-speaker-identity.js',
+  './sinbad-professor.js',
+  './sinbad-tutor-orchestrator.js',
+  './sinbad-tutor-controller.js',
   './styles.css',
   './app.js',
   './sinbad-character-engine.js',
@@ -13,6 +27,8 @@ const ASSETS=[
   './sinbad-viseme-planner.js',
   './pilot-data.js',
   './route-data.js',
+  './resource-data.js',
+  './store-data.js',
   './official-publications.js',
   './supabase/functions/sinbad-answer/core-decision.js',
   './sinbad-core.js',
@@ -80,7 +96,10 @@ self.addEventListener('fetch',event=>{
   }
 
   if(request.mode==='navigate'){
-    const pageKey=url.pathname.endsWith('/academy.html')?'./academy.html':'./index.html';
+    let pageKey=url.pathname.endsWith('/academy.html')?'./academy.html':'./index.html';
+    if(url.pathname.endsWith('/academy-professor.html'))pageKey='./academy-professor.html';
+    if(url.pathname.endsWith('/academy-professor-v3.html'))pageKey='./academy-professor-v3.html';
+    if(url.pathname.endsWith('/academy-professor-native.html'))pageKey='./academy-professor-native.html';
     event.respondWith(
       fetch(request)
         .then(response=>{

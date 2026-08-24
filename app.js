@@ -32,8 +32,8 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&
 
 document.querySelectorAll('[data-open]').forEach(x=>x.onclick=()=>openWorkspace(x.dataset.open));
 document.querySelectorAll('.close').forEach(x=>x.onclick=closeWorkspaces);
-function openWorkspace(id){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');$(id).scrollIntoView({behavior:'smooth'});renderAll();if(id==='enc-viewer')initEncViewer();if(id==='navigation-plot')initNavigationPlot();if(id==='studio-console')refreshStudioCapability()}
-function closeWorkspaces(){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));scrollTo({top:0,behavior:'smooth'})}
+function openWorkspace(id){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');$(id).scrollIntoView({behavior:'smooth'});document.body.classList.toggle('store-active',id==='store');renderAll();if(id==='enc-viewer')initEncViewer();if(id==='navigation-plot')initNavigationPlot();if(id==='studio-console')refreshStudioCapability()}
+function closeWorkspaces(){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));document.body.classList.remove('store-active');scrollTo({top:0,behavior:'smooth'})}
 
 let encMap=null,encChartLayer=null,encBathymetryLayer=null,encSeamarkLayer=null;
 let navigationPlotMap=null,navigationPlotSource=null,navigationPlotRoute=null;
@@ -278,7 +278,73 @@ function setupPilot(){[...new Set(PILOT_DATA.map(x=>x.country))].sort().forEach(
 function renderPilot(){const q=$('pilotSearch').value.toLowerCase(),c=$('countryFilter').value,t=$('typeFilter').value;const rows=PILOT_DATA.filter(x=>(!c||x.country===c)&&(!t||x.type===t)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));$('pilotGrid').innerHTML=rows.map(x=>`<article class="record"><h3>${esc(x.name)}</h3><div class="muted">${esc(x.country)} • ${esc(x.region)}</div><p>${esc(x.approach)}</p><p class="warning">${esc(x.captainNote)}</p></article>`).join('')}
 function setupRoutes(){[...new Set(ROUTE_DATA.map(x=>x.type))].forEach(x=>$('routeType').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`));[...new Set(ROUTE_DATA.map(x=>x.status))].forEach(x=>$('routeStatus').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`))}
 function renderRoutes(){const q=$('routeSearch').value.toLowerCase(),t=$('routeType').value,s=$('routeStatus').value;const rows=ROUTE_DATA.filter(x=>(!t||x.type===t)&&(!s||x.status===s)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));$('routeGrid').innerHTML=rows.map(x=>`<article class="record"><h3>${esc(x.title)}</h3><div class="muted">${esc(x.type)} • ${esc(x.status)}</div><p>${x.stops.map(esc).join(' → ')}</p></article>`).join('')}
+function setupResources(){[...new Set(RESOURCE_DATA.map(x=>x.category))].sort().forEach(x=>$('resourceCategory').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`));[...new Set(RESOURCE_DATA.map(x=>x.region))].forEach(x=>$('resourceRegion').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`))}
+function renderResources(){const q=$('resourceSearch').value.toLowerCase(),c=$('resourceCategory').value,r=$('resourceRegion').value;const rows=RESOURCE_DATA.filter(x=>(!c||x.category===c)&&(!r||x.region===r)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));$('resourceGrid').innerHTML=rows.map(x=>`<article class="record"><h3>${esc(x.name)}</h3><div class="muted">${esc(x.category)} • ${esc(x.region)}</div><p>${esc(x.description)}</p>${x.highlights&&x.highlights.length?`<div>${x.highlights.map(h=>`<span class="badge">${esc(h)}</span>`).join('')}</div>`:''}${x.services&&x.services.length?`<p class="muted">${esc(x.services.join(' • '))}</p>`:''}${x.captainNote&&x.captainNote!=='—'?`<p class="warning">${esc(x.captainNote)}</p>`:''}</article>`).join('')}
 
+
+// --- Sinbad Marine Store ---
+let storeActiveCategory='';
+const storeTRY=n=>'₺'+Number(n).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const storeCartGet=()=>get('atlas_store_cart');
+const storeCartSet=v=>set('atlas_store_cart',v);
+function storeCartAdd(id){const cart=storeCartGet();const line=cart.find(x=>x.id===id);if(line)line.qty+=1;else cart.push({id,qty:1});storeCartSet(cart);renderStoreCart()}
+function storeCartUpdateQty(id,delta){const cart=storeCartGet();const line=cart.find(x=>x.id===id);if(!line)return;line.qty+=delta;const next=cart.filter(x=>x.qty>0);storeCartSet(next);renderStoreCart()}
+function storeCartRemove(id){storeCartSet(storeCartGet().filter(x=>x.id!==id));renderStoreCart()}
+function renderStoreCategories(){
+ const cats=['Tümü',...new Set(STORE_DATA.map(x=>x.category))];
+ $('storeCategories').innerHTML=cats.map(c=>`<button type="button" class="store-chip${(c==='Tümü'&&!storeActiveCategory)||c===storeActiveCategory?' active':''}" data-cat="${c==='Tümü'?'':esc(c)}">${esc(c)}</button>`).join('');
+}
+function setupStore(){
+ renderStoreCategories();
+ $('storeCategories').addEventListener('click',event=>{const btn=event.target.closest('.store-chip');if(!btn)return;storeActiveCategory=btn.dataset.cat;renderStoreCategories();renderStoreGrid()});
+ $('storeSearch').addEventListener('input',renderStoreGrid);
+ $('storeCartFab').addEventListener('click',()=>{$('storeCartOverlay').classList.add('open');$('storeCartDrawer').classList.add('open')});
+ $('storeCartClose').addEventListener('click',storeCloseCart);
+ $('storeCartOverlay').addEventListener('click',storeCloseCart);
+ $('storeCheckoutBtn').addEventListener('click',openStoreCheckout);
+ $('storeCheckoutClose').addEventListener('click',()=>$('storeCheckoutOverlay').classList.remove('open'));
+ $('storeSendWhatsapp').addEventListener('click',()=>storeSendOrder('whatsapp'));
+ $('storeSendEmail').addEventListener('click',()=>storeSendOrder('email'));
+ renderStoreGrid();renderStoreCart();
+}
+function storeCloseCart(){$('storeCartOverlay').classList.remove('open');$('storeCartDrawer').classList.remove('open')}
+function renderStoreGrid(){
+ const q=($('storeSearch').value||'').toLowerCase();
+ const rows=STORE_DATA.filter(x=>(!storeActiveCategory||x.category===storeActiveCategory)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));
+ $('storeResultCount').textContent=`${rows.length} ürün gösteriliyor · Toplam ${STORE_DATA.length} ürün`;
+ $('storeGrid').innerHTML=rows.length?rows.map(x=>`<article class="store-card">${x.badge?`<span class="store-badge-tag">${esc(x.badge)}</span>`:''}<div class="store-image-tile"><img src="${esc(x.image)}" alt="${esc(x.name)}" loading="lazy" referrerpolicy="no-referrer"></div><div class="store-card-category">${esc(x.category)}</div><h3>${esc(x.name)}</h3><p class="store-card-desc">${esc(x.description)}</p><div class="store-card-footer"><div class="store-price">${Number.isFinite(x.price)?storeTRY(x.price):'Güncel fiyat'}<small>${Number.isFinite(x.price)?'Siparişte teyit edilir':'Teklif ile bildirilir'}</small></div><button type="button" class="store-add-btn" data-id="${esc(x.id)}">${Number.isFinite(x.price)?'Sepete Ekle':'Teklif İste'}</button></div></article>`).join(''):'<p class="empty">Bu kategoride/aramada ürün bulunamadı.</p>';
+ $('storeGrid').querySelectorAll('.store-add-btn').forEach(btn=>btn.addEventListener('click',()=>{storeCartAdd(btn.dataset.id);btn.textContent='Eklendi ✓';btn.classList.add('in-cart');setTimeout(()=>{btn.textContent='Sepete Ekle';btn.classList.remove('in-cart')},1100)}));
+}
+function renderStoreCart(){
+ const cart=storeCartGet();
+ const lines=cart.map(item=>({...item,product:STORE_DATA.find(p=>p.id===item.id)})).filter(x=>x.product);
+ const count=lines.reduce((a,x)=>a+x.qty,0);
+ $('storeCartCount').textContent=count;
+ $('storeCartItems').innerHTML=lines.length?lines.map(x=>`<div class="store-cart-item"><div class="store-cart-item-icon"><img src="${esc(x.product.image)}" alt="" loading="lazy" referrerpolicy="no-referrer"></div><div><h4>${esc(x.product.name)}</h4><div class="store-qty-row"><button type="button" class="store-qty-btn" data-id="${esc(x.id)}" data-d="-1">−</button><span>${x.qty}</span><button type="button" class="store-qty-btn" data-id="${esc(x.id)}" data-d="1">+</button></div></div><div><div class="store-cart-item-price">${Number.isFinite(x.product.price)?storeTRY(x.product.price*x.qty):'Fiyat teyidi'}</div><button type="button" class="store-cart-remove" data-id="${esc(x.id)}">Kaldır</button></div></div>`).join(''):'<div class="store-cart-empty">Sepetiniz boş.<br>Mağazadan ürün ekleyin.</div>';
+ $('storeCartItems').querySelectorAll('.store-qty-btn').forEach(btn=>btn.addEventListener('click',()=>storeCartUpdateQty(btn.dataset.id,Number(btn.dataset.d))));
+ $('storeCartItems').querySelectorAll('.store-cart-remove').forEach(btn=>btn.addEventListener('click',()=>storeCartRemove(btn.dataset.id)));
+ const subtotal=lines.reduce((a,x)=>a+(Number.isFinite(x.product.price)?x.product.price*x.qty:0),0);
+ $('storeCartSubtotal').textContent=storeTRY(subtotal);
+}
+function storeBuildOrderText(){
+ const cart=storeCartGet();
+ const lines=cart.map(item=>({...item,product:STORE_DATA.find(p=>p.id===item.id)})).filter(x=>x.product);
+ const subtotal=lines.reduce((a,x)=>a+(Number.isFinite(x.product.price)?x.product.price*x.qty:0),0);
+ const name=$('storeName').value.trim(),phone=$('storePhone').value.trim(),email=$('storeEmail').value.trim(),delivery=$('storeDelivery').value.trim(),note=$('storeNote').value.trim();
+ const itemLines=lines.map(x=>`• ${x.product.name} x${x.qty} — ${Number.isFinite(x.product.price)?storeTRY(x.product.price*x.qty):'Güncel fiyat teyidi'}`).join('\n');
+ return `SİNBAD MARINE STORE — Sipariş / Teklif Talebi\n\nMüşteri: ${name||'—'}\nTelefon: ${phone||'—'}\nE-posta: ${email||'—'}\nTeslimat/Yat: ${delivery||'—'}\n\nÜrünler:\n${itemLines||'—'}\n\nFiyatı görünen ürünler toplamı: ${storeTRY(subtotal)}\nNot: ${note||'—'}\n\n(Stok, teknik özellik, güncel fiyat ve ödeme talimatları sipariş onayında SDM tedarik süreciyle teyit edilir.)`;
+}
+function openStoreCheckout(){
+ if(!storeCartGet().length)return;
+ $('storeCheckoutSummary').textContent=storeBuildOrderText();
+ $('storeCheckoutOverlay').classList.add('open');
+}
+function storeSendOrder(channel){
+ const text=storeBuildOrderText();
+ $('storeCheckoutSummary').textContent=text;
+ if(channel==='whatsapp')window.open(`https://wa.me/?text=${encodeURIComponent(text)}`,'_blank');
+ else window.open(`mailto:?subject=${encodeURIComponent('Sinbad Marine Store — Sipariş Talebi')}&body=${encodeURIComponent(text)}`,'_blank');
+}
 
 $('saveVessel').onclick=()=>{const a=get('atlas_fleet');a.unshift({name:$('vName').value,type:$('vType').value,flag:$('vFlag').value,loa:$('vLoa').value,beam:$('vBeam').value,draft:$('vDraft').value,cruise:$('vCruise').value,fuel:$('vFuel').value,water:$('vWater').value,notes:$('vNotes').value});set('atlas_fleet',a);renderFleet()}
 function renderFleet(){const a=get('atlas_fleet');$('fleetList').innerHTML=a.map(v=>`<article class="record"><h3>${esc(v.name)}</h3><p>${esc(v.type)} • ${esc(v.flag)} • Draft ${esc(v.draft)} m</p></article>`).join('')||'<div class="empty">No vessel records.</div>'}
@@ -286,16 +352,27 @@ $('saveCrew').onclick=()=>{const a=get('atlas_crew');a.unshift({name:$('crewName
 function renderCrew(){const a=get('atlas_crew');$('crewList').innerHTML=a.map(c=>`<article class="record"><h3>${esc(c.name)}</h3><p>${esc(c.rank)} • ${esc(c.nationality)}</p></article>`).join('')||'<div class="empty">No crew records.</div>'}
 
 
-async function renderSummary(){const rows=await dbAll();$('sumFiles').textContent=rows.length;$('sumPubs').textContent=rows.filter(x=>x.folder==='Nautical Publications').length;$('sumCharts').textContent=rows.filter(x=>x.folder==='Nautical Charts').length;$('sumStorage').textContent=(rows.reduce((a,x)=>a+x.size,0)/1048576).toFixed(1)+' MB'}
-async function renderAll(){renderFleet();renderCrew();renderPilot();renderRoutes();await renderDocuments();await renderSummary()}
+async function renderSummary(){
+ if(cloudClient&&cloudSession?.user&&selectedWorkspaceId){
+  await refreshCloudSummary();
+  return;
+ }
+ const rows=await dbAll();
+ $('sumFiles').textContent=rows.length;
+ $('sumPubs').textContent=rows.filter(x=>x.folder==='Nautical Publications').length;
+ $('sumCharts').textContent=rows.filter(x=>x.folder==='Nautical Charts').length;
+ $('sumStorage').textContent=(rows.reduce((a,x)=>a+x.size,0)/1048576).toFixed(1)+' MB';
+}
+async function renderAll(){renderFleet();renderCrew();renderPilot();renderRoutes();renderResources();await renderDocuments();await renderSummary()}
 
 
 ['pilotSearch','countryFilter','typeFilter'].forEach(id=>$(id).addEventListener(id==='pilotSearch'?'input':'change',renderPilot));
 ['routeSearch','routeType','routeStatus'].forEach(id=>$(id).addEventListener(id==='routeSearch'?'input':'change',renderRoutes));
+['resourceSearch','resourceCategory','resourceRegion'].forEach(id=>$(id).addEventListener(id==='resourceSearch'?'input':'change',renderResources));
 
 
 document.addEventListener('DOMContentLoaded',async()=>{
- setupDocumentFilters();setupPilot();setupRoutes();
+ setupDocumentFilters();setupPilot();setupRoutes();setupResources();setupStore();
  try{
   await ensureDB();
   await renderAll();
@@ -1345,7 +1422,9 @@ function saveSinbadMessages(){
 }
 function sinbadVisualCards(visuals=[]){
   if(!Array.isArray(visuals)||!visuals.length)return '';
-  return `<div class="sinbad-source-visuals">${visuals.slice(0,3).map((visual,index)=>`
+  const safeAsset=/^(?:\.\/visual-library\/assets\/(?:bowditch\/(?:assets\/[a-f0-9]{64}\.[a-z0-9]+|fallback-pages\/volume-[12]-page-[0-9]+\.png)|nga-chart-no-1\/page-[0-9]{3}\.png|curated-safety\/(?:lifebuoy-scarborough|inflatable-life-raft-us-navy|sart-radar-transponder|fully-enclosed-lifeboat|life-jacket-inspection-uscg|epirb-ferry-vi|inflated-life-raft-us-navy-historic|marine-evacuation-life-raft-pod|mob-distress-marker-lights|rescue-boat-retrieval|immersion-suit-uscg|eebd-training-us-navy|helicopter-rescue-hoist|lifeboats-ready-to-launch|shipboard-firefighting-drill)\.jpg)|http:\/\/127\.0\.0\.1:31983\/visuals\/assets\/[a-f0-9]{64}\.webp)$/u;
+  return `<div class="sinbad-source-visuals">${visuals.slice(0,3).map((visual,index)=>safeAsset.test(visual.src||'')?`
+    <figure class="sinbad-answer-visual"><img src="${esc(visual.src)}" alt="${esc(visual.alt||'Official maritime visual')}" loading="lazy"><figcaption>${esc(visual.caption||'Official maritime visual')}</figcaption></figure>`:`
     <article class="sinbad-source-visual" data-visual-index="${index}">
       <div><strong>${esc(visual.title||'Atlas Cloud source')}</strong><small>${esc(visual.sourceId||'Source')} · page ${esc(visual.page)}</small></div>
       <button type="button" class="btn sinbad-open-source-visual" data-document-id="${esc(visual.documentId)}" data-page="${esc(visual.page)}" data-title="${esc(visual.title||'Atlas Cloud source')}">Kaynak sayfasını göster</button>
@@ -1444,6 +1523,7 @@ function openSinbadSourceDialog(sourceView){
   dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});dialog.addEventListener('close',()=>{dialog.remove();returnFocus?.focus?.();},{once:true});document.body.append(dialog);dialog.showModal();renderSinbadSourcePage(view);
 }
 async function openSinbadSourceVisual(button){
+  if(!roleCanAccessPrivateSources()){alert('Private source pages are restricted to the workspace Owner and explicitly authorized Developers.');return;}
   const documentId=button?.dataset?.documentId,pageNumber=Math.max(1,Number(button?.dataset?.page)||1);
   const card=button?.closest('.sinbad-source-visual'),stage=card?.querySelector('.sinbad-source-visual-stage');
   if(!documentId||!stage||!cloudClient||!selectedWorkspaceId)return;
@@ -1589,6 +1669,7 @@ let sinbadAcademyBoardQueue=[];
 let sinbadAcademyBoardInFlight=null;
 let sinbadAcademyBoardSequence=0;
 let sinbadAcademyReady=false;
+let sinbadProfessorNativeWindow=null;
 function openSinbadAcademyWindow(){
   if(sinbadAcademyNativeWindow&&!sinbadAcademyNativeWindow.closed){sinbadAcademyNativeWindow.focus();return sinbadAcademyNativeWindow;}
   const width=Math.max(900,screen.availWidth||1200),height=Math.max(650,screen.availHeight||800);
@@ -1619,6 +1700,20 @@ window.addEventListener('message',event=>{
   if(action.kind==='clear'&&action.value==='board'){sinbadLastAcademyBoardAction=null;sinbadPendingAcademyBoardCheck=null;sinbadLastAcademyBoardCheck=null;}else if(['shape','text'].includes(action.kind)&&typeof action.value==='string'&&action.value)sinbadLastAcademyBoardAction=Object.freeze({kind:action.kind,value:action.value.slice(0,200),...(action.kind==='shape'&&['small','standard','large'].includes(action.size)?{size:action.size}:{})});
   dispatchNextSinbadAcademyBoardPayload();
 });
+function openSinbadProfessorWindow(){
+  if(sinbadProfessorNativeWindow&&!sinbadProfessorNativeWindow.closed){sinbadProfessorNativeWindow.focus();return;}
+  const width=Math.max(1100,screen.availWidth||1400),height=Math.max(700,screen.availHeight||900);
+  sinbadProfessorNativeWindow=window.open('./academy-professor.html','sinbadProfessorWorkspace',`popup=yes,left=0,top=0,width=${width},height=${height},resizable=yes,scrollbars=yes`);
+  if(!sinbadProfessorNativeWindow){alert('Sinbad Professor penceresi engellendi. Bu site için açılır pencerelere izin verip yeniden deneyin.');return;}
+  sinbadProfessorNativeWindow.focus();
+}
+
+function openSinbadProfessorHandsFreeWindow(){
+  const width=Math.max(960,Math.min(screen.availWidth||1500,1680)),height=Math.max(680,Math.min(screen.availHeight||920,1040));
+  sinbadProfessorNativeWindow=window.open('./academy-professor-native.html','sinbadProfessorClassroom',`popup=yes,left=0,top=0,width=${width},height=${height},resizable=yes,scrollbars=yes`);
+  if(!sinbadProfessorNativeWindow){alert('Sinbad Professor penceresi tarayıcı tarafından engellendi. Bu site için açılır pencerelere izin verin.');return}
+  sinbadProfessorNativeWindow.focus();
+}
 function renderAcademyLesson(){
   const category=$('academyModule')?.value,lesson=window.SinbadAcademy?.lesson(category,window.SINBAD_TRAINING_DATA),output=$('academyOutput');
   if(!lesson||!output)return;
@@ -1801,7 +1896,8 @@ async function sendToSinbad(text){
   try{
     const answer=groundSinbadResponseToRequestedGesture(await sinbadLocalAnswer(effectiveQuestion));
     setSinbadThinkingStage('composing');
-    speakSinbad(answer,()=>addSinbadMessage('sinbad',answer,consumeSinbadSourceVisuals()));
+    const atlasVisuals=await window.SinbadVisuals?.select?.(effectiveQuestion,answer,{max:1})||[];
+    speakSinbad(answer,()=>addSinbadMessage('sinbad',answer,[...consumeSinbadSourceVisuals(),...atlasVisuals].slice(0,3)));
   }catch(error){
     console.error('Sinbad answer failed',error);
     const message=sinbadState.language==='tr-TR'?'Yanıt hazırlanırken güvenli biçimde durdum. Lütfen yeniden deneyin.':'I stopped safely while preparing the answer. Please try again.';
@@ -1867,6 +1963,7 @@ $('bridgeGpxFile')?.addEventListener('change',event=>importBridgeGpxFile(event.t
 $('syncSinbadMemory')?.addEventListener('click',syncSinbadOfflineMemory);
 addBridgeWaypoint({name:'Departure'});addBridgeWaypoint({name:'Destination'});checkBridgeStatus();setInterval(checkBridgeStatus,30000);
 $('openSinbadAcademyClassroom')?.addEventListener('click',openSinbadAcademyWindow);
+$('openSinbadProfessorWorkspace')?.addEventListener('click',openSinbadProfessorHandsFreeWindow);
 renderOfficialSources();
 setSinbadVoiceUI();
 setListeningUI();
@@ -2152,6 +2249,10 @@ async function diagnosePublicCloudConnection(){
     let detail='';
     try{detail=JSON.parse(raw)?.message||'';}catch(_error){}
     if(!response.ok)throw new Error(detail||`Supabase returned HTTP ${response.status}.`);
+    if(!cloudClient){
+      initCloudClient();
+      await restoreCloudSession();
+    }
     output.textContent='Atlas Cloud is reachable and ready. You may sign in.';
     output.className='auth-message success';
     return true;
@@ -2217,6 +2318,10 @@ async function cloudSignOut(){
 
 async function gatewaySignIn(){
   setAuthMessage('Signing in…');
+  if(!cloudClient){
+    initCloudClient();
+    await restoreCloudSession();
+  }
   if(!cloudClient){setAuthMessage('Atlas Cloud connection is not ready. Open Cloud Setup & Security and save the Project URL again.','error');return;}
   const email=$('gatewayEmail').value.trim();
   const password=$('gatewayPassword').value;
@@ -2392,6 +2497,10 @@ async function loadCurrentWorkspaceRole(){
 
 function roleCanManageLibrary(){
   return ['owner','administrator','captain'].includes(currentWorkspaceRole);
+}
+
+function roleCanAccessPrivateSources(){
+  return ['owner','developer'].includes(currentWorkspaceRole);
 }
 
 function roleCanManageMembers(){
@@ -2639,6 +2748,8 @@ function cloudAnswerPassesCoreGate(data,envelope){
 }
 let sinbadPendingSourceVisuals=[];
 function consumeSinbadSourceVisuals(){const visuals=sinbadPendingSourceVisuals;sinbadPendingSourceVisuals=[];return visuals;}
+function normalizeSinbadSourceName(value){return String(value||'').toLocaleLowerCase('tr-TR').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/\.(?:pdf|pptx?|docx?)$/i,'').replace(/[^a-z0-9çğıöşüа-яёء-ي]+/gi,' ').trim().replace(/\s+/g,' ');}
+function scoreSinbadSourceTitle(title,question,terms){const normalizedTitle=normalizeSinbadSourceName(title),normalizedQuestion=normalizeSinbadSourceName(question),exactNamedSource=normalizedTitle.length>=6&&normalizedQuestion.includes(normalizedTitle),termScore=terms.reduce((score,term)=>score+(normalizedTitle.includes(normalizeSinbadSourceName(term))?1:0),0);return {score:termScore+(exactNamedSource?1000:0),exactNamedSource};}
 async function sinbadCloudKnowledgeAnswer(question){
   sinbadPendingSourceVisuals=[];
   if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId)return null;
@@ -2680,7 +2791,9 @@ async function sinbadCloudKnowledgeAnswer(question){
       const {data,error}=await cloudClient.from('document_knowledge').select('id,title,classification').eq('workspace_id',selectedWorkspaceId).ilike('title',`%${term.replace(/[%_]/g,'')}%`).limit(6);
       if(error)throw error;if(data)titleRows.push(...data);
     }
-    const titleMatches=[...new Map(titleRows.map(row=>[row.id,row])).values()].slice(0,8);
+    const scoredTitleMatches=[...new Map(titleRows.map(row=>[row.id,row])).values()].map(row=>({row,...scoreSinbadSourceTitle(row.title,question,terms)})).sort((a,b)=>b.score-a.score||String(a.row.title).localeCompare(String(b.row.title)));
+    const exactNamedTitleMatches=scoredTitleMatches.filter(match=>match.exactNamedSource);
+    const titleMatches=(exactNamedTitleMatches.length?exactNamedTitleMatches:scoredTitleMatches).slice(0,8).map(match=>match.row);
     let data=[];
     if(titleMatches.length){
       const {data:chunks,error}=await cloudClient.from('document_knowledge_chunks').select('knowledge_id,content,chunk_index').in('knowledge_id',titleMatches.map(row=>row.id)).limit(500);
@@ -2693,7 +2806,7 @@ async function sinbadCloudKnowledgeAnswer(question){
       if(result.error)throw result.error;data=result.data||[];
     }
     if(!data.length){if(status)status.textContent='Atlas Cloud has no answer · trying offline brain';return null;}
-    const ranked=data.map(row=>({row,score:terms.reduce((n,t)=>n+(row.content.toLocaleLowerCase(language).includes(t)?1:0),0)})).sort((a,b)=>b.score-a.score).slice(0,4);
+    const ranked=data.map(row=>({row,score:scoreSinbadSourceTitle(row.document_knowledge.title,question,terms).score+terms.reduce((n,t)=>n+(row.content.toLocaleLowerCase(language).includes(t)?1:0),0)})).sort((a,b)=>b.score-a.score).slice(0,4);
     const excerpts=ranked.map(({row})=>{const lower=row.content.toLocaleLowerCase(language),positions=terms.map(t=>lower.indexOf(t)).filter(n=>n>=0),at=positions.length?Math.min(...positions):0;return `• ${row.document_knowledge.title} [${row.document_knowledge.classification}]\n${row.content.slice(Math.max(0,at-180),at+650).replace(/\s+/g,' ').trim()}`;});
     if(status)status.textContent='Classified cloud archive active';
     return `Relevant classified Atlas Cloud passages:\n\n${excerpts.join('\n\n')}\n\nVerify critical navigation and safety decisions against the original publication.`;
@@ -2742,6 +2855,10 @@ async function uploadCloudFiles(){
   $('cloudFileInput').value='';
 }
 async function loadCloudFiles(){
+  if(!roleCanAccessPrivateSources()){
+    $('cloudFileList').textContent='Private library source identities and original files are restricted to the workspace Owner and explicitly authorized Developers.';
+    return;
+  }
   if(!cloudClient || !selectedWorkspaceId)return;
   const bucket=$('cloudBucketSelect').value;
   const search=($('cloudFileSearch')?.value||'').trim();
@@ -2784,6 +2901,7 @@ async function repairCloudDocumentKnowledge(documentId,bucket,path,filename){
   }
 }
 async function openCloudFile(bucket,path,filename=''){
+  if(!roleCanAccessPrivateSources()){alert('Private source access is restricted to the workspace Owner and explicitly authorized Developers.');return;}
   if(bucket==='nautical-charts'){
     openWorkspace('enc-viewer');
     initEncViewer();
@@ -2822,6 +2940,7 @@ async function saveMemberRole(userId){
 
 
 async function downloadCloudFile(bucket,path,filename='atlas-file'){
+  if(!roleCanAccessPrivateSources()){alert('Private source downloads are restricted to the workspace Owner and explicitly authorized Developers.');return;}
   const {data,error}=await cloudClient.storage.from(bucket).download(path);
   if(error){alert(error.message);return;}
   const url=URL.createObjectURL(data);
@@ -2832,6 +2951,7 @@ async function downloadCloudFile(bucket,path,filename='atlas-file'){
 
 
 async function shareCloudFile(bucket,path,filename='atlas-file'){
+  if(!roleCanAccessPrivateSources()){alert('Private source sharing is restricted to the workspace Owner and explicitly authorized Developers.');return;}
   const {data,error}=await cloudClient.storage.from(bucket).createSignedUrl(path,600);
   if(error){alert(error.message);return;}
   if(navigator.share){

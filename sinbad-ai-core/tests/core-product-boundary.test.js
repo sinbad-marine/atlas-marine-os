@@ -12,6 +12,7 @@ function runtimeFiles(directory){
   for(const entry of fs.readdirSync(directory,{withFileTypes:true})){
     if(entry.name==='tests'||entry.name==='docs')continue;
     const target=path.join(directory,entry.name);
+    if(entry.isDirectory()&&path.relative(coreRoot,target).replaceAll('\\','/')==='visual-library/assets')continue;
     if(entry.isDirectory())files.push(...runtimeFiles(target));
     else if(entry.isFile()&&['.js','.cjs','.mjs','.json'].includes(path.extname(entry.name)))files.push(target);
   }

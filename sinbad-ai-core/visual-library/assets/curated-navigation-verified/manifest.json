@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "sinbad-curated-navigation/1",
+  "licensePolicy": "Only individually verified public-domain government photographs are included.",
+  "visuals": [
+    {
+      "id": "anchor-detail-preparation",
+      "file": "anchor-detail-preparation.webp",
+      "heading": "Sea and anchor detail - line handling",
+      "topics": ["sea and anchor detail", "line handling", "mooring lines", "forecastle", "halat manevrası", "demir hazırlığı"],
+      "sourceUrl": "https://www.dvidshub.net/image/9250519/uss-bainbridge-ddg-96-sea-and-anchor-detail",
+      "credit": "U.S. Navy photo by Mass Communication Specialist 3rd Class Cesar Licona",
+      "license": "Public domain - U.S. federal government work"
+    },
+    {
+      "id": "bridge-radar-console",
+      "file": "bridge-radar-console.webp",
+      "heading": "AN/SPA-25G radar console on a ship bridge",
+      "topics": ["marine radar", "radar console", "bridge equipment", "radar ekranı", "gemi radarı"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:US_Navy_050425-N-5373B-006_Operations_Specialist_3rd_Class_Michelle_Orello_mans_an_AN-SPA-25G_Radar_Console_on_the_bridge_aboard_the_amphibious_assault_ship_USS_Iwo_Jima_(LHD_7).jpg",
+      "credit": "U.S. Navy photo by Photographer's Mate 3rd Class Shannon D. Barnwell",
+      "license": "Public domain - U.S. federal government work"
+    },
+    {
+      "id": "sextant-sun-sight",
+      "file": "sextant-sun-sight.webp",
+      "heading": "Navigator taking a sextant sight",
+      "topics": ["sextant", "sun sight", "celestial navigation", "sekstant", "güneş rasadı"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Category:People_with_sextants",
+      "credit": "U.S. Navy photo by Photographer's Mate 2nd Class Angela M. Virnig, VIRIN 030212-N-5786V-501",
+      "license": "Public domain - U.S. federal government work"
+    },
+    {
+      "id": "bridge-to-bridge-communications",
+      "file": "bridge-to-bridge-communications.webp",
+      "heading": "Bridge-to-bridge communications watch",
+      "topics": ["bridge-to-bridge communications", "pilot house", "radio watch", "köprüüstü haberleşme", "telsiz vardiyası"],
+      "sourceUrl": "https://www.dvidshub.net/image/6853850/sailor-utilizes-bridge-bridge-communications",
+      "credit": "U.S. Navy photo by Mass Communication Specialist 2nd Class John Bellino, VIRIN 210921-N-PC065-1001",
+      "license": "Public domain - U.S. federal government work"
+    },
+    {
+      "id": "magnetic-compass-binnacle",
+      "file": "magnetic-compass-binnacle.webp",
+      "heading": "Ship magnetic compass binnacle",
+      "topics": ["magnetic compass", "binnacle", "compass card", "quadrantal spheres", "manyetik pusula", "pusula dolabı"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Compass_binnacle_from_SS_Kerimoana,_made_by_Dobbie,_McInnes_and_Clyde_Ltd_of_Glasgow_-_Wellington_Museum_-_Wellington,_NZ_-_DSC09915.jpg",
+      "credit": "Photograph by Daderot, Wellington Museum",
+      "license": "CC0 1.0 public-domain dedication"
+    },
+    {
+      "id": "integrated-navigation-bridge",
+      "file": "integrated-navigation-bridge.webp",
+      "heading": "Integrated ship navigation bridge with radar and ECDIS consoles",
+      "topics": ["integrated navigation bridge", "ECDIS console", "electronic chart display", "bridge console", "entegre köprüüstü", "ECDIS ekranı", "elektronik harita konsolu"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Conti_Peridot_bridge.jpg",
+      "credit": "National Transportation Safety Board photograph of the Conti Peridot bridge",
+      "license": "Public domain - U.S. federal government NTSB work"
+    },
+    {
+      "id": "ais-ship-tracking-display",
+      "file": "ais-ship-tracking-display.webp",
+      "heading": "AIS ship-tracking display",
+      "topics": ["AIS display", "automatic identification system", "ship tracking", "vessel traffic", "AIS ekranı", "otomatik tanımlama sistemi", "gemi trafik ekranı"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:AIS_ship_tracking.jpg",
+      "credit": "OpenSeaMap and MarineTraffic AIS display, uploaded by Markus Bärlocher",
+      "license": "CC0 1.0 public-domain dedication"
+    },
+    {
+      "id": "gyrocompass-bearing-operation",
+      "file": "gyrocompass-bearing-operation.webp",
+      "heading": "Navigator taking a bearing with a gyrocompass repeater",
+      "topics": ["gyrocompass", "gyrocompass repeater", "bearing circle", "bearing observation", "cayro pusula", "cayro tekrarlayıcı", "kerteriz alma"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:US_Navy_091002-N-0807W-006_Quartermaster_Seaman_Ricky_C._Rodriguez_uses_a_gyrocompass_during_sea_and_anchor_detail_aboard_the_amphibious_dock_landing_ship_USS_Harpers_Ferry_(LSD_49).jpg",
+      "credit": "U.S. Navy photo by Mass Communication Specialist 2nd Class Joshua J. Wahl, VIRIN 091002-N-0807W-006",
+      "license": "Public domain - U.S. federal government work"
+    }
+  ]
+}

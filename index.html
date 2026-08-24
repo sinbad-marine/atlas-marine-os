@@ -115,14 +115,17 @@
       <h2 data-i18n="heroTitle">One Bridge. Every Operation.</h2>
       <p>Private cloud documents, nautical publications, charts, crew records and Captain Sinbad—available from every authorized device.</p>
     </div>
-  <div class="hero-actions">
-    <button class="btn primary" data-open="cloud-documents">Upload to Atlas Cloud</button>
-    <button class="btn" data-open="cloud-control">Cloud Setup & Security</button>
-    <button class="btn" data-open="sinbad">Ask Captain Sinbad</button>
-    <button class="btn" data-open="location-intelligence">Use Location</button>
-    <button class="btn" data-open="camera-archive">Open Camera</button>
-    <button class="btn primary" data-open="captains-logbook">Captain's Logbook</button>
-  </div>
+  <details class="action-menu hero-action-menu">
+    <summary><span aria-hidden="true">☰</span> Quick actions</summary>
+    <div class="action-menu-panel hero-actions">
+      <button class="btn primary" data-open="cloud-documents">Upload to Atlas Cloud</button>
+      <button class="btn" data-open="cloud-control">Cloud Setup &amp; Security</button>
+      <button class="btn" data-open="sinbad">Ask Captain Sinbad</button>
+      <button class="btn" data-open="location-intelligence">Use Location</button>
+      <button class="btn" data-open="camera-archive">Open Camera</button>
+      <button class="btn primary" data-open="captains-logbook">Captain's Logbook</button>
+    </div>
+  </details>
 </section>
 
 
@@ -138,15 +141,20 @@
 </section>
 
 
-<section class="summary-grid">
-  <article class="summary-card"><span>Cloud Files</span><b id="sumFiles">—</b></article>
-  <article class="summary-card"><span>Publications</span><b id="sumPubs">—</b></article>
-  <article class="summary-card"><span>Charts</span><b id="sumCharts">—</b></article>
-  <article class="summary-card"><span>Cloud Storage</span><b id="sumStorage">—</b></article>
-</section>
+<details class="action-menu cloud-summary-menu">
+  <summary><span aria-hidden="true">☰</span> Atlas Cloud summary</summary>
+  <section class="summary-grid action-menu-panel" aria-label="Atlas Cloud summary">
+    <article class="summary-card"><span>Cloud Files</span><b id="sumFiles">—</b></article>
+    <article class="summary-card"><span>Publications</span><b id="sumPubs">—</b></article>
+    <article class="summary-card"><span>Charts</span><b id="sumCharts">—</b></article>
+    <article class="summary-card"><span>Cloud Storage</span><b id="sumStorage">—</b></article>
+  </section>
+</details>
 
 
 <section class="module-grid">
+  <article class="module-card" data-open="resources"><div>🏝️</div><h3>Blue Voyage Resource Guide</h3><p>Islands, historical sites, entertainment spots, marinas, fuel docks and harbour master's offices.</p><a>Open →</a></article>
+  <article class="module-card featured-card" data-open="store"><div>🛍️</div><h3>Sinbad Marine Store</h3><p>Yacht chandlery — navigation, safety and deck equipment, curated and ready to order.</p><a>Open store →</a></article>
   <article class="module-card featured-card" data-open="cloud-documents"><div>☁️</div><h3>Cloud Document Center</h3><p>Upload, open, download, share, rename and manage private files across devices.</p><a>Open cloud vault →</a></article>
   <article class="module-card" data-cloud-bucket="nautical-charts"><div>🗺️</div><h3>Nautical Charts</h3><p>Private chart archive organized by country, region and chart number.</p><a>Open cloud charts →</a></article>
   <article class="module-card" data-open="sinbad"><div>🧞‍♂️</div><h3>Captain Sinbad</h3><p>Ask questions across the owner-approved Atlas Cloud maritime corpus with grounded citations.</p><a>Open Sinbad →</a></article>
@@ -470,12 +478,15 @@
         <span></span><span></span><span></span>
         <em>Sinbad is thinking…</em>
       </div>
-      <div class="quick-prompts">
-        <button type="button" class="btn sinbad-prompt">Search SOLAS</button>
-        <button type="button" class="btn sinbad-prompt">Show my charts</button>
-        <button type="button" class="btn sinbad-prompt">Review crew expiries</button>
-        <button type="button" class="btn sinbad-prompt">Create passage checklist</button>
-      </div>
+      <details class="action-menu sinbad-tools-menu">
+        <summary><span aria-hidden="true">☰</span> Sinbad tools</summary>
+        <div class="quick-prompts action-menu-panel">
+          <button type="button" class="btn sinbad-prompt">Search SOLAS</button>
+          <button type="button" class="btn sinbad-prompt">Show my charts</button>
+          <button type="button" class="btn sinbad-prompt">Review crew expiries</button>
+          <button type="button" class="btn sinbad-prompt">Create passage checklist</button>
+        </div>
+      </details>
       <div class="sinbad-voice-toolbar" aria-label="Voice controls">
         <label>Answer language
           <select id="sinbadLanguage" aria-label="Sinbad answer language">
@@ -560,7 +571,7 @@
       <section class="sinbad-workspace-panel" id="sinbad-panel-academy" role="tabpanel" aria-labelledby="sinbad-tab-academy" data-sinbad-panel="academy" hidden>
       <section class="academy-launch-card" aria-labelledby="academyLaunchTitle">
         <div><strong id="academyLaunchTitle">🎓 Sinbad Navigation Academy</strong><p>Open Sinbad’s resizable classroom in a separate workspace window.</p></div>
-        <button type="button" class="btn primary" id="openSinbadAcademyClassroom">Open classroom</button>
+        <div class="academy-actions"><button type="button" class="btn primary" id="openSinbadAcademyClassroom">Open classroom</button><button type="button" class="btn" id="openSinbadProfessorWorkspace">Open Professor · Hands-free Beta</button></div>
       </section>
       </section>
     </div>
@@ -778,6 +789,70 @@
 </section>
 
 
+<section id="resources" class="workspace">
+  <div class="workspace-head"><div><h2>Blue Voyage Resource Guide</h2><p>Islands, historical sites, entertainment spots, marinas, fuel stations and harbour master's offices along the Turkish Aegean &amp; Mediterranean coast. Always verify contact details, VHF channels and access rules before relying on them operationally.</p></div><button class="btn close">Close</button></div>
+  <div class="filter-grid"><input id="resourceSearch" placeholder="Search"><select id="resourceCategory"><option value="">All categories</option></select><select id="resourceRegion"><option value="">All regions</option></select></div>
+  <div id="resourceGrid" class="content-grid"></div>
+</section>
+
+<section id="store" class="workspace">
+  <div class="workspace-head"><div><h2>Sinbad Marine Store</h2><p>Yacht chandlery, curated.</p></div><button class="btn close">Close</button></div>
+
+  <div class="store-hero">
+    <span class="store-hero-eyebrow">Sinbad Marine Store</span>
+    <h2>Denizcinin İhtiyaç Duyduğu Her Şey — Kaptan Kalitesiyle Seçildi</h2>
+    <p>Seyir, güvenlik ve güverte ekipmanları — kaptan gözünden değerlendirilmiş, kaliteli tedarikçilerden. Bu, mağazamızın ilk sürümü; katalog büyümeye devam ediyor.</p>
+    <div class="store-hero-badges">
+      <span class="store-hero-badge">⚓ Kaptan onaylı seçki</span>
+      <span class="store-hero-badge">🚚 Tedarikçi güvencesiyle sevkiyat</span>
+      <span class="store-hero-badge">💬 Kişisel sipariş desteği</span>
+    </div>
+  </div>
+
+  <div class="store-notice">Bu mağaza pilot/deneme aşamasındadır. Fiyatlar tedarikçiden alınan güncel referanslardır ve sipariş onayında teyit edilir. Sipariş verdiğinizde ödeme talimatları ekibimiz tarafından ayrıca iletilir.</div>
+
+  <div class="store-toolbar">
+    <div class="store-categories" id="storeCategories"></div>
+    <input id="storeSearch" class="store-search" type="search" placeholder="Ürün ara…">
+  </div>
+
+  <div id="storeResultCount" class="store-result-count" aria-live="polite"></div>
+
+  <div id="storeGrid" class="store-grid"></div>
+</section>
+
+<button id="storeCartFab" class="store-cart-fab" type="button"><span>🛒</span><span>Sepet</span><span class="store-cart-count" id="storeCartCount">0</span></button>
+
+<div class="store-cart-overlay" id="storeCartOverlay"></div>
+<aside class="store-cart-drawer" id="storeCartDrawer">
+  <div class="store-cart-head"><h3>Sepetiniz</h3><button class="btn compact" id="storeCartClose" type="button">Kapat</button></div>
+  <div class="store-cart-items" id="storeCartItems"></div>
+  <div class="store-cart-foot">
+    <div class="store-cart-subtotal"><span>Fiyatlı Ürünler Toplamı</span><b id="storeCartSubtotal">₺0,00</b></div>
+    <button class="btn primary" id="storeCheckoutBtn" type="button" style="width:100%">Siparişi Tamamla</button>
+  </div>
+</aside>
+
+<div class="store-checkout-overlay" id="storeCheckoutOverlay">
+  <div class="store-checkout-modal">
+    <h3>Sipariş Bilgileri</h3>
+    <p>Bilgilerinizi girin — sipariş özetini WhatsApp veya e-posta ile ekibimize iletebilirsiniz. Ödeme, sipariş onayından sonra ayrıca düzenlenecektir.</p>
+    <div class="store-checkout-grid">
+      <label>Ad Soyad<input id="storeName" placeholder="Ad Soyad"></label>
+      <label>Telefon<input id="storePhone" placeholder="05xx xxx xx xx"></label>
+      <label class="wide">E-posta<input id="storeEmail" type="email" placeholder="ornek@eposta.com"></label>
+      <label class="wide">Teslimat / Yat &amp; Marina Bilgisi<input id="storeDelivery" placeholder="Marina, tekne adı veya teslimat adresi"></label>
+      <label class="wide">Sipariş Notu<textarea id="storeNote" placeholder="Varsa ölçü, renk, teslim tarihi gibi notlarınız"></textarea></label>
+    </div>
+    <div class="store-checkout-summary" id="storeCheckoutSummary"></div>
+    <div class="store-checkout-actions">
+      <button class="btn primary" id="storeSendWhatsapp" type="button">📱 WhatsApp ile Gönder</button>
+      <button class="btn" id="storeSendEmail" type="button">✉️ E-posta ile Gönder</button>
+    </div>
+    <button class="btn" id="storeCheckoutClose" type="button" style="width:100%;margin-top:10px">Vazgeç</button>
+  </div>
+</div>
+
 <section id="crew" class="workspace">
   <div class="workspace-head"><div><h2>Crew Manager</h2><p>Personnel and expiry tracking.</p></div><button class="btn close">Close</button></div>
   <div class="form-grid">
@@ -805,9 +880,12 @@
 
 <script src="./pilot-data.js?v=8161"></script>
 <script src="./route-data.js?v=8162"></script>
+<script src="./resource-data.js?v=8210"></script>
+<script src="./store-data.js?v=8230"></script>
 <script src="./official-publications.js?v=8162"></script>
 <script src="./supabase/functions/sinbad-answer/core-decision.js?v=82029"></script>
 <script src="./sinbad-core.js?v=82029"></script>
+<script src="./sinbad-visuals.js?v=8231"></script>
 <script src="./sinbad-training-data.js?v=8180"></script>
 <script src="./sinbad-academy.js?v=8180"></script>
 <script src="./vendor/supabase-2.112.3.js"></script>

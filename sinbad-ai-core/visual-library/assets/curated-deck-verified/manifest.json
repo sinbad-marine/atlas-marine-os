@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "sinbad-curated-deck/1",
+  "licensePolicy": "Only individually verified open-licence photographs are included.",
+  "visuals": [
+    {
+      "id": "anchor-windlass", "file": "anchor-windlass.webp",
+      "heading": "Mechanical anchor windlass on the sailing ship Ted Ashby",
+      "topics": ["anchor windlass", "anchor machinery", "wildcat", "demir ırgatı", "zincir ırgatı", "demir makinesi"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ted_Ashby_anchor_windlass.jpg",
+      "credit": "Photograph by SydneyBridgeUpsideDown", "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/"
+    },
+    {
+      "id": "mooring-winch", "file": "mooring-winch.webp",
+      "heading": "Ship mooring winch operated at the brake handwheel",
+      "topics": ["mooring winch", "warping drum", "winch brake", "bağlama vinci", "halat vinci", "ırgat freni"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Nipponmaru_20200114_084643.jpg",
+      "credit": "Photograph by Ka23 13", "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+    },
+    {
+      "id": "ship-bitts", "file": "ship-bitts.webp",
+      "heading": "Mooring line secured around shipboard bitts",
+      "topics": ["ship bitts", "mooring bitts", "mooring line", "gemi babası", "bağlama babası", "halat volta"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Lashing_on_bollard_on_the_ship_Gunnar_Thorson.jpg",
+      "credit": "Photograph by W.carter", "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+    },
+    {
+      "id": "adjustable-fairlead", "file": "fairlead.webp",
+      "heading": "Adjustable sailboat fairlead guiding a sheet toward a winch",
+      "topics": ["adjustable fairlead", "sheet lead", "sailboat fairlead", "ayarlanabilir kurtağzı", "halat kılavuzu", "iskota arabası"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Fairlead_to_winch_on_sailboat.jpg",
+      "credit": "Photograph by Anaphi61", "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+    }
+  ]
+}

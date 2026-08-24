@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "sinbad-curated-lighthouse/1",
+  "licensePolicy": "Only individually verified open-licence photographs are included.",
+  "visuals": [
+    {
+      "id": "harbor-lighthouse",
+      "file": "harbor-lighthouse.webp",
+      "heading": "Red and white harbor lighthouse at Saint-Martin-de-Re",
+      "topics": ["lighthouse", "harbor light", "navigation light", "deniz feneri", "liman feneri", "seyir feneri"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Lighthouse,_harbor_Saint-Martin-de-R%C3%A9,_R%C3%A9_island,_Charente-Maritime,_France.jpg",
+      "credit": "Photograph by Jebulon",
+      "license": "CC0 1.0 public-domain dedication"
+    },
+    {
+      "id": "lighthouse-optics",
+      "file": "lighthouse-optics.webp",
+      "heading": "Lighthouse optical reflector and lens assembly",
+      "topics": ["lighthouse lens", "lighthouse optics", "reflector", "Fresnel lens", "deniz feneri merceği", "fener optiği", "reflektör"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Lighthouse-mirrors_glass_pic46.JPG",
+      "credit": "Photograph by Alf van Beem",
+      "license": "CC0 1.0 public-domain dedication"
+    },
+    {
+      "id": "lightship-carpentaria",
+      "file": "lightship-carpentaria.webp",
+      "heading": "Carpentaria historic lightship at the Australian National Maritime Museum",
+      "topics": ["lightship", "floating lighthouse", "navigation beacon ship", "fener gemisi", "yüzer deniz feneri"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Light_Ship_Carpentaria_at_National_Maritime_Museum_Sydney.jpg",
+      "credit": "Photograph by Jettthedog",
+      "license": "CC0 1.0 public-domain dedication"
+    }
+  ]
+}

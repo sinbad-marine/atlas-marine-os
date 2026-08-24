@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Sinbad Professor — Hands-free Dialogue</title>
+  <link rel="stylesheet" href="./academy-professor.css?v=82020">
+  <link rel="stylesheet" href="./academy-professor-guidance.css?v=82020">
+  <link rel="stylesheet" href="./academy-professor-handsfree.css?v=82020">
+</head>
+<body>
+  <main class="professor-shell">
+    <header><div><span>⚓ SINBAD MARINE ACADEMY</span><h1>Professor Workspace <small>Hands-free Beta</small></h1></div><p>Frozen Phase 1–2 preserved · conversation control remains on this device</p></header>
+    <section class="handsfree-console" aria-labelledby="handsfreeTitle">
+      <div><span>LIVE DIALOGUE</span><strong id="handsfreeTitle">Eller serbest konuşma</strong><p id="handsfreeStatus" role="status" aria-live="polite">Kapalı — başlatmak için düğmeye basın.</p></div>
+      <button id="toggleHandsFree" type="button" aria-pressed="false">🎧 Eller serbest: Kapalı</button>
+      <small>Mikrofon yalnızca mod açıkken dinler. Ses kaydı saklanmaz. Sinbad konuşurken araya girmek için “Sinbad…” diye başlayın; anlatımı durdurup sorunuzu dinler.</small>
+    </section>
+    <section class="adaptive-coach" id="adaptiveCoach" aria-live="polite">
+      <div><span>PROFESSOR GUIDANCE</span><strong id="coachNextLesson">Complete an assessment first</strong><p id="coachReason">Recommendations use only explicit learner feedback and recorded assessment evidence.</p></div>
+      <button id="coachOpenRecommended" type="button" disabled>Open recommended lesson</button>
+    </section>
+    <section class="professor-grid">
+      <iframe id="phaseOneClassroom" src="./academy.html" title="Sinbad Academy live classroom" allow="microphone"></iframe>
+      <aside>
+        <div class="identity"><label for="learnerName">Student name</label><div><input id="learnerName" maxlength="80" value="Captain"><button id="saveLearnerName" type="button">Save</button></div><small>Stored only in this browser.</small></div>
+        <section class="profile-backup"><h2>Private progress backup</h2><div><button id="exportProfile" type="button">Download backup</button><label class="import-button">Restore backup<input id="importProfile" type="file" accept="application/json,.json"></label></div><small id="profileBackupStatus">No chat, voice or document content is included.</small></section>
+        <section class="summary"><h2>Learning profile</h2><dl><div><dt>Current level</dt><dd id="learnerLevel">Foundation</dd></div><div><dt>Evidence</dt><dd id="learnerEvidence">0</dd></div><div><dt>Priority</dt><dd id="learnerPriority">Not assessed</dd></div><div><dt>Strongest</dt><dd id="learnerStrongest">Not assessed</dd></div></dl></section>
+        <section class="chat-reflection" id="chatReflection" hidden><h2>Lesson reflection</h2><p id="reflectionPrompt"></p><div><button id="reflectionUnderstood" type="button">I understood</button><button id="reflectionReview" type="button">Review needed</button></div><small>Sinbad records progress only after your explicit choice.</small></section>
+        <section class="reflection-check" id="reflectionCheck" hidden><h2>Check your understanding</h2><p id="reflectionCheckStatus">Answer one short question. Only this answer can change topic mastery.</p><strong id="reflectionCheckQuestion"></strong><div class="reflection-check-choices" id="reflectionCheckChoices"></div></section>
+        <section class="diagnostic"><h2>Initial diagnostic</h2><p id="diagnosticStatus">Six short questions establish a first learning baseline.</p><button id="startDiagnostic" type="button">Start diagnostic</button><div id="diagnosticQuestion" hidden></div></section>
+        <section><h2>Topic readiness</h2><div id="masteryList" class="mastery-list"></div></section>
+        <section><h2>Personal study plan</h2><ol id="studyPlan" class="study-plan"></ol></section>
+        <section><h2>Spaced review</h2><div id="reviewSchedule" class="review-schedule"></div></section>
+        <section class="progress-report"><h2>Transparent progress report</h2><dl><div><dt>Overall mastery</dt><dd id="reportMastery">0%</dd></div><div><dt>Topics assessed</dt><dd id="reportCoverage">0 / 6</dd></div><div><dt>Evidence records</dt><dd id="reportEvidence">0</dd></div></dl><button id="downloadProgressReport" type="button">Download report</button><small>Learning progress only — not a certificate or competency endorsement. Current topics are temporary Beta headings, not the final curriculum.</small></section>
+        <section class="evidence-ledger"><h2>Why did my profile change?</h2><div id="evidenceLedger" class="evidence-ledger-list"></div><button id="resetLearnerProfile" class="danger-button" type="button">Reset my local learning profile</button><small id="resetProfileStatus">Only the local learner profile is affected. Chats, source documents and the Atlas library are not stored here.</small></section>
+        <section class="recommendation"><h2>Recommended next lesson</h2><strong id="nextLesson">Complete a guided question first</strong><button id="openRecommended" type="button" disabled>Open in classroom</button></section>
+        <p class="privacy">No chat transcript, voice recording or source document is copied into the learner model.</p>
+      </aside>
+    </section>
+  </main>
+  <script src="./sinbad-professor.js?v=82019"></script>
+  <script src="./academy-professor.js?v=82019"></script>
+  <script src="./academy-professor-handsfree.js?v=82020"></script>
+</body>
+</html>

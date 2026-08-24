@@ -1,0 +1,44 @@
+{
+  "record": "sinbad-professor-phase-2-reality-check/v1",
+  "createdAt": "2026-08-23",
+  "scope": "Adaptive Professor layer composed around the frozen Phase 1 classroom",
+  "decision": "GO_FOR_FREEZE_REVIEW",
+  "freezeApplied": false,
+  "capabilities": [
+    {"id": "separate-professor-window", "status": "working", "note": "A separately resizable browser window opens the Professor workspace."},
+    {"id": "frozen-phase-1-composition", "status": "working", "note": "The Phase 1 classroom is embedded without modifying its frozen files."},
+    {"id": "local-learner-profile", "status": "working", "note": "Bounded progress data is stored locally; chats, voice and source documents are excluded."},
+    {"id": "optional-diagnostic", "status": "working", "note": "Six bounded questions establish an initial evidence baseline."},
+    {"id": "prerequisite-study-plan", "status": "working", "note": "Recommendations are deterministic and prerequisite-aware."},
+    {"id": "completed-answer-reflection", "status": "working", "note": "Reflection appears only after a completed Sinbad answer, never after a safe stop."},
+    {"id": "observation-vs-mastery", "status": "working", "note": "Lesson opening and self-report do not change mastery; answered checks can."},
+    {"id": "knowledge-check", "status": "working", "note": "Explicit reflection is followed by a topic-linked question before mastery changes."},
+    {"id": "evidence-only-spaced-review", "status": "working", "note": "Only assessed topics enter the review schedule; due reviews are actionable."},
+    {"id": "private-backup-restore", "status": "working", "note": "The bounded local learner contract can be exported and strictly restored."},
+    {"id": "evidence-ledger-local-reset", "status": "working", "note": "Learners can inspect mastery impact and explicitly reset only local progress."},
+    {"id": "release-accessibility-gate", "status": "working", "note": "Desktop and mobile browser tests include console, mojibake and WCAG A/AA checks."},
+    {"id": "live-model-answer-and-source-visuals", "status": "partial", "note": "Inherited from Phase 1 and requires a valid Atlas/Supabase session, workspace and deployed Edge Function."}
+  ],
+  "explicitExclusions": [
+    "Final maritime curriculum and final topic taxonomy",
+    "Certification, licensing or competency endorsement",
+    "Cloud-synchronized learner profiles",
+    "Automated mastery inference from chat text, voice, facial expression or lesson opening",
+    "3D rigged embodied instructor and improvisational gesture engine",
+    "Replacement for an approved instructor, simulator, official publication or operational decision process"
+  ],
+  "frozenPhase1Dependency": "professor-phase-1-freeze.json",
+  "candidateFiles": {
+    "academy-professor.html": "97bd5fdee8b5ab34b48b9316e059648d9f848133b31cadcb66d1e9fbc03f3ff4",
+    "academy-professor.css": "96ae6c21a736ae99680b8205f5eb44071a3362da4192b95dd3e48bb8b22a8ef4",
+    "academy-professor-guidance.css": "439bf3ce1e0876d6cf3f58e20412a9ccaeab5f092f4fb28ae8d25c7fbf2d38d0",
+    "academy-professor.js": "ffab18d2bf0bd1478fed209d8d0d46ab28131dbeeca717347cadc67bb91fd223",
+    "sinbad-professor.js": "e5da5b8f8d440357a38b736f8f4a150d207369474216bf2fdb5958f502531b4c"
+  },
+  "testEvidence": [
+    "tests/sinbad-professor.test.js",
+    "tests/sinbad-professor-ui.test.js",
+    "tests/browser/release-quality.spec.js",
+    "tests/professor-phase-1-freeze.test.js"
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "sinbad-curated-aids/1",
+  "licensePolicy": "Only individually verified open-licence photographs are included.",
+  "visuals": [
+    {
+      "id": "cardinal-buoys-deployment",
+      "file": "cardinal-buoys-deployment.webp",
+      "heading": "North and west cardinal buoys awaiting deployment",
+      "topics": ["cardinal buoy", "north cardinal mark", "west cardinal mark", "topmark", "kardinal şamandıra", "kuzey kardinal", "batı kardinal", "tepelik"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cardinal_buoys_waiting_for_deployment_on_Phares_et_Balises_parking.jpg",
+      "credit": "Photograph by PtiBzh",
+      "license": "CC0 1.0 public-domain dedication"
+    },
+    {
+      "id": "south-cardinal-buoy",
+      "file": "south-cardinal-buoy.webp",
+      "heading": "South cardinal light and whistle buoy in service",
+      "topics": ["south cardinal buoy", "south cardinal mark", "light buoy", "whistle buoy", "güney kardinal şamandıra", "güney kardinal işareti", "ışıklı şamandıra", "düdüklü şamandıra"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:South_Cardinal_light_and_whistle_buoy_off_of_South_Racheal_Island.jpg",
+      "credit": "Photograph by Extemporalist",
+      "license": "CC0 1.0 public-domain dedication"
+    },
+    {
+      "id": "port-hand-lateral-buoy",
+      "file": "port-hand-lateral-buoy.webp",
+      "heading": "Red port-hand lateral buoy in IALA Region A",
+      "topics": ["port hand buoy", "port lateral mark", "IALA A", "red buoy", "iskele şamandırası", "iskele lateral işareti", "kırmızı şamandıra"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Lateral_Buoy.jpg",
+      "credit": "Photograph by Astielau",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+    },
+    {
+      "id": "starboard-hand-lateral-buoy",
+      "file": "starboard-hand-lateral-buoy.webp",
+      "heading": "Green starboard-hand lateral buoy with conical topmark in IALA Region A",
+      "topics": ["starboard hand buoy", "starboard lateral mark", "IALA A", "green buoy", "sancak şamandırası", "sancak lateral işareti", "yeşil şamandıra"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Starboard_Hand_Buoy_in_the_approaches_to_Port_Qasim,_07.06.2021.jpg",
+      "credit": "Photograph by VileGecko",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+    },
+    {
+      "id": "safe-water-mark",
+      "file": "safe-water-mark.webp",
+      "heading": "Red-and-white safe-water mark with spherical topmark",
+      "topics": ["safe water mark", "fairway buoy", "mid-channel mark", "emniyetli su işareti", "güvenli su şamandırası", "orta kanal şamandırası"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Limfjord_safe_water_mark.jpg",
+      "credit": "Photograph by Paul Fox",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/"
+    },
+    {
+      "id": "isolated-danger-mark",
+      "file": "isolated-danger-mark.webp",
+      "heading": "Isolated-danger beacon with red-black bands and two black sphere topmarks",
+      "topics": ["isolated danger mark", "isolated danger beacon", "two black spheres", "izole tehlike işareti", "münferit tehlike işareti", "iki siyah küre"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Hjordis_Lighted_Beacon,_Blakeney_NNR_(geograph_2580903).jpg",
+      "credit": "Photograph by Julian Dowse",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/"
+    }
+  ]
+}

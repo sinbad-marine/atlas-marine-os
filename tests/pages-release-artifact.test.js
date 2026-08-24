@@ -22,6 +22,7 @@ test('builds an allowlisted hash-bound Pages artifact without private surfaces',
     assert.equal(bytes.length,entry.bytes,entry.path);
     assert.equal(hash(bytes),entry.sha256,entry.path);
   }
+  for(const required of ['sinbad-tutor-orchestrator.js','sinbad-tutor-controller.js'])assert.ok(result.files.some(entry=>entry.path===required),required);
   for(const forbidden of ['bridge','sinbad-ai-core','tests','.git','.roundtable','supabase/.temp'])assert.equal(fs.existsSync(path.join(target,...forbidden.split('/'))),false,forbidden);
 });
 

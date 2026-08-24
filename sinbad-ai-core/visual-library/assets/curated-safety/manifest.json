@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "sinbad-curated-safety-visuals/1",
+  "collection": "Verified maritime safety photographs",
+  "visuals": [
+    {
+      "file": "lifebuoy-scarborough.jpg",
+      "sha256": "a8f4b84c1ca499755f5005cf0ba3174bbcc5d9eadfca849c9c691cc135837141",
+      "width": 3840,
+      "height": 2160,
+      "contentClass": "photograph",
+      "qualityStatus": "approved",
+      "negativeTraits": [],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Scarborough_Harbour_Lifebuoy.jpg",
+      "occurrences": [
+        {
+          "pdfPage": 1,
+          "headings": ["Can simidi (lifebuoy)"],
+          "topics": ["lifebuoy", "life buoy", "life ring", "can simidi", "can simit", "man overboard", "rescue equipment"],
+          "context": "Gerçek can simidi fotoğrafı. Scarborough Harbour; Partonez; CC BY-SA 4.0.",
+          "sourceLabel": "Wikimedia Commons · CC BY-SA 4.0"
+        }
+      ]
+    },
+    {
+      "file": "inflatable-life-raft-us-navy.jpg",
+      "sha256": "88053bb4876ffc0219dab3a9be59d42434641804083ae10cc4fc1b6738d01811",
+      "width": 3000,
+      "height": 2016,
+      "contentClass": "photograph",
+      "qualityStatus": "approved",
+      "negativeTraits": [],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Inflating_a_life_raft_120406-N-NB694-014.jpg",
+      "occurrences": [
+        {
+          "pdfPage": 1,
+          "headings": ["Şişirilebilir can salı (inflatable liferaft)"],
+          "topics": ["liferaft", "life raft", "inflatable life raft", "can salı", "şişme can salı", "survival craft", "rescue equipment"],
+          "context": "Gerçek şişirilebilir can salı fotoğrafı. Official U.S. Navy photograph 120406-N-NB694-014; United States public domain.",
+          "sourceLabel": "U.S. Navy · public domain"
+        }
+      ]
+    },
+    {
+      "file": "sart-radar-transponder.jpg",
+      "sha256": "85d252226c12b158318542914efc4ca2406665177b77febfe320f60f39c5e0a8",
+      "width": 1024,
+      "height": 2444,
+      "contentClass": "photograph",
+      "qualityStatus": "approved",
+      "negativeTraits": [],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:SART_radar_transponder.jpg",
+      "occurrences": [{"pdfPage": 1, "headings": ["SART radar transponderi"], "topics": ["sart", "radar transponder", "search and rescue transponder", "arama kurtarma transponderi"], "context": "Gemide kullanılan gerçek SART cihazı. Ulf Larsen; CC BY-SA 3.0.", "sourceLabel": "Wikimedia Commons · CC BY-SA 3.0"}]
+    },
+    {
+      "file": "fully-enclosed-lifeboat.jpg",
+      "sha256": "b2a23a5150abefc3619b782c507cd135c6818ff830bb2b0db6499d1dd4f91f04",
+      "width": 1728,
+      "height": 2304,
+      "contentClass": "photograph",
+      "qualityStatus": "approved",
+      "negativeTraits": [],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Fully_enclosed_lifeboat_yellow.jpg",
+      "occurrences": [{"pdfPage": 1, "headings": ["Tam kapalı filika"], "topics": ["lifeboat", "fully enclosed lifeboat", "rescue boat", "filika", "kapalı filika"], "context": "Gemideki tam kapalı sarı filika. Joymaster; public domain dedication.", "sourceLabel": "Wikimedia Commons · public domain"}]
+    },
+    {
+      "file": "life-jacket-inspection-uscg.jpg",
+      "sha256": "88e4ee30ddd5a054fc79b3cc5681b5bf89d346d0aff29475a62e1f7128a97471",
+      "width": 3000,
+      "height": 1945,
+      "contentClass": "photograph",
+      "qualityStatus": "approved",
+      "negativeTraits": [],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Richard_Weiss,_a_member_of_Coast_Guard_Auxiliary_Flotilla_8-2_located_in_Cape_May,_inspects_a_life_jacket_during_a_vessel_safety_check.jpg",
+      "occurrences": [{"pdfPage": 1, "headings": ["Can yeleği emniyet kontrolü"], "topics": ["life jacket", "lifejacket", "personal flotation device", "pfd", "can yeleği", "can yelegi"], "context": "Can yeleğinin tekne emniyet kontrolü sırasında incelenmesi. Petty Officer 3rd Class Jonathan Lindberg; U.S. Coast Guard public domain.", "sourceLabel": "U.S. Coast Guard · public domain"}]
+    },
+    {"file":"epirb-ferry-vi.jpg","sha256":"d5fba5394a76cffdbd6f5797ac0ad83d417029140b27b0e682dbbcec7564120b","width":5184,"height":3456,"contentClass":"photograph","qualityStatus":"approved","negativeTraits":[],"sourceUrl":"https://commons.wikimedia.org/wiki/File:EPIRB_of_FERY_VI.jpg","occurrences":[{"pdfPage":1,"headings":["Gemi EPIRB cihazı"],"topics":["epirb","emergency position indicating radio beacon","acil durum konum belirleme telsiz şamandırası","gemi epirb"],"context":"FERY VI gemisine kayıtlı gerçek EPIRB. Marwan Mohamad; CC BY-SA 4.0.","sourceLabel":"Wikimedia Commons · CC BY-SA 4.0"}]},
+    {"file":"inflated-life-raft-us-navy-historic.jpg","sha256":"ebdd107e81dbca1817520945dbde1f706f3b76322c763f37aed4381e93b04e8e","width":5710,"height":4360,"contentClass":"photograph","qualityStatus":"approved","negativeTraits":[],"sourceUrl":"https://commons.wikimedia.org/wiki/File:80-G-K-13778_(26820697682).jpg","occurrences":[{"pdfPage":1,"headings":["Tam açılmış şişme can salı"],"topics":["inflated life raft","open life raft","life raft equipment","açılmış can salı","şişirilmiş can salı"],"context":"Tam açılmış U.S. Navy Mark I Type D can salı ve boya işareti uygulaması. National Museum of the U.S. Navy; public domain.","sourceLabel":"U.S. Navy · public domain"}]},
+    {"file":"marine-evacuation-life-raft-pod.jpg","sha256":"9b7a25c2b2eb30a2baf75d09daafba0701f836b6789bb29afdd6acc57a7186ee","width":4928,"height":3280,"contentClass":"procedure-photograph","qualityStatus":"approved","negativeTraits":[],"sourceUrl":"https://commons.wikimedia.org/wiki/File:MV_Cape_Ray_operations_140412-N-XB010-008.jpg","occurrences":[{"pdfPage":1,"headings":["Can salı podu ve deniz tahliye sistemi"],"topics":["life raft pod","life raft container","marine evacuation system","mes","can salı konteyneri","can salı podu","can salı podunu","deniz tahliye sistemi"],"context":"MV Cape Ray üzerinde can salı podunun deniz tahliye sistemine bağlanması. U.S. Navy; public domain.","sourceLabel":"U.S. Navy · public domain"}]},
+    {"file":"mob-distress-marker-lights.jpg","sha256":"3243b04014cfd00a0d7528934064236bc35feef0458c86366543e551f64cfdaf","width":4256,"height":2832,"contentClass":"procedure-photograph","qualityStatus":"approved","negativeTraits":[],"sourceUrl":"https://commons.wikimedia.org/wiki/File:Flickr_-_Official_U.S._Navy_Imagery_-_A_Sailor_attach_distress_marker_lights_to_flotation_devices..jpg","occurrences":[{"pdfPage":1,"headings":["MOB şamandırası işaret ışıkları"],"topics":["man overboard equipment","mob marker light","distress marker light","lifebuoy light","mob ekipmanı","denize adam düştü ekipmanı","can simidi ışığı"],"context":"MOB durumunda kullanılan yüzdürme araçlarına işaret ışığı bağlanması. Ryan J. Mayes/U.S. Navy; public domain.","sourceLabel":"U.S. Navy · public domain"}]},
+    {"file":"rescue-boat-retrieval.jpg","sha256":"0c67c45ee9910c5561939c9ac0657a3e8d269b9abbecbe1ceb9374b54cae0bd2","width":4592,"height":3056,"contentClass":"procedure-photograph","qualityStatus":"approved","negativeTraits":[],"sourceUrl":"https://commons.wikimedia.org/wiki/File:Flickr_-_Official_U.S._Navy_Imagery_-_Sailors_retrieve_a_search_and_rescue_boat_during_a_man_overboard_drill..jpg","occurrences":[{"pdfPage":1,"headings":["Arama kurtarma botunun geri alınması"],"topics":["search and rescue boat","rescue boat retrieval","rescue boat","kurtarma botu","arama kurtarma botu","kurtarma botunun geri alınması"],"context":"MOB tatbikatı sonrasında arama kurtarma botunun gemiye alınması. MCCS Joe Kane/U.S. Navy; public domain.","sourceLabel":"U.S. Navy · public domain"}]},
+    {"file":"immersion-suit-uscg.jpg","sha256":"6254c256d11a4350de1356858fe3a79958af6ad0744c53808d0994477946c6e2","width":2784,"height":1848,"contentClass":"procedure-photograph","qualityStatus":"approved","negativeTraits":[],"sourceUrl":"https://commons.wikimedia.org/wiki/File:USCG_sailors_don_cold_water_survival_suits_during_Operation_Nanook_2012,_120810-G-NB914-076.JPG","occurrences":[{"pdfPage":1,"headings":["Dalma ve soğuk su hayatta kalma giysisi"],"topics":["immersion suit","survival suit","cold water survival suit","dalma giysisi","dalma giysisini","terk giysisi","soğuk su hayatta kalma giysisi"],"context":"USCG personelinin gemide hayatta kalma giysilerini giyme eğitimi. Cynthia Oldham/U.S. Coast Guard; public domain.","sourceLabel":"U.S. Coast Guard · public domain"}]},
+    {"file":"eebd-training-us-navy.jpg","sha256":"d839480000512a72cd9068be2da37627c4a4b501191dc07fffbfb6425e876ea0","width":1500,"height":2100,"contentClass":"procedure-photograph","qualityStatus":"approved","negativeTraits":[],"sourceUrl":"https://commons.wikimedia.org/wiki/File:US_Navy_100927-N-3729D-096_Machinist%27s_Mate_Fireman_Aleric_Hernandez_dons_an_emergency_escape_breathing_device_during_engineering_training_evolutio.jpg","occurrences":[{"pdfPage":1,"headings":["EEBD acil kaçış solunum cihazı"],"topics":["eebd","emergency escape breathing device","escape breathing device","acil kaçış solunum cihazı","kaçış solunum cihazı"],"context":"Makine dairesi eğitiminde EEBD cihazının takılması. U.S. Navy; public domain.","sourceLabel":"U.S. Navy · public domain"}]},
+    {"file":"helicopter-rescue-hoist.jpg","sha256":"d34410f1741bf407d27b11a70d01657cc24b6919b8d136f5df4ac2e19d7ca8e3","width":1500,"height":2100,"contentClass":"procedure-photograph","qualityStatus":"approved","negativeTraits":[],"sourceUrl":"https://commons.wikimedia.org/wiki/File:US_Navy_090416-N-9150R-855_Search_and_rescue_swimmers_are_hoisted_out_of_the_water_by_an_MH-60S_Sea_Hawk_helicopter_from_the.jpg","occurrences":[{"pdfPage":1,"headings":["Helikopter kurtarma vinciyle denizden tahliye"],"topics":["helicopter rescue hoist","search and rescue swimmer","sar hoist","helicopter evacuation","helikopterle kurtarma","helikopter tahliyesi","kurtarma vinci"],"context":"Arama kurtarma yüzücülerinin MH-60S helikopterine vinçle alınması. Jon Rasmussen/U.S. Navy; public domain.","sourceLabel":"U.S. Navy · public domain"}]},
+    {"file":"lifeboats-ready-to-launch.jpg","sha256":"282798260e23d150c30468dc75c3d3e5a74cfaa755fdf08d0c5b6e32e2b0fa1e","width":3840,"height":2803,"contentClass":"procedure-photograph","qualityStatus":"approved","negativeTraits":[],"sourceUrl":"https://commons.wikimedia.org/wiki/File:Drill,_Holland_America_Line_-_life_boats_ready_to_launch_LCCN2014691954.jpg","occurrences":[{"pdfPage":1,"headings":["Filikaların mataforada indirmeye hazırlanması"],"topics":["lifeboat launching drill","lifeboats ready to launch","lifeboat davit","filika indirme tatbikatı","filikaları indirmeye hazır","filika mataforası"],"context":"Holland America Line gemisinde filikaların mataforalarda indirmeye hazırlanması. Bain News Service/Library of Congress; public domain.","sourceLabel":"Library of Congress · public domain"}]},
+    {"file":"shipboard-firefighting-drill.jpg","sha256":"b3d789d7ce9356fb47ccc97e6bad9fe94049eb9e47b7cf474a62caacaefd1892","width":2250,"height":1500,"contentClass":"procedure-photograph","qualityStatus":"approved","negativeTraits":[],"sourceUrl":"https://commons.wikimedia.org/wiki/File:US_Navy_020830-N-9964S-010_Sailors_assigned_to_the_hangar_bay_firefighting_team_simulate_shipboard_damage_control_and_firefighting_techniques_during_a_general_quarters_(GQ)_drill.jpg","occurrences":[{"pdfPage":1,"headings":["Gemi yangın ekibi ve solunum cihazları"],"topics":["shipboard firefighting","firefighting team","fireman outfit","self contained breathing apparatus","scba","gemi yangın ekibi","yangıncı teçhizatı","solunum cihazlı yangın ekibi"],"context":"Gemi yangın ve hasar kontrol ekibinin tam teçhizatlı tatbikatı. Christopher B. Stoltz/U.S. Navy; public domain.","sourceLabel":"U.S. Navy · public domain"}]}
+  ]
+}

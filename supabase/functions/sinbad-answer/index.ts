@@ -32,6 +32,21 @@ const TITLE_ALIASES: Record<string, string[]> = {
   labour: ['çalışma', 'calisma', 'iş', 'is'], weather: ['hava', 'meteoroloji'], current: ['akıntı', 'akinti'], tide: ['gelgit']
 };
 const titleTerms = (terms: string[]) => [...new Set(terms.flatMap(term => [term, ...(TITLE_ALIASES[term] || [])]))].slice(0, 30);
+const normalizedSourceName = (value: string) => String(value || '')
+  .toLocaleLowerCase('tr-TR')
+  .normalize('NFKD')
+  .replace(/[\u0300-\u036f]/g, '')
+  .replace(/\.(?:pdf|pptx?|docx?)$/iu, '')
+  .replace(/[^a-z0-9çğıöşüа-яёء-ي]+/giu, ' ')
+  .trim()
+  .replace(/\s+/g, ' ');
+const sourceTitleScore = (title: string, question: string, terms: string[]) => {
+  const normalizedTitle = normalizedSourceName(title);
+  const normalizedQuestion = normalizedSourceName(question);
+  const exactNamedSource = normalizedTitle.length >= 6 && normalizedQuestion.includes(normalizedTitle);
+  const termScore = terms.reduce((total, term) => total + (normalizedTitle.includes(normalizedSourceName(term)) ? 1 : 0), 0);
+  return { score: termScore + (exactNamedSource ? 1000 : 0), exactNamedSource };
+};
 
 const extractText = (response: any) => response?.output_text || response?.output
   ?.flatMap((item: any) => item?.content || [])
@@ -49,12 +64,18 @@ const splitAnswerAndSpokenSummary = (raw: string) => {
   // browser then builds a complete-sentence fallback from the full answer.
   const words = spokenSummary.split(/\s+/).filter(Boolean).length;
   const sentences = spokenSummary.match(/[^.!?…]+[.!?…]+|[^.!?…]+$/gu)?.filter(Boolean).length || 0;
-  return { answer, spokenSummary: words >= 20 && words <= 150 && sentences >= 2 && sentences <= 8 ? spokenSummary : '' };
+  return { answer, spokenSummary: words >= 3 && words <= 90 && sentences >= 1 && sentences <= 4 ? spokenSummary : '' };
 };
+const stripPrivateCitationMarkers = (value: string) => String(value || '')
+  .replace(/\s*\[S\d+\]/giu, '')
+  .replace(/(?:^|\n)\s*(?:Kaynaklar|Sources)\s*:\s*(?:\n[^\n]*)+/giu, '')
+  .trim();
 
 const needsFreshData = (question: string) => serverCoreDecision(question).needsLiveData;
+const isSimpleGreeting = (question: string) => /^(?:selam|selamlar|merhaba|günaydın|gunaydin|iyi\s+(?:günler|gunler|akşamlar|aksamlar)|hello|hi|hey)(?:\s+(?:sinbad|simbad|sinbat|kaptan|captain))*[!.?\s]*$/iu.test(question.trim());
 
 const wantsSourceVisuals = (question: string) => /(görsel|gorsel|şekil|sekil|diyagram|diagram|çizim|cizim|resim|figure|illustration|visual|show.*image|with.*image)/iu.test(question);
+const wantsSourceDetails = (question: string) => /(kaynak(?:lar|ça)?\s*(?:nedir|neler|bilgisi|adı|ismi|göster|aç)|hangi\s+(?:kitap|yayın|pdf|kaynak)|source\s*(?:details?|name|page|show)|show\s+(?:the\s+)?source)/iu.test(question);
 const isContextualFollowUp = (question: string) => /(bununla|bunun hakkında|bu konu|bu anlattığın|onunla|onun hakkında|yukarıdaki|önceki|bahsettiğin|about this|about that|this topic|that topic|the above|previous)/iu.test(question);
 const pageForChunk = (content: string, terms: string[]) => {
   const text = String(content || '');
@@ -96,6 +117,8 @@ Deno.serve(async req => {
     const question = normalizeCoreQuestion(body.question);
     const language = String(body.language || 'tr-TR').slice(0, 12);
     const allowWebSearch = body.allowWebSearch === true;
+    const includeSourceVisuals = body.includeSourceVisuals === true;
+    const suppressSourceVisuals = body.suppressSourceVisuals === true;
     const coreEnvelope = body.coreEnvelope;
     const history = normalizeCoreHistory(coreEnvelope?.history, 10);
     if (!workspaceId || !question) return json({ error: 'workspaceId and question are required' }, 400);
@@ -110,6 +133,21 @@ Deno.serve(async req => {
       .eq('is_active', true)
       .maybeSingle();
     if (!membership) return json({ error: 'Workspace access denied' }, 403);
+    const canAccessPrivateSources = membership.role === 'owner' || membership.role === 'developer';
+    const sourceAccess = canAccessPrivateSources ? 'privileged' : 'restricted';
+
+    if (!canAccessPrivateSources && wantsSourceDetails(question)) {
+      const answer = language.toLowerCase().startsWith('en')
+        ? 'Private library source identities and original publication pages are restricted to the workspace owner and explicitly authorized developers. I can still teach and explain the subject without exposing the publication.'
+        : 'Özel kütüphane kaynak kimlikleri ve yayının orijinal sayfaları yalnızca çalışma alanı sahibi ile açıkça yetkilendirilmiş geliştiricilere sunulur. Yayını açmadan konuyu anlatmaya ve açıklamaya devam edebilirim.';
+      return json({ answer, spokenSummary: answer, sources: [], visuals: [], sourceAccess, mode: 'source-access-restricted', ...decisionSupport });
+    }
+
+    if (isSimpleGreeting(question)) {
+      const english = language.toLowerCase().startsWith('en');
+      const answer = english ? 'Hello Captain, I am listening.' : 'Selam Kaptan, sizi dinliyorum.';
+      return json({ answer, spokenSummary: answer, sources: [], visuals: [], sourceAccess, mode: 'local-greeting', ...decisionSupport });
+    }
 
     if (coreDecision.emergency || coreDecision.risk === 'high' || coreDecision.risk === 'critical') {
       const english = language.toLowerCase().startsWith('en');
@@ -120,28 +158,32 @@ Deno.serve(async req => {
     }
 
     const previousUserMessage = [...history].reverse().find((item: any) => item.role === 'user')?.content || '';
-    const retrievalQuestion = wantsSourceVisuals(question) && isContextualFollowUp(question) && previousUserMessage
+    const sourceVisualsRequested = !suppressSourceVisuals && (includeSourceVisuals || wantsSourceVisuals(question));
+    const retrievalQuestion = sourceVisualsRequested && isContextualFollowUp(question) && previousUserMessage
       ? `${previousUserMessage} ${question}`
       : question;
     const queryTerms = words(retrievalQuestion);
     const expandedTitleTerms = titleTerms(queryTerms);
-    const titleRows: any[] = [];
-    for (const term of expandedTitleTerms.slice(0, 18)) {
+    const titleRows = (await Promise.all(expandedTitleTerms.slice(0, 18).map(async term => {
       const { data, error } = await db.from('document_knowledge')
         .select('id,title,classification,document_id,source_mime_type')
         .eq('workspace_id', workspaceId)
         .ilike('title', `%${term.replace(/[%_]/g, '')}%`)
         .limit(8);
-      if (!error && data) titleRows.push(...data);
-    }
+      return !error && data ? data : [];
+    }))).flat() as any[];
 
-    const titleMatches = [...new Map(titleRows.map(row => [row.id, row])).values()]
+    const scoredTitleMatches = [...new Map(titleRows.map(row => [row.id, row])).values()]
       .map((row: any) => {
-        const title = String(row.title || '').toLocaleLowerCase('tr-TR');
-        const score = expandedTitleTerms.reduce((total, term) => total + (title.includes(term) ? 1 : 0), 0);
-        return { row, score };
+        const { score, exactNamedSource } = sourceTitleScore(String(row.title || ''), retrievalQuestion, expandedTitleTerms);
+        return { row, score, exactNamedSource };
       })
-      .sort((a: any, b: any) => b.score - a.score || String(a.row.title).localeCompare(String(b.row.title)))
+      .sort((a: any, b: any) => b.score - a.score || String(a.row.title).localeCompare(String(b.row.title)));
+    const exactNamedTitleMatches = scoredTitleMatches.filter((match: any) => match.exactNamedSource);
+    // If the user explicitly names a publication, lock retrieval to that
+    // publication. Common words such as "PPT" and "Session" must never let
+    // another course deck outrank the requested source.
+    const titleMatches = (exactNamedTitleMatches.length ? exactNamedTitleMatches : scoredTitleMatches)
       .slice(0, 8)
       .map(({ row }: any) => row) as any[];
     const rows: any[] = [];
@@ -157,20 +199,22 @@ Deno.serve(async req => {
     }
 
     if (!rows.length) {
-      for (const term of queryTerms.slice(0, 5)) {
+      const contentRows = await Promise.all(queryTerms.slice(0, 5).map(async term => {
         const { data, error } = await db.from('document_knowledge_chunks')
           .select('content,chunk_index,document_knowledge!inner(title,classification,workspace_id,document_id,source_mime_type)')
           .eq('document_knowledge.workspace_id', workspaceId)
           .ilike('content', `%${term}%`)
           .limit(6);
-        if (!error && data) rows.push(...data);
-      }
+        return !error && data ? data : [];
+      }));
+      rows.push(...contentRows.flat());
     }
 
     const rankedRows = rows.map(row => {
       const haystack = `${row.document_knowledge?.title || ''} ${row.content || ''}`.toLocaleLowerCase('tr-TR');
       const title = String(row.document_knowledge?.title || '').toLocaleLowerCase('tr-TR');
-      const score = queryTerms.reduce((total, term) => total + (haystack.includes(term) ? 1 : 0) + (title.includes(term) ? 3 : 0), 0);
+      const namedSourceBonus = sourceTitleScore(title, retrievalQuestion, expandedTitleTerms).exactNamedSource ? 1000 : 0;
+      const score = namedSourceBonus + queryTerms.reduce((total, term) => total + (haystack.includes(term) ? 1 : 0) + (title.includes(term) ? 3 : 0), 0);
       return { row, score };
     }).sort((a, b) => b.score - a.score);
     const unique = [...new Map(rankedRows.map(({ row }) => [`${row.document_knowledge.title}:${row.chunk_index}`, row])).values()].slice(0, 8) as any[];
@@ -182,7 +226,7 @@ Deno.serve(async req => {
       mimeType: row.document_knowledge.source_mime_type || null,
       page: pageForChunk(String(row.content || ''), queryTerms)
     }));
-    const visuals = wantsSourceVisuals(question)
+    const visuals = canAccessPrivateSources && sourceVisualsRequested
       ? sources.filter((source: any) => source.documentId && source.page && /pdf/i.test(String(source.mimeType || ''))).slice(0, 3).map((source: any) => ({
           sourceId: source.id,
           title: source.title,
@@ -194,12 +238,18 @@ Deno.serve(async req => {
     const context = unique.map((row: any, index: number) =>
       `[S${index + 1}] ${row.document_knowledge.title} — ${row.document_knowledge.classification}${pageForChunk(String(row.content || ''), queryTerms) ? ` — page ${pageForChunk(String(row.content || ''), queryTerms)}` : ''}\n${String(row.content).slice(0, 2200)}`
     ).join('\n\n');
+    const restrictedContext = unique.map((row: any, index: number) =>
+      `[PRIVATE_EXCERPT_${index + 1}] ${String(row.content).slice(0, 2200)}`
+    ).join('\n\n');
+    const modelContext = canAccessPrivateSources ? context : restrictedContext;
+    const responseSources = canAccessPrivateSources ? sources : [];
 
     if (!openaiKey) {
       if (unique.length) return json({
-        answer: `OpenAI bağlantısı henüz etkin değil. Kütüphanede bulduğum ilgili kaynaklar:\n\n${context}\n\nKritik seyir kararlarını güncel ve resmî kaynaklardan doğrulayın.`,
-        sources,
+        answer: canAccessPrivateSources ? `OpenAI bağlantısı henüz etkin değil. Kütüphanede bulduğum ilgili kaynaklar:\n\n${context}\n\nKritik seyir kararlarını güncel ve resmî kaynaklardan doğrulayın.` : 'Bu konu için özel kütüphanede ilgili içerik bulundu; ancak ders anlatımını oluşturacak model bağlantısı şu anda etkin değil.',
+        sources: responseSources,
         visuals,
+        sourceAccess,
         mode: 'retrieval-only',
         ...decisionSupport
       });
@@ -216,18 +266,18 @@ Deno.serve(async req => {
 
     const system = `You are Captain Sinbad, Atlas Marine OS's capable, warm and practical marine assistant. Reply naturally in ${language}; do not answer with fragments or artificially short phrases. Use conversation history to understand follow-up questions. Be concise for simple questions and detailed when the task needs it.
 
-You may use stable general maritime knowledge for education and planning support. When approved private library sources are supplied, prefer them and cite material claims as [S#]. Clearly label information not supported by those sources as general knowledge. Never invent source citations, coordinates, depths, chart corrections, Notices to Mariners, weather, port status, vessel data or regulations. Explain what information is missing when certainty is not possible.
+You may use stable general maritime knowledge for education and planning support. When approved private library sources are supplied, prefer them. ${canAccessPrivateSources ? 'Cite material claims as [S#] and provide source identity only when asked.' : 'Private source identity is access-restricted: never name, quote a title, cite, identify, link, describe a filename, mention a page number, or reveal document metadata. Teach only the derived subject matter without saying which private publication supplied it.'} Clearly label information not supported by those sources as general knowledge. Never invent source citations, coordinates, depths, chart corrections, Notices to Mariners, weather, port status, vessel data or regulations. Explain what information is missing when certainty is not possible.
 
-When the user asks for a source image or publication page, use only VERIFIED SOURCE PAGE VISUALS supplied in the request. If none are supplied, say only that no matching indexed source page was retrieved for this request. Do not invent a copyright or licensing restriction and do not claim the user's Atlas library lacks relevant publications.
+When the user asks for a source image or publication page, ${canAccessPrivateSources ? 'use only VERIFIED SOURCE PAGE VISUALS supplied in the request. If none are supplied, say only that no matching indexed source page was retrieved for this request.' : 'do not expose or offer any private publication page; explain that original source access is restricted while lesson explanations remain available.'} Do not invent a copyright or licensing restriction and do not claim the user's Atlas library lacks relevant publications.
 
 For passage planning, collision avoidance, stability, weather, chart work or other safety-critical topics, provide decision support only. Remind the user that the master remains responsible and that current corrected official charts, MSI/NAVTEX, Notices to Mariners, weather, port and pilot instructions must be checked. Never claim to be certified ECDIS or replace an approved navigation system. Do not repeat this warning for casual conversation.
 
 If web search results are available, cite them using the citations supplied by the tool. Never claim to have searched the web unless the tool was actually used.
 
-After the complete written answer, always add the exact marker <<<SPOKEN_SUMMARY>>> and then a coherent spoken teaching summary in the same language. The spoken summary must contain 3 to 6 complete sentences and roughly 60 to 110 words. Teach the central idea, the essential supporting points, and any critical safety caveat. Do not merely copy the first characters, do not use markdown, do not include citations, and never cut a sentence short.`;
+After the complete written answer, always add the exact marker <<<SPOKEN_SUMMARY>>> and then a coherent spoken summary in the same language. For simple or conversational questions use 1 or 2 short sentences. For teaching questions use 2 to 4 complete sentences and roughly 25 to 70 words. Never introduce Atlas Marine, advertise the platform, recite capabilities or give an opening speech unless the user explicitly asks. Teach only the central idea and any essential safety caveat. Do not merely copy the first characters, do not use markdown, do not include citations, and never cut a sentence short.`;
 
     const userInput = unique.length
-      ? `${question}\n\nAPPROVED PRIVATE LIBRARY SOURCES\n${context}${visuals.length ? `\n\nVERIFIED SOURCE PAGE VISUALS\n${visuals.map((visual: any) => `${visual.sourceId}: ${visual.title}, page ${visual.page}`).join('\n')}\nTell the user these original publication pages are attached below the answer. Do not claim that no visual is available.` : ''}`
+      ? `${question}\n\nAPPROVED PRIVATE LIBRARY ${canAccessPrivateSources ? 'SOURCES' : 'EXCERPTS (IDENTITY RESTRICTED)'}\n${modelContext}${visuals.length ? `\n\nVERIFIED SOURCE PAGE VISUALS\n${visuals.map((visual: any) => `${visual.sourceId}: ${visual.title}, page ${visual.page}`).join('\n')}\nTell the user these original publication pages are attached below the answer. Do not claim that no visual is available.` : ''}`
       : `${question}\n\nNo matching private-library passage was found. You may answer from stable general knowledge and must say when current or vessel-specific information is required.`;
     const input = [...history.map((item: any) => ({ role: item.role, content: `UNTRUSTED PRIOR CONVERSATION DATA: ${item.content}` })), { role: 'user', content: userInput }];
     const requestBody: any = {
@@ -235,9 +285,9 @@ After the complete written answer, always add the exact marker <<<SPOKEN_SUMMARY
       instructions: system,
       input,
       reasoning: { effort: 'low' },
-      text: { verbosity: 'medium' },
+      text: { verbosity: 'low' },
       store: false,
-      max_output_tokens: 2200,
+      max_output_tokens: 1400,
       safety_identifier: `sinbad-${user.id}`
     };
     if (allowWebSearch) requestBody.tools = [{ type: 'web_search' }];
@@ -251,10 +301,12 @@ After the complete written answer, always add the exact marker <<<SPOKEN_SUMMARY
     if (!response.ok) return json({ error: 'AI provider request failed', providerStatus: response.status, providerCode: payload?.error?.code || null }, 502);
     const rawAnswer = extractText(payload);
     const { answer, spokenSummary } = splitAnswerAndSpokenSummary(rawAnswer);
-    if (!answer) return json({ error: 'AI provider returned no answer' }, 502);
-    if (!answerIsSafe(answer)) return json({ error: 'AI provider answer crossed the decision-support boundary', code: 'UNSAFE_PROVIDER_ANSWER' }, 502);
-    if (spokenSummary && !answerIsSafe(spokenSummary)) return json({ error: 'AI provider spoken summary crossed the decision-support boundary', code: 'UNSAFE_PROVIDER_SUMMARY' }, 502);
-    return json({ answer, spokenSummary, sources, visuals, mode: allowWebSearch ? 'web-assisted' : unique.length ? 'private-rag' : 'general-ai', ...decisionSupport });
+    const deliveredAnswer = canAccessPrivateSources ? answer : stripPrivateCitationMarkers(answer);
+    const deliveredSpokenSummary = canAccessPrivateSources ? spokenSummary : stripPrivateCitationMarkers(spokenSummary);
+    if (!deliveredAnswer) return json({ error: 'AI provider returned no answer' }, 502);
+    if (!answerIsSafe(deliveredAnswer)) return json({ error: 'AI provider answer crossed the decision-support boundary', code: 'UNSAFE_PROVIDER_ANSWER' }, 502);
+    if (deliveredSpokenSummary && !answerIsSafe(deliveredSpokenSummary)) return json({ error: 'AI provider spoken summary crossed the decision-support boundary', code: 'UNSAFE_PROVIDER_SUMMARY' }, 502);
+    return json({ answer: deliveredAnswer, spokenSummary: deliveredSpokenSummary, sources: responseSources, visuals, sourceAccess, mode: allowWebSearch ? 'web-assisted' : unique.length ? 'private-rag' : 'general-ai', ...decisionSupport });
   } catch (error) {
     return json({ error: error instanceof Error ? error.message : 'Unexpected error' }, 500);
   }

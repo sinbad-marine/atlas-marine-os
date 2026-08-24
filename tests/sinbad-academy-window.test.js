@@ -45,7 +45,7 @@ test('standalone Academy retains course and quiz handlers',()=>{
 test('native Academy owns a bounded live Sinbad board-teaching stage',()=>{
   assert.match(academyHtml,/id="academyTeachingStage"/);assert.match(academyHtml,/captain-sinbad-board-teaching\.png/);
   assert.match(academyHtml,/sinbad-character-engine\.js\?v=82029/);
-  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82029/);assert.match(academyHtml,/academy-window\.js\?v=82021/);assert.match(academyHtml,/academy\.css\?v=82019/);
+  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82029/);assert.match(academyHtml,/academy-window\.js\?v=82029/);assert.match(academyHtml,/academy\.css\?v=82019/);
   assert.match(academyApp,/function teachLessonAtBoard\(lesson\)/);
   assert.match(academyApp,/\.join\('\\n\\n'\)\.slice\(0,500\)/);
   assert.match(academyApp,/const event=cue\.state==='walking'\?'WALK':'TEACH_AT_BOARD'/);
@@ -58,6 +58,46 @@ test('native Academy owns a bounded live Sinbad board-teaching stage',()=>{
   assert.match(academyCss,/@media\(prefers-reduced-motion:reduce\)/);
   assert.match(academyCss,/\.academy-sinbad\[data-state="walking"\] img\{animation:none/);
   assert.match(worker,/sinbad-marine-v8\.20\.29-semantic-motion-bridges-v42/);
+});
+
+test('standalone Academy is a live free-form voice and text classroom, not a required topic menu',()=>{
+  assert.match(academyHtml,/id="academyChatForm"/);
+  assert.match(academyHtml,/id="academyQuestion"/);
+  assert.match(academyHtml,/id="academyMic"/);
+  assert.match(academyHtml,/Optional guided lesson shortcuts — no selection required/);
+  assert.match(academyApp,/async function askSinbad\(question\)/);
+  assert.match(academyApp,/functions\.invoke\('sinbad-answer'/);
+  assert.match(academyApp,/includeSourceVisuals:false,suppressSourceVisuals:true/);
+  assert.match(academyApp,/window\.SinbadVisuals\?\.select/);
+  assert.match(academyApp,/SinbadVisuals\?\.select\?\.\(question,answer,\{max:1\}\)/);
+  assert.match(academyApp,/SpeechRecognition\|\|window\.webkitSpeechRecognition/);
+  assert.match(academyApp,/academyChatForm/);
+});
+
+test('Academy Core gate rejects empty and whitespace-only answers before rendering',()=>{
+  assert.match(academyApp,/function coreAnswerIsTrusted\(data,envelope\)/);
+  assert.match(academyApp,/String\(data\?\.answer\|\|''\)\.trim\(\)/);
+  assert.doesNotMatch(academyApp,/Boolean\(data\?\.answer&&/);
+  assert.ok(academyApp.indexOf('if(!coreAnswerIsTrusted(data,coreEnvelope))')<academyApp.indexOf('const answer=String(data.answer).trim()'));
+});
+
+test('Captain Sinbad teaches with real state art, browser voice and verified atlas images',()=>{
+  assert.match(academyHtml,/id="academySinbadAvatar"/);
+  assert.match(academyHtml,/id="academyVoiceToggle"/);
+  assert.match(academyHtml,/id="academyReplayVoice"/);
+  assert.match(academyHtml,/id="academyStopVoice"/);
+  assert.match(academyApp,/captain-sinbad-board-teaching\.png/);
+  assert.match(academyApp,/captain-sinbad-speaking\.png/);
+  assert.match(academyApp,/captain-sinbad-listening\.png/);
+  assert.match(academyApp,/new SpeechSynthesisUtterance/);
+  assert.match(academyApp,/function renderVisuals\(visuals\)/);
+  assert.match(academyHtml,/sinbad-visuals\.js\?v=8235/);
+  assert.match(academyApp,/academy-atlas-visual/);
+  assert.match(academyApp,/visuals\.filter\(visual=>safeAsset\.test/);
+  assert.doesNotMatch(academyApp,/cloudClient\.storage\.from\(doc\.bucket_id\)\.download/);
+  assert.doesNotMatch(academyApp,/#page=\$\{Math\.max/);
+  assert.match(academyCss,/\.academy-atlas-visual img/);
+  assert.match(academyCss,/\[data-state="speaking"\]/);
 });
 
 test('board writing progress drives a real chalk cursor and bounded character direction cues',()=>{
@@ -112,4 +152,15 @@ test('real transparent writing frames follow measured board progress and settle 
   assert.match(academyApp,/ACADEMY_CHARACTER_ASSETS\.writing\[frameKey\]/);
   assert.match(academyApp,/setTimeout\(writeNext,\/\\s\/\.test\(text\[index\]\|\|''\)\?55:/);
   assert.match(academyApp,/else renderAcademyCharacterCue\(\{state:'board-teaching',gesture:'explain',gaze:'audience'\},text\)/);
+});
+
+test('live Academy instructor is driven by the bounded character engine',()=>{
+  assert.match(academyHtml,/id="academyInstructorStage"/);
+  assert.match(academyHtml,/sinbad-character-engine\.js\?v=82029/);
+  assert.match(academyHtml,/sinbad-character-rig\.js\?v=82029/);
+  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82029/);
+  assert.match(academyApp,/createCharacterEngine\(\{initialState:'idle'\}\)/);
+  assert.match(academyApp,/academyCharacterEngine\.setState\(safeState\)/);
+  assert.match(academyApp,/SinbadCharacterRig\?\.poseForState/);
+  assert.match(academyCss,/\[data-gesture="listen-lean"\]/);
 });
