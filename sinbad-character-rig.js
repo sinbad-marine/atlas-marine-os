@@ -35,6 +35,7 @@
     laugh:{headPitch:-.12,leftArm:.56,rightArm:.64},
     walk:{leftArm:-.32,rightArm:.32},
     'point-board':{headYaw:.24,leftArm:.1,rightArm:.86},
+    'write-contact':{headYaw:.28,headPitch:.08,bodyLean:.14,leftArm:.08,rightArm:.78},
     nod:{headPitch:.24},
     'nod-up':{headPitch:-.12,bodyLean:-.02,leftArm:.05,rightArm:.05},
     'listen-lean':{headPitch:.14,bodyLean:.18},

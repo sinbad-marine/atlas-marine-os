@@ -1,7 +1,7 @@
 'use strict';
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {createCharacterEngine,STATES}=require('../sinbad-character-engine.js');
+const {createCharacterEngine,STATES,GAZES}=require('../sinbad-character-engine.js');
 
 test('character engine exposes stable states',()=>{
   assert.deepEqual(STATES,['idle','listening','thinking','preparing-voice','presenting','speaking','laughing','walking','success','warning','error','voice-disabled','board-teaching']);
@@ -13,7 +13,7 @@ test('laugh is an explicit bounded reaction state',()=>{
   assert.equal(result.snapshot.emotion,'joyful');assert.equal(result.snapshot.gesture,'laugh');
 });
 
-test('character engine accepts the real open-palm pose and rejects invented gestures',()=>{
+test('character engine accepts verified poses and fails closed for invented gestures',()=>{
   const engine=createCharacterEngine();
   assert.equal(engine.setState('presenting',{gesture:'show-palm'}).snapshot.gesture,'show-palm');
   assert.equal(engine.setState('presenting',{gesture:'raise-left'}).snapshot.gesture,'raise-left');
@@ -27,7 +27,25 @@ test('character engine accepts the real open-palm pose and rejects invented gest
   assert.equal(engine.setState('presenting',{gesture:'nod-up'}).snapshot.gesture,'nod-up');
   assert.equal(engine.setState('listening',{gesture:'listen-orient'}).snapshot.gesture,'listen-orient');
   assert.equal(engine.setState('listening',{gesture:'listen-follow'}).snapshot.gesture,'listen-follow');
-  assert.equal(engine.setState('presenting',{gesture:'teleport'}).snapshot.gesture,'open-hand');
+  const before=engine.getSnapshot();
+  const rejected=engine.setState('presenting',{gesture:'teleport'});
+  assert.equal(rejected.accepted,false);assert.equal(rejected.reason,'UNKNOWN_GESTURE');assert.equal(engine.getSnapshot(),before);
+});
+
+test('character detail boundary accepts verified gazes and rejects malformed values without mutation',()=>{
+  const engine=createCharacterEngine();assert.deepEqual(GAZES,['audience','thought','path','board','palm']);
+  assert.equal(engine.setState('presenting',{gesture:'show-palm',gaze:'palm'}).accepted,true);
+  const before=engine.getSnapshot();
+  for(const [detail,reason] of [[{gaze:'offstage'},'UNKNOWN_GAZE'],[{emotion:'furious'},'UNKNOWN_EMOTION'],[{boardText:42},'INVALID_BOARD_TEXT'],[[], 'INVALID_DETAIL']]){
+    const result=engine.setState('presenting',detail);assert.equal(result.accepted,false);assert.equal(result.reason,reason);assert.equal(engine.getSnapshot(),before);
+  }
+  const accessor={};Object.defineProperty(accessor,'gesture',{get(){throw new Error('must not run');},enumerable:true});
+  assert.equal(engine.setState('presenting',accessor).reason,'INVALID_DETAIL_ACCESSOR');assert.equal(engine.getSnapshot(),before);
+});
+
+test('board erase contact is a verified bounded character pose',()=>{
+  const result=createCharacterEngine().dispatch('TEACH_AT_BOARD',{boardText:'',gesture:'write-contact',gaze:'board'});
+  assert.equal(result.accepted,true);assert.equal(result.snapshot.gesture,'write-contact');
 });
 
 test('character engine preserves the three real idle micro-poses',()=>{

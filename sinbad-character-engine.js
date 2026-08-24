@@ -7,7 +7,8 @@
 
   const STATES=Object.freeze(['idle','listening','thinking','preparing-voice','presenting','speaking','laughing','walking','success','warning','error','voice-disabled','board-teaching']);
   const EMOTIONS=Object.freeze(['neutral','attentive','curious','warm','joyful','confident','concerned']);
-  const GESTURES=Object.freeze(['rest','idle-breathe','idle-look-left','idle-look-right','open-hand','show-palm','raise-left','show-both-hands','wave-right','wave-right-away','look-left','look-right','shake-head-left','shake-head-right','explain','laugh','walk','point-board','nod','nod-up','listen-lean','listen-orient','listen-follow','hold']);
+  const GESTURES=Object.freeze(['rest','idle-breathe','idle-look-left','idle-look-right','open-hand','show-palm','raise-left','show-both-hands','wave-right','wave-right-away','look-left','look-right','shake-head-left','shake-head-right','explain','laugh','walk','point-board','write-contact','nod','nod-up','listen-lean','listen-orient','listen-follow','hold']);
+  const GAZES=Object.freeze(['audience','thought','path','board','palm']);
   const DEFAULT_PERFORMANCE=Object.freeze({
     idle:{emotion:'warm',gesture:'rest',gaze:'audience'},
     listening:{emotion:'attentive',gesture:'listen-lean',gaze:'audience'},
@@ -29,10 +30,23 @@
     LAUGH:'laughing',WALK:'walking',TURN_SUCCEEDED:'success',WARNING:'warning',ERROR:'error',TEACH_AT_BOARD:'board-teaching'
   });
 
+  function validateDetail(detail){
+    if(detail===undefined)return Object.freeze({accepted:true,detail:Object.freeze({})});
+    if(!detail||typeof detail!=='object'||Array.isArray(detail)||Object.getPrototypeOf(detail)!==Object.prototype)return Object.freeze({accepted:false,reason:'INVALID_DETAIL'});
+    if(Object.getOwnPropertySymbols(detail).length)return Object.freeze({accepted:false,reason:'INVALID_DETAIL_SYMBOL'});
+    const descriptors=Object.getOwnPropertyDescriptors(detail);
+    if(Object.values(descriptors).some(descriptor=>typeof descriptor.get==='function'||typeof descriptor.set==='function'))return Object.freeze({accepted:false,reason:'INVALID_DETAIL_ACCESSOR'});
+    if(Object.hasOwn(detail,'emotion')&&!EMOTIONS.includes(detail.emotion))return Object.freeze({accepted:false,reason:'UNKNOWN_EMOTION'});
+    if(Object.hasOwn(detail,'gesture')&&!GESTURES.includes(detail.gesture))return Object.freeze({accepted:false,reason:'UNKNOWN_GESTURE'});
+    if(Object.hasOwn(detail,'gaze')&&!GAZES.includes(detail.gaze))return Object.freeze({accepted:false,reason:'UNKNOWN_GAZE'});
+    if(Object.hasOwn(detail,'boardText')&&typeof detail.boardText!=='string')return Object.freeze({accepted:false,reason:'INVALID_BOARD_TEXT'});
+    return Object.freeze({accepted:true,detail:Object.freeze({...detail})});
+  }
+
   function immutableSnapshot(state,sequence,detail={}){
     const defaults=DEFAULT_PERFORMANCE[state]||DEFAULT_PERFORMANCE.idle;
-    const emotion=EMOTIONS.includes(detail.emotion)?detail.emotion:defaults.emotion;
-    const gesture=GESTURES.includes(detail.gesture)?detail.gesture:defaults.gesture;
+    const emotion=detail.emotion||defaults.emotion;
+    const gesture=detail.gesture||defaults.gesture;
     return Object.freeze({
       state,emotion,gesture,gaze:detail.gaze||defaults.gaze,
       boardText:state==='board-teaching'?String(detail.boardText||'').slice(0,500):'',
@@ -48,7 +62,9 @@
     const publish=()=>listeners.forEach(listener=>listener(snapshot));
     const setState=(state,detail={})=>{
       if(!STATES.includes(state))return Object.freeze({accepted:false,reason:'UNKNOWN_STATE',snapshot});
-      snapshot=immutableSnapshot(state,++sequence,detail);publish();
+      const validated=validateDetail(detail);
+      if(!validated.accepted)return Object.freeze({accepted:false,reason:validated.reason,snapshot});
+      snapshot=immutableSnapshot(state,++sequence,validated.detail);publish();
       return Object.freeze({accepted:true,snapshot});
     };
     const dispatch=(event,detail={})=>{
@@ -69,5 +85,5 @@
     });
   }
 
-  return Object.freeze({STATES,EMOTIONS,GESTURES,EVENT_TO_STATE,createCharacterEngine});
+  return Object.freeze({STATES,EMOTIONS,GESTURES,GAZES,EVENT_TO_STATE,validateDetail,createCharacterEngine});
 });
