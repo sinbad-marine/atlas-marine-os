@@ -480,8 +480,10 @@ test('voice completion and cancellation clear stale mouth-boundary timers before
   assert.match(app,/classList\.remove\('sinbad-voice-tick'\)/);
   const finish=app.slice(app.indexOf('function finishSinbadVoice'),app.indexOf('function stopSinbadVoice'));
   const stop=app.slice(app.indexOf('function stopSinbadVoice'),app.indexOf('function interruptSinbadVoiceForUser'));
+  const start=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function splitSinbadCloneChunks'));
   assert.match(finish,/resetSinbadStandardBoundaryVisuals\(\)/);
   assert.match(stop,/resetSinbadStandardBoundaryVisuals\(\)/);
+  assert.match(start,/const myGeneration=\+\+sinbadStandardSpeechGeneration;\s*resetSinbadStandardBoundaryVisuals\(\)/);
 });
 
 test('a new question immediately cancels the previous spoken answer and invalidates queued teaching pauses',()=>{

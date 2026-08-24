@@ -1054,6 +1054,7 @@ function sinbadStandardVoiceTick(boundaryEvent,spokenText){
 let sinbadStandardSpeechGeneration=0;
 function speakSinbadStandard(text,onVoiceReady){
   const myGeneration=++sinbadStandardSpeechGeneration;
+  resetSinbadStandardBoundaryVisuals();
   let announced=false;
   const announce=()=>{if(!announced){announced=true;onVoiceReady?.();}};
   const status=$('sinbadKnowledgeStatus');
