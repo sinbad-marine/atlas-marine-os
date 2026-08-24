@@ -132,6 +132,19 @@ test('hands-free Professor runs an explicit listen-send-answer-listen loop witho
   await expect(page.locator('#handsfreeStatus')).toContainText('mikrofon dinlemiyor');
 });
 
+test('guided tutor shows evidence-bound objective progress without replacing the active session',async({page})=>{
+  await page.goto('/academy-professor-native.html');
+  await page.getByRole('button',{name:'Sınıf araçları menüsünü aç'}).click();
+  await page.locator('#tutorTopic').selectOption('marine-weather');
+  await page.locator('#startTutorSession').click();
+  await expect(page.locator('#tutorProgress')).toBeVisible();
+  await expect(page.locator('#tutorProgressLabel')).toContainText('0 /');
+  await expect(page.locator('#tutorProgressBar')).toHaveAttribute('value','0');
+  await expect(page.locator('#tutorObjectiveProgress li.current')).toHaveCount(1);
+  await expect(page.locator('#startTutorSession')).toBeDisabled();
+  await expect(page.locator('#abandonTutorSession')).toBeVisible();
+});
+
 test('student can interrupt Sinbad narration with a name-gated follow-up',async({page})=>{
   await page.addInitScript(()=>{
     class FakeRecognition{

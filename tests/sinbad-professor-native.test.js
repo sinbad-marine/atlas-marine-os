@@ -59,7 +59,7 @@ test('native Professor and consented identity module remain available from the o
 });
 
 test('guided tutor orchestrator is optional, drawer-contained and backed by assessed checks',()=>{
-  for(const id of ['tutorOrchestratorPanel','tutorTopic','startTutorSession','advanceTutorSession','abandonTutorSession','tutorSessionStatus','tutorKnowledgeCheck'])assert.match(html,new RegExp(`id=["']${id}["']`));
+  for(const id of ['tutorOrchestratorPanel','tutorTopic','startTutorSession','advanceTutorSession','abandonTutorSession','tutorProgress','tutorProgressBar','tutorObjectiveProgress','tutorSessionStatus','tutorKnowledgeCheck'])assert.match(html,new RegExp(`id=["']${id}["']`));
   assert.match(html,/sinbad-tutor-orchestrator\.js/);assert.match(html,/sinbad-tutor-controller\.js/);
   const controller=fs.readFileSync('sinbad-tutor-controller.js','utf8');
   assert.match(controller,/SinbadTutorOrchestrator\.create/);assert.match(controller,/kind:'knowledge-check'/);assert.match(controller,/SinbadAcademy\?\.quiz/);assert.match(controller,/objectives:checks\.map/);assert.doesNotMatch(controller,/objectiveIndex%/);assert.match(controller,/Başarı varsayılmadı/);
@@ -91,4 +91,12 @@ test('active tutor progress cannot be silently overwritten and abandonment is ex
   assert.match(controller,/abandonTutorSession.*addEventListener\('click',abandon\)/);
   assert.match(controller,/Doğrulanmış öğrenme profiliniz korunuyor/);
   assert.doesNotMatch(controller,/pendingTeaching=null;\$\('startTutorSession'\)\.disabled=false/);
+});
+
+test('tutor progress UI exposes only assessed objective completion',()=>{
+  const controller=fs.readFileSync('sinbad-tutor-controller.js','utf8');
+  assert.match(controller,/SinbadTutorOrchestrator\.progress\(state\.session\)/);
+  assert.match(controller,/hedef doğrulandı/);
+  assert.match(controller,/item\.status==='VERIFIED'/);
+  assert.match(controller,/renderProgress\(\)/);
 });
