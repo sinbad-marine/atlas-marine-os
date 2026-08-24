@@ -1,0 +1,41 @@
+{
+  "schema": "sinbad-curated-cargo/1",
+  "visuals": [
+    {
+      "id": "container-twistlock",
+      "file": "container-twistlock.webp",
+      "heading": "Container twistlocks shown in close-up",
+      "topics": "container twistlock, konteyner kilidi, cargo securing, yük emniyeti",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Container_twistlock.JPG",
+      "credit": "Pitkäkaula — Container twistlock",
+      "license": "CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0/)"
+    },
+    {
+      "id": "ship-cargo-crane",
+      "file": "ship-cargo-crane.webp",
+      "heading": "Two deck cargo cranes on a small container vessel",
+      "topics": "ship cargo crane, deck cargo crane, gemi yük vinci, güverte yük vinci",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Container_ship_crane.jpg",
+      "credit": "Thue — Container ship crane",
+      "license": "Public domain dedication (PD-self)"
+    },
+    {
+      "id": "folding-hatch-covers",
+      "file": "folding-hatch-covers.webp",
+      "heading": "Folding hatch covers and deck cranes on a bulk carrier",
+      "topics": "folding hatch covers, cargo hatch cover, katlanır ambar kapağı, ambar kapakları",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Le_vraquier_Gullholmen_Island_(3).JPG",
+      "credit": "Jean-Pierre Bazard (Jpbazard) — Le vraquier Gullholmen Island (3)",
+      "license": "CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/)"
+    },
+    {
+      "id": "container-loading",
+      "file": "container-loading.webp",
+      "heading": "Container feeder loading beneath port gantry cranes",
+      "topics": "container loading operation, loading container ship, konteyner yükleme operasyonu, konteyner yükleme",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Loading_of_container_ship_in_Copenhagen.jpg",
+      "credit": "Dennis Rosenfeldt (Mudge) — Loading of container ship in Copenhagen",
+      "license": "CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0/)"
+    }
+  ]
+}

@@ -166,6 +166,18 @@ def test_verified_engine_room_photos_keep_equipment_scopes_distinct():
     assert MODULE.curated_engine_room_query("pürifayer fotoğrafı", 3) == []
 
 
+def test_verified_cargo_photos_match_exact_operations_and_hardware():
+    twistlock = MODULE.curated_cargo_query("konteyner twistlock fotoğrafını göster", 3)
+    crane = MODULE.curated_cargo_query("gemi yük vinci nasıl görünür", 3)
+    hatch = MODULE.curated_cargo_query("katlanır ambar kapağı fotoğrafı", 3)
+    loading = MODULE.curated_cargo_query("konteyner yükleme operasyonu görseli", 3)
+    assert twistlock[0]["visual_key"] == "curated:cargo:container-twistlock"
+    assert crane[0]["visual_key"] == "curated:cargo:ship-cargo-crane"
+    assert hatch[0]["visual_key"] == "curated:cargo:folding-hatch-covers"
+    assert loading[0]["visual_key"] == "curated:cargo:container-loading"
+    assert MODULE.curated_cargo_query("dökme yük kepçesi fotoğrafı", 3) == []
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -182,4 +194,5 @@ if __name__ == "__main__":
     test_verified_lighthouse_photos_match_distinct_object_queries()
     test_verified_deck_equipment_photos_match_exact_hardware_queries()
     test_verified_engine_room_photos_keep_equipment_scopes_distinct()
-    print("15 curated visual query tests passed")
+    test_verified_cargo_photos_match_exact_operations_and_hardware()
+    print("16 curated visual query tests passed")
