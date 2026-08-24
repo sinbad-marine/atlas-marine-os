@@ -39,6 +39,24 @@
     const session=blocked.length?stop(base,'PREREQUISITE_NOT_MET',{blockedBy:blocked}):freeze(base);
     return freeze({session,profile,action:action(session)});
   }
+  function restore(input={}){
+    const lessons=catalog(input.catalog),snapshot=input.snapshot;
+    if(!snapshot||typeof snapshot!=='object'||!snapshot.session||!snapshot.profile)throw new TypeError('A stored tutor snapshot is required');
+    const profile=professor.normalizeProfile(snapshot.profile),stored=snapshot.session;
+    const lesson=lessons.find(item=>item.id===stored.topicId);
+    const objectiveIndex=Number(stored.objectiveIndex),attempts=Number(stored.attempts),turn=Number(stored.turn);
+    if(stored.version!==VERSION||typeof stored.sessionId!=='string'||!stored.sessionId.trim()||stored.learnerId!==profile.learnerId||!lesson)throw new TypeError('Stored tutor session identity is invalid');
+    if(stored.status!=='ACTIVE'||!['EXPLAIN','CHECK','REMEDIATE'].includes(stored.stage))throw new TypeError('Stored tutor session is not resumable');
+    if(!Number.isInteger(objectiveIndex)||objectiveIndex<0||objectiveIndex>=lesson.objectives.length||!Number.isInteger(attempts)||attempts<0||attempts>=MAX_ATTEMPTS||!Number.isInteger(turn)||turn<0)throw new TypeError('Stored tutor progress is invalid');
+    const storedObjectives=Array.isArray(stored.objectives)?stored.objectives:[];
+    if(storedObjectives.length!==lesson.objectives.length||storedObjectives.some((item,index)=>item?.id!==lesson.objectives[index].id||item?.label!==lesson.objectives[index].label))throw new TypeError('Stored tutor objectives do not match the catalog');
+    const evidence=(Array.isArray(stored.evidence)?stored.evidence:[]).map(item=>{
+      if(!lesson.objectives.some(objective=>objective.id===item?.objectiveId)||!ASSESSMENT_KINDS.has(item?.kind)||!Number.isFinite(item?.score)||item.score<0||item.score>1||!Number.isFinite(item?.confidence)||item.confidence<0||item.confidence>1||typeof item?.at!=='string'||!item.at)throw new TypeError('Stored tutor evidence is invalid');
+      return {objectiveId:item.objectiveId,score:item.score,confidence:item.confidence,kind:item.kind,at:item.at};
+    });
+    const session=freeze({version:VERSION,sessionId:stored.sessionId.trim(),learnerId:profile.learnerId,topicId:lesson.id,objectives:lesson.objectives,objectiveIndex,stage:stored.stage,status:'ACTIVE',attempts,turn,reason:null,evidence});
+    return freeze({session,profile,action:action(session)});
+  }
   function advance(sessionInput,profileInput,event={},now=new Date().toISOString()){
     const session=freeze({...sessionInput,objectives:[...(sessionInput.objectives||[])],evidence:[...(sessionInput.evidence||[])]}),profile=professor.normalizeProfile(profileInput);
     if(session.version!==VERSION||!session.sessionId)return freeze({session:stop(session,'INVALID_SESSION'),profile,action:action(stop(session,'INVALID_SESSION'))});
@@ -64,5 +82,5 @@
     }else next=stop(next,'INVALID_TRANSITION',{eventType:type,stage:session.stage});
     next=freeze(next);return freeze({session:next,profile:nextProfile,action:action(next)});
   }
-  return Object.freeze({VERSION,MAX_ATTEMPTS,ASSESSMENT_KINDS:Object.freeze([...ASSESSMENT_KINDS]),create,advance,action});
+  return Object.freeze({VERSION,MAX_ATTEMPTS,ASSESSMENT_KINDS:Object.freeze([...ASSESSMENT_KINDS]),create,restore,advance,action});
 });

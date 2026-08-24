@@ -52,3 +52,27 @@ test('catalog rejects duplicate lessons and missing objectives',()=>{
   assert.throws(()=>tutor.create({sessionId:'x',catalog:[{id:'a',objectives:['x']},{id:'a',objectives:['y']}]}),/unique/);
   assert.throws(()=>tutor.create({sessionId:'x',catalog:[{id:'a'}]}),/objective/);
 });
+
+test('restores only an active catalog-bound tutor session',()=>{
+  let out=tutor.create({sessionId:'resume-1',profile:ready(),catalog,topicId:'weather'});
+  out=tutor.advance(out.session,out.profile,{type:'EXPLANATION_COMPLETE'});
+  const restored=tutor.restore({catalog,snapshot:{session:JSON.parse(JSON.stringify(out.session)),profile:JSON.parse(JSON.stringify(out.profile))}});
+  assert.equal(restored.session.sessionId,'resume-1');
+  assert.equal(restored.session.stage,'CHECK');
+  assert.equal(restored.action.type,'ASK_KNOWLEDGE_CHECK');
+  assert.ok(Object.isFrozen(restored.session));
+});
+
+test('rejects altered, stale and completed tutor snapshots',()=>{
+  const active=tutor.create({sessionId:'resume-2',profile:ready(),catalog,topicId:'weather'});
+  const altered=JSON.parse(JSON.stringify({session:active.session,profile:active.profile}));altered.session.objectives[0].label='forged';
+  assert.throws(()=>tutor.restore({catalog,snapshot:altered}),/objectives/);
+  const stale=JSON.parse(JSON.stringify({session:active.session,profile:active.profile}));stale.session.version='sinbad-tutor-orchestrator/0';
+  assert.throws(()=>tutor.restore({catalog,snapshot:stale}),/identity/);
+  let complete=active;
+  for(let index=0;index<2;index++){
+    complete=tutor.advance(complete.session,complete.profile,{type:'EXPLANATION_COMPLETE'});
+    complete=tutor.advance(complete.session,complete.profile,{type:'ASSESSMENT',kind:'knowledge-check',score:1,confidence:1});
+  }
+  assert.throws(()=>tutor.restore({catalog,snapshot:{session:complete.session,profile:complete.profile}}),/not resumable/);
+});
