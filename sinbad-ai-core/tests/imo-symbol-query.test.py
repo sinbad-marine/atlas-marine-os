@@ -67,12 +67,18 @@ def test_verified_navigation_photos_have_exact_topics_and_provenance():
     lines = MODULE.curated_navigation_query("halat manevrası görseli", 3)
     communications = MODULE.curated_navigation_query("köprüüstü haberleşme fotoğrafı", 3)
     compass = MODULE.curated_navigation_query("manyetik pusula fotoğrafını göster", 3)
+    ecdis = MODULE.curated_navigation_query("ECDIS ekranını göster", 3)
+    ais = MODULE.curated_navigation_query("AIS cihazının görselini göster", 3)
+    gyro = MODULE.curated_navigation_query("cayro pusula ile kerteriz alma fotoğrafı", 3)
     assert radar[0]["visual_key"] == "curated:navigation:bridge-radar-console"
     assert sextant[0]["visual_key"] == "curated:navigation:sextant-sun-sight"
     assert lines[0]["visual_key"] == "curated:navigation:anchor-detail-preparation"
     assert communications[0]["visual_key"] == "curated:navigation:bridge-to-bridge-communications"
     assert compass[0]["visual_key"] == "curated:navigation:magnetic-compass-binnacle"
-    assert all(item[0]["sourcePaths"][0].startswith("https://") for item in (radar, sextant, lines, communications, compass))
+    assert ecdis[0]["visual_key"] == "curated:navigation:integrated-navigation-bridge"
+    assert ais[0]["visual_key"] == "curated:navigation:ais-ship-tracking-display"
+    assert gyro[0]["visual_key"] == "curated:navigation:gyrocompass-bearing-operation"
+    assert all(item[0]["sourcePaths"][0].startswith("https://") for item in (radar, sextant, lines, communications, compass, ecdis, ais, gyro))
     assert MODULE.curated_navigation_query("can salının fotoğrafını göster", 3) == []
 
 
