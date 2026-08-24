@@ -266,11 +266,11 @@ test('explicit gesture requests override improvisation only when a real supporte
 
 test('supported physical requests expand into bounded interruptible gesture sequences',()=>{
   const palm=gestureSequenceForRequest('show-palm');
-  assert.equal(palm.accepted,true);assert.deepEqual(palm.cues.map(cue=>cue.gesture),['open-hand','show-palm','show-palm']);
-  assert.deepEqual(palm.cues.map(cue=>cue.gaze),['audience','palm','audience']);assert.ok(palm.duration<=1200);assert.ok(Object.isFrozen(palm.cues));
-  const left=gestureSequenceForRequest('raise-left-hand');assert.deepEqual(left.cues.map(cue=>cue.gaze),['audience','left-palm','audience']);
+  assert.equal(palm.accepted,true);assert.deepEqual(palm.cues.map(cue=>cue.gesture),['open-hand','open-hand','show-palm','show-palm']);
+  assert.deepEqual(palm.cues.map(cue=>cue.gaze),['audience','palm','palm','audience']);assert.ok(palm.duration<=1200);assert.ok(Object.isFrozen(palm.cues));
+  const left=gestureSequenceForRequest('raise-left-hand');assert.deepEqual(left.cues.map(cue=>cue.gaze),['audience','left-palm','left-palm','audience']);
   const both=gestureSequenceForRequest('show-both-hands');assert.deepEqual(both.cues.map(cue=>cue.gesture),['rest','open-hand','show-both-hands','rest']);assert.ok(both.duration<=1400);
-  const board=gestureSequenceForRequest('point-board');assert.equal(board.cues[1].gaze,'board');assert.ok(board.duration<=1200);
+  const board=gestureSequenceForRequest('point-board');assert.equal(board.cues[1].gaze,'board');assert.equal(board.cues[1].gesture,'explain');assert.equal(board.cues[2].gesture,'point-board');assert.ok(board.duration<=1200);
   const wave=gestureSequenceForRequest('wave');assert.deepEqual(wave.cues.map(cue=>cue.gesture),['open-hand','wave-right','wave-right-away','wave-right','wave-right-away','open-hand']);assert.ok(wave.duration<=1800);
   const laugh=gestureSequenceForRequest('laugh');assert.deepEqual(laugh.cues.map(cue=>cue.gesture),['rest','laugh','nod','laugh','rest']);assert.ok(laugh.duration<=1500);
   const no=gestureSequenceForRequest('shake-head');assert.deepEqual(no.cues.map(cue=>cue.gesture),['rest','shake-head-left','shake-head-right','shake-head-left','rest']);assert.ok(no.duration<=1800);
@@ -284,6 +284,7 @@ test('an explicit two-hand instruction becomes one bounded ordered gesture plan'
   const plan=gestureSequenceForRequest(request.action,{actions:request.actions});
   assert.equal(plan.accepted,true);assert.ok(plan.duration<=2400);assert.deepEqual(plan.actions,request.actions);
   assert.deepEqual(plan.cues.filter(cue=>cue.actionStart).map(cue=>cue.actionStart),request.actions);
+  assert.ok(plan.cues.filter(cue=>cue.actionStart).every(cue=>['show-palm','raise-left'].includes(cue.gesture)));
   assert.ok(plan.cues.every((cue,index)=>index===0||cue.at>=plan.cues[index-1].at));
   assert.match(groundResponseWithGesture('irrelevant',request,'tr-TR').text,/^Önce sağ avucumu, ardından sol elimi/);
   assert.equal(gestureSequenceForRequest('two-hand-sequence',{actions:['show-right-hand','show-right-hand']}).reason,'INVALID_COMPOUND_GESTURE');

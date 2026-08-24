@@ -658,18 +658,21 @@
     const sequences={
       'show-palm':[
         {at:0,gesture:'open-hand',gaze:'audience',emotion:'warm',energy:.3},
-        {at:260,gesture:'show-palm',gaze:'palm',emotion:'attentive',energy:.4},
-        {at:820,gesture:'show-palm',gaze:'audience',emotion:'warm',energy:.34}
+        {at:140,gesture:'open-hand',gaze:'palm',emotion:'attentive',energy:.32},
+        {at:300,gesture:'show-palm',gaze:'palm',emotion:'attentive',energy:.4},
+        {at:860,gesture:'show-palm',gaze:'audience',emotion:'warm',energy:.34}
       ],
       'show-right-hand':[
         {at:0,gesture:'open-hand',gaze:'audience',emotion:'warm',energy:.3},
-        {at:240,gesture:'show-palm',gaze:'palm',emotion:'attentive',energy:.4},
-        {at:780,gesture:'show-palm',gaze:'audience',emotion:'warm',energy:.34}
+        {at:140,gesture:'open-hand',gaze:'palm',emotion:'attentive',energy:.32},
+        {at:300,gesture:'show-palm',gaze:'palm',emotion:'attentive',energy:.4},
+        {at:820,gesture:'show-palm',gaze:'audience',emotion:'warm',energy:.34}
       ],
       'raise-left-hand':[
         {at:0,gesture:'rest',gaze:'audience',emotion:'attentive',energy:.26},
-        {at:240,gesture:'raise-left',gaze:'left-palm',emotion:'attentive',energy:.38},
-        {at:760,gesture:'raise-left',gaze:'audience',emotion:'warm',energy:.32}
+        {at:140,gesture:'rest',gaze:'left-palm',emotion:'attentive',energy:.28},
+        {at:300,gesture:'raise-left',gaze:'left-palm',emotion:'attentive',energy:.38},
+        {at:820,gesture:'raise-left',gaze:'audience',emotion:'warm',energy:.32}
       ],
       'show-both-hands':[
         {at:0,gesture:'rest',gaze:'audience',emotion:'attentive',energy:.24},
@@ -708,8 +711,9 @@
       ],
       'point-board':[
         {at:0,gesture:'explain',gaze:'audience',emotion:'confident',energy:.34},
-        {at:300,gesture:'point-board',gaze:'board',emotion:'confident',energy:.42},
-        {at:1000,gesture:'point-board',gaze:'audience',emotion:'warm',energy:.34}
+        {at:160,gesture:'explain',gaze:'board',emotion:'confident',energy:.36},
+        {at:360,gesture:'point-board',gaze:'board',emotion:'confident',energy:.42},
+        {at:1060,gesture:'point-board',gaze:'audience',emotion:'warm',energy:.34}
       ]
     };
     if(action==='two-hand-sequence'){
@@ -717,7 +721,9 @@
       const cues=[];let offset=0;
       actions.forEach((item,index)=>{
         const source=sequences[item];
-        source.forEach((cue,cueIndex)=>cues.push(Object.freeze({...cue,at:cue.at+offset,...(cueIndex===1?{actionStart:item}:{})})));
+        const actionGesture=item==='show-right-hand'?'show-palm':'raise-left';
+        const actionStartIndex=source.findIndex((cue,cueIndex)=>cue.gesture===actionGesture&&source[cueIndex-1]?.gesture!==actionGesture);
+        source.forEach((cue,cueIndex)=>cues.push(Object.freeze({...cue,at:cue.at+offset,...(cueIndex===actionStartIndex?{actionStart:item}:{})})));
         if(index===0)offset=source.at(-1).at+360;
       });
       return Object.freeze({accepted:true,cues:Object.freeze(cues),duration:cues.at(-1).at,actions:Object.freeze([...actions])});
