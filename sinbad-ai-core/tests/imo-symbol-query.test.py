@@ -120,6 +120,18 @@ def test_verified_cardinal_buoy_photos_match_real_object_queries():
     assert all(item[0]["sourcePaths"][0].startswith("https://") for item in (cardinal, south))
 
 
+def test_verified_lateral_and_special_aids_match_exact_queries():
+    port = MODULE.curated_aids_query("iskele lateral şamandırasının fotoğrafını göster", 3)
+    starboard = MODULE.curated_aids_query("sancak lateral şamandırası nasıl görünür", 3)
+    safe = MODULE.curated_aids_query("emniyetli su işaretinin fotoğrafını göster", 3)
+    danger = MODULE.curated_aids_query("izole tehlike işareti nasıl görünür", 3)
+    assert port[0]["visual_key"] == "curated:aids:port-hand-lateral-buoy"
+    assert starboard[0]["visual_key"] == "curated:aids:starboard-hand-lateral-buoy"
+    assert safe[0]["visual_key"] == "curated:aids:safe-water-mark"
+    assert danger[0]["visual_key"] == "curated:aids:isolated-danger-mark"
+    assert all(item[0]["sourcePaths"][0].startswith("https://") for item in (port, starboard, safe, danger))
+
+
 def test_verified_lighthouse_photos_match_distinct_object_queries():
     lighthouse = MODULE.curated_lighthouse_query("deniz feneri fotoğrafını göster", 3)
     optics = MODULE.curated_lighthouse_query("deniz feneri merceği nasıl görünür", 3)
@@ -142,5 +154,6 @@ if __name__ == "__main__":
     test_verified_safety_photos_are_connected_to_exact_equipment_queries()
     test_verified_marine_weather_photos_match_exact_conditions()
     test_verified_cardinal_buoy_photos_match_real_object_queries()
+    test_verified_lateral_and_special_aids_match_exact_queries()
     test_verified_lighthouse_photos_match_distinct_object_queries()
-    print("12 curated visual query tests passed")
+    print("13 curated visual query tests passed")

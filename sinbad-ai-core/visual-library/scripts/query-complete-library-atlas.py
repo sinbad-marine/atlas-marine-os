@@ -332,6 +332,10 @@ def curated_aids_query(value: str, limit: int) -> list[dict]:
     phrase_groups = {
         "cardinal-buoys-deployment": ("kardinal şamandıra", "kardinal samandira", "kuzey kardinal", "batı kardinal", "bati kardinal", "cardinal buoy", "north cardinal", "west cardinal"),
         "south-cardinal-buoy": ("güney kardinal", "guney kardinal", "south cardinal", "düdüklü şamandıra", "duduklu samandira"),
+        "port-hand-lateral-buoy": ("iskele şamandıra", "iskele samandira", "iskele lateral", "kırmızı lateral", "kirmizi lateral", "port hand buoy", "port lateral"),
+        "starboard-hand-lateral-buoy": ("sancak şamandıra", "sancak samandira", "sancak lateral", "yeşil lateral", "yesil lateral", "starboard hand buoy", "starboard lateral"),
+        "safe-water-mark": ("emniyetli su işareti", "emniyetli su isareti", "güvenli su şamandıra", "guvenli su samandira", "orta kanal şamandıra", "orta kanal samandira", "safe water mark", "mid-channel mark"),
+        "isolated-danger-mark": ("izole tehlike işareti", "izole tehlike isareti", "münferit tehlike", "munferit tehlike", "isolated danger mark", "isolated danger beacon"),
     }
     preferred = {key for key, phrases in phrase_groups.items() if any(phrase in normalized for phrase in phrases)}
     if "south-cardinal-buoy" in preferred:
