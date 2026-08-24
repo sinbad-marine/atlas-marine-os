@@ -706,7 +706,7 @@ async function startSinbadLipSyncAnalyser(audio){
 let sinbadAvatarImageGeneration=0;
 function startSinbadWalkCycle(generation){
   if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches||document.documentElement.classList.contains('sinbad-force-reduced-motion'))return;
-  let frame=0;const tick=()=>{if(generation!==sinbadAvatarImageGeneration||sinbadAssistantState!=='walking')return;frame=(frame+1)%SINBAD_WALK_ASSETS.length;sinbadAssistantElements().forEach(el=>{const img=el.querySelector('.sinbad-avatar-img:not(.sinbad-avatar-blink):not(.sinbad-avatar-mouth)');if(img)img.src=SINBAD_AVATAR_ASSET_BASE+SINBAD_WALK_ASSETS[frame];});sinbadAssistantTimers.push(setTimeout(tick,280));};
+  let frame=0;const tick=()=>{if(generation!==sinbadAvatarImageGeneration||sinbadAssistantState!=='walking')return;frame=(frame+1)%SINBAD_WALK_ASSETS.length;const phase=frame===0?'left':'right';applySinbadLivePerformanceCue({gesture:`walk-${phase}`,gaze:'path',emotion:'warm',energy:.74});sinbadAssistantElements().forEach(el=>{el.dataset.walkPhase=phase;const img=el.querySelector('.sinbad-avatar-img:not(.sinbad-avatar-blink):not(.sinbad-avatar-mouth)');if(img)img.src=SINBAD_AVATAR_ASSET_BASE+SINBAD_WALK_ASSETS[frame];});sinbadAssistantTimers.push(setTimeout(tick,280));};
   sinbadAssistantTimers.push(setTimeout(tick,280));
 }
 function setSinbadAssistantState(state,detail={}){
@@ -755,6 +755,7 @@ function setSinbadAssistantState(state,detail={}){
     else delete el.dataset.thinkingStage;
     if(next==='speaking'&&detail.responseKind)el.dataset.responseKind=detail.responseKind;
     else if(next!=='speaking')delete el.dataset.responseKind;
+    if(next!=='walking')delete el.dataset.walkPhase;
     el.style.removeProperty('--sinbad-motion-duration');
     if(rigTransition?.accepted)el.style.setProperty('--sinbad-motion-duration',`${rigTransition.durationMs}ms`);
     if(transitionInterrupted)el.dataset.motionInterrupted='true';else delete el.dataset.motionInterrupted;

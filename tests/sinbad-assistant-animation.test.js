@@ -151,6 +151,8 @@ test('walking uses two real alpha PNG frames and a bounded user-triggered cycle'
   for(const file of ['captain-sinbad-walk-a-v1.png','captain-sinbad-walk-b-v1.png']){const path=`assets/captain-sinbad/${file}`;assert.ok(fs.existsSync(path));const bytes=fs.readFileSync(path);assert.equal(bytes.toString('ascii',1,4),'PNG');assert.equal(bytes[25],6);}
   assert.match(app,/const SINBAD_WALK_ASSETS=Object\.freeze\(\['captain-sinbad-walk-a-v1\.png','captain-sinbad-walk-b-v1\.png'\]\)/);
   assert.match(app,/function startSinbadWalkCycle\(generation\)/);assert.match(app,/setTimeout\(tick,280\)/);assert.match(app,/if\(next==='walking'\).*2240/);
+  assert.match(app,/applySinbadLivePerformanceCue\(\{gesture:`walk-\$\{phase\}`,gaze:'path',emotion:'warm',energy:\.74\}\)/);
+  assert.match(app,/el\.dataset\.walkPhase=phase/);assert.match(app,/if\(next!=='walking'\)delete el\.dataset\.walkPhase/);
   assert.match(app,/action==='walk'&&!\['idle','voice-disabled'\]\.includes\(sinbadAssistantState\)/);
   assert.match(html,/id="testSinbadWalk"/);assert.match(sw,/captain-sinbad-walk-a-v1\.png/);assert.match(sw,/captain-sinbad-walk-b-v1\.png/);
 });

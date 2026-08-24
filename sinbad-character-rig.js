@@ -34,6 +34,8 @@
     explain:{leftArm:.38,rightArm:.52},
     laugh:{headPitch:-.12,leftArm:.56,rightArm:.64},
     walk:{leftArm:-.32,rightArm:.32},
+    'walk-left':{headYaw:-.04,headPitch:.03,bodyLean:.12,leftArm:-.5,rightArm:.48,energy:.74},
+    'walk-right':{headYaw:.04,headPitch:.01,bodyLean:.04,leftArm:.48,rightArm:-.5,energy:.74},
     'point-board':{headYaw:.24,leftArm:.1,rightArm:.86},
     'write-contact':{headYaw:.28,headPitch:.08,bodyLean:.14,leftArm:.08,rightArm:.78},
     nod:{headPitch:.24},

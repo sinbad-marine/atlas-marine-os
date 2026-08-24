@@ -192,6 +192,11 @@ test('live Sinbad chat grounds body answers in the gesture actually shown',async
   await expect(answer).toContainText('Kısa ve kontrollü bir yürüyüş yapıyorum.');
   await expect(avatar).toHaveAttribute('data-state','walking');
   await expect(avatar).toHaveAttribute('data-gesture','walk');
+  const walkingArmStart=await avatar.locator('.sinbad-rig-right-arm').evaluate(element=>getComputedStyle(element).transform);
+  await expect(avatar).toHaveAttribute('data-gesture',/^walk-(?:left|right)$/u,{timeout:900});
+  await expect(avatar).toHaveAttribute('data-walk-phase',/^(?:left|right)$/u);
+  const walkingArmPhase=await avatar.locator('.sinbad-rig-right-arm').evaluate(element=>getComputedStyle(element).transform);
+  expect(walkingArmPhase).not.toBe(walkingArmStart);
 
   await ask('Hayır anlamında başını salla.');
   await expect(answer).toContainText('Başımı iki yana sallayarak hayır işareti yapıyorum.');
