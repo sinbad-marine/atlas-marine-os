@@ -548,6 +548,27 @@ def curated_bridge_controls_query(value: str, limit: int) -> list[dict]:
     return result[:limit]
 
 
+def curated_firefighting_query(value: str, limit: int) -> list[dict]:
+    root = Path(__file__).resolve().parents[1] / "assets" / "curated-firefighting-verified"
+    manifest = root / "manifest.json"
+    if not manifest.is_file(): return []
+    normalized = value.casefold()
+    groups = {
+        "portable-extinguisher": ("taşınabilir yangın söndürücü", "tasinabilir yangin sondurucu", "yangın tüpü kullanımı", "yangin tupu kullanimi", "portable fire extinguisher"),
+        "fire-hose-station": ("gemi yangın hortumu", "gemi yangin hortumu", "yangın hortumu istasyonu", "yangin hortumu istasyonu", "ship fire hose station", "fire hose rack"),
+        "fire-nozzle-operation": ("yangın nozulu", "yangin nozulu", "yangın lansı", "yangin lansi", "fire hose nozzle operation", "charged fire hose"),
+        "cargo-hold-drenching": ("yük ambarı drencher", "yuk ambari drencher", "ambar sprinkler", "cargo hold drenching", "cargo hold sprinkler"),
+    }
+    preferred = {k for k, phrases in groups.items() if any(p in normalized for p in phrases)}
+    if not preferred: return []
+    result=[]
+    for item in json.loads(manifest.read_text(encoding="utf-8"))["visuals"]:
+        if item["id"] not in preferred: continue
+        path=root/item["file"]; digest=__import__("hashlib").sha256(path.read_bytes()).hexdigest()
+        result.append({"visual_key":f"curated:firefighting:{item['id']}","visual_type":"object","document_hash":"curated-firefighting-verified","page_number":None,"image_number":None,"asset_hash":digest,"file":str(path),"title":item["credit"],"volume":None,"heading":item["heading"],"context":f"Verified shipboard-firefighting photograph. {item['license']}","topics":item["topics"],"sourcePaths":[item["sourceUrl"]],"rank":-2500.0,"assetUrl":f"http://127.0.0.1:31983/visuals/assets/{digest}.webp"})
+    return result[:limit]
+
+
 def terms(value: str) -> list[str]:
     aliases = {
         "şamandıra": "buoy", "samandira": "buoy",
@@ -597,6 +618,9 @@ def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = Fa
     if curated:
         return curated
     curated = curated_bridge_controls_query(value, limit)
+    if curated:
+        return curated
+    curated = curated_firefighting_query(value, limit)
     if curated:
         return curated
     curated = curated_navigation_query(value, limit)
@@ -724,6 +748,10 @@ def resolve_asset(db: sqlite3.Connection, atlas: Path, digest: str) -> dict:
                     "visual_type": "object", "absolutePath": str(path.resolve())}
     bridge_controls_root = Path(__file__).resolve().parents[1] / "assets" / "curated-bridge-controls-verified"
     for path in bridge_controls_root.glob("*.webp"):
+        if __import__("hashlib").sha256(path.read_bytes()).hexdigest() == digest:
+            return {"asset_hash":digest,"file":str(path),"width":None,"height":None,"visual_type":"object","absolutePath":str(path.resolve())}
+    firefighting_root = Path(__file__).resolve().parents[1] / "assets" / "curated-firefighting-verified"
+    for path in firefighting_root.glob("*.webp"):
         if __import__("hashlib").sha256(path.read_bytes()).hexdigest() == digest:
             return {"asset_hash":digest,"file":str(path),"width":None,"height":None,"visual_type":"object","absolutePath":str(path.resolve())}
     statements = [

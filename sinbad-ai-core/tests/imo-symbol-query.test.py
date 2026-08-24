@@ -205,6 +205,18 @@ def test_verified_bridge_controls_keep_hardware_and_operation_distinct():
     assert MODULE.curated_bridge_controls_query("manyetik pusula fotoğrafı", 3) == []
 
 
+def test_verified_firefighting_photos_match_exact_equipment_and_operations():
+    extinguisher=MODULE.curated_firefighting_query("taşınabilir yangın söndürücü fotoğrafı",3)
+    hose=MODULE.curated_firefighting_query("gemi yangın hortumu istasyonu",3)
+    nozzle=MODULE.curated_firefighting_query("yangın nozulu kullanımı görseli",3)
+    drench=MODULE.curated_firefighting_query("yük ambarı drencher sistemi fotoğrafı",3)
+    assert extinguisher[0]["visual_key"]=="curated:firefighting:portable-extinguisher"
+    assert hose[0]["visual_key"]=="curated:firefighting:fire-hose-station"
+    assert nozzle[0]["visual_key"]=="curated:firefighting:fire-nozzle-operation"
+    assert drench[0]["visual_key"]=="curated:firefighting:cargo-hold-drenching"
+    assert MODULE.curated_firefighting_query("yangın alarm paneli",3)==[]
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -224,4 +236,5 @@ if __name__ == "__main__":
     test_verified_cargo_photos_match_exact_operations_and_hardware()
     test_verified_bridge_electronics_match_exact_device_queries()
     test_verified_bridge_controls_keep_hardware_and_operation_distinct()
-    print("18 curated visual query tests passed")
+    test_verified_firefighting_photos_match_exact_equipment_and_operations()
+    print("19 curated visual query tests passed")
