@@ -89,12 +89,14 @@ test('large Captain Sinbad portrait loads the four-layer articulated rig with it
   await expect(avatar.locator('.sinbad-rig-head-base')).toHaveCSS('opacity','0');
   if(testInfo.project.name==='desktop-chromium')await avatar.screenshot({path:'test-results/sinbad-layered-rig-preview.png'});
   await page.evaluate(()=>{
+    document.querySelectorAll('.sinbad-avatar').forEach(element=>element.classList.add('sinbad-blinking'));
     setSinbadAssistantState('speaking');
     sinbadStandardVoiceTick({name:'word',charIndex:0},'Merhaba');
     stopSinbadVoice();
     setSinbadAssistantState('speaking');
     setSinbadMouthFrame('wide');
   });
+  await expect(avatar).not.toHaveClass(/sinbad-blinking/);
   await page.waitForTimeout(220);
   await expect(avatar).toHaveAttribute('data-mouth-frame','wide');
   await page.evaluate(()=>{

@@ -594,7 +594,7 @@ function preloadSinbadAvatarAssets(){
   SINBAD_RIG_PART_ASSETS.forEach(file=>{const img=new Image();img.src=SINBAD_AVATAR_ASSET_BASE+file;});
   SINBAD_RIG_FACE_ASSETS.forEach(file=>{const img=new Image();img.src=SINBAD_AVATAR_ASSET_BASE+file;});
 }
-let sinbadBlinkTimer=null;
+let sinbadBlinkTimer=null,sinbadBlinkHoldTimer=null;
 let sinbadIdleMotionTimer=null;
 function sinbadIdleMotionAllowed(){
   return sinbadAssistantState==='idle'&&document.visibilityState!=='hidden'&&!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches&&!document.documentElement.classList.contains('sinbad-force-reduced-motion');
@@ -633,14 +633,23 @@ function setSinbadMouthFrame(frame){
   const safe=sinbadAssistantState==='speaking'&&Object.hasOwn(SINBAD_SPEECH_ASSETS,frame)?frame:'closed';
   sinbadAssistantElements().forEach(el=>el.dataset.mouthFrame=safe);
 }
-function scheduleSinbadBlink(){
+function clearSinbadBlink(){
   clearTimeout(sinbadBlinkTimer);sinbadBlinkTimer=null;
+  clearTimeout(sinbadBlinkHoldTimer);sinbadBlinkHoldTimer=null;
+  sinbadAssistantElements().forEach(el=>el.classList.remove('sinbad-blinking'));
+}
+function scheduleSinbadBlink(){
+  clearSinbadBlink();
   if(!sinbadBlinkAllowed())return;
   sinbadBlinkTimer=setTimeout(()=>{
+    sinbadBlinkTimer=null;
     if(!sinbadBlinkAllowed())return;
     sinbadAssistantElements().forEach(el=>el.classList.add('sinbad-blinking'));
-    setTimeout(()=>sinbadAssistantElements().forEach(el=>el.classList.remove('sinbad-blinking')),135);
-    scheduleSinbadBlink();
+    sinbadBlinkHoldTimer=setTimeout(()=>{
+      sinbadBlinkHoldTimer=null;
+      sinbadAssistantElements().forEach(el=>el.classList.remove('sinbad-blinking'));
+      scheduleSinbadBlink();
+    },135);
   },3800+Math.floor(Math.random()*3200));
 }
 let sinbadLipSyncAudioContext=null,sinbadLipSyncAnalyser=null,sinbadLipSyncSource=null,sinbadLipSyncRaf=null;

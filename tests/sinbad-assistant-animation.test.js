@@ -86,6 +86,14 @@ test('a real blink frame is bounded to calm states and respects visibility and r
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-idle-blink-v1\.png'/);
 });
 
+test('a state transition cancels both pending and visible blinks before speech mouth frames render',()=>{
+  assert.match(app,/let sinbadBlinkTimer=null,sinbadBlinkHoldTimer=null/);
+  assert.match(app,/function clearSinbadBlink\(\)\{/);
+  assert.match(app,/clearTimeout\(sinbadBlinkHoldTimer\);sinbadBlinkHoldTimer=null/);
+  assert.match(app,/classList\.remove\('sinbad-blinking'\)/);
+  assert.match(app,/function scheduleSinbadBlink\(\)\{\s*clearSinbadBlink\(\)/);
+});
+
 test('real phoneme frames follow audio amplitude or genuine speech boundaries and close on silence',()=>{
   const sw=fs.readFileSync('sw.js','utf8');
   for(const file of ['captain-sinbad-speaking-mbp-v1.png','captain-sinbad-speaking-o-v1.png']){
