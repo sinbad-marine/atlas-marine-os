@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "sinbad-curated-weather/1",
+  "licensePolicy": "Only individually verified public-domain or attribution-compatible photographs are included.",
+  "visuals": [
+    {
+      "id": "marine-fog-harbor",
+      "file": "marine-fog-harbor.webp",
+      "heading": "Dense fog reducing visibility in a harbor",
+      "topics": ["marine fog", "restricted visibility", "harbor fog", "sis", "deniz sisi", "kısıtlı görüş", "limanda sis"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Harbor_Fog_(37128843201).jpg",
+      "credit": "Photograph by Paul VanDerWerf",
+      "license": "CC BY 2.0"
+    },
+    {
+      "id": "marine-thunderstorm-lightning",
+      "file": "marine-thunderstorm-lightning.webp",
+      "heading": "Lightning over the sea during a marine thunderstorm",
+      "topics": ["marine thunderstorm", "lightning at sea", "storm hazard", "denizde gök gürültülü fırtına", "denizde yıldırım", "şimşek", "yıldırım"],
+      "sourceUrl": "https://www.dvidshub.net/image/1473861/incredible-photo-lightning-strike-near-us-navy-ship",
+      "credit": "U.S. Marine Corps photo by Lance Cpl. James R. Skelton, VIRIN 140721-M-UY829-001",
+      "license": "Public domain - U.S. federal government work"
+    },
+    {
+      "id": "ship-heavy-seas",
+      "file": "ship-heavy-seas.webp",
+      "heading": "Large waves breaking over a ship in heavy seas",
+      "topics": ["heavy seas", "rough sea", "large waves", "sea state", "ağır deniz", "kaba deniz", "büyük dalga", "deniz durumu"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:USS_Comstock_in_heavy_seas_150201-N-CU914-037.jpg",
+      "credit": "U.S. Navy photo by Mass Communication Specialist 3rd Class Lenny LaCrosse, VIRIN 150201-N-CU914-037",
+      "license": "Public domain - U.S. federal government work"
+    }
+  ]
+}
