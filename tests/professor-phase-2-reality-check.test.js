@@ -4,7 +4,7 @@ const fs=require('node:fs');
 const crypto=require('node:crypto');
 
 const record=JSON.parse(fs.readFileSync('professor-phase-2-reality-check.json','utf8'));
-const hash=file=>crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+const hash=file=>crypto.createHash('sha256').update(fs.readFileSync(file,'utf8').replace(/\r\n/g,'\n'),'utf8').digest('hex');
 
 test('Phase 2 reality check is a freeze candidate, not an applied freeze',()=>{
   assert.equal(record.record,'sinbad-professor-phase-2-reality-check/v1');
