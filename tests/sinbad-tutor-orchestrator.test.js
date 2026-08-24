@@ -77,6 +77,17 @@ test('rejects altered, stale and completed tutor snapshots',()=>{
   assert.throws(()=>tutor.restore({catalog,snapshot:{session:complete.session,profile:complete.profile}}),/not resumable/);
 });
 
+test('stops persistently when an objective has no available assessment',()=>{
+  let out=tutor.create({sessionId:'missing-check',profile:ready(),catalog,topicId:'weather'});
+  out=tutor.advance(out.session,out.profile,{type:'EXPLANATION_COMPLETE'});
+  out=tutor.advance(out.session,out.profile,{type:'ASSESSMENT_UNAVAILABLE'});
+  assert.equal(out.session.status,'STOPPED');
+  assert.equal(out.session.reason,'ASSESSMENT_UNAVAILABLE');
+  assert.equal(out.action.type,'STOP');
+  assert.equal(Object.hasOwn(out.profile.mastery,'weather'),false);
+  assert.throws(()=>tutor.restore({catalog,snapshot:{session:out.session,profile:out.profile}}),/not resumable/);
+});
+
 test('reports progress only from completed assessed objectives',()=>{
   let out=tutor.create({sessionId:'progress-1',profile:ready(),catalog,topicId:'weather'});
   let view=tutor.progress(out.session);
