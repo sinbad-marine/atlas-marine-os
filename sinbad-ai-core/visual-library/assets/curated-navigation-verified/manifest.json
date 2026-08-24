@@ -28,6 +28,24 @@
       "sourceUrl": "https://commons.wikimedia.org/wiki/Category:People_with_sextants",
       "credit": "U.S. Navy photo by Photographer's Mate 2nd Class Angela M. Virnig, VIRIN 030212-N-5786V-501",
       "license": "Public domain - U.S. federal government work"
+    },
+    {
+      "id": "bridge-to-bridge-communications",
+      "file": "bridge-to-bridge-communications.webp",
+      "heading": "Bridge-to-bridge communications watch",
+      "topics": ["bridge-to-bridge communications", "pilot house", "radio watch", "köprüüstü haberleşme", "telsiz vardiyası"],
+      "sourceUrl": "https://www.dvidshub.net/image/6853850/sailor-utilizes-bridge-bridge-communications",
+      "credit": "U.S. Navy photo by Mass Communication Specialist 2nd Class John Bellino, VIRIN 210921-N-PC065-1001",
+      "license": "Public domain - U.S. federal government work"
+    },
+    {
+      "id": "magnetic-compass-binnacle",
+      "file": "magnetic-compass-binnacle.webp",
+      "heading": "Ship magnetic compass binnacle",
+      "topics": ["magnetic compass", "binnacle", "compass card", "quadrantal spheres", "manyetik pusula", "pusula dolabı"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Compass_binnacle_from_SS_Kerimoana,_made_by_Dobbie,_McInnes_and_Clyde_Ltd_of_Glasgow_-_Wellington_Museum_-_Wellington,_NZ_-_DSC09915.jpg",
+      "credit": "Photograph by Daderot, Wellington Museum",
+      "license": "CC0 1.0 public-domain dedication"
     }
   ]
 }
