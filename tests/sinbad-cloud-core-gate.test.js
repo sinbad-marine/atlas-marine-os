@@ -53,11 +53,17 @@ test('normal and consented web responses are both checked by the client Core gat
   assert.match(app,/SinbadCoreDecision\?\.answerIsSafe/);
 });
 
+test('cloud Core gate rejects missing, empty and whitespace-only answers before rendering',()=>{
+  assert.match(app,/answer=String\(data\?\.answer\|\|''\)\.trim\(\)/);
+  assert.match(app,/answerSafe=Boolean\(answer\)&&window\.SinbadCoreDecision\?\.answerIsSafe\?\.\(answer\)===true/);
+  assert.match(app,/if\(String\(trustedAiData\?\.answer\|\|''\)\.trim\(\)\)/);
+});
+
 test('cloud transport errors skip AI data but preserve private archive retrieval',()=>{
   const invocation=app.indexOf("functions.invoke('sinbad-answer'");
   const errorStop=app.indexOf('if(aiError)',invocation);
   const gate=app.indexOf('else if(!cloudAnswerPassesCoreGate(trustedAiData,coreEnvelope))',invocation);
-  const answer=app.indexOf('if(trustedAiData?.answer)',invocation);
+  const answer=app.indexOf("if(String(trustedAiData?.answer||'').trim())",invocation);
   const privateRetrieval=app.indexOf("cloudClient.from('document_knowledge_chunks')",invocation);
   assert.ok(invocation>=0&&errorStop>invocation&&gate>errorStop&&answer>gate&&privateRetrieval>answer);
 });
