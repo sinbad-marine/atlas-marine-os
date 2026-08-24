@@ -76,3 +76,16 @@ test('rejects altered, stale and completed tutor snapshots',()=>{
   }
   assert.throws(()=>tutor.restore({catalog,snapshot:{session:complete.session,profile:complete.profile}}),/not resumable/);
 });
+
+test('reports progress only from completed assessed objectives',()=>{
+  let out=tutor.create({sessionId:'progress-1',profile:ready(),catalog,topicId:'weather'});
+  let view=tutor.progress(out.session);
+  assert.deepEqual({total:view.total,completed:view.completed,current:view.current,attempts:view.attempts,percent:view.percent},{total:2,completed:0,current:1,attempts:0,percent:0});
+  assert.deepEqual(view.objectives.map(item=>item.status),['CURRENT','PENDING']);
+  out=tutor.advance(out.session,out.profile,{type:'EXPLANATION_COMPLETE'});
+  out=tutor.advance(out.session,out.profile,{type:'ASSESSMENT',kind:'knowledge-check',score:1,confidence:1});
+  view=tutor.progress(out.session);
+  assert.deepEqual({completed:view.completed,current:view.current,percent:view.percent},{completed:1,current:2,percent:50});
+  assert.deepEqual(view.objectives.map(item=>item.status),['VERIFIED','CURRENT']);
+  assert.ok(Object.isFrozen(view));
+});

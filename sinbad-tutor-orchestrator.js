@@ -28,6 +28,12 @@
     if(session.stage==='CHECK')return freeze({...common,type:'ASK_KNOWLEDGE_CHECK',reason:'ASSESSMENT_REQUIRED'});
     return freeze({...common,type:'REMEDIATE',reason:'ASSESSMENT_BELOW_THRESHOLD'});
   }
+  function progress(session={}){
+    const objectives=Array.isArray(session.objectives)?session.objectives:[],total=objectives.length;
+    const completed=session.status==='COMPLETE'?total:Math.max(0,Math.min(total,Number.isInteger(session.objectiveIndex)?session.objectiveIndex:0));
+    const current=total?Math.min(completed+1,total):0;
+    return freeze({total,completed,current,attempts:Math.max(0,Number(session.attempts)||0),maxAttempts:MAX_ATTEMPTS,percent:total?Math.round(completed/total*100):0,objectives:objectives.map((item,index)=>({id:item.id,label:item.label,status:index<completed?'VERIFIED':index===current-1&&session.status==='ACTIVE'?'CURRENT':'PENDING'}))});
+  }
   function stop(base,reason,details={}){return freeze({...base,status:'STOPPED',stage:'STOPPED',reason,details:{...details}})}
   function create(input={}){
     const lessons=catalog(input.catalog),profile=professor.normalizeProfile(input.profile||professor.createProfile());
@@ -82,5 +88,5 @@
     }else next=stop(next,'INVALID_TRANSITION',{eventType:type,stage:session.stage});
     next=freeze(next);return freeze({session:next,profile:nextProfile,action:action(next)});
   }
-  return Object.freeze({VERSION,MAX_ATTEMPTS,ASSESSMENT_KINDS:Object.freeze([...ASSESSMENT_KINDS]),create,restore,advance,action});
+  return Object.freeze({VERSION,MAX_ATTEMPTS,ASSESSMENT_KINDS:Object.freeze([...ASSESSMENT_KINDS]),create,restore,advance,action,progress});
 });
