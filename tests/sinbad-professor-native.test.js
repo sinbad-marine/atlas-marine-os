@@ -54,6 +54,13 @@ test('private publication UI fails closed while Professor lesson text remains ex
 });
 
 test('native Professor and consented identity module remain available from the offline shell',()=>{
-  for(const file of ['academy-professor-native.html','academy-professor-native.css','academy-professor-native.js','sinbad-speaker-identity.js'])assert.match(worker,new RegExp(file.replaceAll('.','\\.')));
+  for(const file of ['academy-professor-native.html','academy-professor-native.css','academy-professor-native.js','sinbad-speaker-identity.js','sinbad-tutor-orchestrator.js','sinbad-tutor-controller.js'])assert.match(worker,new RegExp(file.replaceAll('.','\\.')));
   assert.match(worker,/endsWith\('\/academy-professor-native\.html'\).*pageKey='\.\/academy-professor-native\.html'/s);
+});
+
+test('guided tutor orchestrator is optional, drawer-contained and backed by assessed checks',()=>{
+  for(const id of ['tutorOrchestratorPanel','tutorTopic','startTutorSession','advanceTutorSession','tutorSessionStatus','tutorKnowledgeCheck'])assert.match(html,new RegExp(`id=["']${id}["']`));
+  assert.match(html,/sinbad-tutor-orchestrator\.js/);assert.match(html,/sinbad-tutor-controller\.js/);
+  const controller=fs.readFileSync('sinbad-tutor-controller.js','utf8');
+  assert.match(controller,/SinbadTutorOrchestrator\.create/);assert.match(controller,/kind:'knowledge-check'/);assert.match(controller,/SinbadAcademy\?\.quiz/);assert.match(controller,/objectives:checks\.map/);assert.doesNotMatch(controller,/objectiveIndex%/);assert.match(controller,/Başarı varsayılmadı/);
 });
