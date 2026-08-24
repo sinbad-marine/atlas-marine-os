@@ -56,6 +56,13 @@ test('standalone Academy is a live free-form voice and text classroom, not a req
   assert.match(academyApp,/academyChatForm/);
 });
 
+test('Academy Core gate rejects empty and whitespace-only answers before rendering',()=>{
+  assert.match(academyApp,/function coreAnswerIsTrusted\(data,envelope\)/);
+  assert.match(academyApp,/String\(data\?\.answer\|\|''\)\.trim\(\)/);
+  assert.doesNotMatch(academyApp,/Boolean\(data\?\.answer&&/);
+  assert.ok(academyApp.indexOf('if(!coreAnswerIsTrusted(data,coreEnvelope))')<academyApp.indexOf('const answer=String(data.answer).trim()'));
+});
+
 test('Captain Sinbad teaches with real state art, browser voice and verified atlas images',()=>{
   assert.match(academyHtml,/id="academySinbadAvatar"/);
   assert.match(academyHtml,/id="academyVoiceToggle"/);
