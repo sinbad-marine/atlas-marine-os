@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.19-tutor-missing-assessment-v1';
+const CACHE='sinbad-marine-v8.20.19-tutor-reply-timeout-v1';
 const ASSETS=[
   './',
   './index.html',
