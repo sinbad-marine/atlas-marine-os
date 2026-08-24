@@ -962,6 +962,7 @@ let sinbadActiveResponseText='';
 // voice this turn"); otherwise it falls back to the real persistent voice
 // preference so a transient hiccup never misrepresents that preference.
 function finishSinbadVoice(forceState){
+  resetSinbadStandardBoundaryVisuals();
   clearTimeout(sinbadSpeechMeaningTransitionTimer);sinbadSpeechMeaningTransitionTimer=null;
   if(sinbadVoiceObjectUrl)URL.revokeObjectURL(sinbadVoiceObjectUrl);
   sinbadVoiceObjectUrl='';sinbadVoiceAudio=null;sinbadVoiceAbort=null;
@@ -983,6 +984,7 @@ function finishSinbadVoice(forceState){
   scheduleSinbadListening();
 }
 function stopSinbadVoice(){
+  resetSinbadStandardBoundaryVisuals();
   clearTimeout(sinbadSpeechMeaningTransitionTimer);sinbadSpeechMeaningTransitionTimer=null;
   sinbadStandardSpeechGeneration++;
   sinbadVoiceAbort?.abort();sinbadVoiceAbort=null;
@@ -1003,6 +1005,11 @@ function interruptSinbadVoiceForUser(){
 let sinbadStandardBoundaryTimer=null;
 let sinbadStandardMouthSequence=0;
 const SINBAD_STANDARD_VISEME_CADENCE=Object.freeze(['closed','open','wide','open','round','open','wide','open']);
+function resetSinbadStandardBoundaryVisuals(){
+  clearTimeout(sinbadStandardBoundaryTimer);sinbadStandardBoundaryTimer=null;
+  sinbadAssistantElements().forEach(el=>el.classList.remove('sinbad-voice-tick'));
+  setSinbadMouthFrame('closed');
+}
 function sinbadStandardVoiceTick(boundaryEvent,spokenText){
   sinbadAssistantElements().forEach(el=>el.classList.add('sinbad-voice-tick'));
   const sequenceStep=++sinbadStandardMouthSequence;

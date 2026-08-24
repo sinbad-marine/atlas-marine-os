@@ -465,6 +465,16 @@ test('onboundary drives a real per-word cue (not a fabricated continuous loop, a
   assert.match(css,/\.sinbad-avatar\.sinbad-voice-tick \.sinbad-avatar-img\{transform:scale\(1\.018\)/);
 });
 
+test('voice completion and cancellation clear stale mouth-boundary timers before another turn',()=>{
+  assert.match(app,/function resetSinbadStandardBoundaryVisuals\(\)\{/);
+  assert.match(app,/clearTimeout\(sinbadStandardBoundaryTimer\);sinbadStandardBoundaryTimer=null/);
+  assert.match(app,/classList\.remove\('sinbad-voice-tick'\)/);
+  const finish=app.slice(app.indexOf('function finishSinbadVoice'),app.indexOf('function stopSinbadVoice'));
+  const stop=app.slice(app.indexOf('function stopSinbadVoice'),app.indexOf('function interruptSinbadVoiceForUser'));
+  assert.match(finish,/resetSinbadStandardBoundaryVisuals\(\)/);
+  assert.match(stop,/resetSinbadStandardBoundaryVisuals\(\)/);
+});
+
 test('a new question immediately cancels the previous spoken answer and invalidates queued teaching pauses',()=>{
   const send=app.slice(app.indexOf('async function sendToSinbad'),app.indexOf("$('sendSinbad').addEventListener"));
   assert.match(send,/const q=\(text\|\|'\'\)\.trim\(\); if\(!q\)return;\s*\n\s*clearSinbadTurnFinalization\(\{discard:true\}\);\s*\n\s*\/\/[^\n]*\n(?:\s*\/\/[^\n]*\n)*\s*interruptSinbadVoiceForUser\(\);/);
