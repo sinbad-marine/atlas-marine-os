@@ -553,17 +553,30 @@
     };
     return Object.freeze({accepted:true,known:true,shape:lastBoardAction.value,text:explanations[lastBoardAction.value]});
   }
-  function academyBoardShapeCheckForText(text,lastBoardAction,language='tr-TR'){
+  function academyBoardShapeCheckForText(text,lastBoardAction,language='tr-TR',variant=0){
     if(typeof text!=='string'||!text.trim())return Object.freeze({accepted:false,reason:'INVALID_BOARD_CHECK_TEXT'});
     if(!/(?:bu|tahtadaki|son) şekil(?:le| hakkında).*(?:bana )?soru sor|ask me (?:a )?question about (?:this|the|that|last) shape/iu.test(text.trim()))return Object.freeze({accepted:false,reason:'NO_BOARD_CHECK_REQUEST'});
+    if(!Number.isInteger(variant)||variant<0||variant>2)return Object.freeze({accepted:false,reason:'INVALID_BOARD_CHECK_VARIANT'});
     const turkish=String(language).toLocaleLowerCase('en-US').startsWith('tr'),shape=lastBoardAction?.kind==='shape'?lastBoardAction.value:null;
     const checks=turkish?{
-      circle:['Dairenin kaç köşesi vardır?','zero'],triangle:['Üçgenin kaç kenarı vardır?','three'],rectangle:['Dikdörtgenin kaç dik açısı vardır?','four'],arrow:['Okun uç kısmı neyi gösterir?','direction'],axes:['Koordinat eksenleri kaç temel doğrultu gösterir?','two']
+      circle:[['Dairenin kaç köşesi vardır?','Tahtadaki dairenin köşe sayısı nedir?','Bu dairenin köşelerini sayarsan kaç tane bulursun?'],'zero'],triangle:[['Üçgenin kaç kenarı vardır?','Tahtadaki üçgenin kenar sayısı nedir?','Bu üçgeni oluşturan kaç kenar görüyorsun?'],'three'],rectangle:[['Dikdörtgenin kaç dik açısı vardır?','Tahtadaki dikdörtgende kaç dik açı görüyorsun?','Bu dikdörtgenin dik açılarını sayarsan sonuç kaç olur?'],'four'],arrow:[['Okun uç kısmı neyi gösterir?','Ok başı hangi bilgiyi gösterir?','Bir okun uç kısmından neyi anlarız?'],'direction'],axes:[['Koordinat eksenleri kaç temel doğrultu gösterir?','Yatay ve düşey eksenler birlikte kaç temel doğrultu oluşturur?','Tahtadaki eksenlerde kaç ana doğrultu vardır?'],'two']
     }:{
-      circle:['How many corners does a circle have?','zero'],triangle:['How many sides does a triangle have?','three'],rectangle:['How many right angles does a rectangle have?','four'],arrow:['What does the head of an arrow indicate?','direction'],axes:['How many primary directions do coordinate axes show?','two']
+      circle:[['How many corners does a circle have?','What is the number of corners in the circle on the board?','If you count this circle’s corners, how many do you find?'],'zero'],triangle:[['How many sides does a triangle have?','What is the side count of the triangle on the board?','How many sides form this triangle?'],'three'],rectangle:[['How many right angles does a rectangle have?','How many right angles do you see in the rectangle on the board?','If you count this rectangle’s right angles, what is the total?'],'four'],arrow:[['What does the head of an arrow indicate?','What information does an arrowhead show?','What do we learn from the pointed end of an arrow?'],'direction'],axes:[['How many primary directions do coordinate axes show?','Together, how many primary directions do horizontal and vertical axes form?','How many main directions are shown by the axes on the board?'],'two']
     },check=checks[shape];
     if(!check)return Object.freeze({accepted:true,known:false,text:turkish?'Soru sorabileceğim doğrulanmış bir Academy tahta şekli yok.':'I do not have a verified Academy board shape to ask about.'});
-    return Object.freeze({accepted:true,known:true,check:Object.freeze({shape,expected:check[1]}),text:check[0]});
+    return Object.freeze({accepted:true,known:true,variant,check:Object.freeze({shape,expected:check[1]}),text:check[0][variant]});
+  }
+  function createAcademyBoardQuestionDirector(options={}){
+    const entropy=typeof options.entropy==='function'?options.entropy:defaultEntropy,remainingByKey=new Map();
+    const ask=(text,lastBoardAction,language='tr-TR')=>{
+      const probe=academyBoardShapeCheckForText(text,lastBoardAction,language,0);if(!probe.accepted||!probe.known)return probe;
+      const key=`${String(language).toLocaleLowerCase('en-US')}:${probe.check.shape}`,remaining=remainingByKey.get(key)||[0,1,2],sample=Number(entropy());
+      if(!Number.isFinite(sample)||sample<0||sample>=1)return Object.freeze({accepted:false,reason:'INVALID_ENTROPY'});
+      const index=Math.min(remaining.length-1,Math.floor(sample*remaining.length)),variant=remaining.splice(index,1)[0];
+      if(!remaining.length)remaining.push(...[0,1,2].filter(candidate=>candidate!==variant));remainingByKey.set(key,remaining);
+      return academyBoardShapeCheckForText(text,lastBoardAction,language,variant);
+    };
+    return Object.freeze({ask,reset:()=>remainingByKey.clear()});
   }
   function academyBoardShapeCheckAnswerForText(text,check,language='tr-TR'){
     if(typeof text!=='string'||!text.trim()||!check||!['circle','triangle','rectangle','arrow','axes'].includes(check.shape)||!['zero','two','three','four','direction'].includes(check.expected))return Object.freeze({accepted:false,reason:'INVALID_BOARD_CHECK_ANSWER'});
@@ -702,5 +715,5 @@
     };
     return Object.freeze({play,cancel});
   }
-  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,academyBoardRecallAnswerForText,academyBoardRepeatRequestForText,academyBoardClearRequestForText,academyBoardResizeRequestForText,academyBoardSizeRecallAnswerForText,academyBoardShapeExplanationForText,academyBoardShapeCheckForText,academyBoardShapeCheckAnswerForText,recordVerifiedGesture,gestureHistoryAnswerForText,gestureStopRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
+  return Object.freeze({PERFORMANCES,CUE_SEQUENCES,LISTENING_ACTIVITY_CUES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,academyBoardRecallAnswerForText,academyBoardRepeatRequestForText,academyBoardClearRequestForText,academyBoardResizeRequestForText,academyBoardSizeRecallAnswerForText,academyBoardShapeExplanationForText,academyBoardShapeCheckForText,academyBoardShapeCheckAnswerForText,createAcademyBoardQuestionDirector,recordVerifiedGesture,gestureHistoryAnswerForText,gestureStopRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector});
 });

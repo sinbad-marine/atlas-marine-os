@@ -410,6 +410,7 @@ const sinbadCharacterRig=window.SinbadCharacterRig||null;
 const sinbadPerformanceDirector=window.SinbadPerformanceDirector||null;
 const sinbadVisemePlanner=window.SinbadVisemePlanner||null;
 const sinbadImprovisationDirector=sinbadPerformanceDirector?.createImprovisationDirector?.()||null;
+const sinbadBoardQuestionDirector=sinbadPerformanceDirector?.createAcademyBoardQuestionDirector?.()||null;
 const sinbadSpeechGestureDirector=sinbadPerformanceDirector?.createSpeechGestureDirector?.()||null;
 const sinbadIdleBehaviorDirector=sinbadPerformanceDirector?.createIdleBehaviorDirector?.()||null;
 let sinbadSpeechPerformanceMode='warm';
@@ -1722,7 +1723,7 @@ async function sendToSinbad(text){
   const recalledBoard=sinbadPerformanceDirector?.academyBoardRecallAnswerForText?.(q,sinbadLastAcademyBoardAction,sinbadState.language||appLanguage);
   if(recalledBoard?.accepted){presentSinbadBoardReference(recalledBoard.text);return;}
   if(sinbadPendingAcademyBoardCheck){const assessed=sinbadPerformanceDirector?.academyBoardShapeCheckAnswerForText?.(q,sinbadPendingAcademyBoardCheck,sinbadState.language||appLanguage);if(assessed?.accepted){if(assessed.retry===true)sinbadPendingAcademyBoardCheck=Object.freeze({...sinbadPendingAcademyBoardCheck,attempts:(sinbadPendingAcademyBoardCheck.attempts||0)+1});else sinbadPendingAcademyBoardCheck=null;presentSinbadBoardAssessment(assessed);return;}}
-  const boardCheck=sinbadPerformanceDirector?.academyBoardShapeCheckForText?.(q,sinbadLastAcademyBoardAction,sinbadState.language||appLanguage);
+  const boardCheck=sinbadBoardQuestionDirector?.ask?.(q,sinbadLastAcademyBoardAction,sinbadState.language||appLanguage)||sinbadPerformanceDirector?.academyBoardShapeCheckForText?.(q,sinbadLastAcademyBoardAction,sinbadState.language||appLanguage);
   if(boardCheck?.accepted){sinbadPendingAcademyBoardCheck=boardCheck.known?Object.freeze({...boardCheck.check,attempts:0}):null;presentSinbadBoardReference(boardCheck.text);return;}
   const directReaction=performSinbadDirectCharacterRequest(sinbadRequestedGesture);
   if(directReaction.accepted){addSinbadMessage('sinbad',directReaction.text);return;}
