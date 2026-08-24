@@ -120,6 +120,16 @@ def test_verified_cardinal_buoy_photos_match_real_object_queries():
     assert all(item[0]["sourcePaths"][0].startswith("https://") for item in (cardinal, south))
 
 
+def test_verified_lighthouse_photos_match_distinct_object_queries():
+    lighthouse = MODULE.curated_lighthouse_query("deniz feneri fotoğrafını göster", 3)
+    optics = MODULE.curated_lighthouse_query("deniz feneri merceği nasıl görünür", 3)
+    lightship = MODULE.curated_lighthouse_query("fener gemisi fotoğrafını göster", 3)
+    assert lighthouse[0]["visual_key"] == "curated:lighthouse:harbor-lighthouse"
+    assert optics[0]["visual_key"] == "curated:lighthouse:lighthouse-optics"
+    assert lightship[0]["visual_key"] == "curated:lighthouse:lightship-carpentaria"
+    assert all(item[0]["sourcePaths"][0].startswith("https://") for item in (lighthouse, optics, lightship))
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -132,4 +142,5 @@ if __name__ == "__main__":
     test_verified_safety_photos_are_connected_to_exact_equipment_queries()
     test_verified_marine_weather_photos_match_exact_conditions()
     test_verified_cardinal_buoy_photos_match_real_object_queries()
-    print("11 curated visual query tests passed")
+    test_verified_lighthouse_photos_match_distinct_object_queries()
+    print("12 curated visual query tests passed")
