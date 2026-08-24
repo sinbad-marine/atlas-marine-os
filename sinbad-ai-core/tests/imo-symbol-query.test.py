@@ -69,6 +69,13 @@ def test_verified_navigation_photos_have_exact_topics_and_provenance():
     compass = MODULE.curated_navigation_query("manyetik pusula fotoğrafını göster", 3)
     ecdis = MODULE.curated_navigation_query("ECDIS ekranını göster", 3)
     ais = MODULE.curated_navigation_query("AIS cihazının görselini göster", 3)
+    plain_ais_queries = (
+        "AIS nedir ve fotoğrafını göster",
+        "AIS nasıl çalışır görseli var mı",
+        "Bana AIS fotoğrafı göster",
+        "Gemilerde AIS ne işe yarar? Fotoğrafını da göster",
+    )
+    plain_ais = [MODULE.curated_navigation_query(question, 3) for question in plain_ais_queries]
     gyro = MODULE.curated_navigation_query("cayro pusula ile kerteriz alma fotoğrafı", 3)
     assert radar[0]["visual_key"] == "curated:navigation:bridge-radar-console"
     assert sextant[0]["visual_key"] == "curated:navigation:sextant-sun-sight"
@@ -77,6 +84,7 @@ def test_verified_navigation_photos_have_exact_topics_and_provenance():
     assert compass[0]["visual_key"] == "curated:navigation:magnetic-compass-binnacle"
     assert ecdis[0]["visual_key"] == "curated:navigation:integrated-navigation-bridge"
     assert ais[0]["visual_key"] == "curated:navigation:ais-ship-tracking-display"
+    assert all(result[0]["visual_key"] == "curated:navigation:ais-ship-tracking-display" for result in plain_ais)
     assert gyro[0]["visual_key"] == "curated:navigation:gyrocompass-bearing-operation"
     assert all(item[0]["sourcePaths"][0].startswith("https://") for item in (radar, sextant, lines, communications, compass, ecdis, ais, gyro))
     assert MODULE.curated_navigation_query("can salının fotoğrafını göster", 3) == []
@@ -94,6 +102,16 @@ def test_verified_safety_photos_are_connected_to_exact_equipment_queries():
     assert all(item[0]["sourcePaths"][0].startswith("https://") for item in (lifebuoy, liferaft, epirb, eebd))
 
 
+def test_verified_marine_weather_photos_match_exact_conditions():
+    fog = MODULE.curated_weather_query("limanda sis fotoğrafını göster", 3)
+    lightning = MODULE.curated_weather_query("denizde yıldırım görseli", 3)
+    heavy_seas = MODULE.curated_weather_query("ağır denizde büyük dalga fotoğrafı", 3)
+    assert fog[0]["visual_key"] == "curated:weather:marine-fog-harbor"
+    assert lightning[0]["visual_key"] == "curated:weather:marine-thunderstorm-lightning"
+    assert heavy_seas[0]["visual_key"] == "curated:weather:ship-heavy-seas"
+    assert all(item[0]["sourcePaths"][0].startswith("https://") for item in (fog, lightning, heavy_seas))
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -104,4 +122,5 @@ if __name__ == "__main__":
     test_fire_control_plan_queries_route_to_exact_sis_catalogue_signs()
     test_verified_navigation_photos_have_exact_topics_and_provenance()
     test_verified_safety_photos_are_connected_to_exact_equipment_queries()
-    print("9 curated visual query tests passed")
+    test_verified_marine_weather_photos_match_exact_conditions()
+    print("10 curated visual query tests passed")
