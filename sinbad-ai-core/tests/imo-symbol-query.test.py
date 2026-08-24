@@ -76,6 +76,18 @@ def test_verified_navigation_photos_have_exact_topics_and_provenance():
     assert MODULE.curated_navigation_query("can salının fotoğrafını göster", 3) == []
 
 
+def test_verified_safety_photos_are_connected_to_exact_equipment_queries():
+    lifebuoy = MODULE.curated_safety_query("can simidinin fotoğrafını göster", 3)
+    liferaft = MODULE.curated_safety_query("can salının fotoğrafını göster", 3)
+    epirb = MODULE.curated_safety_query("EPIRB cihazının fotoğrafı", 3)
+    eebd = MODULE.curated_safety_query("EEBD nasıl takılır", 3)
+    assert lifebuoy[0]["visual_key"] == "curated:safety:lifebuoy-scarborough"
+    assert liferaft[0]["visual_key"] == "curated:safety:inflatable-life-raft-us-navy"
+    assert epirb[0]["visual_key"] == "curated:safety:epirb-ferry-vi"
+    assert eebd[0]["visual_key"] == "curated:safety:eebd-training-us-navy"
+    assert all(item[0]["sourcePaths"][0].startswith("https://") for item in (lifebuoy, liferaft, epirb, eebd))
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -85,4 +97,5 @@ if __name__ == "__main__":
     test_lifeboat_launch_sequence_symbol_is_available_without_displacing_photos()
     test_fire_control_plan_queries_route_to_exact_sis_catalogue_signs()
     test_verified_navigation_photos_have_exact_topics_and_provenance()
-    print("8 curated visual query tests passed")
+    test_verified_safety_photos_are_connected_to_exact_equipment_queries()
+    print("9 curated visual query tests passed")
