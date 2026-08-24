@@ -229,6 +229,18 @@ def test_verified_damage_control_photos_match_exact_hardware_and_actions():
     assert MODULE.curated_damage_control_query("yangın nozulu",3)==[]
 
 
+def test_verified_pilotage_access_photos_match_exact_operations():
+    ladder=MODULE.curated_pilotage_access_query("loçman çarmıhı kullanımı",3)
+    boat=MODULE.curated_pilotage_access_query("pilot botu fotoğrafı",3)
+    gangway=MODULE.curated_pilotage_access_query("borda merdiveni kurulumu",3)
+    tug=MODULE.curated_pilotage_access_query("römorkör halatı operasyonu",3)
+    assert ladder[0]["visual_key"]=="curated:pilotage-access:pilot-ladder-operation"
+    assert boat[0]["visual_key"]=="curated:pilotage-access:pilot-boat-limassol"
+    assert gangway[0]["visual_key"]=="curated:pilotage-access:accommodation-ladder-operation"
+    assert tug[0]["visual_key"]=="curated:pilotage-access:harbor-tug-line-operation"
+    assert MODULE.curated_pilotage_access_query("can salı fotoğrafı",3)==[]
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -250,4 +262,5 @@ if __name__ == "__main__":
     test_verified_bridge_controls_keep_hardware_and_operation_distinct()
     test_verified_firefighting_photos_match_exact_equipment_and_operations()
     test_verified_damage_control_photos_match_exact_hardware_and_actions()
-    print("20 curated visual query tests passed")
+    test_verified_pilotage_access_photos_match_exact_operations()
+    print("21 curated visual query tests passed")
