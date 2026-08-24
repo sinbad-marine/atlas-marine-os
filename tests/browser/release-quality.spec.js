@@ -385,12 +385,20 @@ test('live Sinbad chat writes bounded plain text on the real Academy board',asyn
   await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Soruyu burada kapatıyorum.');
   await page.locator('#sinbadInput').fill('Merhaba');await page.locator('#sendSinbad').click();
   await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Merhaba Kaptan. Sinbad aktif.');
+  await classroom.evaluate(()=>{
+    window.__clearPhaseTrace=[];window.__clearFrameTrace=[];
+    const image=document.querySelector('#academySinbadImage'),stage=document.querySelector('#academyTeachingStage');
+    new MutationObserver(()=>window.__clearPhaseTrace.push(stage.dataset.boardDrawingPhase)).observe(stage,{attributes:true,attributeFilter:['data-board-drawing-phase']});
+    new MutationObserver(()=>window.__clearFrameTrace.push(image.getAttribute('src'))).observe(image,{attributes:true,attributeFilter:['src']});
+  });
   await page.locator('#sinbadInput').fill('Tahtayı temizle.');await page.locator('#sendSinbad').click();
   await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Academy tahtasını temizliyorum.');
-  await expect(classroom.locator('#academyTeachingStage')).toHaveAttribute('data-board-drawing-phase','erasing');
-  await expect(classroom.locator('#academySinbadImage')).toHaveAttribute('src',/captain-sinbad-writing-(?:contact|lift)-v1\.png$/u);
   await expect(classroom.locator('#academyTeachingText')).toBeEmpty();
   await expect(classroom.locator('#academyTeachingStage')).toHaveAttribute('data-board-drawing-phase','clear');
+  const clearPhases=await classroom.evaluate(()=>window.__clearPhaseTrace);
+  expect(clearPhases).toContain('erasing');expect(clearPhases.at(-1)).toBe('clear');
+  const clearFrames=await classroom.evaluate(()=>window.__clearFrameTrace);
+  expect(clearFrames.some(src=>/captain-sinbad-writing-(?:contact|lift)-v1\.png$/u.test(src))).toBe(true);
   await page.locator('#sinbadInput').fill('Az önce tahtaya ne çizdin?');await page.locator('#sendSinbad').click();
   await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('başarıyla uygulanmış bir işlem kaydım yok');
   await classroom.close();

@@ -75,10 +75,10 @@ test('board writing progress drives a real chalk cursor and bounded character di
 
 test('main chat can send only bounded same-origin plain text to the Academy board',()=>{
   assert.match(app,/function sendTextToSinbadAcademyBoard\(text\)/);
-  assert.match(app,/slice\(0,200\)/);assert.match(app,/type:'SINBAD_ACADEMY_WRITE_BOARD'/);assert.match(app,/event\.data\.type==='SINBAD_ACADEMY_READY'/);assert.match(app,/postMessage\(sinbadAcademyPendingBoardPayload,location\.origin\)/);
+  assert.match(app,/slice\(0,200\)/);assert.match(app,/type:'SINBAD_ACADEMY_WRITE_BOARD'/);assert.match(app,/event\.data\.type==='SINBAD_ACADEMY_READY'/);assert.match(app,/sinbadAcademyBoardQueue\.length/);assert.match(app,/requestId=`academy-board-/);assert.match(app,/event\.data\.requestId===entry\.payload\.requestId/);
   assert.match(academyApp,/function writeCustomTextAtBoard\(rawText\)/);
   assert.match(academyApp,/event\.origin!==location\.origin\|\|event\.source!==window\.opener/);
-  assert.match(academyApp,/message\.text\.length<=200/);assert.match(academyApp,/writeCustomTextAtBoard\(message\.text\)/);assert.match(academyApp,/type:'SINBAD_ACADEMY_READY'/);
+  assert.match(academyApp,/message\.text\.length<=200/);assert.match(academyApp,/writeCustomTextAtBoard\(message\.text\)/);assert.match(academyApp,/type:'SINBAD_ACADEMY_READY'/);assert.match(academyApp,/requestId:message\.requestId/);
   assert.match(app,/function sendShapeToSinbadAcademyBoard\(shape,size='standard'\)/);assert.match(academyApp,/function drawAllowedShapeAtBoard\(shape,size='standard'\)/);
   assert.match(academyApp,/dataset\.boardSize=safeSize/);assert.match(academyApp,/\['small','standard','large'\]/);
   assert.match(academyApp,/\['circle','triangle','rectangle','arrow','axes'\]\.includes\(message\.shape\)/);assert.match(academyApp,/createElementNS\('http:\/\/www\.w3\.org\/2000\/svg','svg'\)/);
@@ -91,7 +91,7 @@ test('main chat can send only bounded same-origin plain text to the Academy boar
   assert.match(academyApp,/type:'SINBAD_ACADEMY_BOARD_APPLIED'/);assert.match(app,/event\.data\.type==='SINBAD_ACADEMY_BOARD_APPLIED'/);
   assert.match(app,/academyBoardRecallAnswerForText\?\.\(q,sinbadLastAcademyBoardAction/);
   assert.match(academyApp,/function clearAcademyBoard\(onApplied\)/);assert.match(academyApp,/type==='SINBAD_ACADEMY_CLEAR_BOARD'/);assert.match(app,/function clearSinbadAcademyBoard\(\)/);
-  assert.match(app,/action\?\.kind==='clear'.*sinbadLastAcademyBoardAction=null/);
+  assert.match(app,/action\.kind==='clear'.*sinbadLastAcademyBoardAction=null/);
   assert.match(academyApp,/boardDrawingPhase='erasing'/);assert.match(academyApp,/setTimeout\(finish,620\)/);assert.match(academyApp,/clearAcademyBoard\(\(\)=>window\.opener\.postMessage/);
 });
 

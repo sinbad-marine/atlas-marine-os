@@ -154,7 +154,7 @@ window.addEventListener('message',event=>{
   let appliedAction=null;
   if(message.type==='SINBAD_ACADEMY_WRITE_BOARD'&&typeof message.text==='string'&&message.text.trim()&&message.text.length<=200&&writeCustomTextAtBoard(message.text))appliedAction=Object.freeze({kind:'text',value:message.text.trim()});
   if(message.type==='SINBAD_ACADEMY_DRAW_SHAPE'&&['circle','triangle','rectangle','arrow','axes'].includes(message.shape)&&['small','standard','large'].includes(message.size||'standard')&&drawAllowedShapeAtBoard(message.shape,message.size||'standard'))appliedAction=Object.freeze({kind:'shape',value:message.shape,size:message.size||'standard'});
-  if(message.type==='SINBAD_ACADEMY_CLEAR_BOARD'){clearAcademyBoard(()=>window.opener.postMessage({version:1,type:'SINBAD_ACADEMY_BOARD_APPLIED',action:{kind:'clear',value:'board'}},location.origin));return;}
-  if(appliedAction)window.opener.postMessage({version:1,type:'SINBAD_ACADEMY_BOARD_APPLIED',action:appliedAction},location.origin);
+  if(message.type==='SINBAD_ACADEMY_CLEAR_BOARD'){clearAcademyBoard(()=>window.opener.postMessage({version:1,type:'SINBAD_ACADEMY_BOARD_APPLIED',requestId:message.requestId,action:{kind:'clear',value:'board'}},location.origin));return;}
+  if(appliedAction)window.opener.postMessage({version:1,type:'SINBAD_ACADEMY_BOARD_APPLIED',requestId:message.requestId,action:appliedAction},location.origin);
 });
 window.opener?.postMessage({version:1,type:'SINBAD_ACADEMY_READY'},location.origin);
