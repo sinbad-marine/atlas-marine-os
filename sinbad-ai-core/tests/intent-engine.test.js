@@ -28,6 +28,11 @@ test('returns general with explicit low confidence for unmatched text',()=>{
   assert.equal(result.confidence,0.35);
 });
 
+test('does not classify a product identity as a Core training intent',()=>{
+  const result=intent.analyze('academy');
+  assert.equal(result.intent,'general');assert.equal(result.confidence,0.35);
+});
+
 test('does not mutate the published evidence',()=>{
   const result=intent.analyze('Passage plan and weather');
   assert.equal(Object.isFrozen(result),true);

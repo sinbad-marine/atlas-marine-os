@@ -13,7 +13,8 @@ function setup(){
 test('routes a confident intent to a declared expert interface',()=>{
   const {router}=setup();
   const plan=router.plan({analysis:{intent:'navigation',secondaryIntents:[],confidence:.9},safety:{}});
-  assert.equal(plan.routable,true);
+  assert.equal(plan.routable,false);
+  assert.equal(plan.planningRoutable,true);
   assert.equal(plan.routes[0].expertId,'future-navigation');
   assert.equal(plan.routes[0].requiresVerifiedSources,true);
 });
@@ -22,6 +23,7 @@ test('reports a missing expert instead of inventing a result',()=>{
   const {router}=setup();
   const plan=router.plan({analysis:{intent:'crew',secondaryIntents:[],confidence:.9},safety:{}});
   assert.equal(plan.routable,false);
+  assert.equal(plan.planningRoutable,false);
   assert.equal(plan.gaps[0].reason,'EXPERT_NOT_AVAILABLE');
   assert.match(plan.notice,/no expert result may be invented/);
 });
@@ -44,7 +46,10 @@ test('supports a multi-expert routing plan',()=>{
   const plan=router.plan({analysis:{intent:'navigation',secondaryIntents:['passage'],confidence:.9},safety:{}});
   assert.equal(plan.multiExpert,true);
   assert.deepEqual(plan.routes.map(x=>x.expertId),['future-navigation','future-weather']);
-  assert.equal(plan.executionAllowed,true);
+  assert.equal(plan.executionAllowed,false);
+  assert.equal(plan.executionBlockedReason,'ENGINE_PORT_GATE_REQUIRED');
+  assert.deepEqual(plan.executionBlockedReasons,['ENGINE_PORT_GATE_REQUIRED']);
+  assert.equal(plan.planVersion,'sinbad-expert-route-plan/2-v1');
 });
 
 test('safety can block execution without erasing the routing plan',()=>{
@@ -52,7 +57,26 @@ test('safety can block execution without erasing the routing plan',()=>{
   const plan=router.plan({analysis:{intent:'navigation',confidence:.9},safety:{blockedFromAutonomousAction:true}});
   assert.equal(plan.routes.length,1);
   assert.equal(plan.routable,false);
+  assert.equal(plan.planningRoutable,false);
   assert.equal(plan.blockedBySafety,true);
+  assert.equal(plan.executionBlockedReason,'SAFETY_POLICY_BLOCKED');
+  assert.deepEqual(plan.executionBlockedReasons,['SAFETY_POLICY_BLOCKED','ENGINE_PORT_GATE_REQUIRED']);
+});
+
+test('expertise gaps take precedence over the permanent port gate',()=>{
+  const {router}=setup();const plan=router.plan({analysis:{intent:'crew',confidence:.9},safety:{}});
+  assert.equal(plan.executionAllowed,false);assert.equal(plan.executionBlockedReason,'EXPERTISE_GAPS_PRESENT');
+  assert.deepEqual(plan.executionBlockedReasons,['EXPERTISE_GAPS_PRESENT','ENGINE_PORT_GATE_REQUIRED']);assert.ok(Object.isFrozen(plan.executionBlockedReasons));
+});
+
+test('empty routes expose NO_ROUTES and never become routable',()=>{
+  const plan=routerModule.create(registryModule.create()).plan({analysis:{intent:'general',confidence:.9},safety:{}});
+  assert.equal(plan.routable,false);assert.equal(plan.planningRoutable,false);assert.equal(plan.executionAllowed,false);
+  assert.deepEqual(plan.executionBlockedReasons,['NO_ROUTES','ENGINE_PORT_GATE_REQUIRED']);
+});
+
+test('every plan keeps the engine-port gate present and last',()=>{
+  const {router}=setup();for(const input of [{analysis:{intent:'navigation',confidence:.9},safety:{}},{analysis:{intent:'crew',confidence:.9},safety:{}},{analysis:{intent:'navigation',confidence:.9},safety:{blockedFromAutonomousAction:true}}]){const plan=router.plan(input);assert.equal(plan.executionBlockedReasons.at(-1),'ENGINE_PORT_GATE_REQUIRED');assert.equal(plan.executionAllowed,false);}
 });
 
 test('deduplicates one expert selected for several intents',()=>{

@@ -1,0 +1,11 @@
+'use strict';
+const {createHash}=require('node:crypto');
+const AUDIT_VERSION='sinbad-trusted-rollout-recovery-authorization-audit/3N-v1';
+const HASH=/^[a-f0-9]{64}$/u,DECISIONS=new Set(['AUTHORIZED','DENIED']);
+const sha256=value=>createHash('sha256').update(value,'utf8').digest('hex');
+function create(options={}){
+  let appendDescriptor,durableDescriptor;try{appendDescriptor=Object.getOwnPropertyDescriptor(options,'append');durableDescriptor=Object.getOwnPropertyDescriptor(options,'durable');}catch{throw new TypeError('A trusted durable audit append function is required');}if(!appendDescriptor||!Object.hasOwn(appendDescriptor,'value')||typeof appendDescriptor.value!=='function'||!durableDescriptor||!Object.hasOwn(durableDescriptor,'value')||durableDescriptor.value!==true)throw new TypeError('A trusted durable audit append function is required');
+  const append=appendDescriptor.value;
+  return Object.freeze({version:AUDIT_VERSION,durable:true,async record(input={}){if(!input||typeof input!=='object')return Object.freeze({status:'INVALID',eventHash:null});const raw=Object.create(null);for(const name of ['actorHash','attestationHash','purposeHash','decision','decidedAt']){let descriptor;try{descriptor=Object.getOwnPropertyDescriptor(input,name);}catch{return Object.freeze({status:'INVALID',eventHash:null});}if(!descriptor||!Object.hasOwn(descriptor,'value'))return Object.freeze({status:'INVALID',eventHash:null});raw[name]=descriptor.value;}const {actorHash,attestationHash,purposeHash,decision,decidedAt}=raw;if(typeof actorHash!=='string'||typeof attestationHash!=='string'||typeof purposeHash!=='string'||typeof decision!=='string'||!HASH.test(actorHash)||!HASH.test(attestationHash)||!HASH.test(purposeHash)||!DECISIONS.has(decision)||!Number.isSafeInteger(decidedAt)||decidedAt<0)return Object.freeze({status:'INVALID',eventHash:null});const eventHash=sha256([AUDIT_VERSION,actorHash,attestationHash,purposeHash,decision,decidedAt].join('\n')),event=Object.freeze({version:AUDIT_VERSION,actorHash,attestationHash,purposeHash,decision,decidedAt,eventHash});try{return Object.freeze({status:await append(event)===true?'RECORDED':'DENIED',eventHash});}catch{return Object.freeze({status:'UNAVAILABLE',eventHash:null});}}});
+}
+module.exports=Object.freeze({AUDIT_VERSION,create});

@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.19-tutor-reply-timeout-v1';
+const CACHE='sinbad-marine-v8.20.29-semantic-motion-bridges-v42';
 const ASSETS=[
   './',
   './index.html',
@@ -24,6 +24,7 @@ const ASSETS=[
   './sinbad-character-engine.js',
   './sinbad-performance-director.js',
   './sinbad-character-rig.js',
+  './sinbad-viseme-planner.js',
   './pilot-data.js',
   './route-data.js',
   './resource-data.js',
@@ -46,6 +47,17 @@ const ASSETS=[
   './icon-192.png',
   './icon-512.png',
   './assets/captain-sinbad/captain-sinbad-idle-master.png',
+  './assets/captain-sinbad/captain-sinbad-rig-head-v1.png',
+  './assets/captain-sinbad/captain-sinbad-rig-torso-v1.png',
+  './assets/captain-sinbad/captain-sinbad-rig-left-arm-v1.png',
+  './assets/captain-sinbad/captain-sinbad-rig-right-arm-v1.png',
+  './assets/captain-sinbad/captain-sinbad-rig-face-blink-v1.png',
+  './assets/captain-sinbad/captain-sinbad-rig-face-closed-v1.png',
+  './assets/captain-sinbad/captain-sinbad-rig-face-open-v1.png',
+  './assets/captain-sinbad/captain-sinbad-rig-face-wide-v1.png',
+  './assets/captain-sinbad/captain-sinbad-rig-face-round-v1.png',
+  './assets/captain-sinbad/captain-sinbad-rig-expression-concerned-v1.png',
+  './assets/captain-sinbad/captain-sinbad-rig-expression-delighted-v1.png',
   './assets/captain-sinbad/captain-sinbad-idle-blink-v1.png',
   './assets/captain-sinbad/captain-sinbad-listening.png',
   './assets/captain-sinbad/captain-sinbad-thinking.png',
@@ -55,6 +67,8 @@ const ASSETS=[
   './assets/captain-sinbad/captain-sinbad-laughing-v1.png',
   './assets/captain-sinbad/captain-sinbad-walk-a-v1.png',
   './assets/captain-sinbad/captain-sinbad-walk-b-v1.png',
+  './assets/captain-sinbad/captain-sinbad-writing-contact-v1.png',
+  './assets/captain-sinbad/captain-sinbad-writing-lift-v1.png',
   './assets/captain-sinbad/captain-sinbad-board-teaching.png'
 ];
 

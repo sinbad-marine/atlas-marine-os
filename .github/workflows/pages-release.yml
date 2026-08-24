@@ -42,6 +42,8 @@ jobs:
         run: npm audit --audit-level=moderate
       - name: Reject vulnerable navigation dependencies
         run: npm audit --prefix sinbad-ai-core/engines/navigation --audit-level=moderate
+      - name: Verify navigation engine release gates
+        run: npm run verify --prefix sinbad-ai-core/engines/navigation
       - name: Run complete regression suite
         run: node --test sinbad-ai-core/tests/*.test.js tests/*.test.js
       - name: Install Chromium test runtime

@@ -111,9 +111,9 @@ test('unsafe bulk enabling and unlicensed image sources fail closed',()=>{
   assert.throws(()=>sources.validateSource(unsafe),/image license policy/);
 });
 
-test('content profiles scale from a small offline brain to a curated academy',()=>{
-  assert.deepEqual(profiles.listProfiles().map(item=>item.id),['light','standard','academy','archive']);
-  assert.equal(profiles.getProfile('academy').images,'curated-and-attributed');
+test('content profiles scale from a small offline brain to a curated learning corpus',()=>{
+  assert.deepEqual(profiles.listProfiles().map(item=>item.id),['light','standard','learning','archive']);
+  assert.equal(profiles.getProfile('learning').images,'curated-and-attributed');
   assert.equal(profiles.getProfile('missing'),null);
 });
 

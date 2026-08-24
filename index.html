@@ -7,7 +7,7 @@
 <title>Sinbad Marine</title>
 <link rel="manifest" href="./manifest.webmanifest?v=8161">
 <link rel="apple-touch-icon" href="./icon-192.png?v=8155">
-<link rel="stylesheet" href="./styles.css?v=82019">
+<link rel="stylesheet" href="./styles.css?v=82029">
 <link rel="stylesheet" href="./vendor/ol-10.6.1.css">
 </head>
 <body class="auth-pending">
@@ -103,7 +103,7 @@
   <div class="topbar-account-actions">
     <select id="appLanguage" class="app-language" aria-label="Application language"></select>
     <button class="account-password-button" id="openAccountPassword" type="button">Account &amp; Password</button>
-    <div class="version">● v8.20.19</div>
+    <div class="version">● v8.20.29</div>
   </div>
 </header>
 
@@ -434,6 +434,19 @@
     <aside class="sinbad-profile">
       <div class="sinbad-avatar large" data-state="idle" role="img" aria-label="Captain Sinbad, AI marine intelligence guide">
         <img class="sinbad-avatar-img" src="./assets/captain-sinbad/captain-sinbad-idle-master.png" alt="">
+        <span class="sinbad-rig-stage" aria-hidden="true">
+          <img class="sinbad-rig-part sinbad-rig-left-arm" src="./assets/captain-sinbad/captain-sinbad-rig-left-arm-v1.png" alt="">
+          <img class="sinbad-rig-part sinbad-rig-torso" src="./assets/captain-sinbad/captain-sinbad-rig-torso-v1.png" alt="">
+          <img class="sinbad-rig-part sinbad-rig-right-arm" src="./assets/captain-sinbad/captain-sinbad-rig-right-arm-v1.png" alt="">
+          <img class="sinbad-rig-part sinbad-rig-head sinbad-rig-head-base" src="./assets/captain-sinbad/captain-sinbad-rig-head-v1.png" alt="">
+          <img class="sinbad-rig-face-frame sinbad-rig-head sinbad-rig-face-blink" src="./assets/captain-sinbad/captain-sinbad-rig-face-blink-v1.png" alt="">
+          <img class="sinbad-rig-face-frame sinbad-rig-head sinbad-rig-face-closed" src="./assets/captain-sinbad/captain-sinbad-rig-face-closed-v1.png" alt="">
+          <img class="sinbad-rig-face-frame sinbad-rig-head sinbad-rig-face-open" src="./assets/captain-sinbad/captain-sinbad-rig-face-open-v1.png" alt="">
+          <img class="sinbad-rig-face-frame sinbad-rig-head sinbad-rig-face-wide" src="./assets/captain-sinbad/captain-sinbad-rig-face-wide-v1.png" alt="">
+          <img class="sinbad-rig-face-frame sinbad-rig-head sinbad-rig-face-round" src="./assets/captain-sinbad/captain-sinbad-rig-face-round-v1.png" alt="">
+          <img class="sinbad-rig-face-frame sinbad-rig-head sinbad-rig-expression-frame sinbad-rig-expression-concerned" src="./assets/captain-sinbad/captain-sinbad-rig-expression-concerned-v1.png" alt="">
+          <img class="sinbad-rig-face-frame sinbad-rig-head sinbad-rig-expression-frame sinbad-rig-expression-delighted" src="./assets/captain-sinbad/captain-sinbad-rig-expression-delighted-v1.png" alt="">
+        </span>
         <span class="sinbad-status-light" aria-hidden="true"></span>
       </div>
       <p id="sinbadAvatarStatus" class="sinbad-status-line" aria-live="polite">Ready</p>
@@ -870,8 +883,8 @@
 <script src="./resource-data.js?v=8210"></script>
 <script src="./store-data.js?v=8230"></script>
 <script src="./official-publications.js?v=8162"></script>
-<script src="./supabase/functions/sinbad-answer/core-decision.js?v=82019"></script>
-<script src="./sinbad-core.js?v=82019"></script>
+<script src="./supabase/functions/sinbad-answer/core-decision.js?v=82029"></script>
+<script src="./sinbad-core.js?v=82029"></script>
 <script src="./sinbad-visuals.js?v=8231"></script>
 <script src="./sinbad-training-data.js?v=8180"></script>
 <script src="./sinbad-academy.js?v=8180"></script>
@@ -879,12 +892,13 @@
 <script src="./vendor/mammoth-1.12.1.min.js"></script>
 <script src="./vendor/tesseract-5.1.1.min.js"></script>
 <script src="./vendor/ol-10.6.1.js"></script>
-  <script src="./sinbad-navigation.js?v=82019"></script>
-  <script src="./sinbad-navigation-assistant.js?v=82019"></script>
-  <script src="./sinbad-route-visualizer.js?v=82019"></script>
-  <script src="./sinbad-character-engine.js?v=82019"></script>
-  <script src="./sinbad-character-rig.js?v=82019"></script>
-  <script src="./sinbad-performance-director.js?v=82019"></script>
-  <script src="./app.js?v=82019&atlas=8235"></script>
+  <script src="./sinbad-navigation.js?v=82029"></script>
+  <script src="./sinbad-navigation-assistant.js?v=82029"></script>
+  <script src="./sinbad-route-visualizer.js?v=82029"></script>
+  <script src="./sinbad-character-engine.js?v=82029"></script>
+  <script src="./sinbad-character-rig.js?v=82029"></script>
+  <script src="./sinbad-performance-director.js?v=82029"></script>
+  <script src="./sinbad-viseme-planner.js?v=82029"></script>
+  <script src="./app.js?v=82029"></script>
 </body>
 </html>

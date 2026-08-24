@@ -18,17 +18,26 @@ const RELEASE_FILES=Object.freeze([
   'resource-data.js','store-data.js',
   'official-publications.js','sinbad-core.js','sinbad-visuals.js','sinbad-training-data.js',
   'sinbad-academy.js','sinbad-navigation.js','sinbad-navigation-assistant.js',
-  'sinbad-route-visualizer.js','sinbad-character-engine.js','sinbad-character-rig.js',
+  'sinbad-route-visualizer.js','sinbad-character-engine.js','sinbad-character-rig.js','sinbad-viseme-planner.js',
   'sinbad-performance-director.js','sw.js','manifest.webmanifest','icon-192.png',
   'icon-512.png','vendor/ol-10.6.1.js','vendor/ol-10.6.1.css',
   'vendor/land-110m.json','supabase/functions/sinbad-answer/core-decision.js'
   ,'vendor/supabase-2.112.3.js','vendor/mammoth-1.12.1.min.js','vendor/tesseract-5.1.1.min.js'
   ,'assets/captain-sinbad/captain-sinbad-idle-master.png','assets/captain-sinbad/captain-sinbad-listening.png'
   ,'assets/captain-sinbad/captain-sinbad-thinking.png','assets/captain-sinbad/captain-sinbad-speaking.png'
-  ,'assets/captain-sinbad/captain-sinbad-idle-blink-v1.png','assets/captain-sinbad/captain-sinbad-speaking-mbp-v1.png'
-  ,'assets/captain-sinbad/captain-sinbad-speaking-o-v1.png','assets/captain-sinbad/captain-sinbad-laughing-v1.png'
+  ,'assets/captain-sinbad/captain-sinbad-idle-blink-v1.png'
+  ,'assets/captain-sinbad/captain-sinbad-speaking-mbp-v1.png','assets/captain-sinbad/captain-sinbad-speaking-o-v1.png'
+  ,'assets/captain-sinbad/captain-sinbad-laughing-v1.png'
   ,'assets/captain-sinbad/captain-sinbad-walk-a-v1.png','assets/captain-sinbad/captain-sinbad-walk-b-v1.png'
-  ,'assets/captain-sinbad/captain-sinbad-board-teaching.png',...VISUAL_RELEASE_FILES
+  ,'assets/captain-sinbad/captain-sinbad-writing-contact-v1.png','assets/captain-sinbad/captain-sinbad-writing-lift-v1.png'
+  ,'assets/captain-sinbad/captain-sinbad-board-teaching.png'
+  ,'assets/captain-sinbad/captain-sinbad-rig-head-v1.png','assets/captain-sinbad/captain-sinbad-rig-torso-v1.png'
+  ,'assets/captain-sinbad/captain-sinbad-rig-left-arm-v1.png','assets/captain-sinbad/captain-sinbad-rig-right-arm-v1.png'
+  ,'assets/captain-sinbad/captain-sinbad-rig-face-blink-v1.png','assets/captain-sinbad/captain-sinbad-rig-face-open-v1.png'
+  ,'assets/captain-sinbad/captain-sinbad-rig-face-closed-v1.png','assets/captain-sinbad/captain-sinbad-rig-face-wide-v1.png'
+  ,'assets/captain-sinbad/captain-sinbad-rig-face-round-v1.png'
+  ,'assets/captain-sinbad/captain-sinbad-rig-expression-concerned-v1.png','assets/captain-sinbad/captain-sinbad-rig-expression-delighted-v1.png'
+  ,...VISUAL_RELEASE_FILES
 ]);
 const SOURCE_OVERRIDES=Object.freeze({
   'vendor/supabase-2.112.3.js':'node_modules/@supabase/supabase-js/dist/umd/supabase.js',
