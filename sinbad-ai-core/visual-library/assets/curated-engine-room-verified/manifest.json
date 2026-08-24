@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "sinbad-curated-engine-room/1",
+  "licensePolicy": "Only individually verified open-licence photographs are included.",
+  "visuals": [
+    {
+      "id": "main-engine", "file": "main-engine.webp",
+      "heading": "Cylinder tops and pipework of a historic ship main engine",
+      "topics": ["ship main engine", "marine diesel engine", "cylinder head", "gemi ana makinesi", "ana makine silindir kapağı"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ship%27s_Main_Engine_(10509221014).jpg",
+      "credit": "Photograph by Gary Lee Todd, Ph.D.", "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/"
+    },
+    {
+      "id": "engine-room", "file": "engine-room.webp",
+      "heading": "Shipboard engine room with pumps, valves and insulated pipework",
+      "topics": ["ship engine room", "machinery space", "pumps and valves", "gemi makine dairesi", "makine dairesi boruları"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Engine_Room_(Shipboard).JPG",
+      "credit": "Photograph by Conklinj", "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+    },
+    {
+      "id": "boiler-opening", "file": "boiler-opening.webp",
+      "heading": "Open inspection access on a boiler aboard HMS Belfast",
+      "topics": ["marine boiler opening", "boiler inspection", "boiler access", "gemi kazanı açıklığı", "kazan muayene kapağı"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:HMS_Belfast_-_Boiler_room_-_Boiler_opening.jpg",
+      "credit": "Photograph by Rémi Kaupp", "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/"
+    },
+    {
+      "id": "steam-engine-room", "file": "steam-engine-room.webp",
+      "heading": "Historic steam-engine mechanism in the SS Great Britain engine room",
+      "topics": ["marine steam engine", "steamship engine room", "connecting rod", "gemi buhar makinesi", "buharlı gemi makine dairesi"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:SS_Great_Britain_-_engine_room.jpg",
+      "credit": "Photograph by Mike Peel", "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/"
+    }
+  ]
+}
