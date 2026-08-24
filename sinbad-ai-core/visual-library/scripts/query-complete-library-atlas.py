@@ -233,6 +233,58 @@ def curated_navigation_query(value: str, limit: int) -> list[dict]:
     return result[:limit]
 
 
+def curated_safety_query(value: str, limit: int) -> list[dict]:
+    root = Path(__file__).resolve().parents[1] / "assets" / "curated-safety"
+    manifest_path = root / "manifest.json"
+    if not manifest_path.is_file():
+        return []
+    normalized = value.casefold()
+    phrase_groups = {
+        "lifebuoy-scarborough.jpg": ("can simid", "can simit", "lifebuoy", "life buoy", "life ring"),
+        "inflatable-life-raft-us-navy.jpg": ("can sal", "liferaft", "life raft", "şişme sal", "sisme sal"),
+        "inflated-life-raft-us-navy-historic.jpg": ("açılmış can sal", "acilmis can sal", "şişirilmiş can sal", "sisirilmis can sal", "open life raft"),
+        "fully-enclosed-lifeboat.jpg": ("tam kapalı filika", "tam kapali filika", "fully enclosed lifeboat"),
+        "lifeboats-ready-to-launch.jpg": ("filika indirme", "filikaları indir", "filikalari indir", "lifeboat launching", "lifeboats ready"),
+        "life-jacket-inspection-uscg.jpg": ("can yeleğ", "can yeleg", "life jacket", "lifejacket", "personal flotation device"),
+        "epirb-ferry-vi.jpg": ("epirb", "emergency position indicating radio beacon"),
+        "sart-radar-transponder.jpg": ("sart", "search and rescue transponder", "radar transponder"),
+        "marine-evacuation-life-raft-pod.jpg": ("can salı pod", "can sali pod", "can salı konteyner", "can sali konteyner", "marine evacuation system"),
+        "mob-distress-marker-lights.jpg": ("can simidi ış", "can simidi is", "mob işaret", "mob isaret", "distress marker light"),
+        "rescue-boat-retrieval.jpg": ("kurtarma bot", "rescue boat", "arama kurtarma bot"),
+        "immersion-suit-uscg.jpg": ("dalma giysi", "terk giysi", "immersion suit", "survival suit"),
+        "eebd-training-us-navy.jpg": ("eebd", "acil kaçış solunum", "acil kacis solunum", "escape breathing device"),
+        "helicopter-rescue-hoist.jpg": ("helikopterle kurtarma", "helikopter tahliye", "kurtarma vinci", "rescue hoist"),
+        "shipboard-firefighting-drill.jpg": ("gemi yangın ekib", "gemi yangin ekib", "yangıncı teçhizat", "yanginci techizat", "shipboard firefighting", "firefighting team"),
+    }
+    matches = {
+        filename: max((len(phrase) for phrase in phrases if phrase in normalized), default=0)
+        for filename, phrases in phrase_groups.items()
+    }
+    if not any(matches.values()):
+        return []
+    visuals = json.loads(manifest_path.read_text(encoding="utf-8"))["visuals"]
+    ranked = sorted(
+        (item for item in visuals if matches.get(item["file"], 0)),
+        key=lambda item: (-matches[item["file"]], item["file"]),
+    )
+    result = []
+    for item in ranked[:limit]:
+        path = root / item["file"]
+        occurrence = item["occurrences"][0]
+        digest = __import__("hashlib").sha256(path.read_bytes()).hexdigest()
+        result.append({
+            "visual_key": f"curated:safety:{path.stem}", "visual_type": "object",
+            "document_hash": "curated-safety-verified", "page_number": None,
+            "image_number": None, "asset_hash": digest, "file": str(path),
+            "title": occurrence["sourceLabel"], "volume": None,
+            "heading": occurrence["headings"][0], "context": occurrence["context"],
+            "topics": occurrence["topics"], "sourcePaths": [item["sourceUrl"]],
+            "rank": -3000.0,
+            "assetUrl": f"http://127.0.0.1:31983/visuals/assets/{digest}.webp",
+        })
+    return result
+
+
 def terms(value: str) -> list[str]:
     aliases = {
         "şamandıra": "buoy", "samandira": "buoy",
@@ -279,6 +331,9 @@ def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = Fa
     if curated:
         return curated
     curated = curated_navigation_query(value, limit)
+    if curated:
+        return curated
+    curated = curated_safety_query(value, limit)
     if curated:
         return curated
     wanted = terms(value)
@@ -337,6 +392,11 @@ def resolve_asset(db: sqlite3.Connection, atlas: Path, digest: str) -> dict:
                         "visual_type": "object", "absolutePath": str(path.resolve())}
     navigation_root = Path(__file__).resolve().parents[1] / "assets" / "curated-navigation-verified"
     for path in navigation_root.glob("*.webp"):
+        if __import__("hashlib").sha256(path.read_bytes()).hexdigest() == digest:
+            return {"asset_hash": digest, "file": str(path), "width": None, "height": None,
+                    "visual_type": "object", "absolutePath": str(path.resolve())}
+    safety_root = Path(__file__).resolve().parents[1] / "assets" / "curated-safety"
+    for path in safety_root.glob("*.jpg"):
         if __import__("hashlib").sha256(path.read_bytes()).hexdigest() == digest:
             return {"asset_hash": digest, "file": str(path), "width": None, "height": None,
                     "visual_type": "object", "absolutePath": str(path.resolve())}
