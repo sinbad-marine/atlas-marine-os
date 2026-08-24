@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "sinbad-curated-stability-marks/1",
+  "licensePolicy": "Every photograph has individually verified public-domain or Creative Commons provenance.",
+  "visuals": [
+    {"id":"plimsoll-load-line","file":"plimsoll-load-line.webp","heading":"Plimsoll load-line mark on a tugboat hull","topics":["Plimsoll mark","load line","freeboard mark","Plimsoll işareti","yükleme sınırı","fribord markası"],"sourceUrl":"https://commons.wikimedia.org/wiki/File:Plimsoll_mark_on_tugboat_Harry_in_Lysekil_harbor_2.jpg","credit":"Photograph by W.carter","license":"CC BY-SA 4.0"},
+    {"id":"bow-draft-scale","file":"bow-draft-scale.webp","heading":"Draft scale painted on a ship bow","topics":["draft scale","draught marks","ship draft","draft markaları","su çekimi skalası","baş draftı"],"sourceUrl":"https://commons.wikimedia.org/wiki/File:Draft_scale_at_the_ship_bow_(PIC00110).jpg","credit":"Photograph by Wikisearcher","license":"Public-domain dedication"},
+    {"id":"inclining-experiment","file":"inclining-experiment.webp","heading":"USS Gerald R. Ford weighted inclining experiment","topics":["inclining experiment","inclining test","center of gravity","meyil deneyi","eğim deneyi","ağırlık merkezi testi"],"sourceUrl":"https://www.dvidshub.net/image/6177593/uss-gerald-r-ford-cvn-78-incline-experiment","credit":"U.S. Navy photo by Mass Communication Specialist 1st Class Jeffrey Troutman, VIRIN 200416-N-ON468-1068","license":"Public domain - U.S. federal government work"},
+    {"id":"ballast-water-sampling","file":"ballast-water-sampling.webp","heading":"USCG ballast-water sampling and salinity inspection","topics":["ballast water sampling","ballast inspection","salinity refractometer","balast suyu numunesi","balast denetimi","tuzluluk refraktometresi"],"sourceUrl":"https://www.dvidshub.net/image/990415/ballast-water-inspection","credit":"U.S. Coast Guard photo by Petty Officer 3rd Class Danielle Phelps, VIRIN 130801-G-ZZ999-001","license":"Public domain - U.S. federal government work"}
+  ]
+}

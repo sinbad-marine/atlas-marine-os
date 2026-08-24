@@ -275,6 +275,18 @@ def test_verified_hull_underwater_photos_match_exact_components():
     assert MODULE.curated_hull_underwater_query("radar ekranı",3)==[]
 
 
+def test_verified_stability_mark_photos_match_exact_topics():
+    loadline=MODULE.curated_stability_marks_query("Plimsoll yükleme sınırı",3)
+    draft=MODULE.curated_stability_marks_query("draft markaları fotoğrafı",3)
+    incline=MODULE.curated_stability_marks_query("meyil deneyi nasıl yapılır",3)
+    ballast=MODULE.curated_stability_marks_query("balast suyu numunesi alma",3)
+    assert loadline[0]["visual_key"]=="curated:stability-marks:plimsoll-load-line"
+    assert draft[0]["visual_key"]=="curated:stability-marks:bow-draft-scale"
+    assert incline[0]["visual_key"]=="curated:stability-marks:inclining-experiment"
+    assert ballast[0]["visual_key"]=="curated:stability-marks:ballast-water-sampling"
+    assert MODULE.curated_stability_marks_query("yangın nozulu",3)==[]
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -300,4 +312,5 @@ if __name__ == "__main__":
     test_verified_distress_signal_photos_match_exact_equipment()
     test_verified_oil_spill_response_photos_match_exact_systems()
     test_verified_hull_underwater_photos_match_exact_components()
-    print("24 curated visual query tests passed")
+    test_verified_stability_mark_photos_match_exact_topics()
+    print("25 curated visual query tests passed")
