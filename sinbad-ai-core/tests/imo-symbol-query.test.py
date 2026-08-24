@@ -154,6 +154,18 @@ def test_verified_deck_equipment_photos_match_exact_hardware_queries():
     assert all(item[0]["sourcePaths"][0].startswith("https://") for item in (windlass, winch, bitts, fairlead))
 
 
+def test_verified_engine_room_photos_keep_equipment_scopes_distinct():
+    main = MODULE.curated_engine_room_query("gemi ana makinesinin fotoğrafını göster", 3)
+    room = MODULE.curated_engine_room_query("gemi makine dairesi genel görünümü", 3)
+    boiler = MODULE.curated_engine_room_query("kazan muayene kapağı nasıl görünür", 3)
+    steam = MODULE.curated_engine_room_query("gemi buhar makinesi fotoğrafı", 3)
+    assert main[0]["visual_key"] == "curated:engine-room:main-engine"
+    assert room[0]["visual_key"] == "curated:engine-room:engine-room"
+    assert boiler[0]["visual_key"] == "curated:engine-room:boiler-opening"
+    assert steam[0]["visual_key"] == "curated:engine-room:steam-engine-room"
+    assert MODULE.curated_engine_room_query("pürifayer fotoğrafı", 3) == []
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -169,4 +181,5 @@ if __name__ == "__main__":
     test_verified_lateral_and_special_aids_match_exact_queries()
     test_verified_lighthouse_photos_match_distinct_object_queries()
     test_verified_deck_equipment_photos_match_exact_hardware_queries()
-    print("14 curated visual query tests passed")
+    test_verified_engine_room_photos_keep_equipment_scopes_distinct()
+    print("15 curated visual query tests passed")
