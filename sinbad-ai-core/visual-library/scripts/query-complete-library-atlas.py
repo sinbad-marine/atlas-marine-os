@@ -215,6 +215,8 @@ def curated_navigation_query(value: str, limit: int) -> list[dict]:
         "gyrocompass-bearing-operation": ("cayro pusula", "cayro tekrarlayıcı", "cayro tekrarlayici", "gyrocompass", "gyro compass", "kerteriz alma"),
     }
     preferred = {key for key, phrases in phrase_groups.items() if any(phrase in normalized for phrase in phrases)}
+    if re.search(r"\bais\b", normalized):
+        preferred.add("ais-ship-tracking-display")
     if not preferred:
         return []
     visuals = json.loads(manifest_path.read_text(encoding="utf-8"))["visuals"]
