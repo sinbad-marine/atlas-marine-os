@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "sinbad-curated-bridge-electronics/1",
+  "visuals": [
+    {
+      "id": "ais-display",
+      "file": "ais-display.webp",
+      "heading": "Shipboard AIS display listing nearby vessels, range and bearing",
+      "topics": "AIS display, Automatic Identification System, otomatik tanımlama sistemi, AIS cihazı, gemi listesi",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ships_AIS_display_with_lists_of_nearby_vessels.jpg",
+      "credit": "Ulf Larsen — Ships AIS display with lists of nearby vessels",
+      "license": "CC BY-SA 2.5 (https://creativecommons.org/licenses/by-sa/2.5/)"
+    },
+    {
+      "id": "radar-display",
+      "file": "radar-display.webp",
+      "heading": "Kelvin-Hughes marine radar display on the bridge of icebreaker Tarmo",
+      "topics": "marine radar display, ship radar, gemi radarı, radar ekranı, köprüüstü radarı",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Tarmo_bridge_radar_display.JPG",
+      "credit": "MKFI — Tarmo bridge radar display",
+      "license": "Public domain dedication"
+    },
+    {
+      "id": "ecdis-display",
+      "file": "ecdis-display.webp",
+      "heading": "Radar and ECDIS electronic chart displays aboard Sichem Osprey",
+      "topics": "ECDIS display, electronic chart display, elektronik harita sistemi, ECDIS ekranı, seyir cihazı",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sichem_Osprey_radar_and_ECDIS.jpg",
+      "credit": "Bureau d’enquêtes sur les évènements de mer — Sichem Osprey radar and ECDIS",
+      "license": "Licence Ouverte 2.0 (https://www.etalab.gouv.fr/licence-ouverte-open-licence/)"
+    },
+    {
+      "id": "vhf-radio",
+      "file": "vhf-radio.webp",
+      "heading": "Marine VHF radio with DSC distress controls",
+      "topics": "marine VHF radio, DSC radio, deniz VHF telsizi, VHF cihazı, GMDSS telsiz",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:VHF_radio_with_Maritime_Distress_Safety_System.jpg",
+      "credit": "Fanny Schertzer — VHF radio with Maritime Distress Safety System",
+      "license": "CC BY-SA 2.5 (https://creativecommons.org/licenses/by-sa/2.5/)"
+    }
+  ]
+}

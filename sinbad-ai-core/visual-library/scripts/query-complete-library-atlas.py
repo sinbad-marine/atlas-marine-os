@@ -493,6 +493,39 @@ def curated_cargo_query(value: str, limit: int) -> list[dict]:
     return result[:limit]
 
 
+def curated_bridge_electronics_query(value: str, limit: int) -> list[dict]:
+    root = Path(__file__).resolve().parents[1] / "assets" / "curated-bridge-electronics-verified"
+    manifest_path = root / "manifest.json"
+    if not manifest_path.is_file():
+        return []
+    normalized = value.casefold()
+    phrase_groups = {
+        "ais-display": ("ais cihaz", "ais ekran", "otomatik tanımlama sistemi", "otomatik tanimlama sistemi", "automatic identification system", "ship ais display"),
+        "radar-display": ("gemi radarı", "gemi radari", "radar ekranı", "radar ekrani", "köprüüstü radarı", "kopruustu radari", "marine radar display", "ship radar display"),
+        "ecdis-display": ("ecdis ekran", "ecdis cihaz", "elektronik harita sistemi", "electronic chart display", "ecdis display"),
+        "vhf-radio": ("deniz vhf telsiz", "vhf cihaz", "dsc telsiz", "gmdss telsiz", "marine vhf radio", "vhf dsc radio"),
+    }
+    preferred = {key for key, phrases in phrase_groups.items() if any(phrase in normalized for phrase in phrases)}
+    if not preferred:
+        return []
+    result = []
+    for item in json.loads(manifest_path.read_text(encoding="utf-8"))["visuals"]:
+        if item["id"] not in preferred:
+            continue
+        path = root / item["file"]
+        digest = __import__("hashlib").sha256(path.read_bytes()).hexdigest()
+        result.append({
+            "visual_key": f"curated:bridge-electronics:{item['id']}", "visual_type": "object",
+            "document_hash": "curated-bridge-electronics-verified", "page_number": None,
+            "image_number": None, "asset_hash": digest, "file": str(path),
+            "title": item["credit"], "volume": None, "heading": item["heading"],
+            "context": f"Verified bridge-electronics photograph. {item['license']}",
+            "topics": item["topics"], "sourcePaths": [item["sourceUrl"]], "rank": -2500.0,
+            "assetUrl": f"http://127.0.0.1:31983/visuals/assets/{digest}.webp",
+        })
+    return result[:limit]
+
+
 def terms(value: str) -> list[str]:
     aliases = {
         "şamandıra": "buoy", "samandira": "buoy",
@@ -536,6 +569,9 @@ def table_exists(db: sqlite3.Connection, name: str) -> bool:
 
 def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = False) -> list[dict]:
     curated = curated_symbol_query(value, limit)
+    if curated:
+        return curated
+    curated = curated_bridge_electronics_query(value, limit)
     if curated:
         return curated
     curated = curated_navigation_query(value, limit)
@@ -653,6 +689,11 @@ def resolve_asset(db: sqlite3.Connection, atlas: Path, digest: str) -> dict:
                     "visual_type": "object", "absolutePath": str(path.resolve())}
     cargo_root = Path(__file__).resolve().parents[1] / "assets" / "curated-cargo-verified"
     for path in cargo_root.glob("*.webp"):
+        if __import__("hashlib").sha256(path.read_bytes()).hexdigest() == digest:
+            return {"asset_hash": digest, "file": str(path), "width": None, "height": None,
+                    "visual_type": "object", "absolutePath": str(path.resolve())}
+    bridge_electronics_root = Path(__file__).resolve().parents[1] / "assets" / "curated-bridge-electronics-verified"
+    for path in bridge_electronics_root.glob("*.webp"):
         if __import__("hashlib").sha256(path.read_bytes()).hexdigest() == digest:
             return {"asset_hash": digest, "file": str(path), "width": None, "height": None,
                     "visual_type": "object", "absolutePath": str(path.resolve())}
