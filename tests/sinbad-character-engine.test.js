@@ -33,7 +33,7 @@ test('character engine accepts verified poses and fails closed for invented gest
 });
 
 test('character detail boundary accepts verified gazes and rejects malformed values without mutation',()=>{
-  const engine=createCharacterEngine();assert.deepEqual(GAZES,['audience','thought','path','board','palm']);
+  const engine=createCharacterEngine();assert.deepEqual(GAZES,['audience','thought','path','board','palm','left-palm']);
   assert.equal(engine.setState('presenting',{gesture:'show-palm',gaze:'palm'}).accepted,true);
   const before=engine.getSnapshot();
   for(const [detail,reason] of [[{gaze:'offstage'},'UNKNOWN_GAZE'],[{emotion:'furious'},'UNKNOWN_EMOTION'],[{boardText:42},'INVALID_BOARD_TEXT'],[[], 'INVALID_DETAIL']]){
@@ -46,6 +46,11 @@ test('character detail boundary accepts verified gazes and rejects malformed val
 test('board erase contact is a verified bounded character pose',()=>{
   const result=createCharacterEngine().dispatch('TEACH_AT_BOARD',{boardText:'',gesture:'write-contact',gaze:'board'});
   assert.equal(result.accepted,true);assert.equal(result.snapshot.gesture,'write-contact');
+});
+
+test('board writing lift remains a verified engine gesture',()=>{
+  const result=createCharacterEngine().dispatch('TEACH_AT_BOARD',{boardText:'090',gesture:'write-lift',gaze:'board'});
+  assert.equal(result.accepted,true);assert.equal(result.snapshot.gesture,'write-lift');
 });
 
 test('character engine preserves the three real idle micro-poses',()=>{

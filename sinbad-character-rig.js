@@ -38,6 +38,7 @@
     'walk-right':{headYaw:.04,headPitch:.01,bodyLean:.04,leftArm:.48,rightArm:-.5,energy:.74},
     'point-board':{headYaw:.24,leftArm:.1,rightArm:.86},
     'write-contact':{headYaw:.28,headPitch:.08,bodyLean:.14,leftArm:.08,rightArm:.78},
+    'write-lift':{headYaw:.22,headPitch:.04,bodyLean:.08,leftArm:.08,rightArm:.62},
     nod:{headPitch:.24},
     'nod-up':{headPitch:-.12,bodyLean:-.02,leftArm:.05,rightArm:.05},
     'listen-lean':{headPitch:.14,bodyLean:.18},

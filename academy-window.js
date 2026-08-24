@@ -23,9 +23,11 @@ academyCharacterEngine?.subscribe(snapshot=>{
 
 function renderAcademyCharacterCue(cue,text){
   const event=cue.state==='walking'?'WALK':'TEACH_AT_BOARD';
-  academyCharacterEngine?.dispatch(event,{boardText:text,...cue});
+  const result=academyCharacterEngine?.dispatch(event,{boardText:text,...cue});
+  if(!result?.accepted)return false;
   const image=byId('academySinbadImage');if(!image)return;
   image.src=cue.state==='walking'?ACADEMY_CHARACTER_ASSETS.walking[cue.walkFrame===1?1:0]:ACADEMY_CHARACTER_ASSETS['board-teaching'];
+  return true;
 }
 
 function preloadAcademyCharacterAssets(){
@@ -83,7 +85,7 @@ function selectAcademyShapeDrawingRhythm(){
 function animateAllowedShapeDrawing(generation,shape,reducedMotion=false){
   const stage=byId('academyTeachingStage'),image=byId('academySinbadImage');if(!stage||!image)return;
   const rhythm=selectAcademyShapeDrawingRhythm();stage.dataset.boardDrawingRhythm=rhythm.id;
-  const renderFrame=(frameKey,gesture,phase,gaze='board')=>{if(generation!==academyBoardGeneration)return;stage.dataset.boardDrawingPhase=phase;image.src=ACADEMY_CHARACTER_ASSETS.writing[frameKey];academyCharacterEngine?.dispatch('TEACH_AT_BOARD',{boardText:shape,gesture,gaze});};
+  const renderFrame=(frameKey,gesture,phase,gaze='board')=>{if(generation!==academyBoardGeneration)return;const result=academyCharacterEngine?.dispatch('TEACH_AT_BOARD',{boardText:shape,gesture,gaze});if(!result?.accepted){stage.dataset.boardDrawingPhase='blocked';return;}stage.dataset.boardDrawingPhase=phase;image.src=ACADEMY_CHARACTER_ASSETS.writing[frameKey];};
   if(reducedMotion){renderFrame('ready','explain','complete','audience');return;}
   rhythm.frames.forEach(([delay,frameKey,gesture,phase,gaze])=>setTimeout(()=>renderFrame(frameKey,gesture,phase,gaze),delay));
 }

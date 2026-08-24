@@ -65,6 +65,8 @@ test('board writing progress drives a real chalk cursor and bounded character di
   assert.match(academyApp,/document\.createTextNode\(text\.slice\(0,index\)\)/);
   assert.match(academyApp,/cursor\.className='academy-chalk-cursor'/);
   assert.match(academyApp,/function directAcademyWritingGesture\(index,text,lastCueBucket\)/);
+  assert.match(academyApp,/const result=academyCharacterEngine\?\.dispatch\(event,\{boardText:text,\.\.\.cue\}\)/);
+  assert.match(academyApp,/if\(!result\?\.accepted\)return false/);
   assert.match(academyApp,/const cueBucket=Math\.floor\(index\/42\)/);
   assert.match(academyApp,/audienceTurn\?'explain':'point-board'/);
   assert.match(academyApp,/academyCharacterEngine\?\.dispatch\('TEACH_AT_BOARD',\{boardText:text,gesture:/);
@@ -84,6 +86,7 @@ test('main chat can send only bounded same-origin plain text to the Academy boar
   assert.match(academyApp,/\['circle','triangle','rectangle','arrow','axes'\]\.includes\(message\.shape\)/);assert.match(academyApp,/createElementNS\('http:\/\/www\.w3\.org\/2000\/svg','svg'\)/);
   for(const shape of ['triangle','rectangle','arrow','axes'])assert.match(academyApp,new RegExp(`${shape}:Object\\.freeze`));assert.match(academyApp,/svg\.dataset\.boardShape=shape/);
   assert.match(academyApp,/function animateAllowedShapeDrawing\(generation,shape,reducedMotion=false\)/);
+  assert.match(academyApp,/if\(!result\?\.accepted\)\{stage\.dataset\.boardDrawingPhase='blocked';return;\}/);
   assert.match(academyApp,/\[260,'lift','write-lift','lift'\]/);assert.match(academyApp,/\[880,'contact','write-contact','contact'\]/);assert.match(academyApp,/\[1250,'ready','explain','complete','audience'\]/);
   for(const rhythm of ['steady','measured','lively'])assert.match(academyApp,new RegExp(`id:'${rhythm}'`));
   assert.match(academyApp,/function selectAcademyShapeDrawingRhythm\(\)/);assert.match(academyApp,/index>=academyLastShapeDrawingRhythm/);assert.match(academyApp,/stage\.dataset\.boardDrawingRhythm=rhythm\.id/);

@@ -7,8 +7,8 @@
 
   const STATES=Object.freeze(['idle','listening','thinking','preparing-voice','presenting','speaking','laughing','walking','success','warning','error','voice-disabled','board-teaching']);
   const EMOTIONS=Object.freeze(['neutral','attentive','curious','warm','joyful','confident','concerned']);
-  const GESTURES=Object.freeze(['rest','idle-breathe','idle-look-left','idle-look-right','open-hand','show-palm','raise-left','show-both-hands','wave-right','wave-right-away','look-left','look-right','shake-head-left','shake-head-right','explain','laugh','walk','walk-left','walk-right','point-board','write-contact','nod','nod-up','listen-lean','listen-orient','listen-follow','hold']);
-  const GAZES=Object.freeze(['audience','thought','path','board','palm']);
+  const GESTURES=Object.freeze(['rest','idle-breathe','idle-look-left','idle-look-right','open-hand','show-palm','raise-left','show-both-hands','wave-right','wave-right-away','look-left','look-right','shake-head-left','shake-head-right','explain','laugh','walk','walk-left','walk-right','point-board','write-contact','write-lift','nod','nod-up','listen-lean','listen-orient','listen-follow','hold']);
+  const GAZES=Object.freeze(['audience','thought','path','board','palm','left-palm']);
   const DEFAULT_PERFORMANCE=Object.freeze({
     idle:{emotion:'warm',gesture:'rest',gaze:'audience'},
     listening:{emotion:'attentive',gesture:'listen-lean',gaze:'audience'},
