@@ -112,6 +112,14 @@ def test_verified_marine_weather_photos_match_exact_conditions():
     assert all(item[0]["sourcePaths"][0].startswith("https://") for item in (fog, lightning, heavy_seas))
 
 
+def test_verified_cardinal_buoy_photos_match_real_object_queries():
+    cardinal = MODULE.curated_aids_query("kardinal şamandıra fotoğrafını göster", 3)
+    south = MODULE.curated_aids_query("güney kardinal şamandıra nasıl görünür", 3)
+    assert cardinal[0]["visual_key"] == "curated:aids:cardinal-buoys-deployment"
+    assert south[0]["visual_key"] == "curated:aids:south-cardinal-buoy"
+    assert all(item[0]["sourcePaths"][0].startswith("https://") for item in (cardinal, south))
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -123,4 +131,5 @@ if __name__ == "__main__":
     test_verified_navigation_photos_have_exact_topics_and_provenance()
     test_verified_safety_photos_are_connected_to_exact_equipment_queries()
     test_verified_marine_weather_photos_match_exact_conditions()
-    print("10 curated visual query tests passed")
+    test_verified_cardinal_buoy_photos_match_real_object_queries()
+    print("11 curated visual query tests passed")

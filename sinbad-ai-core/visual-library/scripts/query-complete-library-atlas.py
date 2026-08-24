@@ -323,6 +323,39 @@ def curated_weather_query(value: str, limit: int) -> list[dict]:
     return result[:limit]
 
 
+def curated_aids_query(value: str, limit: int) -> list[dict]:
+    root = Path(__file__).resolve().parents[1] / "assets" / "curated-aids-verified"
+    manifest_path = root / "manifest.json"
+    if not manifest_path.is_file():
+        return []
+    normalized = value.casefold()
+    phrase_groups = {
+        "cardinal-buoys-deployment": ("kardinal şamandıra", "kardinal samandira", "kuzey kardinal", "batı kardinal", "bati kardinal", "cardinal buoy", "north cardinal", "west cardinal"),
+        "south-cardinal-buoy": ("güney kardinal", "guney kardinal", "south cardinal", "düdüklü şamandıra", "duduklu samandira"),
+    }
+    preferred = {key for key, phrases in phrase_groups.items() if any(phrase in normalized for phrase in phrases)}
+    if "south-cardinal-buoy" in preferred:
+        preferred.discard("cardinal-buoys-deployment")
+    if not preferred:
+        return []
+    result = []
+    for item in json.loads(manifest_path.read_text(encoding="utf-8"))["visuals"]:
+        if item["id"] not in preferred:
+            continue
+        path = root / item["file"]
+        digest = __import__("hashlib").sha256(path.read_bytes()).hexdigest()
+        result.append({
+            "visual_key": f"curated:aids:{item['id']}", "visual_type": "object",
+            "document_hash": "curated-aids-verified", "page_number": None,
+            "image_number": None, "asset_hash": digest, "file": str(path),
+            "title": item["credit"], "volume": None, "heading": item["heading"],
+            "context": f"Verified aid-to-navigation photograph. {item['license']}",
+            "topics": item["topics"], "sourcePaths": [item["sourceUrl"]], "rank": -2500.0,
+            "assetUrl": f"http://127.0.0.1:31983/visuals/assets/{digest}.webp",
+        })
+    return result[:limit]
+
+
 def terms(value: str) -> list[str]:
     aliases = {
         "şamandıra": "buoy", "samandira": "buoy",
@@ -375,6 +408,9 @@ def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = Fa
     if curated:
         return curated
     curated = curated_weather_query(value, limit)
+    if curated:
+        return curated
+    curated = curated_aids_query(value, limit)
     if curated:
         return curated
     wanted = terms(value)
@@ -443,6 +479,11 @@ def resolve_asset(db: sqlite3.Connection, atlas: Path, digest: str) -> dict:
                     "visual_type": "object", "absolutePath": str(path.resolve())}
     weather_root = Path(__file__).resolve().parents[1] / "assets" / "curated-weather-verified"
     for path in weather_root.glob("*.webp"):
+        if __import__("hashlib").sha256(path.read_bytes()).hexdigest() == digest:
+            return {"asset_hash": digest, "file": str(path), "width": None, "height": None,
+                    "visual_type": "object", "absolutePath": str(path.resolve())}
+    aids_root = Path(__file__).resolve().parents[1] / "assets" / "curated-aids-verified"
+    for path in aids_root.glob("*.webp"):
         if __import__("hashlib").sha256(path.read_bytes()).hexdigest() == digest:
             return {"asset_hash": digest, "file": str(path), "width": None, "height": None,
                     "visual_type": "object", "absolutePath": str(path.resolve())}
