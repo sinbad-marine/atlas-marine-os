@@ -6,6 +6,7 @@ const NONCE_TTL_MS=15*60*1000;
 const MAX_NONCE_RECORDS=10000;
 const consumedDeliveries=new WeakSet();
 const consumedNonces=new Map();
+const authenticAuthorizations=new WeakSet();
 function canonical(value){if(Array.isArray(value))return `[${value.map(canonical).join(',')}]`;if(value&&typeof value==='object')return `{${Object.keys(value).sort().map(key=>`${JSON.stringify(key)}:${canonical(value[key])}`).join(',')}}`;return JSON.stringify(value);}
 function sha256(value){return crypto.createHash('sha256').update(Buffer.isBuffer(value)?value:Buffer.from(String(value),'utf8')).digest('hex');}
 function clean(value){const text=String(value||'').trim().normalize('NFC');return /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/u.test(text)?text:'';}
@@ -19,6 +20,7 @@ function authorize(delivery={},context={}){
   const expected=adapter.deliveryPayload(delivery);
   if(delivery.deliveryHash!==adapter.sha256(adapter.canonical(expected)))return blocked(delivery);
   const body=Object.freeze({version:AUTHORIZATION_VERSION,status:'DELIVERY_AUTHORIZED',reasonCode:null,transactionId:String(delivery.transactionId),sessionId,channelId,contentType:delivery.contentType,renderingPolicy:delivery.renderingPolicy,answer:delivery.answer,sources:delivery.sources,deliveryHash:delivery.deliveryHash,nonceHash:sha256(deliveryNonce)});
-  consumedDeliveries.add(delivery);consumedNonces.set(nonceKey,now+NONCE_TTL_MS);return Object.freeze({...body,authorizationHash:sha256(canonical(body))});
+  consumedDeliveries.add(delivery);consumedNonces.set(nonceKey,now+NONCE_TTL_MS);const output=Object.freeze({...body,authorizationHash:sha256(canonical(body))});authenticAuthorizations.add(output);return output;
 }
-module.exports=Object.freeze({AUTHORIZATION_VERSION,NONCE_TTL_MS,MAX_NONCE_RECORDS,canonical,sha256,clean,authorize});
+function isAuthenticAuthorization(value){return Boolean(value&&typeof value==='object'&&authenticAuthorizations.has(value));}
+module.exports=Object.freeze({AUTHORIZATION_VERSION,NONCE_TTL_MS,MAX_NONCE_RECORDS,canonical,sha256,clean,authorize,isAuthenticAuthorization});

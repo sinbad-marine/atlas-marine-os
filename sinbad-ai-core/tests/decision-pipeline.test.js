@@ -16,9 +16,10 @@ const official={content:'Approved publication excerpt',provenance:{authority:'au
 test('runs every decision stage and stops before real expert execution',()=>{
   const pipeline=harness([{id:'future-navigation',intents:['navigation'],requiresVerifiedSources:true}]);
   const result=pipeline.run({question:'Akıntıya göre rotayı hesapla',evidence:[official]});
-  assert.equal(result.status,'READY_FOR_EXPERT_EXECUTION');
+  assert.equal(result.status,'PLAN_ONLY_READY');
+  assert.equal(result.version,'sinbad-decision-pipeline/2');
   assert.equal(result.permission.mode,'PLAN_ONLY');
-  assert.equal(result.integration.expertExecutionPrepared,true);
+  assert.equal(result.integration.expertExecutionPrepared,false);
   assert.equal(result.integration.expertExecutionPerformed,false);
   assert.deepEqual(result.audit.map(x=>x.stage),['input','intent','safety','context','routing','evidence','permission','result']);
 });
@@ -67,7 +68,7 @@ test('supports a traceable multi-expert plan',()=>{
     {id:'future-passage',intents:['passage'],requiresVerifiedSources:true}
   ]);
   const result=pipeline.run({question:'Rota ve passage planı hazırla',evidence:[official]});
-  assert.equal(result.status,'READY_FOR_EXPERT_EXECUTION');
+  assert.equal(result.status,'PLAN_ONLY_READY');
   assert.equal(result.routing.multiExpert,true);
   assert.deepEqual(result.routing.routes.map(x=>x.expertId),['future-navigation','future-passage']);
   assert.ok(result.audit.find(x=>x.stage==='routing').details.routes.length===2);
@@ -79,5 +80,17 @@ test('converts internal failures into a safe pipeline error',()=>{
   assert.equal(result.status,'PIPELINE_ERROR');
   assert.equal(result.permission.allowed,false);
   assert.equal(result.audit.at(-1).reason,'PIPELINE_ERROR');
+});
+
+test('rejects unknown or execution-capable routing plan contracts',()=>{
+  for(const routing of [{planVersion:'legacy',executionAllowed:false,routes:[],gaps:[]},{planVersion:'sinbad-expert-route-plan/2-v1',executionAllowed:true,routes:[],gaps:[]},{planVersion:'sinbad-expert-route-plan/2-v1',executionAllowed:false,routable:false,planningRoutable:false,routes:Object.freeze([]),gaps:Object.freeze([]),executionBlockedReasons:Object.freeze([])},{planVersion:'sinbad-expert-route-plan/2-v1',executionAllowed:false,routable:false,planningRoutable:false,routes:Object.freeze([]),gaps:Object.freeze([]),executionBlockedReason:'NO_ROUTES',executionBlockedReasons:Object.freeze(['NO_ROUTES'])}]){
+    const pipeline=pipelineModule.create({router:{plan(){return routing;}}});const result=pipeline.run({question:'Rotayı hesapla'});
+    assert.equal(result.status,'ROUTING_BLOCKED');assert.equal(result.error.code,'ROUTING_CONTRACT_REJECTED');assert.equal(result.permission.allowed,false);assert.equal(result.routing,null);
+  }
+});
+
+test('routing audit records plan-only progress without a false terminal stop',()=>{
+  const result=harness([{id:'future-navigation',intents:['navigation']}]).run({question:'Rotayı hesapla'});
+  const routing=result.audit.find(entry=>entry.stage==='routing');assert.equal(routing.outcome,'planned');assert.equal(routing.reason,'EXPERT_PLAN_ONLY');
 });
 

@@ -32,7 +32,7 @@ function harness(options={}){
   const retrieval=retrievalModule.create({adapters:[adapter],clock:()=>10});
   const grounding=groundingModule.create({clock:()=>20});
   const orchestrator=orchestratorModule.create({decisionPipeline:decision,retrievalEngine:retrieval,groundingPipeline:grounding,clock:()=>30,now:()=> '2026-08-11T00:00:00.000Z'});
-  return {orchestrator,expertWasExecuted:()=>registry.list().some(expert=>Object.hasOwn(expert,'execute'))};
+  return {orchestrator,registry};
 }
 function request(overrides={}){
   return {transactionId:'tx-phase2c-1',question:'SOLAS publication bilgisini göster',language:'tr',
@@ -128,7 +128,8 @@ test('prompt-like document content remains DATA_ONLY and never executes',()=>{
 test('never executes experts and reports plan-only security on every path',()=>{
   for(const input of [request(),request({question:'Mayday yangın var',claims:[]})]){
     const instance=harness();const result=instance.orchestrator.run(input);
-    assert.equal(instance.expertWasExecuted(),false);
+    assert.equal(Object.hasOwn(instance.registry.get('future-publication'),'execute'),false);
+    assert.equal(Object.hasOwn(instance.registry.get('future-emergency'),'execute'),false);
     assert.equal(result.execution.expertExecutionPerformed,false);
     assert.equal(result.security.expertExecutionPerformed,false);
     assert.equal(result.security.planOnly,true);

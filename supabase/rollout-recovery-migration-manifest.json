@@ -1,0 +1,18 @@
+{
+  "version": "sinbad-rollout-recovery-migration-release/4I-v1",
+  "databaseFingerprint": "sinbad-rollout-recovery-db/3U-20260820-v1",
+  "normalization": "UTF8_LF",
+  "migrations": [
+    {"file":"20260813_terminal_delivery_idempotency.sql","sha256":"946725be6c803fca6c5b1b5b7bb8bd992d09a7d599b6a0f76984350738dbf49a"},
+    {"file":"20260814_terminal_delivery_recovery.sql","sha256":"c8555c7cc4cc5753a6c7e925163a7cd0e3ed407bfffea240c402c5df6ec22443"},
+    {"file":"20260815_terminal_recovery_audit_integrity.sql","sha256":"4aafe210efc092a0c40a4ca1a7d8a6fcbe5fa4d149e12bea88eed687ac8aae11"},
+    {"file":"20260816_rollout_activation_journal.sql","sha256":"77f92866c37e616e7815482de93df36ddb31e393a72d2b39d7d235c9ae13f876"},
+    {"file":"20260817_rollout_recovery_authorization_audit.sql","sha256":"f73a40e93d95d9eb4837aab26255ef4b1064480084a0c2f7d4846cb881918685"},
+    {"file":"20260818_rollout_recovery_authorization_audit_verification.sql","sha256":"89e6b6d1c5b4ced5e136a3612fd053572c1152461d2456d03688bca14593bd4c"},
+    {"file":"20260819_rollout_recovery_runtime_preflight.sql","sha256":"04f90c312db84ae304381c66498571ffec4b16b163a0bbc09e40d55c11bd6f00"},
+    {"file":"20260820_rollout_recovery_runtime_fingerprint.sql","sha256":"ab3bab8722c67ca44c4cba545d776049309aa3a897fe23881186981ad31189e3"},
+    {"file":"20260821_rollout_recovery_deployment_journal.sql","sha256":"d2df3aa7a406ea9f722dc277c615ce6cabb769febb96e088b79f37ffcbadb059"},
+    {"file":"20260822_rollout_recovery_deployment_reconciliation_audit.sql","sha256":"866b01f8e6d9074bcefae4101a38c009421ebe5ea0e9821da1e988a5c270c4b0"},
+    {"file":"20260823_rollout_recovery_deployment_reconciliation_audit_verification.sql","sha256":"c1e20d99e9ae14dd3e79b8021b5b2dc1fd565341c616778f2f0d7952f3e00dc4"}
+  ]
+}
