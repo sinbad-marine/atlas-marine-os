@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,academyBoardRecallAnswerForText,academyBoardRepeatRequestForText,academyBoardClearRequestForText,academyBoardResizeRequestForText,academyBoardSizeRecallAnswerForText,academyBoardShapeExplanationForText,academyBoardShapeCheckForText,academyBoardShapeCheckAnswerForText,academyBoardShapeCheckRepeatForText,academyBoardShapeCheckHintForText,academyBoardShapeCheckRevealForText,createAcademyBoardQuestionDirector,recordVerifiedGesture,gestureHistoryAnswerForText,gestureStopRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
+const {PERFORMANCES,CUE_SEQUENCES,LISTENING_MEANING_POOLS,THINKING_STAGE_CUES,IMPROVISATION_POOLS,MOTION_PROFILES,IDLE_MICRO_CUES,cueAt,speechModeForDecision,speechCueForBoundary,speechTransitionForKinds,listeningCueForActivity,listeningPauseForPace,listeningCueForPace,listeningCueForText,thinkingCueForStage,responseCueForText,textPresentationCues,gestureRequestForText,gestureAcknowledgementForRequest,groundResponseWithGesture,gestureRecallAnswerForText,academyBoardRecallAnswerForText,academyBoardRepeatRequestForText,academyBoardClearRequestForText,academyBoardResizeRequestForText,academyBoardSizeRecallAnswerForText,academyBoardShapeExplanationForText,academyBoardShapeCheckForText,academyBoardShapeCheckAnswerForText,academyBoardShapeCheckRepeatForText,academyBoardShapeCheckHintForText,academyBoardShapeCheckRevealForText,academyBoardShapeCheckReasonForText,createAcademyBoardQuestionDirector,recordVerifiedGesture,gestureHistoryAnswerForText,gestureStopRequestForText,gestureSequenceForRequest,gazeTransitionForCue,createListeningReactionDirector,createIdleBehaviorDirector,createImprovisationDirector,createSpeechGestureDirector,createPerformanceDirector}=require('../sinbad-performance-director.js');
 
 test('board teaching performance is bounded, immutable and alternates board with audience',()=>{
   const cues=PERFORMANCES['board-teaching'];assert.equal(cues.length,4);assert.ok(Object.isFrozen(cues));
@@ -415,6 +415,14 @@ test('an open verified board question reveals only its fixed answer and closes e
   assert.equal(revealed.accepted,true);assert.equal(revealed.known,true);assert.equal(revealed.revealed,true);assert.equal(revealed.completed,true);assert.match(revealed.text,/Doğru cevap: Okun uç kısmı yönü gösterir.*Soruyu burada kapatıyorum/);
   assert.equal(academyBoardShapeCheckRevealForText('Doğru cevabı söyle.',null,'tr-TR').known,false);
   assert.equal(academyBoardShapeCheckRevealForText('Yönü gösterir.',check,'tr-TR').reason,'NO_BOARD_CHECK_REVEAL_REQUEST');
+});
+
+test('a why follow-up explains only a verified current or previous board answer',()=>{
+  const check={shape:'arrow',expected:'direction'};
+  const reasoned=academyBoardShapeCheckReasonForText('Neden?',check,'tr-TR');
+  assert.equal(reasoned.accepted,true);assert.equal(reasoned.known,true);assert.equal(reasoned.reasoned,true);assert.match(reasoned.text,/sivri uç kısmı.*hangi tarafa yöneldiğini/);
+  assert.equal(academyBoardShapeCheckReasonForText('Neden?',null,'tr-TR').known,false);
+  assert.equal(academyBoardShapeCheckReasonForText('Yeni bir soru sor.',check,'tr-TR').reason,'NO_BOARD_CHECK_REASON_REQUEST');
 });
 
 test('relative gesture commands resolve only against a verified previous action',()=>{

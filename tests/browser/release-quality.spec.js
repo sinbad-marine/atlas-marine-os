@@ -359,6 +359,9 @@ test('live Sinbad chat writes bounded plain text on the real Academy board',asyn
   await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Doğru cevap: Okun uç kısmı yönü gösterir.');
   await expect(page.locator('.sinbad-avatar.large')).toHaveAttribute('data-gesture','point-board');
   await expect(page.locator('.sinbad-avatar.large')).toHaveAttribute('data-gaze','board');
+  await page.locator('#sinbadInput').fill('Neden?');await page.locator('#sendSinbad').click();
+  await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('sivri uç kısmı, gövdesinin hangi tarafa yöneldiğini');
+  await expect(page.locator('.sinbad-avatar.large')).toHaveAttribute('data-gaze','board');
   await page.locator('#sinbadInput').fill('Bu şekille ilgili bana soru sor.');await page.locator('#sendSinbad').click();
   await page.locator('#sinbadInput').fill('Üç kenarı vardır.');await page.locator('#sendSinbad').click();
   await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Okun uç kısmı yönü gösterir.');
