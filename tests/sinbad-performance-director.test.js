@@ -402,7 +402,9 @@ test('an open verified board question can be repeated without assessing or consu
 test('an open verified board question gives a bounded hint without revealing or assessing the answer',()=>{
   const check={shape:'arrow',expected:'direction',question:'Ok başı hangi bilgiyi gösterir?',attempts:0};
   const hint=academyBoardShapeCheckHintForText('Bir ipucu verir misin?',check,'tr-TR');
-  assert.equal(hint.accepted,true);assert.equal(hint.known,true);assert.equal(hint.hint,true);assert.equal(hint.shape,'arrow');assert.match(hint.text,/sivri uç kısmına/);assert.doesNotMatch(hint.text,/cevap|doğru|yönü gösterir/iu);
+  assert.equal(hint.accepted,true);assert.equal(hint.known,true);assert.equal(hint.hint,true);assert.equal(hint.hintIndex,0);assert.equal(hint.shape,'arrow');assert.match(hint.text,/sivri uç kısmına/);assert.doesNotMatch(hint.text,/cevap|doğru|yönü gösterir/iu);
+  const second=academyBoardShapeCheckHintForText('İpucu ver.',{...check,hintsUsed:1},'tr-TR');assert.equal(second.hint,true);assert.equal(second.hintIndex,1);assert.match(second.text,/gövdesinin hangi tarafa/);
+  const exhausted=academyBoardShapeCheckHintForText('İpucu ver.',{...check,hintsUsed:2},'tr-TR');assert.equal(exhausted.hint,false);assert.equal(exhausted.exhausted,true);assert.match(exhausted.text,/cevaplayabilir veya soruyu geçebilirsin/);
   assert.equal(academyBoardShapeCheckHintForText('İpucu ver.',null,'tr-TR').known,false);
   assert.equal(academyBoardShapeCheckHintForText('Yönü gösterir.',check,'tr-TR').reason,'NO_BOARD_CHECK_HINT_REQUEST');
 });

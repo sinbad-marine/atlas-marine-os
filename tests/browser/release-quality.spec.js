@@ -337,6 +337,10 @@ test('live Sinbad chat writes bounded plain text on the real Academy board',asyn
   await page.locator('#sinbadInput').fill('Bir ipucu verir misin?');await page.locator('#sendSinbad').click();
   await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Okun sivri uç kısmına ve işaret ettiği tarafa bak.');
   await expect(page.locator('.sinbad-avatar.large')).toHaveAttribute('data-gaze','board');
+  await page.locator('#sinbadInput').fill('İpucu ver.');await page.locator('#sendSinbad').click();
+  await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Ok gövdesinin hangi tarafa doğru uzandığını düşün.');
+  await page.locator('#sinbadInput').fill('İpucu ver.');await page.locator('#sendSinbad').click();
+  await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('İki doğrulanmış ipucu verdim.');
   await page.locator('#sinbadInput').fill('Yönü gösterir.');await page.locator('#sendSinbad').click();
   await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Doğru. Cevabın tahtadaki şekille uyuşuyor.');
   const firstCorrectGesture=await page.locator('.sinbad-avatar.large').getAttribute('data-gesture');
