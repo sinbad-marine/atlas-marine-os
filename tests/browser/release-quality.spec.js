@@ -330,6 +330,10 @@ test('live Sinbad chat writes bounded plain text on the real Academy board',asyn
   await page.locator('#sinbadInput').fill('Bu şekille ilgili bana soru sor.');await page.locator('#sendSinbad').click();
   const firstQuestionText=await page.locator('#sinbadMessages .chat-bubble.sinbad').last().textContent();
   expect(firstQuestionText).toMatch(/Okun uç kısmı|Ok başı|okun uç kısmından/iu);
+  const firstQuestionPrompt=firstQuestionText.replace('Captain Sinbad','').trim();
+  await page.locator('#sinbadInput').fill('Soruyu tekrar eder misin?');await page.locator('#sendSinbad').click();
+  await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText(firstQuestionPrompt);
+  await expect(page.locator('.sinbad-avatar.large')).toHaveAttribute('data-gaze','board');
   await page.locator('#sinbadInput').fill('Yönü gösterir.');await page.locator('#sendSinbad').click();
   await expect(page.locator('#sinbadMessages .chat-bubble.sinbad').last()).toContainText('Doğru. Cevabın tahtadaki şekille uyuşuyor.');
   const firstCorrectGesture=await page.locator('.sinbad-avatar.large').getAttribute('data-gesture');
