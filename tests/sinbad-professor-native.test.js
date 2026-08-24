@@ -64,3 +64,13 @@ test('guided tutor orchestrator is optional, drawer-contained and backed by asse
   const controller=fs.readFileSync('sinbad-tutor-controller.js','utf8');
   assert.match(controller,/SinbadTutorOrchestrator\.create/);assert.match(controller,/kind:'knowledge-check'/);assert.match(controller,/SinbadAcademy\?\.quiz/);assert.match(controller,/objectives:checks\.map/);assert.doesNotMatch(controller,/objectiveIndex%/);assert.match(controller,/Başarı varsayılmadı/);
 });
+
+test('tutor waits for a completed Sinbad reply and merges the latest learner profile',()=>{
+  const controller=fs.readFileSync('sinbad-tutor-controller.js','utf8');
+  assert.match(controller,/pendingTeaching=\{sessionId:state\.session\.sessionId,assistantCount:/);
+  assert.match(controller,/Açıklama tamamlandı\. Hazır olduğunuzda bilgi kontrolüne geçin/);
+  assert.match(controller,/Sinbad açıklamayı tamamlayamadı\. Başarı kaydı oluşturulmadı/);
+  assert.match(controller,/new MutationObserver\(observeTeachingReply\)/);
+  assert.match(controller,/advance\(state\.session,loadProfile\(\),\{type:'ASSESSMENT'/);
+  assert.match(controller,/advance\(state\.session,loadProfile\(\),\{type\}/);
+});
