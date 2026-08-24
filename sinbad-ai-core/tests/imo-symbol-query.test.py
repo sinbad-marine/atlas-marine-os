@@ -217,6 +217,18 @@ def test_verified_firefighting_photos_match_exact_equipment_and_operations():
     assert MODULE.curated_firefighting_query("yangın alarm paneli",3)==[]
 
 
+def test_verified_damage_control_photos_match_exact_hardware_and_actions():
+    door=MODULE.curated_damage_control_query("su geçirmez kapı fotoğrafı",3)
+    pump=MODULE.curated_damage_control_query("P-100 dewatering pump görseli",3)
+    shore=MODULE.curated_damage_control_query("çelik shoring uygulaması",3)
+    flood=MODULE.curated_damage_control_query("su basmış kompartıman tahliyesi",3)
+    assert door[0]["visual_key"]=="curated:damage-control:watertight-door"
+    assert pump[0]["visual_key"]=="curated:damage-control:dewatering-pump"
+    assert shore[0]["visual_key"]=="curated:damage-control:steel-shoring"
+    assert flood[0]["visual_key"]=="curated:damage-control:flooded-compartment"
+    assert MODULE.curated_damage_control_query("yangın nozulu",3)==[]
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -237,4 +249,5 @@ if __name__ == "__main__":
     test_verified_bridge_electronics_match_exact_device_queries()
     test_verified_bridge_controls_keep_hardware_and_operation_distinct()
     test_verified_firefighting_photos_match_exact_equipment_and_operations()
-    print("19 curated visual query tests passed")
+    test_verified_damage_control_photos_match_exact_hardware_and_actions()
+    print("20 curated visual query tests passed")
