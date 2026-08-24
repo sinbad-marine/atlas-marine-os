@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "sinbad-curated-navigation/1",
+  "licensePolicy": "Only individually verified public-domain government photographs are included.",
+  "visuals": [
+    {
+      "id": "anchor-detail-preparation",
+      "file": "anchor-detail-preparation.webp",
+      "heading": "Sea and anchor detail - line handling",
+      "topics": ["sea and anchor detail", "line handling", "mooring lines", "forecastle", "halat manevrası", "demir hazırlığı"],
+      "sourceUrl": "https://www.dvidshub.net/image/9250519/uss-bainbridge-ddg-96-sea-and-anchor-detail",
+      "credit": "U.S. Navy photo by Mass Communication Specialist 3rd Class Cesar Licona",
+      "license": "Public domain - U.S. federal government work"
+    },
+    {
+      "id": "bridge-radar-console",
+      "file": "bridge-radar-console.webp",
+      "heading": "AN/SPA-25G radar console on a ship bridge",
+      "topics": ["marine radar", "radar console", "bridge equipment", "radar ekranı", "gemi radarı"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:US_Navy_050425-N-5373B-006_Operations_Specialist_3rd_Class_Michelle_Orello_mans_an_AN-SPA-25G_Radar_Console_on_the_bridge_aboard_the_amphibious_assault_ship_USS_Iwo_Jima_(LHD_7).jpg",
+      "credit": "U.S. Navy photo by Photographer's Mate 3rd Class Shannon D. Barnwell",
+      "license": "Public domain - U.S. federal government work"
+    },
+    {
+      "id": "sextant-sun-sight",
+      "file": "sextant-sun-sight.webp",
+      "heading": "Navigator taking a sextant sight",
+      "topics": ["sextant", "sun sight", "celestial navigation", "sekstant", "güneş rasadı"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/Category:People_with_sextants",
+      "credit": "U.S. Navy photo by Photographer's Mate 2nd Class Angela M. Virnig, VIRIN 030212-N-5786V-501",
+      "license": "Public domain - U.S. federal government work"
+    }
+  ]
+}

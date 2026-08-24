@@ -61,6 +61,17 @@ def test_fire_control_plan_queries_route_to_exact_sis_catalogue_signs():
     assert {hydrant[0]["page_number"], co2[0]["page_number"], panel[0]["page_number"]} == {13, 14}
 
 
+def test_verified_navigation_photos_have_exact_topics_and_provenance():
+    radar = MODULE.curated_navigation_query("gemi radarı fotoğrafını göster", 3)
+    sextant = MODULE.curated_navigation_query("sekstant nasıl kullanılır", 3)
+    lines = MODULE.curated_navigation_query("halat manevrası görseli", 3)
+    assert radar[0]["visual_key"] == "curated:navigation:bridge-radar-console"
+    assert sextant[0]["visual_key"] == "curated:navigation:sextant-sun-sight"
+    assert lines[0]["visual_key"] == "curated:navigation:anchor-detail-preparation"
+    assert all(item[0]["sourcePaths"][0].startswith("https://") for item in (radar, sextant, lines))
+    assert MODULE.curated_navigation_query("can salının fotoğrafını göster", 3) == []
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -69,4 +80,5 @@ if __name__ == "__main__":
     test_prohibition_warning_and_mandatory_queries_use_exact_current_symbols()
     test_lifeboat_launch_sequence_symbol_is_available_without_displacing_photos()
     test_fire_control_plan_queries_route_to_exact_sis_catalogue_signs()
-    print("7 IMO symbol query tests passed")
+    test_verified_navigation_photos_have_exact_topics_and_provenance()
+    print("8 curated visual query tests passed")
