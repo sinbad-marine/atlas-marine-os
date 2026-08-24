@@ -59,7 +59,7 @@ test('native Professor and consented identity module remain available from the o
 });
 
 test('guided tutor orchestrator is optional, drawer-contained and backed by assessed checks',()=>{
-  for(const id of ['tutorOrchestratorPanel','tutorTopic','startTutorSession','advanceTutorSession','tutorSessionStatus','tutorKnowledgeCheck'])assert.match(html,new RegExp(`id=["']${id}["']`));
+  for(const id of ['tutorOrchestratorPanel','tutorTopic','startTutorSession','advanceTutorSession','abandonTutorSession','tutorSessionStatus','tutorKnowledgeCheck'])assert.match(html,new RegExp(`id=["']${id}["']`));
   assert.match(html,/sinbad-tutor-orchestrator\.js/);assert.match(html,/sinbad-tutor-controller\.js/);
   const controller=fs.readFileSync('sinbad-tutor-controller.js','utf8');
   assert.match(controller,/SinbadTutorOrchestrator\.create/);assert.match(controller,/kind:'knowledge-check'/);assert.match(controller,/SinbadAcademy\?\.quiz/);assert.match(controller,/objectives:checks\.map/);assert.doesNotMatch(controller,/objectiveIndex%/);assert.match(controller,/Başarı varsayılmadı/);
@@ -81,4 +81,14 @@ test('tutor safely restores a valid local session and discards an invalid one',(
   assert.match(controller,/localStorage\.removeItem\(SESSION_KEY\)/);
   assert.match(controller,/geri yüklendi/);
   assert.match(controller,/doğrulanamadı/);
+});
+
+test('active tutor progress cannot be silently overwritten and abandonment is explicit',()=>{
+  const controller=fs.readFileSync('sinbad-tutor-controller.js','utf8');
+  assert.match(controller,/state\?\.session\?\.status==='ACTIVE'/);
+  assert.match(controller,/Etkin oturum korunuyor/);
+  assert.match(controller,/confirm\('Bu rehberli oturumu bırakmak istiyor musunuz\?/);
+  assert.match(controller,/abandonTutorSession.*addEventListener\('click',abandon\)/);
+  assert.match(controller,/Doğrulanmış öğrenme profiliniz korunuyor/);
+  assert.doesNotMatch(controller,/pendingTeaching=null;\$\('startTutorSession'\)\.disabled=false/);
 });

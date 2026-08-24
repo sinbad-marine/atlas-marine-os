@@ -10,13 +10,14 @@
   function status(message){$('tutorSessionStatus').textContent=message}
   function topicLabel(id){return academyCatalog().find(item=>item.id===id)?.label||id}
   function objectiveLabel(){return state?.session?.objectives?.[state.session.objectiveIndex]?.label||''}
+  function syncSessionControls(){const active=state?.session?.status==='ACTIVE';$('startTutorSession').disabled=Boolean(active);$('abandonTutorSession').hidden=!active}
   function submitTutorPrompt(prompt){
     const input=$('academyQuestion'),form=$('academyChatForm'),messages=$('academyMessages');if(!input||!form||!messages)return false;
     pendingTeaching={sessionId:state.session.sessionId,assistantCount:messages.querySelectorAll('.academy-message.sinbad').length};input.value=prompt;form.requestSubmit();return true;
   }
   function observeTeachingReply(){
     if(!pendingTeaching||pendingTeaching.sessionId!==state?.session?.sessionId)return;const replies=[...$('academyMessages').querySelectorAll('.academy-message.sinbad p')];if(replies.length<=pendingTeaching.assistantCount)return;
-    const reply=String(replies.at(-1)?.textContent||''),advance=$('advanceTutorSession'),heading=`${topicLabel(state.session.topicId)}\nHedef: ${objectiveLabel()}`;pendingTeaching=null;$('startTutorSession').disabled=false;
+    const reply=String(replies.at(-1)?.textContent||''),advance=$('advanceTutorSession'),heading=`${topicLabel(state.session.topicId)}\nHedef: ${objectiveLabel()}`;pendingTeaching=null;syncSessionControls();
     if(/^Bu soruyu şu anda tamamlayamadım:/i.test(reply)){status(`${heading}\nSinbad açıklamayı tamamlayamadı. Başarı kaydı oluşturulmadı.`);advance.textContent='Anlatımı yeniden dene';advance.dataset.action='retry';advance.disabled=false;advance.hidden=false;return}
     status(`${heading}\nAçıklama tamamlandı. Hazır olduğunuzda bilgi kontrolüne geçin.`);advance.dataset.action='advance';advance.disabled=false;advance.hidden=false;
   }
@@ -27,24 +28,25 @@
     item.choices.forEach((choice,index)=>{const button=document.createElement('button');button.type='button';button.textContent=choice;button.addEventListener('click',()=>{[...host.querySelectorAll('button')].forEach(node=>node.disabled=true);state=root.SinbadTutorOrchestrator.advance(state.session,loadProfile(),{type:'ASSESSMENT',kind:'knowledge-check',score:index===item.answer?1:0,confidence:1});save();status(index===item.answer?`Doğru. ${item.explanation}`:`Yeniden çalışacağız. ${item.explanation}`);setTimeout(render,250)});host.append(button)});host.hidden=false;
   }
   function render(){
-    if(!state)return;const action=state.action,advance=$('advanceTutorSession'),check=$('tutorKnowledgeCheck');advance.hidden=true;advance.disabled=false;advance.dataset.action='advance';check.hidden=true;$('startTutorSession').disabled=false;const heading=`${topicLabel(state.session.topicId)}\nHedef: ${objectiveLabel()}`;
-    if(action.type==='EXPLAIN'){status(`${heading}\nSinbad açıklamayı hazırlıyor…`);advance.textContent='Sinbad anlatıyor…';advance.disabled=true;advance.hidden=false;$('startTutorSession').disabled=true;if(!submitTutorPrompt(`${topicLabel(state.session.topicId)} konusunda şu öğrenme hedefini kaynaklara dayanarak, açık ve öğretici biçimde anlat: ${objectiveLabel()}`)){pendingTeaching=null;$('startTutorSession').disabled=false;advance.textContent='Anlatımı yeniden dene';advance.dataset.action='retry';advance.disabled=false;status(`${heading}\nSohbet bağlantısı hazır değil. Oturum ilerletilmedi.`)}}
+    if(!state)return;const action=state.action,advance=$('advanceTutorSession'),check=$('tutorKnowledgeCheck');advance.hidden=true;advance.disabled=false;advance.dataset.action='advance';check.hidden=true;syncSessionControls();const heading=`${topicLabel(state.session.topicId)}\nHedef: ${objectiveLabel()}`;
+    if(action.type==='EXPLAIN'){status(`${heading}\nSinbad açıklamayı hazırlıyor…`);advance.textContent='Sinbad anlatıyor…';advance.disabled=true;advance.hidden=false;$('startTutorSession').disabled=true;if(!submitTutorPrompt(`${topicLabel(state.session.topicId)} konusunda şu öğrenme hedefini kaynaklara dayanarak, açık ve öğretici biçimde anlat: ${objectiveLabel()}`)){pendingTeaching=null;syncSessionControls();advance.textContent='Anlatımı yeniden dene';advance.dataset.action='retry';advance.disabled=false;status(`${heading}\nSohbet bağlantısı hazır değil. Oturum ilerletilmedi.`)}}
     else if(action.type==='ASK_KNOWLEDGE_CHECK'){status(`${heading}\nKısa bilgi kontrolünü tamamlayın.`);renderCheck()}
-    else if(action.type==='REMEDIATE'){status(`${heading}\nBu hedef henüz doğrulanmadı. Sinbad farklı bir açıklama hazırlıyor…`);advance.textContent='Sinbad yeniden anlatıyor…';advance.disabled=true;advance.hidden=false;$('startTutorSession').disabled=true;if(!submitTutorPrompt(`${topicLabel(state.session.topicId)} konusundaki şu hedefi önceki açıklamadan farklı bir örnekle yeniden öğret: ${objectiveLabel()}`)){pendingTeaching=null;$('startTutorSession').disabled=false;advance.textContent='Anlatımı yeniden dene';advance.dataset.action='retry';advance.disabled=false}}
+    else if(action.type==='REMEDIATE'){status(`${heading}\nBu hedef henüz doğrulanmadı. Sinbad farklı bir açıklama hazırlıyor…`);advance.textContent='Sinbad yeniden anlatıyor…';advance.disabled=true;advance.hidden=false;$('startTutorSession').disabled=true;if(!submitTutorPrompt(`${topicLabel(state.session.topicId)} konusundaki şu hedefi önceki açıklamadan farklı bir örnekle yeniden öğret: ${objectiveLabel()}`)){pendingTeaching=null;syncSessionControls();advance.textContent='Anlatımı yeniden dene';advance.dataset.action='retry';advance.disabled=false}}
     else if(action.type==='COMPLETE'){status(`${topicLabel(state.session.topicId)} oturumu tamamlandı. Tüm hedefler açık bilgi kontrolleriyle doğrulandı.`);localStorage.removeItem(SESSION_KEY)}
     else status(`Oturum durduruldu: ${action.reason}. Başarı varsayılmadı.`);
   }
-  function start(){const catalog=academyCatalog();if(!catalog.length){status('Academy konu kataloğu yüklenemedi; oturum başlatılmadı.');return}state=root.SinbadTutorOrchestrator.create({catalog,profile:loadProfile(),topicId:$('tutorTopic').value,sessionId:`tutor-${Date.now()}`});save();render()}
+  function start(){if(state?.session?.status==='ACTIVE'){status('Etkin oturum korunuyor. Yeni bir oturum için önce mevcut oturumu açıkça bırakın.');syncSessionControls();return}const catalog=academyCatalog();if(!catalog.length){status('Academy konu kataloğu yüklenemedi; oturum başlatılmadı.');return}state=root.SinbadTutorOrchestrator.create({catalog,profile:loadProfile(),topicId:$('tutorTopic').value,sessionId:`tutor-${Date.now()}`});save();render()}
   function advance(){if(!state||state.session.status!=='ACTIVE')return;if($('advanceTutorSession').dataset.action==='retry'){render();return}const type=state.session.stage==='EXPLAIN'?'EXPLANATION_COMPLETE':'REMEDIATION_COMPLETE';state=root.SinbadTutorOrchestrator.advance(state.session,loadProfile(),{type});save();render()}
+  function abandon(){if(!state?.session||!confirm('Bu rehberli oturumu bırakmak istiyor musunuz? Oturum ilerlemesi kaldırılır; daha önce doğrulanmış öğrenme kanıtları korunur.'))return;pendingTeaching=null;localStorage.removeItem(SESSION_KEY);state=null;$('advanceTutorSession').hidden=true;$('tutorKnowledgeCheck').hidden=true;$('tutorTopic').value='';syncSessionControls();status('Rehberli oturum bırakıldı. Doğrulanmış öğrenme profiliniz korunuyor.')}
   function init(){
     if(!root.SinbadTutorOrchestrator||!root.SinbadProfessor||!root.SinbadAcademy){status('Eğitmen bileşenleri yüklenemedi.');return}
     const select=$('tutorTopic');for(const item of academyCatalog()){const option=document.createElement('option');option.value=item.id;option.textContent=item.label;select.append(option)}
-    $('startTutorSession').addEventListener('click',start);$('advanceTutorSession').addEventListener('click',advance);new MutationObserver(observeTeachingReply).observe($('academyMessages'),{childList:true,subtree:true});
+    $('startTutorSession').addEventListener('click',start);$('advanceTutorSession').addEventListener('click',advance);$('abandonTutorSession').addEventListener('click',abandon);new MutationObserver(observeTeachingReply).observe($('academyMessages'),{childList:true,subtree:true});
     try{
       const snapshot=JSON.parse(localStorage.getItem(SESSION_KEY)||'null');
       if(snapshot){state=root.SinbadTutorOrchestrator.restore({catalog:academyCatalog(),snapshot});select.value=state.session.topicId;status('Kaydedilmiş rehberli oturum güvenli biçimde geri yüklendi.');render()}
     }catch{
-      localStorage.removeItem(SESSION_KEY);state=null;status('Kaydedilmiş rehberli oturum doğrulanamadı ve kullanılmadı. Yeni bir oturum başlatabilirsiniz.');
+      localStorage.removeItem(SESSION_KEY);state=null;status('Kaydedilmiş rehberli oturum doğrulanamadı ve kullanılmadı. Yeni bir oturum başlatabilirsiniz.');syncSessionControls();
     }
   }
   window.addEventListener('load',init);
