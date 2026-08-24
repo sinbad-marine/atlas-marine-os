@@ -22,10 +22,14 @@
     const input=$('academyQuestion'),form=$('academyChatForm'),messages=$('academyMessages');if(!input||!form||!messages)return false;
     clearPendingTeaching();const sessionId=state.session.sessionId;pendingTeaching={sessionId,assistantCount:messages.querySelectorAll('.academy-message.sinbad').length,timeoutId:setTimeout(()=>teachingTimedOut(sessionId),TEACHING_TIMEOUT_MS)};input.value=prompt;form.requestSubmit();return true;
   }
+  function teachingReplyStopped(reply){
+    const cloudStatus=String($('academyCloudStatus')?.textContent||'').trim();
+    return cloudStatus==='Answer stopped safely'||/^Bu soruyu şu anda tamamlayamadım:/i.test(String(reply||''));
+  }
   function observeTeachingReply(){
     if(!pendingTeaching||pendingTeaching.sessionId!==state?.session?.sessionId)return;const replies=[...$('academyMessages').querySelectorAll('.academy-message.sinbad p')];if(replies.length<=pendingTeaching.assistantCount)return;
     const reply=String(replies.at(-1)?.textContent||''),advance=$('advanceTutorSession'),heading=`${topicLabel(state.session.topicId)}\nHedef: ${objectiveLabel()}`;clearPendingTeaching();syncSessionControls();
-    if(/^Bu soruyu şu anda tamamlayamadım:/i.test(reply)){status(`${heading}\nSinbad açıklamayı tamamlayamadı. Başarı kaydı oluşturulmadı.`);advance.textContent='Anlatımı yeniden dene';advance.dataset.action='retry';advance.disabled=false;advance.hidden=false;return}
+    if(teachingReplyStopped(reply)){status(`${heading}\nSinbad açıklamayı tamamlayamadı. Başarı kaydı oluşturulmadı.`);advance.textContent='Anlatımı yeniden dene';advance.dataset.action='retry';advance.disabled=false;advance.hidden=false;return}
     status(`${heading}\nAçıklama tamamlandı. Hazır olduğunuzda bilgi kontrolüne geçin.`);advance.dataset.action='advance';advance.disabled=false;advance.hidden=false;
   }
   function renderCheck(){

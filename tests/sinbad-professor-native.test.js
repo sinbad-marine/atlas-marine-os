@@ -118,3 +118,14 @@ test('tutor teaching waits are bounded and timeouts never create progress eviden
   assert.ok(timeoutHandler);
   assert.doesNotMatch(timeoutHandler,/SinbadTutorOrchestrator\.advance|recordEvidence|save\(\)/);
 });
+
+test('tutor uses the structured Academy safe-stop state before unlocking assessment',()=>{
+  const controller=fs.readFileSync('sinbad-tutor-controller.js','utf8');
+  const helper=controller.match(/function teachingReplyStopped\(reply\)\{[\s\S]*?\n  \}/)?.[0]||'';
+  const observer=controller.match(/function observeTeachingReply\(\)\{[\s\S]*?\n  \}/)?.[0]||'';
+  assert.match(helper,/academyCloudStatus/);
+  assert.match(helper,/Answer stopped safely/);
+  assert.match(observer,/if\(teachingReplyStopped\(reply\)\)/);
+  assert.match(observer,/advance\.dataset\.action='retry'/);
+  assert.doesNotMatch(helper,/SinbadTutorOrchestrator\.advance|recordEvidence|save\(\)/);
+});
