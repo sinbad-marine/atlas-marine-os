@@ -640,6 +640,24 @@ def curated_oil_spill_response_query(value: str, limit: int) -> list[dict]:
     return result[:limit]
 
 
+def curated_hull_underwater_query(value: str, limit: int) -> list[dict]:
+    root=Path(__file__).resolve().parents[1]/"assets"/"curated-hull-underwater-verified"; manifest=root/"manifest.json"
+    if not manifest.is_file(): return []
+    normalized=value.casefold(); groups={
+        "bulbous-bow-underway":("yumrubaş","yumrubas","balbımsı baş","balbimsi bas","gemi baş formu","bulbous bow","ship bow wave"),
+        "propeller-installation":("gemi pervanesi","pervane şaftı","pervane safti","kuru havuz pervane montajı","kuru havuz pervane montaji","ship propeller","propeller shaft"),
+        "rudder-propeller-inspection":("gemi dümeni","gemi dumeni","dümen denetimi","dumen denetimi","pervane dümen kontrolü","pervane dumen kontrolu","ship rudder","rudder inspection"),
+        "underwater-hull-inspection":("su hattı altı gövde","su hatti alti govde","karina denetimi","gövde sacı kontrolü","govde saci kontrolu","underwater hull","dry dock hull inspection")}
+    preferred={k for k,phrases in groups.items() if any(p in normalized for p in phrases)}
+    if not preferred:return []
+    result=[]
+    for item in json.loads(manifest.read_text(encoding="utf-8"))["visuals"]:
+        if item["id"] not in preferred:continue
+        path=root/item["file"]; digest=__import__("hashlib").sha256(path.read_bytes()).hexdigest()
+        result.append({"visual_key":f"curated:hull-underwater:{item['id']}","visual_type":"object","document_hash":"curated-hull-underwater-verified","page_number":None,"image_number":None,"asset_hash":digest,"file":str(path),"title":item["credit"],"volume":None,"heading":item["heading"],"context":f"Verified ship hull and underwater-gear photograph. {item['license']}","topics":item["topics"],"sourcePaths":[item["sourceUrl"]],"rank":-2500.0,"assetUrl":f"http://127.0.0.1:31983/visuals/assets/{digest}.webp"})
+    return result[:limit]
+
+
 def terms(value: str) -> list[str]:
     aliases = {
         "şamandıra": "buoy", "samandira": "buoy",
@@ -704,6 +722,9 @@ def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = Fa
     if curated:
         return curated
     curated = curated_oil_spill_response_query(value, limit)
+    if curated:
+        return curated
+    curated = curated_hull_underwater_query(value, limit)
     if curated:
         return curated
     curated = curated_navigation_query(value, limit)
@@ -851,6 +872,10 @@ def resolve_asset(db: sqlite3.Connection, atlas: Path, digest: str) -> dict:
             return {"asset_hash":digest,"file":str(path),"width":None,"height":None,"visual_type":"object","absolutePath":str(path.resolve())}
     oil_spill_root=Path(__file__).resolve().parents[1]/"assets"/"curated-oil-spill-response-verified"
     for path in oil_spill_root.glob("*.webp"):
+        if __import__("hashlib").sha256(path.read_bytes()).hexdigest()==digest:
+            return {"asset_hash":digest,"file":str(path),"width":None,"height":None,"visual_type":"object","absolutePath":str(path.resolve())}
+    hull_underwater_root=Path(__file__).resolve().parents[1]/"assets"/"curated-hull-underwater-verified"
+    for path in hull_underwater_root.glob("*.webp"):
         if __import__("hashlib").sha256(path.read_bytes()).hexdigest()==digest:
             return {"asset_hash":digest,"file":str(path),"width":None,"height":None,"visual_type":"object","absolutePath":str(path.resolve())}
     statements = [

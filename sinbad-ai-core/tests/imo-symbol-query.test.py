@@ -263,6 +263,18 @@ def test_verified_oil_spill_response_photos_match_exact_systems():
     assert MODULE.curated_oil_spill_response_query("can simidi fotoğrafı",3)==[]
 
 
+def test_verified_hull_underwater_photos_match_exact_components():
+    bow=MODULE.curated_hull_underwater_query("yumrubaş fotoğrafı",3)
+    propeller=MODULE.curated_hull_underwater_query("gemi pervanesi montajı",3)
+    rudder=MODULE.curated_hull_underwater_query("gemi dümeni denetimi",3)
+    hull=MODULE.curated_hull_underwater_query("karina denetimi fotoğrafı",3)
+    assert bow[0]["visual_key"]=="curated:hull-underwater:bulbous-bow-underway"
+    assert propeller[0]["visual_key"]=="curated:hull-underwater:propeller-installation"
+    assert rudder[0]["visual_key"]=="curated:hull-underwater:rudder-propeller-inspection"
+    assert hull[0]["visual_key"]=="curated:hull-underwater:underwater-hull-inspection"
+    assert MODULE.curated_hull_underwater_query("radar ekranı",3)==[]
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -287,4 +299,5 @@ if __name__ == "__main__":
     test_verified_pilotage_access_photos_match_exact_operations()
     test_verified_distress_signal_photos_match_exact_equipment()
     test_verified_oil_spill_response_photos_match_exact_systems()
-    print("23 curated visual query tests passed")
+    test_verified_hull_underwater_photos_match_exact_components()
+    print("24 curated visual query tests passed")
