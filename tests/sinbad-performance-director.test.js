@@ -418,9 +418,10 @@ test('an open verified board question reveals only its fixed answer and closes e
 });
 
 test('a why follow-up explains only a verified current or previous board answer',()=>{
-  const check={shape:'arrow',expected:'direction'};
+  const check={shape:'arrow',expected:'direction',reasonAvailable:true};
   const reasoned=academyBoardShapeCheckReasonForText('Neden?',check,'tr-TR');
   assert.equal(reasoned.accepted,true);assert.equal(reasoned.known,true);assert.equal(reasoned.reasoned,true);assert.match(reasoned.text,/sivri uç kısmı.*hangi tarafa yöneldiğini/);
+  const early=academyBoardShapeCheckReasonForText('Neden?',{shape:'arrow',expected:'direction'},'tr-TR');assert.equal(early.accepted,true);assert.equal(early.known,false);assert.equal(early.pending,true);assert.doesNotMatch(early.text,/sivri uç kısmı|yöneldiğini/);
   assert.equal(academyBoardShapeCheckReasonForText('Neden?',null,'tr-TR').known,false);
   assert.equal(academyBoardShapeCheckReasonForText('Yeni bir soru sor.',check,'tr-TR').reason,'NO_BOARD_CHECK_REASON_REQUEST');
 });
