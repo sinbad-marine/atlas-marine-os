@@ -100,6 +100,16 @@ test('large Captain Sinbad portrait loads the four-layer articulated rig with it
   await page.waitForTimeout(220);
   await expect(avatar).toHaveAttribute('data-mouth-frame','wide');
   await page.evaluate(()=>{
+    prepareSinbadSpeechPerformance('Sinbad, avucunu açıp gösterir misin?');
+    prepareSinbadResponsePerformance('Avucumu açıp gösteriyorum.');
+    setSinbadAssistantState('speaking',sinbadResponseOpeningCue);
+    playSinbadRequestedGestureSequence();
+    for(let index=0;index<4;index++)sinbadStandardVoiceTick({name:'word',charIndex:index},'Dikkat, yangın var.');
+  });
+  await page.waitForTimeout(950);
+  await expect(avatar).toHaveAttribute('data-gesture','show-palm');
+  await expect(avatar).toHaveAttribute('data-gaze','audience');
+  await page.evaluate(()=>{
     applySinbadLivePerformanceCue({gesture:'raise-left',gaze:'left-palm',emotion:'attentive',energy:.38},{speechBoundary:'word'});
     setSinbadAssistantState('warning');
   });

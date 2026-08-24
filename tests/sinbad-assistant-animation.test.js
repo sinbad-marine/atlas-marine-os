@@ -798,7 +798,7 @@ test('a supported explicit gesture request overrides only the opening cue and un
   assert.match(app,/\.\.\.sinbadRequestedGesture\.cue,responseKind:sinbadTextPresentationCues\[0\]\.responseKind/);
   assert.match(app,/sinbadRequestedGesture=null;/);
   assert.match(app,/sinbadExplicitGestureHoldBoundaries=sinbadRequestedGesture\?\.supported\?2:0/);
-  assert.match(app,/if\(sinbadExplicitGestureHoldBoundaries>0\)\{sinbadExplicitGestureHoldBoundaries--;return Object\.freeze\(\{\.\.\.semantic,gesture:null\}\);\}/);
+  assert.match(app,/if\(sinbadExplicitGestureSequenceActive\|\|sinbadExplicitGestureHoldBoundaries>0\)\{if\(sinbadExplicitGestureHoldBoundaries>0\)sinbadExplicitGestureHoldBoundaries--;return Object\.freeze\(\{\.\.\.semantic,gesture:null\}\);\}/);
   const prepare=app.slice(app.indexOf('function prepareSinbadResponsePerformance'),app.indexOf('function commitSinbadPerformedGestureAction'));
   assert.doesNotMatch(prepare,/recordVerifiedGesture/);
   assert.match(app,/if\(isPresenting\)\{\s*\n\s*commitSinbadPreparedGesture\(\);/);
@@ -812,6 +812,14 @@ test('supported requests play a bounded real gesture sequence on actual voice st
   assert.match(app,/setSinbadAssistantState\('speaking',sinbadResponseOpeningCue\);commitSinbadPreparedGesture\(\);playSinbadRequestedGestureSequence\(\)/);
   assert.match(app,/if\(cue\.actionStart\)commitSinbadPerformedGestureAction\(cue\.actionStart\)/);
   assert.match(app,/sinbadPreparedGestureAction=sinbadRequestedGesture\.compound\?null:sinbadRequestedGesture\.action/);
+});
+
+test('explicit user gesture sequences remain authoritative until their bounded final cue',()=>{
+  assert.match(app,/let sinbadExplicitGestureSequenceActive=false/);
+  assert.match(app,/sinbadExplicitGestureSequenceActive=true;\s*const play=/);
+  assert.match(app,/if\(sinbadExplicitGestureSequenceActive\|\|sinbadExplicitGestureHoldBoundaries>0\)/);
+  assert.match(app,/else sinbadExplicitGestureSequenceActive=false/);
+  assert.match(app,/if\(!\['speaking','presenting'\]\.includes\(next\)\)sinbadExplicitGestureSequenceActive=false/);
 });
 
 test('show-palm reuses the verified real open-hand artwork, removes the large-avatar crop and stays bounded',()=>{

@@ -425,10 +425,12 @@ let sinbadLastAcademyBoardCheck=null;
 let sinbadPerformedGestureHistory=[];
 let sinbadPreparedGestureAction=null;
 let sinbadExplicitGestureHoldBoundaries=0;
+let sinbadExplicitGestureSequenceActive=false;
 let sinbadLastSpeechMeaningKind='conversation';
 let sinbadSpeechMeaningTransitionTimer=null;
 function prepareSinbadSpeechPerformance(question){
   sinbadSpeechGestureDirector?.reset();
+  sinbadExplicitGestureSequenceActive=false;
   const decision=window.SinbadCore?.analyzeQuery?.(question)||{};
   sinbadSpeechPerformanceMode=sinbadPerformanceDirector?.speechModeForDecision(decision)||'warm';
   const request=sinbadPerformanceDirector?.gestureRequestForText(question,{lastAction:sinbadLastPerformedGestureAction});
@@ -448,7 +450,7 @@ function sinbadSpeechPerformanceCue(index){
 function sinbadSpeechBoundaryCue(boundaryEvent,text,index){
   const result=sinbadPerformanceDirector?.speechCueForBoundary({name:boundaryEvent?.name,charIndex:boundaryEvent?.charIndex,text,wordIndex:index,mode:sinbadSpeechPerformanceMode});
   const semantic=result?.accepted?result.cue:sinbadSpeechPerformanceCue(index);
-  if(sinbadExplicitGestureHoldBoundaries>0){sinbadExplicitGestureHoldBoundaries--;return Object.freeze({...semantic,gesture:null});}
+  if(sinbadExplicitGestureSequenceActive||sinbadExplicitGestureHoldBoundaries>0){if(sinbadExplicitGestureHoldBoundaries>0)sinbadExplicitGestureHoldBoundaries--;return Object.freeze({...semantic,gesture:null});}
   const selected=sinbadSpeechGestureDirector?.select(semantic);
   return selected?.accepted?selected.cue:semantic;
 }
@@ -507,17 +509,19 @@ function performSinbadDirectCharacterRequest(request){
   return Object.freeze({accepted:true,text:acknowledgement?.accepted?acknowledgement.text:(sinbadState.language==='tr-TR'?'Kısa bir yürüyüş yapıyorum.':'I am taking a short walk.')});
 }
 function stopSinbadGesturePerformance(){
-  sinbadRequestedGesture=null;sinbadRequestedGestureSequence=[];sinbadPreparedGestureAction=null;sinbadExplicitGestureHoldBoundaries=0;
+  sinbadRequestedGesture=null;sinbadRequestedGestureSequence=[];sinbadPreparedGestureAction=null;sinbadExplicitGestureHoldBoundaries=0;sinbadExplicitGestureSequenceActive=false;
   clearTimeout(sinbadSpeechMeaningTransitionTimer);sinbadSpeechMeaningTransitionTimer=null;stopSinbadVoice();
   setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled',{gesture:'rest',gaze:'audience',emotion:'neutral',energy:0});sinbadAwaitingAnswer=false;return true;
 }
 function playSinbadRequestedGestureSequence(){
   const cues=sinbadRequestedGestureSequence;sinbadRequestedGestureSequence=[];
   const presentationState=sinbadAssistantState;if(cues.length<2||!['speaking','presenting'].includes(presentationState))return false;
+  sinbadExplicitGestureSequenceActive=true;
   const play=index=>{
-    if(sinbadAssistantState!==presentationState||index>=cues.length)return;
+    if(sinbadAssistantState!==presentationState||index>=cues.length){sinbadExplicitGestureSequenceActive=false;return;}
     const cue=cues[index];setSinbadAssistantState(presentationState,{...sinbadResponseOpeningCue,...cue,responseKind:sinbadResponseOpeningCue.responseKind});if(cue.actionStart)commitSinbadPerformedGestureAction(cue.actionStart);
     if(index+1<cues.length){const delay=Math.max(1,cues[index+1].at-cue.at);sinbadAssistantTimers.push(setTimeout(()=>play(index+1),delay));}
+    else sinbadExplicitGestureSequenceActive=false;
   };
   play(0);return true;
 }
@@ -729,6 +733,7 @@ function setSinbadAssistantState(state,detail={}){
   const initialGaze=gazePlan?.accepted?gazePlan.cues[0].gaze:performance.gaze;
   const changed=next!==sinbadAssistantState;
   sinbadAssistantState=next;
+  if(!['speaking','presenting'].includes(next))sinbadExplicitGestureSequenceActive=false;
   sinbadAssistantLastDetail=detail||{};
   clearSinbadAssistantTimers();
   const asset=SINBAD_STATE_ASSET[next]||SINBAD_STATE_ASSET.idle;
