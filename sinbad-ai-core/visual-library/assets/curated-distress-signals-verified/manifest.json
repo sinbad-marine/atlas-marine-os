@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "sinbad-curated-distress-signals/1",
+  "licensePolicy": "Only individually verified public-domain U.S. federal government photographs are included.",
+  "visuals": [
+    {
+      "id": "mk124-distress-signal",
+      "file": "mk124-distress-signal.webp",
+      "heading": "USCG member operating an MK-124 red night distress signal",
+      "topics": ["MK-124", "red night distress signal", "marine flare", "kırmızı imdat fişeği", "gece işaret fişeği", "deniz işaret fişeği"],
+      "sourceUrl": "https://www.dvidshub.net/image/6115481/coast-guard-distress-signal-training",
+      "credit": "U.S. Coast Guard photo by Petty Officer 1st Class Ayla Hudson, VIRIN 200224-G-MQ432-032",
+      "license": "Public domain - U.S. federal government work"
+    },
+    {
+      "id": "orange-smoke-signal",
+      "file": "orange-smoke-signal.webp",
+      "heading": "Orange daytime smoke distress signal in the water",
+      "topics": ["orange smoke signal", "day distress signal", "man overboard smoke", "turuncu duman işareti", "gündüz imdat işareti", "denizde duman kandili"],
+      "sourceUrl": "https://www.dvidshub.net/image/1106325/signal-flare-training",
+      "credit": "U.S. Coast Guard photo by Petty Officer 1st Class Eric J. Chandler",
+      "license": "Public domain - U.S. federal government work"
+    },
+    {
+      "id": "line-throwing-appliance",
+      "file": "line-throwing-appliance.webp",
+      "heading": "Bridger line-throwing appliance for marine rescue",
+      "topics": ["line throwing appliance", "Bridger line thrower", "marine rescue line", "halat atma cihazı", "roketli halat atıcı", "gemi kurtarma halatı"],
+      "sourceUrl": "https://www.dvidshub.net/image/870144/ammo-dogs-to-the-rescue",
+      "credit": "U.S. Army photo by Sgt. Edwin Rodriguez, VIRIN 130213-A-1413R-188",
+      "license": "Public domain - U.S. federal government work"
+    }
+  ]
+}
