@@ -49,6 +49,18 @@ IMO_A760_ALIASES = {
     "emniyet kemerini bagla": "mss-fasten-safety-belts",
     "filikayı suya indir": "mss-lower-lifeboat-to-water", "filikayi suya indir": "mss-lower-lifeboat-to-water",
     "can salını suya indir": "mss-lower-liferaft-to-water", "can salini suya indir": "mss-lower-liferaft-to-water",
+    "yangın kontrol planı": "sis-001-fire-control-plan", "yangin kontrol plani": "sis-001-fire-control-plan",
+    "yangın damperi": "sis-011-fire-damper-machinery-spaces", "yangin damperi": "sis-011-fire-damper-machinery-spaces",
+    "acil yangın pompası": "sis-025-emergency-fire-pump", "acil yangin pompasi": "sis-025-emergency-fire-pump",
+    "yangın hidrantı": "sis-034-fire-hydrant", "yangin hidranti": "sis-034-fire-hydrant",
+    "yangın ana devre vanası": "sis-035-fire-main-section-valve", "yangin ana devre vanasi": "sis-035-fire-main-section-valve",
+    "sprinkler bölüm vanası": "sis-036-sprinkler-section-valve", "sprinkler bolum vanasi": "sis-036-sprinkler-section-valve",
+    "köpük bölüm vanası": "sis-038-foam-section-valve", "kopuk bolum vanasi": "sis-038-foam-section-valve",
+    "inert gaz sistemi": "sis-041-inert-gas-installation",
+    "co2 söndürme sistemi": "sis-046-co2-fire-extinguishing-system", "co2 sondurme sistemi": "sis-046-co2-fire-extinguishing-system",
+    "acil jeneratör": "sis-048-emergency-electrical-power-generator", "acil jenerator": "sis-048-emergency-electrical-power-generator",
+    "acil akü": "sis-049-emergency-electrical-power-battery", "acil aku": "sis-049-emergency-electrical-power-battery",
+    "yangın alarm paneli": "sis-052-fire-detection-alarm-control-panel", "yangin alarm paneli": "sis-052-fire-detection-alarm-control-panel",
 }
 
 IMO_A1116_LSS_PAGES = {
@@ -118,7 +130,17 @@ def curated_symbol_root() -> Path:
 
 def curated_symbol_collections():
     assets = Path(__file__).resolve().parents[1] / "assets"
+    sis_root = assets / "curated-imo-a1116-sis"
+    sis_pages = {}
+    for path in sis_root.glob("imo-a1116-sis-*.webp"):
+        name = path.stem.removeprefix("imo-a1116-")
+        number = int(name.split("-", 2)[1])
+        sis_pages[name] = 13 if ((number - 1) // 4) % 2 == 0 else 14
     return (
+        (sis_root, "imo-a1116-", sis_pages,
+         "IMO Resolution A.1116(30)",
+         "https://wwwcdn.imo.org/localresources/en/KnowledgeCentre/IndexofIMOResolutions/AssemblyDocuments/A.1116%2830%29.pdf", 500,
+         "imo-a1116-sis"),
         (assets / "curated-imo-a1116-operational", "imo-a1116-", IMO_A1116_OPERATIONAL_PAGES,
          "IMO Resolution A.1116(30)",
          "https://wwwcdn.imo.org/localresources/en/KnowledgeCentre/IndexofIMOResolutions/AssemblyDocuments/A.1116%2830%29.pdf", 400,
@@ -167,8 +189,8 @@ def curated_symbol_query(value: str, limit: int) -> list[dict]:
             "image_number": None, "asset_hash": digest,
             "file": str(path), "title": title, "volume": None,
             "heading": name.replace("-", " ").title(),
-            "context": "Official IMO symbol related to life-saving appliances and arrangements.",
-            "topics": [name, title, "life-saving appliance symbol"],
+            "context": "Official IMO shipboard safety, life-saving or fire-control-plan symbol.",
+            "topics": [name, title, "shipboard safety symbol"],
             "sourcePaths": [source_url],
             "rank": -1000.0,
             "assetUrl": f"http://127.0.0.1:31983/visuals/assets/{digest}.webp",

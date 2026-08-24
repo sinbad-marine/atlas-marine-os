@@ -51,6 +51,16 @@ def test_lifeboat_launch_sequence_symbol_is_available_without_displacing_photos(
     assert MODULE.curated_symbol_query("filikanın fotoğrafını göster", 3) == []
 
 
+def test_fire_control_plan_queries_route_to_exact_sis_catalogue_signs():
+    hydrant = MODULE.curated_symbol_query("yangın hidrantı sembolü", 3)
+    co2 = MODULE.curated_symbol_query("CO2 söndürme sistemi işareti", 3)
+    panel = MODULE.curated_symbol_query("yangın alarm paneli sembolü", 3)
+    assert hydrant[0]["visual_key"] == "curated:imo-a1116-sis:sis-034-fire-hydrant"
+    assert co2[0]["visual_key"] == "curated:imo-a1116-sis:sis-046-co2-fire-extinguishing-system"
+    assert panel[0]["visual_key"] == "curated:imo-a1116-sis:sis-052-fire-detection-alarm-control-panel"
+    assert {hydrant[0]["page_number"], co2[0]["page_number"], panel[0]["page_number"]} == {13, 14}
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -58,4 +68,5 @@ if __name__ == "__main__":
     test_escape_emergency_and_fire_queries_stay_in_their_categories()
     test_prohibition_warning_and_mandatory_queries_use_exact_current_symbols()
     test_lifeboat_launch_sequence_symbol_is_available_without_displacing_photos()
-    print("6 IMO symbol query tests passed")
+    test_fire_control_plan_queries_route_to_exact_sis_catalogue_signs()
+    print("7 IMO symbol query tests passed")
