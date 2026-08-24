@@ -1,4 +1,5 @@
 import importlib.util
+import sqlite3
 from pathlib import Path
 
 
@@ -178,6 +179,20 @@ def test_verified_cargo_photos_match_exact_operations_and_hardware():
     assert MODULE.curated_cargo_query("dökme yük kepçesi fotoğrafı", 3) == []
 
 
+def test_verified_bridge_electronics_match_exact_device_queries():
+    ais = MODULE.curated_bridge_electronics_query("AIS cihazı ve fotoğrafını göster", 3)
+    radar = MODULE.curated_bridge_electronics_query("gemi radarı ekranı nasıl görünür", 3)
+    ecdis = MODULE.curated_bridge_electronics_query("ECDIS ekran fotoğrafını göster", 3)
+    vhf = MODULE.curated_bridge_electronics_query("deniz VHF telsiz cihazı görseli", 3)
+    assert ais[0]["visual_key"] == "curated:bridge-electronics:ais-display"
+    assert radar[0]["visual_key"] == "curated:bridge-electronics:radar-display"
+    assert ecdis[0]["visual_key"] == "curated:bridge-electronics:ecdis-display"
+    assert vhf[0]["visual_key"] == "curated:bridge-electronics:vhf-radio"
+    assert MODULE.curated_bridge_electronics_query("manyetik pusula fotoğrafı", 3) == []
+    integrated = MODULE.query(sqlite3.connect(":memory:"), "AIS cihazı ve fotoğrafını göster", 3, True)
+    assert integrated[0]["visual_key"] == "curated:bridge-electronics:ais-display"
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -195,4 +210,5 @@ if __name__ == "__main__":
     test_verified_deck_equipment_photos_match_exact_hardware_queries()
     test_verified_engine_room_photos_keep_equipment_scopes_distinct()
     test_verified_cargo_photos_match_exact_operations_and_hardware()
-    print("16 curated visual query tests passed")
+    test_verified_bridge_electronics_match_exact_device_queries()
+    print("17 curated visual query tests passed")
