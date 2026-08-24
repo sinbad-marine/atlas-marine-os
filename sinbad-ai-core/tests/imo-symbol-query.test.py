@@ -193,6 +193,18 @@ def test_verified_bridge_electronics_match_exact_device_queries():
     assert integrated[0]["visual_key"] == "curated:bridge-electronics:ais-display"
 
 
+def test_verified_bridge_controls_keep_hardware_and_operation_distinct():
+    telegraph = MODULE.curated_bridge_controls_query("makine telgrafı fotoğrafını göster", 3)
+    modern = MODULE.curated_bridge_controls_query("modern dümen konsolu görseli", 3)
+    wheel = MODULE.curated_bridge_controls_query("klasik gemi dümeni fotoğrafı", 3)
+    watch = MODULE.curated_bridge_controls_query("dümen vardiyası nasıl görünür", 3)
+    assert telegraph[0]["visual_key"] == "curated:bridge-controls:engine-order-telegraph"
+    assert modern[0]["visual_key"] == "curated:bridge-controls:modern-helm-console"
+    assert wheel[0]["visual_key"] == "curated:bridge-controls:traditional-ship-wheel"
+    assert watch[0]["visual_key"] == "curated:bridge-controls:helmsman-watch"
+    assert MODULE.curated_bridge_controls_query("manyetik pusula fotoğrafı", 3) == []
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -211,4 +223,5 @@ if __name__ == "__main__":
     test_verified_engine_room_photos_keep_equipment_scopes_distinct()
     test_verified_cargo_photos_match_exact_operations_and_hardware()
     test_verified_bridge_electronics_match_exact_device_queries()
-    print("17 curated visual query tests passed")
+    test_verified_bridge_controls_keep_hardware_and_operation_distinct()
+    print("18 curated visual query tests passed")
