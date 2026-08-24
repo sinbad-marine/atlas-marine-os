@@ -660,19 +660,19 @@
         {at:0,gesture:'open-hand',gaze:'audience',emotion:'warm',energy:.3},
         {at:140,gesture:'open-hand',gaze:'palm',emotion:'attentive',energy:.32},
         {at:300,gesture:'show-palm',gaze:'palm',emotion:'attentive',energy:.4},
-        {at:860,gesture:'show-palm',gaze:'audience',emotion:'warm',energy:.34}
+        {at:860,gesture:'show-palm',gaze:'audience',gazePhase:'settle',emotion:'warm',energy:.34}
       ],
       'show-right-hand':[
         {at:0,gesture:'open-hand',gaze:'audience',emotion:'warm',energy:.3},
         {at:140,gesture:'open-hand',gaze:'palm',emotion:'attentive',energy:.32},
         {at:300,gesture:'show-palm',gaze:'palm',emotion:'attentive',energy:.4},
-        {at:820,gesture:'show-palm',gaze:'audience',emotion:'warm',energy:.34}
+        {at:820,gesture:'show-palm',gaze:'audience',gazePhase:'settle',emotion:'warm',energy:.34}
       ],
       'raise-left-hand':[
         {at:0,gesture:'rest',gaze:'audience',emotion:'attentive',energy:.26},
         {at:140,gesture:'rest',gaze:'left-palm',emotion:'attentive',energy:.28},
         {at:300,gesture:'raise-left',gaze:'left-palm',emotion:'attentive',energy:.38},
-        {at:820,gesture:'raise-left',gaze:'audience',emotion:'warm',energy:.32}
+        {at:820,gesture:'raise-left',gaze:'audience',gazePhase:'settle',emotion:'warm',energy:.32}
       ],
       'show-both-hands':[
         {at:0,gesture:'rest',gaze:'audience',emotion:'attentive',energy:.24},
@@ -713,7 +713,7 @@
         {at:0,gesture:'explain',gaze:'audience',emotion:'confident',energy:.34},
         {at:160,gesture:'explain',gaze:'board',emotion:'confident',energy:.36},
         {at:360,gesture:'point-board',gaze:'board',emotion:'confident',energy:.42},
-        {at:1060,gesture:'point-board',gaze:'audience',emotion:'warm',energy:.34}
+        {at:1060,gesture:'point-board',gaze:'audience',gazePhase:'settle',emotion:'warm',energy:.34}
       ]
     };
     if(action==='two-hand-sequence'){
@@ -736,7 +736,7 @@
     if(!cue||typeof cue!=='object')return Object.freeze({accepted:false,reason:'INVALID_GAZE_CUE'});
     const target=['audience','thought','board','path','palm','left-palm'].includes(cue.gaze)?cue.gaze:'audience';
     let cues;
-    if(reducedMotion)cues=[Object.freeze({at:0,gaze:target})];
+    if(reducedMotion||cue.gazePhase==='settle')cues=[Object.freeze({at:0,gaze:target})];
     else if(cue.gesture==='show-palm')cues=[Object.freeze({at:0,gaze:'palm'}),Object.freeze({at:520,gaze:'audience'})];
     else if(cue.gesture==='raise-left')cues=[Object.freeze({at:0,gaze:'left-palm'}),Object.freeze({at:520,gaze:'audience'})];
     else if(cue.gesture==='point-board')cues=[Object.freeze({at:0,gaze:'board'}),Object.freeze({at:900,gaze:'audience'}),Object.freeze({at:1600,gaze:'board'})];

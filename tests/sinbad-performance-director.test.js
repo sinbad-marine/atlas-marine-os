@@ -271,6 +271,7 @@ test('supported physical requests expand into bounded interruptible gesture sequ
   const left=gestureSequenceForRequest('raise-left-hand');assert.deepEqual(left.cues.map(cue=>cue.gaze),['audience','left-palm','left-palm','audience']);
   const both=gestureSequenceForRequest('show-both-hands');assert.deepEqual(both.cues.map(cue=>cue.gesture),['rest','open-hand','show-both-hands','rest']);assert.ok(both.duration<=1400);
   const board=gestureSequenceForRequest('point-board');assert.equal(board.cues[1].gaze,'board');assert.equal(board.cues[1].gesture,'explain');assert.equal(board.cues[2].gesture,'point-board');assert.ok(board.duration<=1200);
+  for(const plan of [palm,left,board]){const settle=plan.cues.at(-1);assert.equal(settle.gaze,'audience');assert.equal(settle.gazePhase,'settle');assert.deepEqual(gazeTransitionForCue(settle).cues.map(cue=>cue.gaze),['audience']);}
   const wave=gestureSequenceForRequest('wave');assert.deepEqual(wave.cues.map(cue=>cue.gesture),['open-hand','wave-right','wave-right-away','wave-right','wave-right-away','open-hand']);assert.ok(wave.duration<=1800);
   const laugh=gestureSequenceForRequest('laugh');assert.deepEqual(laugh.cues.map(cue=>cue.gesture),['rest','laugh','nod','laugh','rest']);assert.ok(laugh.duration<=1500);
   const no=gestureSequenceForRequest('shake-head');assert.deepEqual(no.cues.map(cue=>cue.gesture),['rest','shake-head-left','shake-head-right','shake-head-left','rest']);assert.ok(no.duration<=1800);

@@ -169,9 +169,11 @@ test('live Sinbad chat grounds body answers in the gesture actually shown',async
   await ask('Sağ elini göster.');
   await expect(answer).toContainText('Sağ avucumu açıp gösteriyorum.');
   await expect(avatar).toHaveAttribute('data-gesture','show-palm');
+  await expect(avatar).toHaveAttribute('data-gaze','audience',{timeout:1500});
   await ask('Şimdi öbür elini göster.');
   await expect(answer).toContainText('Sol elimi kaldırıp gösteriyorum.');
   await expect(avatar).toHaveAttribute('data-gesture','raise-left');
+  await expect(avatar).toHaveAttribute('data-gaze','audience',{timeout:1500});
 
   await ask('Önce sağ elini göster, sonra sol elini kaldır.');
   await expect(answer).toContainText('Önce sağ avucumu, ardından sol elimi gösteriyorum.');
