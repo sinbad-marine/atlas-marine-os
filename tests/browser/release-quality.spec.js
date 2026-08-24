@@ -70,7 +70,8 @@ test('large Captain Sinbad portrait loads the four-layer articulated rig with it
   const adaptiveDuration=await avatar.evaluate(element=>getComputedStyle(element).getPropertyValue('--sinbad-motion-duration'));
   expect(Number.parseInt(adaptiveDuration,10)).toBeGreaterThanOrEqual(280);
   expect(Number.parseInt(adaptiveDuration,10)).toBeLessThanOrEqual(1200);
-  await page.waitForTimeout(80);
+  await page.evaluate(()=>applySinbadLivePerformanceCue({gesture:'show-palm',gaze:'palm',emotion:'warm',energy:.4},{speechBoundary:'word'}));
+  await page.waitForTimeout(20);
   await page.evaluate(()=>applySinbadLivePerformanceCue({gesture:'raise-left',gaze:'left-palm',emotion:'warm',energy:.38},{speechBoundary:'word'}));
   await expect(avatar).toHaveAttribute('data-motion-interrupted','true');
   await expect(avatar).toHaveAttribute('data-gesture','raise-left');
