@@ -714,6 +714,8 @@ function setSinbadAssistantState(state,detail={}){
   const next=SINBAD_ASSISTANT_STATES.includes(state)?state:'idle';
   const performance=sinbadCharacterEngine?.setState(next,detail)?.snapshot||{state:next,emotion:'neutral',gesture:'rest',gaze:'audience'};
   const reducedGazeMotion=detail.reducedMotion===true||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches||document.documentElement.classList.contains('sinbad-force-reduced-motion');
+  const transitionStartedAt=globalThis.performance.now(),transitionInterrupted=Boolean(sinbadLiveRigTransition&&transitionStartedAt<sinbadLiveRigTransition.startedAt+sinbadLiveRigTransition.durationMs);
+  const previousRigControls=currentSinbadLiveRigControls(transitionStartedAt)||sinbadCharacterRig?.poseForState?.(sinbadAssistantState)?.controls||sinbadCharacterRig?.neutralControls?.();
   const gazePlan=sinbadPerformanceDirector?.gazeTransitionForCue?.(performance,{reducedMotion:reducedGazeMotion});
   const initialGaze=gazePlan?.accepted?gazePlan.cues[0].gaze:performance.gaze;
   const changed=next!==sinbadAssistantState;
@@ -726,6 +728,12 @@ function setSinbadAssistantState(state,detail={}){
   // change can never reveal itself (via opacity) once a newer state change
   // has already superseded it.
   const generation=++sinbadAvatarImageGeneration;
+  const defaultEnergy=sinbadCharacterRig?.STATE_POSES[next]?.energy??0;
+  const requestedEnergy=Number(detail.energy??defaultEnergy);
+  const rigOverrides={energy:Math.max(0,Math.min(1,Number.isFinite(requestedEnergy)?requestedEnergy:defaultEnergy))};
+  const rigPose=sinbadCharacterRig?.poseForPerformance?.(next,performance.gesture,rigOverrides)||sinbadCharacterRig?.poseForState?.(next,rigOverrides);
+  const rigCss=rigPose?.accepted?sinbadCharacterRig.cssVariables(rigPose.controls):null;
+  const rigTransition=rigPose?.accepted?sinbadCharacterRig?.transitionForControls?.(previousRigControls,rigPose.controls,{urgent:next==='warning'||next==='error'||detail.responseKind==='caution',reducedMotion:reducedGazeMotion}):null;
   sinbadAssistantElements().forEach(el=>{
     el.dataset.state=next;
     el.dataset.emotion=performance.emotion;
@@ -747,13 +755,10 @@ function setSinbadAssistantState(state,detail={}){
     else delete el.dataset.thinkingStage;
     if(next==='speaking'&&detail.responseKind)el.dataset.responseKind=detail.responseKind;
     else if(next!=='speaking')delete el.dataset.responseKind;
-    const defaultEnergy=sinbadCharacterRig?.STATE_POSES[next]?.energy??0;
-    const requestedEnergy=Number(detail.energy??defaultEnergy);
-    const rigOverrides={energy:Math.max(0,Math.min(1,Number.isFinite(requestedEnergy)?requestedEnergy:defaultEnergy))};
-    const rigPose=sinbadCharacterRig?.poseForPerformance?.(next,performance.gesture,rigOverrides)||sinbadCharacterRig?.poseForState?.(next,rigOverrides);
-    const rigCss=rigPose?.accepted?sinbadCharacterRig.cssVariables(rigPose.controls):null;
     el.style.removeProperty('--sinbad-motion-duration');
-    if(rigCss?.accepted){Object.entries(rigCss.variables).forEach(([name,value])=>el.style.setProperty(name,value));sinbadLastLiveRigControls=rigPose.controls;sinbadLiveRigTransition=null;delete el.dataset.motionInterrupted;}
+    if(rigTransition?.accepted)el.style.setProperty('--sinbad-motion-duration',`${rigTransition.durationMs}ms`);
+    if(transitionInterrupted)el.dataset.motionInterrupted='true';else delete el.dataset.motionInterrupted;
+    if(rigCss?.accepted)Object.entries(rigCss.variables).forEach(([name,value])=>el.style.setProperty(name,value));
     const img=el.querySelector('.sinbad-avatar-img');
     if(img&&!img.src.endsWith(asset)){
       img.style.opacity='0';
@@ -761,6 +766,7 @@ function setSinbadAssistantState(state,detail={}){
       img.src=src;
     }
   });
+  if(rigPose?.accepted){sinbadLastLiveRigControls=rigPose.controls;sinbadLiveRigTransition=rigTransition?.accepted?{from:previousRigControls,to:rigPose.controls,startedAt:transitionStartedAt,durationMs:rigTransition.durationMs}:null;}
   if('reducedMotion' in (detail||{}))document.documentElement.classList.toggle('sinbad-force-reduced-motion',detail.reducedMotion===true);
   if(next!=='speaking')stopSinbadLipSyncAnalyser();
   else setSinbadMouthFrame('closed');

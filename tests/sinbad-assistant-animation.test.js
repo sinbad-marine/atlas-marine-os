@@ -268,6 +268,14 @@ test('live speech and text cues update real rig controls instead of labels alone
   assert.match(app,/sinbadTextPresentationCues\.slice\(1\)[\s\S]*applySinbadLivePerformanceCue\(cue\)/);
 });
 
+test('whole character state changes continue from an in-flight rig pose with bounded urgency',()=>{
+  assert.match(app,/const transitionStartedAt=globalThis\.performance\.now\(\),transitionInterrupted=Boolean\(sinbadLiveRigTransition/);
+  assert.match(app,/previousRigControls=currentSinbadLiveRigControls\(transitionStartedAt\)/);
+  assert.match(app,/urgent:next==='warning'\|\|next==='error'\|\|detail\.responseKind==='caution'/);
+  assert.match(app,/reducedMotion:reducedGazeMotion/);
+  assert.match(app,/sinbadLiveRigTransition=rigTransition\?\.accepted\?\{from:previousRigControls,to:rigPose\.controls/);
+});
+
 test('text-only answers are honestly presented without entering the speaking or mouth-animation state',()=>{
   assert.match(app,/presenting:'Yanıtı ekranda sunuyor'/);
   assert.match(app,/presenting:'captain-sinbad-idle-master\.png'/);
