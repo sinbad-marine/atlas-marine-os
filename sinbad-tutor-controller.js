@@ -40,6 +40,12 @@
     if(!root.SinbadTutorOrchestrator||!root.SinbadProfessor||!root.SinbadAcademy){status('Eğitmen bileşenleri yüklenemedi.');return}
     const select=$('tutorTopic');for(const item of academyCatalog()){const option=document.createElement('option');option.value=item.id;option.textContent=item.label;select.append(option)}
     $('startTutorSession').addEventListener('click',start);$('advanceTutorSession').addEventListener('click',advance);new MutationObserver(observeTeachingReply).observe($('academyMessages'),{childList:true,subtree:true});
+    try{
+      const snapshot=JSON.parse(localStorage.getItem(SESSION_KEY)||'null');
+      if(snapshot){state=root.SinbadTutorOrchestrator.restore({catalog:academyCatalog(),snapshot});select.value=state.session.topicId;status('Kaydedilmiş rehberli oturum güvenli biçimde geri yüklendi.');render()}
+    }catch{
+      localStorage.removeItem(SESSION_KEY);state=null;status('Kaydedilmiş rehberli oturum doğrulanamadı ve kullanılmadı. Yeni bir oturum başlatabilirsiniz.');
+    }
   }
   window.addEventListener('load',init);
 })(window);

@@ -74,3 +74,11 @@ test('tutor waits for a completed Sinbad reply and merges the latest learner pro
   assert.match(controller,/advance\(state\.session,loadProfile\(\),\{type:'ASSESSMENT'/);
   assert.match(controller,/advance\(state\.session,loadProfile\(\),\{type\}/);
 });
+
+test('tutor safely restores a valid local session and discards an invalid one',()=>{
+  const controller=fs.readFileSync('sinbad-tutor-controller.js','utf8');
+  assert.match(controller,/SinbadTutorOrchestrator\.restore/);
+  assert.match(controller,/localStorage\.removeItem\(SESSION_KEY\)/);
+  assert.match(controller,/geri yüklendi/);
+  assert.match(controller,/doğrulanamadı/);
+});

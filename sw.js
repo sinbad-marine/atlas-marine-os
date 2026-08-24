@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.19-tutor-dialogue-sync-v1';
+const CACHE='sinbad-marine-v8.20.19-tutor-session-resume-v1';
 const ASSETS=[
   './',
   './index.html',
