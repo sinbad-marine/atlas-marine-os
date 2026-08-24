@@ -100,3 +100,10 @@ test('tutor progress UI exposes only assessed objective completion',()=>{
   assert.match(controller,/item\.status==='VERIFIED'/);
   assert.match(controller,/renderProgress\(\)/);
 });
+
+test('missing knowledge checks stop the real session instead of only changing status text',()=>{
+  const controller=fs.readFileSync('sinbad-tutor-controller.js','utf8');
+  assert.match(controller,/advance\(state\.session,loadProfile\(\),\{type:'ASSESSMENT_UNAVAILABLE'\}\)/);
+  assert.match(controller,/ASSESSMENT_UNAVAILABLE/);
+  assert.match(controller,/save\(\);syncSessionControls\(\);renderProgress\(\)/);
+});

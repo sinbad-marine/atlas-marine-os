@@ -68,7 +68,8 @@
     if(session.version!==VERSION||!session.sessionId)return freeze({session:stop(session,'INVALID_SESSION'),profile,action:action(stop(session,'INVALID_SESSION'))});
     if(session.status!=='ACTIVE')return freeze({session,profile,action:action(session)});
     const type=String(event.type||'');let next={...session,turn:session.turn+1};let nextProfile=profile;
-    if(type==='EXPLANATION_COMPLETE'&&session.stage==='EXPLAIN')next.stage='CHECK';
+    if(type==='ASSESSMENT_UNAVAILABLE'&&session.stage==='CHECK')next=stop(next,'ASSESSMENT_UNAVAILABLE',{objectiveId:session.objectives[session.objectiveIndex]?.id||null});
+    else if(type==='EXPLANATION_COMPLETE'&&session.stage==='EXPLAIN')next.stage='CHECK';
     else if(type==='REMEDIATION_COMPLETE'&&session.stage==='REMEDIATE')next.stage='CHECK';
     else if(type==='ASSESSMENT'&&session.stage==='CHECK'){
       const kind=String(event.kind||'');

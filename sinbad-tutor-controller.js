@@ -24,7 +24,7 @@
   }
   function renderCheck(){
     const host=$('tutorKnowledgeCheck'),items=root.SinbadAcademy?.quiz(state.session.topicId)||[],item=items[state.session.objectiveIndex];host.replaceChildren();
-    if(!item){host.hidden=true;status('Bu hedef için doğrulanmış kısa soru bulunamadı. Oturum güvenli biçimde durduruldu; başarı kaydı oluşturulmadı.');return}
+    if(!item){host.hidden=true;state=root.SinbadTutorOrchestrator.advance(state.session,loadProfile(),{type:'ASSESSMENT_UNAVAILABLE'});save();syncSessionControls();renderProgress();status('Bu hedef için doğrulanmış kısa soru bulunamadı. Oturum güvenli biçimde durduruldu; başarı kaydı oluşturulmadı.');return}
     const question=document.createElement('strong');question.textContent=item.q;host.append(question);
     item.choices.forEach((choice,index)=>{const button=document.createElement('button');button.type='button';button.textContent=choice;button.addEventListener('click',()=>{[...host.querySelectorAll('button')].forEach(node=>node.disabled=true);state=root.SinbadTutorOrchestrator.advance(state.session,loadProfile(),{type:'ASSESSMENT',kind:'knowledge-check',score:index===item.answer?1:0,confidence:1});save();status(index===item.answer?`Doğru. ${item.explanation}`:`Yeniden çalışacağız. ${item.explanation}`);setTimeout(render,250)});host.append(button)});host.hidden=false;
   }
