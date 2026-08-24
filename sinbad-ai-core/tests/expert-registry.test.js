@@ -7,7 +7,13 @@ test('registers and ranks experts without executing them',()=>{
   registry.register({id:'basic-nav',intents:['navigation'],priority:10});
   registry.register({id:'advanced-nav',intents:['navigation'],priority:90});
   assert.deepEqual(registry.candidates('navigation').map(x=>x.id),['advanced-nav','basic-nav']);
-  assert.equal(registry.get('advanced-nav').execute,null);
+  assert.equal(Object.hasOwn(registry.get('advanced-nav'),'execute'),false);
+});
+
+test('rejects legacy executable expert records fail-closed',()=>{
+  const registry=registryModule.create();
+  assert.throws(()=>registry.register({id:'legacy-nav',intents:['navigation'],execute(){}}),/execute callbacks are forbidden/);
+  assert.equal(registry.list().length,0);
 });
 
 test('rejects duplicate expert registrations',()=>{

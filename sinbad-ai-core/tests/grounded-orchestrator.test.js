@@ -19,9 +19,8 @@ function official(overrides={}){
 }
 function harness(options={}){
   const registry=registryModule.create();
-  let expertExecuted=false;
-  registry.register({id:'future-publication',intents:['publication'],requiresVerifiedSources:true,execute(){expertExecuted=true;}});
-  registry.register({id:'future-emergency',intents:['emergency'],execute(){expertExecuted=true;}});
+  registry.register({id:'future-publication',intents:['publication'],requiresVerifiedSources:true});
+  registry.register({id:'future-emergency',intents:['emergency']});
   const router=routerModule.create(registry);
   const memory=memoryModule.create({now:()=>Date.parse('2026-08-11T00:00:00Z')});
   if(options.memory)memory.rememberSession(options.memory);
@@ -33,7 +32,7 @@ function harness(options={}){
   const retrieval=retrievalModule.create({adapters:[adapter],clock:()=>10});
   const grounding=groundingModule.create({clock:()=>20});
   const orchestrator=orchestratorModule.create({decisionPipeline:decision,retrievalEngine:retrieval,groundingPipeline:grounding,clock:()=>30,now:()=> '2026-08-11T00:00:00.000Z'});
-  return {orchestrator,expertWasExecuted:()=>expertExecuted};
+  return {orchestrator,expertWasExecuted:()=>registry.list().some(expert=>Object.hasOwn(expert,'execute'))};
 }
 function request(overrides={}){
   return {transactionId:'tx-phase2c-1',question:'SOLAS publication bilgisini göster',language:'tr',

@@ -5,6 +5,7 @@
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
   const ID=/^[a-z][a-z0-9-]{2,63}$/;
   function normalize(input={}){
+    if(Object.prototype.hasOwnProperty.call(input,'execute'))throw new TypeError('expert execute callbacks are forbidden; experts are plan-only');
     const id=String(input.id||'').trim();
     if(!ID.test(id))throw new TypeError('expert id must be a lowercase kebab-case identifier');
     const intents=[...new Set((Array.isArray(input.intents)?input.intents:[]).map(String).filter(Boolean))];
@@ -17,8 +18,7 @@
       minConfidence:Number.isFinite(input.minConfidence)?Math.max(0,Math.min(1,Number(input.minConfidence))):0.6,
       requiresVerifiedSources:Boolean(input.requiresVerifiedSources),
       supportsMultiExpert:input.supportsMultiExpert!==false,
-      canHandle:typeof input.canHandle==='function'?input.canHandle:null,
-      execute:typeof input.execute==='function'?input.execute:null
+      canHandle:typeof input.canHandle==='function'?input.canHandle:null
     });
   }
   function interfaceView(expert){
