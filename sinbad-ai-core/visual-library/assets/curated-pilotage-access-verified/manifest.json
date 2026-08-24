@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "sinbad-curated-pilotage-access/1",
+  "licensePolicy": "Only individually verified public-domain or CC0 photographs are included.",
+  "visuals": [
+    {
+      "id": "pilot-ladder-operation",
+      "file": "pilot-ladder-operation.webp",
+      "heading": "Pilot ladder operation on a ship side",
+      "topics": ["pilot ladder", "pilot transfer", "pilot embarkation", "loçman çarmıhı", "pilot merdiveni", "loçman transferi"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Flickr_-_Official_U.S._Navy_Imagery_-_Seaman_Kimerly_Carroll_climbs_down_a_pilot%27s_ladder_aboard_the_amphibious_dock-landing_ship_USS_Gunston_Hall..jpg",
+      "credit": "U.S. Navy photo by Mass Communication Specialist 3rd Class Jonathan Sunderman, VIRIN 120504-N-XO436-211",
+      "license": "Public domain - U.S. federal government work"
+    },
+    {
+      "id": "pilot-boat-limassol",
+      "file": "pilot-boat-limassol.webp",
+      "heading": "Port of Limassol pilot boat",
+      "topics": ["pilot boat", "port pilotage", "pilot transfer craft", "pilot botu", "loçman botu", "liman kılavuzluk hizmeti"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Pilot_Boat_of_the_Port_of_Limassol,_Cyprus.jpg",
+      "credit": "Photograph by Julian Lupyan",
+      "license": "CC0 1.0 public-domain dedication"
+    },
+    {
+      "id": "accommodation-ladder-operation",
+      "file": "accommodation-ladder-operation.webp",
+      "heading": "Sailors securing a ship accommodation ladder",
+      "topics": ["accommodation ladder", "ship access", "gangway", "borda merdiveni", "gemi giriş merdiveni", "iskele kurulumu"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sailors_secure_an_accommodation_ladder_aboard_USS_Stout_while_transiting_the_Mediterranean_Sea._(26951189413).jpg",
+      "credit": "U.S. Navy photo by Mass Communication Specialist 3rd Class Bill Dodge, VIRIN 160608-N-GP524-446",
+      "license": "Public domain - U.S. federal government work"
+    },
+    {
+      "id": "harbor-tug-line-operation",
+      "file": "harbor-tug-line-operation.webp",
+      "heading": "Harbor tug attaching a tug line to a ship",
+      "topics": ["harbor tug", "tug line", "towing operation", "römorkör halatı", "liman römorkörü", "gemi yedekleme"],
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:US_Navy_050208-N-9851B-008_The_large_harbor_tug_USS_Kittanning_(YBT_787)_attaches_a_tug_line_through_the_bull_nose_of_the_Spruance-class_destroyer_USS_Cushing_(CG_985).jpg",
+      "credit": "U.S. Navy photograph, VIRIN 050208-N-9851B-008",
+      "license": "Public domain - U.S. federal government work"
+    }
+  ]
+}
