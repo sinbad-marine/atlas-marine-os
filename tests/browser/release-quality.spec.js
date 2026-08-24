@@ -109,6 +109,8 @@ test('large Captain Sinbad portrait loads the four-layer articulated rig with it
   await page.waitForTimeout(950);
   await expect(avatar).toHaveAttribute('data-gesture','show-palm');
   await expect(avatar).toHaveAttribute('data-gaze','audience');
+  const postSequenceGesture=await page.evaluate(()=>sinbadSpeechBoundaryCue({name:'word',charIndex:0},'Dikkat, yangın var.',20).gesture);
+  expect(postSequenceGesture).not.toBeNull();
   await page.evaluate(()=>{
     applySinbadLivePerformanceCue({gesture:'raise-left',gaze:'left-palm',emotion:'attentive',energy:.38},{speechBoundary:'word'});
     setSinbadAssistantState('warning');
