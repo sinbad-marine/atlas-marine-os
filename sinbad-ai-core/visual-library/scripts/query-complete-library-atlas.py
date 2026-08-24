@@ -208,6 +208,8 @@ def curated_navigation_query(value: str, limit: int) -> list[dict]:
         "anchor-detail-preparation": ("demir hazırlığı", "demir hazirligi", "halat manevrası", "halat manevrasi", "sea and anchor detail"),
         "bridge-radar-console": ("radar konsolu", "radar ekranı", "radar ekrani", "gemi radarı", "gemi radari", "spa-25g"),
         "sextant-sun-sight": ("sekstant", "sextant", "güneş rasadı", "gunes rasadi", "göksel seyir", "goksel seyir"),
+        "bridge-to-bridge-communications": ("köprüüstü haberleşme", "kopruustu haberlesme", "telsiz vardiyası", "telsiz vardiyasi", "bridge-to-bridge communications"),
+        "magnetic-compass-binnacle": ("manyetik pusula", "pusula dolabı", "pusula dolabi", "binnacle", "gemi pusulası", "gemi pusulasi"),
     }
     preferred = {key for key, phrases in phrase_groups.items() if any(phrase in normalized for phrase in phrases)}
     if not preferred:
