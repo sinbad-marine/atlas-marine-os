@@ -20,6 +20,22 @@ def test_object_photo_request_does_not_route_to_symbol_collection():
     assert MODULE.curated_symbol_query("can simidinin fotoğrafını göster", 3) == []
 
 
+def test_semantic_visual_reranker_prefers_text_bound_exact_subject():
+    rows = [
+        {"visual_key": "generic", "visual_type": "object", "document_hash": "a",
+         "page_number": 1, "title": "Marine manual", "heading": "Equipment",
+         "context": "General bridge equipment", "topics": '["equipment"]', "rank": -9.0},
+        {"visual_key": "bound", "visual_type": "object", "document_hash": "b",
+         "page_number": 42, "title": "Navigation handbook", "heading": "AIS display",
+         "context": "AIS display presents vessel identity position course and speed.",
+         "topics": '["ais","display","vessel identity"]', "rank": -2.0},
+    ]
+    ranked = MODULE.rerank_visual_rows(rows, ["ais", "display"], "AIS display", 2)
+    assert ranked[0]["visual_key"] == "bound"
+    assert ranked[0]["semanticScore"] > ranked[1]["semanticScore"]
+    assert ranked[0]["scoreExplanation"]["boundContextBonus"] == 3.0
+
+
 def test_chart_no_1_questions_use_complete_public_domain_table_pages():
     results = MODULE.chart_no_1_table_page_query("batık harita sembolünü göster", 3)
     assert results
@@ -419,6 +435,7 @@ def test_kaiyodai_navigation_schematics_match_exact_concepts():
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
+    test_semantic_visual_reranker_prefers_text_bound_exact_subject()
     test_epirb_and_sart_resolve_to_distinct_official_symbols()
     test_escape_emergency_and_fire_queries_stay_in_their_categories()
     test_prohibition_warning_and_mandatory_queries_use_exact_current_symbols()
@@ -452,4 +469,4 @@ if __name__ == "__main__":
     test_verified_shipboard_ppe_photos_match_exact_protection()
     test_verified_shipboard_industrial_ppe_matches_exact_protection()
     test_kaiyodai_navigation_schematics_match_exact_concepts()
-    print("35 curated visual query tests passed")
+    print("36 curated visual query tests passed")

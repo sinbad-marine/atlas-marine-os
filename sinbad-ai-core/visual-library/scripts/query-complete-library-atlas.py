@@ -1029,6 +1029,48 @@ def table_exists(db: sqlite3.Connection, name: str) -> bool:
     return db.execute("select 1 from sqlite_master where name=?", (name,)).fetchone() is not None
 
 
+def semantic_visual_score(row: dict, wanted: list[str], query_text: str) -> tuple[float, dict]:
+    """Fast, explainable second-stage score for text-bound visual retrieval."""
+    fields = {
+        "title": (row.get("title") or "").casefold(),
+        "heading": (row.get("heading") or "").casefold(),
+        "context": (row.get("context") or "").casefold(),
+        "topics": (row.get("topics") or "").casefold(),
+    }
+    hits = {name: sum(token in value for token in wanted) for name, value in fields.items()}
+    coverage = len({token for token in wanted if any(token in value for value in fields.values())})
+    phrase = " ".join(terms(query_text))
+    phrase_hit = bool(phrase and any(phrase in value for value in fields.values()))
+    visual_type = row.get("visual_type") or "page"
+    type_bonus = {"object": 4.0, "table": 3.0, "vector": 3.0, "diagram": 3.0,
+                  "chart-table": 3.0, "chart-table-highlight": 4.0}.get(visual_type, 0.0)
+    provenance = 2.0 if row.get("document_hash") and row.get("page_number") is not None else 0.0
+    bound_context = 3.0 if fields["context"] and (hits["context"] or hits["heading"]) else 0.0
+    score = (8.0 * hits["heading"] + 6.0 * hits["topics"] +
+             3.0 * hits["context"] + hits["title"] +
+             10.0 * phrase_hit + 4.0 * coverage + type_bonus + provenance + bound_context)
+    explanation = {"headingHits": hits["heading"], "topicHits": hits["topics"],
+                   "contextHits": hits["context"], "titleHits": hits["title"],
+                   "coverage": coverage, "phraseHit": phrase_hit,
+                   "typeBonus": type_bonus, "provenanceBonus": provenance,
+                   "boundContextBonus": bound_context}
+    return score, explanation
+
+
+def rerank_visual_rows(rows: list, wanted: list[str], query_text: str, limit: int) -> list[dict]:
+    ranked = []
+    for row in rows:
+        item = dict(row)
+        semantic_score, explanation = semantic_visual_score(item, wanted, query_text)
+        item["semanticScore"] = semantic_score
+        item["scoreExplanation"] = explanation
+        ranked.append(item)
+    ranked.sort(key=lambda item: (-item["semanticScore"], float(item.get("rank") or 0),
+                                  0 if item.get("visual_type") == "object" else 1,
+                                  item.get("visual_key") or ""))
+    return ranked[:limit]
+
+
 def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = False) -> list[dict]:
     curated = curated_symbol_query(value, limit)
     if curated:
@@ -1124,13 +1166,16 @@ def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = Fa
     if indexed:
         expression = " OR ".join(f'"{word.replace(chr(34), chr(34) * 2)}"' for word in wanted)
         type_clause = " and visual_type='object'" if object_only else ""
+        candidate_limit = min(200, max(40, limit * 12))
         rows = db.execute(
             """select visual_key,visual_type,document_hash,page_number,image_number,asset_hash,file,
-                      title,volume,heading,context,topics,source_paths,bm25(visual_search) rank
+                      title,volume,heading,context,topics,source_paths,
+                      bm25(visual_search,0,0,0,0,0,0,0,2,1,8,3,6,0) rank
                from visual_search where visual_search match ?""" + type_clause + """
                order by rank,case visual_type when 'object' then 0 when 'table' then 1 when 'vector' then 1 else 2 end limit ?""",
-            (expression, limit - len(curated)),
+            (expression, candidate_limit),
         ).fetchall()
+        rows = rerank_visual_rows(rows, wanted, value, limit - len(curated))
     else:
         clauses = " or ".join("lower(coalesce(p.heading,'')||' '||p.context||' '||p.topics) like ?" for _ in wanted)
         params = [f"%{word}%" for word in wanted]
@@ -1145,14 +1190,7 @@ def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = Fa
                 where {clauses} order by p.document_hash,p.page_number limit ?""",
             (*params, min(1000, max(200, limit * 100))),
         ).fetchall()
-        rows = sorted(
-            rows,
-            key=lambda row: sum(
-                token in f"{row['heading'] or ''} {row['context'] or ''} {row['topics'] or ''}".casefold()
-                for token in wanted
-            ),
-            reverse=True,
-        )[:limit]
+        rows = rerank_visual_rows(rows, wanted, value, limit - len(curated))
     result = []
     for row in rows:
         item = dict(row)

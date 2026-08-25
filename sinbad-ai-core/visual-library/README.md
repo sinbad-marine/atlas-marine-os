@@ -55,6 +55,19 @@ This provenance contract applies to all future corpus extraction, not only
 Chart No. 1. It lets Captain Sinbad explain from a source passage and attach the
 photograph, drawing or table that actually belongs to that passage.
 
+Retrieval uses a two-stage bounded algorithm. Unicode FTS5 first selects at
+most `min(200, max(40, 12 × requested_results))` candidates with weighted BM25
+(heading 8, topics 6, context 3, title 2). A deterministic semantic pass then
+scores each candidate as:
+
+`S = 8H + 6T + 3C + N + 10P + 4K + V + R + B`
+
+where `H/T/C/N` are heading/topic/context/title token hits, `P` is an exact
+normalized phrase match, `K` is unique query-token coverage, `V` prefers the
+requested visual type, `R` rewards document+page provenance and `B` rewards a
+visual bound to a matching passage. Results expose `semanticScore` and
+`scoreExplanation`, making wrong selections testable rather than opaque.
+
 `nga-chart-no-1-atlas.js` indexes page-rendered official symbol plates already
 present in the local SINBAD corpus. Page number, original document checksum and
 render checksum are retained independently. This document-first extraction is
