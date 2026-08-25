@@ -347,6 +347,14 @@ def test_verified_survival_craft_and_personal_gear_match_exact_equipment():
     assert MODULE.curated_survival_craft_gear_query("konteyner terminali",3)==[]
 
 
+def test_verified_maritime_knot_photos_match_exact_knots():
+    bowline=MODULE.curated_maritime_knots_query("izbarço bağı nasıl görünür",3)
+    clove=MODULE.curated_maritime_knots_query("kazık bağı fotoğrafını göster",3)
+    assert bowline[0]["visual_key"]=="curated:maritime-knots:bowline-knot"
+    assert clove[0]["visual_key"]=="curated:maritime-knots:clove-hitch"
+    assert MODULE.curated_maritime_knots_query("konteyner twistlock",3)==[]
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -378,4 +386,5 @@ if __name__ == "__main__":
     test_verified_naval_and_support_vessel_photos_match_exact_classes()
     test_verified_shipyard_and_port_photos_match_exact_operations()
     test_verified_survival_craft_and_personal_gear_match_exact_equipment()
-    print("30 curated visual query tests passed")
+    test_verified_maritime_knot_photos_match_exact_knots()
+    print("31 curated visual query tests passed")

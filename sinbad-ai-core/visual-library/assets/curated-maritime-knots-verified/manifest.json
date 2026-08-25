@@ -1,0 +1,8 @@
+{
+  "schemaVersion":"sinbad-curated-maritime-knots/1",
+  "licensePolicy":"Only individually verified public-domain knot photographs are included.",
+  "visuals":[
+    {"id":"bowline-knot","file":"bowline-knot.webp","heading":"Bowline knot with the working end inside the loop","topics":["bowline","bowline knot","izbarço bağı","izbarço","gemi düğümü","sabit halka düğümü"],"sourceUrl":"https://commons.wikimedia.org/wiki/File:Palstek_innen.jpg","credit":"Photo by Markus Bärlocher","license":"Public domain - released by the copyright holder"},
+    {"id":"clove-hitch","file":"clove-hitch.webp","heading":"Clove hitch tied around a pole","topics":["clove hitch","clove hitch knot","kazık bağı","kazik bagi","direğe bağlama","geçici bağ"],"sourceUrl":"https://commons.wikimedia.org/wiki/File:Clove_hitch_on_a_pole.JPG","credit":"Wikimedia Commons contributor — clove hitch on a pole","license":"Public domain - released by the copyright holder"}
+  ]
+}
