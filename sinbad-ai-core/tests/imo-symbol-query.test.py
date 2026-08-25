@@ -20,6 +20,17 @@ def test_object_photo_request_does_not_route_to_symbol_collection():
     assert MODULE.curated_symbol_query("can simidinin fotoğrafını göster", 3) == []
 
 
+def test_chart_no_1_questions_use_exact_public_domain_row_cards():
+    results = MODULE.chart_no_1_symbol_card_query("batık harita sembolünü göster", 3)
+    assert results
+    assert all(item["visual_type"] == "chart-symbol" for item in results)
+    assert all(item["document_hash"] == "247f548eaa45db815e1c49fea9785e966a6e8dd9e4771abc26d4dad473488a1e" for item in results)
+    assert all(item["sourcePaths"] == ["https://repository.library.noaa.gov/view/noaa/2615"] for item in results)
+    resolved = MODULE.resolve_asset(None, Path("."), results[0]["asset_hash"])
+    assert resolved["visual_type"] == "chart-symbol"
+    assert Path(resolved["absolutePath"]).is_file()
+
+
 def test_epirb_and_sart_resolve_to_distinct_official_symbols():
     epirb = MODULE.curated_symbol_query("EPIRB sembolü", 3)
     sart = MODULE.curated_symbol_query("SART işareti", 3)

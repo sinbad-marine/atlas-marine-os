@@ -848,6 +848,48 @@ def curated_kaiyodai_navigation_schematics_query(value: str, limit: int) -> list
     return result[:limit]
 
 
+def chart_no_1_symbol_card_query(value: str, limit: int) -> list[dict]:
+    root = Path(__file__).resolve().parents[1] / "assets" / "nga-chart-no-1-symbol-cards"
+    manifest_path = root / "manifest.json"
+    if not manifest_path.is_file():
+        return []
+    normalized = value.casefold()
+    chart_terms = ("harita", "sembol", "işaret", "isaret", "chart", "buoy", "şamandıra", "samandira",
+                   "fener", "light", "batık", "batik", "wreck", "kaya", "rock", "demirleme", "anchorage")
+    if not any(term in normalized for term in chart_terms):
+        return []
+    aliases = {"şamandıra": "buoy", "samandira": "buoy", "fener": "light", "batık": "wreck",
+               "batik": "wreck", "kaya": "rock", "demirleme": "anchorage", "sembol": "symbol",
+               "işaret": "mark", "isaret": "mark", "harita": "chart"}
+    needles = set(re.findall(r"[^\W\d_][\w-]{2,}", normalized, re.UNICODE))
+    needles.update(aliases[word] for word in tuple(needles) if word in aliases)
+    ignored = {"göster", "goster", "görsel", "gorsel", "resim", "fotoğraf", "fotograf", "nedir", "olan"}
+    needles.difference_update(ignored)
+    scored = []
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    for visual in manifest.get("visuals", []):
+        occurrence = visual["occurrences"][0]
+        haystack = " ".join([occurrence.get("context", ""), occurrence.get("description", ""),
+                             *occurrence.get("headings", []), *occurrence.get("topics", [])]).casefold()
+        score = sum(1 for needle in needles if needle in haystack)
+        if score:
+            scored.append((score, occurrence.get("pdfPage", 0), occurrence.get("symbolNumber", ""), visual, occurrence))
+    result = []
+    for score, page, number, visual, occurrence in sorted(scored, key=lambda item: (-item[0], item[1], item[2]))[:limit]:
+        path = root / visual["file"]
+        result.append({
+            "visual_key": visual["visualId"], "visual_type": "chart-symbol",
+            "document_hash": manifest["sourceDocumentSha256"], "page_number": page,
+            "image_number": number, "asset_hash": visual["sha256"], "file": str(path),
+            "title": manifest["collection"], "volume": None,
+            "heading": " / ".join(occurrence.get("headings", [])) or f"Chart symbol {number}",
+            "context": occurrence.get("context", ""), "topics": occurrence.get("topics", []),
+            "sourcePaths": [manifest["sourceUrl"]], "rank": -3000.0 - score,
+            "assetUrl": f"http://127.0.0.1:31983/visuals/assets/{visual['sha256']}.webp",
+        })
+    return result
+
+
 def terms(value: str) -> list[str]:
     aliases = {
         "şamandıra": "buoy", "samandira": "buoy",
@@ -891,6 +933,9 @@ def table_exists(db: sqlite3.Connection, name: str) -> bool:
 
 def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = False) -> list[dict]:
     curated = curated_symbol_query(value, limit)
+    if curated:
+        return curated
+    curated = chart_no_1_symbol_card_query(value, limit)
     if curated:
         return curated
     curated = curated_bridge_electronics_query(value, limit)
@@ -1028,6 +1073,11 @@ def resolve_asset(db: sqlite3.Connection, atlas: Path, digest: str) -> dict:
             if __import__("hashlib").sha256(path.read_bytes()).hexdigest() == digest:
                 return {"asset_hash": digest, "file": str(path), "width": None, "height": None,
                         "visual_type": "object", "absolutePath": str(path.resolve())}
+    chart_cards_root = Path(__file__).resolve().parents[1] / "assets" / "nga-chart-no-1-symbol-cards"
+    for path in chart_cards_root.glob("*.webp"):
+        if __import__("hashlib").sha256(path.read_bytes()).hexdigest() == digest:
+            return {"asset_hash": digest, "file": str(path), "width": None, "height": None,
+                    "visual_type": "chart-symbol", "absolutePath": str(path.resolve())}
     navigation_root = Path(__file__).resolve().parents[1] / "assets" / "curated-navigation-verified"
     for path in navigation_root.glob("*.webp"):
         if __import__("hashlib").sha256(path.read_bytes()).hexdigest() == digest:
