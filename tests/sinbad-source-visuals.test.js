@@ -58,6 +58,14 @@ test('legacy local library bytes and indexed text are also denied outside owner 
   assert.match(app,/\['uploadDocs','docFiles','docFolder','docTags','knowledgeQuery','knowledgeSearchBtn'\][\s\S]*?el\.disabled=!roleCanAccessPrivateSources\(\)/);
 });
 
+test('dashboard counts and local Sinbad fallback cannot disclose private library inventory',()=>{
+  assert.match(app,/async function renderSummary\(\)\{[\s\S]*?if\(!roleCanAccessPrivateSources\(\)\)\{[\s\S]*?\['sumFiles','sumPubs','sumCharts','sumStorage'\]/);
+  assert.match(app,/const canAccessPrivateLibrary=roleCanAccessPrivateSources\(\);\s*const files=canAccessPrivateLibrary\?await dbAll\(\):\[\]/);
+  assert.match(app,/if\(q\.includes\('chart'\)\)\{\s*if\(!canAccessPrivateLibrary\)return 'Private chart archive identities/);
+  assert.match(app,/if\(q\.includes\('publication'\) \|\| q\.includes\('solas'\) \|\| q\.includes\('marpol'\)\)\{\s*if\(!canAccessPrivateLibrary\)return 'Private publication identities/);
+  assert.match(app,/async function refreshCloudSummary\(\)\{[\s\S]*?if\(!roleCanAccessPrivateSources\(\)\)\{[\s\S]*?\['sumFiles','sumPubs','sumCharts','sumStorage'\]/);
+});
+
 test('Storage RLS limits original library bytes to owner and authorized developer roles',()=>{
   assert.match(storagePolicy,/alter policy atlas_storage_select_member\s+on storage\.objects/i);
   assert.match(storagePolicy,/array\['atlas-documents'::text, 'nautical-publications'::text\]/);
