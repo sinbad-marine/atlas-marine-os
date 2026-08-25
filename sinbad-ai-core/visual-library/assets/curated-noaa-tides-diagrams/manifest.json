@@ -1,0 +1,17 @@
+{
+  "schemaVersion":"sinbad-curated-noaa-tides-diagrams/1",
+  "licensePolicy":"All visuals are NOAA-authored educational diagrams from a source record explicitly marked Public Domain. They are for education and are not tide predictions for navigation.",
+  "sourceTitle":"Understanding Tides",
+  "sourceAuthor":"R. Lawrence Swanson",
+  "sourceOrganization":"NOAA / Oregon Sea Grant",
+  "sourceUrl":"https://repository.library.noaa.gov/view/noaa/45665",
+  "license":"Public Domain",
+  "publicationYear":1977,
+  "visuals":[
+    {"id":"spring-tides","file":"01-spring-tides.webp","heading":"Spring tides: Sun, Earth and Moon aligned","figure":"Figure 4a","page":4,"topics":["spring tide","spring tides","syzygy","sun earth moon alignment","sizici gelgit","büyük gelgit","güneş dünya ay aynı hizada"]},
+    {"id":"neap-tides","file":"02-neap-tides.webp","heading":"Neap tides: Sun and Moon at right angles","figure":"Figure 4b","page":4,"topics":["neap tide","neap tides","quadrature","small tidal range","kırık gelgit","küçük gelgit","güneş ay dik açı"]},
+    {"id":"perigee-apogee","file":"03-perigee-apogee.webp","heading":"Effect of lunar perigee and apogee on tidal range","figure":"Figure 5","page":5,"topics":["lunar perigee apogee","tidal range","moon elliptical orbit","ayın yerberi yeröte etkisi","perige apoge gelgit","gelgit aralığı"]},
+    {"id":"diurnal-inequality","file":"04-diurnal-inequality.webp","heading":"Lunar declination and diurnal inequality","figure":"Figure 6","page":6,"topics":["lunar declination","diurnal inequality","tropic tides","equatorial tides","günlük gelgit eşitsizliği","ayın sapması","deklinasyon gelgit"]},
+    {"id":"tide-types","file":"05-tide-types.webp","heading":"Diurnal, semidiurnal and mixed tide patterns","figure":"Figure 7","page":7,"topics":["diurnal tide","semidiurnal tide","mixed tide","marigram types","günlük gelgit","yarı günlük gelgit","karma gelgit","gelgit türleri"]}
+  ]
+}
