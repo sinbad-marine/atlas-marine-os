@@ -2781,7 +2781,8 @@ async function sinbadCloudKnowledgeAnswer(question){
         || normalizedAnswer.includes('kitabi veya belgeyi kutuphaneye yukleyin');
       if(!cloudMiss&&!cloudMissFallback){
         sinbadModelSpokenSummary=String(trustedAiData.spokenSummary||'').trim();
-        sinbadPendingSourceVisuals=Array.isArray(trustedAiData.visuals)?trustedAiData.visuals.slice(0,3):[];
+        const canRetainPrivateSourceVisuals=trustedAiData.sourceAccess==='privileged'&&roleCanAccessPrivateSources();
+        sinbadPendingSourceVisuals=canRetainPrivateSourceVisuals&&Array.isArray(trustedAiData.visuals)?trustedAiData.visuals.slice(0,3):[];
         if(status)status.textContent=sinbadPendingSourceVisuals.length?'Atlas Cloud AI active · source visuals ready':'Atlas Cloud AI active';return answer;
       }
       if(status)status.textContent='Atlas Cloud has no answer · trying offline brain';
