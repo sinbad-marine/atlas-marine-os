@@ -370,6 +370,10 @@ async function renderSummary(){
   await refreshCloudSummary();
   return;
  }
+ if(!roleCanAccessPrivateSources()){
+  ['sumFiles','sumPubs','sumCharts','sumStorage'].forEach(id=>{if($(id))$(id).textContent='—'});
+  return;
+ }
  const rows=await dbAll();
  $('sumFiles').textContent=rows.length;
  $('sumPubs').textContent=rows.filter(x=>x.folder==='Nautical Publications').length;
@@ -1772,7 +1776,8 @@ async function sinbadLocalAnswer(query){
   }
   const offlineTrainingAnswer=academyOfflineAnswer(query);
   if(offlineTrainingAnswer)return offlineTrainingAnswer;
-  const files=await dbAll();
+  const canAccessPrivateLibrary=roleCanAccessPrivateSources();
+  const files=canAccessPrivateLibrary?await dbAll():[];
   const crew=get('atlas_crew');
   const fleet=get('atlas_fleet');
   const fileMatches=files.filter(x=>`${x.name} ${x.folder} ${x.tags} ${x.text}`.toLowerCase().includes(q)).slice(0,6);
@@ -1791,12 +1796,14 @@ async function sinbadLocalAnswer(query){
 
 
   if(q.includes('chart')){
+    if(!canAccessPrivateLibrary)return 'Private chart archive identities and original files are restricted to the workspace Owner and explicitly authorized Developers. I can still explain chart-reading subjects without exposing the archive.';
     const charts=files.filter(x=>x.folder==='Nautical Charts');
     return charts.length ? `You currently have ${charts.length} nautical chart file(s):\n\n${charts.slice(0,10).map(x=>'• '+x.name).join('\n')}` : 'No nautical charts are stored on this device yet.';
   }
 
 
   if(q.includes('publication') || q.includes('solas') || q.includes('marpol')){
+    if(!canAccessPrivateLibrary)return 'Private publication identities and original files are restricted to the workspace Owner and explicitly authorized Developers. I can still teach the subject without exposing the publication.';
     const pubs=files.filter(x=>x.folder==='Nautical Publications' || `${x.name} ${x.tags}`.toLowerCase().includes(q));
     return pubs.length ? `I found ${pubs.length} relevant publication file(s):\n\n${pubs.slice(0,10).map(x=>'• '+x.name).join('\n')}` : 'I could not find a matching nautical publication in the local library. Upload it to Nautical Publications and add descriptive tags.';
   }
@@ -2025,6 +2032,10 @@ function setSetupProgress(){
 }
 async function refreshCloudSummary(){
   if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId){
+    ['sumFiles','sumPubs','sumCharts','sumStorage'].forEach(id=>{if($(id))$(id).textContent='—'});
+    return;
+  }
+  if(!roleCanAccessPrivateSources()){
     ['sumFiles','sumPubs','sumCharts','sumStorage'].forEach(id=>{if($(id))$(id).textContent='—'});
     return;
   }
