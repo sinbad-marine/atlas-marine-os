@@ -658,6 +658,24 @@ def curated_hull_underwater_query(value: str, limit: int) -> list[dict]:
     return result[:limit]
 
 
+def curated_vessel_types_query(value: str, limit: int) -> list[dict]:
+    root=Path(__file__).resolve().parents[1]/"assets"/"curated-vessel-types-verified"; manifest=root/"manifest.json"
+    if not manifest.is_file(): return []
+    normalized=value.casefold(); groups={
+        "container-ship-underway":("konteyner gemisi","konteyner taşıyan gemi","konteyner tasiyan gemi","container ship","containership","container vessel"),
+        "oil-tanker-underway":("petrol tankeri","ham petrol tankeri","tanker gemisi","oil tanker","tanker ship"),
+        "bulk-carrier-moored":("dökme yük gemisi","dokme yuk gemisi","kuru yük gemisi","kuru yuk gemisi","bulk carrier","dry bulk carrier","bulk cargo ship"),
+        "ro-ro-ship-ramp-deployed":("ro-ro gemisi","roro gemisi","tekerlekli yük gemisi","tekerlekli yuk gemisi","ro-ro ship","roro ship","roll-on roll-off ship")}
+    preferred={k for k,phrases in groups.items() if any(p in normalized for p in phrases)}
+    if not preferred:return []
+    result=[]
+    for item in json.loads(manifest.read_text(encoding="utf-8"))["visuals"]:
+        if item["id"] not in preferred:continue
+        path=root/item["file"]; digest=__import__("hashlib").sha256(path.read_bytes()).hexdigest()
+        result.append({"visual_key":f"curated:vessel-types:{item['id']}","visual_type":"object","document_hash":"curated-vessel-types-verified","page_number":None,"image_number":None,"asset_hash":digest,"file":str(path),"title":item["credit"],"volume":None,"heading":item["heading"],"context":f"Verified vessel-type photograph. {item['license']}","topics":item["topics"],"sourcePaths":[item["sourceUrl"]],"rank":-2500.0,"assetUrl":f"http://127.0.0.1:31983/visuals/assets/{digest}.webp"})
+    return result[:limit]
+
+
 def terms(value: str) -> list[str]:
     aliases = {
         "şamandıra": "buoy", "samandira": "buoy",
@@ -725,6 +743,9 @@ def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = Fa
     if curated:
         return curated
     curated = curated_hull_underwater_query(value, limit)
+    if curated:
+        return curated
+    curated = curated_vessel_types_query(value, limit)
     if curated:
         return curated
     curated = curated_navigation_query(value, limit)
@@ -876,6 +897,10 @@ def resolve_asset(db: sqlite3.Connection, atlas: Path, digest: str) -> dict:
             return {"asset_hash":digest,"file":str(path),"width":None,"height":None,"visual_type":"object","absolutePath":str(path.resolve())}
     hull_underwater_root=Path(__file__).resolve().parents[1]/"assets"/"curated-hull-underwater-verified"
     for path in hull_underwater_root.glob("*.webp"):
+        if __import__("hashlib").sha256(path.read_bytes()).hexdigest()==digest:
+            return {"asset_hash":digest,"file":str(path),"width":None,"height":None,"visual_type":"object","absolutePath":str(path.resolve())}
+    vessel_types_root=Path(__file__).resolve().parents[1]/"assets"/"curated-vessel-types-verified"
+    for path in vessel_types_root.glob("*.webp"):
         if __import__("hashlib").sha256(path.read_bytes()).hexdigest()==digest:
             return {"asset_hash":digest,"file":str(path),"width":None,"height":None,"visual_type":"object","absolutePath":str(path.resolve())}
     statements = [
