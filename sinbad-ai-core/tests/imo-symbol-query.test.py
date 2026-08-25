@@ -29,6 +29,10 @@ def test_chart_no_1_questions_use_complete_public_domain_table_pages():
     resolved = MODULE.resolve_asset(None, Path("."), results[0]["asset_hash"])
     assert resolved["visual_type"] == "chart-table-page"
     assert Path(resolved["absolutePath"]).is_file()
+    assert MODULE.chart_no_1_table_page_query("şamandıra harita sembolünü göster", 1)[0]["page_number"] == 90
+    assert MODULE.chart_no_1_table_page_query("radar harita sembolünü göster", 1)[0]["page_number"] == 104
+    assert MODULE.chart_no_1_table_page_query("gelgit akıntı tablosunu göster", 1)[0]["page_number"] == 39
+    assert MODULE.chart_no_1_table_page_query("liman rıhtım sembollerini göster", 1)[0]["page_number"] == 32
 
 
 def test_epirb_and_sart_resolve_to_distinct_official_symbols():

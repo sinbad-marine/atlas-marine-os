@@ -855,12 +855,29 @@ def chart_no_1_table_page_query(value: str, limit: int) -> list[dict]:
         return []
     normalized = value.casefold()
     sections = (
-        (("batık", "batik", "wreck", "kaya", "rock", "engel", "obstruction"), (52, 54, 56, 58)),
-        (("fener", "light", "ışık", "isik", "lighthouse"), tuple(range(78, 89))),
-        (("şamandıra", "samandira", "buoy", "beacon", "kardinal", "lateral"), tuple(range(90, 97))),
-        (("demirleme", "anchorage", "demir yeri"), (72, 74)),
-        (("liman", "harbour", "harbor", "marina"), (60, 62, 64)),
-        (("derinlik", "depth", "iskandil", "sounding"), (43, 44, 48)),
+        (("harita numarası", "harita basligi", "harita başlığı", "kenar notu", "chart number", "marginal note"), (9, 10)),
+        (("mevki", "pozisyon", "mesafe", "yön", "yon", "pusula", "position", "distance", "direction", "compass"), tuple(range(11, 17))),
+        (("doğal özellik", "dogal ozellik", "kıyı", "kiyi", "sahil", "natural feature", "coastline", "shoreline"), tuple(range(17, 22))),
+        (("kültürel özellik", "kulturel ozellik", "bina", "yol", "cultural feature", "building", "road"), tuple(range(22, 27))),
+        (("belirgin özellik", "belirgin ozellik", "conspicuous", "non-conspicuous"), (27,)),
+        (("nirengi", "landmark", "kule", "tower", "baca", "chimney", "kilise", "church"), tuple(range(28, 32))),
+        (("liman", "port", "harbour", "harbor", "rıhtım", "rihtim", "quay", "iskele", "pier", "marina"), tuple(range(32, 39))),
+        (("gelgit", "gel git", "akıntı", "akinti", "tide", "current", "stream"), tuple(range(39, 43))),
+        (("derinlik", "depth", "iskandil", "sounding", "eş derinlik", "es derinlik", "contour"), tuple(range(43, 48))),
+        (("deniz dibi", "dip cinsi", "seabed", "bottom characteristic", "kum", "sand", "çamur", "camur", "mud"), tuple(range(48, 52))),
+        (("batık", "batik", "wreck", "kaya", "rock", "engel", "obstruction", "su ürünleri", "aquaculture"), tuple(range(52, 60))),
+        (("açık deniz tesisi", "acik deniz tesisi", "offshore installation", "platform", "boru hattı", "boru hatti", "pipeline", "kablo", "cable"), tuple(range(60, 64))),
+        (("rota", "route", "iz", "track", "trafik ayrım", "trafik ayrim", "traffic separation", "tss", "önerilen yol", "onerilen yol"), tuple(range(64, 71))),
+        (("alan", "sınır", "sinir", "area", "limit", "demirleme", "anchorage", "yasak bölge", "yasak bolge", "restricted area"), tuple(range(71, 78))),
+        (("fener", "light", "ışık", "isik", "lighthouse", "sektör ışığı", "sektor isigi", "sector light"), tuple(range(78, 89))),
+        (("ecdis renk", "ecdis sembol", "ecdis symbol", "simplified symbol", "paper chart symbol"), (89,)),
+        (("şamandıra", "samandira", "buoy", "beacon", "kardinal", "cardinal", "lateral", "topmark", "tepe işareti", "tepe isareti"), tuple(range(90, 103))),
+        (("sis işareti", "sis isareti", "fog signal", "düdük", "duduk", "whistle", "siren"), (103,)),
+        (("radar", "radio", "radyo", "uydu seyri", "satellite navigation", "ais", "racons", "racon"), tuple(range(104, 107))),
+        (("hizmet", "service", "pilot", "kılavuz", "kilavuz", "sahil güvenlik", "sahil guvenlik", "coastguard"), tuple(range(107, 109))),
+        (("küçük tekne", "kucuk tekne", "yat", "small craft", "leisure", "tekne tesisi"), (109,)),
+        (("kısaltma", "kisaltma", "abbreviation"), tuple(range(110, 115))),
+        (("indeks", "index", "terim"), tuple(range(115, 126))),
     )
     pages = next((page_numbers for aliases, page_numbers in sections if any(alias in normalized for alias in aliases)), ())
     if not pages or not any(term in normalized for term in ("harita", "sembol", "işaret", "isaret", "chart", "göster", "goster", "görsel", "gorsel")):
