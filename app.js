@@ -2529,6 +2529,10 @@ function roleCanAccessPrivateSources(){
   return ['owner','developer'].includes(currentWorkspaceRole);
 }
 
+function roleCanManagePrivateLibrary(){
+  return roleCanManageLibrary()&&roleCanAccessPrivateSources();
+}
+
 function roleCanManageMembers(){
   return currentWorkspaceRole==='owner';
 }
@@ -2917,7 +2921,7 @@ async function repairCloudDocumentKnowledge(documentId,bucket,path,filename){
   const progress=$('cloudUploadProgress');
   try{
     if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId)throw new Error('Atlas Cloud workspace is not connected.');
-    if(!roleCanManageLibrary())throw new Error('Only an authorized library manager can repair AI text.');
+    if(!roleCanManagePrivateLibrary())throw new Error('Only the workspace Owner may repair private-library AI text.');
     if(progress)progress.textContent=`Downloading ${filename} for AI text repair…`;
     const {data:blob,error:downloadError}=await cloudClient.storage.from(bucket).download(path);
     if(downloadError)throw downloadError;
@@ -2947,7 +2951,8 @@ async function openCloudFile(bucket,path,filename=''){
   if(error){alert(error.message);return;} window.open(data.signedUrl,'_blank','noopener');
 }
 async function indexCloudDocument(documentId){
-  if(!cloudClient)return;
+  if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId)return;
+  if(!roleCanManagePrivateLibrary()){alert('Only the workspace Owner may index private-library documents.');return;}
   const {data,error}=await cloudClient.functions.invoke('index-document',{body:{documentId}});
   alert(error ? error.message : `Index request completed: ${JSON.stringify(data)}`); await loadAiJobs();
 }
@@ -2996,6 +3001,8 @@ async function shareCloudFile(bucket,path,filename='atlas-file'){
 
 
 async function renameCloudFile(documentId,bucket,oldPath,oldName){
+  if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId)return;
+  if(!roleCanManagePrivateLibrary()){alert('Only the workspace Owner may rename private-library files.');return;}
   const newName=prompt('New file name:',oldName);
   if(!newName || newName===oldName)return;
   const safeName=newName.replace(/[^a-zA-Z0-9._-]+/g,'-');
@@ -3012,6 +3019,8 @@ async function renameCloudFile(documentId,bucket,oldPath,oldName){
 
 
 async function deleteCloudFile(documentId,bucket,path){
+  if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId)return;
+  if(!roleCanManagePrivateLibrary()){alert('Only the workspace Owner may delete private-library files.');return;}
   if(!confirm('Delete this cloud file?'))return;
   const {error:fileError}=await cloudClient.storage.from(bucket).remove([path]);
   if(fileError){alert(fileError.message);return;}
