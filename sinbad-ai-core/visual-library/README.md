@@ -39,12 +39,11 @@ present in the local SINBAD corpus. Page number, original document checksum and
 render checksum are retained independently. This document-first extraction is
 the default path; external image search is only for genuine corpus gaps.
 
-`assets/nga-chart-no-1-symbol-cards/` adds searchable row-level crops over the
-complete 131-page atlas. Each card keeps the full NOAA/NGA/INT/ECDIS comparison
-row, source page, symbol number, document checksum, card checksum and the NOAA
-institutional Public Domain record. The query bridge ranks these exact cards
-ahead of generic source pages for chart-symbol questions; the complete page
-atlas remains the fallback where the PDF text layer cannot expose a row number.
+Chart-symbol queries use the complete table pages from the 131-page atlas,
+rather than fragile row crops. This preserves every NOAA/NGA/INT/ECDIS column,
+multi-line explanation and adjacent legend exactly as published. The query
+bridge maps Turkish and English subject aliases to the relevant whole pages and
+serves them by immutable render hash.
 
 ## Complete private-library atlas
 
