@@ -848,6 +848,23 @@ def curated_kaiyodai_navigation_schematics_query(value: str, limit: int) -> list
     return result[:limit]
 
 
+def curated_bluenavi_architecture_schematics_query(value: str, limit: int) -> list[dict]:
+    root=Path(__file__).resolve().parents[1]/"assets"/"curated-bluenavi-architecture-schematics";manifest=root/"manifest.json"
+    if not manifest.is_file():return []
+    normalized=value.casefold();groups={
+        "ship-station":("bluenavi gemi istasyonu","ais gemi istasyonu mimarisi","ship station microservices","ship station architecture","gemi mikroservis mimarisi"),
+        "full-land-station":("bluenavi kara istasyonu","bluenavi kıyı istasyonu","bluenavi kiyi istasyonu","ais kara istasyonu mimarisi","ais kıyı istasyonu mimarisi","full-featured land station"),
+        "minimized-land-station":("minimum ais kara istasyonu","asgari ais kara istasyonu","minimal ais kıyı istasyonu","minimal ais kiyi istasyonu","minimized land station","ais alıcı istasyonu")}
+    preferred={k for k,phrases in groups.items() if any(p in normalized for p in phrases)}
+    if not preferred:return []
+    data=json.loads(manifest.read_text(encoding="utf-8"));result=[]
+    for item in data["visuals"]:
+        if item["id"] not in preferred:continue
+        path=root/item["file"];digest=__import__("hashlib").sha256(path.read_bytes()).hexdigest()
+        result.append({"visual_key":f"curated:bluenavi-architecture:{item['id']}","visual_type":"diagram","document_hash":"curated-bluenavi-architecture-schematics","page_number":item["page"],"image_number":item["figure"],"asset_hash":digest,"file":str(path),"title":data["sourceTitle"],"volume":None,"heading":item["heading"],"context":f"BlueNavi {item['figure']}; {data['license']}. Attribution: {data['sourceAuthors']}. {data['institutionContext']}","topics":item["topics"],"sourcePaths":[data["sourceUrl"]],"rank":-2600.0,"assetUrl":f"http://127.0.0.1:31983/visuals/assets/{digest}.webp"})
+    return result[:limit]
+
+
 def terms(value: str) -> list[str]:
     aliases = {
         "şamandıra": "buoy", "samandira": "buoy",
@@ -948,6 +965,9 @@ def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = Fa
     if curated:
         return curated
     curated = curated_kaiyodai_navigation_schematics_query(value, limit)
+    if curated:
+        return curated
+    curated = curated_bluenavi_architecture_schematics_query(value, limit)
     if curated:
         return curated
     curated = curated_navigation_query(value, limit)
@@ -1143,6 +1163,10 @@ def resolve_asset(db: sqlite3.Connection, atlas: Path, digest: str) -> dict:
             return {"asset_hash":digest,"file":str(path),"width":None,"height":None,"visual_type":"object","absolutePath":str(path.resolve())}
     kaiyodai_navigation_root=Path(__file__).resolve().parents[1]/"assets"/"curated-kaiyodai-navigation-schematics"
     for path in kaiyodai_navigation_root.glob("*.webp"):
+        if __import__("hashlib").sha256(path.read_bytes()).hexdigest()==digest:
+            return {"asset_hash":digest,"file":str(path),"width":None,"height":None,"visual_type":"diagram","absolutePath":str(path.resolve())}
+    bluenavi_architecture_root=Path(__file__).resolve().parents[1]/"assets"/"curated-bluenavi-architecture-schematics"
+    for path in bluenavi_architecture_root.glob("*.webp"):
         if __import__("hashlib").sha256(path.read_bytes()).hexdigest()==digest:
             return {"asset_hash":digest,"file":str(path),"width":None,"height":None,"visual_type":"diagram","absolutePath":str(path.resolve())}
     statements = [

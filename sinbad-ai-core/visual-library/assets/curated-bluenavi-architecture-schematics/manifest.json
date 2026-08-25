@@ -1,0 +1,14 @@
+{
+  "schemaVersion":"sinbad-curated-bluenavi-architecture-schematics/1",
+  "licensePolicy":"Only author-created architecture diagrams from an explicitly CC BY 4.0 article are included; maps, interfaces, photographs and identifiable people are excluded.",
+  "sourceTitle":"BlueNavi: A Microservices Architecture-Styled Platform Providing Maritime Information",
+  "sourceAuthors":"Hongze Liu, Irena Jurdana, Nikola Lopac, Nobukazu Wakabayashi",
+  "sourceUrl":"https://doi.org/10.3390/su14042173",
+  "license":"Creative Commons Attribution 4.0 International",
+  "institutionContext":"Authored at Kobe University and University of Rijeka; live-ship tested aboard Hiyodori at Tokyo University of Marine Science and Technology (Kaiyodai/TUMSAT).",
+  "visuals":[
+    {"id":"ship-station","file":"ship-station.webp","heading":"BlueNavi ship station microservices architecture","figure":"Figure 4","page":6,"topics":["BlueNavi ship station","AIS microservices architecture","NMEA 0183","gateway receiver provider renderer","gemi istasyonu mimarisi","AIS gemi istasyonu","mikroservis mimarisi"]},
+    {"id":"full-land-station","file":"full-land-station.webp","heading":"Full-featured BlueNavi land station architecture","figure":"Figure 6","page":8,"topics":["BlueNavi land station","AIS shore station architecture","gateway receiver provider renderer","kara istasyonu mimarisi","AIS kıyı istasyonu","tam özellikli kara istasyonu"]},
+    {"id":"minimized-land-station","file":"minimized-land-station.webp","heading":"Minimized BlueNavi land station architecture","figure":"Figure 8","page":9,"topics":["minimized BlueNavi land station","AIS receiver station","minimal shore station","minimum AIS kara istasyonu","asgari AIS kıyı istasyonu","AIS alıcı istasyonu"]}
+  ]
+}
