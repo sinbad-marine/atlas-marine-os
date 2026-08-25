@@ -1,0 +1,8 @@
+{
+  "schemaVersion":"sinbad-curated-shipboard-ppe/1",
+  "licensePolicy":"Only individually verified U.S. federal public-domain shipboard PPE photographs are included.",
+  "visuals":[
+    {"id":"hard-hat-chin-strap","file":"hard-hat-chin-strap.webp","heading":"Sailor fastening a hard-hat chin strap aboard ship","topics":["hard hat","hard-hat chin strap","safety helmet","baret","baret çene bağı","baret cene bagi","gemi kişisel koruyucu donanımı"],"sourceUrl":"https://commons.wikimedia.org/wiki/File:US_Navy_110301-N-2055M-087_Boatswain%27s_Mate_Seaman_Christopher_Handlin_fastens_the_chin_strap_of_his_hard_hat_inside_the_port_side_rigid_hull_infla.jpg","credit":"U.S. Navy photo by MC3 Travis K. Mendoza, VIRIN 110301-N-2055M-087","license":"Public domain - U.S. federal government work"},
+    {"id":"safety-harness-connection","file":"safety-harness-connection.webp","heading":"Sailor connecting a safety harness while working aloft","topics":["safety harness","fall arrest harness","working aloft","emniyet kemeri","düşüş durdurma kemeri","dusus durdurma kemeri","yüksekte çalışma","yuksekte calisma"],"sourceUrl":"https://commons.wikimedia.org/wiki/File:US_Navy_090427-N-2893B-001_ATLANTIC_OCEAN_(April_27)_-_USS_Constitution_crewmember_Aviation_Electrician%27s_Mate_2nd_Class,_Tony_Barnardo,_clips_a_safety_harness_onto_the_foremast_topsail_yard.jpg","credit":"U.S. Navy photo, VIRIN 090427-N-2893B-001","license":"Public domain - U.S. federal government work"}
+  ]
+}

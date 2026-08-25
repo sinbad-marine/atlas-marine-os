@@ -365,6 +365,14 @@ def test_verified_advanced_maritime_ropework_matches_exact_knots_and_splice():
     assert MODULE.curated_maritime_knots_advanced_query("can yeleği",3)==[]
 
 
+def test_verified_shipboard_ppe_photos_match_exact_protection():
+    hardhat=MODULE.curated_shipboard_ppe_query("gemi baret çene bağını göster",3)
+    harness=MODULE.curated_shipboard_ppe_query("yüksekte çalışma emniyet kemeri fotoğrafı",3)
+    assert hardhat[0]["visual_key"]=="curated:shipboard-ppe:hard-hat-chin-strap"
+    assert harness[0]["visual_key"]=="curated:shipboard-ppe:safety-harness-connection"
+    assert MODULE.curated_shipboard_ppe_query("can salı",3)==[]
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -398,4 +406,5 @@ if __name__ == "__main__":
     test_verified_survival_craft_and_personal_gear_match_exact_equipment()
     test_verified_maritime_knot_photos_match_exact_knots()
     test_verified_advanced_maritime_ropework_matches_exact_knots_and_splice()
-    print("32 curated visual query tests passed")
+    test_verified_shipboard_ppe_photos_match_exact_protection()
+    print("33 curated visual query tests passed")
