@@ -287,6 +287,18 @@ def test_verified_vessel_type_photos_match_exact_ship_classes():
     assert MODULE.curated_vessel_types_query("can simidi fotoğrafı",3)==[]
 
 
+def test_verified_specialized_vessel_photos_match_exact_ship_classes():
+    lng=MODULE.curated_specialized_vessels_query("LNG tankerinin küresel tanklarını göster",3)
+    chemical=MODULE.curated_specialized_vessels_query("kimyasal tanker fotoğrafı",3)
+    car=MODULE.curated_specialized_vessels_query("araç taşıyıcı gemi nasıl görünür",3)
+    heavy=MODULE.curated_specialized_vessels_query("yarı batabilir ağır yük gemisi",3)
+    assert lng[0]["visual_key"]=="curated:specialized-vessels:lng-carriers-under-construction"
+    assert chemical[0]["visual_key"]=="curated:specialized-vessels:chemical-tanker-doris"
+    assert car[0]["visual_key"]=="curated:specialized-vessels:car-carrier-tosca"
+    assert heavy[0]["visual_key"]=="curated:specialized-vessels:semi-submersible-heavy-lift-ship"
+    assert MODULE.curated_specialized_vessels_query("can salı fotoğrafı",3)==[]
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -313,4 +325,5 @@ if __name__ == "__main__":
     test_verified_oil_spill_response_photos_match_exact_systems()
     test_verified_hull_underwater_photos_match_exact_components()
     test_verified_vessel_type_photos_match_exact_ship_classes()
-    print("25 curated visual query tests passed")
+    test_verified_specialized_vessel_photos_match_exact_ship_classes()
+    print("26 curated visual query tests passed")
