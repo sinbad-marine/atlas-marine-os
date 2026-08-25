@@ -73,6 +73,8 @@ test('visual references are attached only to the matching assistant answer',()=>
   assert.match(app,/let sinbadPendingSourceVisuals=\[\];/);
   assert.match(app,/function consumeSinbadSourceVisuals\(\)/);
   assert.match(app,/trustedAiData\.visuals/);
+  assert.match(app,/trustedAiData\.sourceAccess==='privileged'&&roleCanAccessPrivateSources\(\)/);
+  assert.match(app,/canRetainPrivateSourceVisuals&&Array\.isArray\(trustedAiData\.visuals\)/);
   assert.match(app,/const atlasVisuals=await window\.SinbadVisuals/);
   assert.match(app,/addSinbadMessage\('sinbad',answer,\[\.\.\.consumeSinbadSourceVisuals\(\),\.\.\.atlasVisuals\]\.slice\(0,3\)\)/);
 });
