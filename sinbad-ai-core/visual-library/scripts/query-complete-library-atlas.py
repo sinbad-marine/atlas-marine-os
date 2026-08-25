@@ -879,7 +879,10 @@ def chart_no_1_table_page_query(value: str, limit: int) -> list[dict]:
         (("kısaltma", "kisaltma", "abbreviation"), tuple(range(110, 115))),
         (("indeks", "index", "terim"), tuple(range(115, 126))),
     )
-    pages = next((page_numbers for aliases, page_numbers in sections if any(alias in normalized for alias in aliases)), ())
+    def contains_alias(alias: str) -> bool:
+        return re.search(rf"(?<!\w){re.escape(alias)}(?!\w)", normalized, re.UNICODE) is not None
+
+    pages = next((page_numbers for aliases, page_numbers in sections if any(contains_alias(alias) for alias in aliases)), ())
     if not pages or not any(term in normalized for term in ("harita", "sembol", "işaret", "isaret", "chart", "göster", "goster", "görsel", "gorsel")):
         return []
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))

@@ -33,6 +33,7 @@ def test_chart_no_1_questions_use_complete_public_domain_table_pages():
     assert MODULE.chart_no_1_table_page_query("radar harita sembolünü göster", 1)[0]["page_number"] == 104
     assert MODULE.chart_no_1_table_page_query("gelgit akıntı tablosunu göster", 1)[0]["page_number"] == 39
     assert MODULE.chart_no_1_table_page_query("liman rıhtım sembollerini göster", 1)[0]["page_number"] == 32
+    assert MODULE.chart_no_1_table_page_query("pilot hizmet sembolünü göster", 1)[0]["page_number"] == 107
 
 
 def test_epirb_and_sart_resolve_to_distinct_official_symbols():
