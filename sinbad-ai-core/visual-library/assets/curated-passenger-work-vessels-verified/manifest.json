@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "sinbad-curated-passenger-work-vessels/1",
+  "licensePolicy": "Only individually verified CC0 or public-domain photographs are included.",
+  "visuals": [
+    {"id":"cruise-ship-underway","file":"cruise-ship-underway.webp","heading":"Large cruise ship underway","topics":["cruise ship","passenger liner","kruvaziyer gemisi","yolcu gemisi","turistik gemi"],"sourceUrl":"https://commons.wikimedia.org/wiki/File:Cruise_ship_(43033831225).jpg","credit":"Photo by booledozer","license":"CC0 1.0 Universal Public Domain Dedication"},
+    {"id":"passenger-ferry-underway","file":"passenger-ferry-underway.webp","heading":"Passenger ferry navigating underway","topics":["passenger ferry","ferry boat","feribot","yolcu feribotu","arabalı vapur"],"sourceUrl":"https://commons.wikimedia.org/wiki/File:Passenger_Ferry_Navigating.jpg","credit":"Photo by Xejis4583","license":"CC0 1.0 Universal Public Domain Dedication"},
+    {"id":"fishing-trawler-underway","file":"fishing-trawler-underway.webp","heading":"Commercial fishing trawler underway with catch on deck","topics":["fishing trawler","commercial fishing vessel","balıkçı gemisi","balıkçı trolü","trol teknesi"],"sourceUrl":"https://commons.wikimedia.org/wiki/File:Soviet_trawler.jpg","credit":"U.S. National Oceanic and Atmospheric Administration photograph","license":"Public domain - U.S. federal government work"},
+    {"id":"dredger-viking","file":"dredger-viking.webp","heading":"Dredger Viking showing working machinery","topics":["dredger","dredge vessel","tarak gemisi","deniz dibi tarama gemisi","kum tarama gemisi"],"sourceUrl":"https://commons.wikimedia.org/wiki/File:Viking_dredger_pic2.JPG","credit":"Photo by Alf van Beem","license":"CC0 1.0 Universal Public Domain Dedication"}
+  ]
+}
