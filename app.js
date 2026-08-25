@@ -1821,9 +1821,11 @@ async function sinbadOfflineAiAnswer(question){
     const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/chat`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question,language:sinbadState.language||appLanguage,history,coreEnvelope})});
     if(!response.ok)throw new Error(`Offline brain returned ${response.status}`);
     const data=await response.json();
-    if(!data?.answer)return null;
+    const answer=String(data?.answer||'').trim();
+    const answerSafe=Boolean(answer)&&coreEnvelope?.gateVersion===window.SinbadCore?.CORE_GATE_VERSION&&window.SinbadCoreDecision?.answerIsSafe?.(answer)===true;
+    if(!answerSafe)return null;
     if(status)status.textContent=`Sinbad offline AI active · ${data.model||'local model'}`;
-    return data.answer;
+    return answer;
   }catch(error){
     console.warn('Sinbad offline AI unavailable',error);
     if(status)status.textContent='Offline AI is not installed or Bridge is closed';

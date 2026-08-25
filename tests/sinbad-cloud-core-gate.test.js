@@ -59,6 +59,17 @@ test('cloud Core gate rejects missing, empty and whitespace-only answers before 
   assert.match(app,/if\(String\(trustedAiData\?\.answer\|\|''\)\.trim\(\)\)/);
 });
 
+test('offline AI rejects blank and unsafe Bridge answers before rendering',()=>{
+  const request=app.indexOf("fetch(`${SINBAD_BRIDGE_URL}/ai/chat`");
+  const answer=app.indexOf("const answer=String(data?.answer||'').trim()",request);
+  const safety=app.indexOf("window.SinbadCoreDecision?.answerIsSafe?.(answer)===true",answer);
+  const stop=app.indexOf('if(!answerSafe)return null',safety);
+  const delivery=app.indexOf('return answer',stop);
+  assert.ok(request>=0&&answer>request&&safety>answer&&stop>safety&&delivery>stop);
+  assert.match(app,/coreEnvelope\?\.gateVersion===window\.SinbadCore\?\.CORE_GATE_VERSION/);
+  assert.doesNotMatch(app,/if\(!data\?\.answer\)return null/);
+});
+
 test('cloud transport errors skip AI data but preserve private archive retrieval',()=>{
   const invocation=app.indexOf("functions.invoke('sinbad-answer'");
   const errorStop=app.indexOf('if(aiError)',invocation);
