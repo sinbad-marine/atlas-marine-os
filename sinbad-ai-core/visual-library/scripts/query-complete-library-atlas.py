@@ -831,6 +831,23 @@ def curated_shipboard_industrial_ppe_query(value: str, limit: int) -> list[dict]
     return result[:limit]
 
 
+def curated_kaiyodai_navigation_schematics_query(value: str, limit: int) -> list[dict]:
+    root=Path(__file__).resolve().parents[1]/"assets"/"curated-kaiyodai-navigation-schematics";manifest=root/"manifest.json"
+    if not manifest.is_file():return []
+    normalized=value.casefold();groups={
+        "imu-dvl-integration":("imu dvl entegrasyonu","imu/dvl entegrasyonu","imu dvl integration","doppler hız kütüğü","doppler hiz kutugu","dzupt"),
+        "heading-track-slip-angle":("baş yönü iz yönü","bas yonu iz yonu","sürüklenme açısı","suruklenme acisi","heading track slip angle","heading and track","rüzgar dalga sürüklenmesi","ruzgar dalga suruklenmesi"),
+        "ins-dvl-ekf-integration":("ins dvl ekf","ins/dvl ekf","ins dvl entegrasyonu","extended kalman filter","tamamlayıcı filtre","tamamlayici filtre")}
+    preferred={k for k,phrases in groups.items() if any(p in normalized for p in phrases)}
+    if not preferred:return []
+    data=json.loads(manifest.read_text(encoding="utf-8"));result=[]
+    for item in data["visuals"]:
+        if item["id"] not in preferred:continue
+        path=root/item["file"];digest=__import__("hashlib").sha256(path.read_bytes()).hexdigest()
+        result.append({"visual_key":f"curated:kaiyodai-navigation:{item['id']}","visual_type":"diagram","document_hash":"curated-kaiyodai-navigation-schematics","page_number":item["page"],"image_number":item["figure"],"asset_hash":digest,"file":str(path),"title":data["sourceTitle"],"volume":None,"heading":item["heading"],"context":f"TUMSAT-OACIS {item['figure']}. {data['license']}. Attribution: {data['sourceAuthors']}.","topics":item["topics"],"sourcePaths":[data["sourceUrl"]],"rank":-2600.0,"assetUrl":f"http://127.0.0.1:31983/visuals/assets/{digest}.webp"})
+    return result[:limit]
+
+
 def terms(value: str) -> list[str]:
     aliases = {
         "şamandıra": "buoy", "samandira": "buoy",
@@ -928,6 +945,9 @@ def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = Fa
     if curated:
         return curated
     curated = curated_shipboard_industrial_ppe_query(value, limit)
+    if curated:
+        return curated
+    curated = curated_kaiyodai_navigation_schematics_query(value, limit)
     if curated:
         return curated
     curated = curated_navigation_query(value, limit)
@@ -1121,6 +1141,10 @@ def resolve_asset(db: sqlite3.Connection, atlas: Path, digest: str) -> dict:
     for path in shipboard_industrial_ppe_root.glob("*.webp"):
         if __import__("hashlib").sha256(path.read_bytes()).hexdigest()==digest:
             return {"asset_hash":digest,"file":str(path),"width":None,"height":None,"visual_type":"object","absolutePath":str(path.resolve())}
+    kaiyodai_navigation_root=Path(__file__).resolve().parents[1]/"assets"/"curated-kaiyodai-navigation-schematics"
+    for path in kaiyodai_navigation_root.glob("*.webp"):
+        if __import__("hashlib").sha256(path.read_bytes()).hexdigest()==digest:
+            return {"asset_hash":digest,"file":str(path),"width":None,"height":None,"visual_type":"diagram","absolutePath":str(path.resolve())}
     statements = [
         "select asset_hash,file,width,height,'page' visual_type from page_plates where asset_hash=?",
         "select asset_hash,file,width,height,'object' visual_type from embedded_visuals where asset_hash=? and status='ready'",
