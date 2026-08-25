@@ -335,6 +335,18 @@ def test_verified_shipyard_and_port_photos_match_exact_operations():
     assert MODULE.curated_shipyard_port_query("can salı",3)==[]
 
 
+def test_verified_survival_craft_and_personal_gear_match_exact_equipment():
+    lifeboat=MODULE.curated_survival_craft_gear_query("tam kapalı filika fotoğrafı",3)
+    lifejacket=MODULE.curated_survival_craft_gear_query("can yeleği kontrolünü göster",3)
+    immersion=MODULE.curated_survival_craft_gear_query("immersion suit nasıl görünür",3)
+    rescue=MODULE.curated_survival_craft_gear_query("gemi kurtarma botu fotoğrafı",3)
+    assert lifeboat[0]["visual_key"]=="curated:survival-craft-gear:fully-enclosed-lifeboat"
+    assert lifejacket[0]["visual_key"]=="curated:survival-craft-gear:life-jacket-inspection"
+    assert immersion[0]["visual_key"]=="curated:survival-craft-gear:immersion-suit-training"
+    assert rescue[0]["visual_key"]=="curated:survival-craft-gear:shipboard-rescue-boat"
+    assert MODULE.curated_survival_craft_gear_query("konteyner terminali",3)==[]
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -365,4 +377,5 @@ if __name__ == "__main__":
     test_verified_passenger_and_work_vessel_photos_match_exact_classes()
     test_verified_naval_and_support_vessel_photos_match_exact_classes()
     test_verified_shipyard_and_port_photos_match_exact_operations()
-    print("29 curated visual query tests passed")
+    test_verified_survival_craft_and_personal_gear_match_exact_equipment()
+    print("30 curated visual query tests passed")
