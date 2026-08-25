@@ -1,0 +1,13 @@
+{
+  "schemaVersion":"sinbad-curated-kaiyodai-navigation-schematics/1",
+  "licensePolicy":"Only author-created figures from an explicitly Creative Commons licensed TUMSAT-OACIS article are included; third-party maps and product photographs are excluded.",
+  "sourceTitle":"Performance Evaluation of IMU and DVL Integration in Marine Navigation",
+  "sourceAuthors":"Gen Fukuda, Daisuke Hatta, Xiaoliang Guo, Nobuaki Kubo",
+  "sourceUrl":"https://oacis.repo.nii.ac.jp/records/2188",
+  "license":"Creative Commons Attribution 3.0 International (repository wrapper; article also states CC BY 4.0)",
+  "visuals":[
+    {"id":"imu-dvl-integration","file":"imu-dvl-integration.webp","heading":"IMU and DVL integration architecture","figure":"Figure 1","page":4,"topics":["IMU DVL integration","Doppler velocity log","dead reckoning","DZUPT","Kalman filter","IMU DVL entegrasyonu","Doppler hız kütüğü","parakete","ataletsel seyir"]},
+    {"id":"heading-track-slip-angle","file":"heading-track-slip-angle.webp","heading":"Heading, track direction and slip angle under wind and waves","figure":"Figure 2","page":4,"topics":["heading and track","slip angle","wind and wave drift","course over ground","baş yönü iz yönü","bas yonu iz yonu","sürüklenme açısı","suruklenme acisi","rüzgar akıntı etkisi"]},
+    {"id":"ins-dvl-ekf-integration","file":"ins-dvl-ekf-integration.webp","heading":"Loosely coupled INS/DVL EKF integration architecture","figure":"Figure 3","page":8,"topics":["INS DVL integration","extended Kalman filter","complementary filter","attitude velocity position","INS DVL EKF","tamamlayıcı filtre","tamamlayici filtre","ataletsel seyir sistemi"]}
+  ]
+}

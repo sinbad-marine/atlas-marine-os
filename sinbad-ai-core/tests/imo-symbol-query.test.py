@@ -382,6 +382,17 @@ def test_verified_shipboard_industrial_ppe_matches_exact_protection():
     assert MODULE.curated_shipboard_industrial_ppe_query("can salı",3)==[]
 
 
+def test_kaiyodai_navigation_schematics_match_exact_concepts():
+    fusion=MODULE.curated_kaiyodai_navigation_schematics_query("IMU DVL entegrasyonu şeması",3)
+    slip=MODULE.curated_kaiyodai_navigation_schematics_query("baş yönü iz yönü ve sürüklenme açısı",3)
+    ekf=MODULE.curated_kaiyodai_navigation_schematics_query("INS DVL EKF tamamlayıcı filtre",3)
+    assert fusion[0]["visual_key"]=="curated:kaiyodai-navigation:imu-dvl-integration"
+    assert slip[0]["visual_key"]=="curated:kaiyodai-navigation:heading-track-slip-angle"
+    assert ekf[0]["visual_key"]=="curated:kaiyodai-navigation:ins-dvl-ekf-integration"
+    assert all("TUMSAT-OACIS" in item[0]["context"] for item in (fusion,slip,ekf))
+    assert MODULE.curated_kaiyodai_navigation_schematics_query("can salı",3)==[]
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -417,4 +428,5 @@ if __name__ == "__main__":
     test_verified_advanced_maritime_ropework_matches_exact_knots_and_splice()
     test_verified_shipboard_ppe_photos_match_exact_protection()
     test_verified_shipboard_industrial_ppe_matches_exact_protection()
-    print("34 curated visual query tests passed")
+    test_kaiyodai_navigation_schematics_match_exact_concepts()
+    print("35 curated visual query tests passed")
