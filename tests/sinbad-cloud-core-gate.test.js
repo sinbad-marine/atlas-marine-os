@@ -56,6 +56,8 @@ test('normal and consented web responses are both checked by the client Core gat
 test('cloud Core gate rejects missing, empty and whitespace-only answers before rendering',()=>{
   assert.match(app,/answer=String\(data\?\.answer\|\|''\)\.trim\(\)/);
   assert.match(app,/answerSafe=Boolean\(answer\)&&window\.SinbadCoreDecision\?\.answerIsSafe\?\.\(answer\)===true/);
+  assert.match(app,/spokenSummarySafe=!spokenSummary\|\|window\.SinbadCoreDecision\?\.answerIsSafe\?\.\(spokenSummary\)===true/);
+  assert.match(app,/data&&answerSafe&&spokenSummarySafe&&data\.coreGateVersion/);
   assert.match(app,/if\(String\(trustedAiData\?\.answer\|\|''\)\.trim\(\)\)/);
 });
 
