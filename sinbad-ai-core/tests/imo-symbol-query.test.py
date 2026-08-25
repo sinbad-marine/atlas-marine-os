@@ -323,6 +323,18 @@ def test_verified_naval_and_support_vessel_photos_match_exact_classes():
     assert MODULE.curated_naval_support_vessels_query("can simidi",3)==[]
 
 
+def test_verified_shipyard_and_port_photos_match_exact_operations():
+    dry=MODULE.curated_shipyard_port_query("kuru havuz takozlarını göster",3)
+    floating=MODULE.curated_shipyard_port_query("yüzer havuz fotoğrafı",3)
+    terminal=MODULE.curated_shipyard_port_query("konteyner terminali havadan görünüş",3)
+    launch=MODULE.curated_shipyard_port_query("gemi denize indirme kızağı",3)
+    assert dry[0]["visual_key"]=="curated:shipyard-port:ship-on-drydock-blocks"
+    assert floating[0]["visual_key"]=="curated:shipyard-port:floating-drydock-resourceful"
+    assert terminal[0]["visual_key"]=="curated:shipyard-port:container-terminal-aerial"
+    assert launch[0]["visual_key"]=="curated:shipyard-port:ship-slipway-launch"
+    assert MODULE.curated_shipyard_port_query("can salı",3)==[]
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -352,4 +364,5 @@ if __name__ == "__main__":
     test_verified_specialized_vessel_photos_match_exact_ship_classes()
     test_verified_passenger_and_work_vessel_photos_match_exact_classes()
     test_verified_naval_and_support_vessel_photos_match_exact_classes()
-    print("28 curated visual query tests passed")
+    test_verified_shipyard_and_port_photos_match_exact_operations()
+    print("29 curated visual query tests passed")
