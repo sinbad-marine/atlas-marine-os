@@ -36,6 +36,34 @@ def test_semantic_visual_reranker_prefers_text_bound_exact_subject():
     assert ranked[0]["scoreExplanation"]["boundContextBonus"] == 3.0
 
 
+def test_semantic_visual_reranker_deduplicates_assets_and_honors_table_intent():
+    shared = {"visual_type": "object", "document_hash": "d", "page_number": 7,
+              "heading": "Tide calculation", "context": "Tide calculation table",
+              "topics": '["tide","calculation"]', "rank": -4.0, "asset_hash": "same"}
+    rows = [dict(shared, visual_key="copy-a", title="Path A"),
+            dict(shared, visual_key="copy-b", title="Path B"),
+            {"visual_key": "table", "visual_type": "table", "document_hash": "d",
+             "page_number": 7, "title": "Bowditch", "heading": "Tide calculation",
+             "context": "Tide calculation table", "topics": '["tide","calculation"]',
+             "rank": -3.0, "asset_hash": "table-asset"}]
+    ranked = MODULE.rerank_visual_rows(rows, ["tide", "calculation"], "tide calculation table", 3)
+    assert [item["visual_key"] for item in ranked].count("table") == 1
+    assert len(ranked) == 2
+    assert ranked[0]["visual_key"] == "table"
+    assert ranked[0]["scoreExplanation"]["intentBonus"] == 10.0
+    bowditch_copies = [
+        {"visual_key": "edition-a", "visual_type": "object", "document_hash": "a",
+         "page_number": 310, "image_number": 1, "title": "American Practical Navigator 2024 - Volume II",
+         "heading": "THE SAILINGS", "context": "Great circle sailing", "topics": '["sailing"]',
+         "rank": -4.0, "asset_hash": "encoded-a"},
+        {"visual_key": "edition-b", "visual_type": "object", "document_hash": "b",
+         "page_number": 310, "image_number": 1, "title": "American Practical Navigator Bowditch Vol 2",
+         "heading": "THE SAILINGS", "context": "Great circle sailing", "topics": '["sailing"]',
+         "rank": -3.0, "asset_hash": "encoded-b"},
+    ]
+    assert len(MODULE.rerank_visual_rows(bowditch_copies, ["sailing"], "sailing diagram", 3)) == 1
+
+
 def test_chart_no_1_questions_use_complete_public_domain_table_pages():
     results = MODULE.chart_no_1_table_page_query("batık harita sembolünü göster", 3)
     assert results
@@ -436,6 +464,7 @@ if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
     test_semantic_visual_reranker_prefers_text_bound_exact_subject()
+    test_semantic_visual_reranker_deduplicates_assets_and_honors_table_intent()
     test_epirb_and_sart_resolve_to_distinct_official_symbols()
     test_escape_emergency_and_fire_queries_stay_in_their_categories()
     test_prohibition_warning_and_mandatory_queries_use_exact_current_symbols()
@@ -469,4 +498,4 @@ if __name__ == "__main__":
     test_verified_shipboard_ppe_photos_match_exact_protection()
     test_verified_shipboard_industrial_ppe_matches_exact_protection()
     test_kaiyodai_navigation_schematics_match_exact_concepts()
-    print("36 curated visual query tests passed")
+    print("37 curated visual query tests passed")

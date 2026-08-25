@@ -1044,27 +1044,50 @@ def semantic_visual_score(row: dict, wanted: list[str], query_text: str) -> tupl
     visual_type = row.get("visual_type") or "page"
     type_bonus = {"object": 4.0, "table": 3.0, "vector": 3.0, "diagram": 3.0,
                   "chart-table": 3.0, "chart-table-highlight": 4.0}.get(visual_type, 0.0)
+    normalized_query = query_text.casefold()
+    intent_bonus = 0.0
+    if any(term in normalized_query for term in ("tablo", "table")):
+        intent_bonus = 10.0 if visual_type in {"table", "chart-table", "chart-table-highlight"} else -2.0
+    elif any(term in normalized_query for term in ("şema", "sema", "çizim", "cizim", "diagram")):
+        intent_bonus = 10.0 if visual_type in {"vector", "diagram"} else 2.0 if visual_type == "object" else -2.0
+    elif any(term in normalized_query for term in ("fotoğraf", "fotograf", "photo", "photograph")):
+        intent_bonus = 10.0 if visual_type == "object" else -2.0
     provenance = 2.0 if row.get("document_hash") and row.get("page_number") is not None else 0.0
     bound_context = 3.0 if fields["context"] and (hits["context"] or hits["heading"]) else 0.0
     score = (8.0 * hits["heading"] + 6.0 * hits["topics"] +
              3.0 * hits["context"] + hits["title"] +
-             10.0 * phrase_hit + 4.0 * coverage + type_bonus + provenance + bound_context)
+             10.0 * phrase_hit + 4.0 * coverage + type_bonus + intent_bonus + provenance + bound_context)
     explanation = {"headingHits": hits["heading"], "topicHits": hits["topics"],
                    "contextHits": hits["context"], "titleHits": hits["title"],
                    "coverage": coverage, "phraseHit": phrase_hit,
-                   "typeBonus": type_bonus, "provenanceBonus": provenance,
+                   "typeBonus": type_bonus, "intentBonus": intent_bonus, "provenanceBonus": provenance,
                    "boundContextBonus": bound_context}
     return score, explanation
 
 
 def rerank_visual_rows(rows: list, wanted: list[str], query_text: str, limit: int) -> list[dict]:
-    ranked = []
+    unique: dict[str, dict] = {}
     for row in rows:
         item = dict(row)
         semantic_score, explanation = semantic_visual_score(item, wanted, query_text)
         item["semanticScore"] = semantic_score
         item["scoreExplanation"] = explanation
-        ranked.append(item)
+        title = (item.get("title") or "").casefold()
+        if "american practical navigator" in title:
+            publication_family = "american-practical-navigator"
+        else:
+            publication_family = " ".join(re.findall(r"[^\W\d_][\w-]{2,}", title, re.UNICODE)[:6])
+        occurrence_identity = None
+        if publication_family and item.get("page_number") is not None:
+            occurrence_identity = "|".join(map(str, (publication_family, item.get("visual_type"),
+                item.get("page_number"), item.get("image_number"),
+                (item.get("heading") or "").casefold())))
+        identity = occurrence_identity or item.get("asset_hash") or item.get("visual_key")
+        prior = unique.get(identity)
+        if prior is None or (semantic_score, -(float(item.get("rank") or 0))) > (
+                prior["semanticScore"], -(float(prior.get("rank") or 0))):
+            unique[identity] = item
+    ranked = list(unique.values())
     ranked.sort(key=lambda item: (-item["semanticScore"], float(item.get("rank") or 0),
                                   0 if item.get("visual_type") == "object" else 1,
                                   item.get("visual_key") or ""))

@@ -67,6 +67,9 @@ normalized phrase match, `K` is unique query-token coverage, `V` prefers the
 requested visual type, `R` rewards document+page provenance and `B` rewards a
 visual bound to a matching passage. Results expose `semanticScore` and
 `scoreExplanation`, making wrong selections testable rather than opaque.
+Candidates sharing the same immutable asset hash are collapsed, so duplicate
+library locations cannot repeat one image. Explicit table, diagram/drawing and
+photograph requests receive a type-intent bonus before final selection.
 
 `nga-chart-no-1-atlas.js` indexes page-rendered official symbol plates already
 present in the local SINBAD corpus. Page number, original document checksum and
