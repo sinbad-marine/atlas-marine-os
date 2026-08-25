@@ -78,6 +78,8 @@ test('Academy Core gate rejects empty and whitespace-only answers before renderi
   assert.match(academyApp,/function coreAnswerIsTrusted\(data,envelope\)/);
   assert.match(academyApp,/String\(data\?\.answer\|\|''\)\.trim\(\)/);
   assert.match(academyApp,/SinbadCoreDecision\?\.answerIsSafe\?\.\(answer\)===true/);
+  assert.match(academyApp,/spokenSummarySafe=!spokenSummary\|\|window\.SinbadCoreDecision\?\.answerIsSafe\?\.\(spokenSummary\)===true/);
+  assert.match(academyApp,/data&&answerSafe&&spokenSummarySafe&&data\.coreGateVersion/);
   assert.match(academyApp,/decision\.risk===expected\.risk/);
   assert.match(academyApp,/requiresIndependentVerification/);
   assert.doesNotMatch(academyApp,/Boolean\(data\?\.answer&&/);

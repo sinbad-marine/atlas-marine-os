@@ -2745,8 +2745,8 @@ async function saveDocumentKnowledge(documentId,file,text,bucket){
 }
 function cloudAnswerPassesCoreGate(data,envelope){
   const decision=data?.coreDecision;
-  const expected=envelope?.analysis,answer=String(data?.answer||'').trim(),answerSafe=Boolean(answer)&&window.SinbadCoreDecision?.answerIsSafe?.(answer)===true;
-  return Boolean(data&&answerSafe&&data.coreGateVersion===window.SinbadCore?.CORE_GATE_VERSION&&data.coreGateVersion===envelope?.gateVersion&&data.permission==='DECISION_SUPPORT_ONLY'&&data.executionPerformed===false&&decision&&expected&&['low','medium','high','critical'].includes(decision.risk)&&decision.risk===expected.risk&&['emergency','operational','needsLiveData','requiresHumanApproval','requiresIndependentVerification'].every(field=>typeof decision[field]==='boolean'&&decision[field]===expected[field]));
+  const expected=envelope?.analysis,answer=String(data?.answer||'').trim(),spokenSummary=String(data?.spokenSummary||'').trim(),answerSafe=Boolean(answer)&&window.SinbadCoreDecision?.answerIsSafe?.(answer)===true,spokenSummarySafe=!spokenSummary||window.SinbadCoreDecision?.answerIsSafe?.(spokenSummary)===true;
+  return Boolean(data&&answerSafe&&spokenSummarySafe&&data.coreGateVersion===window.SinbadCore?.CORE_GATE_VERSION&&data.coreGateVersion===envelope?.gateVersion&&data.permission==='DECISION_SUPPORT_ONLY'&&data.executionPerformed===false&&decision&&expected&&['low','medium','high','critical'].includes(decision.risk)&&decision.risk===expected.risk&&['emergency','operational','needsLiveData','requiresHumanApproval','requiresIndependentVerification'].every(field=>typeof decision[field]==='boolean'&&decision[field]===expected[field]));
 }
 let sinbadPendingSourceVisuals=[];
 function consumeSinbadSourceVisuals(){const visuals=sinbadPendingSourceVisuals;sinbadPendingSourceVisuals=[];return visuals;}
