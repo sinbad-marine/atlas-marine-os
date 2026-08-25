@@ -45,7 +45,7 @@ test('standalone Academy retains course and quiz handlers',()=>{
 test('native Academy owns a bounded live Sinbad board-teaching stage',()=>{
   assert.match(academyHtml,/id="academyTeachingStage"/);assert.match(academyHtml,/captain-sinbad-board-teaching\.png/);
   assert.match(academyHtml,/sinbad-character-engine\.js\?v=82029/);
-  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82029/);assert.match(academyHtml,/academy-window\.js\?v=82029/);assert.match(academyHtml,/academy\.css\?v=82019/);
+  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82029/);assert.match(academyHtml,/academy-window\.js\?v=82030/);assert.match(academyHtml,/academy\.css\?v=82019/);
   assert.match(academyApp,/function teachLessonAtBoard\(lesson\)/);
   assert.match(academyApp,/\.join\('\\n\\n'\)\.slice\(0,500\)/);
   assert.match(academyApp,/const event=cue\.state==='walking'\?'WALK':'TEACH_AT_BOARD'/);
@@ -69,7 +69,9 @@ test('standalone Academy is a live free-form voice and text classroom, not a req
   assert.match(academyApp,/functions\.invoke\('sinbad-answer'/);
   assert.match(academyApp,/includeSourceVisuals:false,suppressSourceVisuals:true/);
   assert.match(academyApp,/window\.SinbadVisuals\?\.select/);
-  assert.match(academyApp,/SinbadVisuals\?\.select\?\.\(question,answer,\{max:1\}\)/);
+  assert.match(academyApp,/SinbadVisuals\?\.select\?\.\(question,answer,\{max:3\}\)/);
+  assert.match(academyApp,/speak\(result\.answer,/);
+  assert.doesNotMatch(academyApp,/speak\(result\.spokenSummary,/);
   assert.match(academyApp,/SpeechRecognition\|\|window\.webkitSpeechRecognition/);
   assert.match(academyApp,/academyChatForm/);
 });
@@ -96,7 +98,7 @@ test('Captain Sinbad teaches with real state art, browser voice and verified atl
   assert.match(academyApp,/captain-sinbad-listening\.png/);
   assert.match(academyApp,/new SpeechSynthesisUtterance/);
   assert.match(academyApp,/function renderVisuals\(visuals\)/);
-  assert.match(academyHtml,/sinbad-visuals\.js\?v=8235/);
+  assert.match(academyHtml,/sinbad-visuals\.js\?v=8236/);
   assert.match(academyApp,/academy-atlas-visual/);
   assert.match(academyApp,/visuals\.filter\(visual=>safeAsset\.test/);
   assert.doesNotMatch(academyApp,/cloudClient\.storage\.from\(doc\.bucket_id\)\.download/);
