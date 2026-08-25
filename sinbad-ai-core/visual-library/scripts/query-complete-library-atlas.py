@@ -1129,9 +1129,27 @@ def filter_visual_quality(db: sqlite3.Connection, rows: list) -> list:
         )
         valid_regions = {(row["document_hash"], row["page_number"], row["region_number"])
                          for row in found if viable(row["width"], row["height"], 120000, 0.20, 5.0)}
-    return [row for row in rows if row["visual_type"] not in {"object", "table", "vector"}
-            or (row["document_hash"], row["page_number"], row["image_number"])
-            in (valid_objects if row["visual_type"] == "object" else valid_regions)]
+    valid_binding_keys = None
+    if rows and table_exists(db, "visual_bindings"):
+        keys = [row["visual_key"] for row in rows]
+        placeholders = ",".join("?" for _ in keys)
+        valid_binding_keys = {item[0] for item in db.execute(
+            f"select visual_key from visual_bindings where visual_key in ({placeholders}) and role!='decorative'",
+            keys,
+        )}
+    return [row for row in rows
+            if (valid_binding_keys is None or row["visual_key"] in valid_binding_keys)
+            and (row["visual_type"] not in {"object", "table", "vector"}
+                 or (row["document_hash"], row["page_number"], row["image_number"])
+                 in (valid_objects if row["visual_type"] == "object" else valid_regions))]
+
+
+def requests_visual_media(value: str) -> bool:
+    normalized = value.casefold()
+    return any(word in normalized for word in (
+        "görsel", "gorsel", "resim", "fotoğraf", "fotograf", "image", "picture", "photo",
+        "diagram", "şema", "sema", "çizim", "cizim", "table", "tablo", "plate", "levha",
+    ))
 
 
 def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = False) -> list[dict]:
@@ -1249,6 +1267,10 @@ def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = Fa
                 (" OR ".join(quoted), candidate_limit),
             ).fetchall()
         rows = filter_visual_quality(db, rows)
+        if requests_visual_media(value):
+            visual_rows = [row for row in rows if row["visual_type"] != "page"]
+            if visual_rows:
+                rows = visual_rows
         rows = rerank_visual_rows(rows, wanted, value, limit - len(curated))
     else:
         clauses = " or ".join("lower(coalesce(p.heading,'')||' '||p.context||' '||p.topics) like ?" for _ in wanted)

@@ -483,6 +483,12 @@ def test_kaiyodai_navigation_schematics_match_exact_concepts():
     assert MODULE.curated_kaiyodai_navigation_schematics_query("can salı",3)==[]
 
 
+def test_explicit_visual_requests_can_suppress_whole_pdf_pages():
+    assert MODULE.requests_visual_media("tek nokta bağlama şemasını göster")
+    assert MODULE.requests_visual_media("righting arm curve diagram")
+    assert not MODULE.requests_visual_media("tek nokta bağlama nedir")
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -522,4 +528,5 @@ if __name__ == "__main__":
     test_verified_shipboard_ppe_photos_match_exact_protection()
     test_verified_shipboard_industrial_ppe_matches_exact_protection()
     test_kaiyodai_navigation_schematics_match_exact_concepts()
-    print("38 curated visual query tests passed")
+    test_explicit_visual_requests_can_suppress_whole_pdf_pages()
+    print("39 curated visual query tests passed")

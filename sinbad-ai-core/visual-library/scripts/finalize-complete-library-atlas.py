@@ -11,7 +11,7 @@ from pathlib import Path
 
 
 SCHEMA = "sinbad-complete-visual-atlas/1"
-FINAL_SCHEMA = "sinbad-complete-visual-atlas-final/1"
+FINAL_SCHEMA = "sinbad-complete-visual-atlas-final/2"
 
 
 def structure_overrides() -> dict[str, dict]:
@@ -62,6 +62,7 @@ def connect(atlas: Path) -> sqlite3.Connection:
 
 def build_search_index(db: sqlite3.Connection) -> None:
     overrides = structure_overrides()
+    has_bindings = db.execute("select 1 from sqlite_master where name='visual_bindings'").fetchone() is not None
     db.executescript("""
       create table if not exists source_metadata(
         document_hash text primary key,title text not null,volume text,
@@ -87,10 +88,17 @@ def build_search_index(db: sqlite3.Connection) -> None:
         title = override.get("title", title)
         paths_json = json.dumps(paths, ensure_ascii=False, separators=(",", ":"))
         db.execute("insert into source_metadata values(?,?,?,?,?)", (digest, title, volume, paths[0], paths_json))
-        pages = db.execute(
+        pages = db.execute("""
+            select p.page_number,p.asset_hash,p.file,
+                   coalesce(nullif(b.section_heading,''),p.heading) heading,
+                   coalesce(nullif(b.local_context,''),p.context) context,
+                   coalesce(nullif(b.topics,''),p.topics) topics
+              from page_plates p
+              left join visual_bindings b on b.visual_key='page:'||p.document_hash||':'||p.page_number
+             where p.document_hash=? order by p.page_number
+        """ if has_bindings else
             "select page_number,asset_hash,file,heading,context,topics from page_plates where document_hash=? order by page_number",
-            (digest,),
-        )
+            (digest,))
         for page in pages:
             values = (
                 f"page:{digest}:{page['page_number']}", "page", digest, page["page_number"], None,
@@ -100,11 +108,19 @@ def build_search_index(db: sqlite3.Connection) -> None:
             )
             db.execute("insert into visual_search values(?,?,?,?,?,?,?,?,?,?,?,?,?)", values)
         objects = db.execute(
-            """select e.page_number,e.image_number,e.asset_hash,e.file,p.heading,p.context,p.topics
+            """select e.page_number,e.image_number,e.asset_hash,e.file,
+                      coalesce(nullif(b.section_heading,''),p.heading) heading,
+                      trim(coalesce(b.caption,'')||' '||coalesce(nullif(b.local_context,''),p.context)) context,
+                      coalesce(nullif(b.topics,''),p.topics) topics
                from embedded_visuals e join page_plates p using(document_hash,page_number)
+               left join visual_bindings b on b.visual_key='object:'||e.document_hash||':'||e.page_number||':'||e.image_number
                where e.document_hash=? and e.status='ready'
                order by e.page_number,e.image_number""",
             (digest,),
+        ) if has_bindings else db.execute(
+            """select e.page_number,e.image_number,e.asset_hash,e.file,p.heading,p.context,p.topics
+               from embedded_visuals e join page_plates p using(document_hash,page_number)
+               where e.document_hash=? and e.status='ready' order by e.page_number,e.image_number""", (digest,)
         )
         for item in objects:
             values = (
@@ -116,10 +132,18 @@ def build_search_index(db: sqlite3.Connection) -> None:
             db.execute("insert into visual_search values(?,?,?,?,?,?,?,?,?,?,?,?,?)", values)
         if db.execute("select 1 from sqlite_master where name='visual_regions'").fetchone():
             regions = db.execute(
-                """select page_number,region_number,kind,asset_hash,file,heading,context,topics
-                   from visual_regions where document_hash=? and status='ready'
-                   order by page_number,region_number""",
+                """select r.page_number,r.region_number,r.kind,r.asset_hash,r.file,
+                          coalesce(nullif(b.section_heading,''),r.heading) heading,
+                          trim(coalesce(b.caption,'')||' '||coalesce(nullif(b.local_context,''),r.context)) context,
+                          coalesce(nullif(b.topics,''),r.topics) topics
+                   from visual_regions r
+                   left join visual_bindings b on b.visual_key='region:'||r.document_hash||':'||r.page_number||':'||r.region_number
+                   where r.document_hash=? and r.status='ready'
+                   order by r.page_number,r.region_number""",
                 (digest,),
+            ) if has_bindings else db.execute(
+                """select page_number,region_number,kind,asset_hash,file,heading,context,topics
+                   from visual_regions where document_hash=? and status='ready' order by page_number,region_number""", (digest,)
             )
             for item in regions:
                 values = (
@@ -299,6 +323,19 @@ def audit(db: sqlite3.Connection, atlas: Path, verify_hashes: bool) -> dict:
     result["orphanAssets"] = len(remaining_orphans)
     result["orphanAssetBytes"] = sum(path.stat().st_size for path in remaining_orphans)
     result["searchRows"] = db.execute("select count(*) from visual_search").fetchone()[0]
+    has_bindings = db.execute("select 1 from sqlite_master where name='visual_bindings'").fetchone() is not None
+    result["visualBindings"] = db.execute("select count(*) from visual_bindings").fetchone()[0] if has_bindings else 0
+    result["bindingCompletePages"] = db.execute(
+        "select count(*) from visual_binding_scans where status='complete'"
+    ).fetchone()[0] if has_bindings else 0
+    result["bindingFailedPages"] = db.execute(
+        "select count(*) from visual_binding_scans where status='failed'"
+    ).fetchone()[0] if has_bindings else 0
+    binding_passed = (not has_bindings or (
+        result["bindingCompletePages"] == result["expectedRegionScanPages"]
+        and result["bindingFailedPages"] == 0
+        and result["visualBindings"] == result["pagePlates"] + result["embeddedVisuals"] + result["visualRegions"]
+    ))
     result["passed"] = (
         not mismatches
         and not missing
@@ -307,6 +344,7 @@ def audit(db: sqlite3.Connection, atlas: Path, verify_hashes: bool) -> dict:
         and result["completeWithoutSourceMetadata"] == 0
         and result["searchRows"] == result["pagePlates"] + result["embeddedVisuals"] + result["visualRegions"]
         and result["regionScannedPages"] + result["regionFailedPages"] == result["expectedRegionScanPages"]
+        and binding_passed
         and set(result["statuses"]) <= {"complete", "failed"}
     )
     return result
