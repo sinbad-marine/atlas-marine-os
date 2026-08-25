@@ -676,6 +676,24 @@ def curated_vessel_types_query(value: str, limit: int) -> list[dict]:
     return result[:limit]
 
 
+def curated_specialized_vessels_query(value: str, limit: int) -> list[dict]:
+    root=Path(__file__).resolve().parents[1]/"assets"/"curated-specialized-vessels-verified"; manifest=root/"manifest.json"
+    if not manifest.is_file(): return []
+    normalized=value.casefold(); groups={
+        "lng-carriers-under-construction":("lng gemisi","lng tankeri","sıvılaştırılmış doğal gaz gemisi","sivilastirilmis dogal gaz gemisi","küresel lng tankı","kuresel lng tanki","lng carrier","liquefied natural gas carrier"),
+        "chemical-tanker-doris":("kimyasal tanker","kimyasal madde tankeri","ürün tankeri","urun tankeri","chemical tanker","product tanker"),
+        "car-carrier-tosca":("araç taşıyıcı gemi","arac tasiyici gemi","otomobil taşıma gemisi","otomobil tasima gemisi","araba gemisi","car carrier","vehicle carrier","pctc"),
+        "semi-submersible-heavy-lift-ship":("ağır yük gemisi","agir yuk gemisi","yarı batabilir gemi","yari batabilir gemi","proje yükü gemisi","proje yuku gemisi","heavy lift ship","semi-submersible vessel","heavy transport vessel")}
+    preferred={k for k,phrases in groups.items() if any(p in normalized for p in phrases)}
+    if not preferred:return []
+    result=[]
+    for item in json.loads(manifest.read_text(encoding="utf-8"))["visuals"]:
+        if item["id"] not in preferred:continue
+        path=root/item["file"]; digest=__import__("hashlib").sha256(path.read_bytes()).hexdigest()
+        result.append({"visual_key":f"curated:specialized-vessels:{item['id']}","visual_type":"object","document_hash":"curated-specialized-vessels-verified","page_number":None,"image_number":None,"asset_hash":digest,"file":str(path),"title":item["credit"],"volume":None,"heading":item["heading"],"context":f"Verified specialized-vessel photograph. {item['license']}","topics":item["topics"],"sourcePaths":[item["sourceUrl"]],"rank":-2500.0,"assetUrl":f"http://127.0.0.1:31983/visuals/assets/{digest}.webp"})
+    return result[:limit]
+
+
 def terms(value: str) -> list[str]:
     aliases = {
         "şamandıra": "buoy", "samandira": "buoy",
@@ -746,6 +764,9 @@ def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = Fa
     if curated:
         return curated
     curated = curated_vessel_types_query(value, limit)
+    if curated:
+        return curated
+    curated = curated_specialized_vessels_query(value, limit)
     if curated:
         return curated
     curated = curated_navigation_query(value, limit)
@@ -901,6 +922,10 @@ def resolve_asset(db: sqlite3.Connection, atlas: Path, digest: str) -> dict:
             return {"asset_hash":digest,"file":str(path),"width":None,"height":None,"visual_type":"object","absolutePath":str(path.resolve())}
     vessel_types_root=Path(__file__).resolve().parents[1]/"assets"/"curated-vessel-types-verified"
     for path in vessel_types_root.glob("*.webp"):
+        if __import__("hashlib").sha256(path.read_bytes()).hexdigest()==digest:
+            return {"asset_hash":digest,"file":str(path),"width":None,"height":None,"visual_type":"object","absolutePath":str(path.resolve())}
+    specialized_vessels_root=Path(__file__).resolve().parents[1]/"assets"/"curated-specialized-vessels-verified"
+    for path in specialized_vessels_root.glob("*.webp"):
         if __import__("hashlib").sha256(path.read_bytes()).hexdigest()==digest:
             return {"asset_hash":digest,"file":str(path),"width":None,"height":None,"visual_type":"object","absolutePath":str(path.resolve())}
     statements = [

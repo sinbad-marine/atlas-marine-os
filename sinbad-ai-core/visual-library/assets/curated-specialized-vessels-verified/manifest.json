@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "sinbad-curated-specialized-vessels/1",
+  "licensePolicy": "Only individually verified public-domain or CC0 photographs are included.",
+  "visuals": [
+    {"id":"lng-carriers-under-construction","file":"lng-carriers-under-construction.webp","heading":"LNG carriers with spherical containment tanks under construction","topics":["LNG carrier","liquefied natural gas carrier","LNG gemisi","LNG tankeri","sıvılaştırılmış doğal gaz gemisi","küresel LNG tankı"],"sourceUrl":"https://commons.wikimedia.org/wiki/File:LNG_Carrier_DSME.jpg","credit":"Photo by Towel401","license":"Public domain - released worldwide by the author"},
+    {"id":"chemical-tanker-doris","file":"chemical-tanker-doris.webp","heading":"Chemical tanker Doris underway","topics":["chemical tanker","product tanker","kimyasal tanker","kimyasal madde tankeri","ürün tankeri"],"sourceUrl":"https://commons.wikimedia.org/wiki/File:Doris_(IMO_9172210_-_chemical_tanker).jpg","credit":"Photo by Alet123","license":"CC0 1.0 Universal Public Domain Dedication"},
+    {"id":"car-carrier-tosca","file":"car-carrier-tosca.webp","heading":"Pure car carrier Tosca moored in Bremerhaven","topics":["car carrier","vehicle carrier","PCTC","araç taşıyıcı gemi","otomobil taşıma gemisi","araba gemisi"],"sourceUrl":"https://commons.wikimedia.org/wiki/File:Car_carrier_Tosca.jpg","credit":"Photo by Tvabutzku1234","license":"CC0 1.0 Universal Public Domain Dedication"},
+    {"id":"semi-submersible-heavy-lift-ship","file":"semi-submersible-heavy-lift-ship.webp","heading":"Semi-submersible heavy-lift ship Super Servant 3 showing immersion marks","topics":["heavy lift ship","semi-submersible vessel","heavy transport vessel","ağır yük gemisi","yarı batabilir gemi","proje yükü gemisi"],"sourceUrl":"https://commons.wikimedia.org/wiki/File:Water_level_marks_on_heavy_lift_ship.jpeg","credit":"U.S. Department of Defense photograph","license":"Public domain - U.S. federal government work"}
+  ]
+}
