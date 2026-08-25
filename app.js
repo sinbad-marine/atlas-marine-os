@@ -2743,7 +2743,7 @@ async function saveDocumentKnowledge(documentId,file,text,bucket){
 }
 function cloudAnswerPassesCoreGate(data,envelope){
   const decision=data?.coreDecision;
-  const expected=envelope?.analysis,answerSafe=data?.answer==null||window.SinbadCoreDecision?.answerIsSafe?.(String(data.answer))===true;
+  const expected=envelope?.analysis,answer=String(data?.answer||'').trim(),answerSafe=Boolean(answer)&&window.SinbadCoreDecision?.answerIsSafe?.(answer)===true;
   return Boolean(data&&answerSafe&&data.coreGateVersion===window.SinbadCore?.CORE_GATE_VERSION&&data.coreGateVersion===envelope?.gateVersion&&data.permission==='DECISION_SUPPORT_ONLY'&&data.executionPerformed===false&&decision&&expected&&['low','medium','high','critical'].includes(decision.risk)&&decision.risk===expected.risk&&['emergency','operational','needsLiveData','requiresHumanApproval','requiresIndependentVerification'].every(field=>typeof decision[field]==='boolean'&&decision[field]===expected[field]));
 }
 let sinbadPendingSourceVisuals=[];
@@ -2763,7 +2763,7 @@ async function sinbadCloudKnowledgeAnswer(question){
     const aiError=invocation.error;let trustedAiData=invocation.data;
     if(aiError){trustedAiData=null;if(status)status.textContent='Atlas Cloud AI unavailable · searching private archive';}
     else if(!cloudAnswerPassesCoreGate(trustedAiData,coreEnvelope)){trustedAiData=null;if(status)status.textContent='Atlas Cloud Core gate blocked AI · searching private archive';}
-    if(trustedAiData?.answer){
+    if(String(trustedAiData?.answer||'').trim()){
       const answer=String(trustedAiData.answer).trim();
       // Older cloud deployments can return a polite "no source found" notice
       // as if it were a complete AI answer. Treat those notices as a miss so
