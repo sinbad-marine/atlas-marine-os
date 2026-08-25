@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "sinbad-publication-structure-overrides/1",
+  "documents": {
+    "41a0d4f225fc238e8bee0c36367e2dbd5253d31ba0e1b8e0d9190d4b5cc3a0c2": {
+      "title": "A Brief Introduction to Important Ship Mooring Techniques",
+      "sections": [
+        {"fromPage": 1, "toPage": 1, "heading": "Cover"},
+        {"fromPage": 2, "toPage": 2, "heading": "Notice of Rights"},
+        {"fromPage": 3, "toPage": 3, "heading": "Contents"},
+        {"fromPage": 4, "toPage": 5, "heading": "Introduction - What is Mooring of Ship?"},
+        {"fromPage": 6, "toPage": 13, "heading": "Mediterranean Mooring"},
+        {"fromPage": 14, "toPage": 17, "heading": "Baltic Mooring"},
+        {"fromPage": 18, "toPage": 24, "heading": "Single Point or Single Buoy Mooring"},
+        {"fromPage": 25, "toPage": 28, "heading": "Conventional or Multiple Buoy Mooring"},
+        {"fromPage": 29, "toPage": 31, "heading": "Ship to Ship Mooring"},
+        {"fromPage": 32, "toPage": 35, "heading": "Running Mooring and Standing Mooring"},
+        {"fromPage": 36, "toPage": 36, "heading": "Publication Store"}
+      ]
+    }
+  }
+}

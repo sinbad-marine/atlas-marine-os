@@ -20,6 +20,96 @@ def test_object_photo_request_does_not_route_to_symbol_collection():
     assert MODULE.curated_symbol_query("can simidinin fotoğrafını göster", 3) == []
 
 
+def test_semantic_visual_reranker_prefers_text_bound_exact_subject():
+    rows = [
+        {"visual_key": "generic", "visual_type": "object", "document_hash": "a",
+         "page_number": 1, "title": "Marine manual", "heading": "Equipment",
+         "context": "General bridge equipment", "topics": '["equipment"]', "rank": -9.0},
+        {"visual_key": "bound", "visual_type": "object", "document_hash": "b",
+         "page_number": 42, "title": "Navigation handbook", "heading": "AIS display",
+         "context": "AIS display presents vessel identity position course and speed.",
+         "topics": '["ais","display","vessel identity"]', "rank": -2.0},
+    ]
+    ranked = MODULE.rerank_visual_rows(rows, ["ais", "display"], "AIS display", 2)
+    assert ranked[0]["visual_key"] == "bound"
+    assert ranked[0]["semanticScore"] > ranked[1]["semanticScore"]
+    assert ranked[0]["scoreExplanation"]["boundContextBonus"] == 3.0
+
+
+def test_semantic_visual_reranker_deduplicates_assets_and_honors_table_intent():
+    shared = {"visual_type": "object", "document_hash": "d", "page_number": 7,
+              "heading": "Tide calculation", "context": "Tide calculation table",
+              "topics": '["tide","calculation"]', "rank": -4.0, "asset_hash": "same"}
+    rows = [dict(shared, visual_key="copy-a", title="Path A"),
+            dict(shared, visual_key="copy-b", title="Path B"),
+            {"visual_key": "table", "visual_type": "table", "document_hash": "d",
+             "page_number": 7, "title": "Bowditch", "heading": "Tide calculation",
+             "context": "Tide calculation table", "topics": '["tide","calculation"]',
+             "rank": -3.0, "asset_hash": "table-asset"}]
+    ranked = MODULE.rerank_visual_rows(rows, ["tide", "calculation"], "tide calculation table", 3)
+    assert [item["visual_key"] for item in ranked].count("table") == 1
+    assert len(ranked) == 2
+    assert ranked[0]["visual_key"] == "table"
+    assert ranked[0]["scoreExplanation"]["intentBonus"] == 10.0
+    bowditch_copies = [
+        {"visual_key": "edition-a", "visual_type": "object", "document_hash": "a",
+         "page_number": 310, "image_number": 1, "title": "American Practical Navigator 2024 - Volume II",
+         "heading": "THE SAILINGS", "context": "Great circle sailing", "topics": '["sailing"]',
+         "rank": -4.0, "asset_hash": "encoded-a"},
+        {"visual_key": "edition-b", "visual_type": "object", "document_hash": "b",
+         "page_number": 310, "image_number": 1, "title": "American Practical Navigator Bowditch Vol 2",
+         "heading": "THE SAILINGS", "context": "Great circle sailing", "topics": '["sailing"]',
+         "rank": -3.0, "asset_hash": "encoded-b"},
+    ]
+    assert len(MODULE.rerank_visual_rows(bowditch_copies, ["sailing"], "sailing diagram", 3)) == 1
+
+
+def test_complete_atlas_batch_quality_gate_rejects_page_decorations():
+    db = sqlite3.connect(":memory:")
+    db.row_factory = sqlite3.Row
+    db.executescript("""
+      create table embedded_visuals(document_hash text,page_number integer,image_number integer,
+        width integer,height integer,status text);
+      create table visual_regions(document_hash text,page_number integer,region_number integer,
+        width integer,height integer,status text);
+    """)
+    db.executemany("insert into embedded_visuals values(?,?,?,?,?,?)", [
+        ("d", 1, 1, 145, 794, "ready"),
+        ("d", 1, 2, 700, 1090, "ready"),
+    ])
+    db.execute("insert into visual_regions values(?,?,?,?,?,?)", ("d", 1, 1, 307, 307, "ready"))
+    rows = [
+        {"visual_type": "object", "document_hash": "d", "page_number": 1, "image_number": 1},
+        {"visual_type": "object", "document_hash": "d", "page_number": 1, "image_number": 2},
+        {"visual_type": "vector", "document_hash": "d", "page_number": 1, "image_number": 1},
+    ]
+    assert MODULE.filter_visual_quality(db, rows) == [rows[1]]
+    assert MODULE.terms("ship to ship mooring photograph diagram") == ["ship", "mooring"]
+
+
+def test_chart_no_1_questions_use_complete_public_domain_table_pages():
+    results = MODULE.chart_no_1_table_page_query("batık harita sembolünü göster", 3)
+    assert results
+    assert results[0]["page_number"] == 52
+    assert all(item["visual_type"] == "chart-table-highlight" for item in results)
+    assert all(item["document_hash"] == "247f548eaa45db815e1c49fea9785e966a6e8dd9e4771abc26d4dad473488a1e" for item in results)
+    resolved = MODULE.resolve_asset(None, Path("."), results[0]["asset_hash"])
+    assert resolved["visual_type"] == "chart-table-highlight"
+    assert Path(resolved["absolutePath"]).is_file()
+    assert results[0]["highlightBox"] is not None
+    assert MODULE.chart_no_1_table_page_query("şamandıra harita sembolünü göster", 1)[0]["page_number"] in range(90, 103)
+    assert MODULE.chart_no_1_table_page_query("radar harita sembolünü göster", 1)[0]["page_number"] in range(104, 107)
+    assert MODULE.chart_no_1_table_page_query("gelgit akıntı tablosunu göster", 1)[0]["page_number"] in range(39, 43)
+    assert MODULE.chart_no_1_table_page_query("liman rıhtım sembollerini göster", 1)[0]["page_number"] in range(32, 39)
+    assert MODULE.chart_no_1_table_page_query("pilot hizmet sembolünü göster", 1)[0]["page_number"] in range(107, 109)
+    isolated = MODULE.chart_no_1_table_page_query(
+        "tescil edilmiş sığlık şamandırası sembolünü göster", 1
+    )[0]
+    assert isolated["page_number"] == 101
+    assert isolated["image_number"] == "130.4"
+    assert isolated["visual_type"] == "chart-table-highlight"
+
+
 def test_epirb_and_sart_resolve_to_distinct_official_symbols():
     epirb = MODULE.curated_symbol_query("EPIRB sembolü", 3)
     sart = MODULE.curated_symbol_query("SART işareti", 3)
@@ -393,9 +483,18 @@ def test_kaiyodai_navigation_schematics_match_exact_concepts():
     assert MODULE.curated_kaiyodai_navigation_schematics_query("can salı",3)==[]
 
 
+def test_explicit_visual_requests_can_suppress_whole_pdf_pages():
+    assert MODULE.requests_visual_media("tek nokta bağlama şemasını göster")
+    assert MODULE.requests_visual_media("righting arm curve diagram")
+    assert not MODULE.requests_visual_media("tek nokta bağlama nedir")
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
+    test_semantic_visual_reranker_prefers_text_bound_exact_subject()
+    test_semantic_visual_reranker_deduplicates_assets_and_honors_table_intent()
+    test_complete_atlas_batch_quality_gate_rejects_page_decorations()
     test_epirb_and_sart_resolve_to_distinct_official_symbols()
     test_escape_emergency_and_fire_queries_stay_in_their_categories()
     test_prohibition_warning_and_mandatory_queries_use_exact_current_symbols()
@@ -429,4 +528,5 @@ if __name__ == "__main__":
     test_verified_shipboard_ppe_photos_match_exact_protection()
     test_verified_shipboard_industrial_ppe_matches_exact_protection()
     test_kaiyodai_navigation_schematics_match_exact_concepts()
-    print("35 curated visual query tests passed")
+    test_explicit_visual_requests_can_suppress_whole_pdf_pages()
+    print("39 curated visual query tests passed")

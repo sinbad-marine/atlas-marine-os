@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import hashlib
 import json
 import re
 import sqlite3
@@ -848,6 +849,145 @@ def curated_kaiyodai_navigation_schematics_query(value: str, limit: int) -> list
     return result[:limit]
 
 
+def render_chart_table_highlight(path: Path, box: list[float] | None,
+                                 column: str | None) -> tuple[Path, str] | None:
+    """Render a deterministic whole-table image with the matching row/cell marked."""
+    if not box or len(box) != 4:
+        return None
+    from PIL import Image, ImageDraw
+
+    cache = path.parent / "highlight-cache"
+    cache.mkdir(exist_ok=True)
+    identity = f"{hashlib.sha256(path.read_bytes()).hexdigest()}:{box}:{column or 'row'}:v1"
+    cache_key = hashlib.sha256(identity.encode("utf-8")).hexdigest()
+    cached = cache / f"{cache_key}.webp"
+    if not cached.is_file():
+        with Image.open(path).convert("RGBA") as source:
+            left = max(0, min(source.width - 1, round(box[0] * source.width)))
+            top = max(0, min(source.height - 1, round(box[1] * source.height)))
+            right = max(left + 1, min(source.width, round(box[2] * source.width)))
+            bottom = max(top + 1, min(source.height, round(box[3] * source.height)))
+            overlay = Image.new("RGBA", source.size, (0, 0, 0, 0))
+            draw = ImageDraw.Draw(overlay)
+            draw.rectangle((left, top, right, bottom), fill=(255, 214, 64, 58),
+                           outline=(229, 139, 0, 255), width=max(4, source.width // 220))
+            rendered = Image.alpha_composite(source, overlay).convert("RGB")
+            rendered.save(cached, "WEBP", quality=94, method=6)
+    return cached, hashlib.sha256(cached.read_bytes()).hexdigest()
+
+
+def chart_no_1_table_page_query(value: str, limit: int) -> list[dict]:
+    root = Path(__file__).resolve().parents[1] / "assets" / "nga-chart-no-1"
+    manifest_path = root / "manifest.json"
+    if not manifest_path.is_file():
+        return []
+    normalized = value.casefold()
+    sections = (
+        (("harita numarası", "harita basligi", "harita başlığı", "kenar notu", "chart number", "marginal note"), (9, 10)),
+        (("mevki", "pozisyon", "mesafe", "yön", "yon", "pusula", "position", "distance", "direction", "compass"), tuple(range(11, 17))),
+        (("doğal özellik", "dogal ozellik", "kıyı", "kiyi", "sahil", "natural feature", "coastline", "shoreline"), tuple(range(17, 22))),
+        (("kültürel özellik", "kulturel ozellik", "bina", "yol", "cultural feature", "building", "road"), tuple(range(22, 27))),
+        (("belirgin özellik", "belirgin ozellik", "conspicuous", "non-conspicuous"), (27,)),
+        (("nirengi", "landmark", "kule", "tower", "baca", "chimney", "kilise", "church"), tuple(range(28, 32))),
+        (("liman", "port", "harbour", "harbor", "rıhtım", "rihtim", "quay", "iskele", "pier", "marina"), tuple(range(32, 39))),
+        (("gelgit", "gel git", "akıntı", "akinti", "tide", "current", "stream"), tuple(range(39, 43))),
+        (("derinlik", "depth", "iskandil", "sounding", "eş derinlik", "es derinlik", "contour"), tuple(range(43, 48))),
+        (("deniz dibi", "dip cinsi", "seabed", "bottom characteristic", "kum", "sand", "çamur", "camur", "mud"), tuple(range(48, 52))),
+        (("batık", "batik", "wreck", "kaya", "rock", "engel", "obstruction", "su ürünleri", "aquaculture"), tuple(range(52, 60))),
+        (("açık deniz tesisi", "acik deniz tesisi", "offshore installation", "platform", "boru hattı", "boru hatti", "pipeline", "kablo", "cable"), tuple(range(60, 64))),
+        (("rota", "route", "iz", "track", "trafik ayrım", "trafik ayrim", "traffic separation", "tss", "önerilen yol", "onerilen yol"), tuple(range(64, 71))),
+        (("alan", "sınır", "sinir", "area", "limit", "demirleme", "anchorage", "yasak bölge", "yasak bolge", "restricted area"), tuple(range(71, 78))),
+        (("fener", "light", "ışık", "isik", "lighthouse", "sektör ışığı", "sektor isigi", "sector light"), tuple(range(78, 89))),
+        (("ecdis renk", "ecdis sembol", "ecdis symbol", "simplified symbol", "paper chart symbol"), (89,)),
+        (("şamandıra", "şamandırası", "samandira", "samandirasi", "buoy", "beacon", "tecrit edilmiş", "tescil edilmiş", "isolated danger", "kardinal", "cardinal", "lateral", "topmark", "tepe işareti", "tepe isareti"), tuple(range(90, 103))),
+        (("sis işareti", "sis isareti", "fog signal", "düdük", "duduk", "whistle", "siren"), (103,)),
+        (("radar", "radio", "radyo", "uydu seyri", "satellite navigation", "ais", "racons", "racon"), tuple(range(104, 107))),
+        (("hizmet", "service", "pilot", "kılavuz", "kilavuz", "sahil güvenlik", "sahil guvenlik", "coastguard"), tuple(range(107, 109))),
+        (("küçük tekne", "kucuk tekne", "yat", "small craft", "leisure", "tekne tesisi"), (109,)),
+        (("kısaltma", "kisaltma", "abbreviation"), tuple(range(110, 115))),
+        (("indeks", "index", "terim"), tuple(range(115, 126))),
+    )
+    def contains_alias(alias: str) -> bool:
+        return re.search(rf"(?<!\w){re.escape(alias)}(?!\w)", normalized, re.UNICODE) is not None
+
+    pages = next((page_numbers for aliases, page_numbers in sections if any(contains_alias(alias) for alias in aliases)), ())
+    # Only explicit chart/symbol/table requests belong here. A generic photo or
+    # device request (for example an AIS display) must remain in the object atlas.
+    if not pages or not any(term in normalized for term in
+                            ("harita", "sembol", "işaret", "isaret", "chart", "tablo")):
+        return []
+    table_root = Path(__file__).resolve().parents[1] / "assets" / "nga-chart-no-1-table-atlas"
+    table_manifest_path = table_root / "manifest.json"
+    if table_manifest_path.is_file():
+        table_manifest = json.loads(table_manifest_path.read_text(encoding="utf-8"))
+        table_by_page = {table["page"]: table for table in table_manifest.get("tables", [])}
+        aliases = {"kaya": "rock", "batık": "wreck", "batik": "wreck", "sığlık": "shoal",
+                   "siglik": "shoal", "fener": "light", "ışık": "light", "isik": "light",
+                   "şamandıra": "buoy", "şamandırası": "buoy", "samandira": "buoy", "samandirasi": "buoy",
+                   "sığlık": "danger", "siglik": "danger", "tecrit": "isolated", "tescil": "isolated",
+                   "akıntı": "current", "akinti": "current",
+                   "gelgit": "tide", "kablo": "cable", "boru": "pipeline", "demirleme": "anchorage"}
+        ignored = {"harita", "sembol", "işaret", "isaret", "göster", "goster", "görsel", "gorsel", "tablo"}
+        needles = set(re.findall(r"[^\W\d_][\w-]{2,}", normalized, re.UNICODE)) - ignored
+        needles.update(aliases[word] for word in tuple(needles) if word in aliases)
+        requested_column = next((column for term, column in (("ecdis", "ecdis"), ("noaa", "noaa"),
+                                ("other nga", "other-nga"), ("nga", "nga"), ("int", "int"))
+                                 if contains_alias(term)), None)
+        candidates = []
+        for page in pages:
+            table = table_by_page.get(page)
+            if not table:
+                continue
+            best_row, best_score = None, 0
+            for row in table.get("rows", []):
+                haystack = f"{row.get('description', '')} {row.get('context', '')} {' '.join(row.get('topics', []))}".casefold()
+                score = sum(1 for needle in needles if needle in haystack)
+                if score > best_score:
+                    best_row, best_score = row, score
+            candidates.append((best_score, page, table, best_row))
+        if candidates:
+            result = []
+            for score, page, table, row in sorted(candidates, key=lambda item: (-item[0], item[1]))[:limit]:
+                path = table_root / table["file"]
+                highlight = None if not row else row["cellBoxes"].get(requested_column) if requested_column else row["rowBox"]
+                highlighted = render_chart_table_highlight(path, highlight, requested_column)
+                selected_path = highlighted[0] if highlighted else path
+                selected_hash = highlighted[1] if highlighted else table["sha256"]
+                result.append({
+                    "visual_key": f"nga-chart-no-1:table:{page}:{selected_hash}",
+                    "visual_type": "chart-table-highlight" if highlighted else "chart-table",
+                    "document_hash": table_manifest["sourceDocumentSha256"], "page_number": page,
+                    "image_number": row.get("symbolNumber") if row else None, "asset_hash": selected_hash,
+                    "file": str(selected_path), "title": "U.S. Chart No. 1 - Whole Table Atlas", "volume": None,
+                    "heading": table["headings"][0], "context": row.get("context", "") if row else "",
+                    "topics": row.get("topics", []) if row else [], "highlightBox": highlight,
+                    "highlightColumn": requested_column, "sourcePaths": [table_manifest["sourceUrl"]],
+                    "rank": -3200.0 - score,
+                    "assetUrl": f"http://127.0.0.1:31983/visuals/assets/{selected_hash}.webp",
+                })
+            return result
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    by_page = {visual["occurrences"][0]["pdfPage"]: visual for visual in manifest.get("visuals", [])}
+    result = []
+    for page in pages[:limit]:
+        visual = by_page.get(page)
+        if not visual:
+            continue
+        occurrence = visual["occurrences"][0]
+        path = root / visual["file"]
+        result.append({
+            "visual_key": visual["visualId"], "visual_type": "chart-table-page",
+            "document_hash": manifest["sourceDocumentSha256"], "page_number": page,
+            "image_number": None, "asset_hash": visual["sha256"], "file": str(path),
+            "title": manifest["collection"], "volume": None,
+            "heading": " / ".join(occurrence.get("headings", [])) or f"Chart No. 1 table page {page}",
+            "context": occurrence.get("context", ""), "topics": occurrence.get("topics", []),
+            "sourcePaths": [manifest["sourceUrl"]], "rank": -3000.0,
+            "assetUrl": f"http://127.0.0.1:31983/visuals/assets/{visual['sha256']}.webp",
+        })
+    return result
+
+
 def terms(value: str) -> list[str]:
     aliases = {
         "şamandıra": "buoy", "samandira": "buoy",
@@ -865,6 +1005,7 @@ def terms(value: str) -> list[str]:
         "fotograf", "fotoğrafı", "fotografi", "fotoğrafını", "fotografini",
         "cihaz", "cihazı", "cihazi", "cihazını", "cihazini", "ekipman",
         "show", "display", "image", "picture", "photo", "photograph", "please",
+        "table", "tablo", "diagram", "vector", "şema", "sema", "çizim", "cizim",
     }
     normalized = value.casefold()
     found: list[str] = []
@@ -889,8 +1030,133 @@ def table_exists(db: sqlite3.Connection, name: str) -> bool:
     return db.execute("select 1 from sqlite_master where name=?", (name,)).fetchone() is not None
 
 
+def semantic_visual_score(row: dict, wanted: list[str], query_text: str) -> tuple[float, dict]:
+    """Fast, explainable second-stage score for text-bound visual retrieval."""
+    fields = {
+        "title": (row.get("title") or "").casefold(),
+        "heading": (row.get("heading") or "").casefold(),
+        "context": (row.get("context") or "").casefold(),
+        "topics": (row.get("topics") or "").casefold(),
+    }
+    hits = {name: sum(token in value for token in wanted) for name, value in fields.items()}
+    coverage = len({token for token in wanted if any(token in value for value in fields.values())})
+    phrase = " ".join(terms(query_text))
+    phrase_hit = bool(phrase and any(phrase in value for value in fields.values()))
+    visual_type = row.get("visual_type") or "page"
+    type_bonus = {"object": 4.0, "table": 3.0, "vector": 3.0, "diagram": 3.0,
+                  "chart-table": 3.0, "chart-table-highlight": 4.0}.get(visual_type, 0.0)
+    normalized_query = query_text.casefold()
+    intent_bonus = 0.0
+    if any(term in normalized_query for term in ("tablo", "table")):
+        intent_bonus = 10.0 if visual_type in {"table", "chart-table", "chart-table-highlight"} else -2.0
+    elif any(term in normalized_query for term in ("şema", "sema", "çizim", "cizim", "diagram")):
+        intent_bonus = 10.0 if visual_type in {"vector", "diagram"} else 2.0 if visual_type == "object" else -2.0
+    elif any(term in normalized_query for term in ("fotoğraf", "fotograf", "photo", "photograph")):
+        intent_bonus = 10.0 if visual_type == "object" else -2.0
+    provenance = 2.0 if row.get("document_hash") and row.get("page_number") is not None else 0.0
+    bound_context = 3.0 if fields["context"] and (hits["context"] or hits["heading"]) else 0.0
+    score = (8.0 * hits["heading"] + 6.0 * hits["topics"] +
+             3.0 * hits["context"] + hits["title"] +
+             10.0 * phrase_hit + 4.0 * coverage + type_bonus + intent_bonus + provenance + bound_context)
+    explanation = {"headingHits": hits["heading"], "topicHits": hits["topics"],
+                   "contextHits": hits["context"], "titleHits": hits["title"],
+                   "coverage": coverage, "phraseHit": phrase_hit,
+                   "typeBonus": type_bonus, "intentBonus": intent_bonus, "provenanceBonus": provenance,
+                   "boundContextBonus": bound_context}
+    return score, explanation
+
+
+def rerank_visual_rows(rows: list, wanted: list[str], query_text: str, limit: int) -> list[dict]:
+    unique: dict[str, dict] = {}
+    for row in rows:
+        item = dict(row)
+        semantic_score, explanation = semantic_visual_score(item, wanted, query_text)
+        item["semanticScore"] = semantic_score
+        item["scoreExplanation"] = explanation
+        title = (item.get("title") or "").casefold()
+        if "american practical navigator" in title:
+            publication_family = "american-practical-navigator"
+        else:
+            publication_family = " ".join(re.findall(r"[^\W\d_][\w-]{2,}", title, re.UNICODE)[:6])
+        occurrence_identity = None
+        if publication_family and item.get("page_number") is not None:
+            occurrence_identity = "|".join(map(str, (publication_family, item.get("visual_type"),
+                item.get("page_number"), item.get("image_number"),
+                (item.get("heading") or "").casefold())))
+        identity = occurrence_identity or item.get("asset_hash") or item.get("visual_key")
+        prior = unique.get(identity)
+        if prior is None or (semantic_score, -(float(item.get("rank") or 0))) > (
+                prior["semanticScore"], -(float(prior.get("rank") or 0))):
+            unique[identity] = item
+    ranked = list(unique.values())
+    ranked.sort(key=lambda item: (-item["semanticScore"], float(item.get("rank") or 0),
+                                  0 if item.get("visual_type") == "object" else 1,
+                                  item.get("visual_key") or ""))
+    return ranked[:limit]
+
+
+def filter_visual_quality(db: sqlite3.Connection, rows: list) -> list:
+    """Batch-load dimensions for the bounded FTS pool; avoid per-row SQL scans."""
+    object_keys = sorted({(row["document_hash"], row["page_number"], row["image_number"])
+                          for row in rows if row["visual_type"] == "object"})
+    region_keys = sorted({(row["document_hash"], row["page_number"], row["image_number"])
+                          for row in rows if row["visual_type"] in {"table", "vector"}})
+
+    def viable(width: int, height: int, minimum_area: int, minimum_ratio: float,
+               maximum_ratio: float) -> bool:
+        return bool(width and height and width * height >= minimum_area and
+                    minimum_ratio <= width / height <= maximum_ratio)
+
+    valid_objects = set(object_keys)
+    if object_keys and table_exists(db, "embedded_visuals"):
+        placeholders = ",".join("(?,?,?)" for _ in object_keys)
+        values = [value for key in object_keys for value in key]
+        found = db.execute(
+            f"select document_hash,page_number,image_number,width,height from embedded_visuals "
+            f"where status='ready' and (document_hash,page_number,image_number) in ({placeholders})",
+            values,
+        )
+        valid_objects = {(row["document_hash"], row["page_number"], row["image_number"])
+                         for row in found if viable(row["width"], row["height"], 150000, 0.25, 4.0)}
+    valid_regions = set(region_keys)
+    if region_keys and table_exists(db, "visual_regions"):
+        placeholders = ",".join("(?,?,?)" for _ in region_keys)
+        values = [value for key in region_keys for value in key]
+        found = db.execute(
+            f"select document_hash,page_number,region_number,width,height from visual_regions "
+            f"where status='ready' and (document_hash,page_number,region_number) in ({placeholders})",
+            values,
+        )
+        valid_regions = {(row["document_hash"], row["page_number"], row["region_number"])
+                         for row in found if viable(row["width"], row["height"], 120000, 0.20, 5.0)}
+    valid_binding_keys = None
+    if rows and table_exists(db, "visual_bindings"):
+        keys = [row["visual_key"] for row in rows]
+        placeholders = ",".join("?" for _ in keys)
+        valid_binding_keys = {item[0] for item in db.execute(
+            f"select visual_key from visual_bindings where visual_key in ({placeholders}) and role!='decorative'",
+            keys,
+        )}
+    return [row for row in rows
+            if (valid_binding_keys is None or row["visual_key"] in valid_binding_keys)
+            and (row["visual_type"] not in {"object", "table", "vector"}
+                 or (row["document_hash"], row["page_number"], row["image_number"])
+                 in (valid_objects if row["visual_type"] == "object" else valid_regions))]
+
+
+def requests_visual_media(value: str) -> bool:
+    normalized = value.casefold()
+    return any(word in normalized for word in (
+        "görsel", "gorsel", "resim", "fotoğraf", "fotograf", "image", "picture", "photo",
+        "diagram", "şema", "sema", "çizim", "cizim", "table", "tablo", "plate", "levha",
+    ))
+
+
 def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = False) -> list[dict]:
     curated = curated_symbol_query(value, limit)
+    if curated:
+        return curated
+    curated = chart_no_1_table_page_query(value, limit)
     if curated:
         return curated
     curated = curated_bridge_electronics_query(value, limit)
@@ -979,15 +1245,33 @@ def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = Fa
         return []
     indexed = table_exists(db, "visual_search")
     if indexed:
-        expression = " OR ".join(f'"{word.replace(chr(34), chr(34) * 2)}"' for word in wanted)
+        quoted = [f'"{word.replace(chr(34), chr(34) * 2)}"' for word in wanted]
+        expression = " AND ".join(quoted)
         type_clause = " and visual_type='object'" if object_only else ""
+        candidate_limit = min(200, max(40, limit * 12))
         rows = db.execute(
             """select visual_key,visual_type,document_hash,page_number,image_number,asset_hash,file,
-                      title,volume,heading,context,topics,source_paths,bm25(visual_search) rank
+                      title,volume,heading,context,topics,source_paths,
+                      bm25(visual_search,0,0,0,0,0,0,0,2,1,8,3,6,0) rank
                from visual_search where visual_search match ?""" + type_clause + """
                order by rank,case visual_type when 'object' then 0 when 'table' then 1 when 'vector' then 1 else 2 end limit ?""",
-            (expression, limit - len(curated)),
+            (expression, candidate_limit),
         ).fetchall()
+        if not rows and len(quoted) > 1:
+            rows = db.execute(
+                """select visual_key,visual_type,document_hash,page_number,image_number,asset_hash,file,
+                          title,volume,heading,context,topics,source_paths,
+                          bm25(visual_search,0,0,0,0,0,0,0,2,1,8,3,6,0) rank
+                   from visual_search where visual_search match ?""" + type_clause + """
+                   order by rank,case visual_type when 'object' then 0 when 'table' then 1 when 'vector' then 1 else 2 end limit ?""",
+                (" OR ".join(quoted), candidate_limit),
+            ).fetchall()
+        rows = filter_visual_quality(db, rows)
+        if requests_visual_media(value):
+            visual_rows = [row for row in rows if row["visual_type"] != "page"]
+            if visual_rows:
+                rows = visual_rows
+        rows = rerank_visual_rows(rows, wanted, value, limit - len(curated))
     else:
         clauses = " or ".join("lower(coalesce(p.heading,'')||' '||p.context||' '||p.topics) like ?" for _ in wanted)
         params = [f"%{word}%" for word in wanted]
@@ -1002,14 +1286,7 @@ def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = Fa
                 where {clauses} order by p.document_hash,p.page_number limit ?""",
             (*params, min(1000, max(200, limit * 100))),
         ).fetchall()
-        rows = sorted(
-            rows,
-            key=lambda row: sum(
-                token in f"{row['heading'] or ''} {row['context'] or ''} {row['topics'] or ''}".casefold()
-                for token in wanted
-            ),
-            reverse=True,
-        )[:limit]
+        rows = rerank_visual_rows(rows, wanted, value, limit - len(curated))
     result = []
     for row in rows:
         item = dict(row)
@@ -1028,6 +1305,20 @@ def resolve_asset(db: sqlite3.Connection, atlas: Path, digest: str) -> dict:
             if __import__("hashlib").sha256(path.read_bytes()).hexdigest() == digest:
                 return {"asset_hash": digest, "file": str(path), "width": None, "height": None,
                         "visual_type": "object", "absolutePath": str(path.resolve())}
+    chart_pages_root = Path(__file__).resolve().parents[1] / "assets" / "nga-chart-no-1"
+    for path in chart_pages_root.glob("*.png"):
+        if __import__("hashlib").sha256(path.read_bytes()).hexdigest() == digest:
+            return {"asset_hash": digest, "file": str(path), "width": None, "height": None,
+                    "visual_type": "chart-table-page", "absolutePath": str(path.resolve())}
+    chart_tables_root = Path(__file__).resolve().parents[1] / "assets" / "nga-chart-no-1-table-atlas"
+    for path in chart_tables_root.glob("table-page-*.webp"):
+        if __import__("hashlib").sha256(path.read_bytes()).hexdigest() == digest:
+            return {"asset_hash": digest, "file": str(path), "width": None, "height": None,
+                    "visual_type": "chart-table", "absolutePath": str(path.resolve())}
+    for path in (chart_tables_root / "highlight-cache").glob("*.webp"):
+        if __import__("hashlib").sha256(path.read_bytes()).hexdigest() == digest:
+            return {"asset_hash": digest, "file": str(path), "width": None, "height": None,
+                    "visual_type": "chart-table-highlight", "absolutePath": str(path.resolve())}
     navigation_root = Path(__file__).resolve().parents[1] / "assets" / "curated-navigation-verified"
     for path in navigation_root.glob("*.webp"):
         if __import__("hashlib").sha256(path.read_bytes()).hexdigest() == digest:
