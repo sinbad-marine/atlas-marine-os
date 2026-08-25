@@ -373,6 +373,15 @@ def test_verified_shipboard_ppe_photos_match_exact_protection():
     assert MODULE.curated_shipboard_ppe_query("can salı",3)==[]
 
 
+def test_verified_shipboard_industrial_ppe_matches_exact_protection():
+    welding=MODULE.curated_shipboard_industrial_ppe_query("gemide kaynakçı maskesi ve kaynak PPE fotoğrafı",3)
+    respirator=MODULE.curated_shipboard_industrial_ppe_query("gemi respiratör fit testi fotoğrafı",3)
+    assert welding[0]["visual_key"]=="curated:shipboard-industrial-ppe:welding-face-protection"
+    assert respirator[0]["visual_key"]=="curated:shipboard-industrial-ppe:respirator-fit-test"
+    assert all(item[0]["sourcePaths"][0].startswith("https://") for item in (welding,respirator))
+    assert MODULE.curated_shipboard_industrial_ppe_query("can salı",3)==[]
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -407,4 +416,5 @@ if __name__ == "__main__":
     test_verified_maritime_knot_photos_match_exact_knots()
     test_verified_advanced_maritime_ropework_matches_exact_knots_and_splice()
     test_verified_shipboard_ppe_photos_match_exact_protection()
-    print("33 curated visual query tests passed")
+    test_verified_shipboard_industrial_ppe_matches_exact_protection()
+    print("34 curated visual query tests passed")

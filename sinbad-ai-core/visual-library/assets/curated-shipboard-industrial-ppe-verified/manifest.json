@@ -1,0 +1,8 @@
+{
+  "schemaVersion":"sinbad-curated-shipboard-industrial-ppe/1",
+  "licensePolicy":"Only individually verified U.S. federal public-domain photographs taken aboard named U.S. Navy ships are included.",
+  "visuals":[
+    {"id":"welding-face-protection","file":"shipboard-welding-face-protection.webp","heading":"Welder using face and hand protection aboard USS New Orleans","topics":["shipboard welding","welding helmet","welding face shield","welding gloves","kaynakçı maskesi","kaynakci maskesi","kaynak yüz siperi","kaynak yuz siperi","gemi kaynak PPE"],"sourceUrl":"https://commons.wikimedia.org/wiki/File:Welding_angle_iron_131219-N-SV688-018.jpg","credit":"U.S. Navy photo by MC2 Dominique Pineiro, VIRIN 131219-N-SV688-018","license":"Public domain - U.S. federal government work"},
+    {"id":"respirator-fit-test","file":"shipboard-respirator-fit-test.webp","heading":"Sailors performing a respirator fit test aboard USS Green Bay","topics":["respirator fit test","half-face respirator","respiratory protection","solunum maskesi","respiratör","respirator","respiratör uyum testi","respirator uyum testi","gemi respiratörü"],"sourceUrl":"https://commons.wikimedia.org/wiki/File:US_Navy_respirator_fit_test.jpg","credit":"U.S. Navy photo by MC1 Chris Williamson, VIRIN 160829-N-JH293-018","license":"Public domain - U.S. federal government work"}
+  ]
+}
