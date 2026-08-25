@@ -712,6 +712,24 @@ def curated_passenger_work_vessels_query(value: str, limit: int) -> list[dict]:
     return result[:limit]
 
 
+def curated_naval_support_vessels_query(value: str, limit: int) -> list[dict]:
+    root=Path(__file__).resolve().parents[1]/"assets"/"curated-naval-support-vessels-verified";manifest=root/"manifest.json"
+    if not manifest.is_file():return []
+    normalized=value.casefold();groups={
+        "virginia-class-submarine-underway":("denizaltı","denizalti","nükleer denizaltı","nukleer denizalti","submarine","attack submarine"),
+        "aircraft-carrier-turning":("uçak gemisi","ucak gemisi","uçak taşıyan savaş gemisi","ucak tasiyan savas gemisi","aircraft carrier","carrier flight deck"),
+        "noaa-research-ship":("araştırma gemisi","arastirma gemisi","oşinografi gemisi","osinografi gemisi","bilim gemisi","research vessel","oceanographic ship"),
+        "offshore-supply-vessel-underway":("açık deniz ikmal gemisi","acik deniz ikmal gemisi","platform destek gemisi","offshore supply vessel","platform supply vessel")}
+    preferred={k for k,phrases in groups.items() if any(p in normalized for p in phrases)}
+    if not preferred:return []
+    result=[]
+    for item in json.loads(manifest.read_text(encoding="utf-8"))["visuals"]:
+        if item["id"] not in preferred:continue
+        path=root/item["file"];digest=__import__("hashlib").sha256(path.read_bytes()).hexdigest()
+        result.append({"visual_key":f"curated:naval-support-vessels:{item['id']}","visual_type":"object","document_hash":"curated-naval-support-vessels-verified","page_number":None,"image_number":None,"asset_hash":digest,"file":str(path),"title":item["credit"],"volume":None,"heading":item["heading"],"context":f"Verified naval or support-vessel photograph. {item['license']}","topics":item["topics"],"sourcePaths":[item["sourceUrl"]],"rank":-2500.0,"assetUrl":f"http://127.0.0.1:31983/visuals/assets/{digest}.webp"})
+    return result[:limit]
+
+
 def terms(value: str) -> list[str]:
     aliases = {
         "şamandıra": "buoy", "samandira": "buoy",
@@ -788,6 +806,9 @@ def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = Fa
     if curated:
         return curated
     curated = curated_passenger_work_vessels_query(value, limit)
+    if curated:
+        return curated
+    curated = curated_naval_support_vessels_query(value, limit)
     if curated:
         return curated
     curated = curated_navigation_query(value, limit)
@@ -951,6 +972,10 @@ def resolve_asset(db: sqlite3.Connection, atlas: Path, digest: str) -> dict:
             return {"asset_hash":digest,"file":str(path),"width":None,"height":None,"visual_type":"object","absolutePath":str(path.resolve())}
     passenger_work_root=Path(__file__).resolve().parents[1]/"assets"/"curated-passenger-work-vessels-verified"
     for path in passenger_work_root.glob("*.webp"):
+        if __import__("hashlib").sha256(path.read_bytes()).hexdigest()==digest:
+            return {"asset_hash":digest,"file":str(path),"width":None,"height":None,"visual_type":"object","absolutePath":str(path.resolve())}
+    naval_support_root=Path(__file__).resolve().parents[1]/"assets"/"curated-naval-support-vessels-verified"
+    for path in naval_support_root.glob("*.webp"):
         if __import__("hashlib").sha256(path.read_bytes()).hexdigest()==digest:
             return {"asset_hash":digest,"file":str(path),"width":None,"height":None,"visual_type":"object","absolutePath":str(path.resolve())}
     statements = [

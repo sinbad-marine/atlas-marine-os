@@ -311,6 +311,18 @@ def test_verified_passenger_and_work_vessel_photos_match_exact_classes():
     assert MODULE.curated_passenger_work_vessels_query("radar ekranı",3)==[]
 
 
+def test_verified_naval_and_support_vessel_photos_match_exact_classes():
+    submarine=MODULE.curated_naval_support_vessels_query("nükleer denizaltı fotoğrafı",3)
+    carrier=MODULE.curated_naval_support_vessels_query("uçak gemisi nasıl görünür",3)
+    research=MODULE.curated_naval_support_vessels_query("oşinografi araştırma gemisini göster",3)
+    osv=MODULE.curated_naval_support_vessels_query("açık deniz ikmal gemisi fotoğrafı",3)
+    assert submarine[0]["visual_key"]=="curated:naval-support-vessels:virginia-class-submarine-underway"
+    assert carrier[0]["visual_key"]=="curated:naval-support-vessels:aircraft-carrier-turning"
+    assert research[0]["visual_key"]=="curated:naval-support-vessels:noaa-research-ship"
+    assert osv[0]["visual_key"]=="curated:naval-support-vessels:offshore-supply-vessel-underway"
+    assert MODULE.curated_naval_support_vessels_query("can simidi",3)==[]
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -339,4 +351,5 @@ if __name__ == "__main__":
     test_verified_vessel_type_photos_match_exact_ship_classes()
     test_verified_specialized_vessel_photos_match_exact_ship_classes()
     test_verified_passenger_and_work_vessel_photos_match_exact_classes()
-    print("27 curated visual query tests passed")
+    test_verified_naval_and_support_vessel_photos_match_exact_classes()
+    print("28 curated visual query tests passed")
