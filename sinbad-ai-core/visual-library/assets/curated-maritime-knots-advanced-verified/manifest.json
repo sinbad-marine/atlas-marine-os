@@ -1,0 +1,9 @@
+{
+  "schemaVersion":"sinbad-curated-maritime-knots-advanced/1",
+  "licensePolicy":"Only individually verified public-domain or CC BY-SA maritime ropework photographs are included.",
+  "visuals":[
+    {"id":"reef-knot","file":"reef-knot.webp","heading":"Reef knot joining two rope ends","topics":["reef knot","square knot","camadan bağı","camadan bagi","düz düğüm","duz dugum"],"sourceUrl":"https://commons.wikimedia.org/wiki/File:Knoten_Kreuzknoten.jpg","credit":"Photo by Jiver","license":"Public domain - released by the copyright holder"},
+    {"id":"sheet-bend","file":"sheet-bend.webp","heading":"Sheet bend joining ropes of different sizes","topics":["sheet bend","single sheet bend","sancak bağı","sancak bagi","iskota bağı","iskota bagi","farklı çaplı halatları bağlama"],"sourceUrl":"https://commons.wikimedia.org/wiki/File:Sheet_Bend_-_ABoK_1431_-_USCG.jpg","credit":"U.S. Coast Guard PTC Developer — ABoK 1431","license":"CC0 1.0 Universal Public Domain Dedication"},
+    {"id":"eye-splice","file":"eye-splice.webp","heading":"Finished eye splice in fibre rope","topics":["eye splice","rope eye splice","halat gözü","halat gozu","halat dikişi","halat dikisi","kasa yapmak"],"sourceUrl":"https://commons.wikimedia.org/wiki/File:Rope_Eye_splice_finished.jpg","credit":"Photo by Rasbak","license":"CC BY-SA 3.0"}
+  ]
+}
