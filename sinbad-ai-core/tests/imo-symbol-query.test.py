@@ -393,6 +393,17 @@ def test_kaiyodai_navigation_schematics_match_exact_concepts():
     assert MODULE.curated_kaiyodai_navigation_schematics_query("can salı",3)==[]
 
 
+def test_bluenavi_architecture_schematics_match_exact_stations():
+    ship=MODULE.curated_bluenavi_architecture_schematics_query("BlueNavi gemi istasyonu mimarisi",3)
+    land=MODULE.curated_bluenavi_architecture_schematics_query("BlueNavi kara istasyonu mimarisi",3)
+    minimal=MODULE.curated_bluenavi_architecture_schematics_query("minimum AIS kara istasyonu",3)
+    assert ship[0]["visual_key"]=="curated:bluenavi-architecture:ship-station"
+    assert land[0]["visual_key"]=="curated:bluenavi-architecture:full-land-station"
+    assert minimal[0]["visual_key"]=="curated:bluenavi-architecture:minimized-land-station"
+    assert all("Creative Commons Attribution 4.0" in item[0]["context"] for item in (ship,land,minimal))
+    assert MODULE.curated_bluenavi_architecture_schematics_query("can salı",3)==[]
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -429,4 +440,5 @@ if __name__ == "__main__":
     test_verified_shipboard_ppe_photos_match_exact_protection()
     test_verified_shipboard_industrial_ppe_matches_exact_protection()
     test_kaiyodai_navigation_schematics_match_exact_concepts()
-    print("35 curated visual query tests passed")
+    test_bluenavi_architecture_schematics_match_exact_stations()
+    print("36 curated visual query tests passed")
