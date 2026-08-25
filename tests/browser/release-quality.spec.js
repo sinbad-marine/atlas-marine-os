@@ -556,7 +556,7 @@ test('student can interrupt Sinbad narration with a name-gated follow-up',async(
     Object.defineProperty(window,'speechSynthesis',{configurable:true,value:{speaking:false,getVoices:()=>[{lang:'tr-TR',name:'Test'}],cancel(){this.speaking=false;},speak(utterance){this.speaking=true;this.utterance=utterance;}}});
     localStorage.setItem('atlas_selected_workspace','workspace-test');
   });
-  await page.route('**/vendor/supabase-2.112.3.js',route=>route.fulfill({contentType:'application/javascript',body:`window.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:{user:{id:'test-user'}}}}),onAuthStateChange:()=>({})},functions:{invoke:async(_name,request)=>({data:{answer:'İlk açıklama devam ediyor.',spokenSummary:'İlk açıklama devam ediyor.',visuals:[],coreGateVersion:request.body.coreEnvelope.gateVersion,permission:'DECISION_SUPPORT_ONLY',executionPerformed:false},error:null})}})};`}));
+  await page.route('**/vendor/supabase-2.112.3.js',route=>route.fulfill({contentType:'application/javascript',body:`window.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:{user:{id:'test-user'}}}}),onAuthStateChange:()=>({})},functions:{invoke:async(_name,request)=>({data:{answer:'İlk açıklama devam ediyor.',spokenSummary:'İlk açıklama devam ediyor.',visuals:[],coreGateVersion:request.body.coreEnvelope.gateVersion,coreDecision:request.body.coreEnvelope.analysis,permission:'DECISION_SUPPORT_ONLY',executionPerformed:false},error:null})}})};`}));
   await page.goto('/academy-professor-native.html');
   await expect(page.locator('#academyCloudStatus')).toContainText('Atlas knowledge connected');
   await page.getByRole('button',{name:'Sınıf araçları menüsünü aç'}).click();

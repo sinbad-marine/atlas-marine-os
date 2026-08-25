@@ -77,6 +77,9 @@ test('standalone Academy is a live free-form voice and text classroom, not a req
 test('Academy Core gate rejects empty and whitespace-only answers before rendering',()=>{
   assert.match(academyApp,/function coreAnswerIsTrusted\(data,envelope\)/);
   assert.match(academyApp,/String\(data\?\.answer\|\|''\)\.trim\(\)/);
+  assert.match(academyApp,/SinbadCoreDecision\?\.answerIsSafe\?\.\(answer\)===true/);
+  assert.match(academyApp,/decision\.risk===expected\.risk/);
+  assert.match(academyApp,/requiresIndependentVerification/);
   assert.doesNotMatch(academyApp,/Boolean\(data\?\.answer&&/);
   assert.ok(academyApp.indexOf('if(!coreAnswerIsTrusted(data,coreEnvelope))')<academyApp.indexOf('const answer=String(data.answer).trim()'));
 });
