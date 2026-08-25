@@ -299,6 +299,18 @@ def test_verified_specialized_vessel_photos_match_exact_ship_classes():
     assert MODULE.curated_specialized_vessels_query("can salı fotoğrafı",3)==[]
 
 
+def test_verified_passenger_and_work_vessel_photos_match_exact_classes():
+    cruise=MODULE.curated_passenger_work_vessels_query("kruvaziyer gemisinin fotoğrafını göster",3)
+    ferry=MODULE.curated_passenger_work_vessels_query("yolcu feribotu nasıl görünür",3)
+    trawler=MODULE.curated_passenger_work_vessels_query("balıkçı trolü fotoğrafı",3)
+    dredger=MODULE.curated_passenger_work_vessels_query("deniz dibi tarama gemisi görseli",3)
+    assert cruise[0]["visual_key"]=="curated:passenger-work-vessels:cruise-ship-underway"
+    assert ferry[0]["visual_key"]=="curated:passenger-work-vessels:passenger-ferry-underway"
+    assert trawler[0]["visual_key"]=="curated:passenger-work-vessels:fishing-trawler-underway"
+    assert dredger[0]["visual_key"]=="curated:passenger-work-vessels:dredger-viking"
+    assert MODULE.curated_passenger_work_vessels_query("radar ekranı",3)==[]
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -326,4 +338,5 @@ if __name__ == "__main__":
     test_verified_hull_underwater_photos_match_exact_components()
     test_verified_vessel_type_photos_match_exact_ship_classes()
     test_verified_specialized_vessel_photos_match_exact_ship_classes()
-    print("26 curated visual query tests passed")
+    test_verified_passenger_and_work_vessel_photos_match_exact_classes()
+    print("27 curated visual query tests passed")
