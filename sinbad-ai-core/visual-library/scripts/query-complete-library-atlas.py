@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import hashlib
 import json
 import re
 import sqlite3
@@ -848,6 +849,33 @@ def curated_kaiyodai_navigation_schematics_query(value: str, limit: int) -> list
     return result[:limit]
 
 
+def render_chart_table_highlight(path: Path, box: list[float] | None,
+                                 column: str | None) -> tuple[Path, str] | None:
+    """Render a deterministic whole-table image with the matching row/cell marked."""
+    if not box or len(box) != 4:
+        return None
+    from PIL import Image, ImageDraw
+
+    cache = path.parent / "highlight-cache"
+    cache.mkdir(exist_ok=True)
+    identity = f"{hashlib.sha256(path.read_bytes()).hexdigest()}:{box}:{column or 'row'}:v1"
+    cache_key = hashlib.sha256(identity.encode("utf-8")).hexdigest()
+    cached = cache / f"{cache_key}.webp"
+    if not cached.is_file():
+        with Image.open(path).convert("RGBA") as source:
+            left = max(0, min(source.width - 1, round(box[0] * source.width)))
+            top = max(0, min(source.height - 1, round(box[1] * source.height)))
+            right = max(left + 1, min(source.width, round(box[2] * source.width)))
+            bottom = max(top + 1, min(source.height, round(box[3] * source.height)))
+            overlay = Image.new("RGBA", source.size, (0, 0, 0, 0))
+            draw = ImageDraw.Draw(overlay)
+            draw.rectangle((left, top, right, bottom), fill=(255, 214, 64, 58),
+                           outline=(229, 139, 0, 255), width=max(4, source.width // 220))
+            rendered = Image.alpha_composite(source, overlay).convert("RGB")
+            rendered.save(cached, "WEBP", quality=94, method=6)
+    return cached, hashlib.sha256(cached.read_bytes()).hexdigest()
+
+
 def chart_no_1_table_page_query(value: str, limit: int) -> list[dict]:
     root = Path(__file__).resolve().parents[1] / "assets" / "nga-chart-no-1"
     manifest_path = root / "manifest.json"
@@ -871,7 +899,7 @@ def chart_no_1_table_page_query(value: str, limit: int) -> list[dict]:
         (("alan", "sınır", "sinir", "area", "limit", "demirleme", "anchorage", "yasak bölge", "yasak bolge", "restricted area"), tuple(range(71, 78))),
         (("fener", "light", "ışık", "isik", "lighthouse", "sektör ışığı", "sektor isigi", "sector light"), tuple(range(78, 89))),
         (("ecdis renk", "ecdis sembol", "ecdis symbol", "simplified symbol", "paper chart symbol"), (89,)),
-        (("şamandıra", "samandira", "buoy", "beacon", "kardinal", "cardinal", "lateral", "topmark", "tepe işareti", "tepe isareti"), tuple(range(90, 103))),
+        (("şamandıra", "şamandırası", "samandira", "samandirasi", "buoy", "beacon", "tecrit edilmiş", "tescil edilmiş", "isolated danger", "kardinal", "cardinal", "lateral", "topmark", "tepe işareti", "tepe isareti"), tuple(range(90, 103))),
         (("sis işareti", "sis isareti", "fog signal", "düdük", "duduk", "whistle", "siren"), (103,)),
         (("radar", "radio", "radyo", "uydu seyri", "satellite navigation", "ais", "racons", "racon"), tuple(range(104, 107))),
         (("hizmet", "service", "pilot", "kılavuz", "kilavuz", "sahil güvenlik", "sahil guvenlik", "coastguard"), tuple(range(107, 109))),
@@ -883,8 +911,61 @@ def chart_no_1_table_page_query(value: str, limit: int) -> list[dict]:
         return re.search(rf"(?<!\w){re.escape(alias)}(?!\w)", normalized, re.UNICODE) is not None
 
     pages = next((page_numbers for aliases, page_numbers in sections if any(contains_alias(alias) for alias in aliases)), ())
-    if not pages or not any(term in normalized for term in ("harita", "sembol", "işaret", "isaret", "chart", "göster", "goster", "görsel", "gorsel")):
+    # Only explicit chart/symbol/table requests belong here. A generic photo or
+    # device request (for example an AIS display) must remain in the object atlas.
+    if not pages or not any(term in normalized for term in
+                            ("harita", "sembol", "işaret", "isaret", "chart", "tablo")):
         return []
+    table_root = Path(__file__).resolve().parents[1] / "assets" / "nga-chart-no-1-table-atlas"
+    table_manifest_path = table_root / "manifest.json"
+    if table_manifest_path.is_file():
+        table_manifest = json.loads(table_manifest_path.read_text(encoding="utf-8"))
+        table_by_page = {table["page"]: table for table in table_manifest.get("tables", [])}
+        aliases = {"kaya": "rock", "batık": "wreck", "batik": "wreck", "sığlık": "shoal",
+                   "siglik": "shoal", "fener": "light", "ışık": "light", "isik": "light",
+                   "şamandıra": "buoy", "şamandırası": "buoy", "samandira": "buoy", "samandirasi": "buoy",
+                   "sığlık": "danger", "siglik": "danger", "tecrit": "isolated", "tescil": "isolated",
+                   "akıntı": "current", "akinti": "current",
+                   "gelgit": "tide", "kablo": "cable", "boru": "pipeline", "demirleme": "anchorage"}
+        ignored = {"harita", "sembol", "işaret", "isaret", "göster", "goster", "görsel", "gorsel", "tablo"}
+        needles = set(re.findall(r"[^\W\d_][\w-]{2,}", normalized, re.UNICODE)) - ignored
+        needles.update(aliases[word] for word in tuple(needles) if word in aliases)
+        requested_column = next((column for term, column in (("ecdis", "ecdis"), ("noaa", "noaa"),
+                                ("other nga", "other-nga"), ("nga", "nga"), ("int", "int"))
+                                 if contains_alias(term)), None)
+        candidates = []
+        for page in pages:
+            table = table_by_page.get(page)
+            if not table:
+                continue
+            best_row, best_score = None, 0
+            for row in table.get("rows", []):
+                haystack = f"{row.get('description', '')} {row.get('context', '')} {' '.join(row.get('topics', []))}".casefold()
+                score = sum(1 for needle in needles if needle in haystack)
+                if score > best_score:
+                    best_row, best_score = row, score
+            candidates.append((best_score, page, table, best_row))
+        if candidates:
+            result = []
+            for score, page, table, row in sorted(candidates, key=lambda item: (-item[0], item[1]))[:limit]:
+                path = table_root / table["file"]
+                highlight = None if not row else row["cellBoxes"].get(requested_column) if requested_column else row["rowBox"]
+                highlighted = render_chart_table_highlight(path, highlight, requested_column)
+                selected_path = highlighted[0] if highlighted else path
+                selected_hash = highlighted[1] if highlighted else table["sha256"]
+                result.append({
+                    "visual_key": f"nga-chart-no-1:table:{page}:{selected_hash}",
+                    "visual_type": "chart-table-highlight" if highlighted else "chart-table",
+                    "document_hash": table_manifest["sourceDocumentSha256"], "page_number": page,
+                    "image_number": row.get("symbolNumber") if row else None, "asset_hash": selected_hash,
+                    "file": str(selected_path), "title": "U.S. Chart No. 1 - Whole Table Atlas", "volume": None,
+                    "heading": table["headings"][0], "context": row.get("context", "") if row else "",
+                    "topics": row.get("topics", []) if row else [], "highlightBox": highlight,
+                    "highlightColumn": requested_column, "sourcePaths": [table_manifest["sourceUrl"]],
+                    "rank": -3200.0 - score,
+                    "assetUrl": f"http://127.0.0.1:31983/visuals/assets/{selected_hash}.webp",
+                })
+            return result
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     by_page = {visual["occurrences"][0]["pdfPage"]: visual for visual in manifest.get("visuals", [])}
     result = []
@@ -1095,6 +1176,15 @@ def resolve_asset(db: sqlite3.Connection, atlas: Path, digest: str) -> dict:
         if __import__("hashlib").sha256(path.read_bytes()).hexdigest() == digest:
             return {"asset_hash": digest, "file": str(path), "width": None, "height": None,
                     "visual_type": "chart-table-page", "absolutePath": str(path.resolve())}
+    chart_tables_root = Path(__file__).resolve().parents[1] / "assets" / "nga-chart-no-1-table-atlas"
+    for path in chart_tables_root.glob("table-page-*.webp"):
+        if __import__("hashlib").sha256(path.read_bytes()).hexdigest() == digest:
+            return {"asset_hash": digest, "file": str(path), "width": None, "height": None,
+                    "visual_type": "chart-table", "absolutePath": str(path.resolve())}
+    for path in (chart_tables_root / "highlight-cache").glob("*.webp"):
+        if __import__("hashlib").sha256(path.read_bytes()).hexdigest() == digest:
+            return {"asset_hash": digest, "file": str(path), "width": None, "height": None,
+                    "visual_type": "chart-table-highlight", "absolutePath": str(path.resolve())}
     navigation_root = Path(__file__).resolve().parents[1] / "assets" / "curated-navigation-verified"
     for path in navigation_root.glob("*.webp"):
         if __import__("hashlib").sha256(path.read_bytes()).hexdigest() == digest:

@@ -24,16 +24,23 @@ def test_chart_no_1_questions_use_complete_public_domain_table_pages():
     results = MODULE.chart_no_1_table_page_query("batık harita sembolünü göster", 3)
     assert results
     assert results[0]["page_number"] == 52
-    assert all(item["visual_type"] == "chart-table-page" for item in results)
+    assert all(item["visual_type"] == "chart-table-highlight" for item in results)
     assert all(item["document_hash"] == "247f548eaa45db815e1c49fea9785e966a6e8dd9e4771abc26d4dad473488a1e" for item in results)
     resolved = MODULE.resolve_asset(None, Path("."), results[0]["asset_hash"])
-    assert resolved["visual_type"] == "chart-table-page"
+    assert resolved["visual_type"] == "chart-table-highlight"
     assert Path(resolved["absolutePath"]).is_file()
-    assert MODULE.chart_no_1_table_page_query("şamandıra harita sembolünü göster", 1)[0]["page_number"] == 90
-    assert MODULE.chart_no_1_table_page_query("radar harita sembolünü göster", 1)[0]["page_number"] == 104
-    assert MODULE.chart_no_1_table_page_query("gelgit akıntı tablosunu göster", 1)[0]["page_number"] == 39
-    assert MODULE.chart_no_1_table_page_query("liman rıhtım sembollerini göster", 1)[0]["page_number"] == 32
-    assert MODULE.chart_no_1_table_page_query("pilot hizmet sembolünü göster", 1)[0]["page_number"] == 107
+    assert results[0]["highlightBox"] is not None
+    assert MODULE.chart_no_1_table_page_query("şamandıra harita sembolünü göster", 1)[0]["page_number"] in range(90, 103)
+    assert MODULE.chart_no_1_table_page_query("radar harita sembolünü göster", 1)[0]["page_number"] in range(104, 107)
+    assert MODULE.chart_no_1_table_page_query("gelgit akıntı tablosunu göster", 1)[0]["page_number"] in range(39, 43)
+    assert MODULE.chart_no_1_table_page_query("liman rıhtım sembollerini göster", 1)[0]["page_number"] in range(32, 39)
+    assert MODULE.chart_no_1_table_page_query("pilot hizmet sembolünü göster", 1)[0]["page_number"] in range(107, 109)
+    isolated = MODULE.chart_no_1_table_page_query(
+        "tescil edilmiş sığlık şamandırası sembolünü göster", 1
+    )[0]
+    assert isolated["page_number"] == 101
+    assert isolated["image_number"] == "130.4"
+    assert isolated["visual_type"] == "chart-table-highlight"
 
 
 def test_epirb_and_sart_resolve_to_distinct_official_symbols():

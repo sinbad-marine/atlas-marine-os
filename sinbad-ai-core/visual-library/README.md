@@ -39,11 +39,14 @@ present in the local SINBAD corpus. Page number, original document checksum and
 render checksum are retained independently. This document-first extraction is
 the default path; external image search is only for genuine corpus gaps.
 
-Chart-symbol queries use the complete table pages from the 131-page atlas,
-rather than fragile row crops. This preserves every NOAA/NGA/INT/ECDIS column,
-multi-line explanation and adjacent legend exactly as published. The query
-bridge maps Turkish and English subject aliases to the relevant whole pages and
-serves them by immutable render hash.
+Chart-symbol queries use whole table/plate crops from the 131-page atlas,
+rather than fragile row-only crops. This preserves every NOAA/NGA/INT/ECDIS
+column, multi-line explanation and adjacent legend exactly as published. The
+`nga-chart-no-1-table-atlas` manifest records the subject text, symbol number,
+normalized row box and normalized column-cell boxes for each recognized row.
+The query bridge maps Turkish and English aliases to the best row, renders a
+content-addressed whole-table WebP with that row (or the requested standard's
+cell) highlighted, and retains the original publication/page provenance.
 
 ## Complete private-library atlas
 
