@@ -1005,6 +1005,7 @@ def terms(value: str) -> list[str]:
         "fotograf", "fotoğrafı", "fotografi", "fotoğrafını", "fotografini",
         "cihaz", "cihazı", "cihazi", "cihazını", "cihazini", "ekipman",
         "show", "display", "image", "picture", "photo", "photograph", "please",
+        "table", "tablo", "diagram", "vector", "şema", "sema", "çizim", "cizim",
     }
     normalized = value.casefold()
     found: list[str] = []
@@ -1092,6 +1093,45 @@ def rerank_visual_rows(rows: list, wanted: list[str], query_text: str, limit: in
                                   0 if item.get("visual_type") == "object" else 1,
                                   item.get("visual_key") or ""))
     return ranked[:limit]
+
+
+def filter_visual_quality(db: sqlite3.Connection, rows: list) -> list:
+    """Batch-load dimensions for the bounded FTS pool; avoid per-row SQL scans."""
+    object_keys = sorted({(row["document_hash"], row["page_number"], row["image_number"])
+                          for row in rows if row["visual_type"] == "object"})
+    region_keys = sorted({(row["document_hash"], row["page_number"], row["image_number"])
+                          for row in rows if row["visual_type"] in {"table", "vector"}})
+
+    def viable(width: int, height: int, minimum_area: int, minimum_ratio: float,
+               maximum_ratio: float) -> bool:
+        return bool(width and height and width * height >= minimum_area and
+                    minimum_ratio <= width / height <= maximum_ratio)
+
+    valid_objects = set(object_keys)
+    if object_keys and table_exists(db, "embedded_visuals"):
+        placeholders = ",".join("(?,?,?)" for _ in object_keys)
+        values = [value for key in object_keys for value in key]
+        found = db.execute(
+            f"select document_hash,page_number,image_number,width,height from embedded_visuals "
+            f"where status='ready' and (document_hash,page_number,image_number) in ({placeholders})",
+            values,
+        )
+        valid_objects = {(row["document_hash"], row["page_number"], row["image_number"])
+                         for row in found if viable(row["width"], row["height"], 150000, 0.25, 4.0)}
+    valid_regions = set(region_keys)
+    if region_keys and table_exists(db, "visual_regions"):
+        placeholders = ",".join("(?,?,?)" for _ in region_keys)
+        values = [value for key in region_keys for value in key]
+        found = db.execute(
+            f"select document_hash,page_number,region_number,width,height from visual_regions "
+            f"where status='ready' and (document_hash,page_number,region_number) in ({placeholders})",
+            values,
+        )
+        valid_regions = {(row["document_hash"], row["page_number"], row["region_number"])
+                         for row in found if viable(row["width"], row["height"], 120000, 0.20, 5.0)}
+    return [row for row in rows if row["visual_type"] not in {"object", "table", "vector"}
+            or (row["document_hash"], row["page_number"], row["image_number"])
+            in (valid_objects if row["visual_type"] == "object" else valid_regions)]
 
 
 def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = False) -> list[dict]:
@@ -1187,7 +1227,8 @@ def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = Fa
         return []
     indexed = table_exists(db, "visual_search")
     if indexed:
-        expression = " OR ".join(f'"{word.replace(chr(34), chr(34) * 2)}"' for word in wanted)
+        quoted = [f'"{word.replace(chr(34), chr(34) * 2)}"' for word in wanted]
+        expression = " AND ".join(quoted)
         type_clause = " and visual_type='object'" if object_only else ""
         candidate_limit = min(200, max(40, limit * 12))
         rows = db.execute(
@@ -1198,6 +1239,16 @@ def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = Fa
                order by rank,case visual_type when 'object' then 0 when 'table' then 1 when 'vector' then 1 else 2 end limit ?""",
             (expression, candidate_limit),
         ).fetchall()
+        if not rows and len(quoted) > 1:
+            rows = db.execute(
+                """select visual_key,visual_type,document_hash,page_number,image_number,asset_hash,file,
+                          title,volume,heading,context,topics,source_paths,
+                          bm25(visual_search,0,0,0,0,0,0,0,2,1,8,3,6,0) rank
+                   from visual_search where visual_search match ?""" + type_clause + """
+                   order by rank,case visual_type when 'object' then 0 when 'table' then 1 when 'vector' then 1 else 2 end limit ?""",
+                (" OR ".join(quoted), candidate_limit),
+            ).fetchall()
+        rows = filter_visual_quality(db, rows)
         rows = rerank_visual_rows(rows, wanted, value, limit - len(curated))
     else:
         clauses = " or ".join("lower(coalesce(p.heading,'')||' '||p.context||' '||p.topics) like ?" for _ in wanted)

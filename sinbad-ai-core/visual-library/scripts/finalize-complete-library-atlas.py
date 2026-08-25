@@ -14,6 +14,20 @@ SCHEMA = "sinbad-complete-visual-atlas/1"
 FINAL_SCHEMA = "sinbad-complete-visual-atlas-final/1"
 
 
+def structure_overrides() -> dict[str, dict]:
+    path = Path(__file__).resolve().parents[1] / "publication-structure-overrides.json"
+    if not path.is_file():
+        return {}
+    return json.loads(path.read_text(encoding="utf-8")).get("documents", {})
+
+
+def structured_heading(override: dict, page_number: int, fallback: str | None) -> str | None:
+    for section in override.get("sections", []):
+        if section["fromPage"] <= page_number <= section["toPage"]:
+            return section["heading"]
+    return fallback
+
+
 def sha_file(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as stream:
@@ -47,6 +61,7 @@ def connect(atlas: Path) -> sqlite3.Connection:
 
 
 def build_search_index(db: sqlite3.Connection) -> None:
+    overrides = structure_overrides()
     db.executescript("""
       create table if not exists source_metadata(
         document_hash text primary key,title text not null,volume text,
@@ -68,6 +83,8 @@ def build_search_index(db: sqlite3.Connection) -> None:
         if not paths:
             continue
         title, volume = source_labels(paths[0])
+        override = overrides.get(digest, {})
+        title = override.get("title", title)
         paths_json = json.dumps(paths, ensure_ascii=False, separators=(",", ":"))
         db.execute("insert into source_metadata values(?,?,?,?,?)", (digest, title, volume, paths[0], paths_json))
         pages = db.execute(
@@ -77,7 +94,8 @@ def build_search_index(db: sqlite3.Connection) -> None:
         for page in pages:
             values = (
                 f"page:{digest}:{page['page_number']}", "page", digest, page["page_number"], None,
-                page["asset_hash"], page["file"], title, volume, page["heading"], page["context"],
+                page["asset_hash"], page["file"], title, volume,
+                structured_heading(override, page["page_number"], page["heading"]), page["context"],
                 page["topics"], paths_json,
             )
             db.execute("insert into visual_search values(?,?,?,?,?,?,?,?,?,?,?,?,?)", values)
@@ -92,7 +110,8 @@ def build_search_index(db: sqlite3.Connection) -> None:
             values = (
                 f"object:{digest}:{item['page_number']}:{item['image_number']}", "object", digest,
                 item["page_number"], item["image_number"], item["asset_hash"], item["file"], title,
-                volume, item["heading"], item["context"], item["topics"], paths_json,
+                volume, structured_heading(override, item["page_number"], item["heading"]),
+                item["context"], item["topics"], paths_json,
             )
             db.execute("insert into visual_search values(?,?,?,?,?,?,?,?,?,?,?,?,?)", values)
         if db.execute("select 1 from sqlite_master where name='visual_regions'").fetchone():
@@ -106,7 +125,8 @@ def build_search_index(db: sqlite3.Connection) -> None:
                 values = (
                     f"region:{digest}:{item['page_number']}:{item['region_number']}", item["kind"], digest,
                     item["page_number"], item["region_number"], item["asset_hash"], item["file"], title,
-                    volume, item["heading"], item["context"], item["topics"], paths_json,
+                    volume, structured_heading(override, item["page_number"], item["heading"]),
+                    item["context"], item["topics"], paths_json,
                 )
                 db.execute("insert into visual_search values(?,?,?,?,?,?,?,?,?,?,?,?,?)", values)
     db.execute("insert or replace into meta values('final_schema_version',?)", (FINAL_SCHEMA,))

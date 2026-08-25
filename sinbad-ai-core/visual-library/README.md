@@ -54,6 +54,10 @@ Every book, article and source document uses the same document-first method:
 This provenance contract applies to all future corpus extraction, not only
 Chart No. 1. It lets Captain Sinbad explain from a source passage and attach the
 photograph, drawing or table that actually belongs to that passage.
+When a PDF's text layer does not expose visible section headings, verified page
+ranges and publication titles are retained in
+`publication-structure-overrides.json`; finalization applies them uniformly to
+page plates, embedded visuals and table/vector regions.
 
 Retrieval uses a two-stage bounded algorithm. Unicode FTS5 first selects at
 most `min(200, max(40, 12 × requested_results))` candidates with weighted BM25
@@ -70,6 +74,14 @@ visual bound to a matching passage. Results expose `semanticScore` and
 Candidates sharing the same immutable asset hash are collapsed, so duplicate
 library locations cannot repeat one image. Explicit table, diagram/drawing and
 photograph requests receive a type-intent bonus before final selection.
+Before BM25 ranking, complete-atlas candidates pass a dimension/aspect quality
+gate backed by the source extraction tables. Thin page backgrounds, decorative
+rules, small section-number badges and sparse micro-regions never enter the
+semantic candidate pool.
+FTS treats media words such as table, diagram, vector and photograph as intent
+rather than subject tokens. Multi-token subject searches use strict AND first
+and fall back to OR only when the strict search is empty, avoiding expensive
+library-wide matches on generic words such as `ship`.
 
 `nga-chart-no-1-atlas.js` indexes page-rendered official symbol plates already
 present in the local SINBAD corpus. Page number, original document checksum and

@@ -64,6 +64,29 @@ def test_semantic_visual_reranker_deduplicates_assets_and_honors_table_intent():
     assert len(MODULE.rerank_visual_rows(bowditch_copies, ["sailing"], "sailing diagram", 3)) == 1
 
 
+def test_complete_atlas_batch_quality_gate_rejects_page_decorations():
+    db = sqlite3.connect(":memory:")
+    db.row_factory = sqlite3.Row
+    db.executescript("""
+      create table embedded_visuals(document_hash text,page_number integer,image_number integer,
+        width integer,height integer,status text);
+      create table visual_regions(document_hash text,page_number integer,region_number integer,
+        width integer,height integer,status text);
+    """)
+    db.executemany("insert into embedded_visuals values(?,?,?,?,?,?)", [
+        ("d", 1, 1, 145, 794, "ready"),
+        ("d", 1, 2, 700, 1090, "ready"),
+    ])
+    db.execute("insert into visual_regions values(?,?,?,?,?,?)", ("d", 1, 1, 307, 307, "ready"))
+    rows = [
+        {"visual_type": "object", "document_hash": "d", "page_number": 1, "image_number": 1},
+        {"visual_type": "object", "document_hash": "d", "page_number": 1, "image_number": 2},
+        {"visual_type": "vector", "document_hash": "d", "page_number": 1, "image_number": 1},
+    ]
+    assert MODULE.filter_visual_quality(db, rows) == [rows[1]]
+    assert MODULE.terms("ship to ship mooring photograph diagram") == ["ship", "mooring"]
+
+
 def test_chart_no_1_questions_use_complete_public_domain_table_pages():
     results = MODULE.chart_no_1_table_page_query("batık harita sembolünü göster", 3)
     assert results
@@ -465,6 +488,7 @@ if __name__ == "__main__":
     test_object_photo_request_does_not_route_to_symbol_collection()
     test_semantic_visual_reranker_prefers_text_bound_exact_subject()
     test_semantic_visual_reranker_deduplicates_assets_and_honors_table_intent()
+    test_complete_atlas_batch_quality_gate_rejects_page_decorations()
     test_epirb_and_sart_resolve_to_distinct_official_symbols()
     test_escape_emergency_and_fire_queries_stay_in_their_categories()
     test_prohibition_warning_and_mandatory_queries_use_exact_current_symbols()
@@ -498,4 +522,4 @@ if __name__ == "__main__":
     test_verified_shipboard_ppe_photos_match_exact_protection()
     test_verified_shipboard_industrial_ppe_matches_exact_protection()
     test_kaiyodai_navigation_schematics_match_exact_concepts()
-    print("37 curated visual query tests passed")
+    print("38 curated visual query tests passed")
