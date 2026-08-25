@@ -66,6 +66,14 @@ test('dashboard counts and local Sinbad fallback cannot disclose private library
   assert.match(app,/async function refreshCloudSummary\(\)\{[\s\S]*?if\(!roleCanAccessPrivateSources\(\)\)\{[\s\S]*?\['sumFiles','sumPubs','sumCharts','sumStorage'\]/);
 });
 
+test('private cloud library mutations enforce the same role gate as their hidden controls',()=>{
+  assert.match(app,/function roleCanManagePrivateLibrary\(\)\{\s*return roleCanManageLibrary\(\)&&roleCanAccessPrivateSources\(\);\s*\}/);
+  assert.match(app,/async function repairCloudDocumentKnowledge\([\s\S]*?if\(!roleCanManagePrivateLibrary\(\)\)throw new Error/);
+  for(const name of ['indexCloudDocument','renameCloudFile','deleteCloudFile']){
+    assert.match(app,new RegExp(`async function ${name}\\([^)]*\\)\\{[\\s\\S]{0,220}?if\\(!roleCanManagePrivateLibrary\\(\\)\\)`));
+  }
+});
+
 test('Storage RLS limits original library bytes to owner and authorized developer roles',()=>{
   assert.match(storagePolicy,/alter policy atlas_storage_select_member\s+on storage\.objects/i);
   assert.match(storagePolicy,/array\['atlas-documents'::text, 'nautical-publications'::text\]/);
