@@ -848,6 +848,25 @@ def curated_kaiyodai_navigation_schematics_query(value: str, limit: int) -> list
     return result[:limit]
 
 
+def curated_noaa_tides_diagrams_query(value: str, limit: int) -> list[dict]:
+    root=Path(__file__).resolve().parents[1]/"assets"/"curated-noaa-tides-diagrams";manifest=root/"manifest.json"
+    if not manifest.is_file():return []
+    normalized=value.casefold();groups={
+        "spring-tides":("spring tide","spring tides","sizici gelgit","büyük gelgit","buyuk gelgit","güneş dünya ay aynı hizada","gunes dunya ay ayni hizada"),
+        "neap-tides":("neap tide","neap tides","kırık gelgit","kirik gelgit","küçük gelgit","kucuk gelgit","güneş ay dik açı","gunes ay dik aci"),
+        "perigee-apogee":("perigee apogee","perige apoge","yerberi yeröte","yerberi yerote","ayın eliptik yörüngesi","ayin eliptik yorungesi","gelgit aralığı"),
+        "diurnal-inequality":("diurnal inequality","günlük gelgit eşitsizliği","gunluk gelgit esitsizligi","lunar declination","ayın sapması","ayin sapmasi","deklinasyon gelgit"),
+        "tide-types":("gelgit türleri","gelgit turleri","diurnal semidiurnal mixed","günlük yarı günlük karma gelgit","gunluk yari gunluk karma gelgit","marigram types")}
+    preferred={k for k,phrases in groups.items() if any(p in normalized for p in phrases)}
+    if not preferred:return []
+    data=json.loads(manifest.read_text(encoding="utf-8"));result=[]
+    for item in data["visuals"]:
+        if item["id"] not in preferred:continue
+        path=root/item["file"];digest=__import__("hashlib").sha256(path.read_bytes()).hexdigest()
+        result.append({"visual_key":f"curated:noaa-tides:{item['id']}","visual_type":"diagram","document_hash":"curated-noaa-tides-diagrams","page_number":item["page"],"image_number":item["figure"],"asset_hash":digest,"file":str(path),"title":data["sourceTitle"],"volume":None,"heading":item["heading"],"context":f"NOAA educational diagram, {item['figure']}. {data['license']}. Attribution: {data['sourceAuthor']}, {data['sourceOrganization']}. Not a tide prediction for navigation.","topics":item["topics"],"sourcePaths":[data["sourceUrl"]],"rank":-2600.0,"assetUrl":f"http://127.0.0.1:31983/visuals/assets/{digest}.webp"})
+    return result[:limit]
+
+
 def terms(value: str) -> list[str]:
     aliases = {
         "şamandıra": "buoy", "samandira": "buoy",
@@ -948,6 +967,9 @@ def query(db: sqlite3.Connection, value: str, limit: int, object_only: bool = Fa
     if curated:
         return curated
     curated = curated_kaiyodai_navigation_schematics_query(value, limit)
+    if curated:
+        return curated
+    curated = curated_noaa_tides_diagrams_query(value, limit)
     if curated:
         return curated
     curated = curated_navigation_query(value, limit)
@@ -1143,6 +1165,10 @@ def resolve_asset(db: sqlite3.Connection, atlas: Path, digest: str) -> dict:
             return {"asset_hash":digest,"file":str(path),"width":None,"height":None,"visual_type":"object","absolutePath":str(path.resolve())}
     kaiyodai_navigation_root=Path(__file__).resolve().parents[1]/"assets"/"curated-kaiyodai-navigation-schematics"
     for path in kaiyodai_navigation_root.glob("*.webp"):
+        if __import__("hashlib").sha256(path.read_bytes()).hexdigest()==digest:
+            return {"asset_hash":digest,"file":str(path),"width":None,"height":None,"visual_type":"diagram","absolutePath":str(path.resolve())}
+    noaa_tides_root=Path(__file__).resolve().parents[1]/"assets"/"curated-noaa-tides-diagrams"
+    for path in noaa_tides_root.glob("*.webp"):
         if __import__("hashlib").sha256(path.read_bytes()).hexdigest()==digest:
             return {"asset_hash":digest,"file":str(path),"width":None,"height":None,"visual_type":"diagram","absolutePath":str(path.resolve())}
     statements = [

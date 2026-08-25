@@ -393,6 +393,21 @@ def test_kaiyodai_navigation_schematics_match_exact_concepts():
     assert MODULE.curated_kaiyodai_navigation_schematics_query("can salı",3)==[]
 
 
+def test_noaa_public_domain_tide_diagrams_match_exact_concepts():
+    spring=MODULE.curated_noaa_tides_diagrams_query("spring tide nasıl oluşur",3)
+    neap=MODULE.curated_noaa_tides_diagrams_query("neap tide ve küçük gelgit",3)
+    orbit=MODULE.curated_noaa_tides_diagrams_query("perigee apogee gelgit aralığı",3)
+    inequality=MODULE.curated_noaa_tides_diagrams_query("günlük gelgit eşitsizliği",3)
+    types=MODULE.curated_noaa_tides_diagrams_query("gelgit türleri diyagramı",3)
+    assert spring[0]["visual_key"]=="curated:noaa-tides:spring-tides"
+    assert neap[0]["visual_key"]=="curated:noaa-tides:neap-tides"
+    assert orbit[0]["visual_key"]=="curated:noaa-tides:perigee-apogee"
+    assert inequality[0]["visual_key"]=="curated:noaa-tides:diurnal-inequality"
+    assert types[0]["visual_key"]=="curated:noaa-tides:tide-types"
+    assert all("Public Domain" in item[0]["context"] for item in (spring,neap,orbit,inequality,types))
+    assert MODULE.curated_noaa_tides_diagrams_query("can salı",3)==[]
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -429,4 +444,5 @@ if __name__ == "__main__":
     test_verified_shipboard_ppe_photos_match_exact_protection()
     test_verified_shipboard_industrial_ppe_matches_exact_protection()
     test_kaiyodai_navigation_schematics_match_exact_concepts()
-    print("35 curated visual query tests passed")
+    test_noaa_public_domain_tide_diagrams_match_exact_concepts()
+    print("36 curated visual query tests passed")
