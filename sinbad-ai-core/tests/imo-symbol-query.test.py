@@ -355,6 +355,16 @@ def test_verified_maritime_knot_photos_match_exact_knots():
     assert MODULE.curated_maritime_knots_query("konteyner twistlock",3)==[]
 
 
+def test_verified_advanced_maritime_ropework_matches_exact_knots_and_splice():
+    reef=MODULE.curated_maritime_knots_advanced_query("camadan bağı fotoğrafı",3)
+    sheet=MODULE.curated_maritime_knots_advanced_query("farklı çaplı halatları sheet bend ile bağlama",3)
+    splice=MODULE.curated_maritime_knots_advanced_query("halat gözü dikişi nasıl görünür",3)
+    assert reef[0]["visual_key"]=="curated:maritime-knots-advanced:reef-knot"
+    assert sheet[0]["visual_key"]=="curated:maritime-knots-advanced:sheet-bend"
+    assert splice[0]["visual_key"]=="curated:maritime-knots-advanced:eye-splice"
+    assert MODULE.curated_maritime_knots_advanced_query("can yeleği",3)==[]
+
+
 if __name__ == "__main__":
     test_turkish_lifebuoy_symbol_prefers_exact_official_crop()
     test_object_photo_request_does_not_route_to_symbol_collection()
@@ -387,4 +397,5 @@ if __name__ == "__main__":
     test_verified_shipyard_and_port_photos_match_exact_operations()
     test_verified_survival_craft_and_personal_gear_match_exact_equipment()
     test_verified_maritime_knot_photos_match_exact_knots()
-    print("31 curated visual query tests passed")
+    test_verified_advanced_maritime_ropework_matches_exact_knots_and_splice()
+    print("32 curated visual query tests passed")
