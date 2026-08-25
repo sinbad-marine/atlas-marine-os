@@ -7,11 +7,11 @@ const app=fs.readFileSync('app.js','utf8');
 const html=fs.readFileSync('index.html','utf8');
 const edge=fs.readFileSync('supabase/functions/sinbad-answer/index.ts','utf8');
 
-test('cloud AI returns a separate semantic spoken teaching summary instead of forcing the browser to clip the written answer',()=>{
+test('cloud AI uses the complete written answer as the narration script',()=>{
   assert.match(edge,/const SPOKEN_SUMMARY_MARKER = '<<<SPOKEN_SUMMARY>>>';/);
-  assert.match(edge,/For simple or conversational questions use 1 or 2 short sentences/);
-  assert.match(edge,/Never introduce Atlas Marine, advertise the platform/);
-  assert.match(edge,/Do not merely copy the first characters/);
+  assert.match(edge,/The complete written answer is also the narration script/);
+  assert.match(edge,/Do not append a separate spoken summary/);
+  assert.match(edge,/const deliveredSpokenSummary = deliveredAnswer/);
   assert.match(edge,/return json\(\{ answer: deliveredAnswer, spokenSummary: deliveredSpokenSummary, sources: responseSources,/);
   assert.match(app,/sinbadModelSpokenSummary=String\(trustedAiData\.spokenSummary\|\|''\)\.trim\(\)/);
 });
@@ -47,6 +47,17 @@ test('server RAG resolves named publications by title before synthesis',()=>{
   assert.match(edge,/namedSourceBonus \+ queryTerms\.reduce/);
   assert.match(edge,/APPROVED PRIVATE LIBRARY \$\{canAccessPrivateSources \? 'SOURCES' : 'EXCERPTS \(IDENTITY RESTRICTED\)'\}/);
   assert.match(edge,/\[PRIVATE_EXCERPT_\$\{index \+ 1\}\]/);
+});
+
+test('Captain Sinbad synthesizes diverse evidence through a private instructor reasoning pass',()=>{
+  assert.match(edge,/const diverseEvidence:/);
+  assert.match(edge,/diverseEvidence\.length >= 5/);
+  assert.match(edge,/privately perform an evidence-synthesis pass/);
+  assert.match(edge,/Synthesis is mandatory when multiple relevant passages exist/);
+  assert.match(edge,/Do not reveal private chain-of-thought/);
+  assert.match(edge,/reasoning: \{ effort: 'medium' \}/);
+  assert.match(edge,/text: \{ verbosity: 'medium' \}/);
+  assert.match(edge,/max_output_tokens: 3000/);
 });
 
 test('an explicitly named publication is locked before generic session-title matches',()=>{

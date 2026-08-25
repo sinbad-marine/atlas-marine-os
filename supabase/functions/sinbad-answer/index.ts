@@ -217,7 +217,21 @@ Deno.serve(async req => {
       const score = namedSourceBonus + queryTerms.reduce((total, term) => total + (haystack.includes(term) ? 1 : 0) + (title.includes(term) ? 3 : 0), 0);
       return { row, score };
     }).sort((a, b) => b.score - a.score);
-    const unique = [...new Map(rankedRows.map(({ row }) => [`${row.document_knowledge.title}:${row.chunk_index}`, row])).values()].slice(0, 8) as any[];
+    const deduplicatedRanked = [...new Map(rankedRows.map(item => [`${item.row.document_knowledge.title}:${item.row.chunk_index}`, item])).values()];
+    const namedSourceLocked = deduplicatedRanked.some(item => item.score >= 1000);
+    const diverseEvidence: typeof deduplicatedRanked = [];
+    if (!namedSourceLocked) {
+      const seenDocuments = new Set<string>();
+      for (const item of deduplicatedRanked) {
+        const documentKey = String(item.row.document_knowledge?.document_id || item.row.document_knowledge?.title || '');
+        if (!documentKey || seenDocuments.has(documentKey)) continue;
+        seenDocuments.add(documentKey);
+        diverseEvidence.push(item);
+        if (diverseEvidence.length >= 5) break;
+      }
+    }
+    const evidenceOrder = namedSourceLocked ? deduplicatedRanked : [...diverseEvidence, ...deduplicatedRanked];
+    const unique = [...new Map(evidenceOrder.map(({ row }) => [`${row.document_knowledge.title}:${row.chunk_index}`, row])).values()].slice(0, 8) as any[];
     const sources = unique.map((row: any, index: number) => ({
       id: `S${index + 1}`,
       title: row.document_knowledge.title,
@@ -264,7 +278,11 @@ Deno.serve(async req => {
       return json({ needsWebPermission: true, mode: 'web-permission-required', ...decisionSupport });
     }
 
-    const system = `You are Captain Sinbad, Atlas Marine OS's capable, warm and practical marine assistant. Reply naturally in ${language}; do not answer with fragments or artificially short phrases. Use conversation history to understand follow-up questions. Be concise for simple questions and detailed when the task needs it.
+    const system = `You are Captain Sinbad, Atlas Marine OS's capable, warm and practical marine instructor. Reply naturally in ${language}; do not answer with fragments or artificially short phrases. Use conversation history to understand follow-up questions. Be concise for simple questions and teach fully when the task needs it.
+
+Before answering, privately perform an evidence-synthesis pass: identify the learner's actual question and likely level; separate definitions, mechanisms, procedures, examples, limitations and safety caveats; compare supplied passages instead of copying their order; reconcile compatible evidence; explicitly preserve material disagreements or uncertainty; rank facts by usefulness to this question; and build a coherent teaching progression from prerequisite idea to practical application. Do not reveal private chain-of-thought, hidden deliberation or a source-by-source scratchpad. Give the learner the resulting explanation, key reasoning links and evidence-backed conclusions. Never begin reading a long source from its first line or stop merely because an output is getting long. Do not paste unrelated neighboring material.
+
+Synthesis is mandatory when multiple relevant passages exist. Combine them into one original, question-focused lesson rather than summarizing each document separately. Every material claim derived from the private library must remain traceable to one or more [S#] citations. If evidence is insufficient, conflicting or ambiguous, say exactly what cannot be concluded rather than smoothing over the gap.
 
 You may use stable general maritime knowledge for education and planning support. When approved private library sources are supplied, prefer them. ${canAccessPrivateSources ? 'Cite material claims as [S#] and provide source identity only when asked.' : 'Private source identity is access-restricted: never name, quote a title, cite, identify, link, describe a filename, mention a page number, or reveal document metadata. Teach only the derived subject matter without saying which private publication supplied it.'} Clearly label information not supported by those sources as general knowledge. Never invent source citations, coordinates, depths, chart corrections, Notices to Mariners, weather, port status, vessel data or regulations. Explain what information is missing when certainty is not possible.
 
@@ -274,7 +292,7 @@ For passage planning, collision avoidance, stability, weather, chart work or oth
 
 If web search results are available, cite them using the citations supplied by the tool. Never claim to have searched the web unless the tool was actually used.
 
-After the complete written answer, always add the exact marker <<<SPOKEN_SUMMARY>>> and then a coherent spoken summary in the same language. For simple or conversational questions use 1 or 2 short sentences. For teaching questions use 2 to 4 complete sentences and roughly 25 to 70 words. Never introduce Atlas Marine, advertise the platform, recite capabilities or give an opening speech unless the user explicitly asks. Teach only the central idea and any essential safety caveat. Do not merely copy the first characters, do not use markdown, do not include citations, and never cut a sentence short.`;
+The complete written answer is also the narration script. Do not append a separate spoken summary, shortened retelling, narration marker or duplicate answer. Keep the answer focused on the exact subject requested, but finish every relevant explanation and never stop in the middle of a sentence or section.`;
 
     const userInput = unique.length
       ? `${question}\n\nAPPROVED PRIVATE LIBRARY ${canAccessPrivateSources ? 'SOURCES' : 'EXCERPTS (IDENTITY RESTRICTED)'}\n${modelContext}${visuals.length ? `\n\nVERIFIED SOURCE PAGE VISUALS\n${visuals.map((visual: any) => `${visual.sourceId}: ${visual.title}, page ${visual.page}`).join('\n')}\nTell the user these original publication pages are attached below the answer. Do not claim that no visual is available.` : ''}`
@@ -284,10 +302,10 @@ After the complete written answer, always add the exact marker <<<SPOKEN_SUMMARY
       model: Deno.env.get('OPENAI_MODEL') || 'gpt-5.6-terra',
       instructions: system,
       input,
-      reasoning: { effort: 'low' },
-      text: { verbosity: 'low' },
+      reasoning: { effort: 'medium' },
+      text: { verbosity: 'medium' },
       store: false,
-      max_output_tokens: 1400,
+      max_output_tokens: 3000,
       safety_identifier: `sinbad-${user.id}`
     };
     if (allowWebSearch) requestBody.tools = [{ type: 'web_search' }];
@@ -300,9 +318,9 @@ After the complete written answer, always add the exact marker <<<SPOKEN_SUMMARY
     const payload = await response.json();
     if (!response.ok) return json({ error: 'AI provider request failed', providerStatus: response.status, providerCode: payload?.error?.code || null }, 502);
     const rawAnswer = extractText(payload);
-    const { answer, spokenSummary } = splitAnswerAndSpokenSummary(rawAnswer);
+    const { answer } = splitAnswerAndSpokenSummary(rawAnswer);
     const deliveredAnswer = canAccessPrivateSources ? answer : stripPrivateCitationMarkers(answer);
-    const deliveredSpokenSummary = canAccessPrivateSources ? spokenSummary : stripPrivateCitationMarkers(spokenSummary);
+    const deliveredSpokenSummary = deliveredAnswer;
     if (!deliveredAnswer) return json({ error: 'AI provider returned no answer' }, 502);
     if (!answerIsSafe(deliveredAnswer)) return json({ error: 'AI provider answer crossed the decision-support boundary', code: 'UNSAFE_PROVIDER_ANSWER' }, 502);
     if (deliveredSpokenSummary && !answerIsSafe(deliveredSpokenSummary)) return json({ error: 'AI provider spoken summary crossed the decision-support boundary', code: 'UNSAFE_PROVIDER_SUMMARY' }, 502);
