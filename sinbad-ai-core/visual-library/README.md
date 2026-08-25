@@ -34,6 +34,27 @@ download URL and the SHA-256 of the exact downloaded bytes. Captions must state
 important negative distinctions (for example, a research buoy is not an aid to
 navigation) so retrieval cannot silently turn a related image into a false one.
 
+## Permanent extraction and retrieval standard
+
+Every book, article and source document uses the same document-first method:
+
+- retain the complete photograph, drawing, diagram, table or plate; never use a
+  fragile crop that removes its legend, labels, comparison columns or context;
+- record the source-document hash, publication title, volume, PDF page, printed
+  page, section heading, figure/table identifier and exact source URL/path;
+- bind the visual to the surrounding paragraph, article or lesson text and
+  index that text together with normalized Turkish/English topic aliases;
+- record normalized page coordinates for the visual and, for structured tables,
+  each recognized row and semantic column/cell;
+- retrieve by the answer's supporting text and subject, then rank only visuals
+  bound to that text; a merely similar-looking image is not an acceptable match;
+- display the complete visual with the matching region highlighted, while
+  retaining immutable asset hashes and page-level provenance in the response.
+
+This provenance contract applies to all future corpus extraction, not only
+Chart No. 1. It lets Captain Sinbad explain from a source passage and attach the
+photograph, drawing or table that actually belongs to that passage.
+
 `nga-chart-no-1-atlas.js` indexes page-rendered official symbol plates already
 present in the local SINBAD corpus. Page number, original document checksum and
 render checksum are retained independently. This document-first extraction is
