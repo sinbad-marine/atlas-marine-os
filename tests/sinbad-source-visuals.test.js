@@ -46,6 +46,18 @@ test('Atlas document centre also blocks private source browsing and transfer out
   assert.match(app,/async function shareCloudFile\(bucket,path,filename='atlas-file'\)\{\s*if\(!roleCanAccessPrivateSources\(\)\)/);
 });
 
+test('legacy local library bytes and indexed text are also denied outside owner or developer roles',()=>{
+  assert.match(app,/function requirePrivateLocalLibraryAccess\(action='access local private library files'\)/);
+  assert.match(app,/if\(\$\('uploadDocs'\)\) \$\('uploadDocs'\)\.onclick=async\(\)=>\{\s*if\(!requirePrivateLocalLibraryAccess\('add local private library files'\)\)return/);
+  assert.match(app,/async function renderDocuments\(\)\{[\s\S]*?if\(!roleCanAccessPrivateSources\(\)\)/);
+  for(const [name,action] of [
+    ['previewFile','open'],['downloadFile','download'],['printFile','print'],
+    ['shareFile','share'],['renameFile','rename'],['removeFile','delete']
+  ])assert.match(app,new RegExp(`async function ${name}\\(id\\)\\{if\\(!requirePrivateLocalLibraryAccess\\('${action} local private library files'\\)\\)return`));
+  assert.match(app,/\$\('knowledgeSearchBtn'\)\.onclick=async\(\)=>\{if\(!requirePrivateLocalLibraryAccess\('search local private library files'\)\)/);
+  assert.match(app,/\['uploadDocs','docFiles','docFolder','docTags','knowledgeQuery','knowledgeSearchBtn'\][\s\S]*?el\.disabled=!roleCanAccessPrivateSources\(\)/);
+});
+
 test('Storage RLS limits original library bytes to owner and authorized developer roles',()=>{
   assert.match(storagePolicy,/alter policy atlas_storage_select_member\s+on storage\.objects/i);
   assert.match(storagePolicy,/array\['atlas-documents'::text, 'nautical-publications'::text\]/);

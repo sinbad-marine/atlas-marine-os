@@ -194,7 +194,13 @@ async function fileToText(file){
  if(textTypes.some(t=>file.type.startsWith(t))) return (await file.text()).slice(0,200000);
  return '';
 }
+function requirePrivateLocalLibraryAccess(action='access local private library files'){
+ if(roleCanAccessPrivateSources())return true;
+ alert(`Only the workspace Owner and explicitly authorized Developers may ${action}.`);
+ return false;
+}
 if($('uploadDocs')) $('uploadDocs').onclick=async()=>{
+ if(!requirePrivateLocalLibraryAccess('add local private library files'))return;
  const input=$('docFiles');
  const files=[...(input.files||[])];
  if(!files.length){alert('Choose one or more files first.');return;}
@@ -247,6 +253,13 @@ function openFolderUpload(folder){
 
 async function renderDocuments(){
  if(!$('documentList'))return;
+ if(!roleCanAccessPrivateSources()){
+  const denied='<div class="empty">Private library files are available only to the workspace Owner and explicitly authorized Developers.</div>';
+  $('documentList').innerHTML=denied;
+  if($('publicationList'))$('publicationList').innerHTML=denied;
+  if($('chartList'))$('chartList').innerHTML=denied;
+  return;
+ }
  const rows=await dbAll(),q=($('docSearch').value||'').toLowerCase(),folder=$('docFolderFilter').value,type=$('docTypeFilter').value;
  const filtered=rows.filter(x=>(!folder||x.folder===folder)&&(!type||x.type===type)&&(!q||`${x.name} ${x.folder} ${x.tags} ${x.text}`.toLowerCase().includes(q)));
  $('documentList').innerHTML=filtered.length?filtered.map(fileRow).join(''):'<div class="empty">No matching files.</div>';
@@ -254,17 +267,17 @@ async function renderDocuments(){
 }
 function fileRow(x){return `<div class="file-row"><div><div class="file-name">${esc(x.name)}</div><div class="file-meta">${esc(x.folder)} • ${esc(x.tags||'No tags')}</div></div><div>${esc(x.type||'Unknown')}</div><div>${formatBytes(x.size)}</div><div>${new Date(x.created).toLocaleDateString()}</div><div class="file-actions"><button class="btn" onclick="previewFile(${x.id})">Open</button><button class="btn" onclick="downloadFile(${x.id})">Download</button><button class="btn" onclick="printFile(${x.id})">Print</button><button class="btn" onclick="shareFile(${x.id})">Share</button><button class="btn" onclick="renameFile(${x.id})">Rename</button><button class="btn danger" onclick="removeFile(${x.id})">Delete</button></div></div>`}
 async function getFile(id){return new Promise((res,rej)=>{const r=txStore().get(id);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
-async function previewFile(id){const x=await getFile(id),url=URL.createObjectURL(x.blob);window.open(url,'_blank')}
-async function downloadFile(id){const x=await getFile(id),url=URL.createObjectURL(x.blob),a=document.createElement('a');a.href=url;a.download=x.name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
-async function printFile(id){const x=await getFile(id),url=URL.createObjectURL(x.blob),w=window.open(url,'_blank');setTimeout(()=>{try{w.print()}catch(e){}},1000)}
-async function shareFile(id){const x=await getFile(id),file=new File([x.blob],x.name,{type:x.type});if(navigator.share&&navigator.canShare?.({files:[file]})){await navigator.share({title:x.name,files:[file]})}else{downloadFile(id);alert('Direct sharing is unavailable here; the file was downloaded for sharing.')}}
-async function renameFile(id){const x=await getFile(id),name=prompt('New file name:',x.name);if(name){x.name=name;await dbPut(x);renderDocuments()}}
-async function removeFile(id){if(confirm('Delete this file from local storage?')){await dbDelete(id);renderDocuments();renderSummary()}}
+async function previewFile(id){if(!requirePrivateLocalLibraryAccess('open local private library files'))return;const x=await getFile(id),url=URL.createObjectURL(x.blob);window.open(url,'_blank')}
+async function downloadFile(id){if(!requirePrivateLocalLibraryAccess('download local private library files'))return;const x=await getFile(id),url=URL.createObjectURL(x.blob),a=document.createElement('a');a.href=url;a.download=x.name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+async function printFile(id){if(!requirePrivateLocalLibraryAccess('print local private library files'))return;const x=await getFile(id),url=URL.createObjectURL(x.blob),w=window.open(url,'_blank');setTimeout(()=>{try{w.print()}catch(e){}},1000)}
+async function shareFile(id){if(!requirePrivateLocalLibraryAccess('share local private library files'))return;const x=await getFile(id),file=new File([x.blob],x.name,{type:x.type});if(navigator.share&&navigator.canShare?.({files:[file]})){await navigator.share({title:x.name,files:[file]})}else{downloadFile(id);alert('Direct sharing is unavailable here; the file was downloaded for sharing.')}}
+async function renameFile(id){if(!requirePrivateLocalLibraryAccess('rename local private library files'))return;const x=await getFile(id),name=prompt('New file name:',x.name);if(name){x.name=name;await dbPut(x);renderDocuments()}}
+async function removeFile(id){if(!requirePrivateLocalLibraryAccess('delete local private library files'))return;if(confirm('Delete this file from local storage?')){await dbDelete(id);renderDocuments();renderSummary()}}
 function formatBytes(n){if(n<1024)return n+' B';if(n<1048576)return (n/1024).toFixed(1)+' KB';return (n/1048576).toFixed(1)+' MB'}
 async function renderFolderViews(rows){$('publicationList').innerHTML=(rows.filter(x=>x.folder==='Nautical Publications').map(fileRow).join('')||'<div class="empty">No publications uploaded.</div>');$('chartList').innerHTML=(rows.filter(x=>x.folder==='Nautical Charts').map(fileRow).join('')||'<div class="empty">No charts uploaded.</div>')}
 
 
-$('knowledgeSearchBtn').onclick=async()=>{const q=$('knowledgeQuery').value.toLowerCase().trim(),rows=await dbAll();const out=rows.filter(x=>!q||`${x.name} ${x.folder} ${x.tags} ${x.text}`.toLowerCase().includes(q));$('knowledgeResults').innerHTML=out.length?out.map(x=>`<article class="record"><h3>${esc(x.name)}</h3><div class="muted">${esc(x.folder)} • ${esc(x.tags)}</div><p>${esc((x.text||'No extracted text available.').slice(0,500))}</p><button class="btn" onclick="previewFile(${x.id})">Open Source</button></article>`).join(''):'<div class="empty">No matching knowledge found.</div>'}
+$('knowledgeSearchBtn').onclick=async()=>{if(!requirePrivateLocalLibraryAccess('search local private library files')){$('knowledgeResults').innerHTML='<div class="empty">Private knowledge search is restricted.</div>';return;}const q=$('knowledgeQuery').value.toLowerCase().trim(),rows=await dbAll();const out=rows.filter(x=>!q||`${x.name} ${x.folder} ${x.tags} ${x.text}`.toLowerCase().includes(q));$('knowledgeResults').innerHTML=out.length?out.map(x=>`<article class="record"><h3>${esc(x.name)}</h3><div class="muted">${esc(x.folder)} • ${esc(x.tags)}</div><p>${esc((x.text||'No extracted text available.').slice(0,500))}</p><button class="btn" onclick="previewFile(${x.id})">Open Source</button></article>`).join(''):'<div class="empty">No matching knowledge found.</div>'}
 
 
 function setupDocumentFilters(){
@@ -2531,6 +2544,11 @@ function applyRoleAccess(){
   ['uploadCloudFiles','cloudFileInput','uploadCapturedMedia'].forEach(id=>{
     const el=$(id);if(el)el.disabled=!roleCanManageLibrary();
   });
+  ['uploadDocs','docFiles','docFolder','docTags','knowledgeQuery','knowledgeSearchBtn'].forEach(id=>{
+    const el=$(id);if(el)el.disabled=!roleCanAccessPrivateSources();
+  });
+  if($('knowledgeResults')&&!roleCanAccessPrivateSources())$('knowledgeResults').innerHTML='';
+  renderDocuments().catch(()=>{});
   const adminBanner=$('adminAccessBanner');
   if(adminBanner){
     adminBanner.textContent=!cloudSession?.user?'Sign in to manage your account.':!selectedWorkspaceId?'Select a workspace to manage its members.':roleCanManageMembers()?'Owner access verified. Member administration is enabled.':`Account settings available. Member administration requires the Owner role (current role: ${role}).`;
