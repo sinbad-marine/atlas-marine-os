@@ -92,6 +92,7 @@ function drawAllowedShapeAtBoard(shape,size='standard'){
     circle:Object.freeze({element:'circle',attributes:Object.freeze({cx:'120',cy:'90',r:'62'}),length:'390',label:'Sinbad drew a circle'}),
     triangle:Object.freeze({element:'path',attributes:Object.freeze({d:'M120 24 L202 154 L38 154 Z'}),length:'470',label:'Sinbad drew a triangle'}),
     rectangle:Object.freeze({element:'path',attributes:Object.freeze({d:'M38 34 H202 V146 H38 Z'}),length:'555',label:'Sinbad drew a rectangle'}),
+    hexagon:Object.freeze({element:'path',attributes:Object.freeze({d:'M72 28 H168 L216 90 L168 152 H72 L24 90 Z'}),length:'505',label:'Sinbad drew a hexagon'}),
     arrow:Object.freeze({element:'path',attributes:Object.freeze({d:'M32 90 H194 M164 60 L194 90 L164 120'}),length:'250',label:'Sinbad drew an arrow'}),
     axes:Object.freeze({element:'path',attributes:Object.freeze({d:'M26 90 H214 M188 74 L214 90 L188 106 M120 158 V22 M104 48 L120 22 L136 48'}),length:'475',label:'Sinbad drew coordinate axes'})
   }),definition=definitions[shape],safeSize=['small','standard','large'].includes(size)?size:null;
@@ -140,6 +141,18 @@ function renderQuiz(){
   stopBoardTeaching();
   const category=byId('academyModule').value,items=window.SinbadAcademy?.quiz(category)||[],output=byId('academyOutput');if(!items.length)return;
   const item=items[Math.floor(Math.random()*items.length)];output.replaceChildren();const title=document.createElement('strong');title.textContent=item.q;output.append(title);
+  if(item.kind==='source-page'){
+    const image=document.createElement('img');image.className='academy-question-page';image.src=item.image;image.alt=`${item.q}, kaynak sayfa ${item.page}`;output.append(image);
+    const notice=document.createElement('p');notice.className='academy-answer-pending';
+    if(item.answerStatus==='official-key-verified'){
+      const key=Object.entries(item.answers).map(([question,answer])=>`${question}: ${answer}`).join(' · ');
+      notice.textContent=`Doğrulanmış resmî cevap anahtarı · ${key}`;
+    }else if(item.answerStatus==='official-key-image-needs-human-verification'){
+      notice.textContent=`Sorular ${item.firstQuestion}-${item.lastQuestion} · Resmî anahtar taraması mevcut; okunamayan harfler tahmin edilmedi ve insan doğrulaması bekliyor.`;
+    }else notice.textContent=`Sorular ${item.firstQuestion}-${item.lastQuestion} · Cevap anahtarı bekleniyor. Taramadaki öğrenci işaretlemeleri doğru cevap kabul edilmez.`;
+    output.append(notice);
+    const source=document.createElement('small');source.className='academy-source';source.textContent=`Kaynak: ${item.source} · sayfa ${item.page}`;output.append(source);return;
+  }
   const choices=document.createElement('div');choices.className='academy-choices';item.choices.forEach((choice,index)=>{const button=document.createElement('button');button.type='button';button.className='btn';button.textContent=choice;button.addEventListener('click',()=>{[...choices.children].forEach(node=>node.disabled=true);button.classList.add(index===item.answer?'primary':'danger');const result=document.createElement('p');result.textContent=`${index===item.answer?'✓ Correct':'✗ Review'} — ${item.explanation} [${item.source}]`;output.append(result);});choices.append(button);});output.append(choices);const source=document.createElement('small');source.className='academy-source';source.textContent=`Official source: ${item.source}`;output.append(source);
 }
 restoreWindowGeometry();
@@ -153,7 +166,7 @@ window.addEventListener('message',event=>{
   const message=event.data;if(!message||message.version!==1)return;
   let appliedAction=null;
   if(message.type==='SINBAD_ACADEMY_WRITE_BOARD'&&typeof message.text==='string'&&message.text.trim()&&message.text.length<=200&&writeCustomTextAtBoard(message.text))appliedAction=Object.freeze({kind:'text',value:message.text.trim()});
-  if(message.type==='SINBAD_ACADEMY_DRAW_SHAPE'&&['circle','triangle','rectangle','arrow','axes'].includes(message.shape)&&['small','standard','large'].includes(message.size||'standard')&&drawAllowedShapeAtBoard(message.shape,message.size||'standard'))appliedAction=Object.freeze({kind:'shape',value:message.shape,size:message.size||'standard'});
+  if(message.type==='SINBAD_ACADEMY_DRAW_SHAPE'&&['circle','triangle','rectangle','hexagon','arrow','axes'].includes(message.shape)&&['small','standard','large'].includes(message.size||'standard')&&drawAllowedShapeAtBoard(message.shape,message.size||'standard'))appliedAction=Object.freeze({kind:'shape',value:message.shape,size:message.size||'standard'});
   if(message.type==='SINBAD_ACADEMY_CLEAR_BOARD'){clearAcademyBoard(()=>window.opener.postMessage({version:1,type:'SINBAD_ACADEMY_BOARD_APPLIED',requestId:message.requestId,action:{kind:'clear',value:'board'}},location.origin));return;}
   if(appliedAction)window.opener.postMessage({version:1,type:'SINBAD_ACADEMY_BOARD_APPLIED',requestId:message.requestId,action:appliedAction},location.origin);
 });

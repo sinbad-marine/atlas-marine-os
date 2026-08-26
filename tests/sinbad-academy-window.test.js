@@ -24,6 +24,9 @@ test('standalone classroom owns its full viewport and preserves native window ge
   assert.match(academyHtml,/<title>Sinbad Academy — Classroom<\/title>/);
   assert.match(academyHtml,/id="academyModule"/);
   assert.match(academyHtml,/id="academyOutput"/);
+  assert.match(academyHtml,/value="gasm-seyir-sinav"/);
+  assert.match(academyApp,/item\.kind==='source-page'/);
+  assert.match(academyApp,/Cevap anahtarı bekleniyor/);
   assert.match(academyHtml,/id="closeAcademyWindow"/);
   assert.match(academyCss,/\.academy-shell\{height:100vh/);
   assert.match(academyApp,/window\.resizeTo\(width,height\)/);
@@ -44,8 +47,8 @@ test('standalone Academy retains course and quiz handlers',()=>{
 
 test('native Academy owns a bounded live Sinbad board-teaching stage',()=>{
   assert.match(academyHtml,/id="academyTeachingStage"/);assert.match(academyHtml,/captain-sinbad-board-teaching\.png/);
-  assert.match(academyHtml,/sinbad-character-engine\.js\?v=82029/);
-  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82029/);assert.match(academyHtml,/academy-window\.js\?v=82021/);assert.match(academyHtml,/academy\.css\?v=82019/);
+  assert.match(academyHtml,/sinbad-character-engine\.js\?v=82030/);
+  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82072/);assert.match(academyHtml,/academy-window\.js\?v=82072/);assert.match(academyHtml,/academy\.css\?v=82072/);
   assert.match(academyApp,/function teachLessonAtBoard\(lesson\)/);
   assert.match(academyApp,/\.join\('\\n\\n'\)\.slice\(0,500\)/);
   assert.match(academyApp,/const event=cue\.state==='walking'\?'WALK':'TEACH_AT_BOARD'/);
@@ -57,7 +60,7 @@ test('native Academy owns a bounded live Sinbad board-teaching stage',()=>{
   assert.match(academyCss,/\.academy-teaching-stage\[hidden\]\{display:none\}/);
   assert.match(academyCss,/@media\(prefers-reduced-motion:reduce\)/);
   assert.match(academyCss,/\.academy-sinbad\[data-state="walking"\] img\{animation:none/);
-  assert.match(worker,/sinbad-marine-v8\.20\.29-semantic-motion-bridges-v42/);
+  assert.match(worker,/sinbad-marine-v8\.20\.32-character-v1-v90/);
 });
 
 test('board writing progress drives a real chalk cursor and bounded character direction cues',()=>{
@@ -81,7 +84,7 @@ test('main chat can send only bounded same-origin plain text to the Academy boar
   assert.match(academyApp,/message\.text\.length<=200/);assert.match(academyApp,/writeCustomTextAtBoard\(message\.text\)/);assert.match(academyApp,/type:'SINBAD_ACADEMY_READY'/);assert.match(academyApp,/requestId:message\.requestId/);
   assert.match(app,/function sendShapeToSinbadAcademyBoard\(shape,size='standard'\)/);assert.match(academyApp,/function drawAllowedShapeAtBoard\(shape,size='standard'\)/);
   assert.match(academyApp,/dataset\.boardSize=safeSize/);assert.match(academyApp,/\['small','standard','large'\]/);
-  assert.match(academyApp,/\['circle','triangle','rectangle','arrow','axes'\]\.includes\(message\.shape\)/);assert.match(academyApp,/createElementNS\('http:\/\/www\.w3\.org\/2000\/svg','svg'\)/);
+  assert.match(academyApp,/\['circle','triangle','rectangle','hexagon','arrow','axes'\]\.includes\(message\.shape\)/);assert.match(academyApp,/createElementNS\('http:\/\/www\.w3\.org\/2000\/svg','svg'\)/);
   for(const shape of ['triangle','rectangle','arrow','axes'])assert.match(academyApp,new RegExp(`${shape}:Object\\.freeze`));assert.match(academyApp,/svg\.dataset\.boardShape=shape/);
   assert.match(academyApp,/function animateAllowedShapeDrawing\(generation,shape,reducedMotion=false\)/);
   assert.match(academyApp,/\[260,'lift','write-lift','lift'\]/);assert.match(academyApp,/\[880,'contact','write-contact','contact'\]/);assert.match(academyApp,/\[1250,'ready','explain','complete','audience'\]/);

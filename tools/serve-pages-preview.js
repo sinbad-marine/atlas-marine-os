@@ -6,7 +6,8 @@ const path=require('node:path');
 const {ROOT,buildPagesArtifact}=require('./build-pages-artifact.js');
 
 const HOST='127.0.0.1';
-const PORT=4173;
+const requestedPort=process.argv[2]==='--port'?Number(process.argv[3]):4173;
+const PORT=Number.isInteger(requestedPort)&&requestedPort>=1024&&requestedPort<=65535?requestedPort:4173;
 const target=path.join(ROOT,'.release',`playwright-pages-${process.pid}`);
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.webmanifest':'application/manifest+json; charset=utf-8','.png':'image/png'};
 
@@ -29,8 +30,15 @@ async function start(){
       fs.createReadStream(file).pipe(response);
     }catch{response.writeHead(404);response.end();}
   });
-  let closing=false;
-  const cleanup=()=>{if(closing)return;closing=true;server.close(()=>fsp.rm(target,{recursive:true,force:true}).finally(()=>process.exit(0)));};
+  let closing=false,finished=false;
+  const cleanup=()=>{
+    if(closing)return;closing=true;
+    const finish=()=>{if(finished)return;finished=true;fsp.rm(target,{recursive:true,force:true}).finally(()=>process.exit(0));};
+    server.close(finish);
+    server.closeIdleConnections?.();
+    server.closeAllConnections?.();
+    setTimeout(finish,1000).unref?.();
+  };
   process.once('SIGINT',cleanup);process.once('SIGTERM',cleanup);
   server.listen(PORT,HOST,()=>process.stdout.write(`SINBAD_RELEASE_PREVIEW_READY http://${HOST}:${PORT}\n`));
 }

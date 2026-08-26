@@ -1,4 +1,4 @@
-# Sinbad Marine v8.20.29
+# Sinbad Marine v8.20.32
 
 Sinbad Marine is an offline-capable maritime decision-support and private
 workspace application. Captain Sinbad combines deterministic local marine
@@ -50,7 +50,7 @@ Run the complete Node regression suite from the repository root:
 node --test sinbad-ai-core/tests/*.test.js tests/*.test.js
 ```
 
-The v8.20.9 UTF-8 Core-gate checkpoint passes 425 tests. Re-run the suite for every
+The UTF-8 Core-gate checkpoint is enforced by the current full regression suite. Re-run it for every
 change; the recorded count is evidence for this checkpoint, not a permanent
 claim about future revisions.
 

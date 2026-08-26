@@ -5,9 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#071827">
 <title>Sinbad Marine</title>
+<script>try{if(localStorage.getItem('atlas_sinbad_reduced_motion')==='on')document.documentElement.classList.add('sinbad-force-reduced-motion')}catch{}</script>
 <link rel="manifest" href="./manifest.webmanifest?v=8161">
 <link rel="apple-touch-icon" href="./icon-192.png?v=8155">
-<link rel="stylesheet" href="./styles.css?v=82029">
+<link rel="stylesheet" href="./styles.css?v=82072">
 <link rel="stylesheet" href="./vendor/ol-10.6.1.css">
 </head>
 <body class="auth-pending">
@@ -103,7 +104,7 @@
   <div class="topbar-account-actions">
     <select id="appLanguage" class="app-language" aria-label="Application language"></select>
     <button class="account-password-button" id="openAccountPassword" type="button">Account &amp; Password</button>
-    <div class="version">● v8.20.29</div>
+    <div class="version">● v8.20.32</div>
   </div>
 </header>
 
@@ -147,6 +148,8 @@
 
 
 <section class="module-grid">
+  <article class="module-card" data-open="resources"><div>🏝️</div><h3>Blue Voyage Resource Guide</h3><p>Islands, historical sites, entertainment spots, marinas, fuel docks and harbour master's offices.</p><a>Open →</a></article>
+  <article class="module-card featured-card" data-open="store"><div>🛍️</div><h3>Sinbad Marine Store</h3><p>Yacht chandlery — navigation, safety and deck equipment, curated and ready to order.</p><a>Open store →</a></article>
   <article class="module-card featured-card" data-open="cloud-documents"><div>☁️</div><h3>Cloud Document Center</h3><p>Upload, open, download, share, rename and manage private files across devices.</p><a>Open cloud vault →</a></article>
   <article class="module-card" data-cloud-bucket="nautical-charts"><div>🗺️</div><h3>Nautical Charts</h3><p>Private chart archive organized by country, region and chart number.</p><a>Open cloud charts →</a></article>
   <article class="module-card" data-open="sinbad"><div>🧞‍♂️</div><h3>Captain Sinbad</h3><p>Ask questions across the owner-approved Atlas Cloud maritime corpus with grounded citations.</p><a>Open Sinbad →</a></article>
@@ -490,6 +493,7 @@
         <button type="button" class="btn" id="testSinbadVoice">Test</button>
         <button type="button" class="btn" id="testSinbadWalk">Walk demo</button>
         <button type="button" class="btn" id="stopSinbadVoice">Stop</button>
+        <button type="button" class="btn" id="toggleSinbadReducedMotion" aria-pressed="false">↔️ Reduce motion: Off</button>
       </div>
       <div id="sinbadListeningStatus" class="notice hidden" role="status">Microphone is ready.</div>
       <div id="sinbadWebConsent" class="notice hidden" role="alert">
@@ -778,6 +782,68 @@
 </section>
 
 
+<section id="resources" class="workspace">
+  <div class="workspace-head"><div><h2>Blue Voyage Resource Guide</h2><p>Islands, historical sites, entertainment spots, marinas, fuel stations and harbour master's offices along the Turkish Aegean &amp; Mediterranean coast. Always verify contact details, VHF channels and access rules before relying on them operationally.</p></div><button class="btn close">Close</button></div>
+  <div class="filter-grid"><input id="resourceSearch" placeholder="Search"><select id="resourceCategory"><option value="">All categories</option></select><select id="resourceRegion"><option value="">All regions</option></select></div>
+  <div id="resourceGrid" class="content-grid"></div>
+</section>
+
+<section id="store" class="workspace">
+  <div class="workspace-head"><div><h2>Sinbad Marine Store</h2><p>Yacht chandlery, curated.</p></div><button class="btn close">Close</button></div>
+
+  <div class="store-hero">
+    <span class="store-hero-eyebrow">Sinbad Marine Store</span>
+    <h2>Denizcinin İhtiyaç Duyduğu Her Şey — Kaptan Kalitesiyle Seçildi</h2>
+    <p>Seyir, güvenlik ve güverte ekipmanları — kaptan gözünden değerlendirilmiş, kaliteli tedarikçilerden. Bu, mağazamızın ilk sürümü; katalog büyümeye devam ediyor.</p>
+    <div class="store-hero-badges">
+      <span class="store-hero-badge">⚓ Kaptan onaylı seçki</span>
+      <span class="store-hero-badge">🚚 Tedarikçi güvencesiyle sevkiyat</span>
+      <span class="store-hero-badge">💬 Kişisel sipariş desteği</span>
+    </div>
+  </div>
+
+  <div class="store-notice">Bu mağaza pilot/deneme aşamasındadır. Fiyatlar tedarikçiden alınan güncel referanslardır ve sipariş onayında teyit edilir. Sipariş verdiğinizde ödeme talimatları ekibimiz tarafından ayrıca iletilir.</div>
+
+  <div class="store-toolbar">
+    <div class="store-categories" id="storeCategories"></div>
+    <input id="storeSearch" class="store-search" type="search" placeholder="Ürün ara…">
+  </div>
+
+  <div id="storeGrid" class="store-grid"></div>
+</section>
+
+<button id="storeCartFab" class="store-cart-fab" type="button"><span>🛒</span><span>Sepet</span><span class="store-cart-count" id="storeCartCount">0</span></button>
+
+<div class="store-cart-overlay" id="storeCartOverlay"></div>
+<aside class="store-cart-drawer" id="storeCartDrawer">
+  <div class="store-cart-head"><h3>Sepetiniz</h3><button class="btn compact" id="storeCartClose" type="button">Kapat</button></div>
+  <div class="store-cart-items" id="storeCartItems"></div>
+  <div class="store-cart-foot">
+    <div class="store-cart-subtotal"><span>Ara Toplam</span><b id="storeCartSubtotal">₺0,00</b></div>
+    <button class="btn primary" id="storeCheckoutBtn" type="button" style="width:100%">Siparişi Tamamla</button>
+  </div>
+</aside>
+
+<div class="store-checkout-overlay" id="storeCheckoutOverlay">
+  <div class="store-checkout-modal">
+    <h3>Sipariş Bilgileri</h3>
+    <p>Bilgilerinizi girin — sipariş özetini WhatsApp veya e-posta ile ekibimize iletebilirsiniz. Ödeme, sipariş onayından sonra ayrıca düzenlenecektir.</p>
+    <div class="store-checkout-grid">
+      <label>Ad Soyad<input id="storeName" placeholder="Ad Soyad"></label>
+      <label>Telefon<input id="storePhone" placeholder="05xx xxx xx xx"></label>
+      <label class="wide">E-posta<input id="storeEmail" type="email" placeholder="ornek@eposta.com"></label>
+      <label class="wide">Teslimat / Yat &amp; Marina Bilgisi<input id="storeDelivery" placeholder="Marina, tekne adı veya teslimat adresi"></label>
+      <label class="wide">Sipariş Notu<textarea id="storeNote" placeholder="Varsa ölçü, renk, teslim tarihi gibi notlarınız"></textarea></label>
+    </div>
+    <div class="store-checkout-summary" id="storeCheckoutSummary"></div>
+    <div class="store-checkout-actions">
+      <button class="btn primary" id="storeSendWhatsapp" type="button">📱 WhatsApp ile Gönder</button>
+      <button class="btn" id="storeSendEmail" type="button">✉️ E-posta ile Gönder</button>
+    </div>
+    <button class="btn" id="storeCheckoutClose" type="button" style="width:100%;margin-top:10px">Vazgeç</button>
+  </div>
+</div>
+
 <section id="crew" class="workspace">
   <div class="workspace-head"><div><h2>Crew Manager</h2><p>Personnel and expiry tracking.</p></div><button class="btn close">Close</button></div>
   <div class="form-grid">
@@ -805,22 +871,24 @@
 
 <script src="./pilot-data.js?v=8161"></script>
 <script src="./route-data.js?v=8162"></script>
+<script src="./resource-data.js?v=8210"></script>
+<script src="./store-data.js?v=8220"></script>
 <script src="./official-publications.js?v=8162"></script>
-<script src="./supabase/functions/sinbad-answer/core-decision.js?v=82029"></script>
-<script src="./sinbad-core.js?v=82029"></script>
+<script src="./supabase/functions/sinbad-answer/core-decision.js?v=82032"></script>
+<script src="./sinbad-core.js?v=82032"></script>
 <script src="./sinbad-training-data.js?v=8180"></script>
-<script src="./sinbad-academy.js?v=8180"></script>
+<script src="./sinbad-academy.js?v=82072"></script>
 <script src="./vendor/supabase-2.112.3.js"></script>
 <script src="./vendor/mammoth-1.12.1.min.js"></script>
 <script src="./vendor/tesseract-5.1.1.min.js"></script>
 <script src="./vendor/ol-10.6.1.js"></script>
-  <script src="./sinbad-navigation.js?v=82029"></script>
-  <script src="./sinbad-navigation-assistant.js?v=82029"></script>
-  <script src="./sinbad-route-visualizer.js?v=82029"></script>
-  <script src="./sinbad-character-engine.js?v=82029"></script>
-  <script src="./sinbad-character-rig.js?v=82029"></script>
-  <script src="./sinbad-performance-director.js?v=82029"></script>
-  <script src="./sinbad-viseme-planner.js?v=82029"></script>
-  <script src="./app.js?v=82029"></script>
+  <script src="./sinbad-navigation.js?v=82032"></script>
+  <script src="./sinbad-navigation-assistant.js?v=82032"></script>
+  <script src="./sinbad-route-visualizer.js?v=82032"></script>
+  <script src="./sinbad-character-engine.js?v=82032"></script>
+  <script src="./sinbad-character-rig.js?v=82072"></script>
+  <script src="./sinbad-performance-director.js?v=82072"></script>
+  <script src="./sinbad-viseme-planner.js?v=82032"></script>
+  <script src="./app.js?v=82072"></script>
 </body>
 </html>

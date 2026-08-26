@@ -8,6 +8,7 @@ const html=fs.readFileSync('index.html','utf8');
 const academyHtml=fs.readFileSync('academy.html','utf8');
 const css=fs.readFileSync('styles.css','utf8');
 const rig=fs.readFileSync('sinbad-character-rig.js','utf8');
+const performanceDirector=fs.readFileSync('sinbad-performance-director.js','utf8');
 
 test('a single centralised, testable state API exists with the required states, including board-teaching from the Academy manifest',()=>{
   assert.match(app,/function setSinbadAssistantState\(state,detail=\{\}\)\{/);
@@ -74,14 +75,15 @@ test('avatar image swap preloads all unique state assets and preserves aspect/al
   assert.match(css,/\.sinbad-avatar\.small \.sinbad-avatar-img\{object-fit:cover/);
 });
 
-test('a real blink frame is bounded to calm states and respects visibility and reduced motion',()=>{
+test('a real blink frame follows the rig attention policy and respects visibility and reduced motion',()=>{
   const sw=fs.readFileSync('sw.js','utf8');
   assert.ok(fs.existsSync('assets/captain-sinbad/captain-sinbad-idle-blink-v1.png'));
   assert.match(app,/const SINBAD_BLINK_ASSET='captain-sinbad-idle-blink-v1\.png';/);
-  assert.match(app,/\['idle','voice-disabled','success','warning','error'\]\.includes\(sinbadAssistantState\)/);
+  assert.match(app,/sinbadBlinkPolicy\.allow===true/);
   assert.match(app,/document\.visibilityState!=='hidden'/);
   assert.match(app,/prefers-reduced-motion: reduce/);
-  assert.match(app,/3800\+Math\.floor\(Math\.random\(\)\*3200\)/);
+  assert.match(app,/sinbadBlinkPolicy\.minDelayMs\+Math\.floor\(Math\.random\(\)\*\(sinbadBlinkPolicy\.maxDelayMs-sinbadBlinkPolicy\.minDelayMs\)\)/);
+  assert.match(app,/blinkPolicyForPerformance\?\.\(sinbadAssistantState,\{\.\.\.cue,cadence:speechBoundary\|\|cue\.cadence\}\)/);
   assert.match(css,/\.sinbad-avatar\.sinbad-blinking \.sinbad-avatar-blink\{opacity:1\}/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-idle-blink-v1\.png'/);
 });
@@ -173,7 +175,15 @@ test('sending a question drives thinking, synced with the existing #sinbadThinki
 
 test('preparing-voice starts before the XTTS fetch, not after it resolves',()=>{
   const speakSinbad=app.slice(app.indexOf('async function speakSinbad'),app.indexOf('async function speakSinbad')+900);
-  assert.match(speakSinbad,/const controller=new AbortController\(\);sinbadVoiceAbort=controller;\s*\n\s*setSinbadAssistantState\('preparing-voice',sinbadResponseOpeningCue\);/);
+  assert.match(speakSinbad,/const controller=new AbortController\(\);sinbadVoiceAbort=controller;\s*\n\s*setSinbadAssistantState\('preparing-voice',sinbadVoicePreparationCue\(\)\);/);
+});
+
+test('voice preparation uses a bounded real pose without claiming speech has started',()=>{
+  assert.match(app,/function sinbadVoicePreparationCue\(\)/);
+  assert.match(app,/gesture:caution\?'hold':'idle-breathe'/);
+  assert.match(app,/energy:Math\.min\(Number\(sinbadResponseOpeningCue\?\.energy\)\|\|\.22,\.24\)/);
+  assert.match(app,/performancePhase:'prepare'/);
+  assert.match(app,/setSinbadAssistantState\('preparing-voice',sinbadVoicePreparationCue\(\)\)/);
 });
 
 test('speaking only starts on the real audio "playing" event, never on fetch/announce',()=>{
@@ -206,8 +216,16 @@ test('voice-disabled toggles with the real voice switch, and startup state match
 
 test('audio ended/aborted resolves the avatar, while genuine text-only delivery gets a bounded presenting state',()=>{
   const fn=app.slice(app.indexOf('function finishSinbadVoice'),app.indexOf('function stopSinbadVoice'));
-  assert.match(fn,/setSinbadAssistantState\(forceState\|\|\(sinbadState\.voiceEnabled\?'idle':'voice-disabled'\),isPresenting\?sinbadResponseOpeningCue:\{\}\);/);
-  assert.match(fn,/if\(isPresenting\)\{[\s\S]*return;[\s\S]*\}\s*scheduleSinbadListening\(\);/);
+  assert.match(fn,/setSinbadAssistantState\(completedSpeech\?'success':forceState\|\|\(sinbadState\.voiceEnabled\?'idle':'voice-disabled'\),completedSpeech\?completionCue:isPresenting\?sinbadResponseOpeningCue:\{\}\);/);
+  assert.match(fn,/if\(isPresenting\)\{[\s\S]*return;[\s\S]*\}\s*if\(completedSpeech\)return;\s*scheduleSinbadListening\(\);/);
+});
+
+test('a genuinely completed spoken turn uses one brief verified completion settle',()=>{
+  const fn=app.slice(app.indexOf('function finishSinbadVoice'),app.indexOf('function stopSinbadVoice'));
+  assert.match(fn,/const completedSpeech=!forceState&&sinbadAssistantState==='speaking'/);
+  assert.match(fn,/gesture:'nod'.*performancePhase:'settle'.*completionDurationMs:480.*resumeListening:true/);
+  assert.match(app,/Math\.max\(300,Math\.min\(2200,detail\.completionDurationMs\)\)/);
+  assert.match(app,/if\(detail\.resumeListening\)scheduleSinbadListening\(\)/);
 });
 
 test('an aborted/superseded XTTS request cannot corrupt the animation state',()=>{
@@ -228,7 +246,7 @@ test('tab-hidden reduces animation via a real visibilitychange listener',()=>{
 
 test('an explicit detail.reducedMotion from the Claude integration contract can force-disable animation independent of the OS preference',()=>{
   assert.match(app,/if\('reducedMotion' in \(detail\|\|\{\}\)\)document\.documentElement\.classList\.toggle\('sinbad-force-reduced-motion',detail\.reducedMotion===true\);/);
-  assert.match(css,/\.sinbad-force-reduced-motion \.sinbad-avatar-img\{animation:none!important\}/);
+  assert.match(css,/\.sinbad-force-reduced-motion \.sinbad-avatar-img,\.sinbad-force-reduced-motion \.sinbad-rig-torso\{animation:none!important\}/);
 });
 
 test('large and small avatars both render the real illustration via <img>, one accessible name kept on the large avatar',()=>{
@@ -242,7 +260,7 @@ test('large and small avatars both render the real illustration via <img>, one a
 test('a visible, aria-live status line exists for the large avatar so state is never colour-only',()=>{
   assert.match(html,/<p id="sinbadAvatarStatus" class="sinbad-status-line" aria-live="polite">Ready<\/p>/);
   assert.match(app,/const statusText=next==='thinking'&&thinkingCopy\[detail\.thinkingStage\]\?thinkingCopy\[detail\.thinkingStage\]:next==='speaking'&&responseCopy\[detail\.responseKind\]\?responseCopy\[detail\.responseKind\]:\(copy\[next\]\|\|next\);/);
-  assert.match(app,/if\(label&&\(changed\|\|next==='thinking'\)\)label\.textContent=statusText;/);
+  assert.match(app,/if\(label&&\(changed\|\|next==='thinking'\|\|next==='speaking'\)\)label\.textContent=statusText;/);
 });
 
 test('idle micro-motion is sparse, interruptible and disabled for hidden or reduced-motion views',()=>{
@@ -259,7 +277,7 @@ test('live speech and text cues update real rig controls instead of labels alone
   assert.match(app,/function applySinbadLivePerformanceCue\(cue,\{speechBoundary=''\}=\{\}\)/);
   assert.match(app,/poseForPerformance\?\.\(sinbadAssistantState,cue\.gesture/);
   assert.match(app,/Object\.entries\(rigCss\.variables\)\.forEach\(\(\[name,value\]\)=>el\.style\.setProperty\(name,value\)\)/);
-  assert.match(app,/transitionForControls\?\.\(previous,rigPose\.controls,\{urgent:cue\.responseKind==='caution'/);
+  assert.match(app,/transitionForControls\?\.\(previous,renderedRigControls,\{urgent:cue\.responseKind==='caution'/);
   assert.match(app,/--sinbad-motion-duration',`\$\{transition\.durationMs\}ms`/);
   assert.match(app,/function currentSinbadLiveRigControls\(now=performance\.now\(\)\)/);
   assert.match(app,/interpolateControls\?\.\(from,to,progress\)/);
@@ -268,12 +286,39 @@ test('live speech and text cues update real rig controls instead of labels alone
   assert.match(app,/sinbadTextPresentationCues\.slice\(1\)[\s\S]*applySinbadLivePerformanceCue\(cue\)/);
 });
 
+test('live performance interruption covers the bounded coordinated gesture beat, not only the joint tween',()=>{
+  assert.match(app,/let sinbadLastLivePerformanceCueAt=-Infinity/);
+  assert.match(app,/const performanceBeatStillActive=now-sinbadLastLivePerformanceCueAt<1400/);
+  assert.match(app,/const interrupted=transitionStillActive\|\|performanceBeatStillActive/);
+  assert.match(app,/sinbadLastLivePerformanceCueAt=now/);
+});
+
+test('speech improvisation has a per-answer expansive gesture budget',()=>{
+  assert.match(performanceDirector,/let remainingWords=0,expansiveGestures=0,activeGesture=false/);
+  assert.match(performanceDirector,/if\(expansiveGestures>=2\)return Object\.freeze/);
+  assert.match(performanceDirector,/motionBudget:'settled'/);
+  assert.match(performanceDirector,/const beginTurn=\(\)=>\{remainingWords=0;expansiveGestures=0;activeGesture=false;\}/);
+  assert.match(performanceDirector,/const reset=\(\)=>\{beginTurn\(\);improvisation\.reset\(\);\}/);
+});
+
+test('improvisation uses a bounded two-family memory instead of a visible fixed cycle',()=>{
+  assert.match(performanceDirector,/const GESTURE_FAMILIES=Object\.freeze/);
+  assert.match(performanceDirector,/recentFamilies=\[\.\.\.recentFamilies,family\]\.slice\(-2\)/);
+  assert.match(performanceDirector,/gestureFamily:family/);
+});
+
+test('speech meaning can bias a compatible gesture family with an auditable reason',()=>{
+  assert.match(performanceDirector,/function preferredGestureFamilyForSpeechCue\(cue=\{\}\)/);
+  assert.match(performanceDirector,/preferredFamily:preference\.family,preferenceReason:preference\.reason/);
+  assert.match(performanceDirector,/semanticPreference:preferredChoices\.length/);
+});
+
 test('text-only answers are honestly presented without entering the speaking or mouth-animation state',()=>{
   assert.match(app,/presenting:'Yanıtı ekranda sunuyor'/);
   assert.match(app,/presenting:'captain-sinbad-idle-master\.png'/);
   assert.match(app,/if\(next==='presenting'\)sinbadAssistantTimers\.push\(setTimeout\(\(\)=>\{if\(sinbadAssistantState==='presenting'\)\{setSinbadAssistantState\(sinbadState\.voiceEnabled\?'idle':'voice-disabled'\);scheduleSinbadListening\(\);\}\},1800\)\);/);
   assert.match(app,/finishSinbadVoice\('presenting'\)/);
-  assert.match(app,/setSinbadAssistantState\(forceState\|\|\(sinbadState\.voiceEnabled\?'idle':'voice-disabled'\),isPresenting\?sinbadResponseOpeningCue:\{\}\);/);
+  assert.match(app,/setSinbadAssistantState\(completedSpeech\?'success':forceState\|\|\(sinbadState\.voiceEnabled\?'idle':'voice-disabled'\),completedSpeech\?completionCue:isPresenting\?sinbadResponseOpeningCue:\{\}\);/);
   assert.match(app,/if\(sinbadResponseOpeningCue\.responseKind\)setSinbadResponseKind\(sinbadResponseOpeningCue\.responseKind\);/);
   assert.match(app,/sinbadTextPresentationCues\.slice\(1\)\.forEach\(cue=>sinbadAssistantTimers\.push\(setTimeout/);
   assert.match(app,/if\(sinbadAssistantState!=='presenting'\)return;/);
@@ -309,6 +354,7 @@ test('service worker cache version was bumped for this change and precaches the 
   const visible=html.match(/<div class="version">● v(\d+\.\d+\.\d+)<\/div>/);
   assert.ok(visible);
   assert.match(sw,new RegExp(`const CACHE='sinbad-marine-v${visible[1].replace(/\./g,'\\.')}-`));
+  assert.match(sw,/character-v1-v90/);
   assert.match(sw,/'\.\/sinbad-character-engine\.js'/);
   assert.match(sw,/'\.\/sinbad-character-rig\.js'/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-idle-master\.png'/);
@@ -436,9 +482,9 @@ test('acceptance regression: the avatar never stays in preparing-voice forever w
 test('speaking (standard provider) starts only on the real utterance onstart event, never when merely queued, and a superseded (stale) call cannot flip state either',()=>{
   const fn=app.slice(app.indexOf('function speakSinbadStandard'),app.indexOf('function splitSinbadCloneChunks'));
   assert.match(fn,/utterance\.onstart=\(\)=>\{if\(myGeneration!==sinbadStandardSpeechGeneration\)return;announce\(\);setSinbadAssistantState\('speaking',sinbadResponseOpeningCue\);commitSinbadPreparedGesture\(\);playSinbadRequestedGestureSequence\(\);\};/);
-  assert.match(fn,/setSinbadAssistantState\('preparing-voice',sinbadResponseOpeningCue\);/);
+  assert.match(fn,/setSinbadAssistantState\('preparing-voice',sinbadVoicePreparationCue\(\)\);/);
   // preparing-voice must be set before speechSynthesis.speak() is ever called
-  const preparingIdx=fn.indexOf("setSinbadAssistantState('preparing-voice',sinbadResponseOpeningCue)");
+  const preparingIdx=fn.indexOf("setSinbadAssistantState('preparing-voice',sinbadVoicePreparationCue())");
   const speakCallIdx=fn.indexOf('speechSynthesis.speak(utterance)');
   assert.ok(preparingIdx>0&&preparingIdx<speakCallIdx);
 });
@@ -457,7 +503,7 @@ test('onboundary drives a real per-word cue (not a fabricated continuous loop, a
 
 test('a new question immediately cancels the previous spoken answer and invalidates queued teaching pauses',()=>{
   const send=app.slice(app.indexOf('async function sendToSinbad'),app.indexOf("$('sendSinbad').addEventListener"));
-  assert.match(send,/const q=\(text\|\|'\'\)\.trim\(\); if\(!q\)return;\s*\n\s*clearSinbadTurnFinalization\(\{discard:true\}\);\s*\n\s*\/\/[^\n]*\n(?:\s*\/\/[^\n]*\n)*\s*interruptSinbadVoiceForUser\(\);/);
+  assert.match(send,/const q=\(text\|\|'\'\)\.trim\(\); if\(!q\)return;\s*\n\s*const visibleCharacterSnapshot=sinbadVisibleCharacterSnapshot\(\);\s*\n\s*stopSinbadListeningForAnswer\(\);\s*\n\s*clearSinbadTurnFinalization\(\{discard:true\}\);\s*\n\s*\/\/[^\n]*\n(?:\s*\/\/[^\n]*\n)*\s*interruptSinbadVoiceForUser\(\);/);
   const stop=app.slice(app.indexOf('function stopSinbadVoice'),app.indexOf('let sinbadStandardBoundaryTimer'));
   assert.match(stop,/sinbadStandardSpeechGeneration\+\+;/);
   assert.match(stop,/window\.speechSynthesis\?\.cancel\(\);/);
@@ -525,7 +571,7 @@ test('round-table fix: finishSinbadVoice is the single idempotent end-of-turn pa
   const fn=app.slice(app.indexOf('function finishSinbadVoice'),app.indexOf('function stopSinbadVoice'));
   assert.match(fn,/function finishSinbadVoice\(forceState\)\{/);
   // must be an unconditional call, not `if(sinbadState.voiceEnabled)setSinbadAssistantState(...)`
-  assert.match(fn,/setSinbadAssistantState\(forceState\|\|\(sinbadState\.voiceEnabled\?'idle':'voice-disabled'\),isPresenting\?sinbadResponseOpeningCue:\{\}\);/);
+  assert.match(fn,/setSinbadAssistantState\(completedSpeech\?'success':forceState\|\|\(sinbadState\.voiceEnabled\?'idle':'voice-disabled'\),completedSpeech\?completionCue:isPresenting\?sinbadResponseOpeningCue:\{\}\);/);
   assert.doesNotMatch(fn,/if\(sinbadState\.voiceEnabled\)setSinbadAssistantState/);
 });
 
@@ -650,6 +696,29 @@ test('Sinbad usability layout keeps a compact sticky profile, responsive tab rai
   assert.match(css,/@media\(max-width:600px\)\{\.sinbad-workspace-tabs\{position:static;display:flex;overflow-x:auto/);
 });
 
+test('a typed answer turn snapshots listening truth before stopping recognition and prevents self-hearing restart',()=>{
+  const stop=app.slice(app.indexOf('function stopSinbadListeningForAnswer'),app.indexOf('function finalizeSinbadSpeechTurn'));
+  assert.match(stop,/const recognition=sinbadRecognition;/);
+  assert.match(stop,/sinbadHandsFreeEnabled=false;sinbadWakeActive=false;sinbadIsListening=false;sinbadRecognition=null;/);
+  assert.match(stop,/clearTimeout\(sinbadRestartTimer\);recognition\?\.abort\(\);setListeningUI\('',false\);/);
+  const send=app.slice(app.indexOf('async function sendToSinbad'),app.indexOf("$('sendSinbad').addEventListener"));
+  assert.ok(send.indexOf('const visibleCharacterSnapshot=sinbadVisibleCharacterSnapshot();')<send.indexOf('stopSinbadListeningForAnswer();'));
+});
+
+test('an open Academy question is assessed before direct shape facts can reveal its answer',()=>{
+  const pending=app.indexOf('if(sinbadPendingAcademyBoardCheck){');
+  const assessment=app.indexOf('academyBoardShapeCheckAnswerForText?.(q,sinbadPendingAcademyBoardCheck');
+  const directProperty=app.indexOf('academyBoardShapePropertyAnswerForText?.(q,sinbadLastAcademyBoardAction');
+  assert.ok(pending>=0&&assessment>pending&&directProperty>assessment);
+});
+
+test('a direct board property stores an exact bounded record before its why follow-up',()=>{
+  assert.match(app,/sinbadLastAcademyBoardCheck=null;sinbadLastAcademyBoardProperty=boardShapeProperty\.known\?Object\.freeze\(\{shape:boardShapeProperty\.shape,property:boardShapeProperty\.property,value:boardShapeProperty\.value\}\):null/);
+  assert.match(app,/academyBoardShapePropertyReasonForText\?\.\(q,sinbadLastAcademyBoardProperty/);
+  assert.match(app,/sinbadLastAcademyBoardProperty=null;\s*if\(action\.kind==='clear'/);
+  assert.match(app,/if\(boardCheck\?\.accepted\)\{sinbadLastAcademyBoardCheck=null;sinbadLastAcademyBoardProperty=null;/);
+});
+
 test('an explicit microphone press safely interrupts Sinbad and gives the turn to the user',()=>{
   const fn=app.slice(app.indexOf('function startSinbadListening'),app.indexOf('function saveSinbadMessages'));
   assert.match(fn,/const interruptingVoice=sinbadAssistantState==='speaking'\|\|sinbadAssistantState==='preparing-voice'/);
@@ -681,8 +750,8 @@ test('rig head, lean and gaze outputs drive the real portrait while caution hold
   assert.match(css,/\.sinbad-avatar\[data-gaze="thought"\]\{--sinbad-gaze-offset:-\.7deg\}/);
   assert.match(css,/\.sinbad-avatar\[data-gesture="hold"\]\{animation:sinbadStageHold 1\.1s ease-out both\}/);
   assert.match(css,/@keyframes sinbadStageHold\{/);
-  assert.match(css,/@media \(prefers-reduced-motion: reduce\)\{\s*\.sinbad-avatar,\.sinbad-avatar-img\{animation:none!important\}/);
-  assert.match(css,/\.sinbad-force-reduced-motion \.sinbad-avatar,\.sinbad-force-reduced-motion \.sinbad-avatar-img\{animation:none!important\}/);
+  assert.match(css,/@media \(prefers-reduced-motion: reduce\)\{\s*\.sinbad-avatar,\.sinbad-avatar-img,\.sinbad-rig-torso\{animation:none!important\}/);
+  assert.match(css,/\.sinbad-force-reduced-motion \.sinbad-avatar,\.sinbad-force-reduced-motion \.sinbad-avatar-img,\.sinbad-force-reduced-motion \.sinbad-rig-torso\{animation:none!important\}/);
 });
 
 test('answer choreography uses a bounded non-repeating improvisation director rather than a fixed visible order',()=>{
@@ -708,9 +777,68 @@ test('motion profiles vary bounded body travel, scale and tilt instead of changi
 
 test('live state applies the selected gesture through the versioned articulated rig contract',()=>{
   assert.match(app,/poseForPerformance\?\.\(next,performance\.gesture,rigOverrides\)\|\|sinbadCharacterRig\?\.poseForState\?\.\(next,rigOverrides\)/);
-  assert.match(rig,/const RIG_VERSION='sinbad-2d-rig\/4'/);
+  assert.match(rig,/const RIG_VERSION='sinbad-2d-rig\/13'/);
   assert.match(rig,/'--sinbad-rig-left-arm'/);
   assert.match(rig,/'--sinbad-rig-right-arm'/);
+});
+
+test('whole-state changes interpolate from the current in-flight rig pose instead of snapping',()=>{
+  assert.match(app,/const previousStateRigControls=currentSinbadLiveRigControls\(stateNow\)\|\|sinbadLastLiveRigControls/);
+  assert.match(app,/transitionForControls\?\.\(previousStateRigControls,stateRigControls,\{urgent:urgentStateTransition,reducedMotion:reducedGazeMotion\}\)/);
+  assert.match(app,/expressionTransitionForControls\?\.\(previousStateRigControls,stateRigControls,\{urgent:urgentStateTransition,reducedMotion:reducedGazeMotion\}\)/);
+  assert.match(app,/sinbadLiveRigTransition=\{from:previousStateRigControls,to:stateRigControls,startedAt:stateNow,durationMs:stateTransition\.durationMs\}/);
+});
+
+test('expression overlays use a bounded rig-derived transition instead of snapping between cards',()=>{
+  assert.match(app,/expressionTransitionForControls\?\.\(previous,renderedRigControls/);
+  assert.match(app,/--sinbad-expression-duration/);assert.match(app,/--sinbad-expression-easing/);
+  assert.match(css,/\.sinbad-rig-expression-concerned,\.sinbad-rig-expression-delighted\{transition:[^}]*opacity var\(--sinbad-expression-duration/);
+});
+test('face gaze and arms use a bounded rig-derived scene coordination plan',()=>{
+  assert.match(app,/coordinationForPerformance\?\.\(sinbadAssistantState,cue,/);
+  assert.match(app,/--sinbad-head-delay/);assert.match(app,/--sinbad-arm-delay/);assert.match(app,/--sinbad-expression-delay/);
+  assert.match(app,/--sinbad-head-easing/);assert.match(app,/--sinbad-arm-easing/);
+  assert.match(css,/\.sinbad-rig-head\{transition-timing-function:var\(--sinbad-head-easing,ease-in-out\),linear;transition-delay:var\(--sinbad-head-delay,0ms\),0ms\}/);
+  assert.match(css,/\.sinbad-rig-left-arm,\.sinbad-rig-right-arm\{transition-timing-function:var\(--sinbad-arm-easing,ease-in-out\),linear;transition-delay:var\(--sinbad-arm-delay,0ms\),0ms\}/);
+});
+test('live avatar exposes the speech gesture lifecycle and clears stale phases',()=>{
+  assert.match(app,/if\(cue\.performancePhase\)el\.dataset\.performancePhase=cue\.performancePhase;else delete el\.dataset\.performancePhase/);
+});
+
+test('arm gestures pass through a bounded whole-body balance correction before rendering',()=>{
+  assert.match(app,/balanceControlsForPerformance\?\.\(sinbadAssistantState,cue\.gesture,rigPose\.controls\)/);
+  assert.match(app,/const renderedRigControls=balancedRigPose\?\.accepted\?balancedRigPose\.controls:rigPose\?\.controls/);
+  assert.match(app,/sinbadLastLiveRigControls=renderedRigControls/);
+});
+
+test('the real layered rig supports auditable mirrored explanation gestures',()=>{
+  assert.match(rig,/'open-hand-left':\{headYaw:\.04,leftArm:\.58,rightArm:\.18\}/);
+  assert.match(rig,/'explain-left':\{headYaw:\.03,leftArm:\.52,rightArm:\.38\}/);
+  assert.match(performanceDirector,/gestureSide:side/);
+  assert.match(css,/data-gesture="explain-left"/);assert.match(css,/data-gesture="open-hand-left"/);
+});
+
+test('head gaze and breath use one state-aware reduced-motion-safe micro rhythm',()=>{
+  assert.match(app,/microRhythmForPerformance\?\.\(sinbadAssistantState,cue,\{reducedMotion\}\)/);
+  assert.match(app,/el\.dataset\.performanceRhythm=microRhythm\.profile/);
+  assert.match(css,/@keyframes sinbadCoordinatedBreath/);
+  assert.match(css,/sinbad-avatar:not\(\[data-performance-rhythm="steady"\]\) \.sinbad-rig-torso\{animation:sinbadCoordinatedBreath/);
+  assert.match(css,/\.sinbad-avatar,\.sinbad-avatar-img,\.sinbad-rig-torso\{animation:none!important\}/);
+  assert.match(app,/const stateMicroRhythm=sinbadCharacterRig\?\.microRhythmForPerformance\?\.\(next,\{\.\.\.performance,responseKind:detail\.responseKind\},\{reducedMotion:reducedGazeMotion\}\)/);
+  assert.match(app,/el\.dataset\.performanceRhythm=stateMicroRhythm\.profile/);
+});
+
+test('page lifecycle fail-closes every character runtime resource and restores only a neutral state',()=>{
+  const suspend=app.slice(app.indexOf('function suspendSinbadCharacterRuntime'),app.indexOf('function resumeSinbadCharacterRuntime'));
+  assert.match(suspend,/sinbadCharacterRuntimeSuspended=true;/);
+  assert.match(suspend,/clearSinbadAssistantTimers\(\);clearTimeout\(sinbadBlinkTimer\);sinbadBlinkTimer=null;clearTimeout\(sinbadIdleMotionTimer\);sinbadIdleMotionTimer=null;/);
+  assert.match(suspend,/clearSinbadTurnFinalization\(\{discard:true\}\);clearTimeout\(sinbadRestartTimer\);/);
+  assert.match(suspend,/sinbadRecognition=null;sinbadIsListening=false;sinbadHandsFreeEnabled=false;sinbadWakeActive=false;sinbadAwaitingAnswer=false;recognition\?\.abort\(\);/);
+  assert.match(suspend,/stopSinbadVoice\(\);stopSinbadLipSyncAnalyser\(\);setListeningUI\('',false\);/);
+  const resume=app.slice(app.indexOf('function resumeSinbadCharacterRuntime'),app.indexOf("if(typeof document!=='undefined'&&'visibilityState'in document)"));
+  assert.match(resume,/setSinbadAssistantState\(sinbadState\.voiceEnabled\?'idle':'voice-disabled',\{gesture:'rest',gaze:'audience',emotion:'warm',energy:\.12\}\);/);
+  assert.match(app,/window\.addEventListener\('pagehide',suspendSinbadCharacterRuntime,\{passive:true\}\);/);
+  assert.match(app,/window\.addEventListener\('pageshow',event=>\{if\(event\.persisted\)resumeSinbadCharacterRuntime\(\);\},\{passive:true\}\);/);
 });
 
 test('large live portrait activates four real alpha rig layers only after every part loads',()=>{
@@ -764,8 +892,9 @@ test('a supported explicit gesture request overrides only the opening cue and un
   assert.match(app,/gestureStopRequestForText\?\.\(q,sinbadState\.language\|\|appLanguage\)/);
   assert.match(app,/function stopSinbadGesturePerformance\(\)/);
   assert.match(app,/sinbadRequestedGesture=null;sinbadRequestedGestureSequence=\[\];sinbadPreparedGestureAction=null;sinbadExplicitGestureHoldBoundaries=0/);
+  assert.match(app,/clearSinbadAssistantTimers\(\);clearTimeout\(sinbadSpeechMeaningTransitionTimer\)/);
   assert.match(app,/setSinbadAssistantState\(sinbadState\.voiceEnabled\?'idle':'voice-disabled',\{gesture:'rest',gaze:'audience',emotion:'neutral',energy:0\}\)/);
-  assert.match(app,/gestureRecallAnswerForText\?\.\(q,sinbadLastPerformedGestureAction,sinbadState\.language\|\|appLanguage\)/);
+  assert.match(app,/gestureRecallAnswerForText\?\.\(q,sinbadLastPerformedGestureAction,sinbadState\.language\|\|appLanguage,sinbadLastPerformedGestureContext\)/);
   assert.match(app,/if\(sinbadRequestedGesture\?\.supported&&sinbadTextPresentationCues\.length\)/);
   assert.match(app,/\.\.\.sinbadRequestedGesture\.cue,responseKind:sinbadTextPresentationCues\[0\]\.responseKind/);
   assert.match(app,/sinbadRequestedGesture=null;/);
@@ -776,8 +905,16 @@ test('a supported explicit gesture request overrides only the opening cue and un
   assert.match(app,/if\(isPresenting\)\{\s*\n\s*commitSinbadPreparedGesture\(\);/);
 });
 
+test('the live app fail-closes any supported gesture that lacks a registered execution capability',()=>{
+  const prepare=app.slice(app.indexOf('function prepareSinbadSpeechPerformance'),app.indexOf('function groundSinbadResponseToRequestedGesture'));
+  assert.match(prepare,/gestureCapabilityForRequest\?\.\(request\)/);
+  assert.match(prepare,/request\.supported&&!capability\?\.accepted\?Object\.freeze\(\{\.\.\.request,supported:false,reason:capability\?\.reason\|\|'UNVERIFIED_GESTURE_CAPABILITY'\}\):request/);
+});
+
 test('supported requests play a bounded real gesture sequence on actual voice start',()=>{
-  assert.match(app,/gestureSequenceForRequest\?\.\(sinbadRequestedGesture\.action,\{actions:sinbadRequestedGesture\.actions\}\)/);
+  assert.match(app,/createGestureSequenceDirector\?\.\(\)/);
+  assert.match(app,/sinbadGestureSequenceDirector\?\.select\?\.\(sinbadRequestedGesture\.action,sequenceOptions\)/);
+  assert.match(app,/gestureSequenceForRequest\?\.\(sinbadRequestedGesture\.action,sequenceOptions\)/);
   assert.match(app,/function playSinbadRequestedGestureSequence\(\)/);
   assert.match(app,/if\(cues\.length<2\|\|!\['speaking','presenting'\]\.includes\(presentationState\)\)return false/);
   assert.match(app,/Math\.max\(1,cues\[index\+1\]\.at-cue\.at\)/);
@@ -786,9 +923,69 @@ test('supported requests play a bounded real gesture sequence on actual voice st
   assert.match(app,/sinbadPreparedGestureAction=sinbadRequestedGesture\.compound\?null:sinbadRequestedGesture\.action/);
 });
 
-test('show-palm reuses the verified real open-hand artwork, removes the large-avatar crop and stays bounded',()=>{
-  assert.match(css,/\.sinbad-avatar\.large\[data-gesture="show-palm"\] \.sinbad-avatar-img\{object-fit:contain/);
-  assert.match(css,/\.sinbad-avatar\[data-gesture="show-palm"\]\{animation:sinbadStageShowPalm 1\.35s ease-out both\}/);
+test('current body-state questions are answered from the live character snapshot before model fallback',()=>{
+  assert.match(app,/const visibleCharacterSnapshot=sinbadVisibleCharacterSnapshot\(\)/);
+  assert.match(app,/characterStateAnswerForText\?\.\(q,visibleCharacterSnapshot,sinbadState\.language\|\|appLanguage\)/);
+  assert.match(app,/el\.dataset\.gestureSide=sinbadGestureSide\(cue\.gesture\)/);
+  assert.match(app,/el\.dataset\.gestureHands=sinbadGestureHands\(cue\.gesture\)/);
+  assert.match(app,/function reinforceSinbadVisiblePoseAnswer\(answer\)/);
+  assert.match(app,/\['gaze','audience-gaze'\]\.includes\(answer\.kind\)/);
+  assert.match(app,/board:\{gesture:'rest',gaze:'board',emotion:'attentive',energy:\.2\}/);
+  assert.match(app,/headDirection:sinbadVisibleHeadDirection\(state,gesture\)/);
+  assert.match(app,/headTilt:sinbadVisibleHeadTilt\(state,gesture\)/);
+  assert.match(app,/facialExpression:sinbadVisibleFacialExpression\(state,gesture\)/);
+  assert.match(app,/bodyPosture:sinbadVisibleBodyPosture\(state,gesture\)/);
+  assert.match(app,/motionEnergy:sinbadVisibleMotionEnergy\(state,gesture\)/);
+  assert.match(app,/reducedMotion:sinbadReducedMotionPreferred\(\)/);
+  assert.match(app,/listeningActive:Boolean\(sinbadIsListening\)/);
+  assert.match(app,/if\(answer\.kind==='listening-status'\)/);
+  assert.match(app,/reinforceSinbadVisiblePoseAnswer\(currentCharacterState\);speakSinbad/);
+  const stateAnswer=app.indexOf('const currentCharacterState=');
+  const modelFallback=app.indexOf("setSinbadThinkingStage('analyzing')",stateAnswer);
+  assert.ok(stateAnswer>0&&modelFallback>stateAnswer);
+});
+
+test('verified board confirmations use matching yes and no body language while keeping board gaze',()=>{
+  assert.match(app,/function presentSinbadBoardConfirmation\(answer\)/);
+  assert.match(app,/function commitSinbadPerformedGestureAction\(action,context=null\)/);
+  assert.match(app,/sinbadLastPerformedGestureContext=typeof context==='string'\?context:null/);
+  assert.match(app,/answer\.value\?\{gesture:'nod',gaze:'board'/);
+  assert.match(app,/\{gesture:'shake-head-left',gaze:'board'/);
+  assert.match(app,/commitSinbadPerformedGestureAction\(answer\.value\?'nod':'shake-head',answer\.value\?'board-confirmation-yes':'board-confirmation-no'\)/);
+  assert.match(app,/const preserveBoardGaze=\['board-confirmation-yes','board-confirmation-no'\]\.includes\(sinbadLastPerformedGestureContext\)&&recalledGesture\.kind==='gesture-reason'/);
+  assert.match(app,/replay\.cues\.map\(cue=>preserveBoardGaze\?Object\.freeze\(\{\.\.\.cue,gaze:'board'\}\):cue\)/);
+  assert.match(app,/recalledBoard\.kind==='shape-confirmation'\)presentSinbadBoardConfirmation\(recalledBoard\)/);
+});
+
+test('verified two-movement replay is handled before ordinary direct gesture routing',()=>{
+  assert.match(app,/gestureHistoryReplayForText\?\.\(q,sinbadPerformedGestureHistory,sinbadState\.language\|\|appLanguage\)/);
+  assert.match(app,/function sinbadReducedMotionPreferred\(\)/);
+  assert.match(app,/Hareket azaltma tercihin açık olduğu için iki hareketlik animasyon dizisini oynatmıyorum/);
+  assert.match(app,/select\?\.\(historyReplay\.action,\{actions:historyReplay\.actions\}\)/);
+  assert.match(app,/compound:true,action:historyReplay\.action,actions:historyReplay\.actions/);
+  assert.ok(app.indexOf('const historyReplay=')<app.indexOf('const directReaction=',app.indexOf('const historyReplay=')));
+});
+
+test('reduced motion can be changed by an explicit bounded command and persists locally',()=>{
+  assert.match(html,/id="toggleSinbadReducedMotion" aria-pressed="false"/);
+  assert.ok(html.indexOf("localStorage.getItem('atlas_sinbad_reduced_motion')")<html.indexOf('<link rel="stylesheet" href="./styles.css'));
+  assert.match(html,/try\{if\(localStorage\.getItem\('atlas_sinbad_reduced_motion'\)==='on'\)document\.documentElement\.classList\.add\('sinbad-force-reduced-motion'\)\}catch\{\}/);
+  assert.match(app,/reducedMotionCommandForText\?\.\(q,sinbadState\.language\|\|appLanguage\)/);
+  assert.match(app,/function applySinbadReducedMotionCommand\(command\)/);
+  assert.match(app,/function setSinbadReducedMotionUI\(\)/);
+  assert.match(app,/function handleSinbadSystemReducedMotionChange\(event\)/);
+  assert.match(app,/clearSinbadAssistantTimers\(\);sinbadRequestedGesture=null;sinbadRequestedGestureSequence=\[\]/);
+  assert.match(app,/const \{reducedMotion:_ignored,\.\.\.detail\}=sinbadAssistantLastDetail\|\|\{\};setSinbadAssistantState\(sinbadAssistantState,detail\)/);
+  assert.match(app,/matchMedia\?\.\('\(prefers-reduced-motion: reduce\)'\)\.addEventListener\?\.\('change',handleSinbadSystemReducedMotionChange\)/);
+  assert.match(app,/toggleSinbadReducedMotion'\)\?\.addEventListener\('click'/);
+  assert.match(app,/classList\.toggle\('sinbad-force-reduced-motion',command\.enabled\)/);
+  assert.match(app,/localStorage\.setItem\('atlas_sinbad_reduced_motion',command\.enabled\?'on':'off'\)/);
+  assert.match(app,/işletim sistemi hareket azaltmayı açık tuttuğu için etkin davranış devam ediyor/);
+});
+
+test('right and left palm poses reuse the verified articulated artwork and stay bounded',()=>{
+  assert.match(css,/\.sinbad-avatar\.large:is\(\[data-gesture="show-palm"\],\[data-gesture="show-left-palm"\]\) \.sinbad-avatar-img\{object-fit:contain/);
+  assert.match(css,/\.sinbad-avatar:is\(\[data-gesture="show-palm"\],\[data-gesture="show-left-palm"\]\)\{animation:sinbadStageShowPalm 1\.35s ease-out both\}/);
   assert.match(css,/@keyframes sinbadStageShowPalm\{/);
   assert.doesNotMatch(app,/show-palm.*\.png/);
   assert.match(app,/gazeTransitionForCue\?\.\(performance,\{reducedMotion:reducedGazeMotion\}\)/);
@@ -811,7 +1008,7 @@ test('thinking animation reports only real asynchronous work stages and removes 
 
 test('live speech boundaries expose sentence-level meaning so expression can change during one answer',()=>{
   assert.match(app,/createSpeechGestureDirector\?\.\(\)/);
-  assert.match(app,/sinbadSpeechGestureDirector\?\.reset\(\)/);
+  assert.match(app,/sinbadSpeechGestureDirector\?\.beginTurn\(\)/);
   assert.match(app,/sinbadSpeechGestureDirector\?\.select\(semantic\)/);
   assert.match(app,/function setSinbadResponseKind\(kind\)\{/);
   assert.match(app,/if\(!Object\.hasOwn\(copy,kind\)\)return false;/);
@@ -822,6 +1019,23 @@ test('live speech boundaries expose sentence-level meaning so expression can cha
   assert.match(css,/data-response-kind="question"/);
   assert.match(css,/data-response-kind="completion"/);
   assert.match(css,/data-response-kind="explanation"/);
+});
+
+test('new answers preserve bounded cross-turn body memory while resetting answer-only motion budgets',()=>{
+  assert.match(performanceDirector,/const beginTurn=\(\)=>\{remainingWords=0;expansiveGestures=0;activeGesture=false;\}/);
+  assert.match(performanceDirector,/const reset=\(\)=>\{beginTurn\(\);improvisation\.reset\(\);\}/);
+  assert.match(performanceDirector,/Object\.freeze\(\{select,beginTurn,reset\}\)/);
+});
+
+test('long classroom sessions keep validated in-memory and persisted chat history bounded',()=>{
+  assert.match(app,/const SINBAD_MESSAGE_HISTORY_LIMIT=80;/);
+  assert.match(app,/function loadSinbadMessages\(\)\{/);
+  assert.match(app,/if\(!Array\.isArray\(stored\)\)return \[\];/);
+  assert.match(app,/stored\.filter\(message=>message&&typeof message==='object'&&\['user','sinbad'\]\.includes\(message\.role\)&&typeof message\.text==='string'\)\.slice\(-SINBAD_MESSAGE_HISTORY_LIMIT\)/);
+  assert.match(app,/messages: loadSinbadMessages\(\)/);
+  assert.match(app,/if\(sinbadState\.messages\.length>SINBAD_MESSAGE_HISTORY_LIMIT\)sinbadState\.messages\.splice\(0,sinbadState\.messages\.length-SINBAD_MESSAGE_HISTORY_LIMIT\);/);
+  assert.match(app,/JSON\.stringify\(sinbadState\.messages\.slice\(-SINBAD_MESSAGE_HISTORY_LIMIT\)\)/);
+  assert.match(app,/return sinbadState\.messages\.slice\(-12,end\)/);
 });
 
 test('sentence meaning transitions bridge gently but safety escalation stays immediate',()=>{

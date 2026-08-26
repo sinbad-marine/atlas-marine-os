@@ -11,16 +11,22 @@ const edgeGuide=fs.readFileSync(path.join(root,'supabase/functions/sinbad-answer
 const ignore=fs.readFileSync(path.join(root,'.gitignore'),'utf8');
 const readme=fs.readFileSync(path.join(root,'README.md'),'utf8');
 
-test('visible release, Core and app assets share one live version',()=>{
+test('visible release and Core share a release version while changed UI assets share a cache revision',()=>{
   const visible=html.match(/<div class="version">● v(\d+)\.(\d+)\.(\d+)<\/div>/);
   assert.ok(visible);
   const assetVersion=`${visible[1]}${visible[2].padStart(2,'0')}${visible[3]}`;
+  const uiRevision='82072';
   assert.match(html,new RegExp(`sinbad-core\\.js\\?v=${assetVersion}`));
   assert.match(html,new RegExp(`core-decision\\.js\\?v=${assetVersion}`));
   assert.match(html,new RegExp(`sinbad-navigation\\.js\\?v=${assetVersion}`));
   assert.match(html,new RegExp(`sinbad-navigation-assistant\\.js\\?v=${assetVersion}`));
   assert.match(html,new RegExp(`sinbad-route-visualizer\\.js\\?v=${assetVersion}`));
-  assert.match(html,new RegExp(`app\\.js\\?v=${assetVersion}`));
+  assert.notEqual(uiRevision,assetVersion);
+  assert.match(html,new RegExp(`styles\\.css\\?v=${uiRevision}`));
+  assert.match(html,new RegExp(`sinbad-academy\\.js\\?v=${uiRevision}`));
+  assert.match(html,new RegExp(`sinbad-character-rig\\.js\\?v=${uiRevision}`));
+  assert.match(html,new RegExp(`sinbad-performance-director\\.js\\?v=${uiRevision}`));
+  assert.match(html,new RegExp(`app\\.js\\?v=${uiRevision}`));
   assert.match(worker,new RegExp(`sinbad-marine-v${visible[1]}\\.${visible[2]}\\.${visible[3]}-`));
   assert.match(worker,/supabase\/functions\/sinbad-answer\/core-decision\.js/);
   assert.match(worker,/\.\/sinbad-navigation\.js/);

@@ -32,8 +32,8 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&
 
 document.querySelectorAll('[data-open]').forEach(x=>x.onclick=()=>openWorkspace(x.dataset.open));
 document.querySelectorAll('.close').forEach(x=>x.onclick=closeWorkspaces);
-function openWorkspace(id){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');$(id).scrollIntoView({behavior:'smooth'});renderAll();if(id==='enc-viewer')initEncViewer();if(id==='navigation-plot')initNavigationPlot();if(id==='studio-console')refreshStudioCapability()}
-function closeWorkspaces(){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));scrollTo({top:0,behavior:'smooth'})}
+function openWorkspace(id){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');$(id).scrollIntoView({behavior:'smooth'});document.body.classList.toggle('store-active',id==='store');renderAll();if(id==='enc-viewer')initEncViewer();if(id==='navigation-plot')initNavigationPlot();if(id==='studio-console')refreshStudioCapability()}
+function closeWorkspaces(){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));document.body.classList.remove('store-active');scrollTo({top:0,behavior:'smooth'})}
 
 let encMap=null,encChartLayer=null,encBathymetryLayer=null,encSeamarkLayer=null;
 let navigationPlotMap=null,navigationPlotSource=null,navigationPlotRoute=null;
@@ -278,24 +278,86 @@ function setupPilot(){[...new Set(PILOT_DATA.map(x=>x.country))].sort().forEach(
 function renderPilot(){const q=$('pilotSearch').value.toLowerCase(),c=$('countryFilter').value,t=$('typeFilter').value;const rows=PILOT_DATA.filter(x=>(!c||x.country===c)&&(!t||x.type===t)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));$('pilotGrid').innerHTML=rows.map(x=>`<article class="record"><h3>${esc(x.name)}</h3><div class="muted">${esc(x.country)} • ${esc(x.region)}</div><p>${esc(x.approach)}</p><p class="warning">${esc(x.captainNote)}</p></article>`).join('')}
 function setupRoutes(){[...new Set(ROUTE_DATA.map(x=>x.type))].forEach(x=>$('routeType').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`));[...new Set(ROUTE_DATA.map(x=>x.status))].forEach(x=>$('routeStatus').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`))}
 function renderRoutes(){const q=$('routeSearch').value.toLowerCase(),t=$('routeType').value,s=$('routeStatus').value;const rows=ROUTE_DATA.filter(x=>(!t||x.type===t)&&(!s||x.status===s)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));$('routeGrid').innerHTML=rows.map(x=>`<article class="record"><h3>${esc(x.title)}</h3><div class="muted">${esc(x.type)} • ${esc(x.status)}</div><p>${x.stops.map(esc).join(' → ')}</p></article>`).join('')}
+function setupResources(){[...new Set(RESOURCE_DATA.map(x=>x.category))].sort().forEach(x=>$('resourceCategory').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`));[...new Set(RESOURCE_DATA.map(x=>x.region))].forEach(x=>$('resourceRegion').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`))}
+function renderResources(){const q=$('resourceSearch').value.toLowerCase(),c=$('resourceCategory').value,r=$('resourceRegion').value;const rows=RESOURCE_DATA.filter(x=>(!c||x.category===c)&&(!r||x.region===r)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));$('resourceGrid').innerHTML=rows.map(x=>`<article class="record"><h3>${esc(x.name)}</h3><div class="muted">${esc(x.category)} • ${esc(x.region)}</div><p>${esc(x.description)}</p>${x.highlights&&x.highlights.length?`<div>${x.highlights.map(h=>`<span class="badge">${esc(h)}</span>`).join('')}</div>`:''}${x.services&&x.services.length?`<p class="muted">${esc(x.services.join(' • '))}</p>`:''}${x.captainNote&&x.captainNote!=='—'?`<p class="warning">${esc(x.captainNote)}</p>`:''}</article>`).join('')}
 
 
 $('saveVessel').onclick=()=>{const a=get('atlas_fleet');a.unshift({name:$('vName').value,type:$('vType').value,flag:$('vFlag').value,loa:$('vLoa').value,beam:$('vBeam').value,draft:$('vDraft').value,cruise:$('vCruise').value,fuel:$('vFuel').value,water:$('vWater').value,notes:$('vNotes').value});set('atlas_fleet',a);renderFleet()}
+// --- Sinbad Marine Store ---
+let storeActiveCategory='';
+const storeTRY=n=>'₺'+Number(n).toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const storeCartGet=()=>get('atlas_store_cart');
+const storeCartSet=v=>set('atlas_store_cart',v);
+function storeCartAdd(id){const cart=storeCartGet();const line=cart.find(x=>x.id===id);if(line)line.qty+=1;else cart.push({id,qty:1});storeCartSet(cart);renderStoreCart()}
+function storeCartUpdateQty(id,delta){const cart=storeCartGet();const line=cart.find(x=>x.id===id);if(!line)return;line.qty+=delta;const next=cart.filter(x=>x.qty>0);storeCartSet(next);renderStoreCart()}
+function storeCartRemove(id){storeCartSet(storeCartGet().filter(x=>x.id!==id));renderStoreCart()}
+function setupStore(){
+ const cats=['Tümü',...new Set(STORE_DATA.map(x=>x.category))];
+ $('storeCategories').innerHTML=cats.map(c=>`<button type="button" class="store-chip${(c==='Tümü'&&!storeActiveCategory)||c===storeActiveCategory?' active':''}" data-cat="${c==='Tümü'?'':esc(c)}">${esc(c)}</button>`).join('');
+ $('storeCategories').querySelectorAll('.store-chip').forEach(btn=>btn.addEventListener('click',()=>{storeActiveCategory=btn.dataset.cat;setupStore();renderStoreGrid()}));
+ $('storeSearch').addEventListener('input',renderStoreGrid);
+ $('storeCartFab').addEventListener('click',()=>{$('storeCartOverlay').classList.add('open');$('storeCartDrawer').classList.add('open')});
+ $('storeCartClose').addEventListener('click',storeCloseCart);
+ $('storeCartOverlay').addEventListener('click',storeCloseCart);
+ $('storeCheckoutBtn').addEventListener('click',openStoreCheckout);
+ $('storeCheckoutClose').addEventListener('click',()=>$('storeCheckoutOverlay').classList.remove('open'));
+ $('storeSendWhatsapp').addEventListener('click',()=>storeSendOrder('whatsapp'));
+ $('storeSendEmail').addEventListener('click',()=>storeSendOrder('email'));
+ renderStoreGrid();renderStoreCart();
+}
+function storeCloseCart(){$('storeCartOverlay').classList.remove('open');$('storeCartDrawer').classList.remove('open')}
+function renderStoreGrid(){
+ const q=($('storeSearch').value||'').toLowerCase();
+ const rows=STORE_DATA.filter(x=>(!storeActiveCategory||x.category===storeActiveCategory)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));
+ $('storeGrid').innerHTML=rows.length?rows.map(x=>`<article class="store-card">${x.badge?`<span class="store-badge-tag">${esc(x.badge)}</span>`:''}<div class="store-icon-tile">${x.icon||'⚓'}</div><div class="store-card-category">${esc(x.category)}</div><h3>${esc(x.name)}</h3><p class="store-card-desc">${esc(x.description)}</p><div class="store-card-footer"><div class="store-price">${storeTRY(x.price)}<small>KDV dahil</small></div><button type="button" class="store-add-btn" data-id="${esc(x.id)}">Sepete Ekle</button></div></article>`).join(''):'<p class="empty">Bu kategoride/aramada ürün bulunamadı.</p>';
+ $('storeGrid').querySelectorAll('.store-add-btn').forEach(btn=>btn.addEventListener('click',()=>{storeCartAdd(btn.dataset.id);btn.textContent='Eklendi ✓';btn.classList.add('in-cart');setTimeout(()=>{btn.textContent='Sepete Ekle';btn.classList.remove('in-cart')},1100)}));
+}
+function renderStoreCart(){
+ const cart=storeCartGet();
+ const lines=cart.map(item=>({...item,product:STORE_DATA.find(p=>p.id===item.id)})).filter(x=>x.product);
+ const count=lines.reduce((a,x)=>a+x.qty,0);
+ $('storeCartCount').textContent=count;
+ $('storeCartItems').innerHTML=lines.length?lines.map(x=>`<div class="store-cart-item"><div class="store-cart-item-icon">${x.product.icon||'⚓'}</div><div><h4>${esc(x.product.name)}</h4><div class="store-qty-row"><button type="button" class="store-qty-btn" data-id="${esc(x.id)}" data-d="-1">−</button><span>${x.qty}</span><button type="button" class="store-qty-btn" data-id="${esc(x.id)}" data-d="1">+</button></div></div><div><div class="store-cart-item-price">${storeTRY(x.product.price*x.qty)}</div><button type="button" class="store-cart-remove" data-id="${esc(x.id)}">Kaldır</button></div></div>`).join(''):'<div class="store-cart-empty">Sepetiniz boş.<br>Mağazadan ürün ekleyin.</div>';
+ $('storeCartItems').querySelectorAll('.store-qty-btn').forEach(btn=>btn.addEventListener('click',()=>storeCartUpdateQty(btn.dataset.id,Number(btn.dataset.d))));
+ $('storeCartItems').querySelectorAll('.store-cart-remove').forEach(btn=>btn.addEventListener('click',()=>storeCartRemove(btn.dataset.id)));
+ const subtotal=lines.reduce((a,x)=>a+x.product.price*x.qty,0);
+ $('storeCartSubtotal').textContent=storeTRY(subtotal);
+}
+function storeBuildOrderText(){
+ const cart=storeCartGet();
+ const lines=cart.map(item=>({...item,product:STORE_DATA.find(p=>p.id===item.id)})).filter(x=>x.product);
+ const subtotal=lines.reduce((a,x)=>a+x.product.price*x.qty,0);
+ const name=$('storeName').value.trim(),phone=$('storePhone').value.trim(),email=$('storeEmail').value.trim(),delivery=$('storeDelivery').value.trim(),note=$('storeNote').value.trim();
+ const itemLines=lines.map(x=>`• ${x.product.name} x${x.qty} — ${storeTRY(x.product.price*x.qty)}`).join('\n');
+ return `SİNBAD MARINE STORE — Sipariş Talebi\n\nMüşteri: ${name||'—'}\nTelefon: ${phone||'—'}\nE-posta: ${email||'—'}\nTeslimat/Yat: ${delivery||'—'}\n\nÜrünler:\n${itemLines||'—'}\n\nAra Toplam: ${storeTRY(subtotal)}\nNot: ${note||'—'}\n\n(Bu bir ön sipariş talebidir; ödeme talimatları ayrıca iletilecektir.)`;
+}
+function openStoreCheckout(){
+ if(!storeCartGet().length)return;
+ $('storeCheckoutSummary').textContent=storeBuildOrderText();
+ $('storeCheckoutOverlay').classList.add('open');
+}
+function storeSendOrder(channel){
+ const text=storeBuildOrderText();
+ $('storeCheckoutSummary').textContent=text;
+ if(channel==='whatsapp')window.open(`https://wa.me/?text=${encodeURIComponent(text)}`,'_blank');
+ else window.open(`mailto:?subject=${encodeURIComponent('Sinbad Marine Store — Sipariş Talebi')}&body=${encodeURIComponent(text)}`,'_blank');
+}
 function renderFleet(){const a=get('atlas_fleet');$('fleetList').innerHTML=a.map(v=>`<article class="record"><h3>${esc(v.name)}</h3><p>${esc(v.type)} • ${esc(v.flag)} • Draft ${esc(v.draft)} m</p></article>`).join('')||'<div class="empty">No vessel records.</div>'}
 $('saveCrew').onclick=()=>{const a=get('atlas_crew');a.unshift({name:$('crewName').value,rank:$('crewRank').value,nationality:$('crewNationality').value,passport:$('crewPassport').value,medical:$('crewMedical').value,stcw:$('crewStcw').value,visa:$('crewVisa').value,contract:$('crewContract').value,contact:$('crewContact').value,notes:$('crewNotes').value});set('atlas_crew',a);renderCrew()}
 function renderCrew(){const a=get('atlas_crew');$('crewList').innerHTML=a.map(c=>`<article class="record"><h3>${esc(c.name)}</h3><p>${esc(c.rank)} • ${esc(c.nationality)}</p></article>`).join('')||'<div class="empty">No crew records.</div>'}
 
 
 async function renderSummary(){const rows=await dbAll();$('sumFiles').textContent=rows.length;$('sumPubs').textContent=rows.filter(x=>x.folder==='Nautical Publications').length;$('sumCharts').textContent=rows.filter(x=>x.folder==='Nautical Charts').length;$('sumStorage').textContent=(rows.reduce((a,x)=>a+x.size,0)/1048576).toFixed(1)+' MB'}
-async function renderAll(){renderFleet();renderCrew();renderPilot();renderRoutes();await renderDocuments();await renderSummary()}
+async function renderAll(){renderFleet();renderCrew();renderPilot();renderRoutes();renderResources();await renderDocuments();await renderSummary()}
 
 
 ['pilotSearch','countryFilter','typeFilter'].forEach(id=>$(id).addEventListener(id==='pilotSearch'?'input':'change',renderPilot));
 ['routeSearch','routeType','routeStatus'].forEach(id=>$(id).addEventListener(id==='routeSearch'?'input':'change',renderRoutes));
+['resourceSearch','resourceCategory','resourceRegion'].forEach(id=>$(id).addEventListener(id==='resourceSearch'?'input':'change',renderResources));
 
 
 document.addEventListener('DOMContentLoaded',async()=>{
- setupDocumentFilters();setupPilot();setupRoutes();
+ setupDocumentFilters();setupPilot();setupRoutes();setupResources();setupStore();
  try{
   await ensureDB();
   await renderAll();
@@ -310,9 +372,16 @@ if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWork
 
 
 
-
+const SINBAD_MESSAGE_HISTORY_LIMIT=80;
+function loadSinbadMessages(){
+  try{
+    const stored=JSON.parse(localStorage.getItem('atlas_sinbad_messages')||'[]');
+    if(!Array.isArray(stored))return [];
+    return stored.filter(message=>message&&typeof message==='object'&&['user','sinbad'].includes(message.role)&&typeof message.text==='string').slice(-SINBAD_MESSAGE_HISTORY_LIMIT);
+  }catch(_){return [];}
+}
 const sinbadState = {
-  messages: JSON.parse(localStorage.getItem('atlas_sinbad_messages') || '[]'),
+  messages: loadSinbadMessages(),
   voiceEnabled: localStorage.getItem('atlas_sinbad_voice') !== 'off',
   language: localStorage.getItem('atlas_sinbad_language') || 'tr-TR'
 };
@@ -365,14 +434,14 @@ const SINBAD_THINKING_STAGE_LABELS={
  'it-IT':{analyzing:'Analizza la domanda',calculating:'Calcola',retrieving:'Consulta le fonti',composing:'Prepara la risposta'}
 };
 const SINBAD_RESPONSE_KIND_LABELS={
- 'tr-TR':{caution:'Uyarıyor',question:'Soru yöneltiyor',completion:'Sonucu bildiriyor',explanation:'Açıklıyor',conversation:'Konuşuyor'},
- 'en-US':{caution:'Giving a warning',question:'Asking a question',completion:'Reporting the result',explanation:'Explaining',conversation:'Speaking'},
- 'ru-RU':{caution:'Предупреждает',question:'Задаёт вопрос',completion:'Сообщает результат',explanation:'Объясняет',conversation:'Говорит'},
- 'fr-FR':{caution:'Avertit',question:'Pose une question',completion:'Annonce le résultat',explanation:'Explique',conversation:'Parle'},
- 'de-DE':{caution:'Warnt',question:'Stellt eine Frage',completion:'Meldet das Ergebnis',explanation:'Erklärt',conversation:'Spricht'},
- 'ar-SA':{caution:'يصدر تحذيراً',question:'يطرح سؤالاً',completion:'يعلن النتيجة',explanation:'يشرح',conversation:'يتحدث'},
- 'es-ES':{caution:'Advierte',question:'Hace una pregunta',completion:'Comunica el resultado',explanation:'Explica',conversation:'Habla'},
- 'it-IT':{caution:'Avverte',question:'Fa una domanda',completion:'Comunica il risultato',explanation:'Spiega',conversation:'Parla'}
+ 'tr-TR':{caution:'Uyarıyor',uncertainty:'Belirsizliği açıklıyor',correction:'Bilgiyi düzeltiyor',negative:'Neden yapamayacağını açıklıyor',question:'Soru yöneltiyor',completion:'Sonucu bildiriyor',explanation:'Açıklıyor',conversation:'Konuşuyor'},
+ 'en-US':{caution:'Giving a warning',uncertainty:'Explaining uncertainty',correction:'Correcting information',negative:'Explaining why it cannot comply',question:'Asking a question',completion:'Reporting the result',explanation:'Explaining',conversation:'Speaking'},
+ 'ru-RU':{caution:'Предупреждает',uncertainty:'Объясняет неопределённость',correction:'Исправляет информацию',negative:'Объясняет причину отказа',question:'Задаёт вопрос',completion:'Сообщает результат',explanation:'Объясняет',conversation:'Говорит'},
+ 'fr-FR':{caution:'Avertit',uncertainty:'Explique l’incertitude',correction:'Corrige les informations',negative:'Explique pourquoi il ne peut pas accepter',question:'Pose une question',completion:'Annonce le résultat',explanation:'Explique',conversation:'Parle'},
+ 'de-DE':{caution:'Warnt',uncertainty:'Erklärt Unsicherheit',correction:'Korrigiert Informationen',negative:'Erklärt die Ablehnung',question:'Stellt eine Frage',completion:'Meldet das Ergebnis',explanation:'Erklärt',conversation:'Spricht'},
+ 'ar-SA':{caution:'يصدر تحذيراً',uncertainty:'يوضح عدم اليقين',correction:'يصحح المعلومات',negative:'يوضح سبب الرفض',question:'يطرح سؤالاً',completion:'يعلن النتيجة',explanation:'يشرح',conversation:'يتحدث'},
+ 'es-ES':{caution:'Advierte',uncertainty:'Explica la incertidumbre',correction:'Corrige la información',negative:'Explica por qué no puede hacerlo',question:'Hace una pregunta',completion:'Comunica el resultado',explanation:'Explica',conversation:'Habla'},
+ 'it-IT':{caution:'Avverte',uncertainty:'Spiega l’incertezza',correction:'Corregge le informazioni',negative:'Spiega perché non può farlo',question:'Fa una domanda',completion:'Comunica il risultato',explanation:'Spiega',conversation:'Parla'}
 };
 // Which real illustrated Academy asset represents each state. Several logical
 // states (preparing-voice, success, warning, error, voice-disabled) do not yet
@@ -405,6 +474,7 @@ const SINBAD_STATE_ASSET={
 let sinbadAssistantState='idle';
 let sinbadAssistantTimers=[];
 let sinbadAssistantLastDetail={};
+let sinbadLastVerifiedSpeechGesture=null;
 const sinbadCharacterEngine=window.SinbadCharacterEngine?.createCharacterEngine({initialState:'idle'})||null;
 const sinbadCharacterRig=window.SinbadCharacterRig||null;
 const sinbadPerformanceDirector=window.SinbadPerformanceDirector||null;
@@ -413,27 +483,32 @@ const sinbadImprovisationDirector=sinbadPerformanceDirector?.createImprovisation
 const sinbadBoardQuestionDirector=sinbadPerformanceDirector?.createAcademyBoardQuestionDirector?.()||null;
 const sinbadSpeechGestureDirector=sinbadPerformanceDirector?.createSpeechGestureDirector?.()||null;
 const sinbadIdleBehaviorDirector=sinbadPerformanceDirector?.createIdleBehaviorDirector?.()||null;
+const sinbadGestureSequenceDirector=sinbadPerformanceDirector?.createGestureSequenceDirector?.()||null;
 let sinbadSpeechPerformanceMode='warm';
 let sinbadResponseOpeningCue={gesture:'open-hand',gaze:'audience',emotion:'warm',energy:.36,responseKind:'conversation'};
 let sinbadTextPresentationCues=[];
 let sinbadRequestedGesture=null;
 let sinbadRequestedGestureSequence=[];
 let sinbadLastPerformedGestureAction=null;
+let sinbadLastPerformedGestureContext=null;
 let sinbadLastAcademyBoardAction=null;
 let sinbadPendingAcademyBoardCheck=null;
 let sinbadLastAcademyBoardCheck=null;
+let sinbadLastAcademyBoardProperty=null;
 let sinbadPerformedGestureHistory=[];
 let sinbadPreparedGestureAction=null;
 let sinbadExplicitGestureHoldBoundaries=0;
 let sinbadLastSpeechMeaningKind='conversation';
 let sinbadSpeechMeaningTransitionTimer=null;
 function prepareSinbadSpeechPerformance(question){
-  sinbadSpeechGestureDirector?.reset();
+  sinbadSpeechGestureDirector?.beginTurn();
   const decision=window.SinbadCore?.analyzeQuery?.(question)||{};
   sinbadSpeechPerformanceMode=sinbadPerformanceDirector?.speechModeForDecision(decision)||'warm';
   const request=sinbadPerformanceDirector?.gestureRequestForText(question,{lastAction:sinbadLastPerformedGestureAction});
-  sinbadRequestedGesture=request?.accepted?request:null;
-  const sequence=sinbadRequestedGesture?.supported?sinbadPerformanceDirector?.gestureSequenceForRequest?.(sinbadRequestedGesture.action,{actions:sinbadRequestedGesture.actions}):null;
+  const capability=request?.supported?sinbadPerformanceDirector?.gestureCapabilityForRequest?.(request):null;
+  sinbadRequestedGesture=request?.accepted?(request.supported&&!capability?.accepted?Object.freeze({...request,supported:false,reason:capability?.reason||'UNVERIFIED_GESTURE_CAPABILITY'}):request):null;
+  const sequenceOptions={actions:sinbadRequestedGesture?.actions};
+  const sequence=sinbadRequestedGesture?.supported?(sinbadGestureSequenceDirector?.select?.(sinbadRequestedGesture.action,sequenceOptions)||sinbadPerformanceDirector?.gestureSequenceForRequest?.(sinbadRequestedGesture.action,sequenceOptions)):null;
   sinbadRequestedGestureSequence=sequence?.accepted?[...sequence.cues]:[];
   sinbadExplicitGestureHoldBoundaries=sinbadRequestedGesture?.supported?2:0;
 }
@@ -473,17 +548,26 @@ function prepareSinbadResponsePerformance(text){
   sinbadRequestedGesture=null;
   return sinbadResponseOpeningCue;
 }
-function commitSinbadPerformedGestureAction(action){
+function sinbadVoicePreparationCue(){
+  const caution=sinbadResponseOpeningCue?.responseKind==='caution';
+  return Object.freeze({...sinbadResponseOpeningCue,gesture:caution?'hold':'idle-breathe',gaze:'audience',emotion:caution?'concerned':'attentive',energy:Math.min(Number(sinbadResponseOpeningCue?.energy)||.22,.24),motionProfile:'gentle',performancePhase:'prepare'});
+}
+function commitSinbadPerformedGestureAction(action,context=null){
   if(!action)return false;
   const recorded=sinbadPerformanceDirector?.recordVerifiedGesture?.(sinbadPerformedGestureHistory,action,{limit:4});
   if(!recorded?.accepted)return false;
-  sinbadPerformedGestureHistory=[...recorded.history];sinbadLastPerformedGestureAction=sinbadPerformedGestureHistory.at(-1)||null;return true;
+  sinbadPerformedGestureHistory=[...recorded.history];sinbadLastPerformedGestureAction=sinbadPerformedGestureHistory.at(-1)||null;sinbadLastPerformedGestureContext=typeof context==='string'?context:null;return true;
 }
 function commitSinbadPreparedGesture(){const action=sinbadPreparedGestureAction;sinbadPreparedGestureAction=null;return commitSinbadPerformedGestureAction(action);}
 function presentSinbadBoardReference(text){
   const improvised=sinbadImprovisationDirector?.choose?.('explanation','board-reference'),source=improvised?.accepted?improvised.cue:null;
   const gesture=source?.gesture==='hold'?'point-board':source?.gesture||'point-board',cue={gesture,gaze:'board',emotion:source?.emotion||'confident',energy:source?.energy??.4,responseKind:'instruction',...(source?.motionProfile?{motionProfile:source.motionProfile}:{})};
   setSinbadAssistantState('presenting',cue);if(gesture==='point-board')commitSinbadPerformedGestureAction('point-board');addSinbadMessage('sinbad',text);return true;
+}
+function presentSinbadBoardConfirmation(answer){
+  if(!answer?.known||answer.kind!=='shape-confirmation'||typeof answer.value!=='boolean')return presentSinbadBoardReference(answer?.text||'');
+  const cue=answer.value?{gesture:'nod',gaze:'board',emotion:'confident',energy:.34}:{gesture:'shake-head-left',gaze:'board',emotion:'attentive',energy:.34};
+  setSinbadAssistantState(answer.value?'success':'presenting',cue);commitSinbadPerformedGestureAction(answer.value?'nod':'shake-head',answer.value?'board-confirmation-yes':'board-confirmation-no');addSinbadMessage('sinbad',answer.text);return true;
 }
 function presentSinbadBoardAssessment(assessment){
   if(assessment.revealed===true){setSinbadAssistantState('presenting',{gesture:'point-board',gaze:'board',emotion:'confident',energy:.38});commitSinbadPerformedGestureAction('point-board');addSinbadMessage('sinbad',assessment.text);return true;}
@@ -508,8 +592,20 @@ function performSinbadDirectCharacterRequest(request){
 }
 function stopSinbadGesturePerformance(){
   sinbadRequestedGesture=null;sinbadRequestedGestureSequence=[];sinbadPreparedGestureAction=null;sinbadExplicitGestureHoldBoundaries=0;
-  clearTimeout(sinbadSpeechMeaningTransitionTimer);sinbadSpeechMeaningTransitionTimer=null;stopSinbadVoice();
+  clearSinbadAssistantTimers();clearTimeout(sinbadSpeechMeaningTransitionTimer);sinbadSpeechMeaningTransitionTimer=null;stopSinbadVoice();
   setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled',{gesture:'rest',gaze:'audience',emotion:'neutral',energy:0});sinbadAwaitingAnswer=false;return true;
+}
+function sinbadReducedMotionPreferred(){return Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches||document.documentElement.classList.contains('sinbad-force-reduced-motion'));}
+function setSinbadReducedMotionUI(){const button=$('toggleSinbadReducedMotion');if(!button)return;const enabled=sinbadReducedMotionPreferred(),turkish=sinbadState.language==='tr-TR';button.textContent=enabled?(turkish?'↔️ Hareket azaltma: Açık':'↔️ Reduce motion: On'):(turkish?'↔️ Hareket azaltma: Kapalı':'↔️ Reduce motion: Off');button.setAttribute('aria-pressed',String(enabled));}
+function handleSinbadSystemReducedMotionChange(event){
+  if(event?.matches===true){clearSinbadAssistantTimers();sinbadRequestedGesture=null;sinbadRequestedGestureSequence=[];sinbadPreparedGestureAction=null;sinbadExplicitGestureHoldBoundaries=0;const {reducedMotion:_ignored,...detail}=sinbadAssistantLastDetail||{};setSinbadAssistantState(sinbadAssistantState,detail);}
+  setSinbadReducedMotionUI();
+}
+function applySinbadReducedMotionCommand(command){
+  if(!command?.accepted||typeof command.enabled!=='boolean')return false;
+  stopSinbadGesturePerformance();document.documentElement.classList.toggle('sinbad-force-reduced-motion',command.enabled);localStorage.setItem('atlas_sinbad_reduced_motion',command.enabled?'on':'off');
+  const systemReduced=Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches),text=!command.enabled&&systemReduced?(sinbadState.language==='tr-TR'?'Uygulama içindeki tercihi kapattım; ancak işletim sistemi hareket azaltmayı açık tuttuğu için etkin davranış devam ediyor.':'I disabled the in-app preference, but reduced motion remains active because the operating system preference is enabled.'):command.text;
+  setSinbadReducedMotionUI();addSinbadMessage('sinbad',text);return true;
 }
 function playSinbadRequestedGestureSequence(){
   const cues=sinbadRequestedGestureSequence;sinbadRequestedGestureSequence=[];
@@ -536,6 +632,7 @@ function setSinbadResponseKind(kind){
 }
 let sinbadLastLiveRigControls=null;
 let sinbadLiveRigTransition=null;
+let sinbadLastLivePerformanceCueAt=-Infinity;
 function currentSinbadLiveRigControls(now=performance.now()){
   if(!sinbadLiveRigTransition)return sinbadLastLiveRigControls;
   const {from,to,startedAt,durationMs}=sinbadLiveRigTransition;
@@ -544,27 +641,115 @@ function currentSinbadLiveRigControls(now=performance.now()){
   if(progress>=1)sinbadLiveRigTransition=null;
   return current?.accepted?current.controls:sinbadLastLiveRigControls;
 }
+function sinbadGestureSide(gesture){
+  const result=sinbadCharacterRig?.sideForGesture?.(gesture);
+  return result?.accepted&&['left','right','center'].includes(result.side)?result.side:'center';
+}
+function sinbadGestureHands(gesture){
+  const result=sinbadCharacterRig?.handsForGesture?.(gesture);
+  return result?.accepted&&['none','left','right','both'].includes(result.hands)?result.hands:'none';
+}
+function sinbadVisibleHeadDirection(state,gesture){
+  const controls=currentSinbadLiveRigControls()||sinbadCharacterRig?.poseForPerformance?.(state,gesture)?.controls||sinbadCharacterRig?.poseForState?.(state)?.controls;
+  const yaw=Number(controls?.headYaw);
+  return !Number.isFinite(yaw)?'unknown':Math.abs(yaw)<.16?'center':yaw<0?'left':'right';
+}
+function sinbadVisibleHeadTilt(state,gesture){
+  const controls=currentSinbadLiveRigControls()||sinbadCharacterRig?.poseForPerformance?.(state,gesture)?.controls||sinbadCharacterRig?.poseForState?.(state)?.controls;
+  const pitch=Number(controls?.headPitch);
+  return !Number.isFinite(pitch)?'unknown':Math.abs(pitch)<.16?'level':pitch<0?'up':'down';
+}
+function sinbadVisibleFacialExpression(state,gesture){
+  const controls=currentSinbadLiveRigControls()||sinbadCharacterRig?.poseForPerformance?.(state,gesture)?.controls||sinbadCharacterRig?.poseForState?.(state)?.controls;
+  const smile=Number(controls?.smile);
+  return !Number.isFinite(smile)?'unknown':smile>.34?'smiling':smile<-.12?'concerned':'neutral';
+}
+function sinbadVisibleBodyPosture(state,gesture){
+  const controls=currentSinbadLiveRigControls()||sinbadCharacterRig?.poseForPerformance?.(state,gesture)?.controls||sinbadCharacterRig?.poseForState?.(state)?.controls;
+  const lean=Number(controls?.bodyLean);
+  return !Number.isFinite(lean)?'unknown':lean>.12?'forward':lean<-.08?'back':'upright';
+}
+function sinbadVisibleMotionEnergy(state,gesture){
+  const controls=currentSinbadLiveRigControls()||sinbadCharacterRig?.poseForPerformance?.(state,gesture)?.controls||sinbadCharacterRig?.poseForState?.(state)?.controls;
+  const energy=Number(controls?.energy);
+  return !Number.isFinite(energy)?'unknown':energy<.25?'low':energy<.6?'medium':'high';
+}
+function sinbadVisibleCharacterSnapshot(){
+  const snapshot=sinbadCharacterEngine?.getSnapshot?.()||{};
+  const avatar=document.querySelector('.sinbad-avatar.large');
+  const state=avatar?.dataset.state||snapshot.state,gesture=avatar?.dataset.gesture||snapshot.gesture;
+  const now=globalThis.performance?.now?.()??Date.now();
+  const lastSpeechGesture=sinbadLastVerifiedSpeechGesture?Object.freeze({gesture:sinbadLastVerifiedSpeechGesture.gesture,responseKind:sinbadLastVerifiedSpeechGesture.responseKind,ageMs:Math.max(0,now-sinbadLastVerifiedSpeechGesture.recordedAt)}):null;
+  return Object.freeze({...snapshot,state,gesture,gaze:avatar?.dataset.gaze||snapshot.gaze,gestureSide:avatar?.dataset.gestureSide||sinbadGestureSide(gesture),gestureHands:avatar?.dataset.gestureHands||sinbadGestureHands(gesture),headDirection:sinbadVisibleHeadDirection(state,gesture),headTilt:sinbadVisibleHeadTilt(state,gesture),facialExpression:sinbadVisibleFacialExpression(state,gesture),bodyPosture:sinbadVisibleBodyPosture(state,gesture),motionEnergy:sinbadVisibleMotionEnergy(state,gesture),reducedMotion:sinbadReducedMotionPreferred(),listeningActive:Boolean(sinbadIsListening),lastSpeechGesture});
+}
+function reinforceSinbadVisiblePoseAnswer(answer){
+  if(!answer?.known||sinbadRequestedGesture)return false;
+  if(answer.kind==='listening-status'){sinbadRequestedGesture=Object.freeze({supported:true,action:answer.value?'show-listening':null,cue:Object.freeze(answer.value?{gesture:'listen-lean',gaze:'audience',emotion:'attentive',energy:.3}:{gesture:'rest',gaze:'audience',emotion:'attentive',energy:.12})});return true;}
+  if(['gaze','audience-gaze'].includes(answer.kind)){
+    const target=answer.kind==='gaze'?answer.value:answer.target;
+    const cues={audience:{gesture:'rest',gaze:'audience',emotion:'attentive',energy:.18},thought:{gesture:'hold',gaze:'thought',emotion:'attentive',energy:.16},board:{gesture:'rest',gaze:'board',emotion:'attentive',energy:.2},path:{gesture:'rest',gaze:'path',emotion:'attentive',energy:.2},palm:{gesture:'show-palm',gaze:'palm',emotion:'attentive',energy:.3},'left-palm':{gesture:'show-left-palm',gaze:'left-palm',emotion:'attentive',energy:.3}},cue=cues[target];
+    if(!cue)return false;
+    sinbadRequestedGesture=Object.freeze({supported:true,action:null,cue:Object.freeze(cue)});return true;
+  }
+  if(answer.kind==='head-direction'){
+    const cues={left:{action:'look-left',gesture:'look-left'},right:{action:'look-right',gesture:'look-right'},center:{action:null,gesture:'rest'}},choice=cues[answer.value];
+    if(!choice)return false;
+    sinbadRequestedGesture=Object.freeze({supported:true,action:choice.action,cue:Object.freeze({gesture:choice.gesture,gaze:'audience',emotion:'attentive',energy:.24})});return true;
+  }
+  if(answer.kind==='head-tilt'){
+    const cues={up:{action:'nod',gesture:'nod-up'},down:{action:'nod',gesture:'nod'},level:{action:null,gesture:'rest'}},choice=cues[answer.value];
+    if(!choice)return false;
+    sinbadRequestedGesture=Object.freeze({supported:true,action:choice.action,cue:Object.freeze({gesture:choice.gesture,gaze:'audience',emotion:'attentive',energy:.26})});return true;
+  }
+  if(answer.kind==='facial-expression'){
+    const cues={smiling:{gesture:'rest',emotion:'joyful',energy:.34},neutral:{gesture:'rest',emotion:'neutral',energy:.18},concerned:{gesture:'hold',emotion:'concerned',energy:.24}},choice=cues[answer.value];
+    if(!choice)return false;
+    sinbadRequestedGesture=Object.freeze({supported:true,action:null,cue:Object.freeze({...choice,gaze:'audience'})});return true;
+  }
+  if(!['gesture-side','gesture-hands'].includes(answer.kind))return false;
+  if(answer.value==='both'){sinbadRequestedGesture=Object.freeze({supported:true,action:'show-both-hands',cue:Object.freeze({gesture:'show-both-hands',gaze:'audience',emotion:'attentive',energy:.44})});return true;}
+  if(answer.value==='none'){sinbadRequestedGesture=Object.freeze({supported:true,action:null,cue:Object.freeze({gesture:'rest',gaze:'audience',emotion:'warm',energy:.18})});return true;}
+  if(answer.value==='left')sinbadRequestedGesture=Object.freeze({supported:true,action:'raise-left-hand',cue:Object.freeze({gesture:'show-left-palm',gaze:'left-palm',emotion:'attentive',energy:.38})});
+  else if(answer.value==='right')sinbadRequestedGesture=Object.freeze({supported:true,action:'show-right-hand',cue:Object.freeze({gesture:'show-palm',gaze:'palm',emotion:'attentive',energy:.4})});
+  else return false;
+  return true;
+}
 function applySinbadLivePerformanceCue(cue,{speechBoundary=''}={}){
   if(!cue||typeof cue!=='object'||!cue.gesture)return false;
   const defaultEnergy=sinbadCharacterRig?.STATE_POSES[sinbadAssistantState]?.energy??0;
   const requestedEnergy=Number(cue.energy??defaultEnergy);
   const rigPose=sinbadCharacterRig?.poseForPerformance?.(sinbadAssistantState,cue.gesture,{energy:Math.max(0,Math.min(1,Number.isFinite(requestedEnergy)?requestedEnergy:defaultEnergy))});
-  const rigCss=rigPose?.accepted?sinbadCharacterRig.cssVariables(rigPose.controls):null;
+  const balancedRigPose=rigPose?.accepted?sinbadCharacterRig?.balanceControlsForPerformance?.(sinbadAssistantState,cue.gesture,rigPose.controls):null;
+  const renderedRigControls=balancedRigPose?.accepted?balancedRigPose.controls:rigPose?.controls;
+  const rigCss=renderedRigControls?sinbadCharacterRig.cssVariables(renderedRigControls):null;
   if(!rigCss?.accepted)return false;
-  const now=performance.now(),interrupted=Boolean(sinbadLiveRigTransition&&now<sinbadLiveRigTransition.startedAt+sinbadLiveRigTransition.durationMs);
+  const now=performance.now();
+  const transitionStillActive=Boolean(sinbadLiveRigTransition&&now<sinbadLiveRigTransition.startedAt+sinbadLiveRigTransition.durationMs);
+  const performanceBeatStillActive=now-sinbadLastLivePerformanceCueAt<1400;
+  const interrupted=transitionStillActive||performanceBeatStillActive;
   const previous=currentSinbadLiveRigControls(now)||sinbadCharacterRig?.poseForState?.(sinbadAssistantState)?.controls||sinbadCharacterRig?.neutralControls?.();
   const reducedMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches||document.documentElement.classList.contains('sinbad-force-reduced-motion');
-  const transition=sinbadCharacterRig?.transitionForControls?.(previous,rigPose.controls,{urgent:cue.responseKind==='caution'||sinbadAssistantState==='warning'||sinbadAssistantState==='error',reducedMotion});
+  const transition=sinbadCharacterRig?.transitionForControls?.(previous,renderedRigControls,{urgent:cue.responseKind==='caution'||sinbadAssistantState==='warning'||sinbadAssistantState==='error',reducedMotion});
+  const expressionTransition=sinbadCharacterRig?.expressionTransitionForControls?.(previous,renderedRigControls,{urgent:cue.responseKind==='caution'||sinbadAssistantState==='warning'||sinbadAssistantState==='error',reducedMotion});
+  const coordination=sinbadCharacterRig?.coordinationForPerformance?.(sinbadAssistantState,cue,{urgent:cue.responseKind==='caution'||sinbadAssistantState==='warning'||sinbadAssistantState==='error',reducedMotion});
+  const microRhythm=sinbadCharacterRig?.microRhythmForPerformance?.(sinbadAssistantState,cue,{reducedMotion});
+  const blinkPolicy=sinbadCharacterRig?.blinkPolicyForPerformance?.(sinbadAssistantState,{...cue,cadence:speechBoundary||cue.cadence});
+  if(blinkPolicy?.accepted){sinbadBlinkPolicy=blinkPolicy;scheduleSinbadBlink();}
   sinbadAssistantElements().forEach(el=>{
-    el.dataset.gesture=cue.gesture;el.dataset.gaze=cue.gaze||'audience';el.dataset.emotion=cue.emotion||'warm';
+    el.dataset.gesture=cue.gesture;el.dataset.gestureSide=sinbadGestureSide(cue.gesture);el.dataset.gestureHands=sinbadGestureHands(cue.gesture);el.dataset.gaze=cue.gaze||'audience';el.dataset.emotion=cue.emotion||'warm';
+    if(cue.performancePhase)el.dataset.performancePhase=cue.performancePhase;else delete el.dataset.performancePhase;
+    if(microRhythm?.accepted){el.dataset.performanceRhythm=microRhythm.profile;el.style.setProperty('--sinbad-breath-duration',`${microRhythm.durationMs}ms`);el.style.setProperty('--sinbad-breath-scale',String(microRhythm.breathScale));el.style.setProperty('--sinbad-micro-head',`${microRhythm.headOffset}deg`);el.style.setProperty('--sinbad-micro-gaze',`${microRhythm.gazeOffset}deg`);}
     if(cue.motionProfile)el.dataset.motionProfile=cue.motionProfile;
     if(speechBoundary)el.dataset.speechBoundary=speechBoundary;
     if(interrupted)el.dataset.motionInterrupted='true';else delete el.dataset.motionInterrupted;
     if(transition?.accepted)el.style.setProperty('--sinbad-motion-duration',`${transition.durationMs}ms`);
+    if(expressionTransition?.accepted){el.style.setProperty('--sinbad-expression-duration',`${expressionTransition.durationMs}ms`);el.style.setProperty('--sinbad-expression-easing',expressionTransition.easing);}
+    if(coordination?.accepted){el.dataset.coordination=coordination.profile;el.style.setProperty('--sinbad-head-delay',`${coordination.headDelayMs}ms`);el.style.setProperty('--sinbad-arm-delay',`${coordination.armDelayMs}ms`);el.style.setProperty('--sinbad-expression-delay',`${coordination.expressionDelayMs}ms`);el.style.setProperty('--sinbad-head-easing',coordination.headEasing);el.style.setProperty('--sinbad-arm-easing',coordination.armEasing);}
     Object.entries(rigCss.variables).forEach(([name,value])=>el.style.setProperty(name,value));
   });
-  if(transition?.accepted)sinbadLiveRigTransition={from:previous,to:rigPose.controls,startedAt:now,durationMs:transition.durationMs};
-  sinbadLastLiveRigControls=rigPose.controls;
+  if(transition?.accepted)sinbadLiveRigTransition={from:previous,to:renderedRigControls,startedAt:now,durationMs:transition.durationMs};
+  sinbadLastLivePerformanceCueAt=now;
+  sinbadLastLiveRigControls=renderedRigControls;
   return true;
 }
 function sinbadAssistantElements(){return document.querySelectorAll('.sinbad-avatar');}
@@ -595,9 +780,11 @@ function preloadSinbadAvatarAssets(){
   SINBAD_RIG_FACE_ASSETS.forEach(file=>{const img=new Image();img.src=SINBAD_AVATAR_ASSET_BASE+file;});
 }
 let sinbadBlinkTimer=null;
+let sinbadBlinkPolicy=Object.freeze({accepted:true,allow:true,reason:'NATURAL_WINDOW',minDelayMs:3800,maxDelayMs:7000});
 let sinbadIdleMotionTimer=null;
+let sinbadCharacterRuntimeSuspended=false;
 function sinbadIdleMotionAllowed(){
-  return sinbadAssistantState==='idle'&&document.visibilityState!=='hidden'&&!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches&&!document.documentElement.classList.contains('sinbad-force-reduced-motion');
+  return !sinbadCharacterRuntimeSuspended&&sinbadAssistantState==='idle'&&document.visibilityState!=='hidden'&&!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches&&!document.documentElement.classList.contains('sinbad-force-reduced-motion');
 }
 function scheduleSinbadIdleMotion(){
   clearTimeout(sinbadIdleMotionTimer);sinbadIdleMotionTimer=null;
@@ -606,7 +793,7 @@ function scheduleSinbadIdleMotion(){
   sinbadIdleMotionTimer=setTimeout(()=>{if(sinbadIdleMotionAllowed())setSinbadAssistantState('idle',behavior.cue);},behavior.delayMs);
 }
 function sinbadBlinkAllowed(){
-  return ['idle','voice-disabled','success','warning','error'].includes(sinbadAssistantState)
+  return !sinbadCharacterRuntimeSuspended&&sinbadBlinkPolicy.allow===true
     &&document.visibilityState!=='hidden'
     &&!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
     &&!document.documentElement.classList.contains('sinbad-force-reduced-motion');
@@ -641,7 +828,7 @@ function scheduleSinbadBlink(){
     sinbadAssistantElements().forEach(el=>el.classList.add('sinbad-blinking'));
     setTimeout(()=>sinbadAssistantElements().forEach(el=>el.classList.remove('sinbad-blinking')),135);
     scheduleSinbadBlink();
-  },3800+Math.floor(Math.random()*3200));
+  },sinbadBlinkPolicy.minDelayMs+Math.floor(Math.random()*(sinbadBlinkPolicy.maxDelayMs-sinbadBlinkPolicy.minDelayMs)));
 }
 let sinbadLipSyncAudioContext=null,sinbadLipSyncAnalyser=null,sinbadLipSyncSource=null,sinbadLipSyncRaf=null;
 function stopSinbadLipSyncAnalyser(){
@@ -713,12 +900,32 @@ function setSinbadAssistantState(state,detail={}){
   clearTimeout(sinbadIdleMotionTimer);sinbadIdleMotionTimer=null;
   const next=SINBAD_ASSISTANT_STATES.includes(state)?state:'idle';
   const performance=sinbadCharacterEngine?.setState(next,detail)?.snapshot||{state:next,emotion:'neutral',gesture:'rest',gaze:'audience'};
+  const stateBlinkPolicy=sinbadCharacterRig?.blinkPolicyForPerformance?.(next,{...performance,responseKind:detail.responseKind,cadence:detail.speechBoundary});
+  if(stateBlinkPolicy?.accepted)sinbadBlinkPolicy=stateBlinkPolicy;
   const reducedGazeMotion=detail.reducedMotion===true||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches||document.documentElement.classList.contains('sinbad-force-reduced-motion');
   const gazePlan=sinbadPerformanceDirector?.gazeTransitionForCue?.(performance,{reducedMotion:reducedGazeMotion});
   const initialGaze=gazePlan?.accepted?gazePlan.cues[0].gaze:performance.gaze;
+  const stateMicroRhythm=sinbadCharacterRig?.microRhythmForPerformance?.(next,{...performance,responseKind:detail.responseKind},{reducedMotion:reducedGazeMotion});
+  const defaultEnergy=sinbadCharacterRig?.STATE_POSES[next]?.energy??0;
+  const requestedEnergy=Number(detail.energy??defaultEnergy);
+  const rigOverrides={energy:Math.max(0,Math.min(1,Number.isFinite(requestedEnergy)?requestedEnergy:defaultEnergy))};
+  const rigPose=sinbadCharacterRig?.poseForPerformance?.(next,performance.gesture,rigOverrides)||sinbadCharacterRig?.poseForState?.(next,rigOverrides);
+  const balancedRigPose=rigPose?.accepted?sinbadCharacterRig?.balanceControlsForPerformance?.(next,performance.gesture,rigPose.controls):null;
+  const stateRigControls=balancedRigPose?.accepted?balancedRigPose.controls:rigPose?.controls;
+  const rigCss=stateRigControls?sinbadCharacterRig.cssVariables(stateRigControls):null;
+  const stateNow=globalThis.performance?.now?.()??Date.now();
+  const previousStateRigControls=currentSinbadLiveRigControls(stateNow)||sinbadLastLiveRigControls||sinbadCharacterRig?.neutralControls?.();
+  const stateInterrupted=Boolean(sinbadLiveRigTransition&&stateNow<sinbadLiveRigTransition.startedAt+sinbadLiveRigTransition.durationMs);
+  const urgentStateTransition=detail.responseKind==='caution'||next==='warning'||next==='error';
+  const stateTransition=stateRigControls?sinbadCharacterRig?.transitionForControls?.(previousStateRigControls,stateRigControls,{urgent:urgentStateTransition,reducedMotion:reducedGazeMotion}):null;
+  const stateExpressionTransition=stateRigControls?sinbadCharacterRig?.expressionTransitionForControls?.(previousStateRigControls,stateRigControls,{urgent:urgentStateTransition,reducedMotion:reducedGazeMotion}):null;
   const changed=next!==sinbadAssistantState;
   sinbadAssistantState=next;
   sinbadAssistantLastDetail=detail||{};
+  if(next==='speaking'&&typeof detail.responseKind==='string'){
+    if((['negative','correction'].includes(detail.responseKind)&&['shake-head-left','shake-head-right'].includes(performance.gesture))||(detail.responseKind==='uncertainty'&&performance.gesture==='shrug'))sinbadLastVerifiedSpeechGesture=Object.freeze({gesture:performance.gesture,responseKind:detail.responseKind,recordedAt:globalThis.performance?.now?.()??Date.now()});
+    else if(!['negative','correction','uncertainty'].includes(detail.responseKind))sinbadLastVerifiedSpeechGesture=null;
+  }
   clearSinbadAssistantTimers();
   const asset=SINBAD_STATE_ASSET[next]||SINBAD_STATE_ASSET.idle;
   const src=SINBAD_AVATAR_ASSET_BASE+asset;
@@ -730,7 +937,10 @@ function setSinbadAssistantState(state,detail={}){
     el.dataset.state=next;
     el.dataset.emotion=performance.emotion;
     el.dataset.gesture=performance.gesture;
+    el.dataset.gestureSide=sinbadGestureSide(performance.gesture);
+    el.dataset.gestureHands=sinbadGestureHands(performance.gesture);
     el.dataset.gaze=initialGaze;
+    if(stateMicroRhythm?.accepted){el.dataset.performanceRhythm=stateMicroRhythm.profile;el.style.setProperty('--sinbad-breath-duration',`${stateMicroRhythm.durationMs}ms`);el.style.setProperty('--sinbad-breath-scale',String(stateMicroRhythm.breathScale));el.style.setProperty('--sinbad-micro-head',`${stateMicroRhythm.headOffset}deg`);el.style.setProperty('--sinbad-micro-gaze',`${stateMicroRhythm.gazeOffset}deg`);}
     if(detail.motionProfile)el.dataset.motionProfile=detail.motionProfile;
     else delete el.dataset.motionProfile;
     if(next==='listening'&&detail.listeningActivity)el.dataset.listeningActivity=detail.listeningActivity;
@@ -747,13 +957,10 @@ function setSinbadAssistantState(state,detail={}){
     else delete el.dataset.thinkingStage;
     if(next==='speaking'&&detail.responseKind)el.dataset.responseKind=detail.responseKind;
     else if(next!=='speaking')delete el.dataset.responseKind;
-    const defaultEnergy=sinbadCharacterRig?.STATE_POSES[next]?.energy??0;
-    const requestedEnergy=Number(detail.energy??defaultEnergy);
-    const rigOverrides={energy:Math.max(0,Math.min(1,Number.isFinite(requestedEnergy)?requestedEnergy:defaultEnergy))};
-    const rigPose=sinbadCharacterRig?.poseForPerformance?.(next,performance.gesture,rigOverrides)||sinbadCharacterRig?.poseForState?.(next,rigOverrides);
-    const rigCss=rigPose?.accepted?sinbadCharacterRig.cssVariables(rigPose.controls):null;
-    el.style.removeProperty('--sinbad-motion-duration');
-    if(rigCss?.accepted){Object.entries(rigCss.variables).forEach(([name,value])=>el.style.setProperty(name,value));sinbadLastLiveRigControls=rigPose.controls;sinbadLiveRigTransition=null;delete el.dataset.motionInterrupted;}
+    if(stateTransition?.accepted)el.style.setProperty('--sinbad-motion-duration',`${stateTransition.durationMs}ms`);
+    if(stateExpressionTransition?.accepted){el.style.setProperty('--sinbad-expression-duration',`${stateExpressionTransition.durationMs}ms`);el.style.setProperty('--sinbad-expression-easing',stateExpressionTransition.easing);}
+    if(stateInterrupted)el.dataset.motionInterrupted='true';else delete el.dataset.motionInterrupted;
+    if(rigCss?.accepted)Object.entries(rigCss.variables).forEach(([name,value])=>el.style.setProperty(name,value));
     const img=el.querySelector('.sinbad-avatar-img');
     if(img&&!img.src.endsWith(asset)){
       img.style.opacity='0';
@@ -761,6 +968,9 @@ function setSinbadAssistantState(state,detail={}){
       img.src=src;
     }
   });
+  if(stateTransition?.accepted)sinbadLiveRigTransition={from:previousStateRigControls,to:stateRigControls,startedAt:stateNow,durationMs:stateTransition.durationMs};
+  else sinbadLiveRigTransition=null;
+  if(stateRigControls)sinbadLastLiveRigControls=stateRigControls;
   if('reducedMotion' in (detail||{}))document.documentElement.classList.toggle('sinbad-force-reduced-motion',detail.reducedMotion===true);
   if(next!=='speaking')stopSinbadLipSyncAnalyser();
   else setSinbadMouthFrame('closed');
@@ -769,10 +979,13 @@ function setSinbadAssistantState(state,detail={}){
   const thinkingCopy=SINBAD_THINKING_STAGE_LABELS[sinbadState.language]||SINBAD_THINKING_STAGE_LABELS['en-US'];
   const responseCopy=SINBAD_RESPONSE_KIND_LABELS[sinbadState.language]||SINBAD_RESPONSE_KIND_LABELS['en-US'];
   const statusText=next==='thinking'&&thinkingCopy[detail.thinkingStage]?thinkingCopy[detail.thinkingStage]:next==='speaking'&&responseCopy[detail.responseKind]?responseCopy[detail.responseKind]:(copy[next]||next);
-  if(label&&(changed||next==='thinking'))label.textContent=statusText;
+  if(label&&(changed||next==='thinking'||next==='speaking'))label.textContent=statusText;
   const floatButton=$('sinbadFloat');
   if(floatButton)floatButton.setAttribute('aria-label',`Open Captain Sinbad — ${statusText}`);
-  if(next==='success')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='success')setSinbadAssistantState('idle');},2200));
+  if(next==='success'){
+    const completionDurationMs=Number.isFinite(detail.completionDurationMs)?Math.max(300,Math.min(2200,detail.completionDurationMs)):2200;
+    sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='success'){setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');if(detail.resumeListening)scheduleSinbadListening();}},completionDurationMs));
+  }
   if(next==='presenting')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='presenting'){setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');scheduleSinbadListening();}},1800));
   if(next==='laughing')sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='laughing')setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');},1250));
   if(next==='walking'){startSinbadWalkCycle(generation);sinbadAssistantTimers.push(setTimeout(()=>{if(sinbadAssistantState==='walking')setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');},2240));}
@@ -798,6 +1011,23 @@ window.SinbadCharacterController=Object.freeze({
 });
 ensureSinbadArticulatedRig();ensureSinbadBlinkLayers();ensureSinbadSpeechLayers();scheduleSinbadBlink();scheduleSinbadIdleMotion();
 preloadSinbadAvatarAssets();
+function suspendSinbadCharacterRuntime(){
+  if(sinbadCharacterRuntimeSuspended)return false;
+  sinbadCharacterRuntimeSuspended=true;
+  clearSinbadAssistantTimers();clearTimeout(sinbadBlinkTimer);sinbadBlinkTimer=null;clearTimeout(sinbadIdleMotionTimer);sinbadIdleMotionTimer=null;
+  clearTimeout(sinbadSpeechMeaningTransitionTimer);sinbadSpeechMeaningTransitionTimer=null;clearTimeout(sinbadStandardBoundaryTimer);sinbadStandardBoundaryTimer=null;
+  clearSinbadTurnFinalization({discard:true});clearTimeout(sinbadRestartTimer);
+  const recognition=sinbadRecognition;sinbadRecognition=null;sinbadIsListening=false;sinbadHandsFreeEnabled=false;sinbadWakeActive=false;sinbadAwaitingAnswer=false;recognition?.abort();
+  stopSinbadVoice();stopSinbadLipSyncAnalyser();setListeningUI('',false);
+  sinbadAssistantElements().forEach(el=>el.classList.remove('sinbad-blinking','sinbad-voice-tick'));
+  return true;
+}
+function resumeSinbadCharacterRuntime(){
+  if(!sinbadCharacterRuntimeSuspended)return false;
+  sinbadCharacterRuntimeSuspended=false;
+  setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled',{gesture:'rest',gaze:'audience',emotion:'warm',energy:.12});
+  setListeningUI('',false);scheduleSinbadBlink();scheduleSinbadIdleMotion();return true;
+}
 if(typeof document!=='undefined'&&'visibilityState'in document){
   document.addEventListener('visibilitychange',()=>{
     document.documentElement.classList.toggle('sinbad-tab-hidden',document.visibilityState==='hidden');
@@ -805,6 +1035,8 @@ if(typeof document!=='undefined'&&'visibilityState'in document){
     scheduleSinbadIdleMotion();
   },{passive:true});
 }
+window.addEventListener('pagehide',suspendSinbadCharacterRuntime,{passive:true});
+window.addEventListener('pageshow',event=>{if(event.persisted)resumeSinbadCharacterRuntime();},{passive:true});
 
 function setSinbadVoiceUI(){
   const button=$('toggleSinbadVoice');if(!button)return;
@@ -955,13 +1187,15 @@ let sinbadActiveResponseText='';
 // voice this turn"); otherwise it falls back to the real persistent voice
 // preference so a transient hiccup never misrepresents that preference.
 function finishSinbadVoice(forceState){
+  const completedSpeech=!forceState&&sinbadAssistantState==='speaking';
   clearTimeout(sinbadSpeechMeaningTransitionTimer);sinbadSpeechMeaningTransitionTimer=null;
   if(sinbadVoiceObjectUrl)URL.revokeObjectURL(sinbadVoiceObjectUrl);
   sinbadVoiceObjectUrl='';sinbadVoiceAudio=null;sinbadVoiceAbort=null;
   sinbadActiveResponseText='';
   sinbadAwaitingAnswer=false;
   const isPresenting=forceState==='presenting';
-  setSinbadAssistantState(forceState||(sinbadState.voiceEnabled?'idle':'voice-disabled'),isPresenting?sinbadResponseOpeningCue:{});
+  const completionCue={gesture:'nod',gaze:'audience',emotion:'warm',energy:.26,motionProfile:'gentle',performancePhase:'settle',completionDurationMs:480,resumeListening:true};
+  setSinbadAssistantState(completedSpeech?'success':forceState||(sinbadState.voiceEnabled?'idle':'voice-disabled'),completedSpeech?completionCue:isPresenting?sinbadResponseOpeningCue:{});
   if(isPresenting){
     commitSinbadPreparedGesture();
     playSinbadRequestedGestureSequence();
@@ -973,6 +1207,7 @@ function finishSinbadVoice(forceState){
     },cue.at)));
     return;
   }
+  if(completedSpeech)return;
   scheduleSinbadListening();
 }
 function stopSinbadVoice(){
@@ -1056,7 +1291,7 @@ function speakSinbadStandard(text,onVoiceReady){
   }
   if(sinbadIsListening)sinbadRecognition?.stop();
   speechSynthesis.cancel();
-  setSinbadAssistantState('preparing-voice',sinbadResponseOpeningCue);
+  setSinbadAssistantState('preparing-voice',sinbadVoicePreparationCue());
   const cleanText=selectSinbadSpokenText(text,sinbadModelSpokenSummary);
   sinbadModelSpokenSummary='';
   if(!cleanText){announce();finishSinbadVoice();return;}
@@ -1171,7 +1406,7 @@ async function speakSinbadXttsClone(text,onVoiceReady){
   const chunks=splitSinbadCloneChunks(cleanText);
   const status=$('sinbadKnowledgeStatus');
   const controller=new AbortController();sinbadVoiceAbort=controller;
-  setSinbadAssistantState('preparing-voice',sinbadResponseOpeningCue);
+  setSinbadAssistantState('preparing-voice',sinbadVoicePreparationCue());
   let timedOut=false;
   const loadChunk=async index=>{
     const timeout=setTimeout(()=>{timedOut=true;controller.abort();},150000);
@@ -1253,6 +1488,14 @@ function clearSinbadTurnFinalization({discard=false}={}){
   clearTimeout(sinbadTurnFinalizationTimer);sinbadTurnFinalizationTimer=null;
   if(discard){sinbadPendingSpeechTurn='';sinbadTurnStartedAt=0;sinbadSpeechSegmentStartedAt=0;sinbadTurnPauseMs=SINBAD_TURN_PAUSE_MS;sinbadPendingSpeechPace='measured';}
 }
+function stopSinbadListeningForAnswer(){
+  const recognition=sinbadRecognition;
+  const wasListening=sinbadIsListening||Boolean(recognition)||sinbadHandsFreeEnabled;
+  if(!wasListening)return false;
+  sinbadHandsFreeEnabled=false;sinbadWakeActive=false;sinbadIsListening=false;sinbadRecognition=null;
+  clearTimeout(sinbadRestartTimer);recognition?.abort();setListeningUI('',false);
+  return true;
+}
 function finalizeSinbadSpeechTurn(){
   const heard=sinbadPendingSpeechTurn.trim();clearSinbadTurnFinalization({discard:true});if(!heard)return;
   const wakeMatch=heard.match(/(?:hey|hei|hej|эй|يا)?\s*(?:sinbad|sindbad|simbad)/iu);
@@ -1310,7 +1553,7 @@ function startSinbadListening(){
 
 
 function saveSinbadMessages(){
-  localStorage.setItem('atlas_sinbad_messages', JSON.stringify(sinbadState.messages.slice(-80)));
+  localStorage.setItem('atlas_sinbad_messages',JSON.stringify(sinbadState.messages.slice(-SINBAD_MESSAGE_HISTORY_LIMIT)));
 }
 function sinbadVisualCards(visuals=[]){
   if(!Array.isArray(visuals)||!visuals.length)return '';
@@ -1340,6 +1583,7 @@ function renderSinbadMessages(){
 }
 function addSinbadMessage(role,text,visuals=[]){
   sinbadState.messages.push({role,text,visuals:Array.isArray(visuals)?visuals.slice(0,3):[],at:new Date().toISOString()});
+  if(sinbadState.messages.length>SINBAD_MESSAGE_HISTORY_LIMIT)sinbadState.messages.splice(0,sinbadState.messages.length-SINBAD_MESSAGE_HISTORY_LIMIT);
   saveSinbadMessages();renderSinbadMessages();
 }
 function markSinbadResponseInterrupted(text){
@@ -1578,13 +1822,14 @@ function queueSinbadAcademyBoardPayload(payload){
   return new Promise(resolve=>{sinbadAcademyBoardQueue.push({payload:envelope,resolve,timeout:null});dispatchNextSinbadAcademyBoardPayload();});
 }
 function sendTextToSinbadAcademyBoard(text){const clean=typeof text==='string'?text.trim().slice(0,200):'';return clean?queueSinbadAcademyBoardPayload({version:1,type:'SINBAD_ACADEMY_WRITE_BOARD',text:clean}):Promise.resolve(false);}
-function sendShapeToSinbadAcademyBoard(shape,size='standard'){return ['circle','triangle','rectangle','arrow','axes'].includes(shape)&&['small','standard','large'].includes(size)?queueSinbadAcademyBoardPayload({version:1,type:'SINBAD_ACADEMY_DRAW_SHAPE',shape,size}):Promise.resolve(false);}
+function sendShapeToSinbadAcademyBoard(shape,size='standard'){return ['circle','triangle','rectangle','hexagon','arrow','axes'].includes(shape)&&['small','standard','large'].includes(size)?queueSinbadAcademyBoardPayload({version:1,type:'SINBAD_ACADEMY_DRAW_SHAPE',shape,size}):Promise.resolve(false);}
 function clearSinbadAcademyBoard(){return queueSinbadAcademyBoardPayload({version:1,type:'SINBAD_ACADEMY_CLEAR_BOARD'});}
 window.addEventListener('message',event=>{
   if(event.origin!==location.origin||event.source!==sinbadAcademyNativeWindow||event.data?.version!==1)return;
   if(event.data.type==='SINBAD_ACADEMY_READY'){sinbadAcademyReady=true;dispatchNextSinbadAcademyBoardPayload();return;}
   const entry=sinbadAcademyBoardInFlight,action=event.data.type==='SINBAD_ACADEMY_BOARD_APPLIED'&&entry&&event.data.requestId===entry.payload.requestId?event.data.action:null;if(!action)return;
   clearTimeout(entry.timeout);sinbadAcademyBoardInFlight=null;entry.resolve(true);
+  sinbadLastAcademyBoardProperty=null;
   if(action.kind==='clear'&&action.value==='board'){sinbadLastAcademyBoardAction=null;sinbadPendingAcademyBoardCheck=null;sinbadLastAcademyBoardCheck=null;}else if(['shape','text'].includes(action.kind)&&typeof action.value==='string'&&action.value)sinbadLastAcademyBoardAction=Object.freeze({kind:action.kind,value:action.value.slice(0,200),...(action.kind==='shape'&&['small','standard','large'].includes(action.size)?{size:action.size}:{})});
   dispatchNextSinbadAcademyBoardPayload();
 });
@@ -1598,6 +1843,11 @@ function renderAcademyQuiz(){
   const category=$('academyModule')?.value,items=window.SinbadAcademy?.quiz(category)||[],output=$('academyOutput');if(!items.length||!output)return;
   const item=items[Math.floor(Math.random()*items.length)];output.replaceChildren();
   const title=document.createElement('strong');title.textContent=item.q;output.append(title);
+  if(item.kind==='source-page'){
+    const image=document.createElement('img');image.className='academy-question-page';image.src=item.image;image.alt=`${item.q}, kaynak sayfa ${item.page}`;output.append(image);
+    const notice=document.createElement('p');notice.className='academy-answer-pending';notice.textContent=`Sorular ${item.firstQuestion}-${item.lastQuestion} · Cevap anahtarı bekleniyor. Taramadaki işaretlemeler doğru cevap kabul edilmez.`;output.append(notice);
+    const source=document.createElement('small');source.className='academy-source';source.textContent=`Kaynak: ${item.source} · sayfa ${item.page}`;output.append(source);return;
+  }
   const choices=document.createElement('div');choices.className='academy-choices';
   item.choices.forEach((choice,index)=>{const button=document.createElement('button');button.type='button';button.className='btn';button.textContent=choice;button.addEventListener('click',()=>{[...choices.children].forEach(x=>x.disabled=true);button.classList.add(index===item.answer?'primary':'danger');const result=document.createElement('p');result.textContent=`${index===item.answer?'✓ Correct':'✗ Review'} — ${item.explanation} [${item.source}]`;output.append(result);if(index===item.answer){const progress=JSON.parse(localStorage.getItem('sinbad_academy_progress')||'{}');progress[category]={completedAt:new Date().toISOString(),status:'practised'};localStorage.setItem('sinbad_academy_progress',JSON.stringify(progress));}});choices.append(button);});
   output.append(choices);const source=document.createElement('small');source.className='academy-source';source.textContent=`Official source: ${item.source}`;output.append(source);
@@ -1706,6 +1956,8 @@ async function sinbadOfflineAiAnswer(question){
 }
 async function sendToSinbad(text){
   const q=(text||'').trim(); if(!q)return;
+  const visibleCharacterSnapshot=sinbadVisibleCharacterSnapshot();
+  stopSinbadListeningForAnswer();
   clearSinbadTurnFinalization({discard:true});
   // A new question always takes the floor immediately. This cancels queued
   // teaching pauses and any utterance still reading the previous answer.
@@ -1724,6 +1976,8 @@ async function sendToSinbad(text){
   $('sinbadInput').value='';
   const stopGesture=sinbadPerformanceDirector?.gestureStopRequestForText?.(q,sinbadState.language||appLanguage);
   if(stopGesture?.accepted){stopSinbadGesturePerformance();addSinbadMessage('sinbad',stopGesture.text);return;}
+  const reducedMotionCommand=sinbadPerformanceDirector?.reducedMotionCommandForText?.(q,sinbadState.language||appLanguage);
+  if(reducedMotionCommand?.accepted){applySinbadReducedMotionCommand(reducedMotionCommand);return;}
   const clearedBoard=sinbadPerformanceDirector?.academyBoardClearRequestForText?.(q,sinbadState.language||appLanguage);
   if(clearedBoard?.accepted){const delivered=await clearSinbadAcademyBoard();addSinbadMessage('sinbad',delivered?clearedBoard.text:(sinbadState.language==='tr-TR'?'Academy tahtasına güvenli bağlantı kurulamadığı için tahtayı temizlemedim.':'I did not clear the board because a safe Academy connection could not be established.'));return;}
   const resizedBoard=sinbadPerformanceDirector?.academyBoardResizeRequestForText?.(q,sinbadLastAcademyBoardAction,sinbadState.language||appLanguage);
@@ -1735,7 +1989,7 @@ async function sendToSinbad(text){
   const repeatedBoard=sinbadPerformanceDirector?.academyBoardRepeatRequestForText?.(q,sinbadLastAcademyBoardAction,sinbadState.language||appLanguage);
   if(repeatedBoard?.accepted){if(!repeatedBoard.known){addSinbadMessage('sinbad',repeatedBoard.text);return;}const delivered=await (repeatedBoard.action.kind==='shape'?sendShapeToSinbadAcademyBoard(repeatedBoard.action.value,repeatedBoard.action.size||'standard'):sendTextToSinbadAcademyBoard(repeatedBoard.action.value));addSinbadMessage('sinbad',delivered?repeatedBoard.text:(sinbadState.language==='tr-TR'?'Academy tahtasına güvenli bağlantı kurulamadığı için işlemi tekrarlamadım.':'I did not repeat the action because a safe Academy board connection could not be established.'));return;}
   const recalledBoard=sinbadPerformanceDirector?.academyBoardRecallAnswerForText?.(q,sinbadLastAcademyBoardAction,sinbadState.language||appLanguage);
-  if(recalledBoard?.accepted){presentSinbadBoardReference(recalledBoard.text);return;}
+  if(recalledBoard?.accepted){if(recalledBoard.kind==='shape-confirmation')presentSinbadBoardConfirmation(recalledBoard);else presentSinbadBoardReference(recalledBoard.text);return;}
   if(sinbadPendingAcademyBoardCheck){
     const hint=sinbadPerformanceDirector?.academyBoardShapeCheckHintForText?.(q,sinbadPendingAcademyBoardCheck,sinbadState.language||appLanguage);
     if(hint?.accepted){if(hint.hint===true)sinbadPendingAcademyBoardCheck=Object.freeze({...sinbadPendingAcademyBoardCheck,hintsUsed:(sinbadPendingAcademyBoardCheck.hintsUsed||0)+1});presentSinbadBoardReference(hint.text);return;}
@@ -1748,17 +2002,42 @@ async function sendToSinbad(text){
     const assessed=sinbadPerformanceDirector?.academyBoardShapeCheckAnswerForText?.(q,sinbadPendingAcademyBoardCheck,sinbadState.language||appLanguage);
     if(assessed?.accepted){if(assessed.retry===true)sinbadPendingAcademyBoardCheck=Object.freeze({...sinbadPendingAcademyBoardCheck,attempts:(sinbadPendingAcademyBoardCheck.attempts||0)+1});else{sinbadLastAcademyBoardCheck=assessed.cancelled?null:Object.freeze({shape:sinbadPendingAcademyBoardCheck.shape,expected:sinbadPendingAcademyBoardCheck.expected,reasonAvailable:true});sinbadPendingAcademyBoardCheck=null;}presentSinbadBoardAssessment(assessed);return;}
   }
+  const boardShapeProperty=sinbadPerformanceDirector?.academyBoardShapePropertyAnswerForText?.(q,sinbadLastAcademyBoardAction,sinbadState.language||appLanguage);
+  if(boardShapeProperty?.accepted){sinbadLastAcademyBoardCheck=null;sinbadLastAcademyBoardProperty=boardShapeProperty.known?Object.freeze({shape:boardShapeProperty.shape,property:boardShapeProperty.property,value:boardShapeProperty.value}):null;presentSinbadBoardReference(boardShapeProperty.text);return;}
   const reasonedBoardAnswer=sinbadPerformanceDirector?.academyBoardShapeCheckReasonForText?.(q,sinbadLastAcademyBoardCheck,sinbadState.language||appLanguage);
+  if(reasonedBoardAnswer?.accepted&&reasonedBoardAnswer.known){presentSinbadBoardReference(reasonedBoardAnswer.text);return;}
+  const reasonedBoardProperty=sinbadPerformanceDirector?.academyBoardShapePropertyReasonForText?.(q,sinbadLastAcademyBoardProperty,sinbadState.language||appLanguage);
+  if(reasonedBoardProperty?.accepted){presentSinbadBoardReference(reasonedBoardProperty.text);return;}
   if(reasonedBoardAnswer?.accepted){presentSinbadBoardReference(reasonedBoardAnswer.text);return;}
   const boardCheck=sinbadBoardQuestionDirector?.ask?.(q,sinbadLastAcademyBoardAction,sinbadState.language||appLanguage)||sinbadPerformanceDirector?.academyBoardShapeCheckForText?.(q,sinbadLastAcademyBoardAction,sinbadState.language||appLanguage);
-  if(boardCheck?.accepted){sinbadLastAcademyBoardCheck=null;sinbadPendingAcademyBoardCheck=boardCheck.known?Object.freeze({...boardCheck.check,question:boardCheck.text,attempts:0,hintsUsed:0}):null;presentSinbadBoardReference(boardCheck.text);return;}
+  if(boardCheck?.accepted){sinbadLastAcademyBoardCheck=null;sinbadLastAcademyBoardProperty=null;sinbadPendingAcademyBoardCheck=boardCheck.known?Object.freeze({...boardCheck.check,question:boardCheck.text,attempts:0,hintsUsed:0}):null;presentSinbadBoardReference(boardCheck.text);return;}
+  const historyReplay=sinbadPerformanceDirector?.gestureHistoryReplayForText?.(q,sinbadPerformedGestureHistory,sinbadState.language||appLanguage);
+  if(historyReplay?.accepted){
+    if(historyReplay.known){
+      if(sinbadReducedMotionPreferred()){sinbadRequestedGesture=null;sinbadRequestedGestureSequence=[];sinbadExplicitGestureHoldBoundaries=0;const reducedText=sinbadState.language==='tr-TR'?'Hareket azaltma tercihin açık olduğu için iki hareketlik animasyon dizisini oynatmıyorum.':'Reduced motion is enabled, so I am not playing the two-movement animation sequence.';speakSinbad(reducedText,()=>addSinbadMessage('sinbad',reducedText));return;}
+      const replay=sinbadGestureSequenceDirector?.select?.(historyReplay.action,{actions:historyReplay.actions})||sinbadPerformanceDirector?.gestureSequenceForRequest?.(historyReplay.action,{actions:historyReplay.actions});
+      if(!replay?.accepted){addSinbadMessage('sinbad',sinbadState.language==='tr-TR'?'Doğrulanmış hareket dizisini güvenle hazırlayamadım; hareket etmeyeceğim.':'I could not safely prepare the verified movement sequence, so I will not move.');return;}
+      sinbadRequestedGesture=Object.freeze({accepted:true,supported:true,compound:true,action:historyReplay.action,actions:historyReplay.actions,cue:replay.cues[0]});sinbadRequestedGestureSequence=[...replay.cues];sinbadExplicitGestureHoldBoundaries=2;
+    }
+    speakSinbad(historyReplay.text,()=>addSinbadMessage('sinbad',historyReplay.text));return;
+  }
   const directReaction=performSinbadDirectCharacterRequest(sinbadRequestedGesture);
   if(directReaction.accepted){addSinbadMessage('sinbad',directReaction.text);return;}
   if(sinbadRequestedGesture?.directAcademyBoard){const request=sinbadRequestedGesture,delivered=await (request.boardShape?sendShapeToSinbadAcademyBoard(request.boardShape):sendTextToSinbadAcademyBoard(request.boardText)),ack=sinbadPerformanceDirector?.gestureAcknowledgementForRequest?.(request,sinbadState.language||appLanguage);sinbadRequestedGesture=null;sinbadRequestedGestureSequence=[];if(delivered&&ack?.accepted){commitSinbadPerformedGestureAction('point-board');sinbadAwaitingAnswer=false;addSinbadMessage('sinbad',ack.text);return;}if(!delivered){addSinbadMessage('sinbad',sinbadState.language==='tr-TR'?'Academy işlemi doğrulanmadığı için yapıldığını söylemiyorum.':'I am not claiming the Academy action was completed because it was not verified.');return;}}
   const recalledSequence=sinbadPerformanceDirector?.gestureHistoryAnswerForText?.(q,sinbadPerformedGestureHistory,sinbadState.language||appLanguage);
   if(recalledSequence?.accepted){speakSinbad(recalledSequence.text,()=>addSinbadMessage('sinbad',recalledSequence.text));return;}
-  const recalledGesture=sinbadPerformanceDirector?.gestureRecallAnswerForText?.(q,sinbadLastPerformedGestureAction,sinbadState.language||appLanguage);
-  if(recalledGesture?.accepted){speakSinbad(recalledGesture.text,()=>addSinbadMessage('sinbad',recalledGesture.text));return;}
+  const recalledGesture=sinbadPerformanceDirector?.gestureRecallAnswerForText?.(q,sinbadLastPerformedGestureAction,sinbadState.language||appLanguage,sinbadLastPerformedGestureContext);
+  if(recalledGesture?.accepted){
+    if(recalledGesture.known&&recalledGesture.cue&&recalledGesture.action){
+      sinbadRequestedGesture=Object.freeze({accepted:true,supported:true,action:recalledGesture.action,cue:recalledGesture.cue});
+      const replay=sinbadGestureSequenceDirector?.select?.(recalledGesture.action)||sinbadPerformanceDirector?.gestureSequenceForRequest?.(recalledGesture.action);
+      const preserveBoardGaze=['board-confirmation-yes','board-confirmation-no'].includes(sinbadLastPerformedGestureContext)&&recalledGesture.kind==='gesture-reason';
+      sinbadRequestedGestureSequence=replay?.accepted?replay.cues.map(cue=>preserveBoardGaze?Object.freeze({...cue,gaze:'board'}):cue):[];sinbadExplicitGestureHoldBoundaries=2;
+    }
+    speakSinbad(recalledGesture.text,()=>addSinbadMessage('sinbad',recalledGesture.text));return;
+  }
+  const currentCharacterState=sinbadPerformanceDirector?.characterStateAnswerForText?.(q,visibleCharacterSnapshot,sinbadState.language||appLanguage);
+  if(currentCharacterState?.accepted){reinforceSinbadVisiblePoseAnswer(currentCharacterState);speakSinbad(currentCharacterState.text,()=>addSinbadMessage('sinbad',currentCharacterState.text));return;}
   if(window.SinbadRouteVisualizer?.isPlotRequest?.(q)){
     setSinbadThinkingStage('calculating');
     const plotted=await prepareNavigationPlotFromConversation(q);
@@ -1815,13 +2094,16 @@ setSinbadWorkspaceTab(initialSinbadWorkspaceTab);
 $('sinbadFloat').addEventListener('click',()=>openWorkspace('sinbad'));
 $('backToSinbad')?.addEventListener('click',()=>openWorkspace('sinbad'));
 $('toggleSinbadVoice')?.addEventListener('click',()=>{sinbadState.voiceEnabled=!sinbadState.voiceEnabled;localStorage.setItem('atlas_sinbad_voice',sinbadState.voiceEnabled?'on':'off');setSinbadVoiceUI();if(!sinbadState.voiceEnabled){stopSinbadVoice();setSinbadAssistantState('voice-disabled');}else if(sinbadAssistantState==='voice-disabled')setSinbadAssistantState('idle');});
+$('toggleSinbadReducedMotion')?.addEventListener('click',()=>{const enabled=!sinbadReducedMotionPreferred(),turkish=sinbadState.language==='tr-TR';applySinbadReducedMotionCommand(Object.freeze({accepted:true,enabled,text:enabled?(turkish?'Hareket azaltma tercihini açtım; uzun ve tekrarlı animasyonları oynatmayacağım.':'I enabled reduced motion; I will not play long or repetitive animations.'):(turkish?'Uygulama içindeki hareket azaltma tercihini kapattım.':'I disabled the in-app reduced-motion preference.')}));});
 setSinbadAssistantState(sinbadState.voiceEnabled?'idle':'voice-disabled');
+setSinbadReducedMotionUI();
+window.matchMedia?.('(prefers-reduced-motion: reduce)').addEventListener?.('change',handleSinbadSystemReducedMotionChange);
 $('stopSinbadVoice')?.addEventListener('click',stopSinbadVoice);
 $('startSinbadListening')?.addEventListener('click',startSinbadListening);
 $('testSinbadVoice')?.addEventListener('click',()=>{sinbadState.voiceEnabled=true;localStorage.setItem('atlas_sinbad_voice','on');setSinbadVoiceUI();speakSinbad(speechCopy().test);});
 $('testSinbadWalk')?.addEventListener('click',()=>window.SinbadCharacterController.react('walk'));
 $('sinbadLanguage').value=sinbadState.language;
-$('sinbadLanguage')?.addEventListener('change',e=>{sinbadState.language=e.target.value;localStorage.setItem('atlas_sinbad_language',e.target.value);stopSinbadVoice();if(sinbadIsListening)sinbadRecognition?.stop();setListeningUI();});
+$('sinbadLanguage')?.addEventListener('change',e=>{sinbadState.language=e.target.value;localStorage.setItem('atlas_sinbad_language',e.target.value);stopSinbadVoice();if(sinbadIsListening)sinbadRecognition?.stop();setListeningUI();setSinbadReducedMotionUI();});
 $('allowSinbadWebSearch')?.addEventListener('click',performSinbadWebSearch);
 $('denySinbadWebSearch')?.addEventListener('click',()=>{pendingSinbadWebQuestion='';$('sinbadWebConsent').classList.add('hidden');const copy=SINBAD_WEB_TEXT[sinbadState.language]||SINBAD_WEB_TEXT['en-US'];addSinbadMessage('sinbad',copy.denied);});
 $('createPassagePlan')?.addEventListener('click',createPassagePlanDraft);

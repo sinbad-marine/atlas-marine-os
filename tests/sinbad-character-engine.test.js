@@ -16,6 +16,7 @@ test('laugh is an explicit bounded reaction state',()=>{
 test('character engine accepts the real open-palm pose and rejects invented gestures',()=>{
   const engine=createCharacterEngine();
   assert.equal(engine.setState('presenting',{gesture:'show-palm'}).snapshot.gesture,'show-palm');
+  assert.equal(engine.setState('presenting',{gesture:'show-left-palm'}).snapshot.gesture,'show-left-palm');
   assert.equal(engine.setState('presenting',{gesture:'raise-left'}).snapshot.gesture,'raise-left');
   assert.equal(engine.setState('presenting',{gesture:'show-both-hands'}).snapshot.gesture,'show-both-hands');
   assert.equal(engine.setState('presenting',{gesture:'wave-right'}).snapshot.gesture,'wave-right');
@@ -24,6 +25,7 @@ test('character engine accepts the real open-palm pose and rejects invented gest
   assert.equal(engine.setState('presenting',{gesture:'look-right'}).snapshot.gesture,'look-right');
   assert.equal(engine.setState('presenting',{gesture:'shake-head-left'}).snapshot.gesture,'shake-head-left');
   assert.equal(engine.setState('presenting',{gesture:'shake-head-right'}).snapshot.gesture,'shake-head-right');
+  assert.equal(engine.setState('presenting',{gesture:'shrug'}).snapshot.gesture,'shrug');
   assert.equal(engine.setState('presenting',{gesture:'nod-up'}).snapshot.gesture,'nod-up');
   assert.equal(engine.setState('listening',{gesture:'listen-orient'}).snapshot.gesture,'listen-orient');
   assert.equal(engine.setState('listening',{gesture:'listen-follow'}).snapshot.gesture,'listen-follow');

@@ -30,3 +30,22 @@ test('provides structured lessons and practice questions',()=>{
 test('does not invent an answer without matching evidence',()=>{
   assert.equal(academy.answer('galley refrigerator maintenance',data),null);
 });
+
+test('registers the complete scanned GASM navigation exam series and the human-verified full answer key',()=>{
+  const pages=academy.quiz('gasm-seyir-sinav');
+  assert.equal(pages.length,71);
+  assert.equal(pages.reduce((sum,page)=>sum+page.questionCount,0),643);
+  assert.deepEqual(pages.slice(0,10).map(page=>[page.firstQuestion,page.lastQuestion]),[[1,8],[9,17],[18,27],[28,36],[37,46],[47,56],[57,66],[67,76],[77,86],[87,95]]);
+  assert.deepEqual(pages.slice(-5).map(page=>[page.firstQuestion,page.lastQuestion]),[[601,607],[608,616],[617,625],[626,634],[635,644]]);
+  assert.deepEqual(pages.slice(29,34).map(page=>[page.firstQuestion,page.lastQuestion]),[[266,271],[273,282],[283,291],[292,297],[298,305]]);
+  assert.deepEqual(academy.gasmSeyirMissingRanges,[[272,272]]);
+  assert.ok(pages.every(page=>page.answer===null));
+  assert.equal(pages.filter(page=>page.answerStatus==='official-key-verified').length,71);
+  assert.equal(Object.keys(academy.gasmSeyirVerifiedAnswerKey).length,644);
+  assert.deepEqual(
+    [academy.gasmSeyirVerifiedAnswerKey[1],academy.gasmSeyirVerifiedAnswerKey[15],academy.gasmSeyirVerifiedAnswerKey[217],academy.gasmSeyirVerifiedAnswerKey[513],academy.gasmSeyirVerifiedAnswerKey[601],academy.gasmSeyirVerifiedAnswerKey[644]],
+    ['B','C','B','B','B','A']
+  );
+  assert.ok(pages.every(page=>Object.keys(page.answers).length===page.questionCount));
+  assert.ok(pages.every(page=>/^\.\/assets\/gasm-seyir\/.+\.png$/.test(page.image)));
+});
