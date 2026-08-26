@@ -41,8 +41,8 @@ test('Pages release contains every live character runtime and referenced animati
   assert.equal(builder.RELEASE_FILES.some(file=>file.endsWith('captain-sinbad-hero-portrait.png')),false,'unused portrait must not inflate the release');
 });
 
-test('Pages release excludes local-only and unreviewed content sources',()=>{
-  assert.equal(builder.RELEASE_FILES.includes('store-data.js'),false,'local store data must not enter the public artifact implicitly');
+test('Pages release includes required public data and excludes unreviewed content sources',()=>{
+  assert.equal(builder.RELEASE_FILES.includes('store-data.js'),true,'the public storefront cannot initialize without its catalog');
   assert.equal(builder.RELEASE_FILES.some(file=>file.startsWith('assets/gasm-seyir/')),false,'unreviewed training scans must remain outside the public artifact');
 });
 
