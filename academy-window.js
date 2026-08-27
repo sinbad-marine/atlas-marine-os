@@ -11,12 +11,20 @@ const SINBAD_BRIDGE_URL='http://127.0.0.1:31983';
 const academyModuleOptions=[...byId('academyModule').options].map(option=>Object.freeze({value:option.value,label:option.textContent}));
 const academyCharacterEngine=window.SinbadCharacterEngine?.createCharacterEngine({initialState:'idle'})||null;
 const academyPerformanceDirector=window.SinbadPerformanceDirector?.createPerformanceDirector()||null;
+const academySpeechGestureDirector=window.SinbadPerformanceDirector?.createSpeechGestureDirector()||null;
 const ACADEMY_CHARACTER_ASSETS=Object.freeze({
   walking:Object.freeze(['./assets/captain-sinbad/captain-sinbad-walk-a-v1.png','./assets/captain-sinbad/captain-sinbad-walk-b-v1.png']),
   writing:Object.freeze({ready:'./assets/captain-sinbad/captain-sinbad-board-teaching.png',contact:'./assets/captain-sinbad/captain-sinbad-writing-contact-v1.png',lift:'./assets/captain-sinbad/captain-sinbad-writing-lift-v1.png'}),
-  'board-teaching':'./assets/captain-sinbad/captain-sinbad-board-teaching.png'
+  'board-teaching':'./assets/captain-sinbad/captain-sinbad-board-teaching.png',
+  idle:'./assets/captain-sinbad/captain-sinbad-idle-master.png',
+  listening:'./assets/captain-sinbad/captain-sinbad-listening.png',
+  thinking:'./assets/captain-sinbad/captain-sinbad-thinking.png',
+  speaking:'./assets/captain-sinbad/captain-sinbad-speaking.png',
+  laughing:'./assets/captain-sinbad/captain-sinbad-laughing-v1.png'
 });
 let academyBoardGeneration=0;
+let academyMotionGeneration=0;
+let academyLastPerformedGestureAction=null;
 let academyLessonStartedAt=null;
 let academyLessonClockTimer=null;
 
@@ -48,14 +56,38 @@ academyCharacterEngine?.subscribe(snapshot=>{
 });
 
 function renderAcademyCharacterCue(cue,text){
-  const event=cue.state==='walking'?'WALK':'TEACH_AT_BOARD';
+  const event=cue.state==='walking'?'WALK':cue.state==='listening'?'LISTEN_STARTED':cue.state==='thinking'?'THINK_STARTED':cue.state==='laughing'?'LAUGH':cue.state==='speaking'?'AUDIO_STARTED':cue.state==='idle'?'READY':'TEACH_AT_BOARD';
   academyCharacterEngine?.dispatch(event,{boardText:text,...cue});
-  const image=byId('academySinbadImage');if(!image)return;
-  image.src=cue.state==='walking'?ACADEMY_CHARACTER_ASSETS.walking[cue.walkFrame===1?1:0]:ACADEMY_CHARACTER_ASSETS['board-teaching'];
+  const image=byId('academySinbadImage'),avatar=byId('academyTeachingStage')?.querySelector('.academy-sinbad');if(!image||!avatar)return;
+  const stateAsset=cue.state==='walking'?ACADEMY_CHARACTER_ASSETS.walking[cue.walkFrame===1?1:0]:ACADEMY_CHARACTER_ASSETS[cue.state];
+  image.src=stateAsset||ACADEMY_CHARACTER_ASSETS['board-teaching'];
+  avatar.dataset.motionRevision=String((Number(avatar.dataset.motionRevision)||0)+1);
+}
+
+function settleAcademyCharacter(generation,delay=1400){
+  setTimeout(()=>{if(generation!==academyMotionGeneration)return;renderAcademyCharacterCue({state:'idle',gesture:'rest',gaze:'audience'},'');},delay);
+}
+
+function playAcademyGestureRequest(request){
+  if(!request?.accepted)return false;
+  const acknowledgement=window.SinbadPerformanceDirector?.gestureAcknowledgementForRequest?.(request,'tr-TR');
+  if(request.supported!==true){appendAcademyMessage('sinbad',acknowledgement?.text||'Bu hareketi henüz güvenilir biçimde yapamıyorum.');return true;}
+  const generation=++academyMotionGeneration;academyLastPerformedGestureAction=request.action;
+  if(request.action==='write-board'&&request.boardText)writeCustomTextAtBoard(request.boardText);
+  else if(request.action==='draw-board-shape'&&request.boardShape)drawAllowedShapeAtBoard(request.boardShape,'standard');
+  else if(request.action==='walk'){
+    [0,1,0,1,0,1].forEach((frame,index)=>setTimeout(()=>{if(generation===academyMotionGeneration)renderAcademyCharacterCue({state:'walking',gesture:'walk',gaze:'path',walkFrame:frame},'');},index*260));
+    settleAcademyCharacter(generation,1800);
+  }else{
+    const state=request.action==='laugh'?'laughing':'speaking';
+    renderAcademyCharacterCue({state,...request.cue},'');
+    settleAcademyCharacter(generation,request.action==='wave'?1900:1500);
+  }
+  const text=acknowledgement?.text||'Hareketi yapıyorum.';appendAcademyMessage('sinbad',text);speakAcademyAnswer(text,{preserveMotion:true});return true;
 }
 
 function preloadAcademyCharacterAssets(){
-  [...ACADEMY_CHARACTER_ASSETS.walking,...Object.values(ACADEMY_CHARACTER_ASSETS.writing),ACADEMY_CHARACTER_ASSETS['board-teaching']].forEach(src=>{const image=new Image();image.src=src;});
+  [...ACADEMY_CHARACTER_ASSETS.walking,...Object.values(ACADEMY_CHARACTER_ASSETS.writing),...Object.values(ACADEMY_CHARACTER_ASSETS).filter(value=>typeof value==='string')].forEach(src=>{const image=new Image();image.src=src;});
 }
 
 function renderAcademyBoardProgress(board,text,index,finished=false){
@@ -195,18 +227,23 @@ function appendAcademyMessage(role,text){
   const conversation=byId('academyConversation'),message=document.createElement('p');message.className=`academy-message ${role}`;message.textContent=text;conversation.append(message);
   while(conversation.children.length>20)conversation.firstElementChild.remove();conversation.scrollTop=conversation.scrollHeight;
 }
-function speakAcademyAnswer(text){
+function speakAcademyAnswer(text,{preserveMotion=false}={}){
   if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined')return;
-  speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text.slice(0,1800));utterance.lang='tr-TR';speechSynthesis.speak(utterance);
+  speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text.slice(0,1800));utterance.lang='tr-TR';
+  if(!preserveMotion){
+    const generation=++academyMotionGeneration;utterance.onstart=()=>{academySpeechGestureDirector?.beginTurn?.();const semantic=window.SinbadPerformanceDirector?.responseCueForText?.(text,'conversational')?.cue||{gesture:'explain',gaze:'audience',emotion:'warm'};const selected=academySpeechGestureDirector?.select?.({...semantic,cadence:'opening',responseKind:semantic.responseKind||'conversation'});renderAcademyCharacterCue({state:'speaking',...(selected?.cue||semantic)},text);};utterance.onend=()=>settleAcademyCharacter(generation,180);utterance.onerror=()=>settleAcademyCharacter(generation,180);
+  }
+  speechSynthesis.speak(utterance);
 }
 function academyDialogueHistory(){
   return [...byId('academyConversation').querySelectorAll('.academy-message')].slice(-10).map(message=>Object.freeze({role:message.classList.contains('student')?'user':'assistant',content:String(message.textContent||'').slice(0,1800)}));
 }
-async function academyLocalAiAnswer(question){
+async function academyLocalAiAnswer(question,academyEvidence=''){
   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),120000);
   try{
     byId('academyVoiceStatus').textContent='Sinbad düşünüyor…';
-    const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/chat`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:String(question).slice(0,1200),language:'tr-TR',history:academyDialogueHistory(),useLibrary:false,context:{surface:'sinbad-academy',module:byId('academyModule').value}}),signal:controller.signal});
+    const groundedPrompt=academyEvidence?`Öğrencinin sorusu: ${String(question).slice(0,1200)}\n\nDoğrulanmış çevrimdışı Academy bağlamı (yalnız bu bağlama dayan, eksikse açıkça söyle):\n${String(academyEvidence).slice(0,3500)}`:String(question).slice(0,1200);
+    const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/chat`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:groundedPrompt,language:'tr-TR',history:academyDialogueHistory(),useLibrary:false,context:{surface:'sinbad-academy',module:byId('academyModule').value,grounded:Boolean(academyEvidence)}}),signal:controller.signal});
     if(!response.ok)return null;const data=await response.json();const answer=typeof data?.answer==='string'?data.answer.trim().slice(0,6000):'';
     if(!answer)return null;byId('academyVoiceStatus').textContent=`Local AI · ${String(data.model||'Sinbad').slice(0,32)}`;return answer;
   }catch(error){console.warn('Academy local AI unavailable',error);byId('academyVoiceStatus').textContent='Yerel AI çevrimdışı';return null;}finally{clearTimeout(timeout);}
@@ -224,17 +261,20 @@ function shouldUseAcademySources(question){
 }
 async function answerAcademyQuestion(){
   const input=byId('academyQuestionInput'),question=input.value.trim().slice(0,1200);if(!question)return;
-  appendAcademyMessage('student',question);input.value='';academyCharacterEngine?.dispatch('THINK_STARTED');
+  appendAcademyMessage('student',question);input.value='';
+  const gestureRequest=window.SinbadPerformanceDirector?.gestureRequestForText?.(question,{lastAction:academyLastPerformedGestureAction});
+  if(gestureRequest?.accepted){playAcademyGestureRequest(gestureRequest);return;}
+  renderAcademyCharacterCue({state:'thinking',gesture:'hold',gaze:'thought'},question);
   const socialAnswer=answerAcademySocialTurn(question),result=socialAnswer||!shouldUseAcademySources(question)?null:window.SinbadAcademy?.answer(question,window.SINBAD_TRAINING_DATA);
-  const localAnswer=socialAnswer||result?.text?null:await academyLocalAiAnswer(question);
-  const answer=socialAnswer||result?.text||localAnswer||'Bu soru için doğrulanmış çevrimdışı Academy içeriğinde yeterli kaynak bulamadım ve yerel Sinbad AI şu anda erişilebilir değil. Tahmin üretmeyeceğim; lütfen soruyu daraltın veya yerel Bridge’i başlatın.';
-  appendAcademyMessage('sinbad',answer);academyCharacterEngine?.dispatch('AUDIO_STARTED');renderAcademyCharacterCue({state:'board-teaching',gesture:'explain',gaze:'audience'},answer);speakAcademyAnswer(answer);
+  const localAnswer=socialAnswer?null:await academyLocalAiAnswer(question,result?.text||'');
+  const answer=socialAnswer||localAnswer||result?.text||'Bu soru için doğrulanmış çevrimdışı Academy içeriğinde yeterli kaynak bulamadım ve yerel Sinbad AI şu anda erişilebilir değil. Tahmin üretmeyeceğim; lütfen soruyu daraltın veya yerel Bridge’i başlatın.';
+  appendAcademyMessage('sinbad',answer);speakAcademyAnswer(answer);
 }
 let academyRecognition=null;
 function startAcademyListening(){
   const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Recognition){byId('academyVoiceStatus').textContent='Voice input unsupported';return;}
   academyRecognition?.abort();academyRecognition=new Recognition();academyRecognition.lang='tr-TR';academyRecognition.interimResults=false;academyRecognition.maxAlternatives=1;
-  academyRecognition.onstart=()=>{byId('academyVoiceStatus').textContent='Listening…';byId('startAcademyListening').disabled=true;byId('stopAcademyListening').disabled=false;academyCharacterEngine?.dispatch('LISTEN_STARTED');};
+  academyRecognition.onstart=()=>{byId('academyVoiceStatus').textContent='Listening…';byId('startAcademyListening').disabled=true;byId('stopAcademyListening').disabled=false;renderAcademyCharacterCue({state:'listening',gesture:'listen-lean',gaze:'audience'},'');};
   academyRecognition.onresult=event=>{byId('academyQuestionInput').value=event.results[0][0].transcript;answerAcademyQuestion();};
   academyRecognition.onerror=()=>{byId('academyVoiceStatus').textContent='Voice input unavailable';};
   academyRecognition.onend=()=>{byId('startAcademyListening').disabled=false;byId('stopAcademyListening').disabled=true;if(byId('academyVoiceStatus').textContent==='Listening…')byId('academyVoiceStatus').textContent='Text ready';};academyRecognition.start();

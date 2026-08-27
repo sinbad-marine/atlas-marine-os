@@ -62,13 +62,13 @@ test('standalone Academy retains course and quiz handlers',()=>{
 test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.match(academyHtml,/id="academyTeachingStage"/);assert.match(academyHtml,/captain-sinbad-board-teaching\.png/);
   assert.match(academyHtml,/sinbad-character-engine\.js\?v=82030/);
-  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82082/);assert.match(academyHtml,/academy-window\.js\?v=82086/);assert.match(academyHtml,/academy\.css\?v=82082/);
+  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82082/);assert.match(academyHtml,/academy-window\.js\?v=82088/);assert.match(academyHtml,/academy\.css\?v=82083/);
   assert.doesNotMatch(academyHtml,/id="academyTeachingStage"[^>]*hidden/);
   assert.ok(academyHtml.indexOf('id="academyModule"')<academyHtml.indexOf('</aside>'),'training controls belong to the left classroom column');
   assert.match(academyHtml,/id="academyTrackTitle" hidden/);
   assert.match(academyApp,/function teachLessonAtBoard\(lesson\)/);
   assert.match(academyApp,/\.join\('\\n\\n'\)\.slice\(0,500\)/);
-  assert.match(academyApp,/const event=cue\.state==='walking'\?'WALK':'TEACH_AT_BOARD'/);
+  assert.match(academyApp,/cue\.state==='walking'\?'WALK':cue\.state==='listening'\?'LISTEN_STARTED'/);
   assert.match(academyApp,/academyPerformanceDirector\?\.play\('lesson-opening'/);
   assert.match(academyApp,/captain-sinbad-walk-a-v1\.png/);assert.match(academyApp,/captain-sinbad-walk-b-v1\.png/);
   assert.match(academyApp,/setTimeout\(\(\)=>\{if\(generation===academyBoardGeneration\)writeNext\(\);\},1680\)/);
@@ -81,8 +81,8 @@ test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.doesNotMatch(academyCss,/\.academy-sinbad\{[^}]*right:0/);
   assert.match(academyCss,/object-position:center bottom/);
   assert.match(academyCss,/@media\(prefers-reduced-motion:reduce\)/);
-  assert.match(academyCss,/\.academy-sinbad\[data-state="walking"\] img\{animation:none/);
-  assert.match(worker,/sinbad-marine-v8\.20\.43-character-v1-v101/);
+  assert.match(academyCss,/\.academy-sinbad\[data-state="walking"\] img\{animation:academyWalkCycle/);
+  assert.match(worker,/sinbad-marine-v8\.20\.43-character-v1-v103/);
 });
 
 test('Academy keeps only classroom scenery on the right and dialogue in the left control rail',()=>{
@@ -124,16 +124,18 @@ test('Academy lesson clock measures only an explicitly opened lesson',()=>{
 
 test('Academy uses the owner-local AI only after social and verified lesson answers, while driving the real character',()=>{
   assert.match(academyApp,/const SINBAD_BRIDGE_URL='http:\/\/127\.0\.0\.1:31983'/);
-  assert.match(academyApp,/async function academyLocalAiAnswer\(question\)/);
+  assert.match(academyApp,/async function academyLocalAiAnswer\(question,academyEvidence=''\)/);
   assert.match(academyApp,/fetch\(`\$\{SINBAD_BRIDGE_URL\}\/ai\/chat`/);
   assert.match(academyApp,/slice\(0,1200\)/);assert.match(academyApp,/academyDialogueHistory\(\)/);assert.match(academyApp,/slice\(-10\)/);
   assert.match(academyApp,/useLibrary:false/);
   assert.match(academyApp,/controller\.abort\(\),120000/);
-  assert.match(academyApp,/const localAnswer=socialAnswer\|\|result\?\.text\?null:await academyLocalAiAnswer\(question\)/);
+  assert.match(academyApp,/const localAnswer=socialAnswer\?null:await academyLocalAiAnswer\(question,result\?\.text\|\|''\)/);
   assert.match(academyApp,/shouldUseAcademySources\(question\)/);
   assert.match(academyApp,/denizcilik\|seyir\|harita/);
-  assert.match(academyApp,/academyCharacterEngine\?\.dispatch\('THINK_STARTED'\)/);
-  assert.match(academyApp,/renderAcademyCharacterCue\(\{state:'board-teaching',gesture:'explain',gaze:'audience'\},answer\)/);
+  assert.match(academyApp,/gestureRequestForText\?\.\(question,\{lastAction:academyLastPerformedGestureAction\}\)/);
+  assert.match(academyApp,/renderAcademyCharacterCue\(\{state:'thinking',gesture:'hold',gaze:'thought'\},question\)/);
+  assert.match(academyApp,/createSpeechGestureDirector/);
+  assert.match(academyCss,/@keyframes academyWave/);assert.match(academyCss,/@keyframes academySpeak/);
   assert.match(academyApp,/yerel Sinbad AI şu anda erişilebilir değil/);
 });
 
