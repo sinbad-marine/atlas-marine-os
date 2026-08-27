@@ -578,6 +578,35 @@ test('Sinbad Academy opens outside the main app as a standalone classroom window
   await classroom.close();
 });
 
+test('dashboard opens Captain Sinbad in an independent resizable module window',async({page})=>{
+  await stubBridge(page);
+  await page.goto('/');
+  await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');});
+  const popupPromise=page.waitForEvent('popup');
+  await page.locator('#sinbadFloat').click();
+  const sinbadWindow=await popupPromise;
+  await sinbadWindow.waitForLoadState();
+  await expect(sinbadWindow).toHaveURL(/[?&]module=sinbad(?:&|$)/u);
+  await sinbadWindow.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');});
+  await expect(sinbadWindow.locator('body')).toHaveClass(/module-window-mode/u);
+  await expect(sinbadWindow.locator('#sinbad')).toHaveClass(/active/u);
+  await expect(sinbadWindow.locator('.hero')).toBeHidden();
+  await expect(sinbadWindow.locator('#sinbad')).toBeVisible();
+  await expect(page.locator('#sinbad')).not.toHaveClass(/active/u);
+  await sinbadWindow.close();
+
+  const fleetPopupPromise=page.waitForEvent('popup');
+  await page.locator('[data-open="fleet"]').first().click();
+  const fleetWindow=await fleetPopupPromise;
+  await fleetWindow.waitForLoadState();
+  await expect(fleetWindow).toHaveURL(/[?&]module=fleet(?:&|$)/u);
+  await fleetWindow.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');});
+  await expect(fleetWindow.locator('#fleet')).toHaveClass(/active/u);
+  await expect(fleetWindow.locator('.module-grid')).toBeHidden();
+  await expect(page.locator('#fleet')).not.toHaveClass(/active/u);
+  await fleetWindow.close();
+});
+
 test('live Sinbad chat writes bounded plain text on the real Academy board',async({page})=>{
   await stubBridge(page);
   await page.goto('/');

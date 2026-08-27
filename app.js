@@ -30,10 +30,52 @@ const set=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 
 
+const MODULE_WINDOW_PARAM='module';
+const MODULE_WINDOW_PARAMS=new URLSearchParams(location.search);
+const MODULE_WINDOW_ID=MODULE_WINDOW_PARAMS.get(MODULE_WINDOW_PARAM)||'';
+const MODULE_WINDOW_GEOMETRY_PREFIX='atlas_module_window_geometry_v1:';
+let moduleWindowGeometryTimer=0;
+function moduleWindowGeometry(id){
+  const fallback={width:Math.min(1320,Math.max(760,screen.availWidth-120)),height:Math.min(900,Math.max(560,screen.availHeight-120)),left:Math.max(0,Math.round((screen.availWidth-Math.min(1320,screen.availWidth-120))/2)),top:Math.max(0,Math.round((screen.availHeight-Math.min(900,screen.availHeight-120))/2))};
+  try{
+    const saved=JSON.parse(localStorage.getItem(`${MODULE_WINDOW_GEOMETRY_PREFIX}${id}`)||'null');
+    if(!saved||typeof saved!=='object')return fallback;
+    return {width:Math.min(screen.availWidth,Math.max(520,Number(saved.width)||fallback.width)),height:Math.min(screen.availHeight,Math.max(420,Number(saved.height)||fallback.height)),left:Math.max(0,Number(saved.left)||fallback.left),top:Math.max(0,Number(saved.top)||fallback.top)};
+  }catch{return fallback;}
+}
+function saveModuleWindowGeometry(){
+  if(!MODULE_WINDOW_ID)return;
+  try{localStorage.setItem(`${MODULE_WINDOW_GEOMETRY_PREFIX}${MODULE_WINDOW_ID}`,JSON.stringify({width:outerWidth,height:outerHeight,left:screenX,top:screenY}));}catch{}
+}
+function openWorkspaceWindow(id,{bucket=''}={}){
+  const workspace=$(id);if(!workspace)return null;
+  const geometry=moduleWindowGeometry(id),url=new URL('./index.html',location.href);url.search='';url.hash='';url.searchParams.set(MODULE_WINDOW_PARAM,id);
+  if(bucket)url.searchParams.set('bucket',String(bucket).slice(0,80));
+  const features=`popup=yes,resizable=yes,scrollbars=yes,width=${Math.round(geometry.width)},height=${Math.round(geometry.height)},left=${Math.round(geometry.left)},top=${Math.round(geometry.top)}`;
+  const popup=window.open(url.href,`sinbadModule_${id.replace(/[^a-z0-9_-]/gi,'_')}`,features);popup?.focus();return popup;
+}
+function activateWorkspace(id,{scroll=true,render=true}={}){
+  const workspace=$(id);if(!workspace)return false;
+  document.querySelectorAll('.workspace').forEach(x=>x.classList.toggle('active',x===workspace));
+  document.body.classList.toggle('store-active',id==='store');
+  if(scroll)workspace.scrollIntoView({behavior:'smooth',block:'start'});
+  if(render)renderAll();if(id==='enc-viewer')initEncViewer();if(id==='navigation-plot')initNavigationPlot();if(id==='studio-console')refreshStudioCapability();return true;
+}
+function openWorkspace(id,options={}){return MODULE_WINDOW_ID===id?activateWorkspace(id):openWorkspaceWindow(id,options)}
+function closeWorkspaces(){if(MODULE_WINDOW_ID){saveModuleWindowGeometry();window.close();return;}document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));document.body.classList.remove('store-active');scrollTo({top:0,behavior:'smooth'})}
+function initializeModuleWindow(){
+  if(!MODULE_WINDOW_ID||!$(MODULE_WINDOW_ID))return;
+  document.body.classList.add('module-window-mode');document.body.dataset.moduleWindow=MODULE_WINDOW_ID;
+  const heading=$(MODULE_WINDOW_ID).querySelector('h2')?.textContent?.trim();if(heading)document.title=`${heading} — Sinbad Marine`;
+  activateWorkspace(MODULE_WINDOW_ID,{scroll:false,render:false});
+  const requestedBucket=MODULE_WINDOW_PARAMS.get('bucket');
+  if(MODULE_WINDOW_ID==='cloud-documents'&&requestedBucket)setTimeout(()=>{const select=$('cloudBucketSelect');if(select){select.value=requestedBucket;loadCloudFiles();}},80);
+  addEventListener('resize',()=>{clearTimeout(moduleWindowGeometryTimer);moduleWindowGeometryTimer=setTimeout(saveModuleWindowGeometry,180)});
+  addEventListener('pagehide',saveModuleWindowGeometry);
+}
 document.querySelectorAll('[data-open]').forEach(x=>x.onclick=()=>openWorkspace(x.dataset.open));
 document.querySelectorAll('.close').forEach(x=>x.onclick=closeWorkspaces);
-function openWorkspace(id){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');$(id).scrollIntoView({behavior:'smooth'});document.body.classList.toggle('store-active',id==='store');renderAll();if(id==='enc-viewer')initEncViewer();if(id==='navigation-plot')initNavigationPlot();if(id==='studio-console')refreshStudioCapability()}
-function closeWorkspaces(){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));document.body.classList.remove('store-active');scrollTo({top:0,behavior:'smooth'})}
+document.addEventListener('DOMContentLoaded',initializeModuleWindow);
 
 let encMap=null,encChartLayer=null,encBathymetryLayer=null,encSeamarkLayer=null;
 let navigationPlotMap=null,navigationPlotSource=null,navigationPlotRoute=null;
@@ -2179,7 +2221,8 @@ async function refreshCloudSummary(){
   $('sumStorage').textContent=formatBytes(files.reduce((n,f)=>n+(Number(f.file_size_bytes)||0),0));
 }
 function openCloudBucket(bucket){
-  openWorkspace('cloud-documents');
+  const opened=openWorkspace('cloud-documents',{bucket});
+  if(MODULE_WINDOW_ID!=='cloud-documents')return opened;
   setTimeout(()=>{
     const select=$('cloudBucketSelect');
     if(select){select.value=bucket;loadCloudFiles();}

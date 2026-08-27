@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.32-character-v1-v90';
+const CACHE='sinbad-marine-v8.20.33-character-v1-v91';
 const ASSETS=[
   './',
   './index.html',
@@ -129,7 +129,7 @@ const ASSETS=[
   './assets/captain-sinbad/captain-sinbad-writing-contact-v1.png',
   './assets/captain-sinbad/captain-sinbad-writing-lift-v1.png',
   './assets/captain-sinbad/captain-sinbad-board-teaching.png'
-];
+].filter(asset=>!asset.startsWith('./assets/gasm-seyir/'));
 
 self.addEventListener('install',event=>{
   self.skipWaiting();

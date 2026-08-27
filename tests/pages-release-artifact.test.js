@@ -7,6 +7,7 @@ const os=require('node:os');
 const path=require('node:path');
 const crypto=require('node:crypto');
 const builder=require('../tools/build-pages-artifact.js');
+const worker=fs.readFileSync('sw.js','utf8');
 
 const hash=value=>crypto.createHash('sha256').update(value).digest('hex');
 
@@ -44,6 +45,7 @@ test('Pages release contains every live character runtime and referenced animati
 test('Pages release includes required public data and excludes unreviewed content sources',()=>{
   assert.equal(builder.RELEASE_FILES.includes('store-data.js'),true,'the public storefront cannot initialize without its catalog');
   assert.equal(builder.RELEASE_FILES.some(file=>file.startsWith('assets/gasm-seyir/')),false,'unreviewed training scans must remain outside the public artifact');
+  assert.match(worker,/\.filter\(asset=>!asset\.startsWith\('\.\/assets\/gasm-seyir\/'\)\)/u,'offline installation must also exclude unreviewed training scans');
 });
 
 test('refuses overwrite and targets outside the repository',async t=>{
