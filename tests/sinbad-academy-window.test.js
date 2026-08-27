@@ -58,10 +58,13 @@ test('standalone Academy retains course and quiz handlers',()=>{
   assert.match(academyApp,/function renderQuiz\(\)/);
 });
 
-test('native Academy owns a bounded live Sinbad board-teaching stage',()=>{
+test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.match(academyHtml,/id="academyTeachingStage"/);assert.match(academyHtml,/captain-sinbad-board-teaching\.png/);
   assert.match(academyHtml,/sinbad-character-engine\.js\?v=82030/);
-  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82078/);assert.match(academyHtml,/academy-window\.js\?v=82078/);assert.match(academyHtml,/academy\.css\?v=82078/);
+  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82079/);assert.match(academyHtml,/academy-window\.js\?v=82079/);assert.match(academyHtml,/academy\.css\?v=82079/);
+  assert.doesNotMatch(academyHtml,/id="academyTeachingStage"[^>]*hidden/);
+  assert.ok(academyHtml.indexOf('id="academyModule"')<academyHtml.indexOf('</aside>'),'training controls belong to the left classroom column');
+  assert.match(academyHtml,/id="academyTrackTitle" hidden/);
   assert.match(academyApp,/function teachLessonAtBoard\(lesson\)/);
   assert.match(academyApp,/\.join\('\\n\\n'\)\.slice\(0,500\)/);
   assert.match(academyApp,/const event=cue\.state==='walking'\?'WALK':'TEACH_AT_BOARD'/);
@@ -70,10 +73,13 @@ test('native Academy owns a bounded live Sinbad board-teaching stage',()=>{
   assert.match(academyApp,/setTimeout\(\(\)=>\{if\(generation===academyBoardGeneration\)writeNext\(\);\},1680\)/);
   assert.match(academyApp,/generation!==academyBoardGeneration/);
   assert.match(academyApp,/function stopBoardTeaching\(\)/);
-  assert.match(academyCss,/\.academy-teaching-stage\[hidden\]\{display:none\}/);
+  assert.match(academyCss,/\.academy-teaching-stage\{position:relative;min-height:clamp\(560px,70vh,820px\)/);
+  assert.match(academyCss,/\.academy-live-board\{position:absolute;z-index:1/);
+  assert.match(academyCss,/\.academy-sinbad\{position:absolute;z-index:3/);
+  assert.match(academyCss,/object-position:center bottom/);
   assert.match(academyCss,/@media\(prefers-reduced-motion:reduce\)/);
   assert.match(academyCss,/\.academy-sinbad\[data-state="walking"\] img\{animation:none/);
-  assert.match(worker,/sinbad-marine-v8\.20\.38-character-v1-v96/);
+  assert.match(worker,/sinbad-marine-v8\.20\.39-character-v1-v97/);
 });
 
 test('Professor Sinbad classroom provides bounded text and voice questions',()=>{

@@ -566,7 +566,9 @@ test('Sinbad Academy opens outside the main app as a standalone classroom window
   const classroom=await popupPromise;
   await classroom.waitForLoadState();
   await expect(classroom).toHaveURL(/academy\.html$/);
-  await expect(classroom.getByRole('heading',{name:'General Maritime Education'})).toBeVisible();
+  await expect(classroom.locator('[data-academy-section="general-maritime-education"]')).toHaveClass(/active/);
+  await expect(classroom.locator('#academyTrackTitle')).toBeHidden();
+  await expect(classroom.locator('#academyTeachingStage')).toBeVisible();
   await expect(page.locator('#sinbadAcademyWindow')).toHaveCount(0);
   await classroom.getByRole('button',{name:'Open lesson'}).click();
   await expect(classroom.locator('#academyOutput')).toContainText('Learning objectives');
@@ -585,10 +587,10 @@ test('dashboard Academy opens one classroom and switches programmes inside it',a
   await classroom.waitForLoadState();
   await expect(classroom).toHaveURL(/academy\.html$/);
   await classroom.locator('[data-academy-section="goss-gasm"]').click();
-  await expect(classroom.getByRole('heading',{name:'GOSS / GASM Classroom'})).toBeVisible();
+  await expect(classroom.locator('[data-academy-section="goss-gasm"]')).toHaveClass(/active/);
   await expect(classroom.locator('#academyModule')).toHaveValue('gasm-seyir-sinav');
   await classroom.locator('[data-academy-section="stcw"]').click();
-  await expect(classroom.getByRole('heading',{name:'STCW Classroom'})).toBeVisible();
+  await expect(classroom.locator('[data-academy-section="stcw"]')).toHaveClass(/active/);
   await expect(classroom.locator('#academyModule')).toHaveValue('stcw-foundation');
   await expect(classroom.locator('#academyQuestionInput')).toBeVisible();
   await expect(classroom.locator('#startAcademyListening')).toBeVisible();

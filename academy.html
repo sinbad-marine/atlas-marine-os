@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#0b1d2b">
   <title>Sinbad Academy — Classroom</title>
-  <link rel="stylesheet" href="./academy.css?v=82078">
+  <link rel="stylesheet" href="./academy.css?v=82079">
 </head>
 <body>
   <div class="academy-shell">
@@ -21,21 +21,9 @@
     <div class="academy-layout">
       <aside class="academy-sidebar">
         <div class="academy-emblem" aria-hidden="true">🎓</div>
-        <h2>Captain Sinbad</h2>
+        <h2>Professor Sinbad</h2>
         <p>Your interactive maritime instructor.</p>
         <div class="academy-status"><span></span> Offline-ready lessons</div>
-      </aside>
-      <main class="academy-main">
-        <div class="academy-heading"><div><span class="eyebrow" id="academyTrackLabel">SINBAD MARINE ACADEMY</span><h1 id="academyTrackTitle">Maritime Classroom</h1></div><button type="button" class="btn" id="closeAcademyWindow">Close classroom</button></div>
-        <section id="academyTeachingStage" class="academy-teaching-stage" aria-labelledby="academyTeachingTitle" hidden>
-          <div class="academy-sinbad" data-state="board-teaching" aria-hidden="true">
-            <img id="academySinbadImage" src="./assets/captain-sinbad/captain-sinbad-board-teaching.png" alt="">
-          </div>
-          <div class="academy-live-board">
-            <strong id="academyTeachingTitle">Captain Sinbad's board</strong>
-            <pre id="academyTeachingText" aria-hidden="true"></pre>
-          </div>
-        </section>
         <section class="academy-controls" aria-label="Academy lesson controls">
           <label>Training module
             <select id="academyModule" aria-label="Training module">
@@ -56,6 +44,19 @@
             <button type="button" class="btn" id="startAcademyQuiz">Practice question</button>
           </div>
         </section>
+        <button type="button" class="btn academy-close" id="closeAcademyWindow">Close classroom</button>
+      </aside>
+      <main class="academy-main">
+        <span id="academyTrackLabel" hidden>SINBAD MARINE ACADEMY</span><h1 id="academyTrackTitle" hidden>Maritime Classroom</h1>
+        <section id="academyTeachingStage" class="academy-teaching-stage" aria-labelledby="academyTeachingTitle">
+          <div class="academy-sinbad" data-state="board-teaching" aria-hidden="true">
+            <img id="academySinbadImage" src="./assets/captain-sinbad/captain-sinbad-board-teaching.png" alt="">
+          </div>
+          <div class="academy-live-board">
+            <strong id="academyTeachingTitle">Professor Sinbad's board</strong>
+            <pre id="academyTeachingText" aria-hidden="true">Derse hoş geldiniz.</pre>
+          </div>
+        </section>
         <section id="academyOutput" class="academy-board" aria-live="polite">Choose a module. Lessons and source search remain available without an internet connection.</section>
         <section class="academy-conversation" aria-labelledby="academyConversationTitle">
           <div class="academy-conversation-head"><div><span class="eyebrow">CLASSROOM DIALOGUE</span><h2 id="academyConversationTitle">Ask Professor Sinbad</h2></div><span id="academyVoiceStatus" class="academy-status-pill">Text ready</span></div>
@@ -73,9 +74,9 @@
     </div>
   </div>
   <script src="./sinbad-training-data.js?v=8180"></script>
-  <script src="./sinbad-academy.js?v=82078"></script>
+  <script src="./sinbad-academy.js?v=82079"></script>
   <script src="./sinbad-character-engine.js?v=82030"></script>
-  <script src="./sinbad-performance-director.js?v=82078"></script>
-  <script src="./academy-window.js?v=82078"></script>
+  <script src="./sinbad-performance-director.js?v=82079"></script>
+  <script src="./academy-window.js?v=82079"></script>
 </body>
 </html>

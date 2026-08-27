@@ -27,6 +27,7 @@ Bu dosya yalnız doğrulanmış depo değişikliklerini özetler. Sürüm ve yay
 - Captain Sinbad genel asistanı yalnız yazılı/sesli sohbet yüzeyine indirildi; Academy ve uzman araçlar asistanın içinden çıkarıldı.
 - Ana kumanda paneline tek bir Sinbad Academy girişi eklendi. GOSS/GASM, STCW, GOC ve General Maritime Education aynı tam boy Academy penceresinin üst şeridinden seçilir.
 - Professor Sinbad sınıfına sınırlı 2B öğretmen animasyonu, ders/quiz yüzeyi ve kaynak bulamadığında tahmin üretmeyen yazılı/sesli soru-cevap alanı eklendi.
+- Academy ders seçimi sol kumanda sütununa taşındı; büyük başlık kaldırıldı ve ana alan masasız, büyük tahtalı, önünde doğru ölçekte tam boy Professor Sinbad bulunan kalıcı sınıf sahnesine dönüştürüldü.
 
 ### Doğrulama
 
