@@ -61,7 +61,7 @@ test('standalone Academy retains course and quiz handlers',()=>{
 test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.match(academyHtml,/id="academyTeachingStage"/);assert.match(academyHtml,/captain-sinbad-board-teaching\.png/);
   assert.match(academyHtml,/sinbad-character-engine\.js\?v=82030/);
-  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82079/);assert.match(academyHtml,/academy-window\.js\?v=82079/);assert.match(academyHtml,/academy\.css\?v=82079/);
+  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82080/);assert.match(academyHtml,/academy-window\.js\?v=82080/);assert.match(academyHtml,/academy\.css\?v=82080/);
   assert.doesNotMatch(academyHtml,/id="academyTeachingStage"[^>]*hidden/);
   assert.ok(academyHtml.indexOf('id="academyModule"')<academyHtml.indexOf('</aside>'),'training controls belong to the left classroom column');
   assert.match(academyHtml,/id="academyTrackTitle" hidden/);
@@ -79,7 +79,18 @@ test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.match(academyCss,/object-position:center bottom/);
   assert.match(academyCss,/@media\(prefers-reduced-motion:reduce\)/);
   assert.match(academyCss,/\.academy-sinbad\[data-state="walking"\] img\{animation:none/);
-  assert.match(worker,/sinbad-marine-v8\.20\.39-character-v1-v97/);
+  assert.match(worker,/sinbad-marine-v8\.20\.40-character-v1-v98/);
+});
+
+test('Academy keeps only classroom scenery on the right and dialogue in the left control rail',()=>{
+  const asideEnd=academyHtml.indexOf('</aside>'),mainStart=academyHtml.indexOf('<main class="academy-main">');
+  assert.ok(academyHtml.indexOf('class="academy-conversation"')<asideEnd);
+  assert.ok(academyHtml.indexOf('id="academyOutput"')>mainStart);
+  assert.doesNotMatch(academyHtml,/class="academy-emblem"/);
+  assert.doesNotMatch(academyHtml,/Offline-ready lessons/);
+  assert.match(academyHtml,/id="academyOutput"[^>]*hidden/);
+  assert.match(academyApp,/output\.replaceChildren\(\);output\.hidden=true/);
+  assert.match(academyCss,/\.academy-section-nav button\{[^}]*font-size:\.78rem/);
 });
 
 test('Professor Sinbad classroom provides bounded text and voice questions',()=>{

@@ -142,11 +142,13 @@ function renderLesson(){
   if(!lesson)return;
   const progress=JSON.parse(localStorage.getItem('sinbad_academy_progress')||'{}');progress[category]={openedAt:new Date().toISOString(),status:'studying'};localStorage.setItem('sinbad_academy_progress',JSON.stringify(progress));
   teachLessonAtBoard(lesson);
+  output.hidden=true;
   output.textContent=`${lesson.title}\n\nLearning objectives\n${lesson.objectives.map(x=>'• '+x).join('\n')}\n\nPractice\n${lesson.practice}\n\nOfficial offline sources\n${lesson.sources.map((x,i)=>`[S${i+1}] ${x.title} — ${x.authority}`).join('\n')||'No matching offline source.'}\n\n⚠ Training only. Operational decisions require current official information and captain approval.`;
 }
 function renderQuiz(){
   stopBoardTeaching();
   const category=byId('academyModule').value,items=window.SinbadAcademy?.quiz(category)||[],output=byId('academyOutput');if(!items.length)return;
+  output.hidden=false;
   const item=items[Math.floor(Math.random()*items.length)];output.replaceChildren();const title=document.createElement('strong');title.textContent=item.q;output.append(title);
   if(item.kind==='source-page'){
     const image=document.createElement('img');image.className='academy-question-page';image.src=item.image;image.alt=`${item.q}, kaynak sayfa ${item.page}`;output.append(image);
@@ -168,7 +170,7 @@ function selectAcademySection(sectionId){
   byId('academyTrackTitle').textContent=section.title;byId('academyTrackLabel').textContent=section.label;
   const select=byId('academyModule');select.replaceChildren();
   academyModuleOptions.filter(option=>section.modules.includes(option.value)).forEach(option=>{const node=document.createElement('option');node.value=option.value;node.textContent=option.label;select.append(node);});
-  stopBoardTeaching();byId('academyOutput').textContent=`${section.title} seçildi. Bir eğitim modülü açın veya Professor Sinbad'a bu konu hakkında sorunuzu sorun.`;
+  stopBoardTeaching();const output=byId('academyOutput');output.replaceChildren();output.hidden=true;byId('academyTeachingTitle').textContent="Professor Sinbad's board";byId('academyTeachingText').textContent='Derse hoş geldiniz.';
 }
 function appendAcademyMessage(role,text){
   const conversation=byId('academyConversation'),message=document.createElement('p');message.className=`academy-message ${role}`;message.textContent=text;conversation.append(message);

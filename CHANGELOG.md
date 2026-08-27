@@ -28,6 +28,7 @@ Bu dosya yalnız doğrulanmış depo değişikliklerini özetler. Sürüm ve yay
 - Ana kumanda paneline tek bir Sinbad Academy girişi eklendi. GOSS/GASM, STCW, GOC ve General Maritime Education aynı tam boy Academy penceresinin üst şeridinden seçilir.
 - Professor Sinbad sınıfına sınırlı 2B öğretmen animasyonu, ders/quiz yüzeyi ve kaynak bulamadığında tahmin üretmeyen yazılı/sesli soru-cevap alanı eklendi.
 - Academy ders seçimi sol kumanda sütununa taşındı; büyük başlık kaldırıldı ve ana alan masasız, büyük tahtalı, önünde doğru ölçekte tam boy Professor Sinbad bulunan kalıcı sınıf sahnesine dönüştürüldü.
+- Tekrarlanan Professor Sinbad amblemi/tanıtımı ve boş bölüm-seçim bildirimi kaldırıldı; yazılı/sesli Classroom Dialogue sol kumanda sütununa alındı ve sağ çalışma alanı yalnız sınıf/tahta sahnesi olarak sadeleştirildi.
 
 ### Doğrulama
 
