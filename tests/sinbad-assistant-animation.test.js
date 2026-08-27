@@ -354,7 +354,7 @@ test('service worker cache version was bumped for this change and precaches the 
   const visible=html.match(/<div class="version">● v(\d+\.\d+\.\d+)<\/div>/);
   assert.ok(visible);
   assert.match(sw,new RegExp(`const CACHE='sinbad-marine-v${visible[1].replace(/\./g,'\\.')}-`));
-  assert.match(sw,/character-v1-v99/);
+  assert.match(sw,/character-v1-v100/);
   assert.match(sw,/'\.\/sinbad-character-engine\.js'/);
   assert.match(sw,/'\.\/sinbad-character-rig\.js'/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-idle-master\.png'/);

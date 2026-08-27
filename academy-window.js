@@ -16,6 +16,24 @@ const ACADEMY_CHARACTER_ASSETS=Object.freeze({
   'board-teaching':'./assets/captain-sinbad/captain-sinbad-board-teaching.png'
 });
 let academyBoardGeneration=0;
+let academyLessonStartedAt=null;
+let academyLessonClockTimer=null;
+
+function renderAcademyLessonClock(){
+  const clock=byId('academyLessonElapsed');if(!clock)return;
+  const elapsed=academyLessonStartedAt===null?0:Math.max(0,Math.floor((Date.now()-academyLessonStartedAt)/1000));
+  const minutes=Math.floor(elapsed/60),seconds=elapsed%60;
+  clock.textContent=`${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
+  clock.dateTime=`PT${elapsed}S`;
+}
+function startAcademyLessonClock(){
+  academyLessonStartedAt=Date.now();renderAcademyLessonClock();
+  if(academyLessonClockTimer!==null)clearInterval(academyLessonClockTimer);
+  academyLessonClockTimer=setInterval(renderAcademyLessonClock,1000);
+}
+function resetAcademyLessonClock(){
+  academyLessonStartedAt=null;if(academyLessonClockTimer!==null)clearInterval(academyLessonClockTimer);academyLessonClockTimer=null;renderAcademyLessonClock();
+}
 const ACADEMY_SHAPE_DRAWING_RHYTHMS=Object.freeze([
   Object.freeze({id:'steady',frames:Object.freeze([[0,'contact','write-contact','contact'],[260,'lift','write-lift','lift'],[440,'contact','write-contact','contact'],[720,'ready','explain','check-in','audience'],[880,'contact','write-contact','contact'],[1250,'ready','explain','complete','audience']])}),
   Object.freeze({id:'measured',frames:Object.freeze([[0,'contact','write-contact','contact'],[340,'ready','explain','check-in','audience'],[510,'contact','write-contact','contact'],[760,'lift','write-lift','lift'],[930,'contact','write-contact','contact'],[1250,'ready','explain','complete','audience']])}),
@@ -141,7 +159,7 @@ function renderLesson(){
   const category=byId('academyModule').value,lesson=window.SinbadAcademy?.lesson(category,window.SINBAD_TRAINING_DATA),output=byId('academyOutput');
   if(!lesson)return;
   const progress=JSON.parse(localStorage.getItem('sinbad_academy_progress')||'{}');progress[category]={openedAt:new Date().toISOString(),status:'studying'};localStorage.setItem('sinbad_academy_progress',JSON.stringify(progress));
-  teachLessonAtBoard(lesson);
+  startAcademyLessonClock();teachLessonAtBoard(lesson);
   output.hidden=true;
   output.textContent=`${lesson.title}\n\nLearning objectives\n${lesson.objectives.map(x=>'• '+x).join('\n')}\n\nPractice\n${lesson.practice}\n\nOfficial offline sources\n${lesson.sources.map((x,i)=>`[S${i+1}] ${x.title} — ${x.authority}`).join('\n')||'No matching offline source.'}\n\n⚠ Training only. Operational decisions require current official information and captain approval.`;
 }
@@ -170,7 +188,7 @@ function selectAcademySection(sectionId){
   byId('academyTrackTitle').textContent=section.title;byId('academyTrackLabel').textContent=section.label;
   const select=byId('academyModule');select.replaceChildren();
   academyModuleOptions.filter(option=>section.modules.includes(option.value)).forEach(option=>{const node=document.createElement('option');node.value=option.value;node.textContent=option.label;select.append(node);});
-  stopBoardTeaching();const output=byId('academyOutput');output.replaceChildren();output.hidden=true;byId('academyTeachingTitle').textContent="Professor Sinbad's board";byId('academyTeachingText').textContent='Derse hoş geldiniz.';
+  stopBoardTeaching();resetAcademyLessonClock();const output=byId('academyOutput');output.replaceChildren();output.hidden=true;byId('academyTeachingTitle').textContent="Professor Sinbad's board";byId('academyTeachingText').textContent='Derse hoş geldiniz.';
 }
 function appendAcademyMessage(role,text){
   const conversation=byId('academyConversation'),message=document.createElement('p');message.className=`academy-message ${role}`;message.textContent=text;conversation.append(message);
@@ -180,11 +198,18 @@ function speakAcademyAnswer(text){
   if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined')return;
   speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text.slice(0,1800));utterance.lang='tr-TR';speechSynthesis.speak(utterance);
 }
+function answerAcademySocialTurn(question){
+  const normalized=String(question||'').toLocaleLowerCase('tr-TR').normalize('NFC').replace(/[^a-zçğıöşü\s]/gu,' ').replace(/\s+/g,' ').trim();
+  const greetings=new Set(['selam','merhaba','günaydın','iyi günler','iyi akşamlar','selam sinbad','merhaba sinbad','günaydın sinbad']);
+  if(greetings.has(normalized))return 'Merhaba! Sinbad Academy sınıfına hoş geldiniz. Bugün hangi denizcilik konusunu birlikte çalışalım?';
+  if(['nasılsın','nasılsın sinbad','nasılsınız'].includes(normalized))return 'İyiyim, teşekkür ederim. Sınıfta sizinle çalışmaya hazırım. Siz nasılsınız?';
+  return null;
+}
 function answerAcademyQuestion(){
   const input=byId('academyQuestionInput'),question=input.value.trim().slice(0,1200);if(!question)return;
   appendAcademyMessage('student',question);input.value='';academyCharacterEngine?.dispatch('THINK_STARTED');
-  const result=window.SinbadAcademy?.answer(question,window.SINBAD_TRAINING_DATA);
-  const answer=result?.text||'Bu soru için doğrulanmış çevrimdışı Academy içeriğinde yeterli kaynak bulamadım. Tahmin üretmeyeceğim; lütfen soruyu daraltın veya onaylı kaynağı Academy kütüphanesine ekleyin.';
+  const socialAnswer=answerAcademySocialTurn(question),result=socialAnswer?null:window.SinbadAcademy?.answer(question,window.SINBAD_TRAINING_DATA);
+  const answer=socialAnswer||result?.text||'Bu soru için doğrulanmış çevrimdışı Academy içeriğinde yeterli kaynak bulamadım. Tahmin üretmeyeceğim; lütfen soruyu daraltın veya onaylı kaynağı Academy kütüphanesine ekleyin.';
   appendAcademyMessage('sinbad',answer);academyCharacterEngine?.dispatch('AUDIO_STARTED');renderAcademyCharacterCue({state:'board-teaching',gesture:'explain',gaze:'audience'},answer);speakAcademyAnswer(answer);
 }
 let academyRecognition=null;
@@ -208,7 +233,7 @@ byId('academyQuestionInput').addEventListener('keydown',event=>{if(event.key==='
 byId('startAcademyListening').addEventListener('click',startAcademyListening);
 byId('stopAcademyListening').addEventListener('click',()=>academyRecognition?.stop());
 byId('closeAcademyWindow').addEventListener('click',()=>{saveWindowGeometry();window.close();});
-window.addEventListener('beforeunload',saveWindowGeometry);
+window.addEventListener('beforeunload',()=>{resetAcademyLessonClock();saveWindowGeometry();});
 window.addEventListener('message',event=>{
   if(event.origin!==location.origin||event.source!==window.opener)return;
   const message=event.data;if(!message||message.version!==1)return;

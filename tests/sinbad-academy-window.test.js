@@ -61,7 +61,7 @@ test('standalone Academy retains course and quiz handlers',()=>{
 test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.match(academyHtml,/id="academyTeachingStage"/);assert.match(academyHtml,/captain-sinbad-board-teaching\.png/);
   assert.match(academyHtml,/sinbad-character-engine\.js\?v=82030/);
-  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82081/);assert.match(academyHtml,/academy-window\.js\?v=82081/);assert.match(academyHtml,/academy\.css\?v=82081/);
+  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82082/);assert.match(academyHtml,/academy-window\.js\?v=82082/);assert.match(academyHtml,/academy\.css\?v=82082/);
   assert.doesNotMatch(academyHtml,/id="academyTeachingStage"[^>]*hidden/);
   assert.ok(academyHtml.indexOf('id="academyModule"')<academyHtml.indexOf('</aside>'),'training controls belong to the left classroom column');
   assert.match(academyHtml,/id="academyTrackTitle" hidden/);
@@ -75,13 +75,13 @@ test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.match(academyApp,/function stopBoardTeaching\(\)/);
   assert.match(academyCss,/\.academy-teaching-stage\{position:relative;width:100%;height:100%;min-height:560px/);
   assert.match(academyCss,/linear-gradient\(180deg,#d9d3c3 0 84%,#856c50 84% 86%,#594838 86% 100%\)/);
-  assert.match(academyCss,/\.academy-live-board\{position:absolute;z-index:1;left:17%;top:4%;width:81%;height:82%/);
+  assert.match(academyCss,/\.academy-live-board\{position:absolute;z-index:1;left:17%;top:21%;width:81%;height:39%/);
   assert.match(academyCss,/\.academy-sinbad\{position:absolute;z-index:3;left:0;bottom:\.5%/);
   assert.doesNotMatch(academyCss,/\.academy-sinbad\{[^}]*right:0/);
   assert.match(academyCss,/object-position:center bottom/);
   assert.match(academyCss,/@media\(prefers-reduced-motion:reduce\)/);
   assert.match(academyCss,/\.academy-sinbad\[data-state="walking"\] img\{animation:none/);
-  assert.match(worker,/sinbad-marine-v8\.20\.41-character-v1-v99/);
+  assert.match(worker,/sinbad-marine-v8\.20\.42-character-v1-v100/);
 });
 
 test('Academy keeps only classroom scenery on the right and dialogue in the left control rail',()=>{
@@ -101,6 +101,24 @@ test('Professor Sinbad classroom provides bounded text and voice questions',()=>
   assert.match(academyApp,/SinbadAcademy\?\.answer\(question,window\.SINBAD_TRAINING_DATA\)/);
   assert.match(academyApp,/Tahmin üretmeyeceğim/);
   assert.match(academyApp,/window\.SpeechRecognition\|\|window\.webkitSpeechRecognition/);
+});
+
+test('Professor Sinbad answers bounded social greetings without pretending they need an academic source',()=>{
+  assert.match(academyApp,/function answerAcademySocialTurn\(question\)/);
+  assert.match(academyApp,/new Set\(\['selam','merhaba','günaydın','iyi günler','iyi akşamlar'/);
+  assert.match(academyApp,/socialAnswer\?null:window\.SinbadAcademy\?\.answer/);
+  assert.match(academyApp,/Sinbad Academy sınıfına hoş geldiniz/);
+  assert.doesNotMatch(academyApp,/greetings\.has\(normalized\).*doğrulanmış kaynak/s);
+});
+
+test('Academy lesson clock measures only an explicitly opened lesson',()=>{
+  assert.match(academyHtml,/class="academy-lesson-clock" role="timer"/);
+  assert.match(academyHtml,/id="academyLessonElapsed" datetime="PT0S">00:00/);
+  assert.match(academyApp,/function startAcademyLessonClock\(\)/);
+  assert.match(academyApp,/academyLessonStartedAt=Date\.now\(\)/);
+  assert.match(academyApp,/startAcademyLessonClock\(\);teachLessonAtBoard\(lesson\)/);
+  assert.match(academyApp,/stopBoardTeaching\(\);resetAcademyLessonClock\(\)/);
+  assert.match(academyCss,/\.academy-lesson-clock\{position:absolute;z-index:2/);
 });
 
 test('board writing progress drives a real chalk cursor and bounded character direction cues',()=>{
