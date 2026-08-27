@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#0b1d2b">
   <title>Sinbad Academy — Classroom</title>
-  <link rel="stylesheet" href="./academy.css?v=82076">
+  <link rel="stylesheet" href="./academy.css?v=82077">
 </head>
 <body>
   <div class="academy-shell">
@@ -21,7 +21,7 @@
         <div class="academy-status"><span></span> Offline-ready lessons</div>
       </aside>
       <main class="academy-main">
-        <div class="academy-heading"><div><span class="eyebrow">SINBAD MARINE ACADEMY</span><h1>Navigation Classroom</h1></div><button type="button" class="btn" id="closeAcademyWindow">Close classroom</button></div>
+        <div class="academy-heading"><div><span class="eyebrow" id="academyTrackLabel">SINBAD MARINE ACADEMY</span><h1 id="academyTrackTitle">Maritime Classroom</h1></div><button type="button" class="btn" id="closeAcademyWindow">Close classroom</button></div>
         <section id="academyTeachingStage" class="academy-teaching-stage" aria-labelledby="academyTeachingTitle" hidden>
           <div class="academy-sinbad" data-state="board-teaching" aria-hidden="true">
             <img id="academySinbadImage" src="./assets/captain-sinbad/captain-sinbad-board-teaching.png" alt="">
@@ -35,6 +35,9 @@
           <label>Training module
             <select id="academyModule">
               <option value="gasm-seyir-sinav">GASM seyir sınav soruları (643 soru yüklü)</option>
+              <option value="stcw-foundation">STCW foundation</option>
+              <option value="goc-foundation">GOC radio communication foundation</option>
+              <option value="general-maritime-education">General maritime education</option>
               <option value="chart-reading">Chart reading and hydrography</option>
               <option value="tides-water-levels">Tides and water levels</option>
               <option value="currents-set-drift">Currents, set and drift</option>
@@ -53,9 +56,9 @@
     </div>
   </div>
   <script src="./sinbad-training-data.js?v=8180"></script>
-  <script src="./sinbad-academy.js?v=82076"></script>
+  <script src="./sinbad-academy.js?v=82077"></script>
   <script src="./sinbad-character-engine.js?v=82030"></script>
-  <script src="./sinbad-performance-director.js?v=82076"></script>
-  <script src="./academy-window.js?v=82076"></script>
+  <script src="./sinbad-performance-director.js?v=82077"></script>
+  <script src="./academy-window.js?v=82077"></script>
 </body>
 </html>

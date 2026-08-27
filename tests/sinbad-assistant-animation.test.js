@@ -354,7 +354,7 @@ test('service worker cache version was bumped for this change and precaches the 
   const visible=html.match(/<div class="version">● v(\d+\.\d+\.\d+)<\/div>/);
   assert.ok(visible);
   assert.match(sw,new RegExp(`const CACHE='sinbad-marine-v${visible[1].replace(/\./g,'\\.')}-`));
-  assert.match(sw,/character-v1-v94/);
+  assert.match(sw,/character-v1-v95/);
   assert.match(sw,/'\.\/sinbad-character-engine\.js'/);
   assert.match(sw,/'\.\/sinbad-character-rig\.js'/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-idle-master\.png'/);
@@ -664,11 +664,11 @@ test('round-table: TTS text normalization verified - the same message text rende
   assert.match(app,/\$\{m\.role==='user'\?'Captain':'Captain Sinbad'\}<\/span>\s*\n\s*\$\{esc\(m\.text\)\}/);
 });
 
-test('Sinbad workspace separates chat, Academy, passage planning and sources into accessible tabs without duplicating functional controls',()=>{
-  for(const name of ['chat','academy','passage','sources']){
-    assert.match(html,new RegExp(`role="tab"[^>]+data-sinbad-tab="${name}"`));
-    assert.match(html,new RegExp(`role="tabpanel"[^>]+data-sinbad-panel="${name}"`));
-  }
+test('Sinbad workspace keeps chat primary and routes Academy programmes through a dropdown',()=>{
+  assert.match(html,/data-sinbad-tab="chat"/);
+  assert.doesNotMatch(html,/data-sinbad-tab="(?:academy|passage|sources)"/);
+  assert.match(html,/class="sinbad-academy-menu"/);
+  for(const track of ['goss-gasm','stcw','goc','general-maritime-education'])assert.match(html,new RegExp(`data-academy-track="${track}"`));
   for(const id of ['sinbadMessages','sinbadInput','sendSinbad','passageDeparture','officialSourceList']){
     assert.equal((html.match(new RegExp(`id="${id}"`,'g'))||[]).length,1,`${id} must remain unique`);
   }
@@ -676,8 +676,8 @@ test('Sinbad workspace separates chat, Academy, passage planning and sources int
   assert.equal((academyHtml.match(/id="academyModule"/g)||[]).length,1,'academyModule must remain unique in the standalone classroom');
 });
 
-test('Sinbad workspace tabs implement selection, panel visibility, session preference and keyboard navigation',()=>{
-  assert.match(app,/const SINBAD_WORKSPACE_TABS=Object\.freeze\(\['chat','academy','passage','sources'\]\)/);
+test('Sinbad workspace selection is bounded to chat after specialist tools leave the top bar',()=>{
+  assert.match(app,/const SINBAD_WORKSPACE_TABS=Object\.freeze\(\['chat'\]\)/);
   assert.match(app,/function setSinbadWorkspaceTab\(requested,\{focus=false\}=\{\}\)/);
   assert.match(app,/button\.setAttribute\('aria-selected',String\(active\)\)/);
   assert.match(app,/panel\.hidden=panel\.dataset\.sinbadPanel!==tab/);

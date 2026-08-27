@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.36-character-v1-v94';
+const CACHE='sinbad-marine-v8.20.37-character-v1-v95';
 const ASSETS=[
   './',
   './index.html',

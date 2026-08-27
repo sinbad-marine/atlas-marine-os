@@ -24,6 +24,7 @@ Bu dosya yalnız doğrulanmış depo değişikliklerini özetler. Sürüm ve yay
 - Captain Sinbad ve diğer panel modülleri ayrı, yeniden boyutlandırılabilir tarayıcı pencerelerinde açılır.
 - Her modül penceresinin son boyut ve konumu cihazda ayrı ayrı saklanır.
 - Gömülü tarayıcı çerçevesini yönetemeyen yanıltıcı sayfa-içi pencere düğmeleri kaldırıldı; küçültme, büyütme ve kapatma gerçek tarayıcı/işletim sistemi penceresine bırakıldı.
+- Captain Sinbad üst şeridinden Passage Plan ve Sources kaldırıldı; Academy, GOSS/GASM, STCW, GOC ve General Maritime Education için ayrı sınıf pencereleri açan hamburger menüye dönüştürüldü.
 
 ### Doğrulama
 

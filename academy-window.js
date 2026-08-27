@@ -1,6 +1,14 @@
 'use strict';
 const byId=id=>document.getElementById(id);
-const GEOMETRY_KEY='atlas_sinbad_academy_native_window';
+const ACADEMY_TRACKS=Object.freeze({
+  'goss-gasm':Object.freeze({title:'GOSS / GASM Classroom',label:'GOSS / GASM',module:'gasm-seyir-sinav'}),
+  stcw:Object.freeze({title:'STCW Classroom',label:'STCW',module:'stcw-foundation'}),
+  goc:Object.freeze({title:'GOC Classroom',label:'GOC',module:'goc-foundation'}),
+  'general-maritime-education':Object.freeze({title:'General Maritime Education',label:'GENERAL MARITIME EDUCATION',module:'general-maritime-education'})
+});
+const academyTrackId=new URLSearchParams(location.search).get('track')||'general-maritime-education';
+const academyTrack=ACADEMY_TRACKS[academyTrackId]||ACADEMY_TRACKS['general-maritime-education'];
+const GEOMETRY_KEY=`atlas_sinbad_academy_native_window:${academyTrackId}`;
 const academyCharacterEngine=window.SinbadCharacterEngine?.createCharacterEngine({initialState:'idle'})||null;
 const academyPerformanceDirector=window.SinbadPerformanceDirector?.createPerformanceDirector()||null;
 const ACADEMY_CHARACTER_ASSETS=Object.freeze({
@@ -155,6 +163,10 @@ function renderQuiz(){
   }
   const choices=document.createElement('div');choices.className='academy-choices';item.choices.forEach((choice,index)=>{const button=document.createElement('button');button.type='button';button.className='btn';button.textContent=choice;button.addEventListener('click',()=>{[...choices.children].forEach(node=>node.disabled=true);button.classList.add(index===item.answer?'primary':'danger');const result=document.createElement('p');result.textContent=`${index===item.answer?'✓ Correct':'✗ Review'} — ${item.explanation} [${item.source}]`;output.append(result);});choices.append(button);});output.append(choices);const source=document.createElement('small');source.className='academy-source';source.textContent=`Official source: ${item.source}`;output.append(source);
 }
+document.title=`${academyTrack.title} — Sinbad Academy`;
+byId('academyTrackTitle').textContent=academyTrack.title;
+byId('academyTrackLabel').textContent=academyTrack.label;
+byId('academyModule').value=academyTrack.module;
 restoreWindowGeometry();
 preloadAcademyCharacterAssets();
 byId('startAcademyLesson').addEventListener('click',renderLesson);

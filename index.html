@@ -8,7 +8,7 @@
 <script>try{if(localStorage.getItem('atlas_sinbad_reduced_motion')==='on')document.documentElement.classList.add('sinbad-force-reduced-motion')}catch{}</script>
 <link rel="manifest" href="./manifest.webmanifest?v=8161">
 <link rel="apple-touch-icon" href="./icon-192.png?v=8155">
-<link rel="stylesheet" href="./styles.css?v=82076">
+<link rel="stylesheet" href="./styles.css?v=82077">
 <link rel="stylesheet" href="./vendor/ol-10.6.1.css">
 </head>
 <body class="auth-pending">
@@ -104,7 +104,7 @@
   <div class="topbar-account-actions">
     <select id="appLanguage" class="app-language" aria-label="Application language"></select>
     <button class="account-password-button" id="openAccountPassword" type="button">Account &amp; Password</button>
-    <div class="version">● v8.20.36</div>
+    <div class="version">● v8.20.37</div>
   </div>
 </header>
 
@@ -459,14 +459,20 @@
 
 
     <div class="sinbad-workspace-main">
-      <div class="sinbad-workspace-tabs" role="tablist" aria-label="Captain Sinbad tools">
-        <button type="button" class="sinbad-workspace-tab active" id="sinbad-tab-chat" role="tab" aria-selected="true" aria-controls="sinbad-panel-chat" data-sinbad-tab="chat">💬 Chat</button>
-        <button type="button" class="sinbad-workspace-tab" id="sinbad-tab-academy" role="tab" aria-selected="false" aria-controls="sinbad-panel-academy" data-sinbad-tab="academy" tabindex="-1">🎓 Academy</button>
-        <button type="button" class="sinbad-workspace-tab" id="sinbad-tab-passage" role="tab" aria-selected="false" aria-controls="sinbad-panel-passage" data-sinbad-tab="passage" tabindex="-1">🧭 Passage plan</button>
-        <button type="button" class="sinbad-workspace-tab" id="sinbad-tab-sources" role="tab" aria-selected="false" aria-controls="sinbad-panel-sources" data-sinbad-tab="sources" tabindex="-1">📚 Sources</button>
-      </div>
+      <nav class="sinbad-workspace-tabs" aria-label="Captain Sinbad tools">
+        <button type="button" class="sinbad-workspace-tab active" id="sinbad-tab-chat" aria-current="page" data-sinbad-tab="chat">💬 Chat</button>
+        <details class="sinbad-academy-menu">
+          <summary>☰ 🎓 Academy</summary>
+          <div class="sinbad-academy-menu-items" role="menu" aria-label="Academy programmes">
+            <button type="button" role="menuitem" data-academy-track="goss-gasm">GOSS / GASM</button>
+            <button type="button" role="menuitem" data-academy-track="stcw">STCW</button>
+            <button type="button" role="menuitem" data-academy-track="goc">GOC</button>
+            <button type="button" role="menuitem" data-academy-track="general-maritime-education">General Maritime Education</button>
+          </div>
+        </details>
+      </nav>
 
-      <section class="chat-panel sinbad-workspace-panel" id="sinbad-panel-chat" role="tabpanel" aria-labelledby="sinbad-tab-chat" data-sinbad-panel="chat">
+      <section class="chat-panel sinbad-workspace-panel" id="sinbad-panel-chat" aria-labelledby="sinbad-tab-chat" data-sinbad-panel="chat">
         <div class="sinbad-panel-heading"><div><span class="eyebrow">CAPTAIN'S DESK</span><h3>Ask Sinbad</h3></div><span class="badge" id="sinbadKnowledgeStatus">Approved library only • Web search off</span></div>
       <div id="sinbadMessages" class="chat-messages" aria-live="polite"></div>
       <div id="sinbadThinking" class="thinking-bubble hidden" aria-live="polite">
@@ -874,21 +880,21 @@
 <script src="./resource-data.js?v=8210"></script>
 <script src="./store-data.js?v=8221"></script>
 <script src="./official-publications.js?v=8162"></script>
-<script src="./supabase/functions/sinbad-answer/core-decision.js?v=82036"></script>
-<script src="./sinbad-core.js?v=82036"></script>
+<script src="./supabase/functions/sinbad-answer/core-decision.js?v=82037"></script>
+<script src="./sinbad-core.js?v=82037"></script>
 <script src="./sinbad-training-data.js?v=8180"></script>
-<script src="./sinbad-academy.js?v=82076"></script>
+<script src="./sinbad-academy.js?v=82077"></script>
 <script src="./vendor/supabase-2.112.3.js"></script>
 <script src="./vendor/mammoth-1.12.1.min.js"></script>
 <script src="./vendor/tesseract-5.1.1.min.js"></script>
 <script src="./vendor/ol-10.6.1.js"></script>
-  <script src="./sinbad-navigation.js?v=82036"></script>
-  <script src="./sinbad-navigation-assistant.js?v=82036"></script>
-  <script src="./sinbad-route-visualizer.js?v=82036"></script>
-  <script src="./sinbad-character-engine.js?v=82036"></script>
-  <script src="./sinbad-character-rig.js?v=82076"></script>
-  <script src="./sinbad-performance-director.js?v=82076"></script>
-  <script src="./sinbad-viseme-planner.js?v=82036"></script>
-  <script src="./app.js?v=82076"></script>
+  <script src="./sinbad-navigation.js?v=82037"></script>
+  <script src="./sinbad-navigation-assistant.js?v=82037"></script>
+  <script src="./sinbad-route-visualizer.js?v=82037"></script>
+  <script src="./sinbad-character-engine.js?v=82037"></script>
+  <script src="./sinbad-character-rig.js?v=82077"></script>
+  <script src="./sinbad-performance-director.js?v=82077"></script>
+  <script src="./sinbad-viseme-planner.js?v=82037"></script>
+  <script src="./app.js?v=82077"></script>
 </body>
 </html>

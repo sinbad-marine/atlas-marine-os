@@ -15,7 +15,7 @@ test('visible release and Core share a release version while changed UI assets s
   const visible=html.match(/<div class="version">● v(\d+)\.(\d+)\.(\d+)<\/div>/);
   assert.ok(visible);
   const assetVersion=`${visible[1]}${visible[2].padStart(2,'0')}${visible[3]}`;
-  const uiRevision='82076';
+  const uiRevision='82077';
   assert.match(html,new RegExp(`sinbad-core\\.js\\?v=${assetVersion}`));
   assert.match(html,new RegExp(`core-decision\\.js\\?v=${assetVersion}`));
   assert.match(html,new RegExp(`sinbad-navigation\\.js\\?v=${assetVersion}`));

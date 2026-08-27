@@ -570,11 +570,28 @@ test('Sinbad Academy opens outside the main app as a standalone classroom window
   await page.evaluate(()=>openSinbadAcademyWindow());
   const classroom=await popupPromise;
   await classroom.waitForLoadState();
-  await expect(classroom).toHaveURL(/academy\.html$/);
-  await expect(classroom.getByRole('heading',{name:'Navigation Classroom'})).toBeVisible();
+  await expect(classroom).toHaveURL(/academy\.html\?track=general-maritime-education$/);
+  await expect(classroom.getByRole('heading',{name:'General Maritime Education'})).toBeVisible();
   await expect(page.locator('#sinbadAcademyWindow')).toHaveCount(0);
   await classroom.getByRole('button',{name:'Open lesson'}).click();
   await expect(classroom.locator('#academyOutput')).toContainText('Learning objectives');
+  await classroom.close();
+});
+
+test('Captain Sinbad Academy menu opens programme-specific independent windows',async({page})=>{
+  await stubBridge(page);
+  await page.goto('/');
+  await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');document.querySelector('#sinbad')?.classList.add('active');});
+  await expect(page.locator('[data-sinbad-tab="passage"]')).toHaveCount(0);
+  await expect(page.locator('[data-sinbad-tab="sources"]')).toHaveCount(0);
+  await page.locator('.sinbad-academy-menu summary').click();
+  const popupPromise=page.waitForEvent('popup');
+  await page.locator('[data-academy-track="goss-gasm"]').click();
+  const classroom=await popupPromise;
+  await classroom.waitForLoadState();
+  await expect(classroom).toHaveURL(/academy\.html\?track=goss-gasm$/);
+  await expect(classroom.getByRole('heading',{name:'GOSS / GASM Classroom'})).toBeVisible();
+  await expect(classroom.locator('#academyModule')).toHaveValue('gasm-seyir-sinav');
   await classroom.close();
 });
 
