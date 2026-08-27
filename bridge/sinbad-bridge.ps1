@@ -2,7 +2,9 @@ param(
   [int]$Port = 31983,
   [string]$ExchangeRoot = '',
   [string]$AiModel = 'qwen3:14b',
-  [string]$FastAiModel = 'qwen3:4b',
+  # The installed qwen3:4b template can exhaust its budget without emitting a
+  # final answer. The verified 14B model serves both tiers on this installation.
+  [string]$FastAiModel = 'qwen3:14b',
   [string]$XttsExecutable = '',
   [string]$XttsModelPath = '',
   [string]$XttsConfigPath = '',
@@ -464,7 +466,7 @@ function Get-KiwixKnowledge([string]$question) {
       $description = [regex]::Replace([Net.WebUtility]::HtmlDecode([string]$item.description), '<[^>]+>', ' ')
       $description = [regex]::Replace($description, '\s+', ' ').Trim()
       if ($description.Length -gt 900) { $description = $description.Substring(0,900) + '…' }
-      "SOURCE: Turkish Wikipedia — $title`nOFFLINE URI: $($item.link)`nEXCERPT: $description"
+      "SOURCE: Turkish Wikipedia - $title`nOFFLINE URI: $($item.link)`nEXCERPT: $description"
     }
     return [pscustomobject]@{ state='VERIFIED_OFFLINE_MATCH'; context=($citations -join "`n`n---`n`n"); reason=''; results=$items.Count }
   } catch {
@@ -484,7 +486,7 @@ function Invoke-QwenFinalAnswerRetry($selection, [string]$question, [string]$pri
     @{ role='system'; content='Produce the final answer only. Use the same language as the original question. Do not mention or reveal the private draft. Be accurate, concise, and preserve any source qualifications found in the draft.' },
     @{ role='user'; content="ORIGINAL QUESTION:`n$question`n`nPRIVATE LOCAL DRAFT:`n$boundedDraft`n`nFINAL ANSWER:" }
   )
-  $retryRequest = @{ model=$selection.model; messages=$retryMessages; stream=$false; think=$true; keep_alive='30m'; options=@{ temperature=0.2; num_ctx=8192; num_predict=1024 } }
+  $retryRequest = @{ model=$selection.model; messages=$retryMessages; stream=$false; think=$false; keep_alive='30m'; options=@{ temperature=0.2; num_ctx=8192; num_predict=1024 } }
   $retryResult = Invoke-LocalJsonPost 'http://127.0.0.1:11434/api/chat' ($retryRequest | ConvertTo-Json -Depth 12 -Compress)
   $finalAnswer = [string]$retryResult.message.content
   if ([string]::IsNullOrWhiteSpace($finalAnswer)) { throw 'The local AI returned no answer after a bounded final-answer retry.' }
@@ -537,6 +539,11 @@ function Test-SinbadDirectFastQuestion([string]$question) {
   $text = $question.Trim().ToLowerInvariant()
   if ($text.Length -gt 120) { return $false }
   if ($text -match '^(merhaba|selam|günaydın|iyi (akşamlar|geceler)|hello|hi|hallo)[.!? ]*$') { return $true }
+  # Social turns bypass the full owner-library scan; factual questions still
+  # retain evidence retrieval.
+  if ($text -match '(kendini (?:bir cümleyle )?tanıt|sen kimsin|nasılsın|ne yapabilirsin|benimle konuş|sohbet edelim)') { return $true }
+  if ($text -match '(introduce yourself|who are you|how are you|what can you do|let.s chat)') { return $true }
+  if ($text -match '(stell dich vor|wer bist du|wie geht es dir|was kannst du|lass uns reden)') { return $true }
   # A bounded arithmetic expression with an optional natural-language suffix
   # is stable knowledge and needs neither the 90k-chunk owner index nor Kiwix.
   return $text -match '^\s*[-+]?\d+(?:[.,]\d+)?(?:\s*[-+*x×÷/]\s*[-+]?\d+(?:[.,]\d+)?)+\s*(?:kaç eder|nedir|sonucu(?: nedir)?|equals?|gleich)?\s*[?!.]*\s*$'
@@ -600,7 +607,7 @@ When OFFLINE ENCYCLOPEDIA EXCERPTS are supplied, use them as dated reference evi
   $answerModel = ''
   $finalAnswerRetryUsed = $false
   $fastFinalPathUsed = $false
-  if ($selection.tier -eq 'fast') {
+  if ($selection.tier -eq 'fast' -and $selection.model -eq 'qwen3:4b') {
     try {
       $fastFinal = Invoke-QwenFastFinalAnswer $selection $messages
       $answer = $fastFinal.answer
@@ -612,8 +619,8 @@ When OFFLINE ENCYCLOPEDIA EXCERPTS are supplied, use them as dated reference evi
     }
   }
   if ([string]::IsNullOrWhiteSpace($answer)) {
-    $predictBudget = if ($selection.tier -eq 'fast') { 1024 } else { 2048 }
-    $request = @{ model=$selection.model; messages=$messages; stream=$false; think=$true; keep_alive='30m'; options=@{ temperature=0.35; num_ctx=$contextWindow; num_predict=$predictBudget } }
+    $predictBudget = if ($selection.tier -eq 'fast') { 192 } else { 2048 }
+    $request = @{ model=$selection.model; messages=$messages; stream=$false; think=$false; keep_alive='30m'; options=@{ temperature=0.35; num_ctx=$contextWindow; num_predict=$predictBudget } }
     $result = Invoke-LocalJsonPost 'http://127.0.0.1:11434/api/chat' ($request | ConvertTo-Json -Depth 12 -Compress)
     $answer = [string]$result.message.content
     $answerModel = [string]$result.model

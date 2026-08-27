@@ -45,7 +45,7 @@ test('standalone Academy retains course and quiz handlers',()=>{
 test('native Academy owns a bounded live Sinbad board-teaching stage',()=>{
   assert.match(academyHtml,/id="academyTeachingStage"/);assert.match(academyHtml,/captain-sinbad-board-teaching\.png/);
   assert.match(academyHtml,/sinbad-character-engine\.js\?v=82029/);
-  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82029/);assert.match(academyHtml,/academy-window\.js\?v=82030/);assert.match(academyHtml,/academy\.css\?v=82019/);
+  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82029/);assert.match(academyHtml,/academy-window\.js\?v=82031/);assert.match(academyHtml,/academy\.css\?v=82019/);
   assert.match(academyApp,/function teachLessonAtBoard\(lesson\)/);
   assert.match(academyApp,/\.join\('\\n\\n'\)\.slice\(0,500\)/);
   assert.match(academyApp,/const event=cue\.state==='walking'\?'WALK':'TEACH_AT_BOARD'/);
@@ -167,7 +167,25 @@ test('live Academy instructor is driven by the bounded character engine',()=>{
   assert.match(academyHtml,/sinbad-character-rig\.js\?v=82029/);
   assert.match(academyHtml,/sinbad-performance-director\.js\?v=82029/);
   assert.match(academyApp,/createCharacterEngine\(\{initialState:'idle'\}\)/);
-  assert.match(academyApp,/academyCharacterEngine\.setState\(safeState\)/);
+  assert.match(academyApp,/academyCharacterEngine\.setState\(safeState,detail\)/);
   assert.match(academyApp,/SinbadCharacterRig\?\.poseForState/);
   assert.match(academyCss,/\[data-gesture="listen-lean"\]/);
+});
+
+test('Academy prefers the installed local Sinbad brain and keeps cloud as a fallback',()=>{
+  assert.match(academyApp,/const SINBAD_BRIDGE_URL='http:\/\/127\.0\.0\.1:31983'/);
+  assert.match(academyApp,/fetch\(`\$\{SINBAD_BRIDGE_URL\}\/ai\/chat`/);
+  assert.match(academyApp,/result=await askLocalSinbad\(question,history,coreEnvelope\)/);
+  assert.match(academyApp,/catch\(localError\).*result=await askCloudSinbad\(question,history,coreEnvelope\)/s);
+  assert.match(academyApp,/messages\.slice\(0,-1\)\.slice\(-12\)/);
+});
+
+test('Academy conversation drives semantic thinking and speech-performance cues',()=>{
+  assert.match(academyApp,/thinkingCueForStage\?\.\(stage\)/);
+  assert.match(academyApp,/setThinkingStage\('analyzing'/);
+  assert.match(academyApp,/setThinkingStage\('retrieving'/);
+  assert.match(academyApp,/setThinkingStage\('composing'/);
+  assert.match(academyApp,/responseCueForText\?\.\(lastNarration,'instructional'\)/);
+  assert.match(academyApp,/utterance\.onboundary=/);
+  assert.match(academyApp,/speechCueForBoundary\?\.\(/);
 });

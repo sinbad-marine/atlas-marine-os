@@ -146,7 +146,7 @@ test('live Bridge routes durable questions to loopback Kiwix and blocks stale or
   assert.match(bridge,/BLOCKED_STALE_OR_HIGH_RISK/);
   assert.match(bridge,/offline-world-rag/);
   assert.match(bridge,/KIWIX_LOOPBACK_ONLY/);
-  assert.match(bridge,/stream=\$false; think=\$true/);
+  assert.match(bridge,/stream=\$false; think=\$false/);
   assert.match(bridge,/function Invoke-QwenFinalAnswerRetry/);
   assert.match(bridge,/\$draftLimit = 6000/);
   assert.match(bridge,/finalAnswerRetryUsed=\$finalAnswerRetryUsed/);
@@ -184,16 +184,16 @@ test('Qwen fast final path is bounded, neutralizes ChatML injection and returns 
   assert.doesNotMatch(fast,/answer=\$raw/);
 });
 
-test('ordinary fast turns use the bounded final path while deep turns retain separated thinking',()=>{
+test('ordinary turns use the verified model with bounded answer budgets and no private-thinking delivery',()=>{
   const bridge=fs.readFileSync('bridge/sinbad-bridge.ps1','utf8');
   const start=bridge.indexOf('function Invoke-SinbadLocalAi');
   const end=bridge.indexOf('\nif (Test-Path -LiteralPath $indexPath)',start);
   const runtime=bridge.slice(start,end);
-  assert.match(runtime,/if \(\$selection\.tier -eq 'fast'\)/);
+  assert.match(runtime,/if \(\$selection\.tier -eq 'fast' -and \$selection\.model -eq 'qwen3:4b'\)/);
   assert.match(runtime,/Invoke-QwenFastFinalAnswer \$selection \$messages/);
   assert.match(runtime,/fastFinalPathUsed=\$fastFinalPathUsed/);
-  assert.match(runtime,/\$predictBudget = if \(\$selection\.tier -eq 'fast'\) \{ 1024 \} else \{ 2048 \}/);
-  assert.match(runtime,/think=\$true/);
+  assert.match(runtime,/\$predictBudget = if \(\$selection\.tier -eq 'fast'\) \{ 192 \} else \{ 2048 \}/);
+  assert.match(runtime,/think=\$false/);
 });
 
 test('stable direct questions bypass irrelevant library and Kiwix retrieval on the fast path',()=>{
