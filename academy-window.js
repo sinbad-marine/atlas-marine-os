@@ -7,6 +7,7 @@ const ACADEMY_SECTIONS=Object.freeze({
   'general-maritime-education':Object.freeze({title:'General Maritime Education',label:'GENERAL MARITIME EDUCATION',modules:Object.freeze(['general-maritime-education','chart-reading','tides-water-levels','currents-set-drift'])})
 });
 const GEOMETRY_KEY='atlas_sinbad_academy_native_window';
+const LANGUAGE_KEY='atlas_sinbad_academy_language';
 const SINBAD_BRIDGE_URL='http://127.0.0.1:31983';
 const academyModuleOptions=[...byId('academyModule').options].map(option=>Object.freeze({value:option.value,label:option.textContent}));
 const academyCharacterEngine=window.SinbadCharacterEngine?.createCharacterEngine({initialState:'idle'})||null;
@@ -31,6 +32,7 @@ let academyRecognition=null;
 let academyHandsFreeEnabled=false;
 let academyVoiceBusy=false;
 let academyHandsFreeRestartTimer=null;
+const academyLanguage=()=>['tr-TR','en-US','de-DE'].includes(byId('academyLanguage')?.value)?byId('academyLanguage').value:'tr-TR';
 
 function renderAcademyLessonClock(){
   const clock=byId('academyLessonElapsed');if(!clock)return;
@@ -74,7 +76,7 @@ function settleAcademyCharacter(generation,delay=1400){
 
 function playAcademyGestureRequest(request,onComplete=null){
   if(!request?.accepted)return false;
-  const acknowledgement=window.SinbadPerformanceDirector?.gestureAcknowledgementForRequest?.(request,'tr-TR');
+  const acknowledgement=window.SinbadPerformanceDirector?.gestureAcknowledgementForRequest?.(request,academyLanguage());
   if(request.supported!==true){appendAcademyMessage('sinbad',acknowledgement?.text||'Bu hareketi henüz güvenilir biçimde yapamıyorum.');onComplete?.();return true;}
   const generation=++academyMotionGeneration;academyLastPerformedGestureAction=request.action;
   if(request.action==='write-board'&&request.boardText)writeCustomTextAtBoard(request.boardText);
@@ -233,7 +235,10 @@ function appendAcademyMessage(role,text){
 }
 function speakAcademyAnswer(text,{preserveMotion=false,onComplete=null}={}){
   if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined'){onComplete?.();return;}
-  speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text.slice(0,1800));utterance.lang='tr-TR';
+  speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text.slice(0,1800));utterance.lang=academyLanguage();
+  const voiceLanguage=academyLanguage().split('-')[0].toLocaleLowerCase('en-US');
+  const matchingVoice=speechSynthesis.getVoices().find(voice=>String(voice.lang||'').toLocaleLowerCase('en-US').startsWith(voiceLanguage));
+  if(matchingVoice)utterance.voice=matchingVoice;
   let completed=false;const finish=()=>{if(completed)return;completed=true;onComplete?.();};
   if(!preserveMotion){
     const generation=++academyMotionGeneration;utterance.onstart=()=>{academySpeechGestureDirector?.beginTurn?.();const semantic=window.SinbadPerformanceDirector?.responseCueForText?.(text,'conversational')?.cue||{gesture:'explain',gaze:'audience',emotion:'warm'};const selected=academySpeechGestureDirector?.select?.({...semantic,cadence:'opening',responseKind:semantic.responseKind||'conversation'});renderAcademyCharacterCue({state:'speaking',...(selected?.cue||semantic)},text);};utterance.onend=()=>{settleAcademyCharacter(generation,180);finish();};utterance.onerror=()=>{settleAcademyCharacter(generation,180);finish();};
@@ -264,7 +269,7 @@ async function academyLocalAiAnswer(question,academyEvidence='',useOwnerLibrary=
   try{
     byId('academyVoiceStatus').textContent='Sinbad düşünüyor…';
     const groundedPrompt=academyEvidence?`Öğrencinin sorusu: ${String(question).slice(0,1200)}\n\nDoğrulanmış çevrimdışı Academy bağlamı (yalnız bu bağlama dayan, eksikse açıkça söyle):\n${String(academyEvidence).slice(0,3500)}`:String(question).slice(0,1200);
-    const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/chat`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:groundedPrompt,libraryQuery:String(question).slice(0,1200),language:'tr-TR',history:useOwnerLibrary?[]:academyDialogueHistory(),useLibrary:useOwnerLibrary,context:{surface:'sinbad-academy',module:byId('academyModule').value,grounded:Boolean(academyEvidence),ownerLibrary:useOwnerLibrary}}),signal:controller.signal});
+    const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/chat`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:groundedPrompt,libraryQuery:String(question).slice(0,1200),language:academyLanguage(),history:useOwnerLibrary?[]:academyDialogueHistory(),useLibrary:useOwnerLibrary,context:{surface:'sinbad-academy',module:byId('academyModule').value,grounded:Boolean(academyEvidence),ownerLibrary:useOwnerLibrary}}),signal:controller.signal});
     if(!response.ok)return null;const data=await response.json();const answer=typeof data?.answer==='string'?data.answer.trim().slice(0,6000):'';
     if(!answer)return null;const model=String(data.model||'Sinbad').slice(0,32);byId('academyVoiceStatus').textContent=`Local AI · ${model}`;updateAcademyRuntimePill('academyAiConnection',`Yerel AI bağlı · ${model}`);if(useOwnerLibrary)refreshAcademyRuntimeStatus();return answer;
   }catch(error){console.warn('Academy local AI unavailable',error);byId('academyVoiceStatus').textContent='Yerel AI çevrimdışı';return null;}finally{clearTimeout(timeout);}
@@ -302,7 +307,7 @@ function scheduleAcademyHandsFreeListening(delay=500){
 function completeAcademyVoiceTurn(){academyVoiceBusy=false;scheduleAcademyHandsFreeListening(650);}
 function startAcademyListening(){
   const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Recognition){byId('academyVoiceStatus').textContent='Voice input unsupported';return;}
-  if(academyRecognition)return;academyRecognition=new Recognition();academyRecognition.lang='tr-TR';academyRecognition.interimResults=false;academyRecognition.maxAlternatives=1;academyRecognition.continuous=academyHandsFreeEnabled;
+  if(academyRecognition)return;academyRecognition=new Recognition();academyRecognition.lang=academyLanguage();academyRecognition.interimResults=false;academyRecognition.maxAlternatives=1;academyRecognition.continuous=academyHandsFreeEnabled;
   academyRecognition.onstart=()=>{byId('academyVoiceStatus').textContent=academyHandsFreeEnabled?'Eller serbest · Dinliyorum…':'Dinliyorum…';byId('startAcademyListening').disabled=true;byId('stopAcademyListening').disabled=false;renderAcademyCharacterCue({state:'listening',gesture:'listen-lean',gaze:'audience'},'');};
   academyRecognition.onresult=event=>{const result=[...event.results].reverse().find(item=>item.isFinal!==false)||event.results[event.results.length-1];const transcript=String(result?.[0]?.transcript||'').trim();if(!transcript)return;byId('academyQuestionInput').value=transcript;if(academyHandsFreeEnabled)academyRecognition?.stop();answerAcademyQuestion();};
   academyRecognition.onerror=event=>{if(event.error!=='aborted')byId('academyVoiceStatus').textContent='Ses girişi kullanılamıyor';};
@@ -332,6 +337,8 @@ byId('academyQuestionInput').addEventListener('keydown',event=>{if(event.key==='
 byId('startAcademyListening').addEventListener('click',startAcademyListening);
 byId('stopAcademyListening').addEventListener('click',()=>{if(academyHandsFreeEnabled)setAcademyHandsFree(false);else academyRecognition?.stop();});
 byId('toggleAcademyHandsFree').addEventListener('click',()=>setAcademyHandsFree(!academyHandsFreeEnabled));
+byId('academyLanguage').value=['tr-TR','en-US','de-DE'].includes(localStorage.getItem(LANGUAGE_KEY))?localStorage.getItem(LANGUAGE_KEY):'tr-TR';
+byId('academyLanguage').addEventListener('change',()=>{localStorage.setItem(LANGUAGE_KEY,academyLanguage());academyRecognition?.abort();academyRecognition=null;byId('academyVoiceStatus').textContent=academyLanguage()==='tr-TR'?'Türkçe hazır':academyLanguage()==='de-DE'?'Deutsch bereit':'English ready';});
 byId('academyBackButton').addEventListener('click',goBackFromAcademy);
 byId('academyHomeButton').addEventListener('click',returnToAcademyHome);
 byId('closeAcademyWindow').addEventListener('click',()=>{saveWindowGeometry();window.close();});

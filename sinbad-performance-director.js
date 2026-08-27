@@ -433,6 +433,8 @@
       wave:Object.freeze({gesture:'wave-right',gaze:'audience',emotion:'warm',energy:.46}),
       'look-left':Object.freeze({gesture:'look-left',gaze:'audience',emotion:'attentive',energy:.24}),
       'look-right':Object.freeze({gesture:'look-right',gaze:'audience',emotion:'attentive',energy:.24}),
+      'turn-left':Object.freeze({gesture:'turn-left',gaze:'path',emotion:'attentive',energy:.36}),
+      'turn-right':Object.freeze({gesture:'turn-right',gaze:'path',emotion:'attentive',energy:.36}),
       'look-center':Object.freeze({gesture:'rest',gaze:'audience',emotion:'attentive',energy:.18}),
       'look-board':Object.freeze({gesture:'rest',gaze:'board',emotion:'attentive',energy:.2}),
       'shake-head':Object.freeze({gesture:'shake-head-left',gaze:'audience',emotion:'attentive',energy:.32}),
@@ -478,6 +480,8 @@
     if(/((?:bana\s+)?(?:elini|el)\s+(?:salla|sallar\s+mısın)|(?:merhaba|selam)\s+(?:deyip\s+)?el\s+salla|wave\s+(?:your\s+hand|at\s+me|hello))/iu.test(normalized))return Object.freeze({accepted:true,action:'wave',supported:true,responsePolicy:'replace',cue:Object.freeze({gesture:'wave-right',gaze:'audience',emotion:'warm',energy:.46})});
     if(/(başını\s+sola\s+(?:çevir|döndür)|(?:turn|look).*(?:your\s+)?head.*left)/iu.test(normalized))return Object.freeze({accepted:true,action:'look-left',supported:true,cue:Object.freeze({gesture:'look-left',gaze:'audience',emotion:'attentive',energy:.24})});
     if(/(başını\s+sağa\s+(?:çevir|döndür)|(?:turn|look).*(?:your\s+)?head.*right)/iu.test(normalized))return Object.freeze({accepted:true,action:'look-right',supported:true,cue:Object.freeze({gesture:'look-right',gaze:'audience',emotion:'attentive',energy:.24})});
+    if(/^(?:sinbad[,\s]+)?(?:sağa|saga|sağ\s+tarafa|sag\s+tarafa)\s+(?:dön|don|dönsene|döner\s+misin)(?:[,\s]+sinbad)?[.! ]*$/iu.test(normalized))return Object.freeze({accepted:true,action:'turn-right',supported:true,responsePolicy:'replace',directCharacterReaction:true,cue:contextualActions['turn-right']});
+    if(/^(?:sinbad[,\s]+)?(?:sola|sol\s+tarafa)\s+(?:dön|don|dönsene|döner\s+misin)(?:[,\s]+sinbad)?[.! ]*$/iu.test(normalized))return Object.freeze({accepted:true,action:'turn-left',supported:true,responsePolicy:'replace',directCharacterReaction:true,cue:contextualActions['turn-left']});
     if(/(başını\s+(?:ortaya|merkeze|düz)\s+(?:çevir|döndür)|(?:tekrar|yeniden)\s+bana\s+bak|(?:turn|bring)\s+(?:your\s+)?head\s+(?:back\s+)?(?:to\s+)?(?:the\s+)?cent(?:er|re)|look\s+(?:back\s+)?at\s+me)/iu.test(normalized))return Object.freeze({accepted:true,action:'look-center',supported:true,responsePolicy:'replace',cue:contextualActions['look-center']});
     if(/(?:tahta(?:ya|ya doğru)\s+bak|bakışını\s+tahtaya\s+çevir|look\s+(?:at|toward)\s+(?:the\s+)?(?:board|blackboard))/iu.test(normalized))return Object.freeze({accepted:true,action:'look-board',supported:true,responsePolicy:'replace',cue:contextualActions['look-board']});
     if(/(başını\s+(?:iki\s+yana|sağa\s+sola)\s+salla|hayır\s+(?:anlamında\s+)?başını\s+salla|shake\s+(?:your\s+)?head|head\s+shake)/iu.test(normalized))return Object.freeze({accepted:true,action:'shake-head',supported:true,responsePolicy:'replace',cue:Object.freeze({gesture:'shake-head-left',gaze:'audience',emotion:'attentive',energy:.32})});
@@ -540,6 +544,8 @@
       wave:'Sana gülümseyerek el sallıyorum.',
       'look-left':'Başımı sola çeviriyorum.',
       'look-right':'Başımı sağa çeviriyorum.',
+      'turn-left':'Bedenimi sola çeviriyorum.',
+      'turn-right':'Bedenimi sağa çeviriyorum.',
       'look-center':'Başımı yeniden ortaya çevirip sana bakıyorum.',
       'look-board':'Bakışımı tahtaya çeviriyorum.',
       'shake-head':'Başımı iki yana sallayarak hayır işareti yapıyorum.',

@@ -409,6 +409,8 @@ test('explicit gesture requests override improvisation only when a real supporte
   assert.equal(gestureRequestForText('Sinbad bana el sallar mısın?').action,'wave');
   assert.equal(gestureRequestForText('Başını sola çevir.').cue.gesture,'look-left');
   assert.equal(gestureRequestForText('Başını sağa döndür.').cue.gesture,'look-right');
+  const turnRight=gestureRequestForText('sağa dön sinbad');assert.equal(turnRight.action,'turn-right');assert.equal(turnRight.cue.gesture,'turn-right');
+  const turnLeft=gestureRequestForText('Sinbad sola dön.');assert.equal(turnLeft.action,'turn-left');assert.equal(turnLeft.cue.gesture,'turn-left');
   const centered=gestureRequestForText('Tekrar bana bak.');assert.equal(centered.action,'look-center');assert.equal(centered.cue.gesture,'rest');assert.equal(centered.cue.gaze,'audience');
   assert.equal(gestureRequestForText('Turn your head back to center.').action,'look-center');
   const lookBoard=gestureRequestForText('Tahtaya bak.');assert.equal(lookBoard.action,'look-board');assert.equal(lookBoard.cue.gesture,'rest');assert.equal(lookBoard.cue.gaze,'board');

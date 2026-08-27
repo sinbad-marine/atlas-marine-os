@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#0b1d2b">
   <title>Sinbad Academy — Classroom</title>
-  <link rel="stylesheet" href="./academy.css?v=82084">
+  <link rel="stylesheet" href="./academy.css?v=82092">
 </head>
 <body>
   <div class="academy-shell">
@@ -18,6 +18,13 @@
         <button type="button" data-academy-section="general-maritime-education" class="active" aria-current="page">General Maritime Education</button>
       </nav>
       <div class="academy-window-navigation" aria-label="Window navigation">
+        <label class="academy-language-control">Dil
+          <select id="academyLanguage" aria-label="Sinbad konuşma dili">
+            <option value="tr-TR" selected>Türkçe</option>
+            <option value="en-US">English</option>
+            <option value="de-DE">Deutsch</option>
+          </select>
+        </label>
         <button type="button" id="academyBackButton" title="Önceki sayfa">← Geri</button>
         <button type="button" id="academyHomeButton" title="Ana kumanda paneline dön">⌂ Ana Sayfa</button>
       </div>
@@ -86,6 +93,6 @@
   <script src="./sinbad-academy.js?v=82082"></script>
   <script src="./sinbad-character-engine.js?v=82030"></script>
   <script src="./sinbad-performance-director.js?v=82082"></script>
-  <script src="./academy-window.js?v=82091"></script>
+  <script src="./academy-window.js?v=82092"></script>
 </body>
 </html>

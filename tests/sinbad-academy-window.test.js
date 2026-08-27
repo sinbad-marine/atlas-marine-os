@@ -62,7 +62,7 @@ test('standalone Academy retains course and quiz handlers',()=>{
 test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.match(academyHtml,/id="academyTeachingStage"/);assert.match(academyHtml,/captain-sinbad-board-teaching\.png/);
   assert.match(academyHtml,/sinbad-character-engine\.js\?v=82030/);
-  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82082/);assert.match(academyHtml,/academy-window\.js\?v=82091/);assert.match(academyHtml,/academy\.css\?v=82084/);
+  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82082/);assert.match(academyHtml,/academy-window\.js\?v=82092/);assert.match(academyHtml,/academy\.css\?v=82092/);
   assert.doesNotMatch(academyHtml,/id="academyTeachingStage"[^>]*hidden/);
   assert.ok(academyHtml.indexOf('id="academyModule"')<academyHtml.indexOf('</aside>'),'training controls belong to the left classroom column');
   assert.match(academyHtml,/id="academyTrackTitle" hidden/);
@@ -82,7 +82,7 @@ test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.match(academyCss,/object-position:center bottom/);
   assert.match(academyCss,/@media\(prefers-reduced-motion:reduce\)/);
   assert.match(academyCss,/\.academy-sinbad\[data-state="walking"\] img\{animation:academyWalkCycle/);
-  assert.match(worker,/sinbad-marine-v8\.20\.43-character-v1-v106/);
+  assert.match(worker,/sinbad-marine-v8\.20\.43-character-v1-v107/);
 });
 
 test('Academy keeps only classroom scenery on the right and dialogue in the left control rail',()=>{
@@ -133,6 +133,11 @@ test('Academy exposes and uses the owner-local AI and library while driving the 
   assert.match(academyApp,/slice\(0,1200\)/);assert.match(academyApp,/academyDialogueHistory\(\)/);assert.match(academyApp,/slice\(-10\)/);
   assert.match(academyApp,/useLibrary:useOwnerLibrary/);
   assert.match(academyApp,/libraryQuery:String\(question\)\.slice\(0,1200\)/);
+  assert.match(academyApp,/language:academyLanguage\(\)/);
+  assert.match(academyApp,/matchingVoice=speechSynthesis\.getVoices\(\)\.find/);
+  assert.match(academyApp,/academyRecognition\.lang=academyLanguage\(\)/);
+  assert.match(academyHtml,/id="academyLanguage"/);
+  for(const language of ['tr-TR','en-US','de-DE'])assert.match(academyHtml,new RegExp(`value="${language}"`));
   assert.match(academyApp,/history:useOwnerLibrary\?\[\]:academyDialogueHistory\(\)/);
   assert.match(academyApp,/ownerLibrary:useOwnerLibrary/);
   assert.match(academyApp,/controller\.abort\(\),120000/);
@@ -173,6 +178,7 @@ test('local Bridge permits only the production site and loopback Academy origins
   assert.match(bridge,/\$payload\.libraryQuery/);
   assert.match(bridge,/Earlier assistant messages are not evidence/);
   assert.match(bridge,/Do not blend adjacent topics/);
+  assert.match(bridge,/LANGUAGE LOCK: Reply entirely in natural Turkish/);
   assert.match(bridge,/offline-local-rag-miss/);
   assert.match(bridge,/\$stopWords = @\('nedir'/);
   assert.match(bridge,/if \(\$selected\.Count -ge 4\) \{ break \}/);

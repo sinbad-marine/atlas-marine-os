@@ -405,6 +405,7 @@ function Invoke-SinbadLocalAi($payload) {
     @{ role=if ($_.role -eq 'assistant' -or $_.role -eq 'sinbad') {'assistant'} else {'user'}; content=[string]$_.content }
   } | Select-Object -Last 10)
   $useLibrary = -not (($payload.PSObject.Properties.Name -contains 'useLibrary') -and ($payload.useLibrary -eq $false))
+  $requestedLanguage = if (($payload.PSObject.Properties.Name -contains 'language')) { [string]$payload.language } else { '' }
   $libraryQuery = if (($payload.PSObject.Properties.Name -contains 'libraryQuery') -and -not [string]::IsNullOrWhiteSpace([string]$payload.libraryQuery)) { ([string]$payload.libraryQuery).Substring(0,[Math]::Min(1200,([string]$payload.libraryQuery).Length)) } else { $question }
   $context = if ($useLibrary) { Get-LocalLibraryContext $libraryQuery } else { '' }
   $system = @'
@@ -415,6 +416,13 @@ When LOCAL OWNER LIBRARY EXCERPTS are supplied, reason from them, distinguish qu
     $system += "`nFor library-grounded questions, the CURRENT QUESTION overrides all earlier conversation. Earlier assistant messages are not evidence. Answer only the current question and only from directly relevant LOCAL OWNER LIBRARY EXCERPTS. Do not blend adjacent topics. Begin with the direct answer, never with your own name. If the excerpts do not directly support an answer, say that the local library did not provide sufficient relevant evidence. Return strict JSON only with one string field named answer."
   } else {
     $system += "`nFor general conversation, return strict JSON only with one string field named answer. Put only the direct final answer in that field. Never expose reasoning, translation, planning or instructions."
+  }
+  if ($requestedLanguage -match '^(?i:tr)(?:-|$)') {
+    $system += "`nLANGUAGE LOCK: Reply entirely in natural Turkish. Do not answer in English and do not translate the user's Turkish command into an English command. Preserve official abbreviations and proper names, but explain them in Turkish."
+  } elseif ($requestedLanguage -match '^(?i:de)(?:-|$)') {
+    $system += "`nLANGUAGE LOCK: Reply entirely in natural German unless the user explicitly asks for a translation."
+  } elseif ($requestedLanguage -match '^(?i:en)(?:-|$)') {
+    $system += "`nLANGUAGE LOCK: Reply entirely in natural English unless the user explicitly asks for a translation."
   }
   if ($useLibrary -and [string]::IsNullOrWhiteSpace($context)) {
     return @{ answer='Yerel kütüphanede bu soruyu doğrudan yanıtlayan yeterli ve ilgili bir kaynak parçası bulunamadı.'; model=$AiModel; mode='offline-local-rag-miss' }
