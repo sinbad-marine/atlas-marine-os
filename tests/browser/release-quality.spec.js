@@ -464,15 +464,10 @@ test('live Sinbad chat grounds body answers in the gesture actually shown',async
   await ask('Hareketleri azalt.');
   await expect(answer).toContainText('Hareket azaltma tercihini açtım; uzun ve tekrarlı animasyonları oynatmayacağım.');
   expect(await page.evaluate(()=>({forced:document.documentElement.classList.contains('sinbad-force-reduced-motion'),stored:localStorage.getItem('atlas_sinbad_reduced_motion')}))).toEqual({forced:true,stored:'on'});
-  await expect(page.locator('#toggleSinbadReducedMotion')).toHaveAttribute('aria-pressed','true');
   await ask('Normal hareketlere dön.');
   await expect(answer).toContainText('Uygulama içindeki hareket azaltma tercihini kapattım.');
   expect(await page.evaluate(()=>({forced:document.documentElement.classList.contains('sinbad-force-reduced-motion'),stored:localStorage.getItem('atlas_sinbad_reduced_motion')}))).toEqual({forced:false,stored:'off'});
-  await expect(page.locator('#toggleSinbadReducedMotion')).toHaveAttribute('aria-pressed','false');
-  await page.locator('#toggleSinbadReducedMotion').click();await expect(page.locator('#toggleSinbadReducedMotion')).toHaveAttribute('aria-pressed','true');
-  await page.locator('#toggleSinbadReducedMotion').click();await expect(page.locator('#toggleSinbadReducedMotion')).toHaveAttribute('aria-pressed','false');
-  await page.emulateMedia({reducedMotion:'reduce'});await expect(page.locator('#toggleSinbadReducedMotion')).toHaveAttribute('aria-pressed','true');
-  await page.emulateMedia({reducedMotion:'no-preference'});await expect(page.locator('#toggleSinbadReducedMotion')).toHaveAttribute('aria-pressed','false');
+  await expect(page.locator('#toggleSinbadReducedMotion')).toHaveCount(0);
 
   await ask('Sinbad bana el sallar mısın?');
   await expect(answer).toContainText('Sana gülümseyerek el sallıyorum.');
@@ -570,7 +565,7 @@ test('Sinbad Academy opens outside the main app as a standalone classroom window
   await page.evaluate(()=>openSinbadAcademyWindow());
   const classroom=await popupPromise;
   await classroom.waitForLoadState();
-  await expect(classroom).toHaveURL(/academy\.html\?track=general-maritime-education$/);
+  await expect(classroom).toHaveURL(/academy\.html$/);
   await expect(classroom.getByRole('heading',{name:'General Maritime Education'})).toBeVisible();
   await expect(page.locator('#sinbadAcademyWindow')).toHaveCount(0);
   await classroom.getByRole('button',{name:'Open lesson'}).click();
@@ -578,20 +573,25 @@ test('Sinbad Academy opens outside the main app as a standalone classroom window
   await classroom.close();
 });
 
-test('Captain Sinbad Academy menu opens programme-specific independent windows',async({page})=>{
+test('dashboard Academy opens one classroom and switches programmes inside it',async({page})=>{
   await stubBridge(page);
   await page.goto('/');
-  await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');document.querySelector('#sinbad')?.classList.add('active');});
+  await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');});
   await expect(page.locator('[data-sinbad-tab="passage"]')).toHaveCount(0);
   await expect(page.locator('[data-sinbad-tab="sources"]')).toHaveCount(0);
-  await page.locator('.sinbad-academy-menu summary').click();
   const popupPromise=page.waitForEvent('popup');
-  await page.locator('[data-academy-track="goss-gasm"]').click();
+  await page.locator('#openSinbadAcademyClassroom').click();
   const classroom=await popupPromise;
   await classroom.waitForLoadState();
-  await expect(classroom).toHaveURL(/academy\.html\?track=goss-gasm$/);
+  await expect(classroom).toHaveURL(/academy\.html$/);
+  await classroom.locator('[data-academy-section="goss-gasm"]').click();
   await expect(classroom.getByRole('heading',{name:'GOSS / GASM Classroom'})).toBeVisible();
   await expect(classroom.locator('#academyModule')).toHaveValue('gasm-seyir-sinav');
+  await classroom.locator('[data-academy-section="stcw"]').click();
+  await expect(classroom.getByRole('heading',{name:'STCW Classroom'})).toBeVisible();
+  await expect(classroom.locator('#academyModule')).toHaveValue('stcw-foundation');
+  await expect(classroom.locator('#academyQuestionInput')).toBeVisible();
+  await expect(classroom.locator('#startAcademyListening')).toBeVisible();
   await classroom.close();
 });
 

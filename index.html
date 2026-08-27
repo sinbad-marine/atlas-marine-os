@@ -8,7 +8,7 @@
 <script>try{if(localStorage.getItem('atlas_sinbad_reduced_motion')==='on')document.documentElement.classList.add('sinbad-force-reduced-motion')}catch{}</script>
 <link rel="manifest" href="./manifest.webmanifest?v=8161">
 <link rel="apple-touch-icon" href="./icon-192.png?v=8155">
-<link rel="stylesheet" href="./styles.css?v=82077">
+<link rel="stylesheet" href="./styles.css?v=82078">
 <link rel="stylesheet" href="./vendor/ol-10.6.1.css">
 </head>
 <body class="auth-pending">
@@ -104,7 +104,7 @@
   <div class="topbar-account-actions">
     <select id="appLanguage" class="app-language" aria-label="Application language"></select>
     <button class="account-password-button" id="openAccountPassword" type="button">Account &amp; Password</button>
-    <div class="version">● v8.20.37</div>
+    <div class="version">● v8.20.38</div>
   </div>
 </header>
 
@@ -153,6 +153,7 @@
   <article class="module-card featured-card" data-open="cloud-documents"><div>☁️</div><h3>Cloud Document Center</h3><p>Upload, open, download, share, rename and manage private files across devices.</p><a>Open cloud vault →</a></article>
   <article class="module-card" data-cloud-bucket="nautical-charts"><div>🗺️</div><h3>Nautical Charts</h3><p>Private chart archive organized by country, region and chart number.</p><a>Open cloud charts →</a></article>
   <article class="module-card" data-open="sinbad"><div>🧞‍♂️</div><h3>Captain Sinbad</h3><p>Ask questions across the owner-approved Atlas Cloud maritime corpus with grounded citations.</p><a>Open Sinbad →</a></article>
+  <article class="module-card featured-card" id="openSinbadAcademyClassroom"><div>🎓</div><h3>Sinbad Academy</h3><p>Open the full-screen Professor Sinbad classroom for GOSS/GASM, STCW, GOC and general maritime education.</p><a>Open Academy →</a></article>
   <article class="module-card featured-card" data-open="studio-console"><div>🧰</div><h3>Sinbad Studio</h3><p>Offline web, software and animation workspace with approval-gated Docker verification.</p><a>Open capability console →</a></article>
   <article class="module-card" data-open="cloud-control"><div>☁️</div><h3>Atlas Cloud Control Center</h3><p>Connect Supabase, manage workspaces, users, storage and AI status.</p><a>Open →</a></article>
   <article class="module-card featured-card" data-open="admin-settings"><div>⚙️</div><h3>Settings &amp; Administration</h3><p>Account security, invitations, member access, developer roles and audit history.</p><a>Open settings →</a></article>
@@ -449,41 +450,20 @@
       <span class="badge">Atlas AI</span>
       <p class="muted">“Every Voyage Adds Knowledge.”</p>
       <div class="sinbad-capabilities">
-        <span>⚓ Passage support</span>
-        <span>📚 Publications search</span>
-        <span>🗺️ Route intelligence</span>
-        <span>📄 Document assistance</span>
-        <span>👥 Crew and expiry checks</span>
+        <span>💬 General written conversation</span>
+        <span>🎙️ General voice conversation</span>
+        <span>🧭 Maritime guidance with clear limits</span>
       </div>
     </aside>
 
 
     <div class="sinbad-workspace-main">
-      <nav class="sinbad-workspace-tabs" aria-label="Captain Sinbad tools">
-        <button type="button" class="sinbad-workspace-tab active" id="sinbad-tab-chat" aria-current="page" data-sinbad-tab="chat">💬 Chat</button>
-        <details class="sinbad-academy-menu">
-          <summary>☰ 🎓 Academy</summary>
-          <div class="sinbad-academy-menu-items" role="menu" aria-label="Academy programmes">
-            <button type="button" role="menuitem" data-academy-track="goss-gasm">GOSS / GASM</button>
-            <button type="button" role="menuitem" data-academy-track="stcw">STCW</button>
-            <button type="button" role="menuitem" data-academy-track="goc">GOC</button>
-            <button type="button" role="menuitem" data-academy-track="general-maritime-education">General Maritime Education</button>
-          </div>
-        </details>
-      </nav>
-
-      <section class="chat-panel sinbad-workspace-panel" id="sinbad-panel-chat" aria-labelledby="sinbad-tab-chat" data-sinbad-panel="chat">
-        <div class="sinbad-panel-heading"><div><span class="eyebrow">CAPTAIN'S DESK</span><h3>Ask Sinbad</h3></div><span class="badge" id="sinbadKnowledgeStatus">Approved library only • Web search off</span></div>
+      <section class="chat-panel sinbad-workspace-panel" id="sinbad-panel-chat" data-sinbad-panel="chat">
+        <div class="sinbad-panel-heading"><div><span class="eyebrow">GENERAL ASSISTANT</span><h3>Ask Sinbad</h3></div><span class="badge" id="sinbadKnowledgeStatus">General written and voice chat</span></div>
       <div id="sinbadMessages" class="chat-messages" aria-live="polite"></div>
       <div id="sinbadThinking" class="thinking-bubble hidden" aria-live="polite">
         <span></span><span></span><span></span>
         <em>Sinbad is thinking…</em>
-      </div>
-      <div class="quick-prompts">
-        <button type="button" class="btn sinbad-prompt">Search SOLAS</button>
-        <button type="button" class="btn sinbad-prompt">Show my charts</button>
-        <button type="button" class="btn sinbad-prompt">Review crew expiries</button>
-        <button type="button" class="btn sinbad-prompt">Create passage checklist</button>
       </div>
       <div class="sinbad-voice-toolbar" aria-label="Voice controls">
         <label>Answer language
@@ -497,9 +477,7 @@
         <button type="button" class="btn" id="toggleSinbadVoice" aria-pressed="true">🔊 Voice: On</button>
         <button type="button" class="btn primary" id="startSinbadListening" aria-pressed="false">🎙️ Speak</button>
         <button type="button" class="btn" id="testSinbadVoice">Test</button>
-        <button type="button" class="btn" id="testSinbadWalk">Walk demo</button>
         <button type="button" class="btn" id="stopSinbadVoice">Stop</button>
-        <button type="button" class="btn" id="toggleSinbadReducedMotion" aria-pressed="false">↔️ Reduce motion: Off</button>
       </div>
       <div id="sinbadListeningStatus" class="notice hidden" role="status">Microphone is ready.</div>
       <div id="sinbadWebConsent" class="notice hidden" role="alert">
@@ -570,7 +548,7 @@
       <section class="sinbad-workspace-panel" id="sinbad-panel-academy" role="tabpanel" aria-labelledby="sinbad-tab-academy" data-sinbad-panel="academy" hidden>
       <section class="academy-launch-card" aria-labelledby="academyLaunchTitle">
         <div><strong id="academyLaunchTitle">🎓 Sinbad Navigation Academy</strong><p>Open Sinbad’s resizable classroom in a separate workspace window.</p></div>
-        <button type="button" class="btn primary" id="openSinbadAcademyClassroom">Open classroom</button>
+        <button type="button" class="btn primary" id="openLegacySinbadAcademyClassroom">Open classroom</button>
       </section>
       </section>
     </div>
@@ -880,21 +858,21 @@
 <script src="./resource-data.js?v=8210"></script>
 <script src="./store-data.js?v=8221"></script>
 <script src="./official-publications.js?v=8162"></script>
-<script src="./supabase/functions/sinbad-answer/core-decision.js?v=82037"></script>
-<script src="./sinbad-core.js?v=82037"></script>
+<script src="./supabase/functions/sinbad-answer/core-decision.js?v=82038"></script>
+<script src="./sinbad-core.js?v=82038"></script>
 <script src="./sinbad-training-data.js?v=8180"></script>
-<script src="./sinbad-academy.js?v=82077"></script>
+<script src="./sinbad-academy.js?v=82078"></script>
 <script src="./vendor/supabase-2.112.3.js"></script>
 <script src="./vendor/mammoth-1.12.1.min.js"></script>
 <script src="./vendor/tesseract-5.1.1.min.js"></script>
 <script src="./vendor/ol-10.6.1.js"></script>
-  <script src="./sinbad-navigation.js?v=82037"></script>
-  <script src="./sinbad-navigation-assistant.js?v=82037"></script>
-  <script src="./sinbad-route-visualizer.js?v=82037"></script>
-  <script src="./sinbad-character-engine.js?v=82037"></script>
-  <script src="./sinbad-character-rig.js?v=82077"></script>
-  <script src="./sinbad-performance-director.js?v=82077"></script>
-  <script src="./sinbad-viseme-planner.js?v=82037"></script>
-  <script src="./app.js?v=82077"></script>
+  <script src="./sinbad-navigation.js?v=82038"></script>
+  <script src="./sinbad-navigation-assistant.js?v=82038"></script>
+  <script src="./sinbad-route-visualizer.js?v=82038"></script>
+  <script src="./sinbad-character-engine.js?v=82038"></script>
+  <script src="./sinbad-character-rig.js?v=82078"></script>
+  <script src="./sinbad-performance-director.js?v=82078"></script>
+  <script src="./sinbad-viseme-planner.js?v=82038"></script>
+  <script src="./app.js?v=82078"></script>
 </body>
 </html>

@@ -148,13 +148,13 @@ test('short natural pauses are buffered into one bounded user turn',()=>{
   assert.match(app,/const activeRecognition=sinbadRecognition;sinbadRecognition=null;sinbadIsListening=false;activeRecognition\?\.abort\(\)/);
 });
 
-test('walking uses two real alpha PNG frames and a bounded user-triggered cycle',()=>{
+test('walking remains a bounded chat-directed capability without a demo control',()=>{
   const sw=fs.readFileSync('sw.js','utf8');
   for(const file of ['captain-sinbad-walk-a-v1.png','captain-sinbad-walk-b-v1.png']){const path=`assets/captain-sinbad/${file}`;assert.ok(fs.existsSync(path));const bytes=fs.readFileSync(path);assert.equal(bytes.toString('ascii',1,4),'PNG');assert.equal(bytes[25],6);}
   assert.match(app,/const SINBAD_WALK_ASSETS=Object\.freeze\(\['captain-sinbad-walk-a-v1\.png','captain-sinbad-walk-b-v1\.png'\]\)/);
   assert.match(app,/function startSinbadWalkCycle\(generation\)/);assert.match(app,/setTimeout\(tick,280\)/);assert.match(app,/if\(next==='walking'\).*2240/);
   assert.match(app,/action==='walk'&&!\['idle','voice-disabled'\]\.includes\(sinbadAssistantState\)/);
-  assert.match(html,/id="testSinbadWalk"/);assert.match(sw,/captain-sinbad-walk-a-v1\.png/);assert.match(sw,/captain-sinbad-walk-b-v1\.png/);
+  assert.doesNotMatch(html,/id="testSinbadWalk"/);assert.match(sw,/captain-sinbad-walk-a-v1\.png/);assert.match(sw,/captain-sinbad-walk-b-v1\.png/);
 });
 
 test('a supported chat walk request uses the bounded character controller and records only acceptance',()=>{
@@ -354,7 +354,7 @@ test('service worker cache version was bumped for this change and precaches the 
   const visible=html.match(/<div class="version">● v(\d+\.\d+\.\d+)<\/div>/);
   assert.ok(visible);
   assert.match(sw,new RegExp(`const CACHE='sinbad-marine-v${visible[1].replace(/\./g,'\\.')}-`));
-  assert.match(sw,/character-v1-v95/);
+  assert.match(sw,/character-v1-v96/);
   assert.match(sw,/'\.\/sinbad-character-engine\.js'/);
   assert.match(sw,/'\.\/sinbad-character-rig\.js'/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-idle-master\.png'/);
@@ -664,11 +664,13 @@ test('round-table: TTS text normalization verified - the same message text rende
   assert.match(app,/\$\{m\.role==='user'\?'Captain':'Captain Sinbad'\}<\/span>\s*\n\s*\$\{esc\(m\.text\)\}/);
 });
 
-test('Sinbad workspace keeps chat primary and routes Academy programmes through a dropdown',()=>{
-  assert.match(html,/data-sinbad-tab="chat"/);
+test('Sinbad assistant is general chat only and Academy is a dashboard application',()=>{
+  assert.match(html,/id="sinbad-panel-chat"/);
   assert.doesNotMatch(html,/data-sinbad-tab="(?:academy|passage|sources)"/);
-  assert.match(html,/class="sinbad-academy-menu"/);
-  for(const track of ['goss-gasm','stcw','goc','general-maritime-education'])assert.match(html,new RegExp(`data-academy-track="${track}"`));
+  assert.doesNotMatch(html,/class="sinbad-academy-menu"/);
+  assert.match(html,/id="openSinbadAcademyClassroom"/);
+  assert.match(html,/GENERAL ASSISTANT/);
+  assert.doesNotMatch(html,/class="quick-prompts"/);
   for(const id of ['sinbadMessages','sinbadInput','sendSinbad','passageDeparture','officialSourceList']){
     assert.equal((html.match(new RegExp(`id="${id}"`,'g'))||[]).length,1,`${id} must remain unique`);
   }
@@ -966,8 +968,8 @@ test('verified two-movement replay is handled before ordinary direct gesture rou
   assert.ok(app.indexOf('const historyReplay=')<app.indexOf('const directReaction=',app.indexOf('const historyReplay=')));
 });
 
-test('reduced motion can be changed by an explicit bounded command and persists locally',()=>{
-  assert.match(html,/id="toggleSinbadReducedMotion" aria-pressed="false"/);
+test('reduced motion can be changed by an explicit bounded chat command and persists locally',()=>{
+  assert.doesNotMatch(html,/id="toggleSinbadReducedMotion"/);
   assert.ok(html.indexOf("localStorage.getItem('atlas_sinbad_reduced_motion')")<html.indexOf('<link rel="stylesheet" href="./styles.css'));
   assert.match(html,/try\{if\(localStorage\.getItem\('atlas_sinbad_reduced_motion'\)==='on'\)document\.documentElement\.classList\.add\('sinbad-force-reduced-motion'\)\}catch\{\}/);
   assert.match(app,/reducedMotionCommandForText\?\.\(q,sinbadState\.language\|\|appLanguage\)/);

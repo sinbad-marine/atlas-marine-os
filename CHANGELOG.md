@@ -24,7 +24,9 @@ Bu dosya yalnız doğrulanmış depo değişikliklerini özetler. Sürüm ve yay
 - Captain Sinbad ve diğer panel modülleri ayrı, yeniden boyutlandırılabilir tarayıcı pencerelerinde açılır.
 - Her modül penceresinin son boyut ve konumu cihazda ayrı ayrı saklanır.
 - Gömülü tarayıcı çerçevesini yönetemeyen yanıltıcı sayfa-içi pencere düğmeleri kaldırıldı; küçültme, büyütme ve kapatma gerçek tarayıcı/işletim sistemi penceresine bırakıldı.
-- Captain Sinbad üst şeridinden Passage Plan ve Sources kaldırıldı; Academy, GOSS/GASM, STCW, GOC ve General Maritime Education için ayrı sınıf pencereleri açan hamburger menüye dönüştürüldü.
+- Captain Sinbad genel asistanı yalnız yazılı/sesli sohbet yüzeyine indirildi; Academy ve uzman araçlar asistanın içinden çıkarıldı.
+- Ana kumanda paneline tek bir Sinbad Academy girişi eklendi. GOSS/GASM, STCW, GOC ve General Maritime Education aynı tam boy Academy penceresinin üst şeridinden seçilir.
+- Professor Sinbad sınıfına sınırlı 2B öğretmen animasyonu, ders/quiz yüzeyi ve kaynak bulamadığında tahmin üretmeyen yazılı/sesli soru-cevap alanı eklendi.
 
 ### Doğrulama
 
@@ -32,6 +34,7 @@ Bu dosya yalnız doğrulanmış depo değişikliklerini özetler. Sürüm ve yay
 - Academy ACK değişikliği sonrası Chromium masaüstü/mobil paketi: 18/18 geçti.
 - Bağımsız modül penceresi değişikliği sonrası tam Node regresyonu: 848 test, 847 geçti, 0 hata, 1 bilinçli atlama.
 - Chromium masaüstü/mobil yayın paketi: 28/28 geçti; Sinbad ve filo modüllerinin panelden bağımsız açılması doğrulandı.
+- Tek Academy sınıfı değişikliği sonrası tam Node regresyonu: 850 test, 849 geçti, 0 hata, 1 bilinçli atlama. Academy masaüstü ve mobil hedefli tarayıcı senaryoları: 4/4 geçti.
 
 ## Bilinen sınırlar
 

@@ -1,14 +1,13 @@
 'use strict';
 const byId=id=>document.getElementById(id);
-const ACADEMY_TRACKS=Object.freeze({
-  'goss-gasm':Object.freeze({title:'GOSS / GASM Classroom',label:'GOSS / GASM',module:'gasm-seyir-sinav'}),
-  stcw:Object.freeze({title:'STCW Classroom',label:'STCW',module:'stcw-foundation'}),
-  goc:Object.freeze({title:'GOC Classroom',label:'GOC',module:'goc-foundation'}),
-  'general-maritime-education':Object.freeze({title:'General Maritime Education',label:'GENERAL MARITIME EDUCATION',module:'general-maritime-education'})
+const ACADEMY_SECTIONS=Object.freeze({
+  'goss-gasm':Object.freeze({title:'GOSS / GASM Classroom',label:'GOSS / GASM',modules:Object.freeze(['gasm-seyir-sinav'])}),
+  stcw:Object.freeze({title:'STCW Classroom',label:'STCW',modules:Object.freeze(['stcw-foundation','colregs-navigation-rules','electronic-navigation','marine-weather'])}),
+  goc:Object.freeze({title:'GOC Classroom',label:'GOC',modules:Object.freeze(['goc-foundation'])}),
+  'general-maritime-education':Object.freeze({title:'General Maritime Education',label:'GENERAL MARITIME EDUCATION',modules:Object.freeze(['general-maritime-education','chart-reading','tides-water-levels','currents-set-drift'])})
 });
-const academyTrackId=new URLSearchParams(location.search).get('track')||'general-maritime-education';
-const academyTrack=ACADEMY_TRACKS[academyTrackId]||ACADEMY_TRACKS['general-maritime-education'];
-const GEOMETRY_KEY=`atlas_sinbad_academy_native_window:${academyTrackId}`;
+const GEOMETRY_KEY='atlas_sinbad_academy_native_window';
+const academyModuleOptions=[...byId('academyModule').options].map(option=>Object.freeze({value:option.value,label:option.textContent}));
 const academyCharacterEngine=window.SinbadCharacterEngine?.createCharacterEngine({initialState:'idle'})||null;
 const academyPerformanceDirector=window.SinbadPerformanceDirector?.createPerformanceDirector()||null;
 const ACADEMY_CHARACTER_ASSETS=Object.freeze({
@@ -163,14 +162,49 @@ function renderQuiz(){
   }
   const choices=document.createElement('div');choices.className='academy-choices';item.choices.forEach((choice,index)=>{const button=document.createElement('button');button.type='button';button.className='btn';button.textContent=choice;button.addEventListener('click',()=>{[...choices.children].forEach(node=>node.disabled=true);button.classList.add(index===item.answer?'primary':'danger');const result=document.createElement('p');result.textContent=`${index===item.answer?'✓ Correct':'✗ Review'} — ${item.explanation} [${item.source}]`;output.append(result);});choices.append(button);});output.append(choices);const source=document.createElement('small');source.className='academy-source';source.textContent=`Official source: ${item.source}`;output.append(source);
 }
-document.title=`${academyTrack.title} — Sinbad Academy`;
-byId('academyTrackTitle').textContent=academyTrack.title;
-byId('academyTrackLabel').textContent=academyTrack.label;
-byId('academyModule').value=academyTrack.module;
+function selectAcademySection(sectionId){
+  const section=ACADEMY_SECTIONS[sectionId]||ACADEMY_SECTIONS['general-maritime-education'];
+  document.querySelectorAll('[data-academy-section]').forEach(button=>{const active=button.dataset.academySection===sectionId;button.classList.toggle('active',active);if(active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
+  byId('academyTrackTitle').textContent=section.title;byId('academyTrackLabel').textContent=section.label;
+  const select=byId('academyModule');select.replaceChildren();
+  academyModuleOptions.filter(option=>section.modules.includes(option.value)).forEach(option=>{const node=document.createElement('option');node.value=option.value;node.textContent=option.label;select.append(node);});
+  stopBoardTeaching();byId('academyOutput').textContent=`${section.title} seçildi. Bir eğitim modülü açın veya Professor Sinbad'a bu konu hakkında sorunuzu sorun.`;
+}
+function appendAcademyMessage(role,text){
+  const conversation=byId('academyConversation'),message=document.createElement('p');message.className=`academy-message ${role}`;message.textContent=text;conversation.append(message);
+  while(conversation.children.length>20)conversation.firstElementChild.remove();conversation.scrollTop=conversation.scrollHeight;
+}
+function speakAcademyAnswer(text){
+  if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined')return;
+  speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text.slice(0,1800));utterance.lang='tr-TR';speechSynthesis.speak(utterance);
+}
+function answerAcademyQuestion(){
+  const input=byId('academyQuestionInput'),question=input.value.trim().slice(0,1200);if(!question)return;
+  appendAcademyMessage('student',question);input.value='';academyCharacterEngine?.dispatch('THINK_STARTED');
+  const result=window.SinbadAcademy?.answer(question,window.SINBAD_TRAINING_DATA);
+  const answer=result?.text||'Bu soru için doğrulanmış çevrimdışı Academy içeriğinde yeterli kaynak bulamadım. Tahmin üretmeyeceğim; lütfen soruyu daraltın veya onaylı kaynağı Academy kütüphanesine ekleyin.';
+  appendAcademyMessage('sinbad',answer);academyCharacterEngine?.dispatch('AUDIO_STARTED');renderAcademyCharacterCue({state:'board-teaching',gesture:'explain',gaze:'audience'},answer);speakAcademyAnswer(answer);
+}
+let academyRecognition=null;
+function startAcademyListening(){
+  const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Recognition){byId('academyVoiceStatus').textContent='Voice input unsupported';return;}
+  academyRecognition?.abort();academyRecognition=new Recognition();academyRecognition.lang='tr-TR';academyRecognition.interimResults=false;academyRecognition.maxAlternatives=1;
+  academyRecognition.onstart=()=>{byId('academyVoiceStatus').textContent='Listening…';byId('startAcademyListening').disabled=true;byId('stopAcademyListening').disabled=false;academyCharacterEngine?.dispatch('LISTEN_STARTED');};
+  academyRecognition.onresult=event=>{byId('academyQuestionInput').value=event.results[0][0].transcript;answerAcademyQuestion();};
+  academyRecognition.onerror=()=>{byId('academyVoiceStatus').textContent='Voice input unavailable';};
+  academyRecognition.onend=()=>{byId('startAcademyListening').disabled=false;byId('stopAcademyListening').disabled=true;if(byId('academyVoiceStatus').textContent==='Listening…')byId('academyVoiceStatus').textContent='Text ready';};academyRecognition.start();
+}
+document.title='Sinbad Academy — Professor Sinbad Classroom';
+selectAcademySection('general-maritime-education');
 restoreWindowGeometry();
 preloadAcademyCharacterAssets();
+document.querySelectorAll('[data-academy-section]').forEach(button=>button.addEventListener('click',()=>selectAcademySection(button.dataset.academySection)));
 byId('startAcademyLesson').addEventListener('click',renderLesson);
 byId('startAcademyQuiz').addEventListener('click',renderQuiz);
+byId('askAcademyQuestion').addEventListener('click',answerAcademyQuestion);
+byId('academyQuestionInput').addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();answerAcademyQuestion();}});
+byId('startAcademyListening').addEventListener('click',startAcademyListening);
+byId('stopAcademyListening').addEventListener('click',()=>academyRecognition?.stop());
 byId('closeAcademyWindow').addEventListener('click',()=>{saveWindowGeometry();window.close();});
 window.addEventListener('beforeunload',saveWindowGeometry);
 window.addEventListener('message',event=>{

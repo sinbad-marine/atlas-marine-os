@@ -1844,16 +1844,12 @@ let sinbadAcademyBoardQueue=[];
 let sinbadAcademyBoardInFlight=null;
 let sinbadAcademyBoardSequence=0;
 let sinbadAcademyReady=false;
-const SINBAD_ACADEMY_TRACKS=Object.freeze(['goss-gasm','stcw','goc','general-maritime-education']);
-const sinbadAcademyWindows=new Map();
-function openSinbadAcademyWindow(requestedTrack='general-maritime-education'){
-  const track=SINBAD_ACADEMY_TRACKS.includes(requestedTrack)?requestedTrack:'general-maritime-education';
-  const existing=sinbadAcademyWindows.get(track);if(existing&&!existing.closed){sinbadAcademyNativeWindow=existing;existing.focus();return existing;}
+function openSinbadAcademyWindow(){
+  if(sinbadAcademyNativeWindow&&!sinbadAcademyNativeWindow.closed){sinbadAcademyNativeWindow.focus();return sinbadAcademyNativeWindow;}
   const width=Math.max(900,screen.availWidth||1200),height=Math.max(650,screen.availHeight||800);
   sinbadAcademyReady=false;
-  sinbadAcademyNativeWindow=window.open(`./academy.html?track=${encodeURIComponent(track)}`,`sinbadAcademy_${track.replace(/[^a-z0-9_-]/gi,'_')}`,`popup=yes,left=0,top=0,width=${width},height=${height},resizable=yes,scrollbars=yes`);
+  sinbadAcademyNativeWindow=window.open('./academy.html','sinbadAcademyClassroom',`popup=yes,left=0,top=0,width=${width},height=${height},resizable=yes,scrollbars=yes`);
   if(!sinbadAcademyNativeWindow){alert('Sinbad Academy penceresi engellendi. Bu site için açılır pencerelere izin verip yeniden deneyin.');return null;}
-  sinbadAcademyWindows.set(track,sinbadAcademyNativeWindow);
   sinbadAcademyNativeWindow.focus();return sinbadAcademyNativeWindow;
 }
 function dispatchNextSinbadAcademyBoardPayload(){
@@ -2164,7 +2160,7 @@ $('bridgeGpxFile')?.addEventListener('change',event=>importBridgeGpxFile(event.t
 $('syncSinbadMemory')?.addEventListener('click',syncSinbadOfflineMemory);
 addBridgeWaypoint({name:'Departure'});addBridgeWaypoint({name:'Destination'});checkBridgeStatus();setInterval(checkBridgeStatus,30000);
 $('openSinbadAcademyClassroom')?.addEventListener('click',openSinbadAcademyWindow);
-document.querySelectorAll('[data-academy-track]').forEach(button=>button.addEventListener('click',()=>{openSinbadAcademyWindow(button.dataset.academyTrack);button.closest('details')?.removeAttribute('open');}));
+$('openLegacySinbadAcademyClassroom')?.addEventListener('click',openSinbadAcademyWindow);
 renderOfficialSources();
 setSinbadVoiceUI();
 setListeningUI();

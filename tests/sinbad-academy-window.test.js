@@ -12,8 +12,7 @@ const worker=fs.readFileSync('sw.js','utf8');
 test('Academy launches as a genuine separate resizable browser window',()=>{
   assert.match(html,/id="openSinbadAcademyClassroom"/);
   assert.doesNotMatch(html,/id="sinbadAcademyWindow"/);
-  assert.match(app,/academy\.html\?track=\$\{encodeURIComponent\(track\)\}/);
-  assert.match(app,/`sinbadAcademy_\$\{track\.replace/);
+  assert.match(app,/window\.open\('\.\/academy\.html','sinbadAcademyClassroom'/);
   assert.match(app,/popup=yes/);
   assert.match(app,/resizable=yes/);
   assert.match(app,/scrollbars=yes/);
@@ -21,13 +20,14 @@ test('Academy launches as a genuine separate resizable browser window',()=>{
   assert.match(app,/screen\.availHeight/);
 });
 
-test('Captain Sinbad exposes four Academy programmes as separate window targets',()=>{
+test('dashboard exposes one Academy and its four programmes stay inside that window',()=>{
   assert.doesNotMatch(html,/data-sinbad-tab="passage"/);
   assert.doesNotMatch(html,/data-sinbad-tab="sources"/);
-  for(const track of ['goss-gasm','stcw','goc','general-maritime-education'])assert.match(html,new RegExp(`data-academy-track="${track}"`));
-  assert.match(app,/const SINBAD_ACADEMY_TRACKS=Object\.freeze\(\['goss-gasm','stcw','goc','general-maritime-education'\]\)/);
-  assert.match(academyApp,/const ACADEMY_TRACKS=Object\.freeze/);
-  assert.match(academyApp,/atlas_sinbad_academy_native_window:\$\{academyTrackId\}/);
+  assert.equal((html.match(/id="openSinbadAcademyClassroom"/g)||[]).length,1);
+  assert.doesNotMatch(html,/data-academy-track=/);
+  for(const section of ['goss-gasm','stcw','goc','general-maritime-education'])assert.match(academyHtml,new RegExp(`data-academy-section="${section}"`));
+  assert.match(academyApp,/const ACADEMY_SECTIONS=Object\.freeze/);
+  assert.match(academyApp,/const GEOMETRY_KEY='atlas_sinbad_academy_native_window'/);
 });
 
 test('standalone classroom owns its full viewport and preserves native window geometry',()=>{
@@ -61,7 +61,7 @@ test('standalone Academy retains course and quiz handlers',()=>{
 test('native Academy owns a bounded live Sinbad board-teaching stage',()=>{
   assert.match(academyHtml,/id="academyTeachingStage"/);assert.match(academyHtml,/captain-sinbad-board-teaching\.png/);
   assert.match(academyHtml,/sinbad-character-engine\.js\?v=82030/);
-  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82077/);assert.match(academyHtml,/academy-window\.js\?v=82077/);assert.match(academyHtml,/academy\.css\?v=82077/);
+  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82078/);assert.match(academyHtml,/academy-window\.js\?v=82078/);assert.match(academyHtml,/academy\.css\?v=82078/);
   assert.match(academyApp,/function teachLessonAtBoard\(lesson\)/);
   assert.match(academyApp,/\.join\('\\n\\n'\)\.slice\(0,500\)/);
   assert.match(academyApp,/const event=cue\.state==='walking'\?'WALK':'TEACH_AT_BOARD'/);
@@ -73,7 +73,15 @@ test('native Academy owns a bounded live Sinbad board-teaching stage',()=>{
   assert.match(academyCss,/\.academy-teaching-stage\[hidden\]\{display:none\}/);
   assert.match(academyCss,/@media\(prefers-reduced-motion:reduce\)/);
   assert.match(academyCss,/\.academy-sinbad\[data-state="walking"\] img\{animation:none/);
-  assert.match(worker,/sinbad-marine-v8\.20\.37-character-v1-v95/);
+  assert.match(worker,/sinbad-marine-v8\.20\.38-character-v1-v96/);
+});
+
+test('Professor Sinbad classroom provides bounded text and voice questions',()=>{
+  for(const id of ['academyConversation','academyQuestionInput','askAcademyQuestion','startAcademyListening','stopAcademyListening'])assert.match(academyHtml,new RegExp(`id="${id}"`));
+  assert.match(academyApp,/function answerAcademyQuestion\(\)/);
+  assert.match(academyApp,/SinbadAcademy\?\.answer\(question,window\.SINBAD_TRAINING_DATA\)/);
+  assert.match(academyApp,/Tahmin üretmeyeceğim/);
+  assert.match(academyApp,/window\.SpeechRecognition\|\|window\.webkitSpeechRecognition/);
 });
 
 test('board writing progress drives a real chalk cursor and bounded character direction cues',()=>{
