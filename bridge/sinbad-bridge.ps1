@@ -78,6 +78,7 @@ function Invoke-LocalJsonPost([string]$uri, [string]$json) {
   $info.RedirectStandardInput = $true
   $info.RedirectStandardOutput = $true
   $info.RedirectStandardError = $true
+  $info.StandardInputEncoding = [Text.Encoding]::UTF8
   $info.StandardOutputEncoding = [Text.Encoding]::UTF8
   $process = [Diagnostics.Process]::Start($info)
   $process.StandardInput.Write($json)

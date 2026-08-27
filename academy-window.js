@@ -281,6 +281,14 @@ function answerAcademySocialTurn(question){
   if(['nasılsın','nasılsın sinbad','nasılsınız'].includes(normalized))return 'İyiyim, teşekkür ederim. Sınıfta sizinle çalışmaya hazırım. Siz nasılsınız?';
   return null;
 }
+function academyCharacterCapabilityAnswer(question){
+  const normalized=String(question||'').toLocaleLowerCase('tr-TR').normalize('NFC').replace(/[^a-zçğıöşüäß\s]/gu,' ').replace(/\s+/g,' ').trim();
+  if(!/(hangi|neler|what|which|welche).*(bedensel|hareket|gesture|movement|bewegung)|(?:ne|neler)\s+yapabiliyorsun/u.test(normalized))return null;
+  const language=academyLanguage();
+  if(language==='de-DE')return 'Ich kann mich nach links oder rechts drehen, den Kopf bewegen, winken, meine Hände zeigen, nicken, den Kopf schütteln, die Schultern zucken, lächeln, lachen, kurz gehen, zuhören sowie auf die Tafel zeigen, schreiben und freigegebene Formen zeichnen.';
+  if(language==='en-US')return 'I can turn left or right, move my head, wave, show my hands, nod, shake my head, shrug, smile, laugh, take a short walk, listen, point at the board, write on it and draw approved shapes.';
+  return 'Sola veya sağa dönebilir; başımı çevirebilir, el sallayabilir, ellerimi gösterebilir, başımı sallayabilir, omuz silkebilir, gülümseyebilir, gülebilir, kısa yürüyebilir ve dinleme hareketi yapabilirim. Ayrıca tahtayı işaretleyebilir, yazı yazabilir ve izin verilen şekilleri çizebilirim.';
+}
 function shouldUseAcademySources(question){
   const normalized=String(question||'').toLocaleLowerCase('tr-TR').normalize('NFC');
   return /\b(deniz|denizcilik|seyir|harita|hidrograf|gelgit|akıntı|set|drift|stcw|goc|gmdss|gasm|goss|navtex|pusula|rota|mevki|liman|gemi|tekne|vardiya|radar|ais|ecdis)\b/u.test(normalized);
@@ -292,9 +300,9 @@ async function answerAcademyQuestion(){
   const gestureRequest=window.SinbadPerformanceDirector?.gestureRequestForText?.(question,{lastAction:academyLastPerformedGestureAction});
   if(gestureRequest?.accepted){playAcademyGestureRequest(gestureRequest,completeAcademyVoiceTurn);return;}
   renderAcademyCharacterCue({state:'thinking',gesture:'hold',gaze:'thought'},question);
-  const useOwnerLibrary=shouldUseAcademySources(question),socialAnswer=answerAcademySocialTurn(question),result=socialAnswer||!useOwnerLibrary?null:window.SinbadAcademy?.answer(question,window.SINBAD_TRAINING_DATA);
-  const localAnswer=socialAnswer?null:await academyLocalAiAnswer(question,result?.text||'',useOwnerLibrary);
-  const answer=socialAnswer||localAnswer||result?.text||'Bu soru için doğrulanmış çevrimdışı Academy içeriğinde yeterli kaynak bulamadım ve yerel Sinbad AI şu anda erişilebilir değil. Tahmin üretmeyeceğim; lütfen soruyu daraltın veya yerel Bridge’i başlatın.';
+  const useOwnerLibrary=shouldUseAcademySources(question),capabilityAnswer=academyCharacterCapabilityAnswer(question),socialAnswer=answerAcademySocialTurn(question),result=capabilityAnswer||socialAnswer||!useOwnerLibrary?null:window.SinbadAcademy?.answer(question,window.SINBAD_TRAINING_DATA);
+  const localAnswer=capabilityAnswer||socialAnswer?null:await academyLocalAiAnswer(question,result?.text||'',useOwnerLibrary);
+  const answer=capabilityAnswer||socialAnswer||localAnswer||result?.text||'Bu soru için doğrulanmış çevrimdışı Academy içeriğinde yeterli kaynak bulamadım ve yerel Sinbad AI şu anda erişilebilir değil. Tahmin üretmeyeceğim; lütfen soruyu daraltın veya yerel Bridge’i başlatın.';
   appendAcademyMessage('sinbad',answer);speakAcademyAnswer(answer,{onComplete:completeAcademyVoiceTurn});
 }
 function updateAcademyHandsFreeButton(){

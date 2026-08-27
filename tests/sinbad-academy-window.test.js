@@ -62,7 +62,7 @@ test('standalone Academy retains course and quiz handlers',()=>{
 test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.match(academyHtml,/id="academyTeachingStage"/);assert.match(academyHtml,/captain-sinbad-board-teaching\.png/);
   assert.match(academyHtml,/sinbad-character-engine\.js\?v=82030/);
-  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82082/);assert.match(academyHtml,/academy-window\.js\?v=82092/);assert.match(academyHtml,/academy\.css\?v=82092/);
+  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82082/);assert.match(academyHtml,/academy-window\.js\?v=82093/);assert.match(academyHtml,/academy\.css\?v=82092/);
   assert.doesNotMatch(academyHtml,/id="academyTeachingStage"[^>]*hidden/);
   assert.ok(academyHtml.indexOf('id="academyModule"')<academyHtml.indexOf('</aside>'),'training controls belong to the left classroom column');
   assert.match(academyHtml,/id="academyTrackTitle" hidden/);
@@ -82,7 +82,7 @@ test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.match(academyCss,/object-position:center bottom/);
   assert.match(academyCss,/@media\(prefers-reduced-motion:reduce\)/);
   assert.match(academyCss,/\.academy-sinbad\[data-state="walking"\] img\{animation:academyWalkCycle/);
-  assert.match(worker,/sinbad-marine-v8\.20\.43-character-v1-v107/);
+  assert.match(worker,/sinbad-marine-v8\.20\.43-character-v1-v108/);
 });
 
 test('Academy keeps only classroom scenery on the right and dialogue in the left control rail',()=>{
@@ -111,7 +111,7 @@ test('Professor Sinbad classroom provides bounded text, one-shot voice and hands
 test('Professor Sinbad answers bounded social greetings without pretending they need an academic source',()=>{
   assert.match(academyApp,/function answerAcademySocialTurn\(question\)/);
   assert.match(academyApp,/new Set\(\['selam','merhaba','günaydın','iyi günler','iyi akşamlar'/);
-  assert.match(academyApp,/const useOwnerLibrary=shouldUseAcademySources\(question\),socialAnswer=answerAcademySocialTurn\(question\),result=socialAnswer\|\|!useOwnerLibrary\?null:window\.SinbadAcademy\?\.answer/);
+  assert.match(academyApp,/const useOwnerLibrary=shouldUseAcademySources\(question\),capabilityAnswer=academyCharacterCapabilityAnswer\(question\),socialAnswer=answerAcademySocialTurn\(question\),result=capabilityAnswer\|\|socialAnswer\|\|!useOwnerLibrary\?null:window\.SinbadAcademy\?\.answer/);
   assert.match(academyApp,/Sinbad Academy sınıfına hoş geldiniz/);
   assert.doesNotMatch(academyApp,/greetings\.has\(normalized\).*doğrulanmış kaynak/s);
 });
@@ -141,8 +141,10 @@ test('Academy exposes and uses the owner-local AI and library while driving the 
   assert.match(academyApp,/history:useOwnerLibrary\?\[\]:academyDialogueHistory\(\)/);
   assert.match(academyApp,/ownerLibrary:useOwnerLibrary/);
   assert.match(academyApp,/controller\.abort\(\),120000/);
-  assert.match(academyApp,/const localAnswer=socialAnswer\?null:await academyLocalAiAnswer\(question,result\?\.text\|\|'',useOwnerLibrary\)/);
   assert.match(academyApp,/shouldUseAcademySources\(question\)/);
+  assert.match(academyApp,/function academyCharacterCapabilityAnswer\(question\)/);
+  assert.match(academyApp,/Sola veya sağa dönebilir/);
+  assert.match(academyApp,/const localAnswer=capabilityAnswer\|\|socialAnswer\?null:/);
   assert.match(academyApp,/denizcilik\|seyir\|harita/);
   assert.match(academyApp,/gestureRequestForText\?\.\(question,\{lastAction:academyLastPerformedGestureAction\}\)/);
   assert.match(academyApp,/renderAcademyCharacterCue\(\{state:'thinking',gesture:'hold',gaze:'thought'\},question\)/);
@@ -179,6 +181,7 @@ test('local Bridge permits only the production site and loopback Academy origins
   assert.match(bridge,/Earlier assistant messages are not evidence/);
   assert.match(bridge,/Do not blend adjacent topics/);
   assert.match(bridge,/LANGUAGE LOCK: Reply entirely in natural Turkish/);
+  assert.match(bridge,/StandardInputEncoding = \[Text\.Encoding\]::UTF8/);
   assert.match(bridge,/offline-local-rag-miss/);
   assert.match(bridge,/\$stopWords = @\('nedir'/);
   assert.match(bridge,/if \(\$selected\.Count -ge 4\) \{ break \}/);
