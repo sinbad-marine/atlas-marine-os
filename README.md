@@ -1,4 +1,4 @@
-# Sinbad Marine v8.20.42
+# Sinbad Marine v8.20.43
 
 Sinbad Marine is an offline-capable maritime decision-support and private
 workspace application. Captain Sinbad combines deterministic local marine

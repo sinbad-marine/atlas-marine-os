@@ -8,6 +8,7 @@ const academyHtml=fs.readFileSync('academy.html','utf8');
 const academyCss=fs.readFileSync('academy.css','utf8');
 const academyApp=fs.readFileSync('academy-window.js','utf8');
 const worker=fs.readFileSync('sw.js','utf8');
+const bridge=fs.readFileSync('bridge/sinbad-bridge.ps1','utf8');
 
 test('Academy launches as a genuine separate resizable browser window',()=>{
   assert.match(html,/id="openSinbadAcademyClassroom"/);
@@ -61,7 +62,7 @@ test('standalone Academy retains course and quiz handlers',()=>{
 test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.match(academyHtml,/id="academyTeachingStage"/);assert.match(academyHtml,/captain-sinbad-board-teaching\.png/);
   assert.match(academyHtml,/sinbad-character-engine\.js\?v=82030/);
-  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82082/);assert.match(academyHtml,/academy-window\.js\?v=82082/);assert.match(academyHtml,/academy\.css\?v=82082/);
+  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82082/);assert.match(academyHtml,/academy-window\.js\?v=82086/);assert.match(academyHtml,/academy\.css\?v=82082/);
   assert.doesNotMatch(academyHtml,/id="academyTeachingStage"[^>]*hidden/);
   assert.ok(academyHtml.indexOf('id="academyModule"')<academyHtml.indexOf('</aside>'),'training controls belong to the left classroom column');
   assert.match(academyHtml,/id="academyTrackTitle" hidden/);
@@ -81,7 +82,7 @@ test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.match(academyCss,/object-position:center bottom/);
   assert.match(academyCss,/@media\(prefers-reduced-motion:reduce\)/);
   assert.match(academyCss,/\.academy-sinbad\[data-state="walking"\] img\{animation:none/);
-  assert.match(worker,/sinbad-marine-v8\.20\.42-character-v1-v100/);
+  assert.match(worker,/sinbad-marine-v8\.20\.43-character-v1-v101/);
 });
 
 test('Academy keeps only classroom scenery on the right and dialogue in the left control rail',()=>{
@@ -106,7 +107,7 @@ test('Professor Sinbad classroom provides bounded text and voice questions',()=>
 test('Professor Sinbad answers bounded social greetings without pretending they need an academic source',()=>{
   assert.match(academyApp,/function answerAcademySocialTurn\(question\)/);
   assert.match(academyApp,/new Set\(\['selam','merhaba','günaydın','iyi günler','iyi akşamlar'/);
-  assert.match(academyApp,/socialAnswer\?null:window\.SinbadAcademy\?\.answer/);
+  assert.match(academyApp,/socialAnswer\|\|!shouldUseAcademySources\(question\)\?null:window\.SinbadAcademy\?\.answer/);
   assert.match(academyApp,/Sinbad Academy sınıfına hoş geldiniz/);
   assert.doesNotMatch(academyApp,/greetings\.has\(normalized\).*doğrulanmış kaynak/s);
 });
@@ -119,6 +120,34 @@ test('Academy lesson clock measures only an explicitly opened lesson',()=>{
   assert.match(academyApp,/startAcademyLessonClock\(\);teachLessonAtBoard\(lesson\)/);
   assert.match(academyApp,/stopBoardTeaching\(\);resetAcademyLessonClock\(\)/);
   assert.match(academyCss,/\.academy-lesson-clock\{position:absolute;z-index:2/);
+});
+
+test('Academy uses the owner-local AI only after social and verified lesson answers, while driving the real character',()=>{
+  assert.match(academyApp,/const SINBAD_BRIDGE_URL='http:\/\/127\.0\.0\.1:31983'/);
+  assert.match(academyApp,/async function academyLocalAiAnswer\(question\)/);
+  assert.match(academyApp,/fetch\(`\$\{SINBAD_BRIDGE_URL\}\/ai\/chat`/);
+  assert.match(academyApp,/slice\(0,1200\)/);assert.match(academyApp,/academyDialogueHistory\(\)/);assert.match(academyApp,/slice\(-10\)/);
+  assert.match(academyApp,/useLibrary:false/);
+  assert.match(academyApp,/controller\.abort\(\),120000/);
+  assert.match(academyApp,/const localAnswer=socialAnswer\|\|result\?\.text\?null:await academyLocalAiAnswer\(question\)/);
+  assert.match(academyApp,/shouldUseAcademySources\(question\)/);
+  assert.match(academyApp,/denizcilik\|seyir\|harita/);
+  assert.match(academyApp,/academyCharacterEngine\?\.dispatch\('THINK_STARTED'\)/);
+  assert.match(academyApp,/renderAcademyCharacterCue\(\{state:'board-teaching',gesture:'explain',gaze:'audience'\},answer\)/);
+  assert.match(academyApp,/yerel Sinbad AI şu anda erişilebilir değil/);
+});
+
+test('local Bridge permits only the production site and loopback Academy origins',()=>{
+  assert.match(bridge,/Test-AllowedBrowserOrigin/);
+  assert.match(bridge,/https:\/\/sinbad-marine\.github\.io/);
+  assert.match(bridge,/127\\\.0\\\.0\\\.1\|localhost/);
+  assert.match(bridge,/AI_CHAT_ORIGIN_DENIED/);
+  assert.match(bridge,/useLibrary.*-eq \$false/);
+  assert.match(bridge,/if \(\$useLibrary\) \{ 32768 \} else \{ 4096 \}/);
+  assert.match(bridge,/if \(\$useLibrary\) \{ 512 \} else \{ 256 \}/);
+  assert.match(bridge,/return strict JSON only with one string field named answer/);
+  assert.match(bridge,/\$request\.format =/);
+  assert.match(bridge,/ConvertFrom-Json\)\.answer/);
 });
 
 test('board writing progress drives a real chalk cursor and bounded character direction cues',()=>{

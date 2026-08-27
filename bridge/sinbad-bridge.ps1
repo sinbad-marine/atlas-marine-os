@@ -89,13 +89,20 @@ function Invoke-LocalJsonPost([string]$uri, [string]$json) {
   return ($output | ConvertFrom-Json)
 }
 
+$script:ResponseOrigin = 'https://sinbad-marine.github.io'
+function Test-AllowedBrowserOrigin([string]$origin) {
+  return [string]::IsNullOrWhiteSpace($origin) -or
+    $origin -eq 'https://sinbad-marine.github.io' -or
+    $origin -match '^http://(?:127\.0\.0\.1|localhost):\d{2,5}$'
+}
+
 function Write-HttpResponse($stream, [int]$status, [string]$statusText, [string]$body, [string]$contentType = 'application/json; charset=utf-8') {
   $bodyBytes = [Text.Encoding]::UTF8.GetBytes($body)
   $headers = @(
     "HTTP/1.1 $status $statusText"
     "Content-Type: $contentType"
     "Content-Length: $($bodyBytes.Length)"
-    'Access-Control-Allow-Origin: https://sinbad-marine.github.io'
+    "Access-Control-Allow-Origin: $script:ResponseOrigin"
     'Access-Control-Allow-Methods: GET, POST, OPTIONS'
     'Access-Control-Allow-Headers: Content-Type'
     'Access-Control-Allow-Private-Network: true'
@@ -122,7 +129,7 @@ function Write-HttpBytes($stream, [int]$status, [string]$statusText, [byte[]]$bo
     "HTTP/1.1 $status $statusText"
     "Content-Type: $contentType"
     "Content-Length: $($bodyBytes.Length)"
-    'Access-Control-Allow-Origin: https://sinbad-marine.github.io'
+    "Access-Control-Allow-Origin: $script:ResponseOrigin"
     'Access-Control-Allow-Methods: GET, POST, OPTIONS'
     'Access-Control-Allow-Headers: Content-Type'
     'Access-Control-Allow-Private-Network: true'
@@ -383,18 +390,32 @@ function Invoke-SinbadLocalAi($payload) {
   $history = @($payload.history | ForEach-Object {
     @{ role=if ($_.role -eq 'assistant' -or $_.role -eq 'sinbad') {'assistant'} else {'user'}; content=[string]$_.content }
   } | Select-Object -Last 10)
-  $context = Get-LocalLibraryContext $question
+  $useLibrary = -not (($payload.PSObject.Properties.Name -contains 'useLibrary') -and ($payload.useLibrary -eq $false))
+  $context = if ($useLibrary) { Get-LocalLibraryContext $question } else { '' }
   $system = @'
 You are Captain Sinbad, the offline assistant of Atlas Marine OS. Be a warm, intelligent companion and a practical marine guide. Your primary working languages are Turkish, English and German. Detect which of these languages the user is writing in and reply naturally in the same language unless the user requests another language. You can translate accurately among Turkish, English and German, preserving maritime and technical terminology. Use complete, natural answers and conversation history. You can help with seamanship education, passage-plan drafts, checklists, documents, software and programming. Never invent live weather, current Notices to Mariners, chart corrections, port status, coordinates, depths or regulations. Clearly say when internet, current official publications or vessel-specific data are required. You are planning and decision support, not certified ECDIS. For code changes, explain the plan and create a reviewable draft; never publish, delete data, spend money or change credentials without explicit owner approval.
 When LOCAL OWNER LIBRARY EXCERPTS are supplied, reason from them, distinguish quoted evidence from your inference, and cite the source title in the answer. Never claim a source says something absent from the excerpts.
 '@
+  if (-not $useLibrary) {
+    $system += "`nFor general conversation, return strict JSON only with one string field named answer. Put only the direct final answer in that field. Never expose reasoning, translation, planning or instructions."
+  }
   $messages = @(@{ role='system'; content=$system }) + $history
   $userContent = if ($context) { "$question`n`nLOCAL OWNER LIBRARY EXCERPTS:`n$context" } else { $question }
   $messages += @{ role='user'; content=$userContent }
-  $request = @{ model=$AiModel; messages=$messages; stream=$false; think=$false; keep_alive='30m'; options=@{ temperature=0.35; num_ctx=32768 } }
+  $contextWindow = if ($useLibrary) { 32768 } else { 4096 }
+  $maxTokens = if ($useLibrary) { 512 } else { 256 }
+  $request = @{ model=$AiModel; messages=$messages; stream=$false; think=$false; keep_alive='30m'; options=@{ temperature=0.35; num_ctx=$contextWindow; num_predict=$maxTokens } }
+  if (-not $useLibrary) {
+    $request.format = @{ type='object'; properties=@{ answer=@{ type='string' } }; required=@('answer') }
+  }
   $result = Invoke-LocalJsonPost 'http://127.0.0.1:11434/api/chat' ($request | ConvertTo-Json -Depth 12 -Compress)
   if ([string]::IsNullOrWhiteSpace($result.message.content)) { throw 'The local AI returned no answer.' }
-  return @{ answer=$result.message.content; model=$result.model; mode=if ($context) {'offline-local-rag'} else {'offline-local-ai'} }
+  $answer = [string]$result.message.content
+  if (-not $useLibrary) {
+    try { $answer = [string](($answer | ConvertFrom-Json).answer) } catch { throw 'The local AI returned an invalid structured answer.' }
+  }
+  if ([string]::IsNullOrWhiteSpace($answer)) { throw 'The local AI returned no final answer.' }
+  return @{ answer=$answer; model=$result.model; mode=if ($context) {'offline-local-rag'} else {'offline-local-ai'} }
 }
 
 if (Test-Path -LiteralPath $indexPath) {
@@ -444,7 +465,13 @@ try {
         $body = [Text.Encoding]::UTF8.GetString($buffer, 0, $read)
       }
 
-      if ($method -eq 'OPTIONS') { Write-HttpResponse $stream 204 'No Content' ''; continue }
+      $requestOrigin = if ($headers.ContainsKey('origin')) { [string]$headers['origin'] } else { '' }
+      $originAllowed = Test-AllowedBrowserOrigin $requestOrigin
+      $script:ResponseOrigin = if ($originAllowed -and $requestOrigin) { $requestOrigin } else { 'https://sinbad-marine.github.io' }
+      if ($method -eq 'OPTIONS') {
+        if (-not $originAllowed) { Write-HttpResponse $stream 403 'Forbidden' (Json @{ error='ORIGIN_DENIED' }); continue }
+        Write-HttpResponse $stream 204 'No Content' ''; continue
+      }
       if ($method -eq 'GET' -and $path -eq '/status') {
         $count = @(Get-ChildItem -LiteralPath $routeRoot -Filter '*.gpx' -File -ErrorAction SilentlyContinue).Count
         Write-HttpResponse $stream 200 'OK' (Json @{ name='Sinbad Bridge'; version='0.3.0'; routes=$count; exchangeFolder=$routeRoot; libraryFolder=$libraryRoot; library=(Get-LibraryStatus); ai=(Get-OllamaStatus) }); continue
@@ -472,6 +499,7 @@ try {
         Write-HttpBytes $stream 200 'OK' $audio 'audio/wav'; continue
       }
       if ($method -eq 'POST' -and $path -eq '/ai/chat') {
+        if (-not $originAllowed) { throw 'AI_CHAT_ORIGIN_DENIED' }
         $payload = $body | ConvertFrom-Json
         Write-HttpResponse $stream 200 'OK' (Json (Invoke-SinbadLocalAi $payload)); continue
       }

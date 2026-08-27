@@ -7,6 +7,7 @@ const ACADEMY_SECTIONS=Object.freeze({
   'general-maritime-education':Object.freeze({title:'General Maritime Education',label:'GENERAL MARITIME EDUCATION',modules:Object.freeze(['general-maritime-education','chart-reading','tides-water-levels','currents-set-drift'])})
 });
 const GEOMETRY_KEY='atlas_sinbad_academy_native_window';
+const SINBAD_BRIDGE_URL='http://127.0.0.1:31983';
 const academyModuleOptions=[...byId('academyModule').options].map(option=>Object.freeze({value:option.value,label:option.textContent}));
 const academyCharacterEngine=window.SinbadCharacterEngine?.createCharacterEngine({initialState:'idle'})||null;
 const academyPerformanceDirector=window.SinbadPerformanceDirector?.createPerformanceDirector()||null;
@@ -198,6 +199,18 @@ function speakAcademyAnswer(text){
   if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined')return;
   speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text.slice(0,1800));utterance.lang='tr-TR';speechSynthesis.speak(utterance);
 }
+function academyDialogueHistory(){
+  return [...byId('academyConversation').querySelectorAll('.academy-message')].slice(-10).map(message=>Object.freeze({role:message.classList.contains('student')?'user':'assistant',content:String(message.textContent||'').slice(0,1800)}));
+}
+async function academyLocalAiAnswer(question){
+  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),120000);
+  try{
+    byId('academyVoiceStatus').textContent='Sinbad düşünüyor…';
+    const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/chat`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:String(question).slice(0,1200),language:'tr-TR',history:academyDialogueHistory(),useLibrary:false,context:{surface:'sinbad-academy',module:byId('academyModule').value}}),signal:controller.signal});
+    if(!response.ok)return null;const data=await response.json();const answer=typeof data?.answer==='string'?data.answer.trim().slice(0,6000):'';
+    if(!answer)return null;byId('academyVoiceStatus').textContent=`Local AI · ${String(data.model||'Sinbad').slice(0,32)}`;return answer;
+  }catch(error){console.warn('Academy local AI unavailable',error);byId('academyVoiceStatus').textContent='Yerel AI çevrimdışı';return null;}finally{clearTimeout(timeout);}
+}
 function answerAcademySocialTurn(question){
   const normalized=String(question||'').toLocaleLowerCase('tr-TR').normalize('NFC').replace(/[^a-zçğıöşü\s]/gu,' ').replace(/\s+/g,' ').trim();
   const greetings=new Set(['selam','merhaba','günaydın','iyi günler','iyi akşamlar','selam sinbad','merhaba sinbad','günaydın sinbad']);
@@ -205,11 +218,16 @@ function answerAcademySocialTurn(question){
   if(['nasılsın','nasılsın sinbad','nasılsınız'].includes(normalized))return 'İyiyim, teşekkür ederim. Sınıfta sizinle çalışmaya hazırım. Siz nasılsınız?';
   return null;
 }
-function answerAcademyQuestion(){
+function shouldUseAcademySources(question){
+  const normalized=String(question||'').toLocaleLowerCase('tr-TR').normalize('NFC');
+  return /\b(deniz|denizcilik|seyir|harita|hidrograf|gelgit|akıntı|set|drift|stcw|goc|gmdss|gasm|goss|navtex|pusula|rota|mevki|liman|gemi|tekne|vardiya|radar|ais|ecdis)\b/u.test(normalized);
+}
+async function answerAcademyQuestion(){
   const input=byId('academyQuestionInput'),question=input.value.trim().slice(0,1200);if(!question)return;
   appendAcademyMessage('student',question);input.value='';academyCharacterEngine?.dispatch('THINK_STARTED');
-  const socialAnswer=answerAcademySocialTurn(question),result=socialAnswer?null:window.SinbadAcademy?.answer(question,window.SINBAD_TRAINING_DATA);
-  const answer=socialAnswer||result?.text||'Bu soru için doğrulanmış çevrimdışı Academy içeriğinde yeterli kaynak bulamadım. Tahmin üretmeyeceğim; lütfen soruyu daraltın veya onaylı kaynağı Academy kütüphanesine ekleyin.';
+  const socialAnswer=answerAcademySocialTurn(question),result=socialAnswer||!shouldUseAcademySources(question)?null:window.SinbadAcademy?.answer(question,window.SINBAD_TRAINING_DATA);
+  const localAnswer=socialAnswer||result?.text?null:await academyLocalAiAnswer(question);
+  const answer=socialAnswer||result?.text||localAnswer||'Bu soru için doğrulanmış çevrimdışı Academy içeriğinde yeterli kaynak bulamadım ve yerel Sinbad AI şu anda erişilebilir değil. Tahmin üretmeyeceğim; lütfen soruyu daraltın veya yerel Bridge’i başlatın.';
   appendAcademyMessage('sinbad',answer);academyCharacterEngine?.dispatch('AUDIO_STARTED');renderAcademyCharacterCue({state:'board-teaching',gesture:'explain',gaze:'audience'},answer);speakAcademyAnswer(answer);
 }
 let academyRecognition=null;

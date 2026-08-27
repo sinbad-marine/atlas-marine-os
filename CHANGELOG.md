@@ -32,6 +32,7 @@ Bu dosya yalnız doğrulanmış depo değişikliklerini özetler. Sürüm ve yay
 - Professor Sinbad tahtanın soluna alındı; tahta sağa ve aşağı doğru büyütüldü, zemin inceltildi ve sınıf sahnesinin altındaki boş alan kaldırıldı.
 - Sınıf tahtası gerçekçi duvar oranına ve Sinbad'ın bel hizasına sınırlandı; üst duvara yalnız açılan dersin gerçek süresini sayan yuvarlak dijital ders saati eklendi.
 - Professor Sinbad, akademik kaynak gerektirmeyen sınırlı selamlaşma ve hâl-hatır ifadelerini doğal biçimde yanıtlar; olgusal ders sorularındaki doğrulanmış kaynak kapısı korunur.
+- Academy diyaloğu, sosyal ve doğrulanmış ders yanıtlarından sonra yalnız `127.0.0.1` Sinbad Bridge üzerindeki sahip-yerel AI'a düşer; düşünme, sunma ve konuşma aşamaları mevcut 2B karakter motorunu sürmeye devam eder.
 
 ### Doğrulama
 
