@@ -61,7 +61,7 @@ test('standalone Academy retains course and quiz handlers',()=>{
 test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.match(academyHtml,/id="academyTeachingStage"/);assert.match(academyHtml,/captain-sinbad-board-teaching\.png/);
   assert.match(academyHtml,/sinbad-character-engine\.js\?v=82030/);
-  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82080/);assert.match(academyHtml,/academy-window\.js\?v=82080/);assert.match(academyHtml,/academy\.css\?v=82080/);
+  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82081/);assert.match(academyHtml,/academy-window\.js\?v=82081/);assert.match(academyHtml,/academy\.css\?v=82081/);
   assert.doesNotMatch(academyHtml,/id="academyTeachingStage"[^>]*hidden/);
   assert.ok(academyHtml.indexOf('id="academyModule"')<academyHtml.indexOf('</aside>'),'training controls belong to the left classroom column');
   assert.match(academyHtml,/id="academyTrackTitle" hidden/);
@@ -73,13 +73,15 @@ test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.match(academyApp,/setTimeout\(\(\)=>\{if\(generation===academyBoardGeneration\)writeNext\(\);\},1680\)/);
   assert.match(academyApp,/generation!==academyBoardGeneration/);
   assert.match(academyApp,/function stopBoardTeaching\(\)/);
-  assert.match(academyCss,/\.academy-teaching-stage\{position:relative;min-height:clamp\(560px,70vh,820px\)/);
-  assert.match(academyCss,/\.academy-live-board\{position:absolute;z-index:1/);
-  assert.match(academyCss,/\.academy-sinbad\{position:absolute;z-index:3/);
+  assert.match(academyCss,/\.academy-teaching-stage\{position:relative;width:100%;height:100%;min-height:560px/);
+  assert.match(academyCss,/linear-gradient\(180deg,#d9d3c3 0 84%,#856c50 84% 86%,#594838 86% 100%\)/);
+  assert.match(academyCss,/\.academy-live-board\{position:absolute;z-index:1;left:17%;top:4%;width:81%;height:82%/);
+  assert.match(academyCss,/\.academy-sinbad\{position:absolute;z-index:3;left:0;bottom:\.5%/);
+  assert.doesNotMatch(academyCss,/\.academy-sinbad\{[^}]*right:0/);
   assert.match(academyCss,/object-position:center bottom/);
   assert.match(academyCss,/@media\(prefers-reduced-motion:reduce\)/);
   assert.match(academyCss,/\.academy-sinbad\[data-state="walking"\] img\{animation:none/);
-  assert.match(worker,/sinbad-marine-v8\.20\.40-character-v1-v98/);
+  assert.match(worker,/sinbad-marine-v8\.20\.41-character-v1-v99/);
 });
 
 test('Academy keeps only classroom scenery on the right and dialogue in the left control rail',()=>{

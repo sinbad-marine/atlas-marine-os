@@ -1,4 +1,4 @@
-# Sinbad Marine v8.20.40
+# Sinbad Marine v8.20.41
 
 Sinbad Marine, çevrimdışı çalışabilen bir denizcilik karar destek ve özel çalışma alanı uygulamasıdır. Captain Sinbad; deterministik yerel denizcilik hesaplarını, isteğe bağlı ve yalnız sahibin cihazında çalışan Ollama/XTTS köprüsünü, onaylı özel Atlas Cloud bilgisini ve isteğe bağlı sunucu tarafı AI sağlayıcısını bir araya getirir.
 

@@ -29,6 +29,7 @@ Bu dosya yalnız doğrulanmış depo değişikliklerini özetler. Sürüm ve yay
 - Professor Sinbad sınıfına sınırlı 2B öğretmen animasyonu, ders/quiz yüzeyi ve kaynak bulamadığında tahmin üretmeyen yazılı/sesli soru-cevap alanı eklendi.
 - Academy ders seçimi sol kumanda sütununa taşındı; büyük başlık kaldırıldı ve ana alan masasız, büyük tahtalı, önünde doğru ölçekte tam boy Professor Sinbad bulunan kalıcı sınıf sahnesine dönüştürüldü.
 - Tekrarlanan Professor Sinbad amblemi/tanıtımı ve boş bölüm-seçim bildirimi kaldırıldı; yazılı/sesli Classroom Dialogue sol kumanda sütununa alındı ve sağ çalışma alanı yalnız sınıf/tahta sahnesi olarak sadeleştirildi.
+- Professor Sinbad tahtanın soluna alındı; tahta sağa ve aşağı doğru büyütüldü, zemin inceltildi ve sınıf sahnesinin altındaki boş alan kaldırıldı.
 
 ### Doğrulama
 
