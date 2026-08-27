@@ -592,16 +592,6 @@ test('dashboard opens Captain Sinbad in an independent resizable module window',
   await expect(sinbadWindow.locator('#sinbad')).toHaveClass(/active/u);
   await expect(sinbadWindow.locator('.hero')).toBeHidden();
   await expect(sinbadWindow.locator('#sinbad')).toBeVisible();
-  const windowControls=sinbadWindow.locator('.module-window-controls');
-  await expect(windowControls).toBeVisible();
-  await expect(windowControls.locator('[data-window-action="fullscreen"]')).toBeVisible();
-  await windowControls.locator('[data-window-action="compact"]').click();
-  await expect(sinbadWindow.locator('body')).toHaveClass(/module-window-compact/u);
-  await windowControls.locator('[data-window-action="restore"]').click();
-  await expect(sinbadWindow.locator('body')).not.toHaveClass(/module-window-compact/u);
-  await windowControls.locator('[data-window-action="maximize"]').click();
-  await expect(sinbadWindow.locator('body')).toHaveClass(/module-window-maximized/u);
-  await windowControls.locator('[data-window-action="restore"]').click();
   await expect(page.locator('#sinbad')).not.toHaveClass(/active/u);
   await sinbadWindow.close();
 
