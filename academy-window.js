@@ -34,6 +34,19 @@ let academyVoiceBusy=false;
 let academyHandsFreeRestartTimer=null;
 const academyLanguage=()=>['tr-TR','en-US','de-DE'].includes(byId('academyLanguage')?.value)?byId('academyLanguage').value:'tr-TR';
 
+function setAcademyClassroomPhase(phase){
+  const stage=byId('academyTeachingStage');if(!stage)return;
+  stage.dataset.phase=phase==='lesson'?'lesson':'welcome';
+}
+
+function presentAcademyAnswerOnBoard(question,answer){
+  const stage=byId('academyTeachingStage'),title=byId('academyTeachingTitle'),board=byId('academyTeachingText'),output=byId('academyOutput');
+  if(!stage||stage.dataset.phase!=='lesson'||!title||!board)return;
+  academyBoardGeneration++;title.textContent='Soru ve yanıt';
+  board.textContent=`SORU\n${String(question||'').trim()}\n\nSİNBAD\n${String(answer||'').trim()}`;
+  board.removeAttribute('aria-hidden');if(output){output.hidden=true;output.replaceChildren();}
+}
+
 function renderAcademyLessonClock(){
   const clock=byId('academyLessonElapsed');if(!clock)return;
   const elapsed=academyLessonStartedAt===null?0:Math.max(0,Math.floor((Date.now()-academyLessonStartedAt)/1000));
@@ -124,12 +137,10 @@ function teachLessonAtBoard(lesson){
   const stage=byId('academyTeachingStage'),title=byId('academyTeachingTitle'),board=byId('academyTeachingText');
   if(!stage||!title||!board)return;
   const text=lesson.objectives.map((objective,index)=>`${index+1}. ${objective}`).join('\n\n').slice(0,500);
-  const generation=++academyBoardGeneration;stage.hidden=false;title.textContent=lesson.title;board.textContent='';
+  const generation=++academyBoardGeneration;stage.hidden=false;setAcademyClassroomPhase('lesson');title.textContent=lesson.title;board.textContent='';board.removeAttribute('aria-hidden');
   const reducedMotion=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches===true;
-  academyPerformanceDirector?.play('lesson-opening',cue=>renderAcademyCharacterCue(cue,text),{reducedMotion});
-  if(!academyPerformanceDirector)renderAcademyCharacterCue({state:'board-teaching',gesture:'point-board',gaze:'board'},text);
   if(reducedMotion){board.textContent=text;return;}
-  let index=0,lastCueBucket=-1,lastFrameKey='ready';const writeNext=()=>{if(generation!==academyBoardGeneration)return;index++;lastCueBucket=directAcademyWritingGesture(index,text,lastCueBucket);lastFrameKey=renderAcademyWritingFrame(index,text,lastFrameKey);renderAcademyBoardProgress(board,text,index,index>=text.length);if(index<text.length)setTimeout(writeNext,/\s/.test(text[index]||'')?55:/[.!?;:]/u.test(text[index]||'')?130:30);else renderAcademyCharacterCue({state:'board-teaching',gesture:'explain',gaze:'audience'},text);};setTimeout(()=>{if(generation===academyBoardGeneration)writeNext();},1680);
+  let index=0;const writeNext=()=>{if(generation!==academyBoardGeneration)return;index++;renderAcademyBoardProgress(board,text,index,index>=text.length);if(index<text.length)setTimeout(writeNext,/\s/.test(text[index]||'')?35:/[.!?;:]/u.test(text[index]||'')?90:20);};setTimeout(writeNext,240);
 }
 function writeCustomTextAtBoard(rawText){
   const stage=byId('academyTeachingStage'),title=byId('academyTeachingTitle'),board=byId('academyTeachingText');
@@ -205,7 +216,7 @@ function renderLesson(){
 function renderQuiz(){
   stopBoardTeaching();
   const category=byId('academyModule').value,items=window.SinbadAcademy?.quiz(category)||[],output=byId('academyOutput');if(!items.length)return;
-  output.hidden=false;
+  setAcademyClassroomPhase('lesson');startAcademyLessonClock();output.hidden=false;
   const item=items[Math.floor(Math.random()*items.length)];output.replaceChildren();const title=document.createElement('strong');title.textContent=item.q;output.append(title);
   if(item.kind==='source-page'){
     const image=document.createElement('img');image.className='academy-question-page';image.src=item.image;image.alt=`${item.q}, kaynak sayfa ${item.page}`;output.append(image);
@@ -227,7 +238,7 @@ function selectAcademySection(sectionId){
   byId('academyTrackTitle').textContent=section.title;byId('academyTrackLabel').textContent=section.label;
   const select=byId('academyModule');select.replaceChildren();
   academyModuleOptions.filter(option=>section.modules.includes(option.value)).forEach(option=>{const node=document.createElement('option');node.value=option.value;node.textContent=option.label;select.append(node);});
-  stopBoardTeaching();resetAcademyLessonClock();const output=byId('academyOutput');output.replaceChildren();output.hidden=true;byId('academyTeachingTitle').textContent="Professor Sinbad's board";byId('academyTeachingText').textContent='Derse hoş geldiniz.';
+  stopBoardTeaching();resetAcademyLessonClock();setAcademyClassroomPhase('welcome');const output=byId('academyOutput');output.replaceChildren();output.hidden=true;byId('academyTeachingTitle').textContent="Professor Sinbad's board";byId('academyTeachingText').textContent='Derse hoş geldiniz.';byId('academyTeachingText').setAttribute('aria-hidden','true');
 }
 function appendAcademyMessage(role,text){
   const conversation=byId('academyConversation'),message=document.createElement('p');message.className=`academy-message ${role}`;message.textContent=text;conversation.append(message);
@@ -303,7 +314,7 @@ async function answerAcademyQuestion(){
   const useOwnerLibrary=shouldUseAcademySources(question),capabilityAnswer=academyCharacterCapabilityAnswer(question),socialAnswer=answerAcademySocialTurn(question),result=capabilityAnswer||socialAnswer||!useOwnerLibrary?null:window.SinbadAcademy?.answer(question,window.SINBAD_TRAINING_DATA);
   const localAnswer=capabilityAnswer||socialAnswer?null:await academyLocalAiAnswer(question,result?.text||'',useOwnerLibrary);
   const answer=capabilityAnswer||socialAnswer||localAnswer||result?.text||'Bu soru için doğrulanmış çevrimdışı Academy içeriğinde yeterli kaynak bulamadım ve yerel Sinbad AI şu anda erişilebilir değil. Tahmin üretmeyeceğim; lütfen soruyu daraltın veya yerel Bridge’i başlatın.';
-  appendAcademyMessage('sinbad',answer);speakAcademyAnswer(answer,{onComplete:completeAcademyVoiceTurn});
+  appendAcademyMessage('sinbad',answer);presentAcademyAnswerOnBoard(question,answer);speakAcademyAnswer(answer,{onComplete:completeAcademyVoiceTurn});
 }
 function updateAcademyHandsFreeButton(){
   const button=byId('toggleAcademyHandsFree');button.setAttribute('aria-pressed',String(academyHandsFreeEnabled));button.textContent=academyHandsFreeEnabled?'🎧 Eller serbest: Açık':'🎧 Eller serbest: Kapalı';

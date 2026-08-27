@@ -62,16 +62,17 @@ test('standalone Academy retains course and quiz handlers',()=>{
 test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.match(academyHtml,/id="academyTeachingStage"/);assert.match(academyHtml,/captain-sinbad-board-teaching\.png/);
   assert.match(academyHtml,/sinbad-character-engine\.js\?v=82030/);
-  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82082/);assert.match(academyHtml,/academy-window\.js\?v=82093/);assert.match(academyHtml,/academy\.css\?v=82092/);
+  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82082/);assert.match(academyHtml,/academy-window\.js\?v=82094/);assert.match(academyHtml,/academy\.css\?v=82094/);
   assert.doesNotMatch(academyHtml,/id="academyTeachingStage"[^>]*hidden/);
   assert.ok(academyHtml.indexOf('id="academyModule"')<academyHtml.indexOf('</aside>'),'training controls belong to the left classroom column');
   assert.match(academyHtml,/id="academyTrackTitle" hidden/);
   assert.match(academyApp,/function teachLessonAtBoard\(lesson\)/);
   assert.match(academyApp,/\.join\('\\n\\n'\)\.slice\(0,500\)/);
   assert.match(academyApp,/cue\.state==='walking'\?'WALK':cue\.state==='listening'\?'LISTEN_STARTED'/);
-  assert.match(academyApp,/academyPerformanceDirector\?\.play\('lesson-opening'/);
+  assert.match(academyApp,/renderAcademyBoardProgress\(board,text,index,index>=text\.length\)/);
+  assert.doesNotMatch(academyApp,/function teachLessonAtBoard\(lesson\)[\s\S]*?academyPerformanceDirector\?\.play\('lesson-opening'/);
   assert.match(academyApp,/captain-sinbad-walk-a-v1\.png/);assert.match(academyApp,/captain-sinbad-walk-b-v1\.png/);
-  assert.match(academyApp,/setTimeout\(\(\)=>\{if\(generation===academyBoardGeneration\)writeNext\(\);\},1680\)/);
+  assert.match(academyApp,/setTimeout\(writeNext,240\)/);
   assert.match(academyApp,/generation!==academyBoardGeneration/);
   assert.match(academyApp,/function stopBoardTeaching\(\)/);
   assert.match(academyCss,/\.academy-teaching-stage\{position:relative;width:100%;height:100%;min-height:560px/);
@@ -82,7 +83,7 @@ test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.match(academyCss,/object-position:center bottom/);
   assert.match(academyCss,/@media\(prefers-reduced-motion:reduce\)/);
   assert.match(academyCss,/\.academy-sinbad\[data-state="walking"\] img\{animation:academyWalkCycle/);
-  assert.match(worker,/sinbad-marine-v8\.20\.43-character-v1-v108/);
+  assert.match(worker,/sinbad-marine-v8\.20\.43-character-v1-v109/);
 });
 
 test('Academy keeps only classroom scenery on the right and dialogue in the left control rail',()=>{
@@ -94,6 +95,16 @@ test('Academy keeps only classroom scenery on the right and dialogue in the left
   assert.match(academyHtml,/id="academyOutput"[^>]*hidden/);
   assert.match(academyApp,/output\.replaceChildren\(\);output\.hidden=true/);
   assert.match(academyCss,/\.academy-section-nav button\{[^}]*font-size:\.78rem/);
+});
+
+test('Academy transitions from the Sinbad welcome scene to a full-board lesson workspace',()=>{
+  assert.match(academyHtml,/id="academyTeachingStage" class="academy-teaching-stage" data-phase="welcome"/);
+  assert.match(academyApp,/function setAcademyClassroomPhase\(phase\)/);
+  assert.match(academyApp,/setAcademyClassroomPhase\('lesson'\);title\.textContent=lesson\.title/);
+  assert.match(academyApp,/function presentAcademyAnswerOnBoard\(question,answer\)/);
+  assert.match(academyApp,/presentAcademyAnswerOnBoard\(question,answer\)/);
+  assert.match(academyCss,/\.academy-teaching-stage\[data-phase="lesson"\].*\.academy-sinbad\{display:none\}/);
+  assert.match(academyCss,/\.academy-teaching-stage\[data-phase="lesson"\] \.academy-live-board\{inset:18px/);
 });
 
 test('Professor Sinbad classroom provides bounded text, one-shot voice and hands-free questions',()=>{
