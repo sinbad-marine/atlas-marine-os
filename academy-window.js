@@ -264,9 +264,9 @@ async function academyLocalAiAnswer(question,academyEvidence='',useOwnerLibrary=
   try{
     byId('academyVoiceStatus').textContent='Sinbad düşünüyor…';
     const groundedPrompt=academyEvidence?`Öğrencinin sorusu: ${String(question).slice(0,1200)}\n\nDoğrulanmış çevrimdışı Academy bağlamı (yalnız bu bağlama dayan, eksikse açıkça söyle):\n${String(academyEvidence).slice(0,3500)}`:String(question).slice(0,1200);
-    const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/chat`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:groundedPrompt,language:'tr-TR',history:academyDialogueHistory(),useLibrary:useOwnerLibrary,context:{surface:'sinbad-academy',module:byId('academyModule').value,grounded:Boolean(academyEvidence),ownerLibrary:useOwnerLibrary}}),signal:controller.signal});
+    const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/chat`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:groundedPrompt,libraryQuery:String(question).slice(0,1200),language:'tr-TR',history:useOwnerLibrary?[]:academyDialogueHistory(),useLibrary:useOwnerLibrary,context:{surface:'sinbad-academy',module:byId('academyModule').value,grounded:Boolean(academyEvidence),ownerLibrary:useOwnerLibrary}}),signal:controller.signal});
     if(!response.ok)return null;const data=await response.json();const answer=typeof data?.answer==='string'?data.answer.trim().slice(0,6000):'';
-    if(!answer)return null;byId('academyVoiceStatus').textContent=`Local AI · ${String(data.model||'Sinbad').slice(0,32)}`;return answer;
+    if(!answer)return null;const model=String(data.model||'Sinbad').slice(0,32);byId('academyVoiceStatus').textContent=`Local AI · ${model}`;updateAcademyRuntimePill('academyAiConnection',`Yerel AI bağlı · ${model}`);if(useOwnerLibrary)refreshAcademyRuntimeStatus();return answer;
   }catch(error){console.warn('Academy local AI unavailable',error);byId('academyVoiceStatus').textContent='Yerel AI çevrimdışı';return null;}finally{clearTimeout(timeout);}
 }
 function answerAcademySocialTurn(question){

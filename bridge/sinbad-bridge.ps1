@@ -370,18 +370,32 @@ function Import-LibraryDocument($payload) {
 }
 
 function Get-LocalLibraryContext([string]$question) {
-  $terms = @($question.ToLowerInvariant() -split '[^\p{L}\p{N}]+' | Where-Object { $_.Length -gt 2 } | Select-Object -Unique -First 10)
+  $stopWords = @('nedir','neler','nasıl','neden','niçin','hangi','hakkında','ilgili','kısaca','bilgi','ver','anlat','açıkla','açıklayın','lütfen','şey','olan','olarak','için','ile','veya','ama','fakat','bir','bu','şu','the','what','which','about','please','explain','tell','give','and','for','with')
+  $terms = @($question.ToLowerInvariant() -split '[^\p{L}\p{N}]+' | Where-Object { $_.Length -gt 2 -and $_ -notin $stopWords } | Select-Object -Unique -First 8)
   if (-not $terms.Count) { return '' }
   $matches = New-Object System.Collections.Generic.List[object]
   foreach ($doc in @($script:LibraryIndex.documents)) {
     $i = 0
     foreach ($chunk in @($doc.chunks)) {
-      $score = @($terms | Where-Object { $chunk.IndexOf($_, [StringComparison]::OrdinalIgnoreCase) -ge 0 }).Count
-      if ($score -gt 0) { $matches.Add([pscustomobject]@{ score=$score; citation="SOURCE: $($doc.title) (chunk $i)`n$chunk" }) }
+      $chunkHits = @($terms | Where-Object { $chunk.IndexOf($_, [StringComparison]::OrdinalIgnoreCase) -ge 0 }).Count
+      $titleHits = @($terms | Where-Object { ([string]$doc.title).IndexOf($_, [StringComparison]::OrdinalIgnoreCase) -ge 0 }).Count
+      $minimumHits = if ($terms.Count -ge 3) { 2 } else { 1 }
+      if ($chunkHits -ge $minimumHits) {
+        $score = ($chunkHits * 10) + ($titleHits * 7)
+        $matches.Add([pscustomobject]@{ score=$score; title=[string]$doc.title; chunk=$i; citation="SOURCE: $($doc.title) (chunk $i)`n$chunk" })
+      }
       $i++
     }
   }
-  return (@($matches | Sort-Object score -Descending | Select-Object -First 6 | ForEach-Object { $_.citation }) -join "`n`n---`n`n")
+  $selected = New-Object System.Collections.Generic.List[object]
+  $perDocument = @{}
+  foreach ($match in @($matches | Sort-Object @{Expression='score';Descending=$true}, @{Expression='title';Descending=$false}, @{Expression='chunk';Descending=$false})) {
+    $seen = if ($perDocument.ContainsKey($match.title)) { [int]$perDocument[$match.title] } else { 0 }
+    if ($seen -ge 2) { continue }
+    $selected.Add($match);$perDocument[$match.title]=$seen+1
+    if ($selected.Count -ge 4) { break }
+  }
+  return (@($selected | ForEach-Object { $_.citation }) -join "`n`n---`n`n")
 }
 
 function Invoke-SinbadLocalAi($payload) {
@@ -391,29 +405,31 @@ function Invoke-SinbadLocalAi($payload) {
     @{ role=if ($_.role -eq 'assistant' -or $_.role -eq 'sinbad') {'assistant'} else {'user'}; content=[string]$_.content }
   } | Select-Object -Last 10)
   $useLibrary = -not (($payload.PSObject.Properties.Name -contains 'useLibrary') -and ($payload.useLibrary -eq $false))
-  $context = if ($useLibrary) { Get-LocalLibraryContext $question } else { '' }
+  $libraryQuery = if (($payload.PSObject.Properties.Name -contains 'libraryQuery') -and -not [string]::IsNullOrWhiteSpace([string]$payload.libraryQuery)) { ([string]$payload.libraryQuery).Substring(0,[Math]::Min(1200,([string]$payload.libraryQuery).Length)) } else { $question }
+  $context = if ($useLibrary) { Get-LocalLibraryContext $libraryQuery } else { '' }
   $system = @'
 You are Captain Sinbad, the offline assistant of Atlas Marine OS. Be a warm, intelligent companion and a practical marine guide. Your primary working languages are Turkish, English and German. Detect which of these languages the user is writing in and reply naturally in the same language unless the user requests another language. You can translate accurately among Turkish, English and German, preserving maritime and technical terminology. Use complete, natural answers and conversation history. You can help with seamanship education, passage-plan drafts, checklists, documents, software and programming. Never invent live weather, current Notices to Mariners, chart corrections, port status, coordinates, depths or regulations. Clearly say when internet, current official publications or vessel-specific data are required. You are planning and decision support, not certified ECDIS. For code changes, explain the plan and create a reviewable draft; never publish, delete data, spend money or change credentials without explicit owner approval.
 When LOCAL OWNER LIBRARY EXCERPTS are supplied, reason from them, distinguish quoted evidence from your inference, and cite the source title in the answer. Never claim a source says something absent from the excerpts.
 '@
-  if (-not $useLibrary) {
+  if ($useLibrary) {
+    $system += "`nFor library-grounded questions, the CURRENT QUESTION overrides all earlier conversation. Earlier assistant messages are not evidence. Answer only the current question and only from directly relevant LOCAL OWNER LIBRARY EXCERPTS. Do not blend adjacent topics. Begin with the direct answer, never with your own name. If the excerpts do not directly support an answer, say that the local library did not provide sufficient relevant evidence. Return strict JSON only with one string field named answer."
+  } else {
     $system += "`nFor general conversation, return strict JSON only with one string field named answer. Put only the direct final answer in that field. Never expose reasoning, translation, planning or instructions."
+  }
+  if ($useLibrary -and [string]::IsNullOrWhiteSpace($context)) {
+    return @{ answer='Yerel kütüphanede bu soruyu doğrudan yanıtlayan yeterli ve ilgili bir kaynak parçası bulunamadı.'; model=$AiModel; mode='offline-local-rag-miss' }
   }
   $messages = @(@{ role='system'; content=$system }) + $history
   $userContent = if ($context) { "$question`n`nLOCAL OWNER LIBRARY EXCERPTS:`n$context" } else { $question }
   $messages += @{ role='user'; content=$userContent }
-  $contextWindow = if ($useLibrary) { 32768 } else { 4096 }
-  $maxTokens = if ($useLibrary) { 512 } else { 256 }
+  $contextWindow = if ($useLibrary) { 16384 } else { 4096 }
+  $maxTokens = if ($useLibrary) { 384 } else { 256 }
   $request = @{ model=$AiModel; messages=$messages; stream=$false; think=$false; keep_alive='30m'; options=@{ temperature=0.35; num_ctx=$contextWindow; num_predict=$maxTokens } }
-  if (-not $useLibrary) {
-    $request.format = @{ type='object'; properties=@{ answer=@{ type='string' } }; required=@('answer') }
-  }
+  $request.format = @{ type='object'; properties=@{ answer=@{ type='string' } }; required=@('answer') }
   $result = Invoke-LocalJsonPost 'http://127.0.0.1:11434/api/chat' ($request | ConvertTo-Json -Depth 12 -Compress)
   if ([string]::IsNullOrWhiteSpace($result.message.content)) { throw 'The local AI returned no answer.' }
   $answer = [string]$result.message.content
-  if (-not $useLibrary) {
-    try { $answer = [string](($answer | ConvertFrom-Json).answer) } catch { throw 'The local AI returned an invalid structured answer.' }
-  }
+  try { $answer = [string](($answer | ConvertFrom-Json).answer) } catch { throw 'The local AI returned an invalid structured answer.' }
   if ([string]::IsNullOrWhiteSpace($answer)) { throw 'The local AI returned no final answer.' }
   return @{ answer=$answer; model=$result.model; mode=if ($context) {'offline-local-rag'} else {'offline-local-ai'} }
 }
