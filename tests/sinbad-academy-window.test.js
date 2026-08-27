@@ -48,7 +48,7 @@ test('standalone Academy retains course and quiz handlers',()=>{
 test('native Academy owns a bounded live Sinbad board-teaching stage',()=>{
   assert.match(academyHtml,/id="academyTeachingStage"/);assert.match(academyHtml,/captain-sinbad-board-teaching\.png/);
   assert.match(academyHtml,/sinbad-character-engine\.js\?v=82030/);
-  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82073/);assert.match(academyHtml,/academy-window\.js\?v=82073/);assert.match(academyHtml,/academy\.css\?v=82073/);
+  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82074/);assert.match(academyHtml,/academy-window\.js\?v=82074/);assert.match(academyHtml,/academy\.css\?v=82074/);
   assert.match(academyApp,/function teachLessonAtBoard\(lesson\)/);
   assert.match(academyApp,/\.join\('\\n\\n'\)\.slice\(0,500\)/);
   assert.match(academyApp,/const event=cue\.state==='walking'\?'WALK':'TEACH_AT_BOARD'/);
@@ -60,7 +60,7 @@ test('native Academy owns a bounded live Sinbad board-teaching stage',()=>{
   assert.match(academyCss,/\.academy-teaching-stage\[hidden\]\{display:none\}/);
   assert.match(academyCss,/@media\(prefers-reduced-motion:reduce\)/);
   assert.match(academyCss,/\.academy-sinbad\[data-state="walking"\] img\{animation:none/);
-  assert.match(worker,/sinbad-marine-v8\.20\.33-character-v1-v91/);
+  assert.match(worker,/sinbad-marine-v8\.20\.34-character-v1-v92/);
 });
 
 test('board writing progress drives a real chalk cursor and bounded character direction cues',()=>{

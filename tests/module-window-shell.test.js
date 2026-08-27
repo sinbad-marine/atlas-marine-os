@@ -16,6 +16,12 @@ test('dashboard module launches use named resizable native windows',()=>{
 
 test('module windows remember bounded geometry and close independently',()=>{
   assert.match(app,/MODULE_WINDOW_GEOMETRY_PREFIX='atlas_module_window_geometry_v1:'/u);
+  assert.match(app,/data-window-action="compact"/u);
+  assert.match(app,/data-window-action="restore"/u);
+  assert.match(app,/data-window-action="maximize"/u);
+  assert.match(app,/data-window-action="fullscreen"/u);
+  assert.match(app,/window\.resizeTo/u);
+  assert.match(app,/document\.documentElement\.requestFullscreen/u);
   assert.match(app,/Math\.max\(520,/u);
   assert.match(app,/Math\.max\(420,/u);
   assert.match(app,/width:outerWidth,height:outerHeight,left:screenX,top:screenY/u);
@@ -27,4 +33,6 @@ test('standalone module mode removes dashboard chrome and keeps only the selecte
   assert.match(app,/activateWorkspace\(MODULE_WINDOW_ID,\{scroll:false,render:false\}\)/u);
   assert.match(css,/body\.module-window-mode\.authenticated main>:not\(\.workspace\)\{display:none!important\}/u);
   assert.match(css,/body\.module-window-mode\.authenticated \.topbar,body\.module-window-mode\.authenticated \.sinbad-float,body\.module-window-mode\.authenticated footer\{display:none!important\}/u);
+  assert.match(css,/body\.module-window-mode \.module-window-controls/u);
+  assert.match(css,/body\.module-window-mode\.module-window-compact main/u);
 });

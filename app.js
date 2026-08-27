@@ -35,6 +35,7 @@ const MODULE_WINDOW_PARAMS=new URLSearchParams(location.search);
 const MODULE_WINDOW_ID=MODULE_WINDOW_PARAMS.get(MODULE_WINDOW_PARAM)||'';
 const MODULE_WINDOW_GEOMETRY_PREFIX='atlas_module_window_geometry_v1:';
 let moduleWindowGeometryTimer=0;
+let moduleWindowRestoreGeometry=null;
 function moduleWindowGeometry(id){
   const fallback={width:Math.min(1320,Math.max(760,screen.availWidth-120)),height:Math.min(900,Math.max(560,screen.availHeight-120)),left:Math.max(0,Math.round((screen.availWidth-Math.min(1320,screen.availWidth-120))/2)),top:Math.max(0,Math.round((screen.availHeight-Math.min(900,screen.availHeight-120))/2))};
   try{
@@ -45,7 +46,36 @@ function moduleWindowGeometry(id){
 }
 function saveModuleWindowGeometry(){
   if(!MODULE_WINDOW_ID)return;
+  if(document.body.classList.contains('module-window-compact')||document.body.classList.contains('module-window-maximized'))return;
   try{localStorage.setItem(`${MODULE_WINDOW_GEOMETRY_PREFIX}${MODULE_WINDOW_ID}`,JSON.stringify({width:outerWidth,height:outerHeight,left:screenX,top:screenY}));}catch{}
+}
+function currentModuleWindowGeometry(){return {width:outerWidth,height:outerHeight,left:screenX,top:screenY}}
+function resizeModuleWindow(geometry){
+  try{window.moveTo(Math.max(0,Math.round(geometry.left)),Math.max(0,Math.round(geometry.top)));window.resizeTo(Math.round(geometry.width),Math.round(geometry.height));}catch{}
+}
+function restoreModuleWindow(){
+  document.body.classList.remove('module-window-compact','module-window-maximized');
+  resizeModuleWindow(moduleWindowRestoreGeometry||moduleWindowGeometry(MODULE_WINDOW_ID));
+  moduleWindowRestoreGeometry=null;
+}
+function compactModuleWindow(){
+  if(!document.body.classList.contains('module-window-compact'))moduleWindowRestoreGeometry=currentModuleWindowGeometry();
+  document.body.classList.remove('module-window-maximized');document.body.classList.add('module-window-compact');
+  resizeModuleWindow({width:420,height:170,left:screenX,top:screenY});
+}
+function maximizeModuleWindow(){
+  if(!document.body.classList.contains('module-window-maximized'))moduleWindowRestoreGeometry=currentModuleWindowGeometry();
+  document.body.classList.remove('module-window-compact');document.body.classList.add('module-window-maximized');
+  resizeModuleWindow({width:screen.availWidth,height:screen.availHeight,left:0,top:0});
+}
+async function toggleModuleFullscreen(){
+  try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{}
+}
+function installModuleWindowControls(){
+  const controls=document.createElement('nav');controls.className='module-window-controls';controls.setAttribute('aria-label','Pencere ölçüsü');
+  controls.innerHTML='<button type="button" data-window-action="compact" title="Simge görünümüne küçült" aria-label="Simge görünümüne küçült">−</button><button type="button" data-window-action="restore" title="Önceki ölçüye dön" aria-label="Önceki ölçüye dön">↙</button><button type="button" data-window-action="maximize" title="Pencereyi ekran alanına büyüt" aria-label="Pencereyi ekran alanına büyüt">□</button><button type="button" data-window-action="fullscreen" title="Tam ekrana geç veya tam ekrandan çık" aria-label="Tam ekrana geç veya tam ekrandan çık">⛶</button>';
+  controls.addEventListener('click',event=>{const action=event.target.closest('button')?.dataset.windowAction;if(action==='compact')compactModuleWindow();if(action==='restore')restoreModuleWindow();if(action==='maximize')maximizeModuleWindow();if(action==='fullscreen')toggleModuleFullscreen();});
+  document.body.appendChild(controls);
 }
 function openWorkspaceWindow(id,{bucket=''}={}){
   const workspace=$(id);if(!workspace)return null;
@@ -66,6 +96,7 @@ function closeWorkspaces(){if(MODULE_WINDOW_ID){saveModuleWindowGeometry();windo
 function initializeModuleWindow(){
   if(!MODULE_WINDOW_ID||!$(MODULE_WINDOW_ID))return;
   document.body.classList.add('module-window-mode');document.body.dataset.moduleWindow=MODULE_WINDOW_ID;
+  installModuleWindowControls();
   const heading=$(MODULE_WINDOW_ID).querySelector('h2')?.textContent?.trim();if(heading)document.title=`${heading} — Sinbad Marine`;
   activateWorkspace(MODULE_WINDOW_ID,{scroll:false,render:false});
   const requestedBucket=MODULE_WINDOW_PARAMS.get('bucket');
