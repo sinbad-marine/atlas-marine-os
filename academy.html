@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#0b1d2b">
   <title>Sinbad Academy — Classroom</title>
-  <link rel="stylesheet" href="./academy.css?v=82083">
+  <link rel="stylesheet" href="./academy.css?v=82084">
 </head>
 <body>
   <div class="academy-shell">
@@ -17,6 +17,10 @@
         <button type="button" data-academy-section="goc">GOC</button>
         <button type="button" data-academy-section="general-maritime-education" class="active" aria-current="page">General Maritime Education</button>
       </nav>
+      <div class="academy-window-navigation" aria-label="Window navigation">
+        <button type="button" id="academyBackButton" title="Önceki sayfa">← Geri</button>
+        <button type="button" id="academyHomeButton" title="Ana kumanda paneline dön">⌂ Ana Sayfa</button>
+      </div>
     </header>
     <div class="academy-layout">
       <aside class="academy-sidebar">
@@ -42,12 +46,17 @@
         </section>
         <section class="academy-conversation" aria-labelledby="academyConversationTitle">
           <div class="academy-conversation-head"><div><span class="eyebrow">CLASSROOM DIALOGUE</span><h2 id="academyConversationTitle">Ask Professor Sinbad</h2></div><span id="academyVoiceStatus" class="academy-status-pill">Text ready</span></div>
+          <div class="academy-runtime-status" aria-live="polite">
+            <span id="academyAiConnection" class="academy-runtime-pill pending">Yerel AI kontrol ediliyor…</span>
+            <span id="academyLibraryConnection" class="academy-runtime-pill pending">Kütüphane kontrol ediliyor…</span>
+          </div>
           <div id="academyConversation" class="academy-messages" aria-live="polite"><p class="academy-message sinbad">Konuşabilir veya yazabilirsiniz. Denizcilik eğitim yanıtları doğrulanmış çevrimdışı kaynaklara; genel sohbet ise cihazınızdaki yerel Sinbad AI'a dayanır.</p></div>
           <div class="academy-question-composer">
             <textarea id="academyQuestionInput" maxlength="1200" rows="3" placeholder="Professor Sinbad'a bu ders hakkında sorunuzu yazın…" aria-label="Question for Professor Sinbad"></textarea>
             <div class="academy-question-actions">
               <button type="button" class="btn" id="startAcademyListening">🎙️ Speak</button>
               <button type="button" class="btn" id="stopAcademyListening" disabled>Stop</button>
+              <button type="button" class="btn" id="toggleAcademyHandsFree" aria-pressed="false">🎧 Eller serbest: Kapalı</button>
               <button type="button" class="btn primary" id="askAcademyQuestion">Ask Sinbad</button>
             </div>
           </div>
@@ -77,6 +86,6 @@
   <script src="./sinbad-academy.js?v=82082"></script>
   <script src="./sinbad-character-engine.js?v=82030"></script>
   <script src="./sinbad-performance-director.js?v=82082"></script>
-  <script src="./academy-window.js?v=82088"></script>
+  <script src="./academy-window.js?v=82089"></script>
 </body>
 </html>

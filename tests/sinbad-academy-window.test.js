@@ -62,7 +62,7 @@ test('standalone Academy retains course and quiz handlers',()=>{
 test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.match(academyHtml,/id="academyTeachingStage"/);assert.match(academyHtml,/captain-sinbad-board-teaching\.png/);
   assert.match(academyHtml,/sinbad-character-engine\.js\?v=82030/);
-  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82082/);assert.match(academyHtml,/academy-window\.js\?v=82088/);assert.match(academyHtml,/academy\.css\?v=82083/);
+  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82082/);assert.match(academyHtml,/academy-window\.js\?v=82089/);assert.match(academyHtml,/academy\.css\?v=82084/);
   assert.doesNotMatch(academyHtml,/id="academyTeachingStage"[^>]*hidden/);
   assert.ok(academyHtml.indexOf('id="academyModule"')<academyHtml.indexOf('</aside>'),'training controls belong to the left classroom column');
   assert.match(academyHtml,/id="academyTrackTitle" hidden/);
@@ -82,7 +82,7 @@ test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.match(academyCss,/object-position:center bottom/);
   assert.match(academyCss,/@media\(prefers-reduced-motion:reduce\)/);
   assert.match(academyCss,/\.academy-sinbad\[data-state="walking"\] img\{animation:academyWalkCycle/);
-  assert.match(worker,/sinbad-marine-v8\.20\.43-character-v1-v103/);
+  assert.match(worker,/sinbad-marine-v8\.20\.43-character-v1-v104/);
 });
 
 test('Academy keeps only classroom scenery on the right and dialogue in the left control rail',()=>{
@@ -96,18 +96,22 @@ test('Academy keeps only classroom scenery on the right and dialogue in the left
   assert.match(academyCss,/\.academy-section-nav button\{[^}]*font-size:\.78rem/);
 });
 
-test('Professor Sinbad classroom provides bounded text and voice questions',()=>{
-  for(const id of ['academyConversation','academyQuestionInput','askAcademyQuestion','startAcademyListening','stopAcademyListening'])assert.match(academyHtml,new RegExp(`id="${id}"`));
+test('Professor Sinbad classroom provides bounded text, one-shot voice and hands-free questions',()=>{
+  for(const id of ['academyConversation','academyQuestionInput','askAcademyQuestion','startAcademyListening','stopAcademyListening','toggleAcademyHandsFree'])assert.match(academyHtml,new RegExp(`id="${id}"`));
   assert.match(academyApp,/function answerAcademyQuestion\(\)/);
   assert.match(academyApp,/SinbadAcademy\?\.answer\(question,window\.SINBAD_TRAINING_DATA\)/);
   assert.match(academyApp,/Tahmin üretmeyeceğim/);
   assert.match(academyApp,/window\.SpeechRecognition\|\|window\.webkitSpeechRecognition/);
+  assert.match(academyApp,/academyRecognition\.continuous=academyHandsFreeEnabled/);
+  assert.match(academyApp,/function setAcademyHandsFree\(enabled\)/);
+  assert.match(academyApp,/scheduleAcademyHandsFreeListening\(650\)/);
+  assert.match(academyApp,/Eller serbest: Açık/);
 });
 
 test('Professor Sinbad answers bounded social greetings without pretending they need an academic source',()=>{
   assert.match(academyApp,/function answerAcademySocialTurn\(question\)/);
   assert.match(academyApp,/new Set\(\['selam','merhaba','günaydın','iyi günler','iyi akşamlar'/);
-  assert.match(academyApp,/socialAnswer\|\|!shouldUseAcademySources\(question\)\?null:window\.SinbadAcademy\?\.answer/);
+  assert.match(academyApp,/const useOwnerLibrary=shouldUseAcademySources\(question\),socialAnswer=answerAcademySocialTurn\(question\),result=socialAnswer\|\|!useOwnerLibrary\?null:window\.SinbadAcademy\?\.answer/);
   assert.match(academyApp,/Sinbad Academy sınıfına hoş geldiniz/);
   assert.doesNotMatch(academyApp,/greetings\.has\(normalized\).*doğrulanmış kaynak/s);
 });
@@ -122,14 +126,15 @@ test('Academy lesson clock measures only an explicitly opened lesson',()=>{
   assert.match(academyCss,/\.academy-lesson-clock\{position:absolute;z-index:2/);
 });
 
-test('Academy uses the owner-local AI only after social and verified lesson answers, while driving the real character',()=>{
+test('Academy exposes and uses the owner-local AI and library while driving the real character',()=>{
   assert.match(academyApp,/const SINBAD_BRIDGE_URL='http:\/\/127\.0\.0\.1:31983'/);
-  assert.match(academyApp,/async function academyLocalAiAnswer\(question,academyEvidence=''\)/);
+  assert.match(academyApp,/async function academyLocalAiAnswer\(question,academyEvidence='',useOwnerLibrary=false\)/);
   assert.match(academyApp,/fetch\(`\$\{SINBAD_BRIDGE_URL\}\/ai\/chat`/);
   assert.match(academyApp,/slice\(0,1200\)/);assert.match(academyApp,/academyDialogueHistory\(\)/);assert.match(academyApp,/slice\(-10\)/);
-  assert.match(academyApp,/useLibrary:false/);
+  assert.match(academyApp,/useLibrary:useOwnerLibrary/);
+  assert.match(academyApp,/ownerLibrary:useOwnerLibrary/);
   assert.match(academyApp,/controller\.abort\(\),120000/);
-  assert.match(academyApp,/const localAnswer=socialAnswer\?null:await academyLocalAiAnswer\(question,result\?\.text\|\|''\)/);
+  assert.match(academyApp,/const localAnswer=socialAnswer\?null:await academyLocalAiAnswer\(question,result\?\.text\|\|'',useOwnerLibrary\)/);
   assert.match(academyApp,/shouldUseAcademySources\(question\)/);
   assert.match(academyApp,/denizcilik\|seyir\|harita/);
   assert.match(academyApp,/gestureRequestForText\?\.\(question,\{lastAction:academyLastPerformedGestureAction\}\)/);
@@ -137,6 +142,17 @@ test('Academy uses the owner-local AI only after social and verified lesson answ
   assert.match(academyApp,/createSpeechGestureDirector/);
   assert.match(academyCss,/@keyframes academyWave/);assert.match(academyCss,/@keyframes academySpeak/);
   assert.match(academyApp,/yerel Sinbad AI şu anda erişilebilir değil/);
+  for(const id of ['academyAiConnection','academyLibraryConnection'])assert.match(academyHtml,new RegExp(`id="${id}"`));
+  assert.match(academyApp,/async function refreshAcademyRuntimeStatus\(\)/);
+  assert.match(academyApp,/fetch\(`\$\{SINBAD_BRIDGE_URL\}\/status`/);
+  assert.match(academyApp,/library\.documents/);assert.match(academyApp,/library\.chunks/);
+});
+
+test('Academy has explicit back and main dashboard navigation',()=>{
+  assert.match(academyHtml,/id="academyBackButton"/);assert.match(academyHtml,/id="academyHomeButton"/);
+  assert.match(academyApp,/function returnToAcademyHome\(\)/);assert.match(academyApp,/window\.opener\.focus\(\)/);
+  assert.match(academyApp,/window\.location\.assign\('\.\/index\.html'\)/);assert.match(academyApp,/function goBackFromAcademy\(\)/);
+  assert.match(academyCss,/\.academy-window-navigation\{/);
 });
 
 test('local Bridge permits only the production site and loopback Academy origins',()=>{
