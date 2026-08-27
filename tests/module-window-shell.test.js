@@ -34,5 +34,6 @@ test('standalone module mode removes dashboard chrome and keeps only the selecte
   assert.match(css,/body\.module-window-mode\.authenticated main>:not\(\.workspace\)\{display:none!important\}/u);
   assert.match(css,/body\.module-window-mode\.authenticated \.topbar,body\.module-window-mode\.authenticated \.sinbad-float,body\.module-window-mode\.authenticated footer\{display:none!important\}/u);
   assert.match(css,/body\.module-window-mode \.module-window-controls/u);
+  assert.match(css,/right:16px;top:8px;display:flex;flex-direction:row/u);
   assert.match(css,/body\.module-window-mode\.module-window-compact main/u);
 });

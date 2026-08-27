@@ -23,7 +23,7 @@ Bu dosya yalnız doğrulanmış depo değişikliklerini özetler. Sürüm ve yay
 - Ana sayfa yalnız kumanda paneli olarak tutuldu; çalışma alanları artık panelin altında açılmaz.
 - Captain Sinbad ve diğer panel modülleri ayrı, yeniden boyutlandırılabilir tarayıcı pencerelerinde açılır.
 - Her modül penceresinin son boyut ve konumu cihazda ayrı ayrı saklanır.
-- Modül pencerelerine kompakt görünüm, önceki ölçüye dönüş, ekran alanına büyütme ve gerçek tam ekran kontrolleri eklendi.
+- Modül pencerelerinin sağ üstüne küçük yatay bir grupta kompakt görünüm, önceki ölçüye dönüş, ekran alanına büyütme ve gerçek tam ekran kontrolleri eklendi.
 
 ### Doğrulama
 
