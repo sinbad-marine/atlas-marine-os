@@ -485,7 +485,12 @@ function setAcademyHandsFree(enabled){
   byId('academyVoiceStatus').textContent='Eller serbest başlatılıyor…';startAcademyListening();
 }
 function returnToAcademyHome(){
-  saveWindowGeometry();if(window.opener&&!window.opener.closed){window.opener.focus();window.close();return;}window.location.assign('./index.html');
+  saveWindowGeometry();
+  const marineHome=new URL('./index.html',window.location.href).href;
+  if(window.opener&&!window.opener.closed){
+    try{window.opener.location.assign(marineHome);window.opener.focus();window.close();return;}catch{}
+  }
+  window.location.assign(marineHome);
 }
 function goBackFromAcademy(){
   try{const referrer=document.referrer?new URL(document.referrer):null;if(referrer?.origin===location.origin&&history.length>1){history.back();return;}}catch{}returnToAcademyHome();
