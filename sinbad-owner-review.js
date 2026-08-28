@@ -7,7 +7,7 @@
     if(appUrl.protocol!=='http:'||!LOOPBACK.has(appUrl.hostname))throw new Error('OWNER_REVIEW_REQUIRES_LOOPBACK');
     try{runtimeUrl=new URL(options.baseUrl||'http://localhost/');}catch{runtimeUrl=new URL('http://localhost/');}
     const safeFallback=!LOOPBACK.has(runtimeUrl.hostname);
-    const launchUrl=safeFallback?new URL('./owner-review-local-required.html',runtimeUrl).href:appUrl.href;
+    const launchUrl=safeFallback?new URL('./exam-review.html',runtimeUrl).href:appUrl.href;
     function launch(){
       if(typeof options.openWindow!=='function')throw new Error('OWNER_REVIEW_WINDOW_OPENER_REQUIRED');
       const child=options.openWindow(launchUrl,'sinbadOwnerQuestionReview','popup=yes,resizable=yes,scrollbars=yes,width=1500,height=940');
