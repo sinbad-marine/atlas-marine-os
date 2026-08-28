@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.29-academy-classroom-v120';
+const CACHE='sinbad-marine-v8.20.29-design-guard-v121';
 const ASSETS=[
   './',
   './index.html',
@@ -9,6 +9,9 @@ const ASSETS=[
   './academy-gasm-catalog.js',
   './sinbad-exam-intelligence-config.js',
   './sinbad-exam-intelligence.js',
+  './exam-intelligence-local-required.html',
+  './sinbad-owner-review.js',
+  './owner-review-local-required.html',
   './academy-professor.html',
   './academy-professor.css',
   './academy-professor-guidance.css',

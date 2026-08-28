@@ -654,8 +654,11 @@ test('Sinbad workspace keeps only chat and Academy as visible tabs without dupli
     assert.match(html,new RegExp(`role="tab"[^>]+data-sinbad-tab="${name}"`));
     assert.match(html,new RegExp(`role="tabpanel"[^>]+data-sinbad-panel="${name}"`));
   }
-  for(const id of ['sinbadMessages','sinbadInput','sendSinbad','passageDeparture','officialSourceList']){
+  for(const id of ['sinbadMessages','sinbadInput','sendSinbad']){
     assert.equal((html.match(new RegExp(`id="${id}"`,'g'))||[]).length,1,`${id} must remain unique`);
+  }
+  for(const id of ['passageDeparture','officialSourceList']){
+    assert.equal((html.match(new RegExp(`id="${id}"`,'g'))||[]).length,0,`${id} must stay retired`);
   }
   assert.equal((html.match(/id="academyModule"/g)||[]).length,0,'Academy controls must not remain embedded in the main app');
   assert.equal((academyHtml.match(/id="academyModule"/g)||[]).length,1,'academyModule must remain unique in the standalone classroom');

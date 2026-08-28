@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "sinbad-ui-design-contract/v1",
+  "owner": "Sinbad Marine design protection",
+  "goldenUpdatePolicy": "Golden screenshots may change only in an explicitly reviewed design pull request.",
+  "protectedFileSha256": {
+    "index.html": "5f22e071a9c70ce46b340466b12ed915dc8a97bc6108405aca479871b2293486",
+    "styles.css": "771dcb60aa5f582a093652d7860db386c626a2ba4c11b6ea4ff2a91d9992f815",
+    "academy.html": "aee24817f70dcea5a5334b4abb3ea90d2c9051b52b4cbacefbe0ca3f7e24772f",
+    "academy.css": "9d2c9e160eaa0ed785e3125cbc0f878511d49aeaac31fbff765b1fbb599937fe"
+  },
+  "dashboardWorkspaces": [
+    "admin-settings",
+    "camera-archive",
+    "captains-logbook",
+    "cloud-control",
+    "cloud-documents",
+    "crew",
+    "document-submissions",
+    "enc-viewer",
+    "fleet",
+    "location-intelligence",
+    "pilot",
+    "resources",
+    "routes",
+    "sinbad",
+    "store",
+    "studio-console"
+  ],
+  "surfaces": {
+    "dashboard": {
+      "route": "/index.html",
+      "required": [
+        "header.topbar",
+        "section.module-grid",
+        "#openSinbadAcademyHomeCard[data-open-sinbad-academy]",
+        "#sinbad",
+        "#sinbadFloat"
+      ],
+      "forbidden": []
+    },
+    "captainSinbad": {
+      "route": "/index.html?module=sinbad",
+      "required": [
+        "#sinbad .sinbad-profile",
+        "#sinbad .sinbad-avatar.large",
+        "#sinbad [data-sinbad-tab=\"chat\"]",
+        "#sinbad [data-sinbad-tab=\"academy\"]",
+        "#sinbad-panel-chat",
+        "#sinbad-panel-academy",
+        "#sinbadInput",
+        "#sendSinbad",
+        "#openSinbadAcademyClassroom[data-open-sinbad-academy]"
+      ],
+      "forbidden": [
+        "#sinbad [data-sinbad-tab=\"passage\"]",
+        "#sinbad [data-sinbad-tab=\"sources\"]",
+        "#sinbad-panel-passage",
+        "#sinbad-panel-sources",
+        "#sinbad .sinbad-tools-menu"
+      ]
+    },
+    "academy": {
+      "route": "/academy.html",
+      "required": [
+        ".academy-command-bar",
+        "[data-academy-section=\"goss-gasm\"]",
+        "[data-academy-section=\"stcw\"]",
+        "[data-academy-section=\"goc\"]",
+        "[data-academy-section=\"general-maritime-education\"]",
+        "#academyLanguage",
+        "#academyBackButton",
+        "#academyHomeButton",
+        "#academyModule",
+        "#academyConversation",
+        "#academyQuestionInput",
+        "#toggleAcademyHandsFree",
+        "#academyTeachingStage",
+        "#academyLessonElapsed",
+        "#academySinbadImage",
+        "#academyTeachingTitle",
+        "#academyTeachingText"
+      ],
+      "forbidden": []
+    }
+  }
+}

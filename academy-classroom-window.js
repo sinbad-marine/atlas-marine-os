@@ -15,6 +15,7 @@ const LANGUAGE_KEY='atlas_sinbad_academy_language';
 const SINBAD_BRIDGE_URL='http://127.0.0.1:31983';
 const SINBAD_OWNER_REVIEW_URL='http://127.0.0.1:4177/';
 const academyExamIntegration=window.SinbadExamIntelligence?.create(window.SINBAD_EXAM_INTELLIGENCE_CONFIG,{baseUrl:window.location.href,openWindow:(...args)=>window.open(...args)})||null;
+const academyOwnerReviewIntegration=window.SinbadOwnerReview?.create({appUrl:SINBAD_OWNER_REVIEW_URL},{baseUrl:window.location.href,openWindow:(...args)=>window.open(...args)})||null;
 const academyModuleOptions=[...byId('academyModule').options].map(option=>Object.freeze({value:option.value,label:option.textContent}));
 const gasmCatalog=window.SINBAD_GASM_CATALOG||Object.freeze({qualifications:[],questions:[]});
 let gasmSelection=Object.freeze({qualificationCode:null,subjectCode:null,topicCode:null,index:0,selectedOption:null});
@@ -397,7 +398,10 @@ function openExamIntelligence(){
   try{academyExamIntegration.launch();}
   catch(error){console.warn('Exam Intelligence launch unavailable',error);updateAcademyRuntimePill('academyExamConnection','Sınav motoru açılamadı','offline');}
 }
-function openOwnerQuestionReview(){window.open(SINBAD_OWNER_REVIEW_URL,'sinbadOwnerQuestionReview','popup=yes,resizable=yes,scrollbars=yes,width=1500,height=940');}
+function openOwnerQuestionReview(){
+  try{academyOwnerReviewIntegration?.launch();}
+  catch(error){console.warn('Owner question review launch unavailable',error);}
+}
 async function refreshAcademyRuntimeStatus(){
   let lastError=null;
   for(let attempt=0;attempt<2;attempt++){

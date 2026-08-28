@@ -19,8 +19,11 @@
   }
   function create(config,options={}){
     const normalized=normalize(config,options),openWindow=options.openWindow;
+    let runtimeUrl;try{runtimeUrl=new URL(options.baseUrl||'http://localhost/');}catch{runtimeUrl=new URL('http://localhost/');}
+    const usesHostedFallback=normalized.integrationMode==='LOCAL_SYNTHETIC'&&!LOOPBACK.has(runtimeUrl.hostname);
+    const launchUrl=usesHostedFallback?new URL('./exam-intelligence-local-required.html',runtimeUrl).href:normalized.appUrl;
     function publicStatus(){return freeze({configured:true,mode:normalized.integrationMode,releaseAuthorized:normalized.releaseAuthorized,studentReleaseBlocked:!normalized.releaseAuthorized,legacyAcademyQuestionsTrusted:false,learnerContextTransport:normalized.learnerContextTransport});}
-    function launch(){if(typeof openWindow!=='function')throw new Error('EXAM_WINDOW_OPENER_REQUIRED');const child=openWindow(normalized.appUrl,'sinbadExamIntelligence','popup=yes,resizable=yes,scrollbars=yes,width=1440,height=920');if(!child)throw new Error('EXAM_WINDOW_BLOCKED');return freeze({opened:true,mode:normalized.integrationMode,releaseAuthorized:normalized.releaseAuthorized});}
+    function launch(){if(typeof openWindow!=='function')throw new Error('EXAM_WINDOW_OPENER_REQUIRED');const child=openWindow(launchUrl,'sinbadExamIntelligence','popup=yes,resizable=yes,scrollbars=yes,width=1440,height=920');if(!child)throw new Error('EXAM_WINDOW_BLOCKED');return freeze({opened:true,mode:normalized.integrationMode,releaseAuthorized:normalized.releaseAuthorized,safeFallback:usesHostedFallback});}
     function handshake(target){if(!target||typeof target.postMessage!=='function')throw new Error('EXAM_TARGET_WINDOW_REQUIRED');target.postMessage(freeze({version:1,type:'SINBAD_ACADEMY_HOST_READY',capabilities:freeze(['LAUNCH','STATUS']),learnerContext:null}),normalized.appOrigin);return true;}
     function acceptsMessage(event){return Boolean(event&&event.origin===normalized.appOrigin&&event.data?.version===1&&event.data?.type==='SINBAD_EXAM_INTELLIGENCE_READY');}
     return freeze({config:normalized,publicStatus,launch,handshake,acceptsMessage});

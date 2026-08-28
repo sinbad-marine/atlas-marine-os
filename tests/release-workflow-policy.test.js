@@ -25,6 +25,9 @@ test('quality workflow runs regression artifact build and SBOM with read-only pe
 test('Pages release runs for main pushes and manual recovery with least privilege and SHA pins',()=>{
   assert.match(release,/on:\s*\n\s*push:\s*\n\s*branches:\s*\n\s*- main\s*\n\s*workflow_dispatch:/u);
   assert.match(release,/environment:\s*\n\s*name: github-pages/u);
+  assert.match(release,/release_ref:\s*\n\s*description: Exact known-good commit SHA or ref to rebuild and redeploy/u);
+  assert.match(release,/ref: \$\{\{ inputs\.release_ref \|\| github\.sha \}\}/u);
+  assert.match(release,/name: Record protected release source\s*\n\s*run: git rev-parse HEAD/u);
   assert.match(release,/attestations: write/u);
   assert.match(release,/artifact-metadata: write/u);
   assert.match(release,/FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true/u);
