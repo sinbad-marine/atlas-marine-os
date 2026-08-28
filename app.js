@@ -1745,6 +1745,10 @@ function renderAcademyQuiz(){
   item.choices.forEach((choice,index)=>{const button=document.createElement('button');button.type='button';button.className='btn';button.textContent=choice;button.addEventListener('click',()=>{[...choices.children].forEach(x=>x.disabled=true);button.classList.add(index===item.answer?'primary':'danger');const result=document.createElement('p');result.textContent=`${index===item.answer?'✓ Correct':'✗ Review'} — ${item.explanation} [${item.source}]`;output.append(result);if(index===item.answer){const progress=JSON.parse(localStorage.getItem('sinbad_academy_progress')||'{}');progress[category]={completedAt:new Date().toISOString(),status:'practised'};localStorage.setItem('sinbad_academy_progress',JSON.stringify(progress));}});choices.append(button);});
   output.append(choices);const source=document.createElement('small');source.className='academy-source';source.textContent=`Official source: ${item.source}`;output.append(source);
 }
+function isSinbadMarineQuestion(query){
+  const text=String(query||'').toLocaleLowerCase('tr-TR').normalize('NFKD').replace(/[\u0300-\u036f]/g,'');
+  return /\b(?:deniz|denizci|denizcilik|gemi|tekne|yat|liman|marina|seyir|rota|harita|pusula|radar|ais|arpa|ecdis|solas|marpol|stcw|goss|gasm|goc|colreg|imo|navtex|mayday|pan pan|kaptan|murettebat|mürettebat|vardiya|demir|demirleme|draft|su cekimi|stabilite|stability|trim|balast|ballast|can sali|filika|epirb|sart|passage|pilotage|navigation|nautical|marine|maritime|ship|vessel|boat|yacht|port|harbour|harbor|anchorage|anchor|chart|compass|seafarer|crew|certificate|publication)\b/u.test(text);
+}
 async function sinbadLocalAnswer(query){
   setSinbadThinkingStage('analyzing');
   const q=query.toLowerCase();
@@ -1761,6 +1765,17 @@ async function sinbadLocalAnswer(query){
   if(coreResult?.handled)return coreResult.answer;
   const greetings={'tr-TR':'Merhaba Kaptan. Sinbad aktif. Rotalar, denizcilik yayınları, belgeler, haritalar ve tekne operasyonları hakkında bana soru sorabilirsiniz.','en-US':'Hello Captain. Sinbad is active. Ask me about routes, marine publications, documents, charts, or yacht operations.','ru-RU':'Здравствуйте, капитан. Синбад активен. Спросите меня о маршрутах, морских изданиях, документах, картах или эксплуатации яхты.','fr-FR':'Bonjour Capitaine. Sinbad est actif. Interrogez-moi sur les routes, publications maritimes, documents, cartes ou opérations du yacht.','de-DE':'Hallo Kapitän. Sinbad ist aktiv. Fragen Sie mich zu Routen, nautischen Publikationen, Dokumenten, Karten oder Yachtbetrieb.','ar-SA':'مرحباً أيها القبطان. سندباد نشط. اسألني عن المسارات أو المنشورات البحرية أو الوثائق أو الخرائط أو عمليات اليخت.','es-ES':'Hola Capitán. Sinbad está activo. Pregúnteme sobre rutas, publicaciones marítimas, documentos, cartas u operaciones del yate.','it-IT':'Salve Capitano. Sinbad è attivo. Mi chieda informazioni su rotte, pubblicazioni nautiche, documenti, carte o operazioni dello yacht.'};
   if(/^(slm|selam|merhaba|hello|hi|hey|привет|здрав|bonjour|salut|hallo|guten|مرحبا|السلام|hola|buen|ciao|salve)[!. ]*$/iu.test(q))return greetings[language]||greetings['en-US'];
+  // General conversation belongs to the local Sinbad brain. The private
+  // maritime archive must never be searched for unrelated people, religion,
+  // everyday knowledge or other non-marine subjects because a weak lexical
+  // match can splice unrelated source text and illustrations into the reply.
+  if(!isSinbadMarineQuestion(query)){
+    sinbadPendingSourceVisuals=[];
+    const generalAnswer=await sinbadOfflineAiAnswer(query);
+    if(generalAnswer)return generalAnswer;
+    const unavailable={'tr-TR':'Bu genel soruyu yanıtlamak için yerel Sinbad AI bağlantısı şu anda gerekli. Bridge ve yerel modeli başlatıp yeniden deneyin.','en-US':'The local Sinbad AI connection is currently required for this general question. Start the Bridge and local model, then try again.'};
+    return unavailable[language]||unavailable['en-US'];
+  }
   // At sea, avoid waiting for an unreachable cloud request. When the browser
   // reports that it is offline, ask the local Ollama brain first.
   const offlineFirst=navigator.onLine===false;
@@ -1918,7 +1933,7 @@ async function sendToSinbad(text){
   try{
     const answer=groundSinbadResponseToRequestedGesture(await sinbadLocalAnswer(effectiveQuestion));
     setSinbadThinkingStage('composing');
-    const atlasVisuals=await window.SinbadVisuals?.select?.(effectiveQuestion,answer,{max:1})||[];
+    const atlasVisuals=isSinbadMarineQuestion(effectiveQuestion)?await window.SinbadVisuals?.select?.(effectiveQuestion,answer,{max:1})||[]:[];
     speakSinbad(answer,()=>addSinbadMessage('sinbad',answer,[...consumeSinbadSourceVisuals(),...atlasVisuals].slice(0,3)));
   }catch(error){
     console.error('Sinbad answer failed',error);
