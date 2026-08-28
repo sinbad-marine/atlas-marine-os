@@ -11,7 +11,8 @@ const app=fs.readFileSync('app.js','utf8');
 
 test('protected design files match the explicitly reviewed release',()=>{
   for(const [file,expected] of Object.entries(contract.protectedFileSha256)){
-    const actual=crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+    const canonical=fs.readFileSync(file,'utf8').replace(/\r\n?/gu,'\n');
+    const actual=crypto.createHash('sha256').update(canonical).digest('hex');
     assert.equal(actual,expected,`${file} changed without updating the reviewed design contract`);
   }
 });
