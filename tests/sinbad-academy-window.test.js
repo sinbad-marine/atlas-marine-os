@@ -87,7 +87,8 @@ test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.match(academyApp,/const ACADEMY_FULL_BODY_RIG_CALIBRATED=false/);
   for(const part of ['head','torso','left-arm','right-arm'])assert.match(academyHtml,new RegExp(`captain-sinbad-fullbody-rig-${part}-v2\\.png`));
   assert.match(academyCss,/\.academy-rig-torso\{[^}]*height:74%/);
-  assert.match(worker,/sinbad-marine-v8\.20\.29-academy-classroom-v120/);
+  assert.match(worker,/sinbad-marine-v8\.20\.29-design-guard-v121/);
+  for(const protectedFallback of ['exam-intelligence-local-required.html','sinbad-owner-review.js','owner-review-local-required.html'])assert.match(worker,new RegExp(protectedFallback.replaceAll('.','\\.')));
 });
 
 test('GOSS GASM exposes qualification, mandatory subject, topic and one-question test navigation',()=>{
@@ -103,6 +104,8 @@ test('GOSS GASM exposes qualification, mandatory subject, topic and one-question
   assert.match(academyApp,/insan doğrulaması tamamlanmadan kesin doğru\/yanlış sonucu gösterilmez/);
   assert.match(academyHtml,/id="openOwnerQuestionReview"/);
   assert.match(academyApp,/SINBAD_OWNER_REVIEW_URL='http:\/\/127\.0\.0\.1:4177\/'/);
+  assert.match(academyHtml,/sinbad-owner-review\.js\?v=1/);
+  assert.match(academyApp,/SinbadOwnerReview\?\.create/);
   assert.match(academyApp,/function openOwnerQuestionReview\(\)/);
 });
 

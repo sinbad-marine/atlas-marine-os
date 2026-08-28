@@ -10,6 +10,7 @@
     "academy:exam-local": "node tools/start-academy-exams.js",
     "test": "node --test sinbad-ai-core/tests/*.test.js tests/*.test.js",
     "test:web": "playwright test",
+    "test:web:update-golden": "playwright test tests/browser/visual-regression.spec.js --update-snapshots",
     "test:web:install": "playwright install chromium"
   },
   "devDependencies": {

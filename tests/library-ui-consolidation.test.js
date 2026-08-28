@@ -16,5 +16,5 @@ test('preserves source administration, cloud ingestion and chart access',()=>{
   assert.match(html,/option value="nautical-publications"/);
   assert.match(html,/data-open="document-submissions"/);
   assert.match(html,/data-cloud-bucket="nautical-charts"/);
-  assert.match(html,/Approved official source catalogue/);
+  assert.doesNotMatch(html,/Approved official source catalogue/,'retired Captain Sources panel must not return');
 });
