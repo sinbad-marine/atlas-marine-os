@@ -2,11 +2,19 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
+const crypto=require('node:crypto');
 
 const contract=JSON.parse(fs.readFileSync('config/ui-design-contract.json','utf8'));
 const index=fs.readFileSync('index.html','utf8');
 const academy=fs.readFileSync('academy.html','utf8');
 const app=fs.readFileSync('app.js','utf8');
+
+test('protected design files match the explicitly reviewed release',()=>{
+  for(const [file,expected] of Object.entries(contract.protectedFileSha256)){
+    const actual=crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+    assert.equal(actual,expected,`${file} changed without updating the reviewed design contract`);
+  }
+});
 
 test('design contract has one canonical definition for every protected surface',()=>{
   assert.equal(contract.schemaVersion,'sinbad-ui-design-contract/v1');

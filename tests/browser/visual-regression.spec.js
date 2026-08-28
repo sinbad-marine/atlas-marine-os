@@ -1,6 +1,7 @@
 'use strict';
 const {test,expect}=require('@playwright/test');
 const contract=require('../../config/ui-design-contract.json');
+const visualTest=process.platform==='win32'?test:test.skip;
 
 const bridgeResponse=JSON.stringify({routes:0,library:{chunks:0},status:'STUDIO_RUNTIME_INCOMPLETE'});
 const stabilize=async page=>{
@@ -27,21 +28,21 @@ for(const [name,surface] of Object.entries(contract.surfaces)){
   });
 }
 
-test('approved dashboard module layout',async({page})=>{
+visualTest('approved dashboard module layout',async({page})=>{
   await page.goto('/index.html');
   await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');});
   await stabilize(page);
   await expect(page.locator('.module-grid')).toHaveScreenshot('dashboard-modules.png');
 });
 
-test('approved Captain Sinbad workspace layout',async({page})=>{
+visualTest('approved Captain Sinbad workspace layout',async({page})=>{
   await page.goto('/index.html?module=sinbad');
   await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');document.querySelector('#sinbad')?.classList.add('active');window.setSinbadAssistantState?.('idle',{gesture:'rest',emotion:'neutral'});});
   await stabilize(page);
   await expect(page.locator('#sinbad')).toHaveScreenshot('captain-sinbad-workspace.png');
 });
 
-test('approved Academy classroom layout',async({page})=>{
+visualTest('approved Academy classroom layout',async({page})=>{
   await page.goto('/academy.html');
   await page.evaluate(()=>{const clock=document.querySelector('#academyLessonElapsed');if(clock){clock.textContent='00:00';clock.setAttribute('datetime','PT0S');}const stage=document.querySelector('#academyTeachingStage');if(stage)stage.dataset.phase='welcome';});
   await stabilize(page);

@@ -2,6 +2,12 @@
   "schemaVersion": "sinbad-ui-design-contract/v1",
   "owner": "Sinbad Marine design protection",
   "goldenUpdatePolicy": "Golden screenshots may change only in an explicitly reviewed design pull request.",
+  "protectedFileSha256": {
+    "index.html": "30ba7a3fdaddab2417283ae0b489b0d47440cc743e3c7eeb1e744e6d6d8fde7e",
+    "styles.css": "668435bc5824028e563b71d5f087c647653260ad7f6a16e360126a240c4fcc7d",
+    "academy.html": "279fa4a5aee6069adc95605ede8f7487ec995d9a3c94b31f38c512bcbd121287",
+    "academy.css": "9fb9b3d20d3f22ab7bfcc467358c60c61251e33d05c00891c3f5b25648462efb"
+  },
   "dashboardWorkspaces": [
     "admin-settings",
     "camera-archive",
