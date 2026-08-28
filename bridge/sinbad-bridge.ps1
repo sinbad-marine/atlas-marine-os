@@ -86,6 +86,13 @@ function Invoke-LocalJsonGet([string]$uri) {
   return ($output | ConvertFrom-Json)
 }
 
+$script:ResponseOrigin = 'https://sinbad-marine.github.io'
+function Test-AllowedBrowserOrigin([string]$origin) {
+  return [string]::IsNullOrWhiteSpace($origin) -or
+    $origin -eq 'https://sinbad-marine.github.io' -or
+    $origin -match '^http://(?:127\.0\.0\.1|localhost):\d{2,5}$'
+}
+
 function Invoke-LocalTextGet([string]$uri, [int]$timeoutSeconds = 8) {
   $parsed = [Uri]$uri
   if ($parsed.Scheme -ne 'http' -or $parsed.Host -notin @('127.0.0.1','localhost')) { throw 'LOCAL_KNOWLEDGE_ENDPOINT_DENIED' }
@@ -131,7 +138,7 @@ function Write-HttpResponse($stream, [int]$status, [string]$statusText, [string]
     "HTTP/1.1 $status $statusText"
     "Content-Type: $contentType"
     "Content-Length: $($bodyBytes.Length)"
-    'Access-Control-Allow-Origin: https://sinbad-marine.github.io'
+    "Access-Control-Allow-Origin: $script:ResponseOrigin"
     'Access-Control-Allow-Methods: GET, POST, OPTIONS'
     'Access-Control-Allow-Headers: Content-Type'
     'Access-Control-Allow-Private-Network: true'
@@ -158,7 +165,7 @@ function Write-HttpBytes($stream, [int]$status, [string]$statusText, [byte[]]$bo
     "HTTP/1.1 $status $statusText"
     "Content-Type: $contentType"
     "Content-Length: $($bodyBytes.Length)"
-    'Access-Control-Allow-Origin: https://sinbad-marine.github.io'
+    "Access-Control-Allow-Origin: $script:ResponseOrigin"
     'Access-Control-Allow-Methods: GET, POST, OPTIONS'
     'Access-Control-Allow-Headers: Content-Type'
     'Access-Control-Allow-Private-Network: true'
@@ -673,6 +680,12 @@ try {
         if ($separator -gt 0) { $headers[$line.Substring(0,$separator).Trim().ToLowerInvariant()] = $line.Substring($separator+1).Trim() }
         }
       }
+      $requestOrigin = if ($headers.ContainsKey('origin')) { [string]$headers['origin'] } else { '' }
+      if (-not (Test-AllowedBrowserOrigin $requestOrigin)) {
+        $script:ResponseOrigin = 'https://sinbad-marine.github.io'
+        Write-HttpResponse $stream 403 'Forbidden' (Json @{ error='AI_CHAT_ORIGIN_DENIED' }); continue
+      }
+      $script:ResponseOrigin = if ([string]::IsNullOrWhiteSpace($requestOrigin)) { 'https://sinbad-marine.github.io' } else { $requestOrigin }
       $body = ''
       $contentLength = if ($headers.ContainsKey('content-length')) { [int]$headers['content-length'] } else { 0 }
       if ($contentLength -gt 0) {

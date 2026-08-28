@@ -6,6 +6,8 @@
     "node": "24.19.0"
   },
   "scripts": {
+    "academy:gasm-catalog": "node tools/build-academy-gasm-catalog.mjs",
+    "academy:exam-local": "node tools/start-academy-exams.js",
     "test": "node --test sinbad-ai-core/tests/*.test.js tests/*.test.js",
     "test:web": "playwright test",
     "test:web:install": "playwright install chromium"
