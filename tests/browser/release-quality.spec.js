@@ -300,15 +300,26 @@ test('Sinbad Academy opens outside the main app as a standalone classroom window
   const classroom=await popupPromise;
   await classroom.waitForLoadState();
   await expect(classroom).toHaveURL(/academy\.html$/);
-  await expect(classroom.getByRole('heading',{name:'Navigation Classroom'})).toBeVisible();
+  await expect(classroom.locator('[data-academy-section="general-maritime-education"]')).toHaveClass(/active/);
+  await expect(classroom.locator('#academyTeachingStage')).toBeVisible();
   await expect(page.locator('#sinbadAcademyWindow')).toHaveCount(0);
-  await expect(classroom.locator('#academySinbadAvatar')).toBeVisible();
-  await expect(classroom.locator('#academyChatForm')).toBeVisible();
-  await expect(classroom.locator('#academyQuestion')).toBeVisible();
-  await expect(classroom.locator('#academyMic')).toBeVisible();
-  await classroom.locator('.academy-guided-tools > summary').click();
+  await expect(classroom.locator('#academyQuestionInput')).toBeVisible();
+  await expect(classroom.locator('#startAcademyListening')).toBeVisible();
   await classroom.locator('#startAcademyLesson').click();
-  await expect(classroom.locator('#academyOutput')).toContainText('Learning objectives');
+  await expect(classroom.locator('#academyTeachingStage')).toHaveAttribute('data-phase','lesson');
+  await expect(classroom.locator('#academyTeachingTitle')).not.toBeEmpty();
+  await classroom.close();
+});
+
+test('standalone Academy switches programmes inside the same classroom window',async({page})=>{
+  await stubBridge(page);await page.goto('/');
+  await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');});
+  const popupPromise=page.waitForEvent('popup');await page.evaluate(()=>openSinbadAcademyWindow());
+  const classroom=await popupPromise;await classroom.waitForLoadState();
+  await classroom.locator('[data-academy-section="goss-gasm"]').click();
+  await expect(classroom.locator('#academyModule')).toHaveValue('gasm-seyir-sinav');
+  await classroom.locator('[data-academy-section="stcw"]').click();
+  await expect(classroom.locator('#academyModule')).toHaveValue('stcw-foundation');
   await classroom.close();
 });
 

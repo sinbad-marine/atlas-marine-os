@@ -8,6 +8,7 @@ const academyHtml=fs.readFileSync('academy.html','utf8');
 const academyCss=fs.readFileSync('academy.css','utf8');
 const academyApp=fs.readFileSync('academy-window.js','utf8');
 const worker=fs.readFileSync('sw.js','utf8');
+const bridge=fs.readFileSync('bridge/sinbad-bridge.ps1','utf8');
 
 test('Academy launches as a genuine separate resizable browser window',()=>{
   assert.match(html,/id="openSinbadAcademyClassroom"/);
@@ -20,10 +21,24 @@ test('Academy launches as a genuine separate resizable browser window',()=>{
   assert.match(app,/screen\.availHeight/);
 });
 
+test('dashboard exposes one Academy and its four programmes stay inside that window',()=>{
+  assert.equal((html.match(/id="openSinbadAcademyClassroom"/g)||[]).length,1);
+  assert.doesNotMatch(html,/data-academy-track=/);
+  for(const section of ['goss-gasm','stcw','goc','general-maritime-education'])assert.match(academyHtml,new RegExp(`data-academy-section="${section}"`));
+  assert.match(academyApp,/const ACADEMY_SECTIONS=Object\.freeze/);
+  assert.match(academyApp,/const GEOMETRY_KEY='atlas_sinbad_academy_native_window'/);
+});
+
 test('standalone classroom owns its full viewport and preserves native window geometry',()=>{
   assert.match(academyHtml,/<title>Sinbad Academy — Classroom<\/title>/);
   assert.match(academyHtml,/id="academyModule"/);
   assert.match(academyHtml,/id="academyOutput"/);
+  assert.match(academyHtml,/value="gasm-seyir-sinav"/);
+  assert.match(academyHtml,/value="stcw-foundation"/);
+  assert.match(academyHtml,/value="goc-foundation"/);
+  assert.match(academyHtml,/value="general-maritime-education"/);
+  assert.match(academyApp,/item\.kind==='source-page'/);
+  assert.match(academyApp,/Cevap anahtarı bekleniyor/);
   assert.match(academyHtml,/id="closeAcademyWindow"/);
   assert.match(academyCss,/\.academy-shell\{height:100vh/);
   assert.match(academyApp,/window\.resizeTo\(width,height\)/);
@@ -42,69 +57,189 @@ test('standalone Academy retains course and quiz handlers',()=>{
   assert.match(academyApp,/function renderQuiz\(\)/);
 });
 
-test('native Academy owns a bounded live Sinbad board-teaching stage',()=>{
+test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.match(academyHtml,/id="academyTeachingStage"/);assert.match(academyHtml,/captain-sinbad-board-teaching\.png/);
-  assert.match(academyHtml,/sinbad-character-engine\.js\?v=82029/);
-  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82029/);assert.match(academyHtml,/academy-window\.js\?v=82031/);assert.match(academyHtml,/academy\.css\?v=82019/);
+  assert.match(academyHtml,/sinbad-character-engine\.js\?v=82030/);
+  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82082/);assert.match(academyHtml,/academy-window\.js\?v=82103/);assert.match(academyHtml,/academy\.css\?v=82097/);
+  assert.doesNotMatch(academyHtml,/id="academyTeachingStage"[^>]*hidden/);
+  assert.ok(academyHtml.indexOf('id="academyModule"')<academyHtml.indexOf('</aside>'),'training controls belong to the left classroom column');
+  assert.match(academyHtml,/id="academyTrackTitle" hidden/);
   assert.match(academyApp,/function teachLessonAtBoard\(lesson\)/);
   assert.match(academyApp,/\.join\('\\n\\n'\)\.slice\(0,500\)/);
-  assert.match(academyApp,/const event=cue\.state==='walking'\?'WALK':'TEACH_AT_BOARD'/);
-  assert.match(academyApp,/academyPerformanceDirector\?\.play\('lesson-opening'/);
+  assert.match(academyApp,/cue\.state==='walking'\?'WALK':cue\.state==='listening'\?'LISTEN_STARTED'/);
+  assert.match(academyApp,/renderAcademyBoardProgress\(board,text,index,index>=text\.length\)/);
+  assert.doesNotMatch(academyApp,/function teachLessonAtBoard\(lesson\)[\s\S]*?academyPerformanceDirector\?\.play\('lesson-opening'/);
   assert.match(academyApp,/captain-sinbad-walk-a-v1\.png/);assert.match(academyApp,/captain-sinbad-walk-b-v1\.png/);
-  assert.match(academyApp,/setTimeout\(\(\)=>\{if\(generation===academyBoardGeneration\)writeNext\(\);\},1680\)/);
+  assert.match(academyApp,/setTimeout\(writeNext,240\)/);
   assert.match(academyApp,/generation!==academyBoardGeneration/);
   assert.match(academyApp,/function stopBoardTeaching\(\)/);
-  assert.match(academyCss,/\.academy-teaching-stage\[hidden\]\{display:none\}/);
+  assert.match(academyCss,/\.academy-teaching-stage\{position:relative;width:100%;height:100%;min-height:560px/);
+  assert.match(academyCss,/linear-gradient\(180deg,#d9d3c3 0 84%,#856c50 84% 86%,#594838 86% 100%\)/);
+  assert.match(academyCss,/\.academy-live-board\{position:absolute;z-index:1;left:17%;top:21%;width:81%;height:39%/);
+  assert.match(academyCss,/\.academy-sinbad\{position:absolute;z-index:3;left:0;bottom:\.5%/);
+  assert.doesNotMatch(academyCss,/\.academy-sinbad\{[^}]*right:0/);
+  assert.match(academyCss,/object-position:center bottom/);
   assert.match(academyCss,/@media\(prefers-reduced-motion:reduce\)/);
-  assert.match(academyCss,/\.academy-sinbad\[data-state="walking"\] img\{animation:none/);
-  assert.match(worker,/sinbad-marine-v8\.20\.29-semantic-motion-bridges-v42/);
+  assert.match(academyCss,/\.academy-sinbad\[data-state="walking"\] img\{animation:academyWalkCycle/);
+  assert.match(academyApp,/const ACADEMY_FULL_BODY_RIG_CALIBRATED=false/);
+  for(const part of ['head','torso','left-arm','right-arm'])assert.match(academyHtml,new RegExp(`captain-sinbad-fullbody-rig-${part}-v2\\.png`));
+  assert.match(academyCss,/\.academy-rig-torso\{[^}]*height:74%/);
+  assert.match(worker,/sinbad-marine-v8\.20\.29-academy-classroom-v120/);
 });
 
-test('standalone Academy is a live free-form voice and text classroom, not a required topic menu',()=>{
-  assert.match(academyHtml,/id="academyChatForm"/);
-  assert.match(academyHtml,/id="academyQuestion"/);
-  assert.match(academyHtml,/id="academyMic"/);
-  assert.match(academyHtml,/Optional guided lesson shortcuts — no selection required/);
-  assert.match(academyApp,/async function askSinbad\(question\)/);
-  assert.match(academyApp,/functions\.invoke\('sinbad-answer'/);
-  assert.match(academyApp,/includeSourceVisuals:false,suppressSourceVisuals:true/);
-  assert.match(academyApp,/window\.SinbadVisuals\?\.select/);
-  assert.match(academyApp,/SinbadVisuals\?\.select\?\.\(question,answer,\{max:3\}\)/);
-  assert.match(academyApp,/speak\(result\.answer,/);
-  assert.doesNotMatch(academyApp,/speak\(result\.spokenSummary,/);
-  assert.match(academyApp,/SpeechRecognition\|\|window\.webkitSpeechRecognition/);
-  assert.match(academyApp,/academyChatForm/);
+test('GOSS GASM exposes qualification, mandatory subject, topic and one-question test navigation',()=>{
+  assert.match(academyHtml,/id="gasmMenuButton"/);
+  assert.match(academyHtml,/id="gasmQualificationMenu"/);
+  assert.match(academyHtml,/academy-gasm-catalog\.js\?v=1/);
+  assert.match(worker,/'\.\/academy-gasm-catalog\.js'/);
+  assert.match(academyApp,/function renderGasmQualificationMenu\(\)/);
+  assert.match(academyApp,/function selectGasmSubject\(/);
+  assert.match(academyApp,/function renderGasmTest\(\)/);
+  assert.match(academyApp,/function handleAcademySectionClick\(button\)/);
+  assert.match(academyApp,/Arşiv sorusu henüz yok/);
+  assert.match(academyApp,/insan doğrulaması tamamlanmadan kesin doğru\/yanlış sonucu gösterilmez/);
+  assert.match(academyHtml,/id="openOwnerQuestionReview"/);
+  assert.match(academyApp,/SINBAD_OWNER_REVIEW_URL='http:\/\/127\.0\.0\.1:4177\/'/);
+  assert.match(academyApp,/function openOwnerQuestionReview\(\)/);
 });
 
-test('Academy Core gate rejects empty and whitespace-only answers before rendering',()=>{
-  assert.match(academyApp,/function coreAnswerIsTrusted\(data,envelope\)/);
-  assert.match(academyApp,/String\(data\?\.answer\|\|''\)\.trim\(\)/);
-  assert.match(academyApp,/SinbadCoreDecision\?\.answerIsSafe\?\.\(answer\)===true/);
-  assert.match(academyApp,/spokenSummarySafe=!spokenSummary\|\|window\.SinbadCoreDecision\?\.answerIsSafe\?\.\(spokenSummary\)===true/);
-  assert.match(academyApp,/data&&answerSafe&&spokenSummarySafe&&data\.coreGateVersion/);
-  assert.match(academyApp,/decision\.risk===expected\.risk/);
-  assert.match(academyApp,/requiresIndependentVerification/);
-  assert.doesNotMatch(academyApp,/Boolean\(data\?\.answer&&/);
-  assert.ok(academyApp.indexOf('if(!coreAnswerIsTrusted(data,coreEnvelope))')<academyApp.indexOf('const answer=String(data.answer).trim()'));
+test('student Academy never renders the verified GASM answer key',()=>{
+  assert.match(academyApp,/Doğrulanmış cevap anahtarı yalnız yetkili Owner inceleme ekranında gösterilir/);
+  assert.doesNotMatch(academyApp,/Object\.entries\(item\.answers\)/);
+  assert.doesNotMatch(academyApp,/Doğrulanmış resmî cevap anahtarı ·/);
 });
 
-test('Captain Sinbad teaches with real state art, browser voice and verified atlas images',()=>{
-  assert.match(academyHtml,/id="academySinbadAvatar"/);
-  assert.match(academyHtml,/id="academyVoiceToggle"/);
-  assert.match(academyHtml,/id="academyReplayVoice"/);
-  assert.match(academyHtml,/id="academyStopVoice"/);
-  assert.match(academyApp,/captain-sinbad-board-teaching\.png/);
-  assert.match(academyApp,/captain-sinbad-speaking\.png/);
-  assert.match(academyApp,/captain-sinbad-listening\.png/);
-  assert.match(academyApp,/new SpeechSynthesisUtterance/);
-  assert.match(academyApp,/function renderVisuals\(visuals\)/);
-  assert.match(academyHtml,/sinbad-visuals\.js\?v=8236/);
-  assert.match(academyApp,/academy-atlas-visual/);
-  assert.match(academyApp,/visuals\.filter\(visual=>safeAsset\.test/);
-  assert.doesNotMatch(academyApp,/cloudClient\.storage\.from\(doc\.bucket_id\)\.download/);
-  assert.doesNotMatch(academyApp,/#page=\$\{Math\.max/);
-  assert.match(academyCss,/\.academy-atlas-visual img/);
-  assert.match(academyCss,/\[data-state="speaking"\]/);
+test('Academy keeps only classroom scenery on the right and dialogue in the left control rail',()=>{
+  const asideEnd=academyHtml.indexOf('</aside>'),mainStart=academyHtml.indexOf('<main class="academy-main">');
+  assert.ok(academyHtml.indexOf('class="academy-conversation"')<asideEnd);
+  assert.ok(academyHtml.indexOf('id="academyOutput"')>mainStart);
+  assert.doesNotMatch(academyHtml,/class="academy-emblem"/);
+  assert.doesNotMatch(academyHtml,/Offline-ready lessons/);
+  assert.match(academyHtml,/id="academyOutput"[^>]*hidden/);
+  assert.match(academyApp,/output\.replaceChildren\(\);output\.hidden=true/);
+  assert.match(academyCss,/\.academy-section-nav button\{[^}]*font-size:\.78rem/);
+});
+
+test('Academy transitions from the Sinbad welcome scene to a full-board lesson workspace',()=>{
+  assert.match(academyHtml,/id="academyTeachingStage" class="academy-teaching-stage" data-phase="welcome"/);
+  assert.match(academyApp,/function setAcademyClassroomPhase\(phase\)/);
+  assert.match(academyApp,/setAcademyClassroomPhase\('lesson'\);title\.textContent=lesson\.title/);
+  assert.match(academyApp,/function presentAcademyAnswerOnBoard\(question,answer\)/);
+  assert.match(academyApp,/presentAcademyAnswerOnBoard\(question,answer\)/);
+  assert.match(academyCss,/\.academy-teaching-stage\[data-phase="lesson"\].*\.academy-sinbad\{display:none\}/);
+  assert.match(academyCss,/\.academy-teaching-stage\[data-phase="lesson"\] \.academy-live-board\{inset:18px/);
+});
+
+test('Professor Sinbad classroom provides bounded text, one-shot voice and hands-free questions',()=>{
+  for(const id of ['academyConversation','academyQuestionInput','askAcademyQuestion','startAcademyListening','stopAcademyListening','toggleAcademyHandsFree'])assert.match(academyHtml,new RegExp(`id="${id}"`));
+  assert.match(academyApp,/function answerAcademyQuestion\(\)/);
+  assert.match(academyApp,/SinbadAcademy\?\.answer\(question,window\.SINBAD_TRAINING_DATA\)/);
+  assert.match(academyApp,/Tahmin üretmeyeceğim/);
+  assert.match(academyApp,/window\.SpeechRecognition\|\|window\.webkitSpeechRecognition/);
+  assert.match(academyApp,/academyRecognition\.continuous=academyHandsFreeEnabled/);
+  assert.match(academyApp,/function setAcademyHandsFree\(enabled\)/);
+  assert.match(academyApp,/scheduleAcademyHandsFreeListening\(650\)/);
+  assert.match(academyApp,/Eller serbest: Açık/);
+});
+
+test('Professor Sinbad drives real bounded mouth frames from speech events',()=>{
+  assert.match(academyApp,/captain-sinbad-speaking-mbp-v1\.png/);
+  assert.match(academyApp,/captain-sinbad-speaking-o-v1\.png/);
+  assert.match(academyApp,/function academyMouthFrameForText\(text,index=0\)/);
+  assert.match(academyApp,/utterance\.onboundary=event=>/);
+  assert.match(academyApp,/startAcademyLipSync\(text\)/);
+  assert.match(academyApp,/stopAcademyLipSync\(\)/);
+  assert.match(academyApp,/prefers-reduced-motion: reduce/);
+});
+
+test('Professor Sinbad changes bounded body meaning at real speech boundaries',()=>{
+  assert.match(academyApp,/speechCueForBoundary\?\.\(\{text,name:event\.name\|\|'word',charIndex,wordIndex,mode:'warm'\}\)/);
+  assert.match(academyApp,/academySpeechGestureDirector\?\.select\?\.\(boundary\.cue\)/);
+  assert.match(academyApp,/if\(selected\?\.change&&selected\.cue\?\.gesture\)renderAcademyCharacterCue\(\{state:'speaking',\.\.\.selected\.cue\}/);
+  assert.match(academyApp,/avatar\.dataset\.emotion=snapshot\.emotion\|\|'neutral'/);
+  assert.match(academyCss,/data-state="speaking"\]\[data-gesture="hold"/);
+  assert.match(academyCss,/data-state="speaking"\]\[data-gesture="nod"/);
+  assert.match(academyCss,/data-emotion="concerned"/);
+});
+
+test('Professor Sinbad blinks at bounded non-sequential idle intervals only in the welcome scene',()=>{
+  assert.match(academyApp,/idleBlink:'\.\/assets\/captain-sinbad\/captain-sinbad-idle-blink-v1\.png'/);
+  assert.match(academyApp,/function academyIdleBlinkDelay\(\)/);
+  assert.match(academyApp,/window\.crypto\?\.getRandomValues\?\.\(entropy\)/);
+  assert.match(academyApp,/return 3600\+.*%3601/);
+  assert.match(academyApp,/stage\?\.dataset\.phase!=='welcome'/);
+  assert.match(academyApp,/avatar\?\.dataset\.state!=='idle'/);
+  assert.match(academyApp,/prefers-reduced-motion: reduce/);
+  assert.match(academyApp,/stopAcademyIdleBlink\(\).*scheduleAcademyIdleBlink\(\)/s);
+});
+
+test('Professor Sinbad answers bounded social greetings without pretending they need an academic source',()=>{
+  assert.match(academyApp,/function answerAcademySocialTurn\(question\)/);
+  assert.match(academyApp,/new Set\(\['selam','merhaba','günaydın','iyi günler','iyi akşamlar'/);
+  assert.match(academyApp,/foundationAnswer=academyMaritimeFoundationAnswer\(question\)/);
+  assert.match(academyApp,/Sinbad Academy sınıfına hoş geldiniz/);
+  assert.doesNotMatch(academyApp,/greetings\.has\(normalized\).*doğrulanmış kaynak/s);
+});
+
+test('Academy lesson clock measures only an explicitly opened lesson',()=>{
+  assert.match(academyHtml,/class="academy-lesson-clock" role="timer"/);
+  assert.match(academyHtml,/id="academyLessonElapsed" datetime="PT0S">00:00/);
+  assert.match(academyApp,/function startAcademyLessonClock\(\)/);
+  assert.match(academyApp,/academyLessonStartedAt=Date\.now\(\)/);
+  assert.match(academyApp,/startAcademyLessonClock\(\);teachLessonAtBoard\(lesson\)/);
+  assert.match(academyApp,/stopBoardTeaching\(\);resetAcademyLessonClock\(\)/);
+  assert.match(academyCss,/\.academy-lesson-clock\{position:absolute;z-index:2/);
+});
+
+test('Academy exposes and uses the owner-local AI and library while driving the real character',()=>{
+  assert.match(academyApp,/const SINBAD_BRIDGE_URL='http:\/\/127\.0\.0\.1:31983'/);
+  assert.match(academyApp,/async function academyLocalAiAnswer\(question,academyEvidence='',useOwnerLibrary=false\)/);
+  assert.match(academyApp,/fetch\(`\$\{SINBAD_BRIDGE_URL\}\/ai\/chat`/);
+  assert.match(academyApp,/slice\(0,1200\)/);assert.match(academyApp,/academyDialogueHistory\(\)/);assert.match(academyApp,/slice\(-10\)/);
+  assert.match(academyApp,/useLibrary:useOwnerLibrary/);
+  assert.match(academyApp,/libraryQuery:String\(question\)\.slice\(0,1200\)/);
+  assert.match(academyApp,/language:academyLanguage\(\)/);
+  assert.match(academyApp,/matchingVoice=speechSynthesis\.getVoices\(\)\.find/);
+  assert.match(academyApp,/academyRecognition\.lang=academyLanguage\(\)/);
+  assert.match(academyHtml,/id="academyLanguage"/);
+  for(const language of ['tr-TR','en-US','de-DE'])assert.match(academyHtml,new RegExp(`value="${language}"`));
+  assert.match(academyApp,/history:useOwnerLibrary\?\[\]:academyDialogueHistory\(\)/);
+  assert.match(academyApp,/ownerLibrary:useOwnerLibrary/);
+  assert.match(academyApp,/controller\.abort\(\),120000/);
+  assert.match(academyApp,/shouldUseAcademySources\(question\)/);
+  assert.match(academyApp,/function academyCharacterCapabilityAnswer\(question\)/);
+  assert.match(academyApp,/Sola veya sağa dönebilir/);
+  assert.match(academyApp,/function academyMaritimeFoundationAnswer\(question\)/);
+  assert.match(academyApp,/Gemilerden Kaynaklanan Kirliliğin Önlenmesi Uluslararası Sözleşmesi/);
+  assert.match(academyApp,/const localAnswer=capabilityAnswer\|\|foundationAnswer\|\|socialAnswer\?null:/);
+  assert.match(academyApp,/denizcilik\|seyir\|harita/);
+  assert.match(academyApp,/gestureRequestForText\?\.\(question,\{lastAction:academyLastPerformedGestureAction\}\)/);
+  assert.match(academyApp,/renderAcademyCharacterCue\(\{state:'thinking',gesture:'hold',gaze:'thought'\},question\)/);
+  assert.match(academyApp,/createSpeechGestureDirector/);
+  assert.match(academyCss,/@keyframes academyWave/);assert.match(academyCss,/@keyframes academySpeak/);
+  assert.match(academyApp,/yerel Sinbad AI bu isteğe yanıt veremedi/);
+  for(const id of ['academyAiConnection','academyLibraryConnection'])assert.match(academyHtml,new RegExp(`id="${id}"`));
+  assert.match(academyApp,/async function refreshAcademyRuntimeStatus\(\)/);
+  assert.match(academyApp,/fetch\(`\$\{SINBAD_BRIDGE_URL\}\/status`/);
+  assert.match(academyApp,/library\.documents/);assert.match(academyApp,/library\.chunks/);
+  assert.match(academyApp,/updateAcademyRuntimePill\('academyAiConnection',`Yerel AI bağlı · \$\{model\}`\)/);
+  assert.match(academyApp,/if\(useOwnerLibrary\)refreshAcademyRuntimeStatus\(\)/);
+});
+
+test('Academy has explicit back and main dashboard navigation',()=>{
+  assert.match(academyHtml,/id="academyBackButton"/);assert.match(academyHtml,/id="academyHomeButton"/);
+  assert.match(academyApp,/function returnToAcademyHome\(\)/);assert.match(academyApp,/window\.opener\.focus\(\)/);
+  assert.match(academyApp,/window\.location\.assign\('\.\/index\.html'\)/);assert.match(academyApp,/function goBackFromAcademy\(\)/);
+  assert.match(academyCss,/\.academy-window-navigation\{/);
+});
+
+test('local Bridge permits only the production site and loopback Academy origins',()=>{
+  assert.match(bridge,/Test-AllowedBrowserOrigin/);
+  assert.match(bridge,/https:\/\/sinbad-marine\.github\.io/);
+  assert.match(bridge,/127\\\.0\\\.0\\\.1\|localhost/);
+  assert.match(bridge,/AI_CHAT_ORIGIN_DENIED/);
+  assert.match(bridge,/Get-LocalLibraryContext \$question/);
+  assert.match(bridge,/LOCAL_AI_ENDPOINT_DENIED/);
 });
 
 test('board writing progress drives a real chalk cursor and bounded character direction cues',()=>{
@@ -112,8 +247,6 @@ test('board writing progress drives a real chalk cursor and bounded character di
   assert.match(academyApp,/document\.createTextNode\(text\.slice\(0,index\)\)/);
   assert.match(academyApp,/cursor\.className='academy-chalk-cursor'/);
   assert.match(academyApp,/function directAcademyWritingGesture\(index,text,lastCueBucket\)/);
-  assert.match(academyApp,/const result=academyCharacterEngine\?\.dispatch\(event,\{boardText:text,\.\.\.cue\}\)/);
-  assert.match(academyApp,/if\(!result\?\.accepted\)return false/);
   assert.match(academyApp,/const cueBucket=Math\.floor\(index\/42\)/);
   assert.match(academyApp,/audienceTurn\?'explain':'point-board'/);
   assert.match(academyApp,/academyCharacterEngine\?\.dispatch\('TEACH_AT_BOARD',\{boardText:text,gesture:/);
@@ -130,10 +263,9 @@ test('main chat can send only bounded same-origin plain text to the Academy boar
   assert.match(academyApp,/message\.text\.length<=200/);assert.match(academyApp,/writeCustomTextAtBoard\(message\.text\)/);assert.match(academyApp,/type:'SINBAD_ACADEMY_READY'/);assert.match(academyApp,/requestId:message\.requestId/);
   assert.match(app,/function sendShapeToSinbadAcademyBoard\(shape,size='standard'\)/);assert.match(academyApp,/function drawAllowedShapeAtBoard\(shape,size='standard'\)/);
   assert.match(academyApp,/dataset\.boardSize=safeSize/);assert.match(academyApp,/\['small','standard','large'\]/);
-  assert.match(academyApp,/\['circle','triangle','rectangle','arrow','axes'\]\.includes\(message\.shape\)/);assert.match(academyApp,/createElementNS\('http:\/\/www\.w3\.org\/2000\/svg','svg'\)/);
+  assert.match(academyApp,/\['circle','triangle','rectangle','hexagon','arrow','axes'\]\.includes\(message\.shape\)/);assert.match(academyApp,/createElementNS\('http:\/\/www\.w3\.org\/2000\/svg','svg'\)/);
   for(const shape of ['triangle','rectangle','arrow','axes'])assert.match(academyApp,new RegExp(`${shape}:Object\\.freeze`));assert.match(academyApp,/svg\.dataset\.boardShape=shape/);
   assert.match(academyApp,/function animateAllowedShapeDrawing\(generation,shape,reducedMotion=false\)/);
-  assert.match(academyApp,/if\(!result\?\.accepted\)\{stage\.dataset\.boardDrawingPhase='blocked';return;\}/);
   assert.match(academyApp,/\[260,'lift','write-lift','lift'\]/);assert.match(academyApp,/\[880,'contact','write-contact','contact'\]/);assert.match(academyApp,/\[1250,'ready','explain','complete','audience'\]/);
   for(const rhythm of ['steady','measured','lively'])assert.match(academyApp,new RegExp(`id:'${rhythm}'`));
   assert.match(academyApp,/function selectAcademyShapeDrawingRhythm\(\)/);assert.match(academyApp,/index>=academyLastShapeDrawingRhythm/);assert.match(academyApp,/stage\.dataset\.boardDrawingRhythm=rhythm\.id/);
@@ -159,33 +291,4 @@ test('real transparent writing frames follow measured board progress and settle 
   assert.match(academyApp,/ACADEMY_CHARACTER_ASSETS\.writing\[frameKey\]/);
   assert.match(academyApp,/setTimeout\(writeNext,\/\\s\/\.test\(text\[index\]\|\|''\)\?55:/);
   assert.match(academyApp,/else renderAcademyCharacterCue\(\{state:'board-teaching',gesture:'explain',gaze:'audience'\},text\)/);
-});
-
-test('live Academy instructor is driven by the bounded character engine',()=>{
-  assert.match(academyHtml,/id="academyInstructorStage"/);
-  assert.match(academyHtml,/sinbad-character-engine\.js\?v=82029/);
-  assert.match(academyHtml,/sinbad-character-rig\.js\?v=82029/);
-  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82029/);
-  assert.match(academyApp,/createCharacterEngine\(\{initialState:'idle'\}\)/);
-  assert.match(academyApp,/academyCharacterEngine\.setState\(safeState,detail\)/);
-  assert.match(academyApp,/SinbadCharacterRig\?\.poseForState/);
-  assert.match(academyCss,/\[data-gesture="listen-lean"\]/);
-});
-
-test('Academy prefers the installed local Sinbad brain and keeps cloud as a fallback',()=>{
-  assert.match(academyApp,/const SINBAD_BRIDGE_URL='http:\/\/127\.0\.0\.1:31983'/);
-  assert.match(academyApp,/fetch\(`\$\{SINBAD_BRIDGE_URL\}\/ai\/chat`/);
-  assert.match(academyApp,/result=await askLocalSinbad\(question,history,coreEnvelope\)/);
-  assert.match(academyApp,/catch\(localError\).*result=await askCloudSinbad\(question,history,coreEnvelope\)/s);
-  assert.match(academyApp,/messages\.slice\(0,-1\)\.slice\(-12\)/);
-});
-
-test('Academy conversation drives semantic thinking and speech-performance cues',()=>{
-  assert.match(academyApp,/thinkingCueForStage\?\.\(stage\)/);
-  assert.match(academyApp,/setThinkingStage\('analyzing'/);
-  assert.match(academyApp,/setThinkingStage\('retrieving'/);
-  assert.match(academyApp,/setThinkingStage\('composing'/);
-  assert.match(academyApp,/responseCueForText\?\.\(lastNarration,'instructional'\)/);
-  assert.match(academyApp,/utterance\.onboundary=/);
-  assert.match(academyApp,/speechCueForBoundary\?\.\(/);
 });

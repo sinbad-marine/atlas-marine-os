@@ -1,10 +1,13 @@
-const CACHE='sinbad-marine-v8.20.29-semantic-motion-bridges-v42';
+const CACHE='sinbad-marine-v8.20.29-academy-classroom-v120';
 const ASSETS=[
   './',
   './index.html',
   './academy.html',
   './academy.css',
   './academy-window.js',
+  './academy-gasm-catalog.js',
+  './sinbad-exam-intelligence-config.js',
+  './sinbad-exam-intelligence.js',
   './academy-professor.html',
   './academy-professor.css',
   './academy-professor-guidance.css',

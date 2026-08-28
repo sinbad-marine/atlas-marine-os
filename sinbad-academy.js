@@ -37,6 +37,7 @@
   }
 
   const MODULES={
+    'general-maritime-education':{title:'General Maritime Education',objectives:['Emniyetli denizciliğin temel eğitim alanlarını ve aralarındaki ilişkiyi tanımak','Seyir, gemicilik, haberleşme, emniyet ve çevre koruma konularında resmî kaynak kullanımını açıklamak','Eğitim bilgisini güncel operasyonel bilgi ve kaptan sorumluluğundan ayırmak'],practice:'Bir sefer öncesi eğitim kontrol listesi hazırlayın; her başlık için kullanılacak güncel resmî kaynağı ayrıca belirtin.'},
     'chart-reading':{title:'Harita Okuma ve Hidrografi',objectives:['Harita ölçeği ve kullanım amacını ayırt etmek','Semboller, datumlar ve derinlikleri doğru yorumlamak','Haritanın güncellik ve kullanım sınırlarını açıklamak'],practice:'Bir eğitim haritasında ölçek, pusula gülü, derinlik datumunu ve üç seyir tehlikesini belirleyin.'},
     'tides-water-levels':{title:'Gelgit ve Su Seviyesi',objectives:['Flood, ebb ve slack kavramlarını ayırt etmek','Gelgit yüksekliği ile emniyetli su derinliği ilişkisini kurmak','Yerel resmî tahmin verisinin gerekliliğini açıklamak'],practice:'Bir liman geçişi için tahminî gelgit penceresi oluşturun; sonucu operasyonel tahmin değil eğitim örneği olarak etiketleyin.'},
     'currents-set-drift':{title:'Akıntı, Set ve Drift',objectives:['Set ve drift etkisini açıklamak','Yer rotası ile su içindeki rota farkını ayırt etmek','Akıntı verisinin zaman ve konuma bağlı olduğunu göstermek'],practice:'Bir eğitim senaryosunda akıntının COG/SOG üzerindeki etkisini vektör çizimiyle gösterin.'},
