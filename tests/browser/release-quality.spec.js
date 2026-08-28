@@ -552,6 +552,7 @@ test('guided tutor shows evidence-bound objective progress without replacing the
 });
 
 test('student can interrupt Sinbad narration with a name-gated follow-up',async({page})=>{
+  await page.route('http://127.0.0.1:31983/**',route=>route.abort());
   await page.addInitScript(()=>{
     class FakeRecognition{
       constructor(){(window.__recognitions||(window.__recognitions=[])).push(this);this.started=0;}

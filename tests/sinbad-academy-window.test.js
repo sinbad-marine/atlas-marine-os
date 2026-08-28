@@ -6,7 +6,7 @@ const html=fs.readFileSync('index.html','utf8');
 const app=fs.readFileSync('app.js','utf8');
 const academyHtml=fs.readFileSync('academy.html','utf8');
 const academyCss=fs.readFileSync('academy.css','utf8');
-const academyApp=fs.readFileSync('academy-window.js','utf8');
+const academyApp=fs.readFileSync('academy-classroom-window.js','utf8');
 const worker=fs.readFileSync('sw.js','utf8');
 const bridge=fs.readFileSync('bridge/sinbad-bridge.ps1','utf8');
 
@@ -60,7 +60,7 @@ test('standalone Academy retains course and quiz handlers',()=>{
 test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.match(academyHtml,/id="academyTeachingStage"/);assert.match(academyHtml,/captain-sinbad-board-teaching\.png/);
   assert.match(academyHtml,/sinbad-character-engine\.js\?v=82030/);
-  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82082/);assert.match(academyHtml,/academy-window\.js\?v=82103/);assert.match(academyHtml,/academy\.css\?v=82097/);
+  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82082/);assert.match(academyHtml,/academy-classroom-window\.js\?v=82104/);assert.match(academyHtml,/academy\.css\?v=82097/);
   assert.doesNotMatch(academyHtml,/id="academyTeachingStage"[^>]*hidden/);
   assert.ok(academyHtml.indexOf('id="academyModule"')<academyHtml.indexOf('</aside>'),'training controls belong to the left classroom column');
   assert.match(academyHtml,/id="academyTrackTitle" hidden/);

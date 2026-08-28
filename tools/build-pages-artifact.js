@@ -13,7 +13,7 @@ const VISUAL_RELEASE_FILES=Object.freeze(fs.readdirSync(visualSourceRoot,{recurs
   .map(entry=>`visual-library/assets/${path.relative(visualSourceRoot,path.join(entry.parentPath,entry.name)).split(path.sep).join('/')}`)
   .sort());
 const RELEASE_FILES=Object.freeze([
-  'index.html','styles.css','app.js','academy.html','academy.css','academy-window.js','academy-gasm-catalog.js',
+  'index.html','styles.css','app.js','academy.html','academy.css','academy-window.js','academy-classroom-window.js','academy-gasm-catalog.js',
   'academy-professor.html','academy-professor.css','academy-professor-guidance.css','academy-professor.js','sinbad-professor.js','academy-professor-v3.html','academy-professor-handsfree.css','academy-professor-handsfree.js','academy-professor-native.html','academy-professor-native.css','academy-professor-native.js','sinbad-speaker-identity.js','sinbad-tutor-orchestrator.js','sinbad-tutor-controller.js','pilot-data.js','route-data.js',
   'resource-data.js','store-data.js',
   'official-publications.js','sinbad-core.js','sinbad-visuals.js','sinbad-training-data.js',

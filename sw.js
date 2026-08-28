@@ -5,6 +5,7 @@ const ASSETS=[
   './academy.html',
   './academy.css',
   './academy-window.js',
+  './academy-classroom-window.js',
   './academy-gasm-catalog.js',
   './sinbad-exam-intelligence-config.js',
   './sinbad-exam-intelligence.js',
