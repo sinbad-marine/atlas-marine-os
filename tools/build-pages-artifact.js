@@ -7,10 +7,10 @@ const crypto=require('node:crypto');
 
 const ROOT=path.resolve(__dirname,'..');
 const RELEASE_FILES=Object.freeze([
-  'index.html','styles.css','app.js','academy.html','academy.css','academy-window.js','pilot-data.js','route-data.js',
+  'index.html','styles.css','app.js','academy.html','academy.css','academy-window.js','academy-gasm-catalog.js','pilot-data.js','route-data.js',
   'resource-data.js','store-data.js',
   'official-publications.js','sinbad-core.js','sinbad-training-data.js',
-  'sinbad-academy.js','sinbad-navigation.js','sinbad-navigation-assistant.js',
+  'sinbad-academy.js','sinbad-exam-intelligence-config.js','sinbad-exam-intelligence.js','sinbad-navigation.js','sinbad-navigation-assistant.js',
   'sinbad-route-visualizer.js','sinbad-character-engine.js','sinbad-character-rig.js','sinbad-viseme-planner.js',
   'sinbad-performance-director.js','sw.js','manifest.webmanifest','icon-192.png',
   'icon-512.png','vendor/ol-10.6.1.js','vendor/ol-10.6.1.css',
@@ -30,6 +30,8 @@ const RELEASE_FILES=Object.freeze([
   ,'assets/captain-sinbad/captain-sinbad-rig-face-closed-v1.png','assets/captain-sinbad/captain-sinbad-rig-face-wide-v1.png'
   ,'assets/captain-sinbad/captain-sinbad-rig-face-round-v1.png'
   ,'assets/captain-sinbad/captain-sinbad-rig-expression-concerned-v1.png','assets/captain-sinbad/captain-sinbad-rig-expression-delighted-v1.png'
+  ,'assets/captain-sinbad/captain-sinbad-fullbody-rig-head-v2.png','assets/captain-sinbad/captain-sinbad-fullbody-rig-torso-v2.png'
+  ,'assets/captain-sinbad/captain-sinbad-fullbody-rig-left-arm-v2.png','assets/captain-sinbad/captain-sinbad-fullbody-rig-right-arm-v2.png'
 ]);
 const SOURCE_OVERRIDES=Object.freeze({
   'vendor/supabase-2.112.3.js':'node_modules/@supabase/supabase-js/dist/umd/supabase.js',

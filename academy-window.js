@@ -9,8 +9,16 @@ const ACADEMY_SECTIONS=Object.freeze({
 const GEOMETRY_KEY='atlas_sinbad_academy_native_window';
 const LANGUAGE_KEY='atlas_sinbad_academy_language';
 const SINBAD_BRIDGE_URL='http://127.0.0.1:31983';
+const SINBAD_OWNER_REVIEW_URL='http://127.0.0.1:4177/';
+const academyExamIntegration=window.SinbadExamIntelligence?.create(window.SINBAD_EXAM_INTELLIGENCE_CONFIG,{baseUrl:window.location.href,openWindow:(...args)=>window.open(...args)})||null;
 const academyModuleOptions=[...byId('academyModule').options].map(option=>Object.freeze({value:option.value,label:option.textContent}));
+const gasmCatalog=window.SINBAD_GASM_CATALOG||Object.freeze({qualifications:[],questions:[]});
+let gasmSelection=Object.freeze({qualificationCode:null,subjectCode:null,topicCode:null,index:0,selectedOption:null});
 const academyCharacterEngine=window.SinbadCharacterEngine?.createCharacterEngine({initialState:'idle'})||null;
+const academyCharacterRig=window.SinbadCharacterRig||null;
+// Fail closed: the generated full-body layers remain offline until their
+// shoulder, neck and stage coordinates pass wide-screen visual acceptance.
+const ACADEMY_FULL_BODY_RIG_CALIBRATED=false;
 const academyPerformanceDirector=window.SinbadPerformanceDirector?.createPerformanceDirector()||null;
 const academySpeechGestureDirector=window.SinbadPerformanceDirector?.createSpeechGestureDirector()||null;
 const ACADEMY_CHARACTER_ASSETS=Object.freeze({
@@ -18,9 +26,11 @@ const ACADEMY_CHARACTER_ASSETS=Object.freeze({
   writing:Object.freeze({ready:'./assets/captain-sinbad/captain-sinbad-board-teaching.png',contact:'./assets/captain-sinbad/captain-sinbad-writing-contact-v1.png',lift:'./assets/captain-sinbad/captain-sinbad-writing-lift-v1.png'}),
   'board-teaching':'./assets/captain-sinbad/captain-sinbad-board-teaching.png',
   idle:'./assets/captain-sinbad/captain-sinbad-idle-master.png',
+  idleBlink:'./assets/captain-sinbad/captain-sinbad-idle-blink-v1.png',
   listening:'./assets/captain-sinbad/captain-sinbad-listening.png',
   thinking:'./assets/captain-sinbad/captain-sinbad-thinking.png',
   speaking:'./assets/captain-sinbad/captain-sinbad-speaking.png',
+  speakingFrames:Object.freeze({closed:'./assets/captain-sinbad/captain-sinbad-speaking.png',open:'./assets/captain-sinbad/captain-sinbad-speaking-mbp-v1.png',round:'./assets/captain-sinbad/captain-sinbad-speaking-o-v1.png'}),
   laughing:'./assets/captain-sinbad/captain-sinbad-laughing-v1.png'
 });
 let academyBoardGeneration=0;
@@ -32,18 +42,21 @@ let academyRecognition=null;
 let academyHandsFreeEnabled=false;
 let academyVoiceBusy=false;
 let academyHandsFreeRestartTimer=null;
+let academyLipSyncTimer=null;
+let academyIdleBlinkTimer=null;
 const academyLanguage=()=>['tr-TR','en-US','de-DE'].includes(byId('academyLanguage')?.value)?byId('academyLanguage').value:'tr-TR';
 
 function setAcademyClassroomPhase(phase){
   const stage=byId('academyTeachingStage');if(!stage)return;
   stage.dataset.phase=phase==='lesson'?'lesson':'welcome';
+  if(stage.dataset.phase==='lesson')byId('academyTeachingText')?.replaceChildren();
 }
 
 function presentAcademyAnswerOnBoard(question,answer){
   const stage=byId('academyTeachingStage'),title=byId('academyTeachingTitle'),board=byId('academyTeachingText'),output=byId('academyOutput');
   if(!stage||stage.dataset.phase!=='lesson'||!title||!board)return;
   academyBoardGeneration++;title.textContent='Soru ve yanıt';
-  board.textContent=`SORU\n${String(question||'').trim()}\n\nSİNBAD\n${String(answer||'').trim()}`;
+  board.replaceChildren();board.textContent=`SORU\n${String(question||'').trim()}\n\nSİNBAD\n${String(answer||'').trim()}`;
   board.removeAttribute('aria-hidden');if(output){output.hidden=true;output.replaceChildren();}
 }
 
@@ -72,15 +85,68 @@ let academyLastShapeDrawingRhythm=-1;
 academyCharacterEngine?.subscribe(snapshot=>{
   const avatar=byId('academyTeachingStage')?.querySelector('.academy-sinbad');if(!avatar)return;
   avatar.dataset.state=snapshot.state;avatar.dataset.gesture=snapshot.gesture;avatar.dataset.gaze=snapshot.gaze;
+  avatar.dataset.emotion=snapshot.emotion||'neutral';avatar.style.setProperty('--academy-motion-energy',String(Math.max(0,Math.min(1,Number(snapshot.energy)||0))));
 });
 
 function renderAcademyCharacterCue(cue,text){
+  stopAcademyIdleBlink();
   const event=cue.state==='walking'?'WALK':cue.state==='listening'?'LISTEN_STARTED':cue.state==='thinking'?'THINK_STARTED':cue.state==='laughing'?'LAUGH':cue.state==='speaking'?'AUDIO_STARTED':cue.state==='idle'?'READY':'TEACH_AT_BOARD';
   academyCharacterEngine?.dispatch(event,{boardText:text,...cue});
   const image=byId('academySinbadImage'),avatar=byId('academyTeachingStage')?.querySelector('.academy-sinbad');if(!image||!avatar)return;
+  const rigActive=ACADEMY_FULL_BODY_RIG_CALIBRATED&&['idle','speaking'].includes(cue.state)&&Boolean(academyCharacterRig);avatar.dataset.rigActive=String(rigActive);
+  if(rigActive){
+    const pose=academyCharacterRig.poseForPerformance?.(cue.state,cue.gesture||'rest',{energy:Math.max(0,Math.min(1,Number(cue.energy)||.24))})||academyCharacterRig.poseForState?.(cue.state);
+    const balanced=pose?.accepted?academyCharacterRig.balanceControlsForPerformance?.(cue.state,cue.gesture||'rest',pose.controls):null;
+    const css=academyCharacterRig.cssVariables?.(balanced?.accepted?balanced.controls:pose?.controls);
+    if(css?.accepted)Object.entries(css.variables).forEach(([name,value])=>avatar.style.setProperty(name,value));
+  }
   const stateAsset=cue.state==='walking'?ACADEMY_CHARACTER_ASSETS.walking[cue.walkFrame===1?1:0]:ACADEMY_CHARACTER_ASSETS[cue.state];
   image.src=stateAsset||ACADEMY_CHARACTER_ASSETS['board-teaching'];
   avatar.dataset.motionRevision=String((Number(avatar.dataset.motionRevision)||0)+1);
+  if(cue.state==='idle')scheduleAcademyIdleBlink();
+}
+
+function academyIdleBlinkDelay(){
+  const entropy=new Uint32Array(1);window.crypto?.getRandomValues?.(entropy);
+  return 3600+(entropy[0]||Math.floor(Math.random()*3601))%3601;
+}
+function scheduleAcademyIdleBlink(){
+  stopAcademyIdleBlink();
+  const stage=byId('academyTeachingStage'),avatar=stage?.querySelector('.academy-sinbad');
+  if(document.hidden||stage?.dataset.phase!=='welcome'||avatar?.dataset.state!=='idle'||window.matchMedia?.('(prefers-reduced-motion: reduce)').matches===true)return;
+  academyIdleBlinkTimer=setTimeout(()=>{
+    const image=byId('academySinbadImage');
+    if(!image||document.hidden||stage.dataset.phase!=='welcome'||avatar.dataset.state!=='idle')return;
+    if(avatar.dataset.rigActive!=='true')image.src=ACADEMY_CHARACTER_ASSETS.idleBlink;avatar.dataset.microMotion='blink';
+    academyIdleBlinkTimer=setTimeout(()=>{if(avatar.dataset.state==='idle'){if(avatar.dataset.rigActive!=='true')image.src=ACADEMY_CHARACTER_ASSETS.idle;delete avatar.dataset.microMotion;scheduleAcademyIdleBlink();}},125);
+  },academyIdleBlinkDelay());
+}
+function stopAcademyIdleBlink(){
+  if(academyIdleBlinkTimer!==null)clearTimeout(academyIdleBlinkTimer);academyIdleBlinkTimer=null;
+  const avatar=byId('academyTeachingStage')?.querySelector('.academy-sinbad');if(avatar)delete avatar.dataset.microMotion;
+}
+
+function academyMouthFrameForText(text,index=0){
+  const token=String(text||'').slice(Math.max(0,index),Math.max(0,index)+3).toLocaleLowerCase('tr-TR');
+  if(/[oöuü]/u.test(token))return 'round';
+  if(/[aeıi]/u.test(token))return 'open';
+  return 'closed';
+}
+function renderAcademyMouthFrame(frame){
+  const image=byId('academySinbadImage'),avatar=byId('academyTeachingStage')?.querySelector('.academy-sinbad');
+  if(!image||!avatar||avatar.dataset.state!=='speaking')return;
+  const safeFrame=Object.hasOwn(ACADEMY_CHARACTER_ASSETS.speakingFrames,frame)?frame:'closed';
+  if(avatar.dataset.rigActive!=='true')image.src=ACADEMY_CHARACTER_ASSETS.speakingFrames[safeFrame];avatar.dataset.mouthFrame=safeFrame;
+}
+function startAcademyLipSync(text){
+  stopAcademyLipSync();
+  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches===true)return;
+  const frames=['closed','open','round','open'];let index=0;
+  renderAcademyMouthFrame('open');academyLipSyncTimer=setInterval(()=>{renderAcademyMouthFrame(frames[index%frames.length]);index++;},145);
+}
+function stopAcademyLipSync(){
+  if(academyLipSyncTimer!==null)clearInterval(academyLipSyncTimer);academyLipSyncTimer=null;
+  const avatar=byId('academyTeachingStage')?.querySelector('.academy-sinbad');if(avatar)delete avatar.dataset.mouthFrame;
 }
 
 function settleAcademyCharacter(generation,delay=1400){
@@ -106,7 +172,7 @@ function playAcademyGestureRequest(request,onComplete=null){
 }
 
 function preloadAcademyCharacterAssets(){
-  [...ACADEMY_CHARACTER_ASSETS.walking,...Object.values(ACADEMY_CHARACTER_ASSETS.writing),...Object.values(ACADEMY_CHARACTER_ASSETS).filter(value=>typeof value==='string')].forEach(src=>{const image=new Image();image.src=src;});
+  [...ACADEMY_CHARACTER_ASSETS.walking,...Object.values(ACADEMY_CHARACTER_ASSETS.writing),...Object.values(ACADEMY_CHARACTER_ASSETS.speakingFrames),...Object.values(ACADEMY_CHARACTER_ASSETS).filter(value=>typeof value==='string')].forEach(src=>{const image=new Image();image.src=src;});
 }
 
 function renderAcademyBoardProgress(board,text,index,finished=false){
@@ -205,6 +271,54 @@ function restoreWindowGeometry(){
     window.moveTo(Math.max(screen.availLeft||0,Number(saved.left)||0),Math.max(screen.availTop||0,Number(saved.top)||0));
   }catch{}
 }
+const gasmBranchLabel=branch=>branch==='DECK'?'Güverte yeterlilikleri':branch==='ENGINE'?'Makine yeterlilikleri':'Elektro-teknik yeterlilikleri';
+const gasmTopicLabel=code=>String(code||'GENEL').split('_').map(word=>word.charAt(0)+word.slice(1).toLocaleLowerCase('tr-TR')).join(' ');
+function gasmQuestionsFor({qualificationCode,subjectCode,topicCode=null}){
+  return gasmCatalog.questions.filter(item=>item.subjectCode===subjectCode&&item.qualificationCodes.includes(qualificationCode)&&(!topicCode||item.topicCode===topicCode));
+}
+function renderGasmQualificationMenu(){
+  const root=byId('gasmQualificationList');if(!root)return;root.replaceChildren();
+  for(const branch of ['DECK','ENGINE','ELECTRO_TECHNICAL']){
+    const qualifications=gasmCatalog.qualifications.filter(item=>item.branch===branch);if(!qualifications.length)continue;
+    const group=document.createElement('details');group.className='gasm-branch';group.open=branch==='DECK';
+    const summary=document.createElement('summary');summary.textContent=gasmBranchLabel(branch);group.append(summary);
+    qualifications.forEach(qualification=>{
+      const detail=document.createElement('details');detail.className='gasm-qualification';detail.dataset.qualificationCode=qualification.code;
+      const heading=document.createElement('summary');heading.innerHTML=`<span>${qualification.name}</span><small>${qualification.subjects.length} zorunlu ders</small>`;detail.append(heading);
+      const subjects=document.createElement('div');subjects.className='gasm-subjects';
+      qualification.subjects.forEach(subject=>{
+        const count=gasmQuestionsFor({qualificationCode:qualification.code,subjectCode:subject.code}).length;
+        const button=document.createElement('button');button.type='button';button.className='gasm-subject-button';button.dataset.qualificationCode=qualification.code;button.dataset.subjectCode=subject.code;
+        button.innerHTML=`<span>${subject.code} · ${subject.name}</span><b>%${subject.passScore}</b><small>${count?`${count} arşiv sorusu`:'Arşiv sorusu henüz yok'}</small>`;
+        button.addEventListener('click',()=>selectGasmSubject(qualification,subject,button));subjects.append(button);
+      });detail.append(subjects);group.append(detail);
+    });root.append(group);
+  }
+}
+function selectGasmSubject(qualification,subject,button){
+  document.querySelectorAll('.gasm-subject-button').forEach(node=>node.classList.toggle('active',node===button));
+  gasmSelection=Object.freeze({qualificationCode:qualification.code,subjectCode:subject.code,topicCode:null,index:0,selectedOption:null});
+  const questions=gasmQuestionsFor(gasmSelection),topics=[...new Set(questions.map(item=>item.topicCode))].sort();
+  const detail=button.closest('.gasm-qualification'),old=detail.querySelector('.gasm-topic-list');old?.remove();
+  if(topics.length){const list=document.createElement('div');list.className='gasm-topic-list';const all=document.createElement('button');all.type='button';all.className='gasm-topic-button';all.textContent=`Tüm konular (${questions.length})`;all.addEventListener('click',()=>openGasmTest(null));list.append(all);topics.forEach(topic=>{const topicQuestions=gasmQuestionsFor({...gasmSelection,topicCode:topic}),node=document.createElement('button');node.type='button';node.className='gasm-topic-button';node.textContent=`${gasmTopicLabel(topic)} (${topicQuestions.length})`;node.addEventListener('click',()=>openGasmTest(topic));list.append(node);});detail.append(list);}
+  openGasmTest(null);
+}
+function openGasmTest(topicCode){
+  gasmSelection=Object.freeze({...gasmSelection,topicCode,index:0,selectedOption:null});renderGasmTest();
+}
+function renderGasmTest(){
+  stopBoardTeaching();setAcademyClassroomPhase('lesson');startAcademyLessonClock();
+  const output=byId('academyOutput');output.hidden=false;output.replaceChildren();
+  const qualification=gasmCatalog.qualifications.find(item=>item.code===gasmSelection.qualificationCode),subject=qualification?.subjects.find(item=>item.code===gasmSelection.subjectCode),questions=gasmQuestionsFor(gasmSelection);
+  const header=document.createElement('div');header.className='gasm-test-header';header.innerHTML=`<div><strong>${qualification?.name||'GOSS / GASM'}</strong><br><small>${subject?`${subject.code} · ${subject.name} · Geçme notu %${subject.passScore}`:'Ders seçiniz'}</small></div><b>${questions.length?`${Math.min(gasmSelection.index+1,questions.length)} / ${questions.length}`:'0 soru'}</b>`;output.append(header);
+  if(!questions.length){const empty=document.createElement('p');empty.className='gasm-empty';empty.textContent='Bu yeterlilik ve ders için sınıflandırılmış arşiv sorusu henüz bulunmuyor. Sistem soru uydurmayacak; doğrulanmış içerik eklendiğinde test burada otomatik açılacak.';output.append(empty);return;}
+  const item=questions[gasmSelection.index%questions.length],card=document.createElement('article');card.className='gasm-question-card';
+  const meta=document.createElement('div');meta.className='gasm-question-meta';meta.innerHTML=`<span>Konu: ${gasmTopicLabel(item.topicCode)}</span><span>·</span><span>Kaynak: ${item.sourceClass}</span><span>·</span><span>İçerik: ${item.reviewStatus==='APPROVED'?'onaylı':'insan kontrolü bekliyor'}</span>`;card.append(meta);
+  const stem=document.createElement('h2');stem.textContent=item.stem;card.append(stem);
+  const choices=document.createElement('div');choices.className='academy-choices';item.options.forEach(option=>{const button=document.createElement('button');button.type='button';button.className='gasm-option';button.innerHTML=`<b>${option.label}</b><span></span>`;button.lastElementChild.textContent=option.text;button.addEventListener('click',()=>{choices.querySelectorAll('button').forEach(node=>node.classList.remove('selected'));button.classList.add('selected');gasmSelection=Object.freeze({...gasmSelection,selectedOption:option.label});});choices.append(button);});card.append(choices);
+  const note=document.createElement('p');note.className='gasm-status-note';note.textContent=item.answerStatus==='REPORTED'?'Cevabınız kaydedilir. Arşivde raporlanmış cevap vardır; insan doğrulaması tamamlanmadan kesin doğru/yanlış sonucu gösterilmez.':'Cevabınız kaydedilir. Doğru cevap insan tarafından doğrulanmadığı için sistem tahmin üretmez.';card.append(note);
+  const actions=document.createElement('div');actions.className='gasm-test-actions';const previous=document.createElement('button'),next=document.createElement('button');previous.type=next.type='button';previous.className=next.className='btn';previous.textContent='← Önceki soru';next.textContent='Sonraki soru →';previous.disabled=gasmSelection.index===0;previous.addEventListener('click',()=>{gasmSelection=Object.freeze({...gasmSelection,index:Math.max(0,gasmSelection.index-1),selectedOption:null});renderGasmTest();});next.addEventListener('click',()=>{gasmSelection=Object.freeze({...gasmSelection,index:(gasmSelection.index+1)%questions.length,selectedOption:null});renderGasmTest();});actions.append(previous,next);card.append(actions);output.append(card);
+}
 function renderLesson(){
   const category=byId('academyModule').value,lesson=window.SinbadAcademy?.lesson(category,window.SINBAD_TRAINING_DATA),output=byId('academyOutput');
   if(!lesson)return;
@@ -222,8 +336,7 @@ function renderQuiz(){
     const image=document.createElement('img');image.className='academy-question-page';image.src=item.image;image.alt=`${item.q}, kaynak sayfa ${item.page}`;output.append(image);
     const notice=document.createElement('p');notice.className='academy-answer-pending';
     if(item.answerStatus==='official-key-verified'){
-      const key=Object.entries(item.answers).map(([question,answer])=>`${question}: ${answer}`).join(' · ');
-      notice.textContent=`Doğrulanmış resmî cevap anahtarı · ${key}`;
+      notice.textContent='Doğrulanmış cevap anahtarı yalnız yetkili Owner inceleme ekranında gösterilir.';
     }else if(item.answerStatus==='official-key-image-needs-human-verification'){
       notice.textContent=`Sorular ${item.firstQuestion}-${item.lastQuestion} · Resmî anahtar taraması mevcut; okunamayan harfler tahmin edilmedi ve insan doğrulaması bekliyor.`;
     }else notice.textContent=`Sorular ${item.firstQuestion}-${item.lastQuestion} · Cevap anahtarı bekleniyor. Taramadaki öğrenci işaretlemeleri doğru cevap kabul edilmez.`;
@@ -237,8 +350,15 @@ function selectAcademySection(sectionId){
   document.querySelectorAll('[data-academy-section]').forEach(button=>{const active=button.dataset.academySection===sectionId;button.classList.toggle('active',active);if(active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
   byId('academyTrackTitle').textContent=section.title;byId('academyTrackLabel').textContent=section.label;
   const select=byId('academyModule');select.replaceChildren();
+  byId('openExamIntelligence').hidden=sectionId!=='goss-gasm';byId('openOwnerQuestionReview').hidden=sectionId!=='goss-gasm';
+  const gasmMenu=byId('gasmQualificationMenu'),gasmButton=byId('gasmMenuButton');if(gasmMenu)gasmMenu.hidden=sectionId!=='goss-gasm';if(gasmButton)gasmButton.setAttribute('aria-expanded',String(sectionId==='goss-gasm'));
   academyModuleOptions.filter(option=>section.modules.includes(option.value)).forEach(option=>{const node=document.createElement('option');node.value=option.value;node.textContent=option.label;select.append(node);});
-  stopBoardTeaching();resetAcademyLessonClock();setAcademyClassroomPhase('welcome');const output=byId('academyOutput');output.replaceChildren();output.hidden=true;byId('academyTeachingTitle').textContent="Professor Sinbad's board";byId('academyTeachingText').textContent='Derse hoş geldiniz.';byId('academyTeachingText').setAttribute('aria-hidden','true');
+  stopBoardTeaching();resetAcademyLessonClock();setAcademyClassroomPhase('welcome');const output=byId('academyOutput');output.replaceChildren();output.hidden=true;byId('academyTeachingTitle').textContent="Professor Sinbad's board";byId('academyTeachingText').replaceChildren();byId('academyTeachingText').setAttribute('aria-hidden','true');
+}
+function handleAcademySectionClick(button){
+  const sectionId=button.dataset.academySection,menu=byId('gasmQualificationMenu');
+  if(sectionId==='goss-gasm'&&button.classList.contains('active')&&menu){menu.hidden=!menu.hidden;button.setAttribute('aria-expanded',String(!menu.hidden));return;}
+  selectAcademySection(sectionId);
 }
 function appendAcademyMessage(role,text){
   const conversation=byId('academyConversation'),message=document.createElement('p');message.className=`academy-message ${role}`;message.textContent=text;conversation.append(message);
@@ -252,7 +372,7 @@ function speakAcademyAnswer(text,{preserveMotion=false,onComplete=null}={}){
   if(matchingVoice)utterance.voice=matchingVoice;
   let completed=false;const finish=()=>{if(completed)return;completed=true;onComplete?.();};
   if(!preserveMotion){
-    const generation=++academyMotionGeneration;utterance.onstart=()=>{academySpeechGestureDirector?.beginTurn?.();const semantic=window.SinbadPerformanceDirector?.responseCueForText?.(text,'conversational')?.cue||{gesture:'explain',gaze:'audience',emotion:'warm'};const selected=academySpeechGestureDirector?.select?.({...semantic,cadence:'opening',responseKind:semantic.responseKind||'conversation'});renderAcademyCharacterCue({state:'speaking',...(selected?.cue||semantic)},text);};utterance.onend=()=>{settleAcademyCharacter(generation,180);finish();};utterance.onerror=()=>{settleAcademyCharacter(generation,180);finish();};
+    const generation=++academyMotionGeneration;utterance.onstart=()=>{academySpeechGestureDirector?.beginTurn?.();const semantic=window.SinbadPerformanceDirector?.responseCueForText?.(text,'conversational')?.cue||{gesture:'explain',gaze:'audience',emotion:'warm'};const selected=academySpeechGestureDirector?.select?.({...semantic,cadence:'opening',responseKind:semantic.responseKind||'conversation'});renderAcademyCharacterCue({state:'speaking',...(selected?.cue||semantic)},text);startAcademyLipSync(text);};utterance.onboundary=event=>{if(generation!==academyMotionGeneration)return;const charIndex=Number(event.charIndex)||0,wordIndex=Math.max(0,text.slice(0,charIndex).trim().split(/\s+/u).filter(Boolean).length),boundary=window.SinbadPerformanceDirector?.speechCueForBoundary?.({text,name:event.name||'word',charIndex,wordIndex,mode:'warm'}),selected=boundary?.accepted?academySpeechGestureDirector?.select?.(boundary.cue):null;if(selected?.change&&selected.cue?.gesture)renderAcademyCharacterCue({state:'speaking',...selected.cue},text);renderAcademyMouthFrame(academyMouthFrameForText(text,charIndex));};utterance.onend=()=>{stopAcademyLipSync();settleAcademyCharacter(generation,180);finish();};utterance.onerror=()=>{stopAcademyLipSync();settleAcademyCharacter(generation,180);finish();};
   }else{
     utterance.onend=finish;utterance.onerror=finish;
   }
@@ -264,16 +384,31 @@ function academyDialogueHistory(){
 function updateAcademyRuntimePill(id,text,state='online'){
   const pill=byId(id);if(!pill)return;pill.textContent=text;pill.classList.toggle('pending',state==='pending');pill.classList.toggle('offline',state==='offline');
 }
+function refreshAcademyExamStatus(){
+  const status=academyExamIntegration?.publicStatus?.(),button=byId('openExamIntelligence');
+  if(!status){updateAcademyRuntimePill('academyExamConnection','Sınav motoru yapılandırılmadı','offline');button.disabled=true;return;}
+  updateAcademyRuntimePill('academyExamConnection',status.releaseAuthorized?'Sınav motoru · kontrollü yayın':'Sınav motoru · sentetik/yerel',status.releaseAuthorized?'online':'pending');button.disabled=false;
+}
+function openExamIntelligence(){
+  try{academyExamIntegration.launch();}
+  catch(error){console.warn('Exam Intelligence launch unavailable',error);updateAcademyRuntimePill('academyExamConnection','Sınav motoru açılamadı','offline');}
+}
+function openOwnerQuestionReview(){window.open(SINBAD_OWNER_REVIEW_URL,'sinbadOwnerQuestionReview','popup=yes,resizable=yes,scrollbars=yes,width=1500,height=940');}
 async function refreshAcademyRuntimeStatus(){
-  const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),5000);
-  try{
-    const response=await fetch(`${SINBAD_BRIDGE_URL}/status`,{cache:'no-store',signal:controller.signal});if(!response.ok)throw new Error(`Bridge status ${response.status}`);
-    const status=await response.json(),ai=status?.ai||{},library=status?.library||{};
-    updateAcademyRuntimePill('academyAiConnection',ai.online?`Yerel AI bağlı · ${ai.model||'Sinbad'}`:'Yerel AI modeli çevrimdışı',ai.online?'online':'offline');
-    const documents=Number(library.documents)||0,chunks=Number(library.chunks)||0;
-    updateAcademyRuntimePill('academyLibraryConnection',documents>0?`Kütüphane bağlı · ${documents.toLocaleString('tr-TR')} belge · ${chunks.toLocaleString('tr-TR')} parça`:'Kütüphane boş',documents>0?'online':'offline');
-    return status;
-  }catch(error){console.warn('Academy runtime status unavailable',error);updateAcademyRuntimePill('academyAiConnection','Yerel AI bağlantısı yok','offline');updateAcademyRuntimePill('academyLibraryConnection','Kütüphane bağlantısı yok','offline');return null;}finally{clearTimeout(timeout);}
+  let lastError=null;
+  for(let attempt=0;attempt<2;attempt++){
+    const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),5000);
+    try{
+      const response=await fetch(`${SINBAD_BRIDGE_URL}/status`,{cache:'no-store',signal:controller.signal});if(!response.ok)throw new Error(`Bridge status ${response.status}`);
+      const status=await response.json(),ai=status?.ai||{},library=status?.library||{};
+      updateAcademyRuntimePill('academyAiConnection',ai.online?`Yerel AI bağlı · ${ai.model||'Sinbad'}`:'Yerel AI modeli çevrimdışı',ai.online?'online':'offline');
+      const documents=Number(library.documents)||0,chunks=Number(library.chunks)||0;
+      updateAcademyRuntimePill('academyLibraryConnection',documents>0?`Kütüphane bağlı · ${documents.toLocaleString('tr-TR')} belge · ${chunks.toLocaleString('tr-TR')} parça`:'Kütüphane boş',documents>0?'online':'offline');
+      return status;
+    }catch(error){lastError=error;if(attempt===0)await new Promise(resolve=>setTimeout(resolve,350));}
+    finally{clearTimeout(timeout);}
+  }
+  console.warn('Academy runtime status unavailable',lastError);updateAcademyRuntimePill('academyAiConnection','Yerel AI bağlantısı yok','offline');updateAcademyRuntimePill('academyLibraryConnection','Kütüphane bağlantısı yok','offline');return null;
 }
 async function academyLocalAiAnswer(question,academyEvidence='',useOwnerLibrary=false){
   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),120000);
@@ -281,9 +416,9 @@ async function academyLocalAiAnswer(question,academyEvidence='',useOwnerLibrary=
     byId('academyVoiceStatus').textContent='Sinbad düşünüyor…';
     const groundedPrompt=academyEvidence?`Öğrencinin sorusu: ${String(question).slice(0,1200)}\n\nDoğrulanmış çevrimdışı Academy bağlamı (yalnız bu bağlama dayan, eksikse açıkça söyle):\n${String(academyEvidence).slice(0,3500)}`:String(question).slice(0,1200);
     const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/chat`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:groundedPrompt,libraryQuery:String(question).slice(0,1200),language:academyLanguage(),history:useOwnerLibrary?[]:academyDialogueHistory(),useLibrary:useOwnerLibrary,context:{surface:'sinbad-academy',module:byId('academyModule').value,grounded:Boolean(academyEvidence),ownerLibrary:useOwnerLibrary}}),signal:controller.signal});
-    if(!response.ok)return null;const data=await response.json();const answer=typeof data?.answer==='string'?data.answer.trim().slice(0,6000):'';
+    if(!response.ok){byId('academyVoiceStatus').textContent='Yerel AI yanıt hatası';updateAcademyRuntimePill('academyAiConnection','Yerel AI açık · son istek başarısız','offline');refreshAcademyRuntimeStatus();return null;}const data=await response.json();const answer=typeof data?.answer==='string'?data.answer.trim().slice(0,6000):'';
     if(!answer)return null;const model=String(data.model||'Sinbad').slice(0,32);byId('academyVoiceStatus').textContent=`Local AI · ${model}`;updateAcademyRuntimePill('academyAiConnection',`Yerel AI bağlı · ${model}`);if(useOwnerLibrary)refreshAcademyRuntimeStatus();return answer;
-  }catch(error){console.warn('Academy local AI unavailable',error);byId('academyVoiceStatus').textContent='Yerel AI çevrimdışı';return null;}finally{clearTimeout(timeout);}
+  }catch(error){console.warn('Academy local AI unavailable',error);byId('academyVoiceStatus').textContent=error?.name==='AbortError'?'Yerel AI zaman aşımı':'Yerel AI bağlantı hatası';updateAcademyRuntimePill('academyAiConnection','Yerel AI açık · son istek tamamlanamadı','offline');refreshAcademyRuntimeStatus();return null;}finally{clearTimeout(timeout);}
 }
 function answerAcademySocialTurn(question){
   const normalized=String(question||'').toLocaleLowerCase('tr-TR').normalize('NFC').replace(/[^a-zçğıöşü\s]/gu,' ').replace(/\s+/g,' ').trim();
@@ -300,6 +435,14 @@ function academyCharacterCapabilityAnswer(question){
   if(language==='en-US')return 'I can turn left or right, move my head, wave, show my hands, nod, shake my head, shrug, smile, laugh, take a short walk, listen, point at the board, write on it and draw approved shapes.';
   return 'Sola veya sağa dönebilir; başımı çevirebilir, el sallayabilir, ellerimi gösterebilir, başımı sallayabilir, omuz silkebilir, gülümseyebilir, gülebilir, kısa yürüyebilir ve dinleme hareketi yapabilirim. Ayrıca tahtayı işaretleyebilir, yazı yazabilir ve izin verilen şekilleri çizebilirim.';
 }
+function academyMaritimeFoundationAnswer(question){
+  const normalized=String(question||'').toLocaleLowerCase('tr-TR').normalize('NFC').replace(/[^a-zçğıöşüäß\s]/gu,' ').replace(/\s+/g,' ').trim();
+  if(!/(?:^|\s)marpol[a-zçğıöşü]*(?:\s|$)/u.test(normalized)||!/(nedir|anlat|tanıt|açıkla|hakkında|what is|explain|tell me about|was ist|erklär)/u.test(normalized))return null;
+  const language=academyLanguage();
+  if(language==='de-DE')return 'MARPOL ist das Internationale Übereinkommen zur Verhütung der Meeresverschmutzung durch Schiffe. Seine sechs Anlagen behandeln Öl, schädliche flüssige Stoffe als Massengut, Schadstoffe in verpackter Form, Schiffsabwasser, Schiffsmüll und Luftverunreinigung. Diese Zusammenfassung dient der Ausbildung; für einen Betriebsvorgang müssen die aktuelle amtliche Fassung, die anwendbare Anlage und die schiffsspezifischen Vorgaben geprüft werden.';
+  if(language==='en-US')return 'MARPOL is the International Convention for the Prevention of Pollution from Ships. Its six annexes address oil, noxious liquid substances in bulk, harmful substances in packaged form, sewage, garbage and air pollution. This is a training summary; an operational decision requires the current official text, the applicable annex and vessel-specific requirements.';
+  return 'MARPOL, Gemilerden Kaynaklanan Kirliliğin Önlenmesi Uluslararası Sözleşmesi’dir. Altı eki; petrolü, dökme hâlde taşınan zararlı sıvı maddeleri, ambalajlı zararlı maddeleri, pis suyu, çöpü ve hava kirliliğini düzenler. Bu kısa bir eğitim özetidir; operasyonel işlem için güncel resmî metin, ilgili ek ve gemiye özgü şartlar ayrıca doğrulanmalıdır.';
+}
 function shouldUseAcademySources(question){
   const normalized=String(question||'').toLocaleLowerCase('tr-TR').normalize('NFC');
   return /\b(deniz|denizcilik|seyir|harita|hidrograf|gelgit|akıntı|set|drift|stcw|goc|gmdss|gasm|goss|navtex|pusula|rota|mevki|liman|gemi|tekne|vardiya|radar|ais|ecdis)\b/u.test(normalized);
@@ -311,9 +454,9 @@ async function answerAcademyQuestion(){
   const gestureRequest=window.SinbadPerformanceDirector?.gestureRequestForText?.(question,{lastAction:academyLastPerformedGestureAction});
   if(gestureRequest?.accepted){playAcademyGestureRequest(gestureRequest,completeAcademyVoiceTurn);return;}
   renderAcademyCharacterCue({state:'thinking',gesture:'hold',gaze:'thought'},question);
-  const useOwnerLibrary=shouldUseAcademySources(question),capabilityAnswer=academyCharacterCapabilityAnswer(question),socialAnswer=answerAcademySocialTurn(question),result=capabilityAnswer||socialAnswer||!useOwnerLibrary?null:window.SinbadAcademy?.answer(question,window.SINBAD_TRAINING_DATA);
-  const localAnswer=capabilityAnswer||socialAnswer?null:await academyLocalAiAnswer(question,result?.text||'',useOwnerLibrary);
-  const answer=capabilityAnswer||socialAnswer||localAnswer||result?.text||'Bu soru için doğrulanmış çevrimdışı Academy içeriğinde yeterli kaynak bulamadım ve yerel Sinbad AI şu anda erişilebilir değil. Tahmin üretmeyeceğim; lütfen soruyu daraltın veya yerel Bridge’i başlatın.';
+  const useOwnerLibrary=shouldUseAcademySources(question),capabilityAnswer=academyCharacterCapabilityAnswer(question),foundationAnswer=academyMaritimeFoundationAnswer(question),socialAnswer=answerAcademySocialTurn(question),result=capabilityAnswer||foundationAnswer||socialAnswer||!useOwnerLibrary?null:window.SinbadAcademy?.answer(question,window.SINBAD_TRAINING_DATA);
+  const localAnswer=capabilityAnswer||foundationAnswer||socialAnswer?null:await academyLocalAiAnswer(question,result?.text||'',useOwnerLibrary);
+  const answer=capabilityAnswer||foundationAnswer||socialAnswer||localAnswer||result?.text||'Bu soru için doğrulanmış çevrimdışı Academy içeriğinde yeterli kaynak bulamadım ve yerel Sinbad AI bu isteğe yanıt veremedi. Tahmin üretmeyeceğim; lütfen soruyu daraltıp yeniden deneyin.';
   appendAcademyMessage('sinbad',answer);presentAcademyAnswerOnBoard(question,answer);speakAcademyAnswer(answer,{onComplete:completeAcademyVoiceTurn});
 }
 function updateAcademyHandsFreeButton(){
@@ -334,7 +477,7 @@ function startAcademyListening(){
 }
 function setAcademyHandsFree(enabled){
   academyHandsFreeEnabled=Boolean(enabled);updateAcademyHandsFreeButton();clearTimeout(academyHandsFreeRestartTimer);
-  if(!academyHandsFreeEnabled){academyRecognition?.abort();window.speechSynthesis?.cancel?.();academyVoiceBusy=false;byId('academyVoiceStatus').textContent='Text ready';return;}
+  if(!academyHandsFreeEnabled){academyRecognition?.abort();window.speechSynthesis?.cancel?.();stopAcademyLipSync();academyVoiceBusy=false;byId('academyVoiceStatus').textContent='Text ready';return;}
   byId('academyVoiceStatus').textContent='Eller serbest başlatılıyor…';startAcademyListening();
 }
 function returnToAcademyHome(){
@@ -344,13 +487,20 @@ function goBackFromAcademy(){
   try{const referrer=document.referrer?new URL(document.referrer):null;if(referrer?.origin===location.origin&&history.length>1){history.back();return;}}catch{}returnToAcademyHome();
 }
 document.title='Sinbad Academy — Professor Sinbad Classroom';
+renderGasmQualificationMenu();
 selectAcademySection('general-maritime-education');
 restoreWindowGeometry();
 preloadAcademyCharacterAssets();
+renderAcademyCharacterCue({state:'idle',gesture:'rest',gaze:'audience',emotion:'warm',energy:.12},'');
 refreshAcademyRuntimeStatus();
-document.querySelectorAll('[data-academy-section]').forEach(button=>button.addEventListener('click',()=>selectAcademySection(button.dataset.academySection)));
+refreshAcademyExamStatus();
+const academyRuntimeStatusTimer=setInterval(refreshAcademyRuntimeStatus,15000);
+window.addEventListener('focus',refreshAcademyRuntimeStatus);window.addEventListener('online',refreshAcademyRuntimeStatus);document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAcademyIdleBlink();else{refreshAcademyRuntimeStatus();scheduleAcademyIdleBlink();}});
+document.querySelectorAll('[data-academy-section]').forEach(button=>button.addEventListener('click',()=>handleAcademySectionClick(button)));
 byId('startAcademyLesson').addEventListener('click',renderLesson);
 byId('startAcademyQuiz').addEventListener('click',renderQuiz);
+byId('openExamIntelligence').addEventListener('click',openExamIntelligence);
+byId('openOwnerQuestionReview').addEventListener('click',openOwnerQuestionReview);
 byId('askAcademyQuestion').addEventListener('click',answerAcademyQuestion);
 byId('academyQuestionInput').addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();answerAcademyQuestion();}});
 byId('startAcademyListening').addEventListener('click',startAcademyListening);
@@ -361,7 +511,7 @@ byId('academyLanguage').addEventListener('change',()=>{localStorage.setItem(LANG
 byId('academyBackButton').addEventListener('click',goBackFromAcademy);
 byId('academyHomeButton').addEventListener('click',returnToAcademyHome);
 byId('closeAcademyWindow').addEventListener('click',()=>{saveWindowGeometry();window.close();});
-window.addEventListener('beforeunload',()=>{clearTimeout(academyHandsFreeRestartTimer);academyRecognition?.abort();resetAcademyLessonClock();saveWindowGeometry();});
+window.addEventListener('beforeunload',()=>{clearInterval(academyRuntimeStatusTimer);clearTimeout(academyHandsFreeRestartTimer);stopAcademyLipSync();stopAcademyIdleBlink();academyRecognition?.abort();resetAcademyLessonClock();saveWindowGeometry();});
 window.addEventListener('message',event=>{
   if(event.origin!==location.origin||event.source!==window.opener)return;
   const message=event.data;if(!message||message.version!==1)return;

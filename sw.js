@@ -1,10 +1,11 @@
-const CACHE='sinbad-marine-v8.20.43-character-v1-v109';
+const CACHE='sinbad-marine-v8.20.43-character-v1-v119';
 const ASSETS=[
   './',
   './index.html',
   './academy.html',
   './academy.css',
   './academy-window.js',
+  './academy-gasm-catalog.js',
   './styles.css',
   './app.js',
   './sinbad-character-engine.js',
@@ -23,6 +24,8 @@ const ASSETS=[
   './sinbad-route-visualizer.js',
   './sinbad-training-data.js',
   './sinbad-academy.js',
+  './sinbad-exam-intelligence-config.js',
+  './sinbad-exam-intelligence.js',
   './assets/gasm-seyir/adobe-scan-2026-08-24-page-01.png',
   './assets/gasm-seyir/adobe-scan-2026-08-24-page-02.png',
   './assets/gasm-seyir/adobe-scan-2026-08-24-page-03.png',
@@ -117,6 +120,10 @@ const ASSETS=[
   './assets/captain-sinbad/captain-sinbad-rig-face-round-v1.png',
   './assets/captain-sinbad/captain-sinbad-rig-expression-concerned-v1.png',
   './assets/captain-sinbad/captain-sinbad-rig-expression-delighted-v1.png',
+  './assets/captain-sinbad/captain-sinbad-fullbody-rig-head-v2.png',
+  './assets/captain-sinbad/captain-sinbad-fullbody-rig-torso-v2.png',
+  './assets/captain-sinbad/captain-sinbad-fullbody-rig-left-arm-v2.png',
+  './assets/captain-sinbad/captain-sinbad-fullbody-rig-right-arm-v2.png',
   './assets/captain-sinbad/captain-sinbad-idle-blink-v1.png',
   './assets/captain-sinbad/captain-sinbad-listening.png',
   './assets/captain-sinbad/captain-sinbad-thinking.png',

@@ -354,7 +354,7 @@ test('service worker cache version was bumped for this change and precaches the 
   const visible=html.match(/<div class="version">● v(\d+\.\d+\.\d+)<\/div>/);
   assert.ok(visible);
   assert.match(sw,new RegExp(`const CACHE='sinbad-marine-v${visible[1].replace(/\./g,'\\.')}-`));
-  assert.match(sw,/character-v1-v109/);
+  assert.match(sw,/character-v1-v119/);
   assert.match(sw,/'\.\/sinbad-character-engine\.js'/);
   assert.match(sw,/'\.\/sinbad-character-rig\.js'/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-idle-master\.png'/);
@@ -362,6 +362,8 @@ test('service worker cache version was bumped for this change and precaches the 
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-thinking\.png'/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-speaking\.png'/);
   assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-board-teaching\.png'/);
+  assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-fullbody-rig-head-v2\.png'/);
+  assert.match(sw,/'\.\/assets\/captain-sinbad\/captain-sinbad-fullbody-rig-torso-v2\.png'/);
 });
 
 test('tablet: the compact avatar rail gives status and capabilities dedicated grid areas without collisions',()=>{
@@ -844,6 +846,8 @@ test('page lifecycle fail-closes every character runtime resource and restores o
 });
 
 test('large live portrait activates four real alpha rig layers only after every part loads',()=>{
+  assert.match(app,/const SINBAD_PORTRAIT_RIG_CALIBRATED=false/);
+  assert.match(app,/if\(!SINBAD_PORTRAIT_RIG_CALIBRATED\)\{if\(avatar\)delete avatar\.dataset\.rigReady;return;\}/);
   assert.match(html,/class="sinbad-rig-part sinbad-rig-left-arm"/);
   assert.match(html,/class="sinbad-rig-part sinbad-rig-torso"/);
   assert.match(html,/class="sinbad-rig-part sinbad-rig-right-arm"/);

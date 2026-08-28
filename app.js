@@ -498,6 +498,8 @@ const SINBAD_SPEECH_ASSETS=Object.freeze({closed:'captain-sinbad-speaking-mbp-v1
 const SINBAD_WALK_ASSETS=Object.freeze(['captain-sinbad-walk-a-v1.png','captain-sinbad-walk-b-v1.png']);
 const SINBAD_RIG_PART_ASSETS=Object.freeze(['captain-sinbad-rig-head-v1.png','captain-sinbad-rig-torso-v1.png','captain-sinbad-rig-left-arm-v1.png','captain-sinbad-rig-right-arm-v1.png']);
 const SINBAD_RIG_FACE_ASSETS=Object.freeze(['captain-sinbad-rig-face-blink-v1.png','captain-sinbad-rig-face-closed-v1.png','captain-sinbad-rig-face-open-v1.png','captain-sinbad-rig-face-wide-v1.png','captain-sinbad-rig-face-round-v1.png','captain-sinbad-rig-expression-concerned-v1.png','captain-sinbad-rig-expression-delighted-v1.png']);
+// Fail closed until the portrait rig passes visual alignment acceptance.
+const SINBAD_PORTRAIT_RIG_CALIBRATED=false;
 const SINBAD_STATE_ASSET={
   idle:'captain-sinbad-idle-master.png',
   listening:'captain-sinbad-listening.png',
@@ -798,6 +800,7 @@ function sinbadAssistantElements(){return document.querySelectorAll('.sinbad-ava
 function ensureSinbadArticulatedRig(){
   document.querySelectorAll('.sinbad-avatar.large .sinbad-rig-stage').forEach(stage=>{
     const avatar=stage.closest('.sinbad-avatar'),parts=[...stage.querySelectorAll('.sinbad-rig-part,.sinbad-rig-face-frame')];
+    if(!SINBAD_PORTRAIT_RIG_CALIBRATED){if(avatar)delete avatar.dataset.rigReady;return;}
     if(!avatar||parts.length!==SINBAD_RIG_PART_ASSETS.length+SINBAD_RIG_FACE_ASSETS.length)return;
     let remaining=parts.length,failed=false;
     const settled=ok=>{failed=failed||!ok;remaining--;if(remaining===0){if(!failed)avatar.dataset.rigReady='true';else delete avatar.dataset.rigReady;}};

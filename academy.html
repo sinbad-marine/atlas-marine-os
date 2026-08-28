@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#0b1d2b">
   <title>Sinbad Academy — Classroom</title>
-  <link rel="stylesheet" href="./academy.css?v=82094">
+  <link rel="stylesheet" href="./academy.css?v=82097">
 </head>
 <body>
   <div class="academy-shell">
     <header class="academy-command-bar">
       <div class="academy-brand"><span aria-hidden="true">⚓</span><div><strong>Sinbad Academy</strong><small>Independent classroom window</small></div></div>
       <nav class="academy-section-nav" aria-label="Academy departments">
-        <button type="button" data-academy-section="goss-gasm">GOSS / GASM</button>
+        <button type="button" data-academy-section="goss-gasm" id="gasmMenuButton" aria-expanded="false" aria-controls="gasmQualificationMenu">☰ GOSS / GASM</button>
         <button type="button" data-academy-section="stcw">STCW</button>
         <button type="button" data-academy-section="goc">GOC</button>
         <button type="button" data-academy-section="general-maritime-education" class="active" aria-current="page">General Maritime Education</button>
@@ -31,6 +31,10 @@
     </header>
     <div class="academy-layout">
       <aside class="academy-sidebar">
+        <section id="gasmQualificationMenu" class="gasm-qualification-menu" aria-label="GOSS GASM yeterlilik ve ders menüsü" hidden>
+          <div class="gasm-menu-heading"><strong>Yeterlilik sınavını seç</strong><small>Kademe → zorunlu ders → konu testi</small></div>
+          <div id="gasmQualificationList"></div>
+        </section>
         <section class="academy-controls" aria-label="Academy lesson controls">
           <label>Training module
             <select id="academyModule" aria-label="Training module">
@@ -49,6 +53,8 @@
           <div class="academy-actions">
             <button type="button" class="btn primary" id="startAcademyLesson">Open lesson</button>
             <button type="button" class="btn" id="startAcademyQuiz">Practice question</button>
+            <button type="button" class="btn exam-intelligence-launch" id="openExamIntelligence">Exam Intelligence</button>
+            <button type="button" class="btn owner-review-launch" id="openOwnerQuestionReview">Owner · Soruları Doğrula</button>
           </div>
         </section>
         <section class="academy-conversation" aria-labelledby="academyConversationTitle">
@@ -56,6 +62,7 @@
           <div class="academy-runtime-status" aria-live="polite">
             <span id="academyAiConnection" class="academy-runtime-pill pending">Yerel AI kontrol ediliyor…</span>
             <span id="academyLibraryConnection" class="academy-runtime-pill pending">Kütüphane kontrol ediliyor…</span>
+            <span id="academyExamConnection" class="academy-runtime-pill pending">Sınav motoru yapılandırılıyor…</span>
           </div>
           <div id="academyConversation" class="academy-messages" aria-live="polite"><p class="academy-message sinbad">Konuşabilir veya yazabilirsiniz. Denizcilik eğitim yanıtları doğrulanmış çevrimdışı kaynaklara; genel sohbet ise cihazınızdaki yerel Sinbad AI'a dayanır.</p></div>
           <div class="academy-question-composer">
@@ -77,12 +84,18 @@
             <span class="academy-lesson-clock-label">DERS SÜRESİ</span>
             <time id="academyLessonElapsed" datetime="PT0S">00:00</time>
           </div>
-          <div class="academy-sinbad" data-state="board-teaching" aria-hidden="true">
+          <div class="academy-sinbad" data-state="board-teaching" data-rig-active="false" aria-hidden="true">
             <img id="academySinbadImage" src="./assets/captain-sinbad/captain-sinbad-board-teaching.png" alt="">
+            <div class="academy-rig-stage" aria-hidden="true">
+              <img class="academy-rig-part academy-rig-torso" src="./assets/captain-sinbad/captain-sinbad-fullbody-rig-torso-v2.png" alt="">
+              <img class="academy-rig-part academy-rig-right-arm" src="./assets/captain-sinbad/captain-sinbad-fullbody-rig-right-arm-v2.png" alt="">
+              <img class="academy-rig-part academy-rig-left-arm" src="./assets/captain-sinbad/captain-sinbad-fullbody-rig-left-arm-v2.png" alt="">
+              <img class="academy-rig-part academy-rig-head" src="./assets/captain-sinbad/captain-sinbad-fullbody-rig-head-v2.png" alt="">
+            </div>
           </div>
           <div class="academy-live-board">
             <strong id="academyTeachingTitle">Professor Sinbad's board</strong>
-            <pre id="academyTeachingText" aria-hidden="true">Derse hoş geldiniz.</pre>
+            <pre id="academyTeachingText" aria-hidden="true"></pre>
             <section id="academyOutput" class="academy-board" aria-live="polite" hidden></section>
           </div>
         </section>
@@ -90,9 +103,13 @@
     </div>
   </div>
   <script src="./sinbad-training-data.js?v=8180"></script>
+  <script src="./academy-gasm-catalog.js?v=1"></script>
+  <script src="./sinbad-exam-intelligence-config.js?v=1"></script>
+  <script src="./sinbad-exam-intelligence.js?v=1"></script>
   <script src="./sinbad-academy.js?v=82082"></script>
   <script src="./sinbad-character-engine.js?v=82030"></script>
+  <script src="./sinbad-character-rig.js?v=82063"></script>
   <script src="./sinbad-performance-director.js?v=82082"></script>
-  <script src="./academy-window.js?v=82094"></script>
+  <script src="./academy-window.js?v=82103"></script>
 </body>
 </html>

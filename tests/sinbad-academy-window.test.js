@@ -62,7 +62,7 @@ test('standalone Academy retains course and quiz handlers',()=>{
 test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.match(academyHtml,/id="academyTeachingStage"/);assert.match(academyHtml,/captain-sinbad-board-teaching\.png/);
   assert.match(academyHtml,/sinbad-character-engine\.js\?v=82030/);
-  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82082/);assert.match(academyHtml,/academy-window\.js\?v=82094/);assert.match(academyHtml,/academy\.css\?v=82094/);
+  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82082/);assert.match(academyHtml,/academy-window\.js\?v=82103/);assert.match(academyHtml,/academy\.css\?v=82097/);
   assert.doesNotMatch(academyHtml,/id="academyTeachingStage"[^>]*hidden/);
   assert.ok(academyHtml.indexOf('id="academyModule"')<academyHtml.indexOf('</aside>'),'training controls belong to the left classroom column');
   assert.match(academyHtml,/id="academyTrackTitle" hidden/);
@@ -83,7 +83,32 @@ test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.match(academyCss,/object-position:center bottom/);
   assert.match(academyCss,/@media\(prefers-reduced-motion:reduce\)/);
   assert.match(academyCss,/\.academy-sinbad\[data-state="walking"\] img\{animation:academyWalkCycle/);
-  assert.match(worker,/sinbad-marine-v8\.20\.43-character-v1-v109/);
+  assert.match(academyApp,/const ACADEMY_FULL_BODY_RIG_CALIBRATED=false/);
+  for(const part of ['head','torso','left-arm','right-arm'])assert.match(academyHtml,new RegExp(`captain-sinbad-fullbody-rig-${part}-v2\\.png`));
+  assert.match(academyCss,/\.academy-rig-torso\{[^}]*height:74%/);
+  assert.match(worker,/sinbad-marine-v8\.20\.43-character-v1-v119/);
+});
+
+test('GOSS GASM exposes qualification, mandatory subject, topic and one-question test navigation',()=>{
+  assert.match(academyHtml,/id="gasmMenuButton"/);
+  assert.match(academyHtml,/id="gasmQualificationMenu"/);
+  assert.match(academyHtml,/academy-gasm-catalog\.js\?v=1/);
+  assert.match(worker,/'\.\/academy-gasm-catalog\.js'/);
+  assert.match(academyApp,/function renderGasmQualificationMenu\(\)/);
+  assert.match(academyApp,/function selectGasmSubject\(/);
+  assert.match(academyApp,/function renderGasmTest\(\)/);
+  assert.match(academyApp,/function handleAcademySectionClick\(button\)/);
+  assert.match(academyApp,/Arşiv sorusu henüz yok/);
+  assert.match(academyApp,/insan doğrulaması tamamlanmadan kesin doğru\/yanlış sonucu gösterilmez/);
+  assert.match(academyHtml,/id="openOwnerQuestionReview"/);
+  assert.match(academyApp,/SINBAD_OWNER_REVIEW_URL='http:\/\/127\.0\.0\.1:4177\/'/);
+  assert.match(academyApp,/function openOwnerQuestionReview\(\)/);
+});
+
+test('student Academy never renders the verified GASM answer key',()=>{
+  assert.match(academyApp,/Doğrulanmış cevap anahtarı yalnız yetkili Owner inceleme ekranında gösterilir/);
+  assert.doesNotMatch(academyApp,/Object\.entries\(item\.answers\)/);
+  assert.doesNotMatch(academyApp,/Doğrulanmış resmî cevap anahtarı ·/);
 });
 
 test('Academy keeps only classroom scenery on the right and dialogue in the left control rail',()=>{
@@ -119,10 +144,41 @@ test('Professor Sinbad classroom provides bounded text, one-shot voice and hands
   assert.match(academyApp,/Eller serbest: Açık/);
 });
 
+test('Professor Sinbad drives real bounded mouth frames from speech events',()=>{
+  assert.match(academyApp,/captain-sinbad-speaking-mbp-v1\.png/);
+  assert.match(academyApp,/captain-sinbad-speaking-o-v1\.png/);
+  assert.match(academyApp,/function academyMouthFrameForText\(text,index=0\)/);
+  assert.match(academyApp,/utterance\.onboundary=event=>/);
+  assert.match(academyApp,/startAcademyLipSync\(text\)/);
+  assert.match(academyApp,/stopAcademyLipSync\(\)/);
+  assert.match(academyApp,/prefers-reduced-motion: reduce/);
+});
+
+test('Professor Sinbad changes bounded body meaning at real speech boundaries',()=>{
+  assert.match(academyApp,/speechCueForBoundary\?\.\(\{text,name:event\.name\|\|'word',charIndex,wordIndex,mode:'warm'\}\)/);
+  assert.match(academyApp,/academySpeechGestureDirector\?\.select\?\.\(boundary\.cue\)/);
+  assert.match(academyApp,/if\(selected\?\.change&&selected\.cue\?\.gesture\)renderAcademyCharacterCue\(\{state:'speaking',\.\.\.selected\.cue\}/);
+  assert.match(academyApp,/avatar\.dataset\.emotion=snapshot\.emotion\|\|'neutral'/);
+  assert.match(academyCss,/data-state="speaking"\]\[data-gesture="hold"/);
+  assert.match(academyCss,/data-state="speaking"\]\[data-gesture="nod"/);
+  assert.match(academyCss,/data-emotion="concerned"/);
+});
+
+test('Professor Sinbad blinks at bounded non-sequential idle intervals only in the welcome scene',()=>{
+  assert.match(academyApp,/idleBlink:'\.\/assets\/captain-sinbad\/captain-sinbad-idle-blink-v1\.png'/);
+  assert.match(academyApp,/function academyIdleBlinkDelay\(\)/);
+  assert.match(academyApp,/window\.crypto\?\.getRandomValues\?\.\(entropy\)/);
+  assert.match(academyApp,/return 3600\+.*%3601/);
+  assert.match(academyApp,/stage\?\.dataset\.phase!=='welcome'/);
+  assert.match(academyApp,/avatar\?\.dataset\.state!=='idle'/);
+  assert.match(academyApp,/prefers-reduced-motion: reduce/);
+  assert.match(academyApp,/stopAcademyIdleBlink\(\).*scheduleAcademyIdleBlink\(\)/s);
+});
+
 test('Professor Sinbad answers bounded social greetings without pretending they need an academic source',()=>{
   assert.match(academyApp,/function answerAcademySocialTurn\(question\)/);
   assert.match(academyApp,/new Set\(\['selam','merhaba','günaydın','iyi günler','iyi akşamlar'/);
-  assert.match(academyApp,/const useOwnerLibrary=shouldUseAcademySources\(question\),capabilityAnswer=academyCharacterCapabilityAnswer\(question\),socialAnswer=answerAcademySocialTurn\(question\),result=capabilityAnswer\|\|socialAnswer\|\|!useOwnerLibrary\?null:window\.SinbadAcademy\?\.answer/);
+  assert.match(academyApp,/foundationAnswer=academyMaritimeFoundationAnswer\(question\)/);
   assert.match(academyApp,/Sinbad Academy sınıfına hoş geldiniz/);
   assert.doesNotMatch(academyApp,/greetings\.has\(normalized\).*doğrulanmış kaynak/s);
 });
@@ -155,13 +211,15 @@ test('Academy exposes and uses the owner-local AI and library while driving the 
   assert.match(academyApp,/shouldUseAcademySources\(question\)/);
   assert.match(academyApp,/function academyCharacterCapabilityAnswer\(question\)/);
   assert.match(academyApp,/Sola veya sağa dönebilir/);
-  assert.match(academyApp,/const localAnswer=capabilityAnswer\|\|socialAnswer\?null:/);
+  assert.match(academyApp,/function academyMaritimeFoundationAnswer\(question\)/);
+  assert.match(academyApp,/Gemilerden Kaynaklanan Kirliliğin Önlenmesi Uluslararası Sözleşmesi/);
+  assert.match(academyApp,/const localAnswer=capabilityAnswer\|\|foundationAnswer\|\|socialAnswer\?null:/);
   assert.match(academyApp,/denizcilik\|seyir\|harita/);
   assert.match(academyApp,/gestureRequestForText\?\.\(question,\{lastAction:academyLastPerformedGestureAction\}\)/);
   assert.match(academyApp,/renderAcademyCharacterCue\(\{state:'thinking',gesture:'hold',gaze:'thought'\},question\)/);
   assert.match(academyApp,/createSpeechGestureDirector/);
   assert.match(academyCss,/@keyframes academyWave/);assert.match(academyCss,/@keyframes academySpeak/);
-  assert.match(academyApp,/yerel Sinbad AI şu anda erişilebilir değil/);
+  assert.match(academyApp,/yerel Sinbad AI bu isteğe yanıt veremedi/);
   for(const id of ['academyAiConnection','academyLibraryConnection'])assert.match(academyHtml,new RegExp(`id="${id}"`));
   assert.match(academyApp,/async function refreshAcademyRuntimeStatus\(\)/);
   assert.match(academyApp,/fetch\(`\$\{SINBAD_BRIDGE_URL\}\/status`/);
@@ -183,8 +241,10 @@ test('local Bridge permits only the production site and loopback Academy origins
   assert.match(bridge,/127\\\.0\\\.0\\\.1\|localhost/);
   assert.match(bridge,/AI_CHAT_ORIGIN_DENIED/);
   assert.match(bridge,/useLibrary.*-eq \$false/);
-  assert.match(bridge,/if \(\$useLibrary\) \{ 16384 \} else \{ 4096 \}/);
-  assert.match(bridge,/if \(\$useLibrary\) \{ 384 \} else \{ 256 \}/);
+  assert.match(bridge,/\$contextWindow = 4096/);
+  assert.match(bridge,/if \(\$useLibrary\) \{ 128 \} else \{ 192 \}/);
+  assert.match(bridge,/at most five non-repetitive sentences/);
+  assert.match(bridge,/\$requestModel = if \(\$useLibrary\) \{ 'qwen3:4b' \} else \{ \$AiModel \}/);
   assert.match(bridge,/return strict JSON only with one string field named answer/);
   assert.match(bridge,/\$request\.format =/);
   assert.match(bridge,/ConvertFrom-Json\)\.answer/);
@@ -192,10 +252,11 @@ test('local Bridge permits only the production site and loopback Academy origins
   assert.match(bridge,/Earlier assistant messages are not evidence/);
   assert.match(bridge,/Do not blend adjacent topics/);
   assert.match(bridge,/LANGUAGE LOCK: Reply entirely in natural Turkish/);
-  assert.match(bridge,/StandardInputEncoding = \[Text\.Encoding\]::UTF8/);
+  assert.match(bridge,/\[Text\.Encoding\]::UTF8\.GetBytes\(\$json\)/);
+  assert.match(bridge,/Only loopback local AI requests are allowed/);
   assert.match(bridge,/offline-local-rag-miss/);
   assert.match(bridge,/\$stopWords = @\('nedir'/);
-  assert.match(bridge,/if \(\$selected\.Count -ge 4\) \{ break \}/);
+  assert.match(bridge,/if \(\$selected\.Count -ge 1\) \{ break \}/);
 });
 
 test('board writing progress drives a real chalk cursor and bounded character direction cues',()=>{

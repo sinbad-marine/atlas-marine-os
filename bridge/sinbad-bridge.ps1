@@ -70,24 +70,9 @@ function Invoke-LocalJsonGet([string]$uri) {
 }
 
 function Invoke-LocalJsonPost([string]$uri, [string]$json) {
-  $info = [Diagnostics.ProcessStartInfo]::new()
-  $info.FileName = 'curl.exe'
-  $info.Arguments = "--noproxy * --silent --show-error --max-time 600 -H `"Content-Type: application/json`" --data-binary @- $uri"
-  $info.UseShellExecute = $false
-  $info.CreateNoWindow = $true
-  $info.RedirectStandardInput = $true
-  $info.RedirectStandardOutput = $true
-  $info.RedirectStandardError = $true
-  $info.StandardInputEncoding = [Text.Encoding]::UTF8
-  $info.StandardOutputEncoding = [Text.Encoding]::UTF8
-  $process = [Diagnostics.Process]::Start($info)
-  $process.StandardInput.Write($json)
-  $process.StandardInput.Close()
-  $output = $process.StandardOutput.ReadToEnd()
-  $errorText = $process.StandardError.ReadToEnd()
-  $process.WaitForExit()
-  if ($process.ExitCode -ne 0) { throw "Local AI request failed: $errorText" }
-  return ($output | ConvertFrom-Json)
+  if ($uri -notmatch '^http://127\.0\.0\.1:\d{2,5}/') { throw 'Only loopback local AI requests are allowed.' }
+  $bytes = [Text.Encoding]::UTF8.GetBytes($json)
+  return Invoke-RestMethod -Method Post -Uri $uri -ContentType 'application/json; charset=utf-8' -Body $bytes -TimeoutSec 600
 }
 
 $script:ResponseOrigin = 'https://sinbad-marine.github.io'
@@ -392,9 +377,9 @@ function Get-LocalLibraryContext([string]$question) {
   $perDocument = @{}
   foreach ($match in @($matches | Sort-Object @{Expression='score';Descending=$true}, @{Expression='title';Descending=$false}, @{Expression='chunk';Descending=$false})) {
     $seen = if ($perDocument.ContainsKey($match.title)) { [int]$perDocument[$match.title] } else { 0 }
-    if ($seen -ge 2) { continue }
+    if ($seen -ge 1) { continue }
     $selected.Add($match);$perDocument[$match.title]=$seen+1
-    if ($selected.Count -ge 4) { break }
+    if ($selected.Count -ge 1) { break }
   }
   return (@($selected | ForEach-Object { $_.citation }) -join "`n`n---`n`n")
 }
@@ -414,7 +399,7 @@ You are Captain Sinbad, the offline assistant of Atlas Marine OS. Be a warm, int
 When LOCAL OWNER LIBRARY EXCERPTS are supplied, reason from them, distinguish quoted evidence from your inference, and cite the source title in the answer. Never claim a source says something absent from the excerpts.
 '@
   if ($useLibrary) {
-    $system += "`nFor library-grounded questions, the CURRENT QUESTION overrides all earlier conversation. Earlier assistant messages are not evidence. Answer only the current question and only from directly relevant LOCAL OWNER LIBRARY EXCERPTS. Do not blend adjacent topics. Begin with the direct answer, never with your own name. If the excerpts do not directly support an answer, say that the local library did not provide sufficient relevant evidence. Return strict JSON only with one string field named answer."
+    $system += "`nFor library-grounded questions, the CURRENT QUESTION overrides all earlier conversation. Earlier assistant messages are not evidence. Answer only the current question and only from directly relevant LOCAL OWNER LIBRARY EXCERPTS. Do not blend adjacent topics. Begin with the direct answer, never with your own name. Be concise: use at most five non-repetitive sentences unless the user explicitly requests detail. If the excerpts do not directly support an answer, say that the local library did not provide sufficient relevant evidence. Return strict JSON only with one string field named answer."
   } else {
     $system += "`nFor general conversation, return strict JSON only with one string field named answer. Put only the direct final answer in that field. Never expose reasoning, translation, planning or instructions."
   }
@@ -431,9 +416,10 @@ When LOCAL OWNER LIBRARY EXCERPTS are supplied, reason from them, distinguish qu
   $messages = @(@{ role='system'; content=$system }) + $history
   $userContent = if ($context) { "$question`n`nLOCAL OWNER LIBRARY EXCERPTS:`n$context" } else { $question }
   $messages += @{ role='user'; content=$userContent }
-  $contextWindow = if ($useLibrary) { 16384 } else { 4096 }
-  $maxTokens = if ($useLibrary) { 384 } else { 256 }
-  $request = @{ model=$AiModel; messages=$messages; stream=$false; think=$false; keep_alive='30m'; options=@{ temperature=0.35; num_ctx=$contextWindow; num_predict=$maxTokens } }
+  $contextWindow = 4096
+  $maxTokens = if ($useLibrary) { 128 } else { 192 }
+  $requestModel = if ($useLibrary) { 'qwen3:4b' } else { $AiModel }
+  $request = @{ model=$requestModel; messages=$messages; stream=$false; think=$false; keep_alive='30m'; options=@{ temperature=0.35; num_ctx=$contextWindow; num_predict=$maxTokens } }
   $request.format = @{ type='object'; properties=@{ answer=@{ type='string' } }; required=@('answer') }
   $result = Invoke-LocalJsonPost 'http://127.0.0.1:11434/api/chat' ($request | ConvertTo-Json -Depth 12 -Compress)
   if ([string]::IsNullOrWhiteSpace($result.message.content)) { throw 'The local AI returned no answer.' }

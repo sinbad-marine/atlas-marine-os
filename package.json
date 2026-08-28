@@ -6,9 +6,11 @@
     "node": "24.19.0"
   },
   "scripts": {
+    "academy:gasm-catalog": "node tools/build-academy-gasm-catalog.mjs",
     "test": "node --test sinbad-ai-core/tests/*.test.js tests/*.test.js",
     "test:web": "playwright test",
     "test:web:install": "playwright install chromium"
+    ,"academy:exam-local": "node tools/start-academy-exams.js"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
