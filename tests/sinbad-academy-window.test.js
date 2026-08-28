@@ -228,8 +228,11 @@ test('Academy exposes and uses the owner-local AI and library while driving the 
 
 test('Academy has explicit back and main dashboard navigation',()=>{
   assert.match(academyHtml,/id="academyBackButton"/);assert.match(academyHtml,/id="academyHomeButton"/);
+  assert.match(academyApp,/const marineHome=new URL\('\.\/index\.html',window\.location\.href\)\.href/);
+  assert.match(academyApp,/window\.opener\.location\.assign\(marineHome\)/);
+  assert.match(academyApp,/window\.location\.assign\(marineHome\)/);
   assert.match(academyApp,/function returnToAcademyHome\(\)/);assert.match(academyApp,/window\.opener\.focus\(\)/);
-  assert.match(academyApp,/window\.location\.assign\('\.\/index\.html'\)/);assert.match(academyApp,/function goBackFromAcademy\(\)/);
+  assert.match(academyApp,/function goBackFromAcademy\(\)/);
   assert.match(academyCss,/\.academy-window-navigation\{/);
 });
 
