@@ -649,8 +649,8 @@ test('round-table: TTS text normalization verified - the same message text rende
   assert.match(app,/\$\{m\.role==='user'\?'Captain':'Captain Sinbad'\}<\/span>\s*\n\s*\$\{esc\(m\.text\)\}/);
 });
 
-test('Sinbad workspace separates chat, Academy, passage planning and sources into accessible tabs without duplicating functional controls',()=>{
-  for(const name of ['chat','academy','passage','sources']){
+test('Sinbad workspace keeps only chat and Academy as visible tabs without duplicating functional controls',()=>{
+  for(const name of ['chat','academy']){
     assert.match(html,new RegExp(`role="tab"[^>]+data-sinbad-tab="${name}"`));
     assert.match(html,new RegExp(`role="tabpanel"[^>]+data-sinbad-panel="${name}"`));
   }
@@ -662,7 +662,9 @@ test('Sinbad workspace separates chat, Academy, passage planning and sources int
 });
 
 test('Sinbad workspace tabs implement selection, panel visibility, session preference and keyboard navigation',()=>{
-  assert.match(app,/const SINBAD_WORKSPACE_TABS=Object\.freeze\(\['chat','academy','passage','sources'\]\)/);
+  assert.doesNotMatch(html,/data-sinbad-tab="(?:passage|sources)"/);
+  assert.doesNotMatch(html,/Sinbad tools/);
+  assert.match(app,/const SINBAD_WORKSPACE_TABS=Object\.freeze\(\['chat','academy'\]\)/);
   assert.match(app,/function setSinbadWorkspaceTab\(requested,\{focus=false\}=\{\}\)/);
   assert.match(app,/button\.setAttribute\('aria-selected',String\(active\)\)/);
   assert.match(app,/panel\.hidden=panel\.dataset\.sinbadPanel!==tab/);
