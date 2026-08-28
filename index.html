@@ -158,6 +158,7 @@
   <article class="module-card featured-card" data-open="cloud-documents"><div>☁️</div><h3>Cloud Document Center</h3><p>Upload, open, download, share, rename and manage private files across devices.</p><a>Open cloud vault →</a></article>
   <article class="module-card" data-cloud-bucket="nautical-charts"><div>🗺️</div><h3>Nautical Charts</h3><p>Private chart archive organized by country, region and chart number.</p><a>Open cloud charts →</a></article>
   <article class="module-card" data-open="sinbad"><div>🧞‍♂️</div><h3>Captain Sinbad</h3><p>Ask questions across the owner-approved Atlas Cloud maritime corpus with grounded citations.</p><a>Open Sinbad →</a></article>
+  <article class="module-card featured-card" id="openSinbadAcademyHomeCard" data-open-sinbad-academy tabindex="0" role="button" aria-label="Sinbad Academy sınıfını ayrı pencerede aç"><div>🎓</div><h3>Sinbad Academy</h3><p>GOSS/GASM, STCW, GOC ve genel denizcilik eğitimlerini Professor Sinbad’ın bağımsız sınıfında açın.</p><a>Open Academy →</a></article>
   <article class="module-card featured-card" data-open="studio-console"><div>🧰</div><h3>Sinbad Studio</h3><p>Offline web, software and animation workspace with approval-gated Docker verification.</p><a>Open capability console →</a></article>
   <article class="module-card" data-open="cloud-control"><div>☁️</div><h3>Atlas Cloud Control Center</h3><p>Connect Supabase, manage workspaces, users, storage and AI status.</p><a>Open →</a></article>
   <article class="module-card featured-card" data-open="admin-settings"><div>⚙️</div><h3>Settings &amp; Administration</h3><p>Account security, invitations, member access, developer roles and audit history.</p><a>Open settings →</a></article>
@@ -464,11 +465,9 @@
 
 
     <div class="sinbad-workspace-main">
-      <div class="sinbad-workspace-tabs" role="tablist" aria-label="Captain Sinbad tools">
+      <div class="sinbad-workspace-tabs" role="tablist" aria-label="Captain Sinbad navigation">
         <button type="button" class="sinbad-workspace-tab active" id="sinbad-tab-chat" role="tab" aria-selected="true" aria-controls="sinbad-panel-chat" data-sinbad-tab="chat">💬 Chat</button>
         <button type="button" class="sinbad-workspace-tab" id="sinbad-tab-academy" role="tab" aria-selected="false" aria-controls="sinbad-panel-academy" data-sinbad-tab="academy" tabindex="-1">🎓 Academy</button>
-        <button type="button" class="sinbad-workspace-tab" id="sinbad-tab-passage" role="tab" aria-selected="false" aria-controls="sinbad-panel-passage" data-sinbad-tab="passage" tabindex="-1">🧭 Passage plan</button>
-        <button type="button" class="sinbad-workspace-tab" id="sinbad-tab-sources" role="tab" aria-selected="false" aria-controls="sinbad-panel-sources" data-sinbad-tab="sources" tabindex="-1">📚 Sources</button>
       </div>
 
       <section class="chat-panel sinbad-workspace-panel" id="sinbad-panel-chat" role="tabpanel" aria-labelledby="sinbad-tab-chat" data-sinbad-panel="chat">
@@ -478,15 +477,6 @@
         <span></span><span></span><span></span>
         <em>Sinbad is thinking…</em>
       </div>
-      <details class="action-menu sinbad-tools-menu">
-        <summary><span aria-hidden="true">☰</span> Sinbad tools</summary>
-        <div class="quick-prompts action-menu-panel">
-          <button type="button" class="btn sinbad-prompt">Search SOLAS</button>
-          <button type="button" class="btn sinbad-prompt">Show my charts</button>
-          <button type="button" class="btn sinbad-prompt">Review crew expiries</button>
-          <button type="button" class="btn sinbad-prompt">Create passage checklist</button>
-        </div>
-      </details>
       <div class="sinbad-voice-toolbar" aria-label="Voice controls">
         <label>Answer language
           <select id="sinbadLanguage" aria-label="Sinbad answer language">
@@ -571,7 +561,7 @@
       <section class="sinbad-workspace-panel" id="sinbad-panel-academy" role="tabpanel" aria-labelledby="sinbad-tab-academy" data-sinbad-panel="academy" hidden>
       <section class="academy-launch-card" aria-labelledby="academyLaunchTitle">
         <div><strong id="academyLaunchTitle">🎓 Sinbad Navigation Academy</strong><p>Open Sinbad’s resizable classroom in a separate workspace window.</p></div>
-        <div class="academy-actions"><button type="button" class="btn primary" id="openSinbadAcademyClassroom">Open classroom</button><button type="button" class="btn" id="openSinbadProfessorWorkspace">Open Professor · Hands-free Beta</button></div>
+        <div class="academy-actions"><button type="button" class="btn primary" id="openSinbadAcademyClassroom" data-open-sinbad-academy>Open classroom</button><button type="button" class="btn" id="openSinbadProfessorWorkspace">Open Professor · Hands-free Beta</button></div>
       </section>
       </section>
     </div>

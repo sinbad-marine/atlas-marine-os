@@ -461,6 +461,7 @@ test('live Sinbad chat writes bounded plain text on the real Academy board',asyn
 
 test('Professor Phase 2 opens separately, embeds the frozen classroom and starts a real diagnostic',async({page,context})=>{
   await stubBridge(page);
+  await context.route('http://127.0.0.1:31983/**',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({routes:0,library:{chunks:0},status:'STUDIO_RUNTIME_INCOMPLETE'})}));
   await page.goto('/');
   await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');});
   const popupPromise=context.waitForEvent('page');

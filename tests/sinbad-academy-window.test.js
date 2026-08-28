@@ -23,6 +23,9 @@ test('Academy launches as a genuine separate resizable browser window',()=>{
 
 test('dashboard exposes one Academy and its four programmes stay inside that window',()=>{
   assert.equal((html.match(/id="openSinbadAcademyClassroom"/g)||[]).length,1);
+  assert.match(html,/id="openSinbadAcademyHomeCard"[^>]*data-open-sinbad-academy/);
+  assert.equal((html.match(/data-open-sinbad-academy/g)||[]).length,2);
+  assert.match(app,/document\.querySelectorAll\('\[data-open-sinbad-academy\]'\)/);
   assert.doesNotMatch(html,/data-academy-track=/);
   for(const section of ['goss-gasm','stcw','goc','general-maritime-education'])assert.match(academyHtml,new RegExp(`data-academy-section="${section}"`));
   assert.match(academyApp,/const ACADEMY_SECTIONS=Object\.freeze/);

@@ -1946,7 +1946,7 @@ $('sinbadMessages')?.addEventListener('click',event=>{const button=event.target.
 $('sinbadInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendToSinbad($('sinbadInput').value)}});
 document.querySelectorAll('.sinbad-prompt').forEach(b=>b.addEventListener('click',()=>sendToSinbad(b.textContent)));
 
-const SINBAD_WORKSPACE_TABS=Object.freeze(['chat','academy','passage','sources']);
+const SINBAD_WORKSPACE_TABS=Object.freeze(['chat','academy']);
 function setSinbadWorkspaceTab(requested,{focus=false}={}){
   const tab=SINBAD_WORKSPACE_TABS.includes(requested)?requested:'chat';
   document.querySelectorAll('[data-sinbad-tab]').forEach(button=>{
@@ -1999,7 +1999,10 @@ $('importBridgeGpx')?.addEventListener('click',()=>$('bridgeGpxFile')?.click());
 $('bridgeGpxFile')?.addEventListener('change',event=>importBridgeGpxFile(event.target.files?.[0]));
 $('syncSinbadMemory')?.addEventListener('click',syncSinbadOfflineMemory);
 addBridgeWaypoint({name:'Departure'});addBridgeWaypoint({name:'Destination'});checkBridgeStatus();setInterval(checkBridgeStatus,30000);
-$('openSinbadAcademyClassroom')?.addEventListener('click',openSinbadAcademyWindow);
+document.querySelectorAll('[data-open-sinbad-academy]').forEach(element=>{
+  element.addEventListener('click',openSinbadAcademyWindow);
+  if(element.matches('[role="button"]'))element.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();openSinbadAcademyWindow();}});
+});
 $('openSinbadProfessorWorkspace')?.addEventListener('click',openSinbadProfessorHandsFreeWindow);
 renderOfficialSources();
 setSinbadVoiceUI();
