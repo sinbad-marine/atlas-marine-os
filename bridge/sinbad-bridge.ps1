@@ -881,7 +881,21 @@ try {
         $routes = Get-ChildItem -LiteralPath $routeRoot -Filter '*.gpx' -File -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | ForEach-Object { @{ name=$_.Name; size=$_.Length; modified=$_.LastWriteTime.ToString('o') } }
         Write-HttpResponse $stream 200 'OK' (Json @{ routes=@($routes) }); continue
       }
+      if ($method -eq 'POST' -and $path -eq '/routes/read') {
+        if ($contentLength -gt 1024) { throw 'ROUTE_READ_REQUEST_TOO_LARGE' }
+        $payload = $body | ConvertFrom-Json
+        $filename = [IO.Path]::GetFileName([string]$payload.filename)
+        if ([string]::IsNullOrWhiteSpace($filename) -or -not $filename.EndsWith('.gpx', [StringComparison]::OrdinalIgnoreCase)) { throw 'GPX_FILENAME_REQUIRED' }
+        $target = Join-Path $routeRoot $filename
+        if (-not (Test-Path -LiteralPath $target -PathType Leaf)) { throw 'GPX_ROUTE_NOT_FOUND' }
+        $item = Get-Item -LiteralPath $target
+        if ($item.Length -gt 2097152) { throw 'GPX_ROUTE_TOO_LARGE' }
+        $gpx = [IO.File]::ReadAllText($target, [Text.Encoding]::UTF8)
+        if ($gpx -notmatch '<gpx') { throw 'GPX_ROUTE_INVALID' }
+        Write-HttpResponse $stream 200 'OK' (Json @{ filename=$item.Name; modified=$item.LastWriteTime.ToString('o'); gpx=$gpx }); continue
+      }
       if ($method -eq 'POST' -and $path -eq '/routes') {
+        if ($contentLength -gt 2097152) { throw 'GPX_REQUEST_TOO_LARGE' }
         $payload = $body | ConvertFrom-Json
         if ([string]::IsNullOrWhiteSpace($payload.gpx) -or $payload.gpx -notmatch '<gpx') { throw 'A valid GPX document is required.' }
         $filename = [IO.Path]::GetFileName([string]$payload.filename)

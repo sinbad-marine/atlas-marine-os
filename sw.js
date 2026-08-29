@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.29-design-guard-v123';
+const CACHE='sinbad-marine-v8.20.29-passage-plan-v124';
 const ASSETS=[
   './',
   './index.html',
@@ -39,6 +39,7 @@ const ASSETS=[
   './official-publications.js',
   './supabase/functions/sinbad-answer/core-decision.js',
   './sinbad-core.js',
+  './sinbad-passage-planner.js',
   './sinbad-navigation.js',
   './sinbad-navigation-assistant.js',
   './sinbad-route-visualizer.js',

@@ -421,6 +421,28 @@
     <article><span>Mode</span><strong>ECS planning &amp; decision support</strong></article>
     <article><span>Archive</span><strong>61 cloud packages retained</strong></article>
   </div>
+  <section class="enc-passage-planner" aria-labelledby="encPassageTitle">
+    <div class="enc-passage-heading"><div><span class="eyebrow">OPENCPN ROUTE INTELLIGENCE</span><h3 id="encPassageTitle">Rota → Passage Plan</h3><p>OpenCPN’den dışa aktarılan GPX rotasını okuyun, bacak hesabını hazırlayın ve onayınızla geri gönderin.</p></div><span class="badge" id="encPassageBridgeStatus">Bridge bekleniyor</span></div>
+    <div class="enc-passage-actions">
+      <button class="btn" id="encRefreshRoutes" type="button">OpenCPN rota klasörünü tara</button>
+      <select id="encRouteSelect" aria-label="Yerel GPX rotası"><option value="">Rota seçin…</option></select>
+      <button class="btn primary" id="encLoadRoute" type="button">Seçili rotayı al</button>
+      <button class="btn" id="encPickGpx" type="button">Bilgisayardan GPX seç</button>
+      <input id="encGpxFile" type="file" accept=".gpx,application/gpx+xml,application/xml,text/xml" hidden>
+    </div>
+    <div class="enc-passage-settings">
+      <label>Plan sürati (kn)<input id="encPassageSpeed" type="number" min="0.1" step="0.1" value="10"></label>
+      <label>Yakıt tüketimi (L/h)<input id="encPassageFuel" type="number" min="0" step="0.1" value="0"></label>
+      <label>Yakıt marjı (%)<input id="encPassageMargin" type="number" min="0" step="1" value="20"></label>
+      <label>Kalkış zamanı<input id="encPassageDeparture" type="datetime-local"></label>
+      <button class="btn primary" id="encCalculatePassage" type="button">Passage planı hesapla</button>
+    </div>
+    <div id="encPassageSummary" class="enc-passage-summary" aria-live="polite">Henüz rota yüklenmedi.</div>
+    <div class="enc-leg-table-wrap"><table class="enc-leg-table"><thead><tr><th>Leg</th><th>Başlangıç</th><th>Varış</th><th>Rota</th><th>Mesafe</th><th>Süre</th><th>ETA</th></tr></thead><tbody id="encLegRows"><tr><td colspan="7">GPX rota bekleniyor.</td></tr></tbody></table></div>
+    <pre id="encPassageDraft" class="enc-passage-draft">Passage plan taslağı burada oluşturulacak.</pre>
+    <div class="enc-passage-actions"><button class="btn" id="encDownloadPassageGpx" type="button" disabled>GPX indir</button><button class="btn primary" id="encSendPassageToOpenCpn" type="button" disabled>Onayla ve OpenCPN’e gönder</button></div>
+    <p class="enc-passage-note" id="encPassageStatus">OpenCPN’deki rota için Route &amp; Mark Manager üzerinden GPX dışa aktarabilirsiniz. Sinbad yalnız yerel Routes klasörünü veya seçtiğiniz dosyayı okur.</p>
+  </section>
 </section>
 
 <section id="knowledge" class="workspace">
@@ -852,6 +874,7 @@
 <script src="./official-publications.js?v=8162"></script>
 <script src="./supabase/functions/sinbad-answer/core-decision.js?v=82029"></script>
 <script src="./sinbad-core.js?v=82029"></script>
+<script src="./sinbad-passage-planner.js?v=82030"></script>
 <script src="./sinbad-visuals.js?v=8236"></script>
 <script src="./sinbad-training-data.js?v=8180"></script>
 <script src="./sinbad-academy.js?v=8180"></script>

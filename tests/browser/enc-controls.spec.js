@@ -45,3 +45,27 @@ test('armed OpenCPN surface forwards bounded local mouse and keyboard controls',
   expect(inputs.find(item=>item.action==='text')?.text).toBe('ğ');
   expect(inputs.find(item=>item.action==='shortcut')?.key.toLowerCase()).toBe('s');
 });
+
+test('imports a local Bridge GPX, calculates legs and sends it to OpenCPN after approval',async({page})=>{
+  const opened=[];
+  const gpx='<?xml version="1.0"?><gpx xmlns="http://www.topografix.com/GPX/1/1"><rte><name>Marmaris Rodos</name><rtept lat="36.8500" lon="28.2700"><name>Marmaris</name></rtept><rtept lat="36.4500" lon="28.2200"><name>WP02</name></rtept><rtept lat="36.1600" lon="28.0000"><name>Rodos</name></rtept></rte></gpx>';
+  await page.route('http://127.0.0.1:31983/**',route=>{
+    const url=new URL(route.request().url());
+    if(url.pathname==='/routes'&&route.request().method()==='GET')return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({routes:[{name:'marmaris-rodos.gpx',size:gpx.length,modified:'2026-08-29T00:00:00Z'}]})});
+    if(url.pathname==='/routes/read')return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({filename:'marmaris-rodos.gpx',gpx})});
+    if(url.pathname==='/routes/open'){opened.push(route.request().postDataJSON());return route.fulfill({status:201,contentType:'application/json',body:JSON.stringify({ok:true,imported:true})});}
+    if(url.pathname==='/opencpn/start'||url.pathname==='/opencpn/status')return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({installed:true,running:true,minimized:false,title:'OpenCPN test'})});
+    return route.fulfill({status:503,contentType:'application/json',body:'{}'});
+  });
+  page.on('dialog',dialog=>dialog.accept());
+  await page.goto('/index.html?workspace=enc-viewer');
+  await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated')});
+  await page.locator('#encRouteSelect').selectOption('marmaris-rodos.gpx');
+  await page.locator('#encLoadRoute').click();
+  await expect(page.locator('#encPassageSummary')).toContainText('Marmaris Rodos');
+  await expect(page.locator('#encLegRows tr')).toHaveCount(2);
+  await expect(page.locator('#encPassageDraft')).toContainText('KAPTAN ONAYI');
+  await page.locator('#encSendPassageToOpenCpn').click();
+  await expect.poll(()=>opened.length).toBe(1);
+  expect(opened[0].filename).toBe('marmaris-rodos.gpx');
+});
