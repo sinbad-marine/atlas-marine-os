@@ -138,3 +138,16 @@ test('fullscreen command targets only the chart panel',async({page})=>{
   await page.locator('#encFullscreenMap').click();
   await expect.poll(()=>page.evaluate(()=>document.body.dataset.fullscreenTarget)).toContain('enc-map-shell');
 });
+
+test('fullscreen chart exposes working planning controls over the map',async({page})=>{
+  await page.route('http://127.0.0.1:31983/**',route=>route.fulfill({status:503,contentType:'application/json',body:'{}'}));
+  await page.goto('/index.html?workspace=enc-viewer');
+  await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');const shell=document.querySelector('.enc-map-shell');Object.defineProperty(document,'fullscreenElement',{configurable:true,get:()=>shell});document.dispatchEvent(new Event('fullscreenchange'))});
+  const overlay=page.locator('.enc-fullscreen-tools');
+  await expect(overlay).toBeVisible();
+  await overlay.getByRole('button',{name:/Rota/}).click();
+  await expect(page.locator('#encDrawRouteTool')).toHaveAttribute('aria-pressed','true');
+  await expect(overlay.getByRole('button',{name:/Rota/})).toHaveAttribute('aria-pressed','true');
+  await overlay.getByRole('button',{name:/Temizle/}).click();
+  await expect(page.locator('#encPanTool')).toHaveAttribute('aria-pressed','true');
+});
