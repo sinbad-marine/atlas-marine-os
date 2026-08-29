@@ -175,6 +175,7 @@ function initEncViewer(){
   $('encOpacity').addEventListener('input',e=>encChartLayer.setOpacity(Number(e.target.value)/100));
   $('encOpenCpnView').addEventListener('click',()=>setOpenCpnPreviewMode(true));
   $('encWebChartView').addEventListener('click',()=>setOpenCpnPreviewMode(false));
+  initOpenCpnInputControls();
   $('encResetView').addEventListener('click',()=>encMap.getView().animate({center:ol.proj.fromLonLat([-98.5,38.5]),zoom:4,duration:650}));
   $('encMediterraneanView').addEventListener('click',()=>encMap.getView().animate({center:ol.proj.fromLonLat([18,36]),zoom:5,duration:650}));
   const calculateSafetyDepth=()=>{
@@ -213,12 +214,49 @@ async function refreshOpenCpnPreview(){
     status.className='enc-map-status ready';
   }catch(error){status.textContent=`${error.message} Sinbad Bridge açık olmalıdır.`;status.className='enc-map-status error';}
 }
-function setOpenCpnPreviewMode(enabled){
+async function ensureOpenCpnRunning(){
+  const response=await fetch(`${SINBAD_BRIDGE_URL}/opencpn/start`,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+  if(!response.ok)throw new Error('OpenCPN otomatik başlatılamadı. Sinbad Bridge açık olmalıdır.');
+  return response.json();
+}
+async function sendOpenCpnInput(payload){
+  const response=await fetch(`${SINBAD_BRIDGE_URL}/opencpn/input`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  if(!response.ok)throw new Error('OpenCPN denetimi uygulanamadı.');
+  return response.json();
+}
+function initOpenCpnInputControls(){
+  const image=$('encOpenCpnFrame'),toggle=$('encOpenCpnControlToggle'),status=$('encOpenCpnStatus');
+  if(!image||!toggle||toggle.dataset.ready)return;toggle.dataset.ready='true';
+  let armed=false,start=null,startButton=0,clickTimer=null;
+  const point=e=>{const rect=image.getBoundingClientRect();return{x:Math.max(0,Math.min(1,(e.clientX-rect.left)/rect.width)),y:Math.max(0,Math.min(1,(e.clientY-rect.top)/rect.height))}};
+  const dispatch=async payload=>{try{await sendOpenCpnInput(payload);setTimeout(refreshOpenCpnPreview,90)}catch(error){status.textContent=error.message;status.className='enc-map-status error'}};
+  toggle.addEventListener('click',()=>{armed=!armed;toggle.setAttribute('aria-pressed',String(armed));toggle.textContent=`OpenCPN kontrolü: ${armed?'Açık':'Kapalı'}`;image.classList.toggle('interactive',armed)});
+  image.addEventListener('pointerdown',e=>{if(!armed)return;start=point(e);startButton=e.button;image.focus({preventScroll:true});image.setPointerCapture?.(e.pointerId);e.preventDefault()});
+  image.addEventListener('pointerup',e=>{if(!armed||!start)return;const finish=point(e),distance=Math.hypot(finish.x-start.x,finish.y-start.y),origin=start,button=startButton;start=null;if(distance>.008&&button===0)dispatch({action:'drag',...origin,x2:finish.x,y2:finish.y});else if(button===2)dispatch({action:'rightClick',...finish});else if(button===1)dispatch({action:'middleClick',...finish});else{clearTimeout(clickTimer);clickTimer=setTimeout(()=>dispatch({action:'click',...finish}),220)}e.preventDefault()});
+  image.addEventListener('pointercancel',()=>{start=null});
+  image.addEventListener('contextmenu',e=>{if(armed)e.preventDefault()});
+  image.addEventListener('dblclick',e=>{if(!armed)return;clearTimeout(clickTimer);dispatch({action:'doubleClick',...point(e)});e.preventDefault()});
+  image.addEventListener('wheel',e=>{if(!armed)return;dispatch({action:'wheel',...point(e),steps:e.deltaY<0?1:-1});e.preventDefault()},{passive:false});
+  image.tabIndex=0;image.setAttribute('role','application');image.setAttribute('aria-label','Etkileşimli yerel OpenCPN görüntüsü');
+  image.addEventListener('keydown',e=>{
+    if(!armed||e.altKey||e.metaKey)return;
+    if(e.ctrlKey&&/^[a-z]$/i.test(e.key)){dispatch({action:'shortcut',key:e.key});e.preventDefault();return}
+    if(e.ctrlKey)return;
+    const allowed=['Enter','Escape','Backspace','Delete','Tab','Space','ArrowLeft','ArrowUp','ArrowRight','ArrowDown','Home','End','PageUp','PageDown','Insert','F1','F2','F3','F4','F5','F6','F7','F8','F9','F10','F11','F12'];
+    if(allowed.includes(e.key)){dispatch({action:'key',key:e.key});e.preventDefault();return}
+    if(e.key.length===1&&!/[\u0000-\u001f]/.test(e.key)){dispatch({action:'text',text:e.key});e.preventDefault()}
+  });
+}
+async function setOpenCpnPreviewMode(enabled){
   const shell=$('encOpenCpnShell'),mapShell=$('encMap')?.closest('.enc-map-shell');
   if(!shell||!mapShell)return;
   shell.hidden=!enabled;mapShell.hidden=enabled;$('encOpenCpnView').hidden=enabled;$('encWebChartView').hidden=!enabled;
   if(openCpnPreviewTimer){clearInterval(openCpnPreviewTimer);openCpnPreviewTimer=null;}
-  if(enabled){refreshOpenCpnPreview();openCpnPreviewTimer=setInterval(refreshOpenCpnPreview,1200);}
+  if(enabled){
+    const status=$('encOpenCpnStatus');status.textContent='OpenCPN başlatılıyor ve yerel görüntü hazırlanıyor…';status.className='enc-map-status';
+    try{await ensureOpenCpnRunning();await refreshOpenCpnPreview()}catch(error){status.textContent=error.message;status.className='enc-map-status error'}
+    openCpnPreviewTimer=setInterval(refreshOpenCpnPreview,1200);
+  }
   else{releaseOpenCpnFrame();setTimeout(()=>encMap?.updateSize(),80);}
 }
 

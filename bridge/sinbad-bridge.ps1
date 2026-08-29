@@ -24,8 +24,13 @@ using System;
 using System.Runtime.InteropServices;
 public static class SinbadNativeWindow {
   [StructLayout(LayoutKind.Sequential)] public struct RECT { public int Left; public int Top; public int Right; public int Bottom; }
+  [StructLayout(LayoutKind.Sequential)] public struct POINT { public int X; public int Y; }
   [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr hWnd, out RECT rect);
+  [DllImport("user32.dll")] public static extern bool GetClientRect(IntPtr hWnd, out RECT rect);
+  [DllImport("user32.dll")] public static extern bool ClientToScreen(IntPtr hWnd, ref POINT point);
   [DllImport("user32.dll")] public static extern bool IsIconic(IntPtr hWnd);
+  [DllImport("user32.dll")] public static extern bool ShowWindowAsync(IntPtr hWnd, int command);
+  [DllImport("user32.dll")] public static extern bool PostMessage(IntPtr hWnd, uint message, UIntPtr wParam, IntPtr lParam);
   [DllImport("user32.dll")] public static extern bool PrintWindow(IntPtr hWnd, IntPtr hdcBlt, uint flags);
 }
 '@
@@ -226,6 +231,93 @@ function Get-OpenCpnWindowStatus {
   if (-not $process) { return @{ installed=$installed; running=$false; minimized=$false; title=''; pid=$null } }
   $process.Refresh()
   return @{ installed=$installed; running=$true; minimized=[SinbadNativeWindow]::IsIconic($process.MainWindowHandle); title=$process.MainWindowTitle; pid=$process.Id }
+}
+
+function Start-OpenCpnWindow {
+  $state = Get-OpenCpnWindowStatus
+  if ($state.running) {
+    $process = Get-Process -Id $state.pid -ErrorAction Stop
+    if ($state.minimized) { $null = [SinbadNativeWindow]::ShowWindowAsync($process.MainWindowHandle,9) }
+    return Get-OpenCpnWindowStatus
+  }
+  if ([string]::IsNullOrWhiteSpace([string]$OpenCpnExecutable) -or -not (Test-Path -LiteralPath $OpenCpnExecutable -PathType Leaf)) { throw 'OPENCPN_NOT_INSTALLED' }
+  Start-Process -FilePath $OpenCpnExecutable | Out-Null
+  $deadline = [DateTime]::UtcNow.AddSeconds(15)
+  do {
+    Start-Sleep -Milliseconds 250
+    $state = Get-OpenCpnWindowStatus
+    if ($state.running) { return $state }
+  } while ([DateTime]::UtcNow -lt $deadline)
+  throw 'OPENCPN_START_TIMEOUT'
+}
+
+function ConvertTo-NormalizedOpenCpnCoordinate($value,[string]$name) {
+  $number = 0.0
+  if (-not [double]::TryParse(([string]$value),[Globalization.NumberStyles]::Float,[Globalization.CultureInfo]::InvariantCulture,[ref]$number)) { throw "OPENCPN_INPUT_INVALID_$name" }
+  if ([double]::IsNaN($number) -or [double]::IsInfinity($number) -or $number -lt 0 -or $number -gt 1) { throw "OPENCPN_INPUT_INVALID_$name" }
+  return $number
+}
+
+function Send-OpenCpnWindowInput($payload) {
+  $allowed = @('click','rightClick','middleClick','doubleClick','drag','wheel','text','key','shortcut')
+  $action = [string]$payload.action
+  if ($allowed -notcontains $action) { throw 'OPENCPN_INPUT_ACTION_DENIED' }
+  $process = Get-Process -Name 'opencpn' -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 } | Select-Object -First 1
+  if (-not $process) { throw 'OPENCPN_NOT_RUNNING' }
+  $process.Refresh(); $handle = $process.MainWindowHandle
+  if ([SinbadNativeWindow]::IsIconic($handle)) { throw 'OPENCPN_WINDOW_MINIMIZED' }
+  if ($action -eq 'text') {
+    $text=[string]$payload.text
+    if ([string]::IsNullOrEmpty($text) -or $text.Length -gt 16 -or $text -match '[\x00-\x08\x0B\x0C\x0E-\x1F]') { throw 'OPENCPN_INPUT_TEXT_DENIED' }
+    foreach ($character in $text.ToCharArray()) { if (-not [SinbadNativeWindow]::PostMessage($handle,0x0102,[UIntPtr][uint16]$character,[IntPtr]::Zero)) { throw 'OPENCPN_INPUT_DISPATCH_FAILED' } }
+    return @{ ok=$true; action=$action; pid=$process.Id }
+  }
+  if ($action -eq 'key' -or $action -eq 'shortcut') {
+    $virtualKeys=@{ Enter=0x0D; Escape=0x1B; Backspace=0x08; Delete=0x2E; Tab=0x09; Space=0x20; ArrowLeft=0x25; ArrowUp=0x26; ArrowRight=0x27; ArrowDown=0x28; Home=0x24; End=0x23; PageUp=0x21; PageDown=0x22; Insert=0x2D; F1=0x70; F2=0x71; F3=0x72; F4=0x73; F5=0x74; F6=0x75; F7=0x76; F8=0x77; F9=0x78; F10=0x79; F11=0x7A; F12=0x7B }
+    $key=[string]$payload.key
+    if ($action -eq 'shortcut') {
+      if ($key -notmatch '^[A-Za-z]$') { throw 'OPENCPN_INPUT_SHORTCUT_DENIED' }
+      $virtualKeys[$key]=[byte][char]$key.ToUpperInvariant()
+      $null=[SinbadNativeWindow]::PostMessage($handle,0x0100,[UIntPtr]0x11,[IntPtr]::Zero)
+    }
+    if (-not $virtualKeys.ContainsKey($key)) { throw 'OPENCPN_INPUT_KEY_DENIED' }
+    $vk=[UIntPtr][uint32]$virtualKeys[$key]
+    if (-not [SinbadNativeWindow]::PostMessage($handle,0x0100,$vk,[IntPtr]::Zero) -or -not [SinbadNativeWindow]::PostMessage($handle,0x0101,$vk,[IntPtr]::Zero)) { throw 'OPENCPN_INPUT_DISPATCH_FAILED' }
+    if ($action -eq 'shortcut') { $null=[SinbadNativeWindow]::PostMessage($handle,0x0101,[UIntPtr]0x11,[IntPtr]::Zero) }
+    return @{ ok=$true; action=$action; pid=$process.Id }
+  }
+  $windowRect = [SinbadNativeWindow+RECT]::new(); $clientRect = [SinbadNativeWindow+RECT]::new(); $clientOrigin = [SinbadNativeWindow+POINT]::new()
+  if (-not [SinbadNativeWindow]::GetWindowRect($handle,[ref]$windowRect) -or -not [SinbadNativeWindow]::GetClientRect($handle,[ref]$clientRect) -or -not [SinbadNativeWindow]::ClientToScreen($handle,[ref]$clientOrigin)) { throw 'OPENCPN_WINDOW_BOUNDS_UNAVAILABLE' }
+  $windowWidth=$windowRect.Right-$windowRect.Left; $windowHeight=$windowRect.Bottom-$windowRect.Top; $clientWidth=$clientRect.Right; $clientHeight=$clientRect.Bottom
+  if ($windowWidth -lt 320 -or $windowHeight -lt 240 -or $clientWidth -lt 1 -or $clientHeight -lt 1) { throw 'OPENCPN_WINDOW_BOUNDS_INVALID' }
+  $toPoint = {
+    param($nx,$ny)
+    $px=[Math]::Round((ConvertTo-NormalizedOpenCpnCoordinate $nx 'X')*($windowWidth-1))-($clientOrigin.X-$windowRect.Left)
+    $py=[Math]::Round((ConvertTo-NormalizedOpenCpnCoordinate $ny 'Y')*($windowHeight-1))-($clientOrigin.Y-$windowRect.Top)
+    if ($px -lt 0 -or $py -lt 0 -or $px -ge $clientWidth -or $py -ge $clientHeight) { throw 'OPENCPN_INPUT_OUTSIDE_CLIENT' }
+    return @{ x=[int]$px; y=[int]$py }
+  }
+  $pack = { param($point) [IntPtr](($point.y -shl 16) -bor ($point.x -band 0xffff)) }
+  $post = { param([uint32]$message,[UIntPtr]$flags,[IntPtr]$location) if (-not [SinbadNativeWindow]::PostMessage($handle,$message,$flags,$location)) { throw 'OPENCPN_INPUT_DISPATCH_FAILED' } }
+  $start = & $toPoint $payload.x $payload.y; $startLocation = & $pack $start
+  if ($action -eq 'click') { & $post 0x0201 ([UIntPtr]1) $startLocation; & $post 0x0202 ([UIntPtr]0) $startLocation }
+  elseif ($action -eq 'rightClick') { & $post 0x0204 ([UIntPtr]2) $startLocation; & $post 0x0205 ([UIntPtr]0) $startLocation }
+  elseif ($action -eq 'middleClick') { & $post 0x0207 ([UIntPtr]0x10) $startLocation; & $post 0x0208 ([UIntPtr]0) $startLocation }
+  elseif ($action -eq 'doubleClick') {
+    & $post 0x0201 ([UIntPtr]1) $startLocation; & $post 0x0202 ([UIntPtr]0) $startLocation
+    & $post 0x0203 ([UIntPtr]1) $startLocation; & $post 0x0202 ([UIntPtr]0) $startLocation
+  } elseif ($action -eq 'drag') {
+    $finish = & $toPoint $payload.x2 $payload.y2
+    & $post 0x0201 ([UIntPtr]1) $startLocation
+    1..8 | ForEach-Object { $ratio=$_/8; $step=@{x=[int][Math]::Round($start.x+($finish.x-$start.x)*$ratio);y=[int][Math]::Round($start.y+($finish.y-$start.y)*$ratio)}; & $post 0x0200 ([UIntPtr]1) (& $pack $step) }
+    & $post 0x0202 ([UIntPtr]0) (& $pack $finish)
+  } else {
+    $steps=[Math]::Max(-3,[Math]::Min(3,[int]$payload.steps)); if ($steps -eq 0) { throw 'OPENCPN_INPUT_INVALID_WHEEL' }
+    $screenX=$windowRect.Left+[Math]::Round((ConvertTo-NormalizedOpenCpnCoordinate $payload.x 'X')*($windowWidth-1)); $screenY=$windowRect.Top+[Math]::Round((ConvertTo-NormalizedOpenCpnCoordinate $payload.y 'Y')*($windowHeight-1))
+    $screenLocation=[IntPtr](($screenY -shl 16) -bor ($screenX -band 0xffff)); $wheelValue=[uint32](([int16](120*$steps)) -shl 16)
+    & $post 0x020A ([UIntPtr]$wheelValue) $screenLocation
+  }
+  return @{ ok=$true; action=$action; pid=$process.Id }
 }
 
 function Get-OpenCpnWindowFrame {
@@ -747,6 +839,8 @@ try {
       if ($method -eq 'GET' -and $path -eq '/studio/status') { Write-HttpResponse $stream 200 'OK' (Json (Get-StudioCapabilityStatus)); continue }
       if ($method -eq 'GET' -and $path -eq '/opencpn/status') { Write-HttpResponse $stream 200 'OK' (Json (Get-OpenCpnWindowStatus)); continue }
       if ($method -eq 'GET' -and $path -eq '/opencpn/frame') { Write-HttpBytes $stream 200 'OK' (Get-OpenCpnWindowFrame) 'image/png'; continue }
+      if ($method -eq 'POST' -and $path -eq '/opencpn/start') { if ($contentLength -gt 256) { throw 'OPENCPN_START_REQUEST_TOO_LARGE' }; Write-HttpResponse $stream 200 'OK' (Json (Start-OpenCpnWindow)); continue }
+      if ($method -eq 'POST' -and $path -eq '/opencpn/input') { if ($contentLength -gt 4096) { throw 'OPENCPN_INPUT_REQUEST_TOO_LARGE' }; Write-HttpResponse $stream 200 'OK' (Json (Send-OpenCpnWindowInput ($body | ConvertFrom-Json))); continue }
       if ($method -eq 'POST' -and $path -eq '/library/reindex') { Write-HttpResponse $stream 200 'OK' (Json (Update-LibraryIndex)); continue }
       if ($method -eq 'POST' -and $path -eq '/library/ingest') {
         $payload = $body | ConvertFrom-Json
