@@ -12,3 +12,10 @@ test('local launcher requires an explicit exam project and separate bounded port
   assert.throws(()=>launcher.parseArgs(['--exam-root','exam','--academy-port','4192','--exam-port','4192']),/EXAM_PORT_INVALID/);
   assert.throws(()=>launcher.parseArgs(['--exam-root','exam','--review-port','4192']),/REVIEW_PORT_INVALID/);
 });
+
+test('local launcher passes the selected Academy port through the preview server environment',()=>{
+  const source=require('node:fs').readFileSync(require.resolve('../tools/start-academy-exams.js'),'utf8');
+  assert.match(source,/SINBAD_PREVIEW_PORT:String\(academyPort\)/);
+  assert.match(source,/academy\.html\?examPort=\$\{examPort\}/);
+  assert.doesNotMatch(source,/serve-pages-preview\.js','--port'/);
+});

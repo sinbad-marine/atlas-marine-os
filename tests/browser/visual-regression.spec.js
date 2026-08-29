@@ -30,7 +30,7 @@ for(const [name,surface] of Object.entries(contract.surfaces)){
 
 visualTest('approved dashboard module layout',async({page})=>{
   await page.goto('/index.html');
-  await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');});
+  await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');const card=document.querySelector('#developerProjectCard');if(card)card.dataset.roleHidden='false';});
   await stabilize(page);
   await expect(page.locator('.module-grid')).toHaveScreenshot('dashboard-modules.png');
 });

@@ -8,32 +8,43 @@ const prepareDashboard=async page=>{
   await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');});
 };
 
-test('every dashboard card opens and closes its canonical workspace',async({page})=>{
+test('every dashboard card opens its canonical independent resizable window',async({page,context})=>{
   const pageErrors=[];page.on('pageerror',error=>pageErrors.push(error.message));
   await prepareDashboard(page);
   for(const id of contract.dashboardWorkspaces){
+    if(id==='document-submissions')await page.locator('#developerProjectCard').evaluate(element=>element.dataset.roleHidden='false');
     const launcher=page.locator(`[data-open="${id}"]:visible`).first();
     await expect(launcher,`${id} launcher`).toBeVisible();
+    const popupPromise=context.waitForEvent('page');
     await launcher.evaluate(element=>element.click());
-    const workspace=page.locator(`#${id}`);
-    await expect(workspace,`${id} workspace`).toHaveClass(/\bactive\b/u);
-    await expect(page.locator('.workspace.active')).toHaveCount(1);
-    await workspace.locator('.close').first().evaluate(element=>element.click());
-    await expect(workspace).not.toHaveClass(/\bactive\b/u);
+    const popup=await popupPromise;await popup.waitForLoadState('domcontentloaded');
+    await popup.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');});
+    if(id==='store')await expect(popup).toHaveURL(/\/store\.html/u);
+    else{
+      await expect(popup).toHaveURL(new RegExp(`workspace=${id}`,'u'));
+      await expect(popup.locator(`#${id}`)).toHaveClass(/\bactive\b/u);
+      await expect(popup.locator('[data-window-back]')).toBeVisible();
+      await expect(popup.locator('[data-window-home]')).toBeVisible();
+    }
+    await popup.close();
   }
   expect(pageErrors).toEqual([]);
 });
 
-test('Captain Sinbad exposes only working Chat and Academy tabs',async({page})=>{
+test('Captain Sinbad exposes only working Chat and Academy tabs',async({page,context})=>{
   await prepareDashboard(page);
+  const popupPromise=context.waitForEvent('page');
   await page.locator('[data-open="sinbad"]:visible').first().click({force:true});
-  await expect(page.locator('[data-sinbad-tab="chat"]')).toHaveAttribute('aria-selected','true');
-  await page.locator('[data-sinbad-tab="academy"]').click();
-  await expect(page.locator('[data-sinbad-tab="academy"]')).toHaveAttribute('aria-selected','true');
-  await expect(page.locator('#sinbad-panel-academy')).toBeVisible();
-  await expect(page.locator('[data-sinbad-tab="passage"],[data-sinbad-tab="sources"],.sinbad-tools-menu')).toHaveCount(0);
-  await page.locator('[data-sinbad-tab="chat"]').click();
-  await expect(page.locator('#sinbad-panel-chat')).toBeVisible();
+  const popup=await popupPromise;await popup.waitForLoadState('domcontentloaded');
+  await popup.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');});
+  await expect(popup.locator('[data-sinbad-tab="chat"]')).toHaveAttribute('aria-selected','true');
+  await popup.locator('[data-sinbad-tab="academy"]').click();
+  await expect(popup.locator('[data-sinbad-tab="academy"]')).toHaveAttribute('aria-selected','true');
+  await expect(popup.locator('#sinbad-panel-academy')).toBeVisible();
+  await expect(popup.locator('[data-sinbad-tab="passage"],[data-sinbad-tab="sources"],.sinbad-tools-menu')).toHaveCount(0);
+  await popup.locator('[data-sinbad-tab="chat"]').click();
+  await expect(popup.locator('#sinbad-panel-chat')).toBeVisible();
+  await popup.close();
 });
 
 test('Academy departments switch in the same functional classroom',async({page})=>{
