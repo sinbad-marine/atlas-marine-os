@@ -375,9 +375,30 @@
     <button class="btn close">Close</button>
   </div>
   <div class="enc-safety"><strong>Planning aid only.</strong> Do not use this web display as the sole means of navigation. Verify aboard with an approved, updated ECDIS/ECS and official notices.</div>
+  <details class="enc-map-apps-menu" id="encMapAppsMenu">
+    <summary class="btn" aria-label="Harita uygulamaları menüsünü aç"><span aria-hidden="true">☰</span> Haritalar</summary>
+    <div class="enc-map-apps-panel">
+      <section aria-labelledby="encMapApplicationsTitle">
+        <h3 id="encMapApplicationsTitle">Harita uygulamaları</h3>
+        <div class="enc-map-app-links">
+          <button class="btn" id="encOpenCpnView" type="button">OpenCPN Yerel Canlı Görüntü</button>
+          <button class="btn primary" id="encWebChartView" type="button" hidden>Web ENC Haritasına Dön</button>
+          <a class="btn" href="https://nauticalcharts.noaa.gov/enconline/enconline.html" target="_blank" rel="noopener">NOAA ENC Viewer</a>
+        </div>
+      </section>
+      <section aria-labelledby="encBasemapTitle">
+        <h3 id="encBasemapTitle">Altlık haritası</h3>
+        <div class="enc-basemap-options" id="encBasemapGallery" role="group" aria-label="Altlık haritası galerisi">
+          <button type="button" class="enc-basemap-card navigation" data-enc-basemap="navigation" aria-pressed="true"><span>Seyir / Açık</span><small>OpenStreetMap</small></button>
+          <button type="button" class="enc-basemap-card topo" data-enc-basemap="topographic" aria-pressed="false"><span>Topografik</span><small>Esri World Topo</small></button>
+          <button type="button" class="enc-basemap-card dark" data-enc-basemap="dark-gray" aria-pressed="false"><span>Koyu Gri</span><small>Esri Dark Gray</small></button>
+          <button type="button" class="enc-basemap-card ocean" data-enc-basemap="ocean" aria-pressed="false"><span>Okyanus</span><small>Esri Ocean</small></button>
+          <button type="button" class="enc-basemap-card imagery" data-enc-basemap="imagery" aria-pressed="false"><span>Uydu</span><small>Esri World Imagery</small></button>
+        </div>
+      </section>
+    </div>
+  </details>
   <div class="enc-toolbar">
-    <button class="btn" id="encOpenCpnView" type="button">OpenCPN Yerel Canlı Görüntü</button>
-    <button class="btn primary" id="encWebChartView" type="button" hidden>Web ENC Haritasına Dön</button>
     <button class="btn primary" id="encMediterraneanView" type="button">Mediterranean</button>
     <button class="btn" id="encResetView" type="button">NOAA / USA</button>
     <button class="btn" id="encUseLocation" type="button">Go to My Position</button>
@@ -385,18 +406,7 @@
     <label class="enc-toggle"><input id="encSeamarkToggle" type="checkbox" checked> Seamarks</label>
     <label class="enc-toggle"><input id="encLayerToggle" type="checkbox" checked> NOAA ENC</label>
     <label class="enc-opacity">Opacity <input id="encOpacity" type="range" min="20" max="100" value="100"></label>
-    <a class="btn" href="https://nauticalcharts.noaa.gov/enconline/enconline.html" target="_blank" rel="noopener">Open NOAA Viewer</a>
   </div>
-  <details class="enc-basemap-gallery" id="encBasemapGallery">
-    <summary class="btn">Harita formatı</summary>
-    <div class="enc-basemap-options" role="group" aria-label="Altlık haritası galerisi">
-      <button type="button" class="enc-basemap-card navigation" data-enc-basemap="navigation" aria-pressed="true"><span>Seyir / Açık</span><small>OpenStreetMap</small></button>
-      <button type="button" class="enc-basemap-card topo" data-enc-basemap="topographic" aria-pressed="false"><span>Topografik</span><small>Esri World Topo</small></button>
-      <button type="button" class="enc-basemap-card dark" data-enc-basemap="dark-gray" aria-pressed="false"><span>Koyu Gri</span><small>Esri Dark Gray</small></button>
-      <button type="button" class="enc-basemap-card ocean" data-enc-basemap="ocean" aria-pressed="false"><span>Okyanus</span><small>Esri Ocean</small></button>
-      <button type="button" class="enc-basemap-card imagery" data-enc-basemap="imagery" aria-pressed="false"><span>Uydu</span><small>Esri World Imagery</small></button>
-    </div>
-  </details>
   <div class="enc-map-tools" role="toolbar" aria-label="Sinbad web haritası araçları">
     <button class="btn primary" id="encPanTool" type="button" aria-pressed="true">Gezin</button>
     <button class="btn" id="encMeasureTool" type="button" aria-pressed="false">Mesafe ölç</button>

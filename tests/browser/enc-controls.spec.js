@@ -6,12 +6,12 @@ test('direct ENC workspace initializes its map and OpenCPN controls',async({page
   await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');});
 
   await expect(page.locator('#encMap .ol-viewport')).toBeVisible();
+  await page.locator('#encMapAppsMenu > summary').click();
   await page.getByRole('button',{name:'OpenCPN Yerel Canlı Görüntü'}).click();
   await expect(page.locator('#encOpenCpnShell')).toBeVisible();
   await expect(page.locator('#encOpenCpnFrame')).toBeHidden();
   await expect(page.locator('#encOpenCpnFrame')).not.toHaveAttribute('src',/.+/);
-  await expect(page.getByRole('button',{name:'Web ENC Haritasına Dön'})).toBeVisible();
-
+  await page.locator('#encMapAppsMenu > summary').click();
   await page.getByRole('button',{name:'Web ENC Haritasına Dön'}).click();
   await expect(page.locator('#encMap .ol-viewport')).toBeVisible();
 
@@ -31,6 +31,7 @@ test('armed OpenCPN surface forwards bounded local mouse and keyboard controls',
   });
   await page.goto('/index.html?workspace=enc-viewer');
   await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');});
+  await page.locator('#encMapAppsMenu > summary').click();
   await page.getByRole('button',{name:'OpenCPN Yerel Canlı Görüntü'}).click();
   await page.getByRole('button',{name:'OpenCPN kontrolü: Kapalı'}).click();
   const frame=page.locator('#encOpenCpnFrame');
@@ -82,7 +83,7 @@ test('controls every active web chart layer and turns a drawn route into a passa
   await page.locator('#encBathymetryToggle').check();
   await page.locator('#encSeamarkToggle').check();
   await page.locator('#encLayerToggle').check();
-  await page.locator('#encBasemapGallery').getByText('Harita formatı',{exact:true}).click();
+  await page.locator('#encMapAppsMenu > summary').click();
   await page.getByRole('button',{name:/Koyu Gri/}).click();
   await expect(page.locator('[data-enc-basemap="dark-gray"]')).toHaveAttribute('aria-pressed','true');
   await expect(page.locator('#encPlanningStatus')).toContainText('Harita formatı: Koyu Gri');
