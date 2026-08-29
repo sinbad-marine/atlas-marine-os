@@ -61,7 +61,7 @@ function installWorkspaceWindowShell(){
   document.querySelectorAll('.workspace').forEach(section=>section.classList.toggle('active',section.id===workspaceWindowId));
   const requestedBucket=new URLSearchParams(location.search).get('bucket'),bucketSelect=$('cloudBucketSelect');
   if(requestedBucket&&bucketSelect)bucketSelect.value=requestedBucket;
-  workspace.querySelectorAll('.close').forEach(button=>{button.textContent='Pencereyi kapat';button.onclick=()=>window.close();});
+  workspace.querySelectorAll('.close').forEach(button=>button.remove());
 }
 document.querySelectorAll('[data-open]').forEach(x=>x.onclick=()=>workspaceWindowId?openWorkspace(x.dataset.open):openDashboardWorkspaceWindow(x.dataset.open));
 document.querySelectorAll('.close').forEach(x=>x.onclick=closeWorkspaces);
