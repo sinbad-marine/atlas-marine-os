@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.29-passage-plan-v124';
+const CACHE='sinbad-marine-v8.20.29-opencpn-live-frame-v125';
 const ASSETS=[
   './',
   './index.html',
