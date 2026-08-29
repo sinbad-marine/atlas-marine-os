@@ -4,7 +4,7 @@
   "goldenUpdatePolicy": "Golden screenshots may change only in an explicitly reviewed design pull request.",
   "protectedFileSha256": {
     "index.html": "3fd4de26c822fc9a5c5b7e5bb32565d45b848d31219131521e94a2cd2ee586b2",
-    "styles.css": "143527de67570cecd1189d018b4794f37826c76b7c93c9657aaa1e5412888644",
+    "styles.css": "64069dca0b0c0426a4574b6f442193fa124518d790be312e4237ba7e2de589b6",
     "academy.html": "5f66e3da0e5d8ad90095e01e1cc5fe75f96f86b87a6649b92e0c0115c1ad6d20",
     "academy.css": "9d2c9e160eaa0ed785e3125cbc0f878511d49aeaac31fbff765b1fbb599937fe"
   },

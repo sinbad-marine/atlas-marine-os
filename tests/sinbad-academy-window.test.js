@@ -87,7 +87,7 @@ test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.match(academyApp,/const ACADEMY_FULL_BODY_RIG_CALIBRATED=false/);
   for(const part of ['head','torso','left-arm','right-arm'])assert.match(academyHtml,new RegExp(`captain-sinbad-fullbody-rig-${part}-v2\\.png`));
   assert.match(academyCss,/\.academy-rig-torso\{[^}]*height:74%/);
-  assert.match(worker,/sinbad-marine-v8\.20\.29-chart-console-v128/);
+  assert.match(worker,/sinbad-marine-v8\.20\.29-chart-full-width-v129/);
   for(const protectedFallback of ['exam-intelligence-local-required.html','sinbad-owner-review.js','owner-review-local-required.html'])assert.match(worker,new RegExp(protectedFallback.replaceAll('.','\\.')));
 });
 

@@ -509,6 +509,7 @@ input,textarea,select{box-shadow:inset 0 1px 0 rgba(255,255,255,.025)}
 .submission-head{display:flex;justify-content:space-between;align-items:center;gap:12px}.submission-card{margin:10px 0;padding:13px;border:1px solid var(--line);border-radius:13px;background:#061927}.submission-card h4,.submission-card p{margin:0}.submission-card p{margin-top:7px;color:var(--muted);line-height:1.45}.submission-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.submission-actions .btn{padding:7px 10px;font-size:12px}
 [data-role-hidden="true"]{display:none!important}
 .workspace-window-mode main{width:min(1800px,calc(100% - 28px));padding-top:14px}
+.workspace-window-mode.workspace-window-enc-viewer main{width:100%;max-width:none;box-sizing:border-box;padding:14px 10px 10px}
 .workspace-window-mode main> :not(.workspace):not(.workspace-window-toolbar){display:none!important}
 .workspace-window-mode .workspace{margin-top:14px;min-height:calc(100vh - 190px)}
 .workspace-window-mode .sinbad-float,.workspace-window-mode footer{display:none!important}
