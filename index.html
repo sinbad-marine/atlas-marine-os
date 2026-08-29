@@ -170,7 +170,7 @@
   <article class="module-card featured-card" data-open="location-intelligence"><div>📍</div><h3>Location Intelligence</h3><p>Permission-based position service for nearby marine information.</p><a>Open location service →</a></article>
   <article class="module-card featured-card" data-open="camera-archive"><div>📷</div><h3>Camera & Media Archive</h3><p>Capture private operational photos and videos for your workspace.</p><a>Open camera →</a></article>
   <article class="module-card featured-card" data-open="captains-logbook"><div>🎙️</div><h3>Captain's Logbook</h3><p>Capture timestamped voice or typed draft journal entries while operations continue.</p><a>Open voice log →</a></article>
-  <article class="module-card featured-card" data-open="document-submissions"><div>📥</div><h3>Library Submissions</h3><p>Developers submit original sources to quarantine; only the Owner can approve them.</p><a>Open submission desk →</a></article>
+  <article class="module-card featured-card" id="developerProjectCard" data-open="document-submissions" data-role-hidden="true"><div>💬</div><h3>Developer Project Center</h3><p>Owner ve Developer geliştirme talepleri, mesajlar, görsel/video/belge ekleri ve kontrollü onay kuyruğu.</p><span class="developer-message-badge" id="ownerDeveloperMessageCount">Yeni talep yok</span><a>Merkezi aç →</a></article>
   <article class="module-card featured-card" data-open="enc-viewer"><div>⚓</div><h3>Sinbad ENC Viewer</h3><p>View the NOAA ENC archive as a seamless, zoomable S-52 chart.</p><a>Open visual ENC →</a></article>
 </section>
 
@@ -300,26 +300,42 @@
 
 <section id="document-submissions" class="workspace">
   <div class="workspace-head">
-    <div><div class="eyebrow">CONTROLLED CONTRIBUTION WORKFLOW</div><h2>Library Submissions</h2><p>Original sources remain unchanged in quarantine. Publication requires Owner approval and a verified security scan.</p></div>
+    <div><div class="eyebrow">CONTROLLED CONTRIBUTION WORKFLOW</div><h2>Academy Contributions &amp; Change Plans</h2><p>Developers may upload learning media, review answer-key evidence and propose design changes. Nothing is published without final Owner approval.</p></div>
     <button class="btn close">Close</button>
   </div>
   <div class="role-access-banner" id="currentRoleBanner">Loading your workspace role…</div>
   <div class="submission-grid">
     <article class="control-panel" id="developerSubmissionPanel">
-      <h3>Submit an Original Source</h3>
-      <p class="muted">PDF, image, chart or publication. Uploading does not publish the source.</p>
-      <label>Source files<input id="submissionFiles" type="file" multiple accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.webp,.tif,.tiff"></label>
-      <label>Intended library<select id="submissionLibrary"><option value="nautical-publications">Nautical Publications</option><option value="nautical-charts">Nautical Charts</option><option value="atlas-documents">Document Center</option></select></label>
+      <h3>Submit Academy Material</h3>
+      <p class="muted">Documents, video, drawings, images and tables remain unchanged in quarantine until the review chain is complete.</p>
+      <label>Contribution files<input id="submissionFiles" type="file" multiple accept=".pdf,.doc,.docx,.txt,.md,.csv,.xls,.xlsx,.jpg,.jpeg,.png,.webp,.svg,.tif,.tiff,.mp4,.webm,.mov,application/pdf,image/*,video/*"></label>
+      <label>Intended destination<select id="submissionLibrary"><option value="sinbad-academy">Sinbad Academy</option><option value="nautical-publications">Nautical Publications</option><option value="nautical-charts">Nautical Charts</option><option value="atlas-documents">Document Center</option></select></label>
       <label>Description<textarea id="submissionDescription" rows="4" placeholder="Edition, region, source, relevance and any notes for review"></textarea></label>
       <button class="btn primary" id="submitLibraryFiles" type="button">Submit to Quarantine</button>
       <div id="submissionUploadStatus" class="notice">No files selected.</div>
     </article>
     <article class="control-panel">
-      <div class="submission-head"><h3>Submission Queue</h3><button class="btn" id="refreshSubmissions" type="button">Refresh</button></div>
+      <div class="submission-head"><h3>Review &amp; Owner Approval Queue</h3><button class="btn" id="refreshSubmissions" type="button">Refresh</button></div>
       <div id="submissionList" class="cloud-list">No submissions loaded.</div>
     </article>
   </div>
-  <div class="log-safety-note"><strong>Security gate:</strong> Owner approval changes a submission to “approved pending scan”. It is not moved to the main library until a trusted scanner reports success.</div>
+  <div class="submission-grid contribution-plan-grid">
+    <article class="control-panel" id="developerDesignPlanPanel">
+      <h3>Propose a Page Design Change</h3>
+      <p class="muted">Describe the requested result, affected page and acceptance checks. A proposal cannot edit or publish the live site.</p>
+      <label>Target page<select id="designPlanSurface"><option value="dashboard">Main dashboard</option><option value="captain-sinbad">Captain Sinbad</option><option value="academy">Sinbad Academy</option><option value="exam-intelligence">Exam Intelligence</option><option value="store">Sinbad Marine Store</option></select></label>
+      <label>Proposal title<input id="designPlanTitle" maxlength="140" placeholder="Short change title"></label>
+      <label>Change plan<textarea id="designPlanBody" rows="6" maxlength="5000" placeholder="Current problem, proposed layout, expected behavior and acceptance checks"></textarea></label>
+      <label>Supporting files<input id="designPlanAttachments" type="file" multiple accept=".pdf,.doc,.docx,.txt,.md,.csv,.xls,.xlsx,.jpg,.jpeg,.png,.webp,.svg,.tif,.tiff,.mp4,.webm,.mov,application/pdf,image/*,video/*"></label>
+      <button class="btn primary" id="submitDesignPlan" type="button">Send Plan to Owner</button>
+      <div id="designPlanStatus" class="notice">No plan submitted.</div>
+    </article>
+    <article class="control-panel owner-final-approval-panel">
+      <div class="submission-head"><h3>Design Approval Queue</h3><button class="btn" id="refreshDesignPlans" type="button">Refresh</button></div>
+      <div id="designPlanList" class="cloud-list">No change plans loaded.</div>
+    </article>
+  </div>
+  <div class="log-safety-note"><strong>Two-stage publication gate:</strong> Developer review never publishes. Final Owner approval only authorizes the next protected build/scan/PR step; live publication remains guarded by CI.</div>
 </section>
 
 <section id="documents" class="workspace">

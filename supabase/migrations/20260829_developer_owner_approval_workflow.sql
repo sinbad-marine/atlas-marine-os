@@ -19,6 +19,7 @@ create table if not exists public.design_change_proposals (
   target_surface text not null check (target_surface in ('dashboard','captain-sinbad','academy','exam-intelligence','store')),
   title text not null check (char_length(title) between 4 and 140),
   plan text not null check (char_length(plan) between 20 and 5000),
+  attachment_submission_ids uuid[] not null default '{}',
   status text not null default 'submitted' check (status in ('submitted','owner_approved','rejected','implemented','published')),
   owner_note text,
   owner_reviewed_by uuid references auth.users(id),
@@ -26,6 +27,9 @@ create table if not exists public.design_change_proposals (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.design_change_proposals
+  add column if not exists attachment_submission_ids uuid[] not null default '{}';
 
 create table if not exists public.exam_answer_key_reviews (
   id uuid primary key default gen_random_uuid(),

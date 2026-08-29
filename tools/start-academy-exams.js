@@ -23,14 +23,14 @@ function validateExamRoot(examRoot){
 }
 function launch({examRoot,academyPort,examPort,reviewPort}){
   validateExamRoot(examRoot);
-  const academy=spawn(process.execPath,['tools/serve-pages-preview.js','--port',String(academyPort)],{cwd:path.resolve(__dirname,'..'),stdio:'inherit',windowsHide:true});
+  const academy=spawn(process.execPath,['tools/serve-pages-preview.js'],{cwd:path.resolve(__dirname,'..'),stdio:'inherit',windowsHide:true,env:{...process.env,SINBAD_PREVIEW_PORT:String(academyPort)}});
   const exam=spawn(process.execPath,['student-web/server.mjs'],{cwd:examRoot,stdio:'inherit',windowsHide:true,env:{...process.env,SINBAD_STUDENT_WEB_PORT:String(examPort)}});
   const review=spawn(process.execPath,['review-console/server.mjs'],{cwd:examRoot,stdio:'inherit',windowsHide:true,env:{...process.env,SINBAD_REVIEW_PORT:String(reviewPort)}});
   const children=[academy,exam,review];let stopping=false;
   const stop=()=>{if(stopping)return;stopping=true;for(const child of children)if(!child.killed)child.kill();};
   for(const child of children)child.once('exit',code=>{if(!stopping&&code!==0){process.exitCode=code||1;stop();}});
   process.once('SIGINT',stop);process.once('SIGTERM',stop);process.once('exit',stop);
-  process.stdout.write(`SINBAD Academy: http://127.0.0.1:${academyPort}/academy.html\nExam Intelligence: http://127.0.0.1:${examPort}/\nOwner Soru Doğrulama: http://127.0.0.1:${reviewPort}/\nLOCAL SYNTHETIC ONLY — STUDENT RELEASE REMAINS BLOCKED\n`);
+  process.stdout.write(`SINBAD Academy: http://127.0.0.1:${academyPort}/academy.html?examPort=${examPort}\nExam Intelligence: http://127.0.0.1:${examPort}/\nOwner Soru Doğrulama: http://127.0.0.1:${reviewPort}/\nLOCAL SYNTHETIC ONLY — STUDENT RELEASE REMAINS BLOCKED\n`);
   return Object.freeze({academy,exam,review,stop});
 }
 if(require.main===module){try{launch(parseArgs(process.argv.slice(2)));}catch(error){process.stderr.write(`${error.message}\n`);process.exitCode=1;}}

@@ -30,10 +30,49 @@ const set=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 
 
-document.querySelectorAll('[data-open]').forEach(x=>x.onclick=()=>openWorkspace(x.dataset.open));
+const workspaceWindowId=new URLSearchParams(location.search).get('workspace');
+const workspaceWindows=new Map();
+function workspaceWindowFeatures(){
+  const width=Math.max(960,Math.min(screen.availWidth-80,1560));
+  const height=Math.max(700,Math.min(screen.availHeight-80,1080));
+  return `popup=yes,left=40,top=40,width=${width},height=${height},resizable=yes,scrollbars=yes`;
+}
+function openDashboardWorkspaceWindow(id,params={}){
+  const existing=workspaceWindows.get(id);
+  if(existing&&!existing.closed){existing.focus();return existing;}
+  const url=id==='store'?new URL('./store.html',location.href):new URL(location.href);
+  if(id!=='store'){url.search='';url.hash='';url.searchParams.set('workspace',id);Object.entries(params).forEach(([key,value])=>url.searchParams.set(key,value));}
+  const child=window.open(url.href,id==='store'?'sinbadMarineStore':`sinbadWorkspace_${id.replace(/[^a-z0-9_-]/gi,'_')}`,workspaceWindowFeatures());
+  if(child)workspaceWindows.set(id,child);else location.href=url.href;
+  return child;
+}
+function installWorkspaceWindowShell(){
+  if(!workspaceWindowId)return;
+  const workspace=$(workspaceWindowId);
+  if(!workspace){location.replace('./index.html');return;}
+  document.body.classList.add('workspace-window-mode');
+  document.title=`${workspace.querySelector('h2')?.textContent?.trim()||'Workspace'} — Sinbad Marine`;
+  const toolbar=document.createElement('nav');
+  toolbar.className='workspace-window-toolbar';toolbar.setAttribute('aria-label','Pencere gezinme araçları');
+  toolbar.innerHTML='<div><strong>⚓ Sinbad Marine</strong><small>Bağımsız çalışma penceresi</small></div><div class="workspace-window-actions"><button class="btn" type="button" data-window-back>← Geri</button><button class="btn primary" type="button" data-window-home>⌂ Ana Sayfa</button></div>';
+  document.querySelector('main')?.prepend(toolbar);
+  toolbar.querySelector('[data-window-back]').onclick=()=>history.length>1?history.back():window.close();
+  toolbar.querySelector('[data-window-home]').onclick=()=>{if(window.opener&&!window.opener.closed){window.opener.focus();window.close();}else location.href='./index.html';};
+  document.querySelectorAll('.workspace').forEach(section=>section.classList.toggle('active',section.id===workspaceWindowId));
+  const requestedBucket=new URLSearchParams(location.search).get('bucket'),bucketSelect=$('cloudBucketSelect');
+  if(requestedBucket&&bucketSelect)bucketSelect.value=requestedBucket;
+  workspace.querySelectorAll('.close').forEach(button=>{button.textContent='Pencereyi kapat';button.onclick=()=>window.close();});
+}
+document.querySelectorAll('[data-open]').forEach(x=>x.onclick=()=>workspaceWindowId?openWorkspace(x.dataset.open):openDashboardWorkspaceWindow(x.dataset.open));
 document.querySelectorAll('.close').forEach(x=>x.onclick=closeWorkspaces);
-function openWorkspace(id){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');$(id).scrollIntoView({behavior:'smooth'});document.body.classList.toggle('store-active',id==='store');renderAll();if(id==='enc-viewer')initEncViewer();if(id==='navigation-plot')initNavigationPlot();if(id==='studio-console')refreshStudioCapability()}
-function closeWorkspaces(){document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));document.body.classList.remove('store-active');scrollTo({top:0,behavior:'smooth'})}
+function openWorkspace(id){
+  if(!workspaceWindowId)return openDashboardWorkspaceWindow(id);
+  const url=new URL(location.href);url.searchParams.set('workspace',id);history.pushState({workspace:id},'',url);
+  document.querySelectorAll('.workspace').forEach(x=>x.classList.toggle('active',x.id===id));
+  $(id)?.scrollIntoView({behavior:'smooth'});renderAll();if(id==='enc-viewer')initEncViewer();if(id==='navigation-plot')initNavigationPlot();if(id==='studio-console')refreshStudioCapability();
+}
+function closeWorkspaces(){if(workspaceWindowId){window.close();return;}document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));scrollTo({top:0,behavior:'smooth'})}
+installWorkspaceWindowShell();
 
 let encMap=null,encChartLayer=null,encBathymetryLayer=null,encSeamarkLayer=null;
 let navigationPlotMap=null,navigationPlotSource=null,navigationPlotRoute=null;
@@ -2069,6 +2108,7 @@ async function refreshCloudSummary(){
   $('sumStorage').textContent=formatBytes(files.reduce((n,f)=>n+(Number(f.file_size_bytes)||0),0));
 }
 function openCloudBucket(bucket){
+  if(!workspaceWindowId){openDashboardWorkspaceWindow('cloud-documents',{bucket});return;}
   openWorkspace('cloud-documents');
   setTimeout(()=>{
     const select=$('cloudBucketSelect');
@@ -2537,6 +2577,7 @@ async function loadCurrentWorkspaceRole(){
   if(!error&&data?.is_active)currentWorkspaceRole=data.role;
   applyRoleAccess();
   await loadSubmissions();
+  await loadDesignPlans();
 }
 
 function roleCanManageLibrary(){
@@ -2559,6 +2600,14 @@ function roleCanSubmit(){
   return roleCanManageLibrary()||currentWorkspaceRole==='developer';
 }
 
+function roleCanDeveloperReview(){
+  return currentWorkspaceRole==='developer'||currentWorkspaceRole==='owner';
+}
+
+function roleCanOwnerFinalize(){
+  return currentWorkspaceRole==='owner';
+}
+
 function applyRoleAccess(){
   const role=currentWorkspaceRole||'no workspace role';
   const banner=$('currentRoleBanner');
@@ -2566,7 +2615,7 @@ function applyRoleAccess(){
     banner.textContent=role==='visitor'
       ?'Visitor access: you may explore approved features, but cannot upload, change or delete documents.'
       :role==='developer'
-        ?'Developer access: you may submit original sources to quarantine. You cannot approve or publish them.'
+        ?'Developer access: you may upload Academy material, review Owner answer-key evidence and submit design change plans. Final publication requires Owner approval.'
         :roleCanManageLibrary()
           ?`Reviewer access (${role}): you may review submissions. Publishing still requires a verified scan.`
           :`Access role: ${role}`;
@@ -2574,6 +2623,14 @@ function applyRoleAccess(){
   }
   const developerPanel=$('developerSubmissionPanel');
   if(developerPanel)developerPanel.dataset.roleHidden=String(!roleCanSubmit());
+  const designPlanPanel=$('developerDesignPlanPanel');
+  if(designPlanPanel)designPlanPanel.dataset.roleHidden=String(!roleCanSubmit());
+  const developerProjectCard=$('developerProjectCard');
+  if(developerProjectCard)developerProjectCard.dataset.roleHidden=String(!roleCanSubmit());
+  if(workspaceWindowId==='document-submissions'&&!roleCanSubmit()){
+    const workspace=$('document-submissions');
+    if(workspace)workspace.innerHTML='<div class="workspace-access-denied"><h2>Bu alan yetkili kullanıcılara özeldir</h2><p>Developer Proje Merkezi yalnız aktif Owner ve Developer hesaplarına açıktır.</p><button class="btn primary" type="button" onclick="window.close()">Pencereyi kapat</button></div>';
+  }
   ['uploadCloudFiles','cloudFileInput','uploadCapturedMedia'].forEach(id=>{
     const el=$(id);if(el)el.disabled=!roleCanManageLibrary();
   });
@@ -2700,7 +2757,7 @@ async function submitLibraryFiles(){
     completed++;
   }
   $('submissionFiles').value='';$('submissionDescription').value='';
-  $('submissionUploadStatus').textContent=`✓ ${completed}/${files.length} source file(s) submitted for Owner review and security scan.`;
+  $('submissionUploadStatus').textContent=`✓ ${completed}/${files.length} contribution(s) submitted. Developer review and final Owner approval are required before publication.`;
   await loadSubmissions();
 }
 
@@ -2708,36 +2765,74 @@ async function loadSubmissions(){
   const list=$('submissionList');if(!list)return;
   if(!cloudClient||!selectedWorkspaceId||!cloudSession?.user){list.textContent='Sign in and select a workspace.';return;}
   const {data,error}=await cloudClient.from('document_submissions')
-    .select('id,submitted_by,original_filename,title,description,mime_type,file_size_bytes,intended_library,status,review_note,object_path,created_at')
+    .select('id,submitted_by,original_filename,title,description,mime_type,file_size_bytes,intended_library,status,review_note,object_path,created_at,developer_review_status,developer_review_note,owner_final_status')
     .eq('workspace_id',selectedWorkspaceId).order('created_at',{ascending:false}).limit(100);
   if(error){list.textContent=error.message;return;}
   list.innerHTML=data?.length?data.map(s=>`
     <article class="submission-card">
       <h4>${cloudEsc(s.title||s.original_filename)}</h4>
       <p>${cloudEsc(s.intended_library)} • ${formatBytes(s.file_size_bytes||0)} • ${cloudEsc(s.status)}<br>${cloudEsc(s.description||'No description')}<br><small>${cloudEsc(s.created_at)}</small></p>
-      ${roleCanManageLibrary()?`<div class="submission-actions">
+      ${(roleCanDeveloperReview()||roleCanOwnerFinalize())?`<div class="submission-actions">
         <button class="btn submission-open" data-path="${cloudEsc(s.object_path)}">Inspect original</button>
-        <button class="btn primary submission-approve" data-id="${s.id}">Approve pending scan</button>
-        <button class="btn danger submission-reject" data-id="${s.id}">Reject</button>
+        ${roleCanDeveloperReview()&&!roleCanOwnerFinalize()?`<button class="btn primary submission-developer-approve" data-id="${s.id}">Developer approve</button><button class="btn danger submission-developer-reject" data-id="${s.id}">Return to Owner</button>`:''}
+        ${roleCanOwnerFinalize()?`<button class="btn primary submission-owner-approve" data-id="${s.id}" ${s.developer_review_status!=='approved'?'disabled title="Developer approval required"':''}>Owner final approve</button><button class="btn danger submission-owner-reject" data-id="${s.id}">Owner reject</button>`:''}
       </div>`:''}
+      <small>Developer review: ${cloudEsc(s.developer_review_status||'pending')} • Owner final: ${cloudEsc(s.owner_final_status||'pending')}</small>
     </article>`).join(''):'No submissions found.';
 }
 
-async function reviewSubmission(id,status){
-  if(!roleCanManageLibrary())return;
-  const note=prompt(status==='rejected'?'Reason for rejection:':'Owner review note:','')??'';
-  const {error}=await cloudClient.from('document_submissions').update({
-    status,review_note:note||null,reviewed_by:cloudSession.user.id,reviewed_at:new Date().toISOString()
-  }).eq('id',id).eq('workspace_id',selectedWorkspaceId);
-  alert(error?error.message:(status==='approved_pending_scan'?'Approved for security scanning. Not published yet.':'Submission rejected.'));
+async function reviewSubmission(id,stage,decision){
+  if(stage==='developer'&&!roleCanDeveloperReview())return;
+  if(stage==='owner'&&!roleCanOwnerFinalize())return;
+  const note=prompt(`${stage==='owner'?'Owner final':'Developer'} ${decision==='approved'?'approval':'return/rejection'} note:`,'')??'';
+  const functionName=stage==='owner'?'owner-finalize-contribution':'developer-review-contribution';
+  const {data,error}=await cloudClient.functions.invoke(functionName,{body:{workspaceId:selectedWorkspaceId,submissionId:id,decision,note}});
+  alert(error?.message||data?.error||(stage==='owner'&&decision==='approved'?'Owner approval recorded. Publication still requires the protected build, scan and PR gates.':`${stage} ${decision} recorded.`));
   if(!error)await loadSubmissions();
 }
 
 async function openSubmissionOriginal(path){
-  if(!roleCanManageLibrary())return;
+  if(!roleCanDeveloperReview()&&!roleCanOwnerFinalize())return;
   const {data,error}=await cloudClient.storage.from('quarantine').createSignedUrl(path,300);
   if(error){alert(error.message);return;}
   window.open(data.signedUrl,'_blank','noopener');
+}
+
+async function submitDesignPlan(){
+  if(!roleCanSubmit())return;
+  const title=$('designPlanTitle').value.trim(),plan=$('designPlanBody').value.trim(),surface=$('designPlanSurface').value,status=$('designPlanStatus');
+  if(title.length<4||plan.length<20){status.textContent='Add a clear title and a change plan of at least 20 characters.';return;}
+  const attachmentIds=[],files=[...($('designPlanAttachments')?.files||[])];
+  status.textContent=files.length?'Ekler güvenli karantinaya yükleniyor…':'Sending the plan to the Owner queue…';
+  for(const file of files){
+    const safe=file.name.replace(/[^a-zA-Z0-9._-]+/g,'-'),path=`${selectedWorkspaceId}/${cloudSession.user.id}/${Date.now()}-${safe}`;
+    const {error:uploadError}=await cloudClient.storage.from('quarantine').upload(path,file,{contentType:file.type||'application/octet-stream',upsert:false});
+    if(uploadError){status.textContent=`Ek yüklenemedi (${file.name}): ${uploadError.message}`;return;}
+    const {data:row,error:rowError}=await cloudClient.from('document_submissions').insert({workspace_id:selectedWorkspaceId,submitted_by:cloudSession.user.id,bucket_id:'quarantine',object_path:path,original_filename:file.name,title:`${title} — ${file.name}`,description:plan,mime_type:file.type||null,file_size_bytes:file.size,intended_library:'developer-change-request',status:'submitted'}).select('id').single();
+    if(rowError){status.textContent=`Ek kaydı oluşturulamadı (${file.name}): ${rowError.message}`;return;}
+    attachmentIds.push(row.id);
+  }
+  const {error}=await cloudClient.from('design_change_proposals').insert({workspace_id:selectedWorkspaceId,proposed_by:cloudSession.user.id,target_surface:surface,title,plan,attachment_submission_ids:attachmentIds,status:'submitted'});
+  status.textContent=error?`Plan failed: ${error.message}`:'✓ Change plan sent to the Owner approval queue. Nothing was changed or published.';
+  if(!error){$('designPlanTitle').value='';$('designPlanBody').value='';if($('designPlanAttachments'))$('designPlanAttachments').value='';await loadDesignPlans();}
+}
+
+async function loadDesignPlans(){
+  const list=$('designPlanList');if(!list)return;
+  if(!cloudClient||!selectedWorkspaceId){list.textContent='Sign in and select a workspace.';return;}
+  const {data,error}=await cloudClient.from('design_change_proposals').select('id,proposed_by,target_surface,title,plan,attachment_submission_ids,status,owner_note,created_at').eq('workspace_id',selectedWorkspaceId).order('created_at',{ascending:false}).limit(100);
+  if(error){list.textContent=error.message;return;}
+  const pending=(data||[]).filter(item=>item.status==='submitted').length,badge=$('ownerDeveloperMessageCount');
+  if(badge){badge.textContent=pending?`${pending} yeni talep`:'Yeni talep yok';badge.classList.toggle('has-items',pending>0);}
+  list.innerHTML=data?.length?data.map(item=>`<article class="submission-card"><h4>${cloudEsc(item.title)}</h4><p>${cloudEsc(item.target_surface)} • ${cloudEsc(item.status)} • ${(item.attachment_submission_ids||[]).length} ek<br>${cloudEsc(item.plan)}<br><small>${cloudEsc(item.created_at)}</small></p>${roleCanOwnerFinalize()&&item.status==='submitted'?`<div class="submission-actions"><button class="btn primary design-plan-approve" data-id="${item.id}">Owner approve plan</button><button class="btn danger design-plan-reject" data-id="${item.id}">Reject plan</button></div>`:''}</article>`).join(''):'No change plans found.';
+}
+
+async function ownerReviewDesignPlan(id,decision){
+  if(!roleCanOwnerFinalize())return;
+  const note=prompt(`Owner ${decision} note:`,'')??'';
+  const {data,error}=await cloudClient.functions.invoke('owner-review-design-plan',{body:{workspaceId:selectedWorkspaceId,proposalId:id,decision,note}});
+  alert(error?.message||data?.error||(decision==='approved'?'Plan approved for a protected implementation PR. It is not live yet.':'Plan rejected.'));
+  if(!error)await loadDesignPlans();
 }
 async function loadAiJobs(){
   if(!selectedWorkspaceId || !cloudClient)return;
@@ -3588,14 +3683,19 @@ $('mobileMediaCapture')?.addEventListener('change',event=>addSelectedMedia(event
 $('uploadCapturedMedia')?.addEventListener('click',uploadCapturedMedia);
 $('submitLibraryFiles')?.addEventListener('click',submitLibraryFiles);
 $('refreshSubmissions')?.addEventListener('click',loadSubmissions);
+$('submitDesignPlan')?.addEventListener('click',submitDesignPlan);
+$('refreshDesignPlans')?.addEventListener('click',loadDesignPlans);
 $('submissionList')?.addEventListener('click',event=>{
   const open=event.target.closest('.submission-open');
-  const approve=event.target.closest('.submission-approve');
-  const reject=event.target.closest('.submission-reject');
   if(open)openSubmissionOriginal(open.dataset.path);
-  if(approve)reviewSubmission(approve.dataset.id,'approved_pending_scan');
-  if(reject)reviewSubmission(reject.dataset.id,'rejected');
+  const developerApprove=event.target.closest('.submission-developer-approve'),developerReject=event.target.closest('.submission-developer-reject');
+  const ownerApprove=event.target.closest('.submission-owner-approve'),ownerReject=event.target.closest('.submission-owner-reject');
+  if(developerApprove)reviewSubmission(developerApprove.dataset.id,'developer','approved');
+  if(developerReject)reviewSubmission(developerReject.dataset.id,'developer','changes_requested');
+  if(ownerApprove)reviewSubmission(ownerApprove.dataset.id,'owner','approved');
+  if(ownerReject)reviewSubmission(ownerReject.dataset.id,'owner','rejected');
 });
+$('designPlanList')?.addEventListener('click',event=>{const approve=event.target.closest('.design-plan-approve'),reject=event.target.closest('.design-plan-reject');if(approve)ownerReviewDesignPlan(approve.dataset.id,'approved');if(reject)ownerReviewDesignPlan(reject.dataset.id,'rejected');});
 $('capturedMediaGallery')?.addEventListener('click',event=>{
   const button=event.target.closest('[data-media-index]');
   if(button)removePendingMedia(Number(button.dataset.mediaIndex));

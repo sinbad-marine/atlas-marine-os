@@ -52,8 +52,9 @@ test('dashboard and Captain Sinbad keep exactly two Academy entrances',()=>{
 });
 
 test('Academy keeps its canonical classroom shell and navigation controls',()=>{
-  for(const id of ['academyLanguage','academyBackButton','academyHomeButton','academyModule','academyConversation','academyQuestionInput','toggleAcademyHandsFree','academyTeachingStage','academyLessonElapsed','academySinbadImage','academyTeachingTitle','academyTeachingText']){
+  for(const id of ['academyLanguage','academyBackButton','academyHomeButton','academyModule','openExamIntelligence','academyConversation','academyQuestionInput','toggleAcademyHandsFree','academyTeachingStage','academyLessonElapsed','academySinbadImage','academyTeachingTitle','academyTeachingText']){
     assert.match(academy,new RegExp(`id="${id}"`,'u'),id);
   }
+  assert.match(academy,/id="openExamIntelligence"[^>]*>Öğrenci sınav ekranını aç<\/button>/u);
   assert.equal((academy.match(/data-academy-section=/gu)||[]).length,4);
 });
