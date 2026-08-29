@@ -46,6 +46,11 @@ function openDashboardWorkspaceWindow(id,params={}){
   if(child)workspaceWindows.set(id,child);else location.href=url.href;
   return child;
 }
+function initializeWorkspaceSurface(id){
+  if(id==='enc-viewer')initEncViewer();
+  if(id==='navigation-plot')initNavigationPlot();
+  if(id==='studio-console')refreshStudioCapability();
+}
 function installWorkspaceWindowShell(){
   if(!workspaceWindowId)return;
   const workspace=$(workspaceWindowId);
@@ -62,6 +67,10 @@ function installWorkspaceWindowShell(){
   const requestedBucket=new URLSearchParams(location.search).get('bucket'),bucketSelect=$('cloudBucketSelect');
   if(requestedBucket&&bucketSelect)bucketSelect.value=requestedBucket;
   workspace.querySelectorAll('.close').forEach(button=>button.remove());
+  // A workspace opened directly from its own URL bypasses openWorkspace().
+  // Defer until the full script has initialized its shared state, then attach
+  // the workspace-specific controls and data exactly as an in-page open does.
+  setTimeout(()=>initializeWorkspaceSurface(workspaceWindowId),0);
 }
 document.querySelectorAll('[data-open]').forEach(x=>x.onclick=()=>workspaceWindowId?openWorkspace(x.dataset.open):openDashboardWorkspaceWindow(x.dataset.open));
 document.querySelectorAll('.close').forEach(x=>x.onclick=closeWorkspaces);
@@ -69,7 +78,7 @@ function openWorkspace(id){
   if(!workspaceWindowId)return openDashboardWorkspaceWindow(id);
   const url=new URL(location.href);url.searchParams.set('workspace',id);history.pushState({workspace:id},'',url);
   document.querySelectorAll('.workspace').forEach(x=>x.classList.toggle('active',x.id===id));
-  $(id)?.scrollIntoView({behavior:'smooth'});renderAll();if(id==='enc-viewer')initEncViewer();if(id==='navigation-plot')initNavigationPlot();if(id==='studio-console')refreshStudioCapability();
+  $(id)?.scrollIntoView({behavior:'smooth'});renderAll();initializeWorkspaceSurface(id);
 }
 function closeWorkspaces(){if(workspaceWindowId){window.close();return;}document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));scrollTo({top:0,behavior:'smooth'})}
 installWorkspaceWindowShell();
