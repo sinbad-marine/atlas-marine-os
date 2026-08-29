@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.29-map-apps-menu-v127';
+const CACHE='sinbad-marine-v8.20.29-chart-console-v128';
 const ASSETS=[
   './',
   './index.html',

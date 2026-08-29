@@ -1,5 +1,27 @@
 const {test,expect}=require('@playwright/test');
 
+test('desktop chart console keeps route tools left, chart centre and settings right',async({page})=>{
+  await page.setViewportSize({width:1600,height:1000});
+  await page.route('http://127.0.0.1:31983/**',route=>route.fulfill({status:503,contentType:'application/json',body:'{}'}));
+  await page.goto('/index.html?workspace=enc-viewer');
+  await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated')});
+  const tools=page.locator('.enc-chart-tools'),map=page.locator('.enc-chart-canvas'),settings=page.locator('.enc-chart-settings');
+  const [toolsBox,mapBox,settingsBox]=await Promise.all([tools.boundingBox(),map.boundingBox(),settings.boundingBox()]);
+  expect(toolsBox.x+toolsBox.width).toBeLessThan(mapBox.x);
+  expect(mapBox.x+mapBox.width).toBeLessThan(settingsBox.x);
+  await expect(tools.locator('#encDrawRouteTool')).toBeVisible();
+  await expect(settings.locator('#encMapAppsMenu')).toBeVisible();
+  await expect(settings.locator('#encLayerToggle')).toBeVisible();
+  await expect(page.locator('.workspace-window-controls')).toBeVisible();
+  await page.locator('[data-window-scale]').click();
+  await expect(page.locator('body')).toHaveClass(/workspace-window-fit/);
+  await page.locator('[data-window-minimize]').click();
+  await expect(page.locator('body')).toHaveClass(/workspace-window-minimized/);
+  await expect(page.locator('#enc-viewer')).toBeHidden();
+  await page.locator('[data-window-minimize]').click();
+  await expect(page.locator('#enc-viewer')).toBeVisible();
+});
+
 test('direct ENC workspace initializes its map and OpenCPN controls',async({page})=>{
   await page.route('http://127.0.0.1:31983/**',route=>route.fulfill({status:503,contentType:'application/json',body:'{}'}));
   await page.goto('/index.html?workspace=enc-viewer');
