@@ -143,6 +143,7 @@ async function prepareNavigationPlotFromConversation(requestText=''){
   navigationPlotRoute=route;openWorkspace('navigation-plot');return {ok:true,message:'Seyir çizim sayfasını açtım. Başlangıç, varış ve rota hattı etkileşimli harita üzerinde gösteriliyor.'};
 }
 function initEncViewer(){
+  initEncPassagePlanner();
   if(encMap){setTimeout(()=>encMap.updateSize(),80);return;}
   const status=$('encMapStatus');
   if(!window.ol){status.textContent='Map library could not be loaded. Check the internet connection and reload.';status.classList.add('error');return;}
@@ -192,6 +193,47 @@ function initEncViewer(){
       status.textContent='Map centered on your current position.';status.classList.add('ready');
     },err=>{status.textContent=`Location could not be read: ${err.message}`;status.classList.add('error')},{enableHighAccuracy:true,timeout:12000});
   });
+}
+
+let encPassageRoute=null;
+function parseEncPassageGpx(gpx,filename='route.gpx'){
+  if(typeof gpx!=='string'||gpx.length>2097152)throw new Error('GPX dosyası boş veya 2 MB sınırını aşıyor.');
+  const xml=new DOMParser().parseFromString(gpx,'application/xml');if(xml.querySelector('parsererror'))throw new Error('Geçerli bir GPX belgesi okunamadı.');
+  const routePoints=[...xml.getElementsByTagNameNS('*','rtept')],trackPoints=[...xml.getElementsByTagNameNS('*','trkpt')],waypoints=[...xml.getElementsByTagNameNS('*','wpt')];
+  const nodes=routePoints.length?routePoints:trackPoints.length?trackPoints:waypoints;if(nodes.length<2)throw new Error('GPX rotası en az iki waypoint içermelidir.');
+  const routeNode=xml.getElementsByTagNameNS('*','rte')[0]||xml.getElementsByTagNameNS('*','trk')[0],name=routeNode?.getElementsByTagNameNS('*','name')[0]?.textContent?.trim()||filename.replace(/\.gpx$/i,'');
+  const points=nodes.map((node,index)=>({name:node.getElementsByTagNameNS('*','name')[0]?.textContent?.trim()||`WP${String(index+1).padStart(2,'0')}`,lat:Number(node.getAttribute('lat')),lon:Number(node.getAttribute('lon'))}));
+  return {name,filename,gpx,points};
+}
+function encPassageInputs(){return {name:encPassageRoute.name,points:encPassageRoute.points,speedKn:$('encPassageSpeed').value,fuelRateLph:$('encPassageFuel').value,fuelMarginPct:$('encPassageMargin').value,departureTime:$('encPassageDeparture').value}}
+function renderEncPassagePlan(){
+  if(!encPassageRoute)throw new Error('Önce bir GPX rotası yükleyin.');
+  const plan=SinbadPassagePlanner.calculate(encPassageInputs());encPassageRoute={...encPassageRoute,plan};
+  $('encPassageSummary').innerHTML=`<strong>${esc(plan.name)}</strong><span>${plan.points.length} WP</span><span>${plan.totalDistanceNm.toFixed(1)} NM</span><span>${plan.totalHours.toFixed(1)} saat</span><span>${Math.ceil(plan.fuelRequiredLitres)} L (marj dahil)</span>`;
+  $('encLegRows').innerHTML=plan.legs.map(item=>`<tr><td>${item.number}</td><td>${esc(item.from.name)}</td><td>${esc(item.to.name)}</td><td>${item.courseTrue.toFixed(0).padStart(3,'0')}°T</td><td>${item.distanceNm.toFixed(2)} NM</td><td>${item.hours.toFixed(2)} h</td><td>${item.eta?new Date(item.eta).toLocaleString():'TBC'}</td></tr>`).join('');
+  $('encPassageDraft').textContent=SinbadPassagePlanner.checklist(plan);$('encDownloadPassageGpx').disabled=false;$('encSendPassageToOpenCpn').disabled=false;$('encPassageStatus').textContent='Taslak hazır. Resmî haritalar, NtM, hava/gelgit ve kaptan onayı tamamlanmadan seyirde kullanmayın.';
+}
+function loadEncPassageGpx(gpx,filename){encPassageRoute=parseEncPassageGpx(gpx,filename);renderEncPassagePlan()}
+async function refreshEncPassageRoutes(){
+  const status=$('encPassageStatus'),select=$('encRouteSelect');status.textContent='Yerel Routes klasörü taranıyor…';
+  try{const response=await fetch(`${SINBAD_BRIDGE_URL}/routes`,{cache:'no-store'});if(!response.ok)throw new Error();const data=await response.json();select.innerHTML='<option value="">Rota seçin…</option>'+data.routes.map(route=>`<option value="${esc(route.name)}">${esc(route.name)} · ${new Date(route.modified).toLocaleString()}</option>`).join('');$('encPassageBridgeStatus').textContent=`Bridge bağlı · ${data.routes.length} rota`;status.textContent=data.routes.length?'Bir rota seçip “Seçili rotayı al” düğmesine basın.':'Routes klasöründe GPX yok. OpenCPN’den GPX dışa aktarın veya bilgisayardan seçin.';}
+  catch(_){$('encPassageBridgeStatus').textContent='Bridge çevrimdışı';status.textContent='Sinbad Bridge’e ulaşılamadı. Bilgisayardan GPX seçebilirsiniz.';}
+}
+async function readEncPassageRoute(){
+  const filename=$('encRouteSelect').value;if(!filename){$('encPassageStatus').textContent='Önce listeden bir rota seçin.';return}
+  try{const response=await fetch(`${SINBAD_BRIDGE_URL}/routes/read`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({filename})});if(!response.ok)throw new Error(`Bridge ${response.status}`);const data=await response.json();loadEncPassageGpx(data.gpx,data.filename);}
+  catch(error){$('encPassageStatus').textContent=`Rota okunamadı: ${error.message}`;}
+}
+function downloadEncPassageGpx(){if(!encPassageRoute)return;const link=document.createElement('a');link.href=URL.createObjectURL(new Blob([encPassageRoute.gpx],{type:'application/gpx+xml'}));link.download=encPassageRoute.filename||'sinbad-passage-route.gpx';link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000)}
+async function sendEncPassageToOpenCpn(){
+  if(!encPassageRoute?.plan)return;if(!confirm(`“${encPassageRoute.plan.name}” rotasını yerel OpenCPN'e göndermeyi ve içe aktarmayı onaylıyor musunuz?`))return;
+  const button=$('encSendPassageToOpenCpn');button.disabled=true;$('encPassageStatus').textContent='Rota OpenCPN’e gönderiliyor…';
+  try{const response=await fetch(`${SINBAD_BRIDGE_URL}/routes/open`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({filename:encPassageRoute.filename,name:encPassageRoute.name,gpx:encPassageRoute.gpx})});if(!response.ok)throw new Error(`Bridge ${response.status}`);const result=await response.json();$('encPassageStatus').textContent=result.imported?'Rota OpenCPN’e aktarıldı ve etkinleştirildi.':'OpenCPN açıldı; GPX yerel Routes klasörüne kaydedildi. REST içe aktarımı yoksa Route & Mark Manager’dan içe aktarın.';setOpenCpnPreviewMode(true);}
+  catch(error){$('encPassageStatus').textContent=`OpenCPN aktarımı başarısız: ${error.message}`;}finally{button.disabled=false}
+}
+function initEncPassagePlanner(){
+  const root=$('encPassageTitle')?.closest('.enc-passage-planner');if(!root||root.dataset.ready)return;root.dataset.ready='true';
+  $('encRefreshRoutes').addEventListener('click',refreshEncPassageRoutes);$('encLoadRoute').addEventListener('click',readEncPassageRoute);$('encPickGpx').addEventListener('click',()=>$('encGpxFile').click());$('encGpxFile').addEventListener('change',async event=>{const file=event.target.files?.[0];if(!file)return;try{loadEncPassageGpx(await file.text(),file.name)}catch(error){$('encPassageStatus').textContent=error.message}});$('encCalculatePassage').addEventListener('click',()=>{try{renderEncPassagePlan()}catch(error){$('encPassageStatus').textContent=error.message}});$('encDownloadPassageGpx').addEventListener('click',downloadEncPassageGpx);$('encSendPassageToOpenCpn').addEventListener('click',sendEncPassageToOpenCpn);refreshEncPassageRoutes();
 }
 
 function releaseOpenCpnFrame(){
