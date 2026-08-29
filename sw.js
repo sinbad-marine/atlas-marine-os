@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.29-design-guard-v121';
+const CACHE='sinbad-marine-v8.20.29-design-guard-v122';
 const ASSETS=[
   './',
   './index.html',
