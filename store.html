@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#071723">
+  <title>Sinbad Marine Store</title>
+  <link rel="stylesheet" href="./styles.css?v=store-window-1">
+</head>
+<body class="store-window store-active">
+  <header class="store-window-header">
+    <div class="store-window-brand"><span aria-hidden="true">⚓</span><div><strong>Sinbad Marine Store</strong><small>Bağımsız mağaza penceresi</small></div></div>
+    <div class="store-window-actions">
+      <button class="btn" id="storeBack" type="button">← Geri</button>
+      <button class="btn" id="storeHome" type="button">⌂ Ana Sayfa</button>
+      <button class="btn" id="storeClose" type="button">Kapat</button>
+    </div>
+  </header>
+  <main class="store-window-main">
+    <section id="store" class="workspace active" aria-labelledby="storeTitle">
+      <div class="store-hero">
+        <span class="store-hero-eyebrow">Sinbad Marine Store</span>
+        <h1 id="storeTitle">Denizcinin İhtiyaç Duyduğu Her Şey — Kaptan Kalitesiyle Seçildi</h1>
+        <p>Seyir, güvenlik ve güverte ekipmanları — kaptan gözünden değerlendirilmiş, kaliteli tedarikçilerden. Katalog büyümeye devam ediyor.</p>
+        <div class="store-hero-badges"><span class="store-hero-badge">⚓ Kaptan onaylı seçki</span><span class="store-hero-badge">🚚 Tedarikçi güvencesiyle sevkiyat</span><span class="store-hero-badge">💬 Kişisel sipariş desteği</span></div>
+      </div>
+      <div class="store-notice">Bu mağaza pilot/deneme aşamasındadır. Fiyatlar tedarikçiden alınan güncel referanslardır ve sipariş onayında teyit edilir.</div>
+      <div class="store-toolbar"><div class="store-categories" id="storeCategories"></div><input id="storeSearch" class="store-search" type="search" placeholder="Ürün ara…" aria-label="Ürün ara"></div>
+      <div id="storeResultCount" class="store-result-count" aria-live="polite"></div>
+      <div id="storeGrid" class="store-grid"></div>
+    </section>
+  </main>
+  <button id="storeCartFab" class="store-cart-fab" type="button"><span>🛒</span><span>Sepet</span><span class="store-cart-count" id="storeCartCount">0</span></button>
+  <div class="store-cart-overlay" id="storeCartOverlay"></div>
+  <aside class="store-cart-drawer" id="storeCartDrawer" aria-label="Sepetiniz"><div class="store-cart-head"><h2>Sepetiniz</h2><button class="btn compact" id="storeCartClose" type="button">Kapat</button></div><div class="store-cart-items" id="storeCartItems"></div><div class="store-cart-foot"><div class="store-cart-subtotal"><span>Fiyatlı Ürünler Toplamı</span><b id="storeCartSubtotal">₺0,00</b></div><button class="btn primary" id="storeCheckoutBtn" type="button" style="width:100%">Siparişi Tamamla</button></div></aside>
+  <div class="store-checkout-overlay" id="storeCheckoutOverlay"><div class="store-checkout-modal"><h2>Sipariş Bilgileri</h2><p>Bilgilerinizi girin; sipariş özetini WhatsApp veya e-posta ile iletebilirsiniz.</p><div class="store-checkout-grid"><label>Ad Soyad<input id="storeName" placeholder="Ad Soyad"></label><label>Telefon<input id="storePhone" placeholder="05xx xxx xx xx"></label><label class="wide">E-posta<input id="storeEmail" type="email" placeholder="ornek@eposta.com"></label><label class="wide">Teslimat / Yat &amp; Marina Bilgisi<input id="storeDelivery" placeholder="Marina, tekne adı veya teslimat adresi"></label><label class="wide">Sipariş Notu<textarea id="storeNote" placeholder="Varsa ölçü, renk, teslim tarihi gibi notlarınız"></textarea></label></div><div class="store-checkout-summary" id="storeCheckoutSummary"></div><div class="store-checkout-actions"><button class="btn primary" id="storeSendWhatsapp" type="button">📱 WhatsApp ile Gönder</button><button class="btn" id="storeSendEmail" type="button">✉️ E-posta ile Gönder</button></div><button class="btn" id="storeCheckoutClose" type="button" style="width:100%;margin-top:10px">Vazgeç</button></div></div>
+  <script src="./store-data.js?v=8230"></script>
+  <script src="./store-window.js?v=1"></script>
+</body>
+</html>
