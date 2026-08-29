@@ -178,8 +178,8 @@ function initEncViewer(){
   $('encBathymetryToggle').addEventListener('change',e=>encBathymetryLayer.setVisible(e.target.checked));
   $('encSeamarkToggle').addEventListener('change',e=>encSeamarkLayer.setVisible(e.target.checked));
   $('encOpacity').addEventListener('input',e=>encChartLayer.setOpacity(Number(e.target.value)/100));
-  $('encOpenCpnView').addEventListener('click',()=>setOpenCpnPreviewMode(true));
-  $('encWebChartView').addEventListener('click',()=>setOpenCpnPreviewMode(false));
+  $('encOpenCpnView').addEventListener('click',()=>{setOpenCpnPreviewMode(true);$('encMapAppsMenu').open=false});
+  $('encWebChartView').addEventListener('click',()=>{setOpenCpnPreviewMode(false);$('encMapAppsMenu').open=false});
   initOpenCpnInputControls();
   $('encResetView').addEventListener('click',()=>encMap.getView().animate({center:ol.proj.fromLonLat([-98.5,38.5]),zoom:4,duration:650}));
   $('encMediterraneanView').addEventListener('click',()=>encMap.getView().animate({center:ol.proj.fromLonLat([18,36]),zoom:5,duration:650}));
@@ -215,7 +215,7 @@ function setEncBasemap(id){
   encBaseLayer.setSource(createEncBasemapSource(id));
   document.querySelectorAll('[data-enc-basemap]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.encBasemap===id)));
   $('encPlanningStatus').textContent=`Harita formatı: ${format.label}. ENC, seamark ve rota katmanları korunuyor.`;
-  $('encBasemapGallery').open=false;
+  $('encMapAppsMenu').open=false;
 }
 
 function setEncPlanningMode(mode){
