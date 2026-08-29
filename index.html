@@ -401,6 +401,15 @@
       <div class="enc-map-shell">
         <div id="encMap" role="application" aria-label="Interactive NOAA electronic navigational chart"></div>
         <div id="encMapStatus" class="enc-map-status">Loading official ENC layer…</div>
+        <div class="enc-fullscreen-tools" role="toolbar" aria-label="Tam ekran harita çalışma araçları">
+          <button class="btn primary" type="button" data-enc-fullscreen-action="encPanTool" aria-pressed="true">✥ Gezin</button>
+          <button class="btn" type="button" data-enc-fullscreen-action="encMeasureTool" aria-pressed="false">↔ Ölç</button>
+          <button class="btn" type="button" data-enc-fullscreen-action="encDrawRouteTool" aria-pressed="false">⌁ Rota</button>
+          <button class="btn" type="button" data-enc-fullscreen-action="encUndoMapPoint">↶ Geri al</button>
+          <button class="btn" type="button" data-enc-fullscreen-action="encClearMapDrawing">⌫ Temizle</button>
+          <button class="btn" type="button" data-enc-fullscreen-action="encRouteToPassage" disabled>⇥ Passage Plan</button>
+          <button class="btn" type="button" data-enc-fullscreen-action="encFullscreenMap">⛶ Çıkış</button>
+        </div>
       </div>
     </div>
     <aside class="enc-chart-settings" aria-labelledby="encChartSettingsTitle">

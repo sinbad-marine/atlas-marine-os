@@ -248,18 +248,19 @@ function setEncBasemap(id){
 function setEncPlanningMode(mode){
   if(!encMap||!encPlanningSource)return;encPlanningMode=mode;
   if(encDrawInteraction){encMap.removeInteraction(encDrawInteraction);encDrawInteraction=null;}
-  ['encPanTool','encMeasureTool','encDrawRouteTool'].forEach(id=>{const active=(id==='encPanTool'&&mode==='pan')||(id==='encMeasureTool'&&mode==='measure')||(id==='encDrawRouteTool'&&mode==='route');$(id).setAttribute('aria-pressed',String(active));$(id).classList.toggle('primary',active)});
+  ['encPanTool','encMeasureTool','encDrawRouteTool'].forEach(id=>{const active=(id==='encPanTool'&&mode==='pan')||(id==='encMeasureTool'&&mode==='measure')||(id==='encDrawRouteTool'&&mode==='route');$(id).setAttribute('aria-pressed',String(active));$(id).classList.toggle('primary',active);document.querySelector(`[data-enc-fullscreen-action="${id}"]`)?.setAttribute('aria-pressed',String(active));document.querySelector(`[data-enc-fullscreen-action="${id}"]`)?.classList.toggle('primary',active)});
   const status=$('encPlanningStatus');
   if(mode==='pan'){status.textContent='Gezinme açık: sürükleyin, tekerlekle yakınlaştırın.';return}
   encDrawInteraction=new ol.interaction.Draw({source:encPlanningSource,type:'LineString'});encMap.addInteraction(encDrawInteraction);status.textContent=mode==='measure'?'Ölçü hattının noktalarını tıklayın; bitirmek için çift tıklayın.':'Rota waypointlerini tıklayın; bitirmek için çift tıklayın.';
-  encDrawInteraction.on('drawend',event=>{event.feature.set('kind',mode);const coordinates=event.feature.getGeometry().getCoordinates(),distanceNm=ol.sphere.getLength(event.feature.getGeometry())/1852,message=`${mode==='measure'?'Ölçülen mesafe':'Çizilen rota'}: ${distanceNm.toFixed(2)} NM · ${coordinates.length} nokta.`;status.textContent=message;if(mode==='route')$('encRouteToPassage').disabled=false;setTimeout(()=>{setEncPlanningMode('pan');status.textContent=message},0)});
+  encDrawInteraction.on('drawend',event=>{event.feature.set('kind',mode);const coordinates=event.feature.getGeometry().getCoordinates(),distanceNm=ol.sphere.getLength(event.feature.getGeometry())/1852,message=`${mode==='measure'?'Ölçülen mesafe':'Çizilen rota'}: ${distanceNm.toFixed(2)} NM · ${coordinates.length} nokta.`;status.textContent=message;if(mode==='route')setEncRouteTransferEnabled(true);setTimeout(()=>{setEncPlanningMode('pan');status.textContent=message},0)});
 }
 function latestEncRouteFeature(){return [...(encPlanningSource?.getFeatures()||[])].reverse().find(feature=>feature.get('kind')==='route')||null}
 function undoEncMapPoint(){
   if(encDrawInteraction){encDrawInteraction.removeLastPoint();$('encPlanningStatus').textContent='Son çizim noktası geri alındı.';return}
-  const feature=latestEncRouteFeature();if(!feature)return;const geometry=feature.getGeometry(),coordinates=geometry.getCoordinates();if(coordinates.length<=2){encPlanningSource.removeFeature(feature);$('encRouteToPassage').disabled=!latestEncRouteFeature();$('encPlanningStatus').textContent='Rota çizimi kaldırıldı.';return}geometry.setCoordinates(coordinates.slice(0,-1));$('encPlanningStatus').textContent='Rotanın son waypointi kaldırıldı.';
+  const feature=latestEncRouteFeature();if(!feature)return;const geometry=feature.getGeometry(),coordinates=geometry.getCoordinates();if(coordinates.length<=2){encPlanningSource.removeFeature(feature);setEncRouteTransferEnabled(Boolean(latestEncRouteFeature()));$('encPlanningStatus').textContent='Rota çizimi kaldırıldı.';return}geometry.setCoordinates(coordinates.slice(0,-1));$('encPlanningStatus').textContent='Rotanın son waypointi kaldırıldı.';
 }
-function clearEncMapDrawing(){if(encDrawInteraction){encMap.removeInteraction(encDrawInteraction);encDrawInteraction=null}encPlanningSource?.clear();$('encRouteToPassage').disabled=true;setEncPlanningMode('pan');$('encPlanningStatus').textContent='Harita çizimleri temizlendi.'}
+function setEncRouteTransferEnabled(enabled){$('encRouteToPassage').disabled=!enabled;const overlay=document.querySelector('[data-enc-fullscreen-action="encRouteToPassage"]');if(overlay)overlay.disabled=!enabled}
+function clearEncMapDrawing(){if(encDrawInteraction){encMap.removeInteraction(encDrawInteraction);encDrawInteraction=null}encPlanningSource?.clear();setEncRouteTransferEnabled(false);setEncPlanningMode('pan');$('encPlanningStatus').textContent='Harita çizimleri temizlendi.'}
 function routeFeatureToGpx(feature){
   const points=feature.getGeometry().getCoordinates().map((coordinate,index)=>{const [lon,lat]=ol.proj.toLonLat(coordinate);return{name:`WP${String(index+1).padStart(2,'0')}`,lat,lon}}),name=`Sinbad web route ${new Date().toLocaleString()}`;
   const gpx=`<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Sinbad Marine Web ENC" xmlns="http://www.topografix.com/GPX/1/1"><rte><name>${bridgeXml(name)}</name>${points.map(point=>`<rtept lat="${point.lat.toFixed(6)}" lon="${point.lon.toFixed(6)}"><name>${point.name}</name></rtept>`).join('')}</rte></gpx>`;
@@ -268,10 +269,11 @@ function routeFeatureToGpx(feature){
 function sendEncMapRouteToPassage(){const feature=latestEncRouteFeature();if(!feature){$('encPlanningStatus').textContent='Önce harita üzerinde bir rota çizin.';return}encPassageRoute=routeFeatureToGpx(feature);renderEncPassagePlan();$('encPassageTitle').scrollIntoView({behavior:'smooth',block:'start'});$('encPlanningStatus').textContent='Çizilen rota Passage Plan’a aktarıldı.'}
 function initEncMapPlanningTools(){
   $('encPanTool').addEventListener('click',()=>setEncPlanningMode('pan'));$('encMeasureTool').addEventListener('click',()=>setEncPlanningMode('measure'));$('encDrawRouteTool').addEventListener('click',()=>setEncPlanningMode('route'));$('encUndoMapPoint').addEventListener('click',undoEncMapPoint);$('encClearMapDrawing').addEventListener('click',clearEncMapDrawing);$('encRouteToPassage').addEventListener('click',sendEncMapRouteToPassage);
+  document.querySelectorAll('[data-enc-fullscreen-action]').forEach(button=>button.addEventListener('click',()=>$(button.dataset.encFullscreenAction)?.click()));
   document.querySelectorAll('[data-enc-basemap]').forEach(button=>button.addEventListener('click',()=>setEncBasemap(button.dataset.encBasemap)));
   const mapShell=$('encMap').closest('.enc-map-shell'),fullscreenButton=$('encFullscreenMap');
   fullscreenButton.addEventListener('click',async()=>{if(document.fullscreenElement===mapShell)await document.exitFullscreen();else await mapShell.requestFullscreen()});
-  document.addEventListener('fullscreenchange',()=>{const active=document.fullscreenElement===mapShell;fullscreenButton.textContent=active?'Tam ekrandan çık':'Haritayı tam ekran yap';setTimeout(()=>encMap?.updateSize(),100)});
+  document.addEventListener('fullscreenchange',()=>{const active=document.fullscreenElement===mapShell;mapShell.classList.toggle('fullscreen-active',active);fullscreenButton.textContent=active?'Tam ekrandan çık':'Haritayı tam ekran yap';setTimeout(()=>encMap?.updateSize(),100)});
 }
 
 let encPassageRoute=null;
