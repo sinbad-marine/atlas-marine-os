@@ -83,7 +83,7 @@ function openWorkspace(id){
 function closeWorkspaces(){if(workspaceWindowId){window.close();return;}document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));scrollTo({top:0,behavior:'smooth'})}
 installWorkspaceWindowShell();
 
-let encMap=null,encChartLayer=null,encBathymetryLayer=null,encSeamarkLayer=null,encPlanningSource=null,encDrawInteraction=null,encPlanningMode='pan',openCpnPreviewTimer=null,openCpnFrameUrl='';
+let encMap=null,encBaseLayer=null,encChartLayer=null,encBathymetryLayer=null,encSeamarkLayer=null,encPlanningSource=null,encDrawInteraction=null,encPlanningMode='pan',openCpnPreviewTimer=null,openCpnFrameUrl='';
 let navigationPlotMap=null,navigationPlotSource=null,navigationPlotRoute=null;
 function plotCoordinate(value,axis){return window.SinbadNavigation?.formatCoordinate?.(value,axis)||Number(value).toFixed(5)}
 function renderNavigationPlot(){
@@ -166,9 +166,10 @@ function initEncViewer(){
   });
   encPlanningSource=new ol.source.Vector();
   const planningLayer=new ol.layer.Vector({source:encPlanningSource,zIndex:8,style:feature=>new ol.style.Style({stroke:new ol.style.Stroke({color:feature.get('kind')==='measure'?'#f3d37d':'#32d6c6',width:4,lineDash:feature.get('kind')==='measure'?[9,7]:undefined}),image:new ol.style.Circle({radius:6,fill:new ol.style.Fill({color:'#f3d37d'}),stroke:new ol.style.Stroke({color:'#07131f',width:2})})})});
+  encBaseLayer=new ol.layer.Tile({source:createEncBasemapSource('navigation'),zIndex:0});
   encMap=new ol.Map({
     target:'encMap',
-    layers:[new ol.layer.Tile({source:new ol.source.OSM(),zIndex:0}),encBathymetryLayer,encChartLayer,encSeamarkLayer,planningLayer],
+    layers:[encBaseLayer,encBathymetryLayer,encChartLayer,encSeamarkLayer,planningLayer],
     view:new ol.View({center:ol.proj.fromLonLat([18,36]),zoom:5,minZoom:2,maxZoom:19})
   });
   encMap.addControl(new ol.control.ScaleLine({units:'nautical'}));
@@ -198,6 +199,25 @@ function initEncViewer(){
   });
 }
 
+const ENC_BASEMAPS={
+  navigation:{label:'Seyir / Açık',url:null},
+  topographic:{label:'Topografik',url:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}'},
+  'dark-gray':{label:'Koyu Gri',url:'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'},
+  ocean:{label:'Okyanus',url:'https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}'},
+  imagery:{label:'Uydu',url:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'}
+};
+function createEncBasemapSource(id){
+  const format=ENC_BASEMAPS[id]||ENC_BASEMAPS.navigation;
+  return format.url?new ol.source.XYZ({url:format.url,crossOrigin:'anonymous',maxZoom:19,attributions:'Tiles © Esri'}):new ol.source.OSM();
+}
+function setEncBasemap(id){
+  const format=ENC_BASEMAPS[id];if(!format||!encBaseLayer)return;
+  encBaseLayer.setSource(createEncBasemapSource(id));
+  document.querySelectorAll('[data-enc-basemap]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.encBasemap===id)));
+  $('encPlanningStatus').textContent=`Harita formatı: ${format.label}. ENC, seamark ve rota katmanları korunuyor.`;
+  $('encBasemapGallery').open=false;
+}
+
 function setEncPlanningMode(mode){
   if(!encMap||!encPlanningSource)return;encPlanningMode=mode;
   if(encDrawInteraction){encMap.removeInteraction(encDrawInteraction);encDrawInteraction=null;}
@@ -220,7 +240,11 @@ function routeFeatureToGpx(feature){
 }
 function sendEncMapRouteToPassage(){const feature=latestEncRouteFeature();if(!feature){$('encPlanningStatus').textContent='Önce harita üzerinde bir rota çizin.';return}encPassageRoute=routeFeatureToGpx(feature);renderEncPassagePlan();$('encPassageTitle').scrollIntoView({behavior:'smooth',block:'start'});$('encPlanningStatus').textContent='Çizilen rota Passage Plan’a aktarıldı.'}
 function initEncMapPlanningTools(){
-  $('encPanTool').addEventListener('click',()=>setEncPlanningMode('pan'));$('encMeasureTool').addEventListener('click',()=>setEncPlanningMode('measure'));$('encDrawRouteTool').addEventListener('click',()=>setEncPlanningMode('route'));$('encUndoMapPoint').addEventListener('click',undoEncMapPoint);$('encClearMapDrawing').addEventListener('click',clearEncMapDrawing);$('encRouteToPassage').addEventListener('click',sendEncMapRouteToPassage);$('encFullscreenMap').addEventListener('click',async()=>{const workspace=$('enc-viewer');if(document.fullscreenElement)await document.exitFullscreen();else await workspace.requestFullscreen();setTimeout(()=>encMap?.updateSize(),100)});
+  $('encPanTool').addEventListener('click',()=>setEncPlanningMode('pan'));$('encMeasureTool').addEventListener('click',()=>setEncPlanningMode('measure'));$('encDrawRouteTool').addEventListener('click',()=>setEncPlanningMode('route'));$('encUndoMapPoint').addEventListener('click',undoEncMapPoint);$('encClearMapDrawing').addEventListener('click',clearEncMapDrawing);$('encRouteToPassage').addEventListener('click',sendEncMapRouteToPassage);
+  document.querySelectorAll('[data-enc-basemap]').forEach(button=>button.addEventListener('click',()=>setEncBasemap(button.dataset.encBasemap)));
+  const mapShell=$('encMap').closest('.enc-map-shell'),fullscreenButton=$('encFullscreenMap');
+  fullscreenButton.addEventListener('click',async()=>{if(document.fullscreenElement===mapShell)await document.exitFullscreen();else await mapShell.requestFullscreen()});
+  document.addEventListener('fullscreenchange',()=>{const active=document.fullscreenElement===mapShell;fullscreenButton.textContent=active?'Tam ekrandan çık':'Haritayı tam ekran yap';setTimeout(()=>encMap?.updateSize(),100)});
 }
 
 let encPassageRoute=null;

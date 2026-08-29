@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.29-opencpn-live-frame-v125';
+const CACHE='sinbad-marine-v8.20.29-enc-basemap-gallery-v126';
 const ASSETS=[
   './',
   './index.html',

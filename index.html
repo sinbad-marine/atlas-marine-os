@@ -387,6 +387,16 @@
     <label class="enc-opacity">Opacity <input id="encOpacity" type="range" min="20" max="100" value="100"></label>
     <a class="btn" href="https://nauticalcharts.noaa.gov/enconline/enconline.html" target="_blank" rel="noopener">Open NOAA Viewer</a>
   </div>
+  <details class="enc-basemap-gallery" id="encBasemapGallery">
+    <summary class="btn">Harita formatı</summary>
+    <div class="enc-basemap-options" role="group" aria-label="Altlık haritası galerisi">
+      <button type="button" class="enc-basemap-card navigation" data-enc-basemap="navigation" aria-pressed="true"><span>Seyir / Açık</span><small>OpenStreetMap</small></button>
+      <button type="button" class="enc-basemap-card topo" data-enc-basemap="topographic" aria-pressed="false"><span>Topografik</span><small>Esri World Topo</small></button>
+      <button type="button" class="enc-basemap-card dark" data-enc-basemap="dark-gray" aria-pressed="false"><span>Koyu Gri</span><small>Esri Dark Gray</small></button>
+      <button type="button" class="enc-basemap-card ocean" data-enc-basemap="ocean" aria-pressed="false"><span>Okyanus</span><small>Esri Ocean</small></button>
+      <button type="button" class="enc-basemap-card imagery" data-enc-basemap="imagery" aria-pressed="false"><span>Uydu</span><small>Esri World Imagery</small></button>
+    </div>
+  </details>
   <div class="enc-map-tools" role="toolbar" aria-label="Sinbad web haritası araçları">
     <button class="btn primary" id="encPanTool" type="button" aria-pressed="true">Gezin</button>
     <button class="btn" id="encMeasureTool" type="button" aria-pressed="false">Mesafe ölç</button>
@@ -394,7 +404,7 @@
     <button class="btn" id="encUndoMapPoint" type="button">Son noktayı geri al</button>
     <button class="btn" id="encClearMapDrawing" type="button">Çizimi temizle</button>
     <button class="btn" id="encRouteToPassage" type="button" disabled>Rotayı Passage Plan’a aktar</button>
-    <button class="btn" id="encFullscreenMap" type="button">Tam ekran</button>
+    <button class="btn" id="encFullscreenMap" type="button">Haritayı tam ekran yap</button>
     <span id="encPlanningStatus" role="status" aria-live="polite">Haritayı sürükleyebilir, tekerlekle yakınlaştırabilirsiniz.</span>
   </div>
   <div class="enc-operations-grid">

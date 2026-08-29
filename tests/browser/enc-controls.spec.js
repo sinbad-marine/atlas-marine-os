@@ -82,6 +82,12 @@ test('controls every active web chart layer and turns a drawn route into a passa
   await page.locator('#encBathymetryToggle').check();
   await page.locator('#encSeamarkToggle').check();
   await page.locator('#encLayerToggle').check();
+  await page.locator('#encBasemapGallery').getByText('Harita formatı',{exact:true}).click();
+  await page.getByRole('button',{name:/Koyu Gri/}).click();
+  await expect(page.locator('[data-enc-basemap="dark-gray"]')).toHaveAttribute('aria-pressed','true');
+  await expect(page.locator('#encPlanningStatus')).toContainText('Harita formatı: Koyu Gri');
+  await expect(page.locator('#encLayerToggle')).toBeChecked();
+  await expect(page.locator('#encSeamarkToggle')).toBeChecked();
   await page.locator('#encDrawRouteTool').click();
   await expect(page.locator('#encDrawRouteTool')).toHaveAttribute('aria-pressed','true');
   const map=page.locator('#encMap');await map.scrollIntoViewIfNeeded();const box=await map.boundingBox();
@@ -93,4 +99,16 @@ test('controls every active web chart layer and turns a drawn route into a passa
   await page.locator('#encRouteToPassage').click();
   await expect(page.locator('#encLegRows tr')).toHaveCount(2);
   await expect(page.locator('#encPassageDraft')).toContainText('KAPTAN ONAYI');
+});
+
+test('fullscreen command targets only the chart panel',async({page})=>{
+  await page.route('http://127.0.0.1:31983/**',route=>route.fulfill({status:503,contentType:'application/json',body:'{}'}));
+  await page.goto('/index.html?workspace=enc-viewer');
+  await page.evaluate(()=>{
+    document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');
+    const shell=document.querySelector('#encMap').closest('.enc-map-shell');
+    shell.requestFullscreen=async()=>{document.body.dataset.fullscreenTarget=shell.className};
+  });
+  await page.locator('#encFullscreenMap').click();
+  await expect.poll(()=>page.evaluate(()=>document.body.dataset.fullscreenTarget)).toContain('enc-map-shell');
 });
