@@ -375,76 +375,86 @@
     <button class="btn close">Close</button>
   </div>
   <div class="enc-safety"><strong>Planning aid only.</strong> Do not use this web display as the sole means of navigation. Verify aboard with an approved, updated ECDIS/ECS and official notices.</div>
-  <details class="enc-map-apps-menu" id="encMapAppsMenu">
-    <summary class="btn" aria-label="Harita uygulamaları menüsünü aç"><span aria-hidden="true">☰</span> Haritalar</summary>
-    <div class="enc-map-apps-panel">
-      <section aria-labelledby="encMapApplicationsTitle">
-        <h3 id="encMapApplicationsTitle">Harita uygulamaları</h3>
-        <div class="enc-map-app-links">
-          <button class="btn" id="encOpenCpnView" type="button">OpenCPN Yerel Canlı Görüntü</button>
-          <button class="btn primary" id="encWebChartView" type="button" hidden>Web ENC Haritasına Dön</button>
-          <a class="btn" href="https://nauticalcharts.noaa.gov/enconline/enconline.html" target="_blank" rel="noopener">NOAA ENC Viewer</a>
-        </div>
-      </section>
-      <section aria-labelledby="encBasemapTitle">
-        <h3 id="encBasemapTitle">Altlık haritası</h3>
-        <div class="enc-basemap-options" id="encBasemapGallery" role="group" aria-label="Altlık haritası galerisi">
-          <button type="button" class="enc-basemap-card navigation" data-enc-basemap="navigation" aria-pressed="true"><span>Seyir / Açık</span><small>OpenStreetMap</small></button>
-          <button type="button" class="enc-basemap-card topo" data-enc-basemap="topographic" aria-pressed="false"><span>Topografik</span><small>Esri World Topo</small></button>
-          <button type="button" class="enc-basemap-card dark" data-enc-basemap="dark-gray" aria-pressed="false"><span>Koyu Gri</span><small>Esri Dark Gray</small></button>
-          <button type="button" class="enc-basemap-card ocean" data-enc-basemap="ocean" aria-pressed="false"><span>Okyanus</span><small>Esri Ocean</small></button>
-          <button type="button" class="enc-basemap-card imagery" data-enc-basemap="imagery" aria-pressed="false"><span>Uydu</span><small>Esri World Imagery</small></button>
-        </div>
-      </section>
-    </div>
-  </details>
-  <div class="enc-toolbar">
-    <button class="btn primary" id="encMediterraneanView" type="button">Mediterranean</button>
-    <button class="btn" id="encResetView" type="button">NOAA / USA</button>
-    <button class="btn" id="encUseLocation" type="button">Go to My Position</button>
-    <label class="enc-toggle"><input id="encBathymetryToggle" type="checkbox" checked> EMODnet depths</label>
-    <label class="enc-toggle"><input id="encSeamarkToggle" type="checkbox" checked> Seamarks</label>
-    <label class="enc-toggle"><input id="encLayerToggle" type="checkbox" checked> NOAA ENC</label>
-    <label class="enc-opacity">Opacity <input id="encOpacity" type="range" min="20" max="100" value="100"></label>
-  </div>
-  <div class="enc-map-tools" role="toolbar" aria-label="Sinbad web haritası araçları">
-    <button class="btn primary" id="encPanTool" type="button" aria-pressed="true">Gezin</button>
-    <button class="btn" id="encMeasureTool" type="button" aria-pressed="false">Mesafe ölç</button>
-    <button class="btn" id="encDrawRouteTool" type="button" aria-pressed="false">Rota çiz</button>
-    <button class="btn" id="encUndoMapPoint" type="button">Son noktayı geri al</button>
-    <button class="btn" id="encClearMapDrawing" type="button">Çizimi temizle</button>
-    <button class="btn" id="encRouteToPassage" type="button" disabled>Rotayı Passage Plan’a aktar</button>
-    <button class="btn" id="encFullscreenMap" type="button">Haritayı tam ekran yap</button>
-    <span id="encPlanningStatus" role="status" aria-live="polite">Haritayı sürükleyebilir, tekerlekle yakınlaştırabilirsiniz.</span>
-  </div>
-  <div class="enc-operations-grid">
-    <article class="enc-layer-panel">
-      <h3>Chart Layers</h3>
-      <p>EMODnet provides global/European bathymetry. OpenSeaMap adds community seamarks. NOAA ENC appears in United States charted waters.</p>
-      <div class="enc-layer-legend"><span><i class="depth"></i> Bathymetry</span><span><i class="seamark"></i> Aids to navigation</span><span><i class="official"></i> Official ENC</span></div>
-    </article>
-    <article class="enc-safety-panel">
-      <h3>Vessel Safety Depth</h3>
-      <div class="enc-safety-inputs">
-        <label>Draft (m)<input id="encDraft" type="number" min="0" step="0.1" value="2.0"></label>
-        <label>Required UKC (m)<input id="encUkc" type="number" min="0" step="0.1" value="1.0"></label>
-        <label>Squat allowance (m)<input id="encSquat" type="number" min="0" step="0.1" value="0.3"></label>
+  <div class="enc-chart-console" id="encChartConsole">
+    <aside class="enc-chart-tools" aria-labelledby="encChartToolsTitle">
+      <div class="enc-console-label" id="encChartToolsTitle">WPT / ROUTE</div>
+      <div class="enc-map-tools" role="toolbar" aria-label="Sinbad web haritası araçları">
+        <button class="btn primary" id="encPanTool" type="button" aria-pressed="true">✥ Gezin</button>
+        <button class="btn" id="encMeasureTool" type="button" aria-pressed="false">↔ Mesafe ölç</button>
+        <button class="btn" id="encDrawRouteTool" type="button" aria-pressed="false">⌁ Rota çiz</button>
+        <button class="btn" id="encUndoMapPoint" type="button">↶ Son noktayı geri al</button>
+        <button class="btn" id="encClearMapDrawing" type="button">⌫ Çizimi temizle</button>
+        <button class="btn" id="encRouteToPassage" type="button" disabled>⇥ Passage Plan’a aktar</button>
+        <button class="btn" id="encFullscreenMap" type="button">⛶ Haritayı tam ekran yap</button>
+        <span id="encPlanningStatus" role="status" aria-live="polite">Haritayı sürükleyebilir, tekerlekle yakınlaştırabilirsiniz.</span>
       </div>
-      <div class="enc-safety-result">Calculated safety depth <strong id="encSafetyDepth">3.3 m</strong></div>
-      <small>Advisory calculation only. Add tide, wave response, density, heel and company margins where applicable.</small>
-    </article>
-  </div>
-  <div class="enc-opencpn-shell" id="encOpenCpnShell" hidden>
-    <div class="enc-opencpn-controls">
-      <button class="btn" id="encOpenCpnControlToggle" type="button" aria-pressed="false">OpenCPN kontrolü: Kapalı</button>
-      <span id="encOpenCpnControlHint">Kontrolü açınca fare, sağ tık, tekerlek ve OpenCPN klavye kısayollarını burada kullanabilirsiniz.</span>
+    </aside>
+    <div class="enc-chart-canvas">
+      <div class="enc-opencpn-shell" id="encOpenCpnShell" hidden>
+        <div class="enc-opencpn-controls">
+          <button class="btn" id="encOpenCpnControlToggle" type="button" aria-pressed="false">OpenCPN kontrolü: Kapalı</button>
+          <span id="encOpenCpnControlHint">Kontrolü açınca fare, sağ tık, tekerlek ve OpenCPN klavye kısayollarını burada kullanabilirsiniz.</span>
+        </div>
+        <img id="encOpenCpnFrame" alt="Bu bilgisayarda çalışan OpenCPN harita penceresinin yerel canlı görüntüsü" hidden>
+        <div class="enc-map-status" id="encOpenCpnStatus">OpenCPN yerel bağlantısı bekleniyor…</div>
+      </div>
+      <div class="enc-map-shell">
+        <div id="encMap" role="application" aria-label="Interactive NOAA electronic navigational chart"></div>
+        <div id="encMapStatus" class="enc-map-status">Loading official ENC layer…</div>
+      </div>
     </div>
-    <img id="encOpenCpnFrame" alt="Bu bilgisayarda çalışan OpenCPN harita penceresinin yerel canlı görüntüsü" hidden>
-    <div class="enc-map-status" id="encOpenCpnStatus">OpenCPN yerel bağlantısı bekleniyor…</div>
-  </div>
-  <div class="enc-map-shell">
-    <div id="encMap" role="application" aria-label="Interactive NOAA electronic navigational chart"></div>
-    <div id="encMapStatus" class="enc-map-status">Loading official ENC layer…</div>
+    <aside class="enc-chart-settings" aria-labelledby="encChartSettingsTitle">
+      <div class="enc-console-label" id="encChartSettingsTitle">CHART SETTINGS</div>
+      <details class="enc-map-apps-menu" id="encMapAppsMenu">
+        <summary class="btn" aria-label="Harita uygulamaları menüsünü aç"><span aria-hidden="true">☰</span> Haritalar</summary>
+        <div class="enc-map-apps-panel">
+          <section aria-labelledby="encMapApplicationsTitle">
+            <h3 id="encMapApplicationsTitle">Harita uygulamaları</h3>
+            <div class="enc-map-app-links">
+              <button class="btn" id="encOpenCpnView" type="button">OpenCPN Yerel Canlı Görüntü</button>
+              <button class="btn primary" id="encWebChartView" type="button" hidden>Web ENC Haritasına Dön</button>
+              <a class="btn" href="https://nauticalcharts.noaa.gov/enconline/enconline.html" target="_blank" rel="noopener">NOAA ENC Viewer</a>
+            </div>
+          </section>
+          <section aria-labelledby="encBasemapTitle">
+            <h3 id="encBasemapTitle">Altlık haritası</h3>
+            <div class="enc-basemap-options" id="encBasemapGallery" role="group" aria-label="Altlık haritası galerisi">
+              <button type="button" class="enc-basemap-card navigation" data-enc-basemap="navigation" aria-pressed="true"><span>Seyir / Açık</span><small>OpenStreetMap</small></button>
+              <button type="button" class="enc-basemap-card topo" data-enc-basemap="topographic" aria-pressed="false"><span>Topografik</span><small>Esri World Topo</small></button>
+              <button type="button" class="enc-basemap-card dark" data-enc-basemap="dark-gray" aria-pressed="false"><span>Koyu Gri</span><small>Esri Dark Gray</small></button>
+              <button type="button" class="enc-basemap-card ocean" data-enc-basemap="ocean" aria-pressed="false"><span>Okyanus</span><small>Esri Ocean</small></button>
+              <button type="button" class="enc-basemap-card imagery" data-enc-basemap="imagery" aria-pressed="false"><span>Uydu</span><small>Esri World Imagery</small></button>
+            </div>
+          </section>
+        </div>
+      </details>
+      <div class="enc-toolbar" aria-label="Harita görünüm ve katman ayarları">
+        <button class="btn primary" id="encMediterraneanView" type="button">Mediterranean</button>
+        <button class="btn" id="encResetView" type="button">NOAA / USA</button>
+        <button class="btn" id="encUseLocation" type="button">Go to My Position</button>
+        <label class="enc-toggle"><input id="encBathymetryToggle" type="checkbox" checked> EMODnet depths</label>
+        <label class="enc-toggle"><input id="encSeamarkToggle" type="checkbox" checked> Seamarks</label>
+        <label class="enc-toggle"><input id="encLayerToggle" type="checkbox" checked> NOAA ENC</label>
+        <label class="enc-opacity">Opacity <input id="encOpacity" type="range" min="20" max="100" value="100"></label>
+      </div>
+      <div class="enc-operations-grid">
+        <article class="enc-layer-panel">
+          <h3>Chart Layers</h3>
+          <p>EMODnet provides global/European bathymetry. OpenSeaMap adds community seamarks. NOAA ENC appears in United States charted waters.</p>
+          <div class="enc-layer-legend"><span><i class="depth"></i> Bathymetry</span><span><i class="seamark"></i> Aids to navigation</span><span><i class="official"></i> Official ENC</span></div>
+        </article>
+        <article class="enc-safety-panel">
+          <h3>Vessel Safety Depth</h3>
+          <div class="enc-safety-inputs">
+            <label>Draft (m)<input id="encDraft" type="number" min="0" step="0.1" value="2.0"></label>
+            <label>Required UKC (m)<input id="encUkc" type="number" min="0" step="0.1" value="1.0"></label>
+            <label>Squat allowance (m)<input id="encSquat" type="number" min="0" step="0.1" value="0.3"></label>
+          </div>
+          <div class="enc-safety-result">Calculated safety depth <strong id="encSafetyDepth">3.3 m</strong></div>
+          <small>Advisory calculation only. Add tide, wave response, density, heel and company margins where applicable.</small>
+        </article>
+      </div>
+    </aside>
   </div>
   <div class="enc-info-grid">
     <article><span>Sources</span><strong>NOAA • EMODnet • OpenSeaMap</strong></article>

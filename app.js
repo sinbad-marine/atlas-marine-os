@@ -59,10 +59,37 @@ function installWorkspaceWindowShell(){
   document.title=`${workspace.querySelector('h2')?.textContent?.trim()||'Workspace'} — Sinbad Marine`;
   const toolbar=document.createElement('nav');
   toolbar.className='workspace-window-toolbar';toolbar.setAttribute('aria-label','Pencere gezinme araçları');
-  toolbar.innerHTML='<div><strong>⚓ Sinbad Marine</strong><small>Bağımsız çalışma penceresi</small></div><div class="workspace-window-actions"><button class="btn" type="button" data-window-back>← Geri</button><button class="btn primary" type="button" data-window-home>⌂ Ana Sayfa</button></div>';
+  const windowControls=workspaceWindowId==='enc-viewer'?'<div class="workspace-window-controls" aria-label="Pencere görünüm kontrolleri"><button class="workspace-window-control" type="button" data-window-minimize title="Simge durumuna küçült" aria-label="Simge durumuna küçült">—</button><button class="workspace-window-control" type="button" data-window-scale title="Pencereyi ölçeklendir" aria-label="Pencereyi ölçeklendir">▣</button><button class="workspace-window-control" type="button" data-window-fullscreen title="Ekranı kapla" aria-label="Ekranı kapla">⛶</button></div>':'';
+  toolbar.innerHTML='<div class="workspace-window-brand"><strong>⚓ Sinbad Marine</strong><small>Bağımsız çalışma penceresi</small></div><div class="workspace-window-actions"><button class="btn" type="button" data-window-back>← Geri</button><button class="btn primary" type="button" data-window-home>⌂ Ana Sayfa</button>'+windowControls+'</div>';
   document.querySelector('main')?.prepend(toolbar);
   toolbar.querySelector('[data-window-back]').onclick=()=>history.length>1?history.back():window.close();
   toolbar.querySelector('[data-window-home]').onclick=()=>{if(window.opener&&!window.opener.closed){window.opener.focus();window.close();}else location.href='./index.html';};
+  const minimizeButton=toolbar.querySelector('[data-window-minimize]');
+  if(minimizeButton)minimizeButton.onclick=()=>{
+    const minimized=document.body.classList.toggle('workspace-window-minimized');
+    minimizeButton.textContent=minimized?'□':'—';
+    minimizeButton.title=minimized?'Pencereyi geri getir':'Simge durumuna küçült';
+    minimizeButton.setAttribute('aria-label',minimizeButton.title);
+  };
+  const scaleButton=toolbar.querySelector('[data-window-scale]');
+  if(scaleButton)scaleButton.onclick=()=>{
+    const fitted=document.body.classList.toggle('workspace-window-fit');
+    scaleButton.textContent=fitted?'▢':'▣';
+    scaleButton.title=fitted?'Normal ölçeğe dön':'Pencereyi ölçeklendir';
+    scaleButton.setAttribute('aria-label',scaleButton.title);
+    requestAnimationFrame(()=>encMap?.updateSize?.());
+  };
+  const fullscreenButton=toolbar.querySelector('[data-window-fullscreen]');
+  if(fullscreenButton){
+    fullscreenButton.onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.documentElement.requestFullscreen();}catch{}};
+    document.addEventListener('fullscreenchange',()=>{
+      const active=Boolean(document.fullscreenElement);
+      fullscreenButton.textContent=active?'⛶':'⛶';
+      fullscreenButton.title=active?'Tam ekrandan çık':'Ekranı kapla';
+      fullscreenButton.setAttribute('aria-label',fullscreenButton.title);
+      requestAnimationFrame(()=>encMap?.updateSize?.());
+    });
+  }
   document.querySelectorAll('.workspace').forEach(section=>section.classList.toggle('active',section.id===workspaceWindowId));
   const requestedBucket=new URLSearchParams(location.search).get('bucket'),bucketSelect=$('cloudBucketSelect');
   if(requestedBucket&&bucketSelect)bucketSelect.value=requestedBucket;
