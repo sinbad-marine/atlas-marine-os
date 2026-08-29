@@ -83,7 +83,7 @@ function openWorkspace(id){
 function closeWorkspaces(){if(workspaceWindowId){window.close();return;}document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));scrollTo({top:0,behavior:'smooth'})}
 installWorkspaceWindowShell();
 
-let encMap=null,encChartLayer=null,encBathymetryLayer=null,encSeamarkLayer=null,openCpnPreviewTimer=null,openCpnFrameUrl='';
+let encMap=null,encChartLayer=null,encBathymetryLayer=null,encSeamarkLayer=null,encPlanningSource=null,encDrawInteraction=null,encPlanningMode='pan',openCpnPreviewTimer=null,openCpnFrameUrl='';
 let navigationPlotMap=null,navigationPlotSource=null,navigationPlotRoute=null;
 function plotCoordinate(value,axis){return window.SinbadNavigation?.formatCoordinate?.(value,axis)||Number(value).toFixed(5)}
 function renderNavigationPlot(){
@@ -164,12 +164,15 @@ function initEncViewer(){
     source:new ol.source.XYZ({url:'https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png',crossOrigin:'anonymous',attributions:'OpenSeaMap contributors'}),
     zIndex:3
   });
+  encPlanningSource=new ol.source.Vector();
+  const planningLayer=new ol.layer.Vector({source:encPlanningSource,zIndex:8,style:feature=>new ol.style.Style({stroke:new ol.style.Stroke({color:feature.get('kind')==='measure'?'#f3d37d':'#32d6c6',width:4,lineDash:feature.get('kind')==='measure'?[9,7]:undefined}),image:new ol.style.Circle({radius:6,fill:new ol.style.Fill({color:'#f3d37d'}),stroke:new ol.style.Stroke({color:'#07131f',width:2})})})});
   encMap=new ol.Map({
     target:'encMap',
-    layers:[new ol.layer.Tile({source:new ol.source.OSM(),zIndex:0}),encBathymetryLayer,encChartLayer,encSeamarkLayer],
+    layers:[new ol.layer.Tile({source:new ol.source.OSM(),zIndex:0}),encBathymetryLayer,encChartLayer,encSeamarkLayer,planningLayer],
     view:new ol.View({center:ol.proj.fromLonLat([18,36]),zoom:5,minZoom:2,maxZoom:19})
   });
   encMap.addControl(new ol.control.ScaleLine({units:'nautical'}));
+  initEncMapPlanningTools();
   $('encLayerToggle').addEventListener('change',e=>encChartLayer.setVisible(e.target.checked));
   $('encBathymetryToggle').addEventListener('change',e=>encBathymetryLayer.setVisible(e.target.checked));
   $('encSeamarkToggle').addEventListener('change',e=>encSeamarkLayer.setVisible(e.target.checked));
@@ -193,6 +196,31 @@ function initEncViewer(){
       status.textContent='Map centered on your current position.';status.classList.add('ready');
     },err=>{status.textContent=`Location could not be read: ${err.message}`;status.classList.add('error')},{enableHighAccuracy:true,timeout:12000});
   });
+}
+
+function setEncPlanningMode(mode){
+  if(!encMap||!encPlanningSource)return;encPlanningMode=mode;
+  if(encDrawInteraction){encMap.removeInteraction(encDrawInteraction);encDrawInteraction=null;}
+  ['encPanTool','encMeasureTool','encDrawRouteTool'].forEach(id=>{const active=(id==='encPanTool'&&mode==='pan')||(id==='encMeasureTool'&&mode==='measure')||(id==='encDrawRouteTool'&&mode==='route');$(id).setAttribute('aria-pressed',String(active));$(id).classList.toggle('primary',active)});
+  const status=$('encPlanningStatus');
+  if(mode==='pan'){status.textContent='Gezinme açık: sürükleyin, tekerlekle yakınlaştırın.';return}
+  encDrawInteraction=new ol.interaction.Draw({source:encPlanningSource,type:'LineString'});encMap.addInteraction(encDrawInteraction);status.textContent=mode==='measure'?'Ölçü hattının noktalarını tıklayın; bitirmek için çift tıklayın.':'Rota waypointlerini tıklayın; bitirmek için çift tıklayın.';
+  encDrawInteraction.on('drawend',event=>{event.feature.set('kind',mode);const coordinates=event.feature.getGeometry().getCoordinates(),distanceNm=ol.sphere.getLength(event.feature.getGeometry())/1852,message=`${mode==='measure'?'Ölçülen mesafe':'Çizilen rota'}: ${distanceNm.toFixed(2)} NM · ${coordinates.length} nokta.`;status.textContent=message;if(mode==='route')$('encRouteToPassage').disabled=false;setTimeout(()=>{setEncPlanningMode('pan');status.textContent=message},0)});
+}
+function latestEncRouteFeature(){return [...(encPlanningSource?.getFeatures()||[])].reverse().find(feature=>feature.get('kind')==='route')||null}
+function undoEncMapPoint(){
+  if(encDrawInteraction){encDrawInteraction.removeLastPoint();$('encPlanningStatus').textContent='Son çizim noktası geri alındı.';return}
+  const feature=latestEncRouteFeature();if(!feature)return;const geometry=feature.getGeometry(),coordinates=geometry.getCoordinates();if(coordinates.length<=2){encPlanningSource.removeFeature(feature);$('encRouteToPassage').disabled=!latestEncRouteFeature();$('encPlanningStatus').textContent='Rota çizimi kaldırıldı.';return}geometry.setCoordinates(coordinates.slice(0,-1));$('encPlanningStatus').textContent='Rotanın son waypointi kaldırıldı.';
+}
+function clearEncMapDrawing(){if(encDrawInteraction){encMap.removeInteraction(encDrawInteraction);encDrawInteraction=null}encPlanningSource?.clear();$('encRouteToPassage').disabled=true;setEncPlanningMode('pan');$('encPlanningStatus').textContent='Harita çizimleri temizlendi.'}
+function routeFeatureToGpx(feature){
+  const points=feature.getGeometry().getCoordinates().map((coordinate,index)=>{const [lon,lat]=ol.proj.toLonLat(coordinate);return{name:`WP${String(index+1).padStart(2,'0')}`,lat,lon}}),name=`Sinbad web route ${new Date().toLocaleString()}`;
+  const gpx=`<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Sinbad Marine Web ENC" xmlns="http://www.topografix.com/GPX/1/1"><rte><name>${bridgeXml(name)}</name>${points.map(point=>`<rtept lat="${point.lat.toFixed(6)}" lon="${point.lon.toFixed(6)}"><name>${point.name}</name></rtept>`).join('')}</rte></gpx>`;
+  return {name,filename:`sinbad-web-route-${Date.now()}.gpx`,gpx,points};
+}
+function sendEncMapRouteToPassage(){const feature=latestEncRouteFeature();if(!feature){$('encPlanningStatus').textContent='Önce harita üzerinde bir rota çizin.';return}encPassageRoute=routeFeatureToGpx(feature);renderEncPassagePlan();$('encPassageTitle').scrollIntoView({behavior:'smooth',block:'start'});$('encPlanningStatus').textContent='Çizilen rota Passage Plan’a aktarıldı.'}
+function initEncMapPlanningTools(){
+  $('encPanTool').addEventListener('click',()=>setEncPlanningMode('pan'));$('encMeasureTool').addEventListener('click',()=>setEncPlanningMode('measure'));$('encDrawRouteTool').addEventListener('click',()=>setEncPlanningMode('route'));$('encUndoMapPoint').addEventListener('click',undoEncMapPoint);$('encClearMapDrawing').addEventListener('click',clearEncMapDrawing);$('encRouteToPassage').addEventListener('click',sendEncMapRouteToPassage);$('encFullscreenMap').addEventListener('click',async()=>{const workspace=$('enc-viewer');if(document.fullscreenElement)await document.exitFullscreen();else await workspace.requestFullscreen();setTimeout(()=>encMap?.updateSize(),100)});
 }
 
 let encPassageRoute=null;
@@ -238,6 +266,7 @@ function initEncPassagePlanner(){
 
 function releaseOpenCpnFrame(){
   if(openCpnFrameUrl){URL.revokeObjectURL(openCpnFrameUrl);openCpnFrameUrl='';}
+  const image=$('encOpenCpnFrame');if(image){image.removeAttribute('src');image.hidden=true;}
 }
 async function refreshOpenCpnPreview(){
   const shell=$('encOpenCpnShell'),image=$('encOpenCpnFrame'),status=$('encOpenCpnStatus');
@@ -251,10 +280,10 @@ async function refreshOpenCpnPreview(){
     const frameResponse=await fetch(`${SINBAD_BRIDGE_URL}/opencpn/frame?ts=${Date.now()}`,{cache:'no-store'});
     if(!frameResponse.ok)throw new Error('OpenCPN görüntüsü alınamadı. Pencereyi görünür durumda bırakın.');
     const nextUrl=URL.createObjectURL(await frameResponse.blob()),previousUrl=openCpnFrameUrl;
-    openCpnFrameUrl=nextUrl;image.src=nextUrl;if(previousUrl)URL.revokeObjectURL(previousUrl);
+    openCpnFrameUrl=nextUrl;image.src=nextUrl;image.hidden=false;if(previousUrl)URL.revokeObjectURL(previousUrl);
     status.textContent=`Yerel canlı görüntü · ${state.title||'OpenCPN'} · hiçbir harita dosyası buluta gönderilmiyor.`;
     status.className='enc-map-status ready';
-  }catch(error){status.textContent=`${error.message} Sinbad Bridge açık olmalıdır.`;status.className='enc-map-status error';}
+  }catch(error){releaseOpenCpnFrame();status.textContent=`${error.message} Sinbad Bridge açık olmalıdır.`;status.className='enc-map-status error';}
 }
 async function ensureOpenCpnRunning(){
   const response=await fetch(`${SINBAD_BRIDGE_URL}/opencpn/start`,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});

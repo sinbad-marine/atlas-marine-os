@@ -8,6 +8,8 @@ test('direct ENC workspace initializes its map and OpenCPN controls',async({page
   await expect(page.locator('#encMap .ol-viewport')).toBeVisible();
   await page.getByRole('button',{name:'OpenCPN Yerel Canlı Görüntü'}).click();
   await expect(page.locator('#encOpenCpnShell')).toBeVisible();
+  await expect(page.locator('#encOpenCpnFrame')).toBeHidden();
+  await expect(page.locator('#encOpenCpnFrame')).not.toHaveAttribute('src',/.+/);
   await expect(page.getByRole('button',{name:'Web ENC Haritasına Dön'})).toBeVisible();
 
   await page.getByRole('button',{name:'Web ENC Haritasına Dön'}).click();
@@ -68,4 +70,27 @@ test('imports a local Bridge GPX, calculates legs and sends it to OpenCPN after 
   await page.locator('#encSendPassageToOpenCpn').click();
   await expect.poll(()=>opened.length).toBe(1);
   expect(opened[0].filename).toBe('marmaris-rodos.gpx');
+});
+
+test('controls every active web chart layer and turns a drawn route into a passage plan',async({page})=>{
+  await page.route('http://127.0.0.1:31983/**',route=>route.fulfill({status:503,contentType:'application/json',body:'{}'}));
+  await page.goto('/index.html?workspace=enc-viewer');
+  await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated')});
+  await page.locator('#encBathymetryToggle').uncheck();
+  await page.locator('#encSeamarkToggle').uncheck();
+  await page.locator('#encLayerToggle').uncheck();
+  await page.locator('#encBathymetryToggle').check();
+  await page.locator('#encSeamarkToggle').check();
+  await page.locator('#encLayerToggle').check();
+  await page.locator('#encDrawRouteTool').click();
+  await expect(page.locator('#encDrawRouteTool')).toHaveAttribute('aria-pressed','true');
+  const map=page.locator('#encMap');await map.scrollIntoViewIfNeeded();const box=await map.boundingBox();
+  await page.mouse.click(box.x+box.width*.25,box.y+box.height*.55);
+  await page.mouse.click(box.x+box.width*.5,box.y+box.height*.42);
+  await page.mouse.dblclick(box.x+box.width*.72,box.y+box.height*.58);
+  await expect(page.locator('#encPlanningStatus')).toContainText('Çizilen rota');
+  await expect(page.locator('#encRouteToPassage')).toBeEnabled();
+  await page.locator('#encRouteToPassage').click();
+  await expect(page.locator('#encLegRows tr')).toHaveCount(2);
+  await expect(page.locator('#encPassageDraft')).toContainText('KAPTAN ONAYI');
 });

@@ -387,6 +387,16 @@
     <label class="enc-opacity">Opacity <input id="encOpacity" type="range" min="20" max="100" value="100"></label>
     <a class="btn" href="https://nauticalcharts.noaa.gov/enconline/enconline.html" target="_blank" rel="noopener">Open NOAA Viewer</a>
   </div>
+  <div class="enc-map-tools" role="toolbar" aria-label="Sinbad web haritası araçları">
+    <button class="btn primary" id="encPanTool" type="button" aria-pressed="true">Gezin</button>
+    <button class="btn" id="encMeasureTool" type="button" aria-pressed="false">Mesafe ölç</button>
+    <button class="btn" id="encDrawRouteTool" type="button" aria-pressed="false">Rota çiz</button>
+    <button class="btn" id="encUndoMapPoint" type="button">Son noktayı geri al</button>
+    <button class="btn" id="encClearMapDrawing" type="button">Çizimi temizle</button>
+    <button class="btn" id="encRouteToPassage" type="button" disabled>Rotayı Passage Plan’a aktar</button>
+    <button class="btn" id="encFullscreenMap" type="button">Tam ekran</button>
+    <span id="encPlanningStatus" role="status" aria-live="polite">Haritayı sürükleyebilir, tekerlekle yakınlaştırabilirsiniz.</span>
+  </div>
   <div class="enc-operations-grid">
     <article class="enc-layer-panel">
       <h3>Chart Layers</h3>
@@ -409,7 +419,7 @@
       <button class="btn" id="encOpenCpnControlToggle" type="button" aria-pressed="false">OpenCPN kontrolü: Kapalı</button>
       <span id="encOpenCpnControlHint">Kontrolü açınca fare, sağ tık, tekerlek ve OpenCPN klavye kısayollarını burada kullanabilirsiniz.</span>
     </div>
-    <img id="encOpenCpnFrame" alt="Bu bilgisayarda çalışan OpenCPN harita penceresinin yerel canlı görüntüsü">
+    <img id="encOpenCpnFrame" alt="Bu bilgisayarda çalışan OpenCPN harita penceresinin yerel canlı görüntüsü" hidden>
     <div class="enc-map-status" id="encOpenCpnStatus">OpenCPN yerel bağlantısı bekleniyor…</div>
   </div>
   <div class="enc-map-shell">
