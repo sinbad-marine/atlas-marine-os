@@ -3,8 +3,8 @@
   "owner": "Sinbad Marine design protection",
   "goldenUpdatePolicy": "Golden screenshots may change only in an explicitly reviewed design pull request.",
   "protectedFileSha256": {
-    "index.html": "fb5277dc9065ccda6beac1d65869c8ab63074ae7cf4531402bbb78c5c9fdd8cc",
-    "styles.css": "36bc62ef64b5a88323eba8ee4a79ca42a637957cf7ad1c858506419370f8bfae",
+    "index.html": "d008f85da7be2cdf44f4bc093e776a374ab56a7e1712339f1a6ac3e5059bd2d2",
+    "styles.css": "7f14a48092a2f0e39387245697cf20b30e4054ee6f2577eac8125b88ec07b51d",
     "academy.html": "5f66e3da0e5d8ad90095e01e1cc5fe75f96f86b87a6649b92e0c0115c1ad6d20",
     "academy.css": "9d2c9e160eaa0ed785e3125cbc0f878511d49aeaac31fbff765b1fbb599937fe"
   },

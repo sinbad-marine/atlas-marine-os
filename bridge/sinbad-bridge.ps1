@@ -17,6 +17,19 @@ param(
 
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Net.Http
+Add-Type -AssemblyName System.Drawing
+if (-not ('SinbadNativeWindow' -as [type])) {
+  Add-Type @'
+using System;
+using System.Runtime.InteropServices;
+public static class SinbadNativeWindow {
+  [StructLayout(LayoutKind.Sequential)] public struct RECT { public int Left; public int Top; public int Right; public int Bottom; }
+  [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr hWnd, out RECT rect);
+  [DllImport("user32.dll")] public static extern bool IsIconic(IntPtr hWnd);
+  [DllImport("user32.dll")] public static extern bool PrintWindow(IntPtr hWnd, IntPtr hdcBlt, uint flags);
+}
+'@
+}
 $tierRouterPath = Join-Path $PSScriptRoot 'qwen-tier-router.ps1'
 if (-not (Test-Path -LiteralPath $tierRouterPath -PathType Leaf)) { throw 'SINBAD_QWEN_TIER_ROUTER_MISSING' }
 . $tierRouterPath
@@ -205,6 +218,35 @@ function Get-StudioCapabilityStatus {
     prohibited = @('GENERAL_COMMAND_EXECUTION','NETWORK_ACCESS','HOST_OR_CORE_WRITE','AUTOMATIC_MERGE','LIVE_PUBLISH')
     approval = 'EXACT_SINGLE_USE_APPROVAL_REQUIRED'
   }
+}
+
+function Get-OpenCpnWindowStatus {
+  $process = Get-Process -Name 'opencpn' -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 } | Select-Object -First 1
+  $installed = -not [string]::IsNullOrWhiteSpace([string]$OpenCpnExecutable) -and (Test-Path -LiteralPath $OpenCpnExecutable -PathType Leaf)
+  if (-not $process) { return @{ installed=$installed; running=$false; minimized=$false; title=''; pid=$null } }
+  $process.Refresh()
+  return @{ installed=$installed; running=$true; minimized=[SinbadNativeWindow]::IsIconic($process.MainWindowHandle); title=$process.MainWindowTitle; pid=$process.Id }
+}
+
+function Get-OpenCpnWindowFrame {
+  $process = Get-Process -Name 'opencpn' -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 } | Select-Object -First 1
+  if (-not $process) { throw 'OPENCPN_NOT_RUNNING' }
+  $process.Refresh()
+  if ([SinbadNativeWindow]::IsIconic($process.MainWindowHandle)) { throw 'OPENCPN_WINDOW_MINIMIZED' }
+  $rect = [SinbadNativeWindow+RECT]::new()
+  if (-not [SinbadNativeWindow]::GetWindowRect($process.MainWindowHandle, [ref]$rect)) { throw 'OPENCPN_WINDOW_BOUNDS_UNAVAILABLE' }
+  $width = $rect.Right-$rect.Left; $height = $rect.Bottom-$rect.Top
+  if ($width -lt 320 -or $height -lt 240 -or $width -gt 7680 -or $height -gt 4320) { throw 'OPENCPN_WINDOW_BOUNDS_INVALID' }
+  $bitmap = [Drawing.Bitmap]::new($width,$height,[Drawing.Imaging.PixelFormat]::Format24bppRgb)
+  $graphics = [Drawing.Graphics]::FromImage($bitmap)
+  $stream = [IO.MemoryStream]::new()
+  try {
+    $hdc = $graphics.GetHdc()
+    try { $captured = [SinbadNativeWindow]::PrintWindow($process.MainWindowHandle,$hdc,2) } finally { $graphics.ReleaseHdc($hdc) }
+    if (-not $captured) { throw 'OPENCPN_WINDOW_CAPTURE_FAILED' }
+    $bitmap.Save($stream,[Drawing.Imaging.ImageFormat]::Png)
+    return $stream.ToArray()
+  } finally { $stream.Dispose(); $graphics.Dispose(); $bitmap.Dispose() }
 }
 
 function Json($value) { return ($value | ConvertTo-Json -Depth 8 -Compress) }
@@ -703,6 +745,8 @@ try {
       }
       if ($method -eq 'GET' -and $path -eq '/library/status') { Write-HttpResponse $stream 200 'OK' (Json (Get-LibraryStatus)); continue }
       if ($method -eq 'GET' -and $path -eq '/studio/status') { Write-HttpResponse $stream 200 'OK' (Json (Get-StudioCapabilityStatus)); continue }
+      if ($method -eq 'GET' -and $path -eq '/opencpn/status') { Write-HttpResponse $stream 200 'OK' (Json (Get-OpenCpnWindowStatus)); continue }
+      if ($method -eq 'GET' -and $path -eq '/opencpn/frame') { Write-HttpBytes $stream 200 'OK' (Get-OpenCpnWindowFrame) 'image/png'; continue }
       if ($method -eq 'POST' -and $path -eq '/library/reindex') { Write-HttpResponse $stream 200 'OK' (Json (Update-LibraryIndex)); continue }
       if ($method -eq 'POST' -and $path -eq '/library/ingest') {
         $payload = $body | ConvertFrom-Json

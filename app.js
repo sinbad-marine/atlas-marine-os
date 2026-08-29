@@ -74,7 +74,7 @@ function openWorkspace(id){
 function closeWorkspaces(){if(workspaceWindowId){window.close();return;}document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));scrollTo({top:0,behavior:'smooth'})}
 installWorkspaceWindowShell();
 
-let encMap=null,encChartLayer=null,encBathymetryLayer=null,encSeamarkLayer=null;
+let encMap=null,encChartLayer=null,encBathymetryLayer=null,encSeamarkLayer=null,openCpnPreviewTimer=null,openCpnFrameUrl='';
 let navigationPlotMap=null,navigationPlotSource=null,navigationPlotRoute=null;
 function plotCoordinate(value,axis){return window.SinbadNavigation?.formatCoordinate?.(value,axis)||Number(value).toFixed(5)}
 function renderNavigationPlot(){
@@ -164,6 +164,8 @@ function initEncViewer(){
   $('encBathymetryToggle').addEventListener('change',e=>encBathymetryLayer.setVisible(e.target.checked));
   $('encSeamarkToggle').addEventListener('change',e=>encSeamarkLayer.setVisible(e.target.checked));
   $('encOpacity').addEventListener('input',e=>encChartLayer.setOpacity(Number(e.target.value)/100));
+  $('encOpenCpnView').addEventListener('click',()=>setOpenCpnPreviewMode(true));
+  $('encWebChartView').addEventListener('click',()=>setOpenCpnPreviewMode(false));
   $('encResetView').addEventListener('click',()=>encMap.getView().animate({center:ol.proj.fromLonLat([-98.5,38.5]),zoom:4,duration:650}));
   $('encMediterraneanView').addEventListener('click',()=>encMap.getView().animate({center:ol.proj.fromLonLat([18,36]),zoom:5,duration:650}));
   const calculateSafetyDepth=()=>{
@@ -180,6 +182,35 @@ function initEncViewer(){
       status.textContent='Map centered on your current position.';status.classList.add('ready');
     },err=>{status.textContent=`Location could not be read: ${err.message}`;status.classList.add('error')},{enableHighAccuracy:true,timeout:12000});
   });
+}
+
+function releaseOpenCpnFrame(){
+  if(openCpnFrameUrl){URL.revokeObjectURL(openCpnFrameUrl);openCpnFrameUrl='';}
+}
+async function refreshOpenCpnPreview(){
+  const shell=$('encOpenCpnShell'),image=$('encOpenCpnFrame'),status=$('encOpenCpnStatus');
+  if(!shell||shell.hidden)return;
+  try{
+    const stateResponse=await fetch(`${SINBAD_BRIDGE_URL}/opencpn/status`,{cache:'no-store'});
+    if(!stateResponse.ok)throw new Error('OpenCPN durumu okunamadı.');
+    const state=await stateResponse.json();
+    if(!state.running)throw new Error(state.installed?'OpenCPN kapalı. Önce OpenCPN uygulamasını açın.':'OpenCPN bu bilgisayarda bulunamadı.');
+    if(state.minimized)throw new Error('OpenCPN simge durumunda. Canlı görüntü için pencereyi geri yükleyin.');
+    const frameResponse=await fetch(`${SINBAD_BRIDGE_URL}/opencpn/frame?ts=${Date.now()}`,{cache:'no-store'});
+    if(!frameResponse.ok)throw new Error('OpenCPN görüntüsü alınamadı. Pencereyi görünür durumda bırakın.');
+    const nextUrl=URL.createObjectURL(await frameResponse.blob()),previousUrl=openCpnFrameUrl;
+    openCpnFrameUrl=nextUrl;image.src=nextUrl;if(previousUrl)URL.revokeObjectURL(previousUrl);
+    status.textContent=`Yerel canlı görüntü · ${state.title||'OpenCPN'} · hiçbir harita dosyası buluta gönderilmiyor.`;
+    status.className='enc-map-status ready';
+  }catch(error){status.textContent=`${error.message} Sinbad Bridge açık olmalıdır.`;status.className='enc-map-status error';}
+}
+function setOpenCpnPreviewMode(enabled){
+  const shell=$('encOpenCpnShell'),mapShell=$('encMap')?.closest('.enc-map-shell');
+  if(!shell||!mapShell)return;
+  shell.hidden=!enabled;mapShell.hidden=enabled;$('encOpenCpnView').hidden=enabled;$('encWebChartView').hidden=!enabled;
+  if(openCpnPreviewTimer){clearInterval(openCpnPreviewTimer);openCpnPreviewTimer=null;}
+  if(enabled){refreshOpenCpnPreview();openCpnPreviewTimer=setInterval(refreshOpenCpnPreview,1200);}
+  else{releaseOpenCpnFrame();setTimeout(()=>encMap?.updateSize(),80);}
 }
 
 
