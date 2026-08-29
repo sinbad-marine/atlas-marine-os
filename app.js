@@ -55,7 +55,7 @@ function installWorkspaceWindowShell(){
   if(!workspaceWindowId)return;
   const workspace=$(workspaceWindowId);
   if(!workspace){location.replace('./index.html');return;}
-  document.body.classList.add('workspace-window-mode');
+  document.body.classList.add('workspace-window-mode',`workspace-window-${workspaceWindowId}`);
   document.title=`${workspace.querySelector('h2')?.textContent?.trim()||'Workspace'} — Sinbad Marine`;
   const toolbar=document.createElement('nav');
   toolbar.className='workspace-window-toolbar';toolbar.setAttribute('aria-label','Pencere gezinme araçları');
