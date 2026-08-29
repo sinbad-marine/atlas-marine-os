@@ -5,7 +5,7 @@
   "protectedFileSha256": {
     "index.html": "5f22e071a9c70ce46b340466b12ed915dc8a97bc6108405aca479871b2293486",
     "styles.css": "771dcb60aa5f582a093652d7860db386c626a2ba4c11b6ea4ff2a91d9992f815",
-    "academy.html": "aee24817f70dcea5a5334b4abb3ea90d2c9051b52b4cbacefbe0ca3f7e24772f",
+    "academy.html": "54f6acc8948947d7aa7b96ef3e774fe0763dbb0bf6a13480f15d2a417fa5cb98",
     "academy.css": "9d2c9e160eaa0ed785e3125cbc0f878511d49aeaac31fbff765b1fbb599937fe"
   },
   "dashboardWorkspaces": [
@@ -71,6 +71,7 @@
         "#academyBackButton",
         "#academyHomeButton",
         "#academyModule",
+        "#openExamIntelligence",
         "#academyConversation",
         "#academyQuestionInput",
         "#toggleAcademyHandsFree",
