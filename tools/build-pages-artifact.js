@@ -8,9 +8,15 @@ const crypto=require('node:crypto');
 const ROOT=path.resolve(__dirname,'..');
 const WEB_VISUAL_SOURCE='sinbad-ai-core/visual-library/assets';
 const visualSourceRoot=path.join(ROOT,...WEB_VISUAL_SOURCE.split('/'));
+const STORE_SOURCE='store';
+const storeSourceRoot=path.join(ROOT,STORE_SOURCE);
 const VISUAL_RELEASE_FILES=Object.freeze(fs.readdirSync(visualSourceRoot,{recursive:true,withFileTypes:true})
   .filter(entry=>entry.isFile()&&!entry.isSymbolicLink())
   .map(entry=>`visual-library/assets/${path.relative(visualSourceRoot,path.join(entry.parentPath,entry.name)).split(path.sep).join('/')}`)
+  .sort());
+const STORE_RELEASE_FILES=Object.freeze(fs.readdirSync(storeSourceRoot,{recursive:true,withFileTypes:true})
+  .filter(entry=>entry.isFile()&&!entry.isSymbolicLink())
+  .map(entry=>`store/${path.relative(storeSourceRoot,path.join(entry.parentPath,entry.name)).split(path.sep).join('/')}`)
   .sort());
 const RELEASE_FILES=Object.freeze([
   'index.html','styles.css','app.js','academy.html','academy.css','academy-window.js','academy-classroom-window.js','academy-gasm-catalog.js','exam-intelligence-local-required.html','owner-review-local-required.html','exam-review.html','exam-review.css','exam-review.js',
@@ -39,6 +45,7 @@ const RELEASE_FILES=Object.freeze([
   ,'assets/captain-sinbad/captain-sinbad-rig-expression-concerned-v1.png','assets/captain-sinbad/captain-sinbad-rig-expression-delighted-v1.png'
   ,'assets/captain-sinbad/captain-sinbad-fullbody-rig-head-v2.png','assets/captain-sinbad/captain-sinbad-fullbody-rig-torso-v2.png'
   ,'assets/captain-sinbad/captain-sinbad-fullbody-rig-left-arm-v2.png','assets/captain-sinbad/captain-sinbad-fullbody-rig-right-arm-v2.png'
+  ,...STORE_RELEASE_FILES
   ,...VISUAL_RELEASE_FILES
 ]);
 const SOURCE_OVERRIDES=Object.freeze({
@@ -79,4 +86,4 @@ if(require.main===module){
     .catch(error=>{process.stderr.write(`${error.message}\n`);process.exitCode=1;});
 }
 
-module.exports=Object.freeze({ROOT,RELEASE_FILES,buildPagesArtifact});
+module.exports=Object.freeze({ROOT,RELEASE_FILES,STORE_RELEASE_FILES,buildPagesArtifact});

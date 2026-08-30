@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="SINBAD Marine Store — yat, tekne ve profesyonel gemi ekipmanları.">
+  <meta name="theme-color" content="#071521">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; media-src 'none'; frame-src 'none'; form-action 'none'; upgrade-insecure-requests">
+  <title>SINBAD Marine Store · Equip the Voyage</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="pro.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body class="theme-day">
+  <div class="notice"><span>SINBAD Marine Store</span><strong>Demo katalog · ödeme kapalı</strong><span>Teknik veriler doğrulama bekliyor</span></div>
+  <header class="site-header pro-header">
+    <a class="brand" href="#top" aria-label="SINBAD Marine Store ana sayfa"><span class="brand-mark">⚓</span><span><b>SINBAD</b><small>MARINE STORE</small></span></a>
+    <button class="menu-button" id="menuButton" aria-label="Menüyü aç" aria-expanded="false">☰</button>
+    <nav id="mainNav" aria-label="Ana menü">
+      <button class="mega-trigger" id="megaTrigger" aria-expanded="false">Tüm kategoriler⌄</button><a href="#systems">Teknenize göre</a><a href="#guides">Rehberler</a><a href="#professional">Profesyonel</a><a href="#trust">Güven</a>
+    </nav>
+    <div class="header-actions"><button class="icon-button" id="searchButton" aria-label="Ürün ara">⌕</button><button class="cart-button" id="cartButton">Sepet <span id="cartCount">0</span></button></div>
+  </header>
+  <section class="mega-menu" id="megaMenu" hidden aria-label="Ürün kategorileri">
+    <div><p class="eyebrow">ÜRÜN AİLELERİ</p><a data-menu-filter="safety" href="#catalog"><b>Can kurtarma</b><small>Can yelekleri · ışıklar · işaretler</small></a><a data-menu-filter="bridge" href="#catalog"><b>Seyir & köprüüstü</b><small>Harita masası · göstergeler · haberleşme</small></a><a data-menu-filter="electrical" href="#catalog"><b>Marin elektrik</b><small>12/24 V · aydınlatma · güç sistemleri</small></a></div>
+    <div><p class="eyebrow">GÜVERTE & YAŞAM</p><a data-menu-filter="deck" href="#catalog"><b>Güverte donanımı</b><small>Bağlama · oturma · paslanmaz ekipman</small></a><a href="#systems"><b>Teknenize göre bulun</b><small>Yat · yelkenli · ticari gemi</small></a><a href="#guides"><b>Satın alma rehberleri</b><small>Doğru ürün, doğru ölçü, doğru belge</small></a></div>
+    <div class="mega-feature"><span>PRO</span><p class="eyebrow">GEMİ TEDARİK MASASI</p><h3>ETA’nıza göre limana teslim.</h3><button class="button primary" data-open-quote>Teklif oluştur</button></div>
+  </section>
+  <div class="service-rail"><span>✓ Teknik uzman desteği</span><span>⌖ Limana ve marinaya teslim</span><span>▣ Belge kontrollü ürün verisi</span><span>↻ Kolay iade altyapısı</span></div>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-image" role="img" aria-label="Yüz metreden uzun yelkenli yat, yunuslar ve deniz yaşamını gösteren sanatsal deniz tablosu"></div>
+      <div class="hero-shade"></div>
+      <div class="hero-content">
+        <p class="eyebrow">DENİZİN RUHU · TECRÜBENİN GÜVENİ</p>
+        <h1>Denize hazır.<br><em>Her ayrıntısıyla.</em></h1>
+        <p>Yatınızdan ticari filonuza kadar; güvenlik, seyir ve teknik ekipmanı doğrulanabilir ürün bilgisiyle keşfedin.</p>
+        <div class="hero-actions"><a class="button primary" href="#catalog">Ürünleri keşfet</a><button class="button ghost" data-open-quote>Gemi için teklif al</button></div>
+        <div class="hero-facts"><span><b>Teknik kanıt</b> belge ve uyumluluk</span><span><b>B2C + B2B</b> mağaza ve gemi tedarik</span></div>
+      </div>
+    </section>
+
+    <section class="quick-find" aria-label="Hızlı ürün bulma">
+      <div><span class="eyebrow">AKILLI ÜRÜN BULUCU</span><h2>Tekneniz için ne arıyorsunuz?</h2></div>
+      <label class="search-field"><span>⌕</span><input id="searchInput" type="search" placeholder="Ürün, model veya kategori ara…" autocomplete="off"></label>
+      <button class="button dark" id="findButton">Ara</button>
+    </section>
+
+    <section class="vessel-finder" id="systems">
+      <div class="finder-copy"><p class="eyebrow">GEMİNİZİ TANIYALIM</p><h2>Ürün değil,<br><em>uyumlu çözüm</em> bulun.</h2><p>Tekne tipini ve sistemi seçin. SINBAD yalnızca ilgili ürün ailelerini, gerekli belgeleri ve doğrulama adımlarını öne çıkarsın.</p></div>
+      <form class="finder-panel" id="vesselForm"><label>Tekne / gemi tipi<select id="vesselType"><option value="yacht">Motor yat</option><option value="sailing">Yelkenli</option><option value="commercial">Ticari gemi</option><option value="workboat">İş teknesi</option></select></label><label>Aradığınız sistem<select id="systemType"><option value="safety">Can kurtarma & güvenlik</option><option value="bridge">Seyir & köprüüstü</option><option value="electrical">Elektrik & güç</option><option value="deck">Güverte & yaşam</option></select></label><button class="button primary" type="submit">Uyumlu ürünleri göster</button><small>Son uyumluluk kararı ürün kodu ve gemi bilgisi doğrulandıktan sonra verilir.</small></form>
+    </section>
+
+    <section class="category-showcase" id="solutions">
+      <article class="category-feature safety"><span>01</span><div><p>CAN KURTARMA</p><h3>Denizde güvenlik,<br>her şeyden önce.</h3><button data-filter="safety">Kategoriyi aç →</button></div></article>
+      <article class="category-feature bridge"><span>02</span><div><p>SEYİR & KÖPRÜÜSTÜ</p><h3>Rotanız net,<br>köprünüz hazır.</h3><button data-filter="bridge">Kategoriyi aç →</button></div></article>
+      <article class="category-feature supply"><span>03</span><div><p>GEMİ TEDARİK</p><h3>Limana, marinaya<br>veya doğrudan gemiye.</h3><button data-open-quote>Teklif oluştur →</button></div></article>
+    </section>
+
+    <section class="catalog-section" id="catalog">
+      <div class="section-heading"><div><p class="eyebrow">SINBAD SEÇKİSİ · PROVİZYONEL KATALOG</p><h2>Deniz için seçildi</h2></div><p>Demo katalog verileri tedarik ortağı kaynaklarından hazırlanmıştır. Satış öncesi stok, KDV, teknik özellik ve sertifika doğrulanır.</p></div>
+      <div class="catalog-toolbar"><div class="filters" id="filters"></div><div class="toolbar-end"><button class="compare-toggle" id="compareButton">Karşılaştır <span id="compareCount">0</span></button><select id="sortSelect" aria-label="Ürünleri sırala"><option value="featured">Önerilen sıralama</option><option value="price-low">Fiyat: düşükten yükseğe</option><option value="price-high">Fiyat: yüksekten düşüğe</option></select></div></div>
+      <div class="product-grid" id="productGrid" aria-live="polite"></div>
+      <p class="empty-state" id="emptyState" hidden>Aramanızla eşleşen ürün bulunamadı.</p>
+    </section>
+
+    <section class="editorial" id="guides">
+      <div class="section-heading"><div><p class="eyebrow">SINBAD DENİZ REHBERİ</p><h2>Satın almadan önce bilin</h2></div><p>Teknik ürünlerde güven, yalnızca markadan değil; doğru seçim, doğru kurulum ve doğrulanmış belgeden doğar.</p></div>
+      <div class="guide-grid"><article class="guide-lead"><span>01 · GÜVENLİK</span><h3>Can yeleği seçerken<br>yalnızca Newton değerine bakmayın.</h3><p>Kullanım bölgesi, beden, dönüş performansı ve sertifika birlikte değerlendirilir.</p><button data-filter="safety">Rehberi ve ürünleri aç →</button></article><article><span>02 · ELEKTRİK</span><h3>12 V mu, 24 V mu?</h3><p>Gerilim, kablo kesiti ve koruma sınıfını aynı sistemde okuyun.</p><button data-filter="electrical">Sistemi keşfet →</button></article><article><span>03 · SEYİR</span><h3>Köprüüstü kontrol listesi</h3><p>Harita masasından haberleşmeye temel ekipman katmanları.</p><button data-filter="bridge">Listeyi aç →</button></article></div>
+    </section>
+
+    <section class="professional-desk" id="professional"><div><p class="eyebrow">SINBAD PRO · GEMİ TEDARİK MASASI</p><h2>Bir sepet değil.<br>Bir operasyon planı.</h2></div><div class="pro-steps"><span><b>01</b>Gemi, IMO, liman ve ETA</span><span><b>02</b>Kalem bazlı teknik doğrulama</span><span><b>03</b>Teklif, stok ve teslimat planı</span></div><button class="button primary" data-open-quote>Profesyonel teklif başlat</button></section>
+
+    <aside class="supplier-note" id="sdm" aria-label="Tedarik ortağı notu"><span>TEDARİK ORTAĞI</span><b>SDM Marine</b><p>İlk ürün seçkisinin tedarik ve teknik doğrulama ortağı.</p></aside>
+
+    <section class="trust-section" id="trust">
+      <div class="section-heading"><div><p class="eyebrow">GÜVENLİ TİCARET MİMARİSİ</p><h2>Ödeme güveni tasarımdan başlar</h2></div></div>
+      <div class="trust-grid"><article><b>01</b><h3>Kart verisi tutulmaz</h3><p>Ödeme, PCI DSS uyumlu banka veya ödeme kuruluşunun barındırdığı güvenli sayfada tamamlanacak.</p></article><article><b>02</b><h3>Ürün kanıtı</h3><p>Sertifika, model ve teknik özellikler Owner doğrulamasından geçmeden kesin iddia olarak yayınlanmayacak.</p></article><article><b>03</b><h3>Ayrı ticaret motoru</h3><p>Sipariş ve müşteri verileri Academy ve SINBAD Core’dan teknik olarak ayrılmış tutulacak.</p></article><article><b>04</b><h3>İzlenebilir işlemler</h3><p>Stok, fiyat, sipariş ve yönetici değişiklikleri denetlenebilir olay kayıtlarıyla korunacak.</p></article></div>
+    </section>
+  </main>
+
+  <footer><div class="brand footer-brand"><span class="brand-mark">⚓</span><span><b>SINBAD</b><small>MARINE STORE</small></span></div><p>Equip the Voyage. Trust the Sea.</p><div><a href="#catalog">Ürünler</a><a href="#trust">Güvenlik</a><button data-open-quote>Kurumsal teklif</button></div><small>© 2026 SINBAD Marine Store · Demo ticaret vitrini</small></footer>
+
+  <aside class="drawer" id="cartDrawer" aria-hidden="true" aria-label="Sepet"><div class="drawer-head"><div><p class="eyebrow">ALIŞVERİŞ SEPETİ</p><h2>Seçtikleriniz</h2></div><button data-close aria-label="Sepeti kapat">×</button></div><div id="cartItems" class="cart-items"></div><div class="drawer-foot"><div><span>Ara toplam</span><strong id="cartTotal">₺0</strong></div><button class="button primary full" id="checkoutButton" type="button" disabled aria-disabled="true">Güvenli ödeme — yakında</button><small>Kart bilgisi alınmaz. Bu prototipte ödeme özellikle kapalıdır.</small></div></aside>
+  <div class="overlay" id="overlay" hidden></div>
+
+  <dialog id="productDialog"><button class="dialog-close" data-dialog-close aria-label="Kapat">×</button><div id="productDetail"></div></dialog>
+  <dialog id="quoteDialog"><button class="dialog-close" data-dialog-close aria-label="Kapat">×</button><form method="dialog" id="quoteForm"><p class="eyebrow">PROFESYONEL TEDARİK</p><h2>Gemi için teklif oluştur</h2><p>Bu demo formu bilgi toplamaz veya göndermez. Üretimde güvenli teklif servisine bağlanacaktır.</p><div class="form-grid"><label>Ad / Firma<input required name="company" autocomplete="organization"></label><label>E-posta<input required type="email" name="email" autocomplete="email"></label><label>Gemi / Yat adı<input name="vessel"></label><label>IMO numarası<input name="imo" inputmode="numeric" pattern="[0-9]{7}"></label><label>Liman<input name="port"></label><label>ETA<input type="date" name="eta"></label></div><label>İhtiyaç listesi<textarea name="request" rows="5" placeholder="Ürün, miktar ve teslimat notları…"></textarea></label><button class="button primary full" value="submit">Demo teklifi hazırla</button></form></dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

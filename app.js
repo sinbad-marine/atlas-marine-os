@@ -40,7 +40,7 @@ function workspaceWindowFeatures(){
 function openDashboardWorkspaceWindow(id,params={}){
   const existing=workspaceWindows.get(id);
   if(existing&&!existing.closed){existing.focus();return existing;}
-  const url=id==='store'?new URL('./store.html',location.href):new URL(location.href);
+  const url=id==='store'?new URL('./store/index.html',location.href):new URL(location.href);
   if(id!=='store'){url.search='';url.hash='';url.searchParams.set('workspace',id);Object.entries(params).forEach(([key,value])=>url.searchParams.set(key,value));}
   const child=window.open(url.href,id==='store'?'sinbadMarineStore':`sinbadWorkspace_${id.replace(/[^a-z0-9_-]/gi,'_')}`,workspaceWindowFeatures());
   if(child)workspaceWindows.set(id,child);else location.href=url.href;
