@@ -19,7 +19,7 @@ test('every dashboard card opens its canonical independent resizable window',asy
     await launcher.evaluate(element=>element.click());
     const popup=await popupPromise;await popup.waitForLoadState('domcontentloaded');
     await popup.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');});
-    if(id==='store')await expect(popup).toHaveURL(/\/store\.html/u);
+    if(id==='store')await expect(popup).toHaveURL(/\/store\/index\.html$/u);
     else{
       await expect(popup).toHaveURL(new RegExp(`workspace=${id}`,'u'));
       await expect(popup.locator(`#${id}`)).toHaveClass(/\bactive\b/u);
