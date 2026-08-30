@@ -93,6 +93,10 @@ test('imports a local Bridge GPX, calculates legs and sends it to OpenCPN after 
   await expect(page.locator('#encPassageSummary')).toContainText('Marmaris Rodos');
   await expect(page.locator('#encLegRows tr')).toHaveCount(2);
   await expect(page.locator('#encPassageDraft')).toContainText('KAPTAN ONAYI');
+  await expect(page.locator('#encPublicationRows')).toContainText('NP286(3)');
+  await expect(page.locator('#encReportingRows')).toContainText('Marmaris');
+  await expect(page.locator('#encSendPassageToOpenCpn')).toBeDisabled();
+  await page.locator('#encMasterApproval').check();
   await page.locator('#encSendPassageToOpenCpn').click();
   await expect.poll(()=>opened.length).toBe(1);
   expect(opened[0].filename).toBe('marmaris-rodos.gpx');
@@ -125,6 +129,9 @@ test('controls every active web chart layer and turns a drawn route into a passa
   await page.locator('#encRouteToPassage').click();
   await expect(page.locator('#encLegRows tr')).toHaveCount(2);
   await expect(page.locator('#encPassageDraft')).toContainText('KAPTAN ONAYI');
+  await page.locator('#encAdmiraltyCatalogFile').setInputFiles({name:'adc-route.csv',mimeType:'text/csv',buffer:Buffer.from('Product,Title\nGB123456,Approach\nNP286(3),Radio')});
+  await expect(page.locator('#encChartRows')).toContainText('GB123456');
+  await expect(page.locator('#encAdmiraltyCatalogStatus')).toContainText('2 harita/yayın kodu');
 });
 
 test('fullscreen command targets only the chart panel',async({page})=>{

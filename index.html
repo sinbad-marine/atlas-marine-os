@@ -488,6 +488,27 @@
     </div>
     <div id="encPassageSummary" class="enc-passage-summary" aria-live="polite">Henüz rota yüklenmedi.</div>
     <div class="enc-leg-table-wrap"><table class="enc-leg-table"><thead><tr><th>Leg</th><th>Başlangıç</th><th>Varış</th><th>Rota</th><th>Mesafe</th><th>Süre</th><th>ETA</th></tr></thead><tbody id="encLegRows"><tr><td colspan="7">GPX rota bekleniyor.</td></tr></tbody></table></div>
+    <div class="enc-intelligence-grid" aria-label="Passage Plan rota istihbaratı">
+      <section class="enc-intelligence-panel" aria-labelledby="encChartsPublicationsTitle">
+        <div class="enc-intelligence-head"><div><span class="eyebrow">ROUTE CATALOGUE</span><h4 id="encChartsPublicationsTitle">Charts &amp; Publications</h4></div><a class="btn compact" href="https://www.admiralty.co.uk/publications/admiralty-digital-catalogue" target="_blank" rel="noopener">ADMIRALTY Catalogue</a></div>
+        <p>Sinbad yayın adaylarını rotadan çıkarır. Resmî harita/ENC numaraları ADC rota sonucu içe aktarılınca eklenir.</p>
+        <div class="enc-catalog-import"><button class="btn" id="encPickAdmiraltyCatalog" type="button">ADC sonucunu içe aktar</button><input id="encAdmiraltyCatalogFile" type="file" accept=".csv,.txt,text/csv,text/plain" hidden><span id="encAdmiraltyCatalogStatus" role="status">ADC sonucu bekleniyor.</span></div>
+        <div class="enc-leg-table-wrap"><table class="enc-intelligence-table"><thead><tr><th>Harita / ENC</th><th>Tür</th><th>Kaynak</th><th>Durum</th></tr></thead><tbody id="encChartRows"><tr><td colspan="4">Rota bekleniyor.</td></tr></tbody></table></div>
+        <div class="enc-leg-table-wrap"><table class="enc-intelligence-table"><thead><tr><th>Yayın</th><th>Başlık</th><th>Kullanım</th></tr></thead><tbody id="encPublicationRows"><tr><td colspan="3">Rota bekleniyor.</td></tr></tbody></table></div>
+      </section>
+      <section class="enc-intelligence-panel" aria-labelledby="encReportingTitle">
+        <div class="enc-intelligence-head"><div><span class="eyebrow">VTS / REPORTING</span><h4 id="encReportingTitle">Reporting Points</h4></div></div>
+        <p>Rapor mevkileri adaydır; yetkili istasyon, VHF kanalı, zaman ve mesaj formatı güncel ALRS/VTS kaynağıyla doğrulanmalıdır.</p>
+        <div class="enc-leg-table-wrap"><table class="enc-intelligence-table"><thead><tr><th>Mevki</th><th>Tür</th><th>Kontrol</th></tr></thead><tbody id="encReportingRows"><tr><td colspan="3">Rota bekleniyor.</td></tr></tbody></table></div>
+      </section>
+      <section class="enc-intelligence-panel" aria-labelledby="encCriticalTitle">
+        <div class="enc-intelligence-head"><div><span class="eyebrow">MASTER REVIEW</span><h4 id="encCriticalTitle">Critical Points &amp; Approval</h4></div></div>
+        <p>Abort point, wheel-over, XTD, no-go area ve mevki kontrol aralıkları gemi özellikleriyle tamamlanmalıdır.</p>
+        <div class="enc-leg-table-wrap"><table class="enc-intelligence-table"><thead><tr><th>Nokta</th><th>Tür</th><th>Detay</th></tr></thead><tbody id="encCriticalRows"><tr><td colspan="3">Rota bekleniyor.</td></tr></tbody></table></div>
+        <label class="enc-master-approval"><input id="encMasterApproval" type="checkbox"> Harita/yayın güncelliğini, rapor noktalarını ve kritik limitleri kontrol ettim.</label>
+        <span class="badge" id="encMasterApprovalStatus">Kaptan onayı bekleniyor</span>
+      </section>
+    </div>
     <pre id="encPassageDraft" class="enc-passage-draft">Passage plan taslağı burada oluşturulacak.</pre>
     <div class="enc-passage-actions"><button class="btn" id="encDownloadPassageGpx" type="button" disabled>GPX indir</button><button class="btn primary" id="encSendPassageToOpenCpn" type="button" disabled>Onayla ve OpenCPN’e gönder</button></div>
     <p class="enc-passage-note" id="encPassageStatus">OpenCPN’deki rota için Route &amp; Mark Manager üzerinden GPX dışa aktarabilirsiniz. Sinbad yalnız yerel Routes klasörünü veya seçtiğiniz dosyayı okur.</p>

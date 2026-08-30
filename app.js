@@ -276,7 +276,7 @@ function initEncMapPlanningTools(){
   document.addEventListener('fullscreenchange',()=>{const active=document.fullscreenElement===mapShell;mapShell.classList.toggle('fullscreen-active',active);fullscreenButton.textContent=active?'Tam ekrandan çık':'Haritayı tam ekran yap';setTimeout(()=>encMap?.updateSize(),100)});
 }
 
-let encPassageRoute=null;
+let encPassageRoute=null,encAdmiraltyCatalogEntries=[];
 function parseEncPassageGpx(gpx,filename='route.gpx'){
   if(typeof gpx!=='string'||gpx.length>2097152)throw new Error('GPX dosyası boş veya 2 MB sınırını aşıyor.');
   const xml=new DOMParser().parseFromString(gpx,'application/xml');if(xml.querySelector('parsererror'))throw new Error('Geçerli bir GPX belgesi okunamadı.');
@@ -287,12 +287,19 @@ function parseEncPassageGpx(gpx,filename='route.gpx'){
   return {name,filename,gpx,points};
 }
 function encPassageInputs(){return {name:encPassageRoute.name,points:encPassageRoute.points,speedKn:$('encPassageSpeed').value,fuelRateLph:$('encPassageFuel').value,fuelMarginPct:$('encPassageMargin').value,departureTime:$('encPassageDeparture').value}}
+function renderEncPassageIntelligence(plan){
+  const intel=SinbadPassagePlanner.intelligence(plan,encAdmiraltyCatalogEntries);encPassageRoute={...encPassageRoute,intelligence:intel};
+  const chartType=item=>item.kind==='paper-chart'?'SNC / Kâğıt':item.kind==='enc-chart'?'ENC / AVCS':'ADC doğrulaması';$('encChartRows').innerHTML=intel.charts.map(item=>`<tr><td>${esc(item.identifier)}</td><td>${esc(chartType(item))}</td><td>${esc(item.source)}</td><td>${esc(item.status)}</td></tr>`).join('');
+  $('encPublicationRows').innerHTML=intel.publications.map(item=>`<tr><td>${esc(item.id)}</td><td>${esc(item.title)}</td><td>${esc(item.reason)}</td></tr>`).join('');
+  $('encReportingRows').innerHTML=intel.reports.map(item=>`<tr><td>${esc(item.point)}</td><td>${esc(item.type)}</td><td>${esc(item.detail)}</td></tr>`).join('');
+  $('encCriticalRows').innerHTML=intel.critical.map(item=>`<tr><td>${esc(item.point)}</td><td>${esc(item.type)}</td><td>${esc(item.detail)}</td></tr>`).join('');
+}
 function renderEncPassagePlan(){
   if(!encPassageRoute)throw new Error('Önce bir GPX rotası yükleyin.');
   const plan=SinbadPassagePlanner.calculate(encPassageInputs());encPassageRoute={...encPassageRoute,plan};
   $('encPassageSummary').innerHTML=`<strong>${esc(plan.name)}</strong><span>${plan.points.length} WP</span><span>${plan.totalDistanceNm.toFixed(1)} NM</span><span>${plan.totalHours.toFixed(1)} saat</span><span>${Math.ceil(plan.fuelRequiredLitres)} L (marj dahil)</span>`;
   $('encLegRows').innerHTML=plan.legs.map(item=>`<tr><td>${item.number}</td><td>${esc(item.from.name)}</td><td>${esc(item.to.name)}</td><td>${item.courseTrue.toFixed(0).padStart(3,'0')}°T</td><td>${item.distanceNm.toFixed(2)} NM</td><td>${item.hours.toFixed(2)} h</td><td>${item.eta?new Date(item.eta).toLocaleString():'TBC'}</td></tr>`).join('');
-  $('encPassageDraft').textContent=SinbadPassagePlanner.checklist(plan);$('encDownloadPassageGpx').disabled=false;$('encSendPassageToOpenCpn').disabled=false;$('encPassageStatus').textContent='Taslak hazır. Resmî haritalar, NtM, hava/gelgit ve kaptan onayı tamamlanmadan seyirde kullanmayın.';
+  renderEncPassageIntelligence(plan);$('encMasterApproval').checked=false;$('encMasterApprovalStatus').textContent='Kaptan onayı bekleniyor';$('encPassageDraft').textContent=SinbadPassagePlanner.checklist(plan);$('encDownloadPassageGpx').disabled=false;$('encSendPassageToOpenCpn').disabled=true;$('encPassageStatus').textContent='Taslak hazır. ADC harita sonuçları, resmî yayınlar, rapor noktaları ve kritik limitler kaptan tarafından doğrulanmalıdır.';
 }
 function loadEncPassageGpx(gpx,filename){encPassageRoute=parseEncPassageGpx(gpx,filename);renderEncPassagePlan()}
 async function refreshEncPassageRoutes(){
@@ -314,7 +321,7 @@ async function sendEncPassageToOpenCpn(){
 }
 function initEncPassagePlanner(){
   const root=$('encPassageTitle')?.closest('.enc-passage-planner');if(!root||root.dataset.ready)return;root.dataset.ready='true';
-  $('encRefreshRoutes').addEventListener('click',refreshEncPassageRoutes);$('encLoadRoute').addEventListener('click',readEncPassageRoute);$('encPickGpx').addEventListener('click',()=>$('encGpxFile').click());$('encGpxFile').addEventListener('change',async event=>{const file=event.target.files?.[0];if(!file)return;try{loadEncPassageGpx(await file.text(),file.name)}catch(error){$('encPassageStatus').textContent=error.message}});$('encCalculatePassage').addEventListener('click',()=>{try{renderEncPassagePlan()}catch(error){$('encPassageStatus').textContent=error.message}});$('encDownloadPassageGpx').addEventListener('click',downloadEncPassageGpx);$('encSendPassageToOpenCpn').addEventListener('click',sendEncPassageToOpenCpn);refreshEncPassageRoutes();
+  $('encRefreshRoutes').addEventListener('click',refreshEncPassageRoutes);$('encLoadRoute').addEventListener('click',readEncPassageRoute);$('encPickGpx').addEventListener('click',()=>$('encGpxFile').click());$('encGpxFile').addEventListener('change',async event=>{const file=event.target.files?.[0];if(!file)return;try{loadEncPassageGpx(await file.text(),file.name)}catch(error){$('encPassageStatus').textContent=error.message}});$('encCalculatePassage').addEventListener('click',()=>{try{renderEncPassagePlan()}catch(error){$('encPassageStatus').textContent=error.message}});$('encPickAdmiraltyCatalog').addEventListener('click',()=>$('encAdmiraltyCatalogFile').click());$('encAdmiraltyCatalogFile').addEventListener('change',async event=>{const file=event.target.files?.[0];if(!file)return;try{encAdmiraltyCatalogEntries=SinbadPassagePlanner.parseAdmiraltyCatalog(await file.text());$('encAdmiraltyCatalogStatus').textContent=encAdmiraltyCatalogEntries.length?`${encAdmiraltyCatalogEntries.length} harita/yayın kodu alındı; kaptan doğrulaması gerekli.`:'Katalog dosyasında tanınan ürün kodu bulunamadı.';if(encPassageRoute?.plan)renderEncPassagePlan()}catch(error){$('encAdmiraltyCatalogStatus').textContent=error.message}});$('encMasterApproval').addEventListener('change',event=>{const approved=event.target.checked&&Boolean(encPassageRoute?.plan);$('encSendPassageToOpenCpn').disabled=!approved;$('encMasterApprovalStatus').textContent=approved?'Kaptan tarafından kontrol edildi':'Kaptan onayı bekleniyor'});$('encDownloadPassageGpx').addEventListener('click',downloadEncPassageGpx);$('encSendPassageToOpenCpn').addEventListener('click',sendEncPassageToOpenCpn);refreshEncPassageRoutes();
 }
 
 function releaseOpenCpnFrame(){
