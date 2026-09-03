@@ -2,7 +2,7 @@
 
 ## Decision
 
-**REVISE before production release.** The scoped Human Reviewer implementation is complete, the coordinated CI gate is green and the production-backup restore/migration/rollback rehearsal passes. Production release remains closed until the Edge Function is deployed with the production allowlist and an authenticated Owner/two-Reviewer canary is completed before the Pages release.
+**REVISE before production release.** The scoped Human Reviewer implementation is complete, the coordinated CI gate is green, the production-backup restore/migration/rollback rehearsal passes, and the additive production database, Edge Function and synthetic canary gates have passed. Production release remains closed until authenticated Owner/two-Reviewer browser smoke tests pass before the Pages release.
 
 ## Delivered
 
@@ -17,7 +17,7 @@
 - Desktop, tablet and mobile responsive review surface.
 - Read-only checkpoint SQL, evidence-preserving emergency rollback and controlled release runbook.
 
-No GASM workflow, question source, production database, live Edge Function or Pages release was changed.
+No GASM workflow or question source was changed. The additive Human Review migration and live Edge Function were deployed to production; the Pages release remains closed.
 
 ## Verification evidence
 
@@ -30,12 +30,14 @@ No GASM workflow, question source, production database, live Edge Function or Pa
 - Supabase backup rehearsal: production backup `02 Sep 2026 23:47:51 (+0000)` restored successfully into isolated Frankfurt project `atlas-human-review-rehearsal-20260904` (`paiskgudruamfgzgbrij`). Storage objects/settings and other project-level settings were intentionally outside the database restore scope.
 - Isolated migration checkpoint: 5/5 Human Review tables present with RLS enabled; 7/7 mutation functions executable by `service_role`; `anon` and `authenticated` execute grants both 0; completeness/orphan/Owner-actor invariant violations 0.
 - Evidence-preserving rollback rehearsal: `service_role` mutation grants changed from 7 to 0 while all 5 tables remained present; re-enable restored the grant count to 7 and the final invariant count remained 0.
+- Production migration checkpoint: 5/5 Human Review tables present with RLS enabled; 7/7 mutation functions executable only by `service_role`; `anon` and `authenticated` execute grants both 0; initial authorization count 0.
+- Production Edge Function: `human-review` deployed with `HUMAN_REVIEW_ALLOWED_ORIGINS=https://sinbad-marine.github.io`; the deployed source contains the exact-origin guard.
+- Dedicated Reviewer identities: `ekremhakki717@gmail.com` and `ali_ordukaya@yahoo.com` are active workspace Visitors with active Human Reviewer authorization. Their former Developer roles were removed; the unused Varol Colak account was not authorized.
+- Production synthetic canary package `7f27b390-32f2-4489-bfb1-52eb33a13ebb`: `OWNER_ACCEPTED`, complete 25/25 present and reviewed, assignment generation 2 and lock version 29. The transaction asserted second-claim rejection, former-reviewer rejection and stale-lock rejection before commit. Its immutable evidence contains 30 audit events: 25 decision saves, one transfer and one Owner acceptance.
 
 ## Remaining production gates
 
-1. Provision two dedicated Human Reviewer identities; do not reuse the unused Varol Colak account.
-2. Apply the migration to production, deploy the function with the exact production origin allowlist and run authenticated Owner/two-Reviewer smoke tests.
-3. Run a synthetic 25-question canary, record its audit evidence and verify transfer/stale-writer behavior before enabling real immutable manifests.
-4. Release the Pages artifact only through `.github/workflows/pages-release.yml` after the canary and required checks pass.
+1. Run authenticated browser/API smoke tests with the Owner and both dedicated Reviewer accounts, including AAL2 protection on an Owner action.
+2. Release the Pages artifact only through `.github/workflows/pages-release.yml` after the authenticated smoke evidence and required checks pass.
 
-Until all four gates pass, the system must not be described as live or production-complete.
+Until both gates pass, the system must not be described as live or production-complete.
