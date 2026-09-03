@@ -41,6 +41,12 @@ test('Captain Sinbad exposes only working Chat and Academy tabs',async({page,con
   await popup.locator('[data-sinbad-tab="academy"]').click();
   await expect(popup.locator('[data-sinbad-tab="academy"]')).toHaveAttribute('aria-selected','true');
   await expect(popup.locator('#sinbad-panel-academy')).toBeVisible();
+  await popup.route('http://127.0.0.1:31983/argos/status',route=>route.fulfill({contentType:'application/json',body:JSON.stringify({version:'sinbad-argos-live-status/1-v1',state:'ACTIVE',mode:'MONITOR_ONLY',observedAt:'2026-09-01T12:00:00.000Z',bridge:{online:true,version:'0.5.0'},ai:{online:true,model:'test-local',modelCount:1},commandGate:{active:true,registeredActions:7,observedCommands:0,replayProtection:true,freshnessWindowSeconds:300,ledgerCapacity:4096}})}));
+  await popup.locator('[data-sinbad-tab="argos"]').click();
+  await expect(popup.locator('[data-sinbad-tab="argos"]')).toHaveAttribute('aria-selected','true');
+  await expect(popup.locator('#sinbad-panel-argos')).toBeVisible();
+  await expect(popup.locator('#argosOverallStatus')).toHaveText('ARGOS UYARI');
+  await expect(popup.locator('#argosGateState')).toHaveText('OWNER KURULUMU EKSİK');
   await expect(popup.locator('[data-sinbad-tab="passage"],[data-sinbad-tab="sources"],.sinbad-tools-menu')).toHaveCount(0);
   await popup.locator('[data-sinbad-tab="chat"]').click();
   await expect(popup.locator('#sinbad-panel-chat')).toBeVisible();

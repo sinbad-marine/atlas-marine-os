@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.29-passage-intelligence-v131';
+const CACHE='sinbad-marine-v8.20.29-argos-owner-v200';
 const ASSETS=[
   './',
   './index.html',
@@ -28,6 +28,8 @@ const ASSETS=[
   './sinbad-tutor-controller.js',
   './styles.css',
   './app.js',
+  './founder-owner-mfa.js',
+  './founder-owner-ui.js',
   './sinbad-character-engine.js',
   './sinbad-performance-director.js',
   './sinbad-character-rig.js',

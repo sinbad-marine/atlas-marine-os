@@ -1,0 +1,13 @@
+'use strict';
+
+const crypto=require('node:crypto');
+const {assess}=require('./argos-health-contracts');
+const repair=require('./argos-repair-proposal');
+const VERSION='sinbad-argos-supervisor/1-v1';
+const HASH=/^[a-f0-9]{64}$/u;
+const CRITICAL=new Set(['APPLICATION','TEST_SUITE','RELEASE_PIPELINE']);
+function sha(value){return crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');}
+function safeId(value){return value.toLowerCase().replace(/[^a-z0-9._-]/gu,'-').slice(0,120);}
+function supervise(input={}){if(!input||typeof input!=='object'||Array.isArray(input)||typeof input.now!=='string'||!Array.isArray(input.observations)||!input.shelf||typeof input.shelf.append!=='function'||!HASH.test(input.agentEnvelopeHash||'')||typeof input.runId!=='string'||!/^[A-Za-z0-9._-]{1,80}$/u.test(input.runId))return Object.freeze({version:VERSION,status:'ARGOS_SUPERVISION_BLOCKED',reasonCode:'SUPERVISION_INPUT_INVALID',assessment:null,events:Object.freeze([]),proposals:Object.freeze([])});const assessment=assess(input.observations,input.now);if(assessment.status==='ARGOS_HEALTH_BLOCKED')return Object.freeze({version:VERSION,status:'ARGOS_SUPERVISION_BLOCKED',reasonCode:assessment.reasonCode,assessment,events:Object.freeze([]),proposals:Object.freeze([])});const events=[],proposals=[];for(const component of assessment.components){const evidenceHash=sha({component:component.component,state:component.state,reasonCode:component.reasonCode,at:input.now});const event=input.shelf.append({eventId:safeId(`${input.runId}-${component.component}`),observedAt:input.now,actorId:'argos',kind:'HEALTH_OBSERVED',targetRef:`component/${component.component}`,outcome:component.state,evidenceHash});events.push(event);if(CRITICAL.has(component.component)&&component.state!=='HEALTHY'){const proposalId=safeId(`${input.runId}-${component.component}-repair`),incidentRef=`${event.eventId}:${event.eventHash}`;proposals.push(repair.create({proposalId,incidentRef,createdAt:input.now,agentEnvelopeHash:input.agentEnvelopeHash,changeSetHash:sha({component:component.component,action:'NO_CHANGESET_YET'}),patchHash:sha({component:component.component,patch:'QUARANTINED_NOT_GENERATED'}),rollbackPlanHash:sha({component:component.component,rollback:'REQUIRED_BEFORE_REVIEW'}),testPlanHash:sha({component:component.component,tests:'REPRODUCE_THEN_REGRESSION'}),risk:component.state==='UNAVAILABLE'?'HIGH':'MEDIUM'}));}}
+return Object.freeze({version:VERSION,status:proposals.length?'ARGOS_INCIDENTS_QUARANTINED':'ARGOS_SUPERVISION_RECORDED',reasonCode:proposals.length?'OWNER_REVIEW_REQUIRED':null,assessment,events:Object.freeze(events),proposals:Object.freeze(proposals)});}
+module.exports=Object.freeze({VERSION,supervise});

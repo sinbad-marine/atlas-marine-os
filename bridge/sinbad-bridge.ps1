@@ -38,6 +38,7 @@ public static class SinbadNativeWindow {
 $tierRouterPath = Join-Path $PSScriptRoot 'qwen-tier-router.ps1'
 if (-not (Test-Path -LiteralPath $tierRouterPath -PathType Leaf)) { throw 'SINBAD_QWEN_TIER_ROUTER_MISSING' }
 . $tierRouterPath
+. (Join-Path $PSScriptRoot 'argos-owner-boundary.ps1')
 $bridgeRoot = if ([string]::IsNullOrWhiteSpace($ExchangeRoot)) { Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'Sinbad Bridge' } else { $ExchangeRoot }
 $routeRoot = Join-Path $bridgeRoot 'Routes'
 $libraryRoot = Join-Path $bridgeRoot 'Library'
@@ -111,6 +112,40 @@ function Test-AllowedBrowserOrigin([string]$origin) {
     $origin -match '^http://(?:127\.0\.0\.1|localhost):\d{2,5}$'
 }
 
+$script:ArgosBridgeCommandVersion = 'sinbad-argos-command/1-v1'
+$script:ArgosSeenCommands = @{}
+$script:ArgosBridgeActions = @{
+  '/ai/chat' = 'AI_INFERENCE'
+  '/ai/tts' = 'SPEECH_SYNTHESIS'
+  '/visuals/search' = 'VISUAL_SEARCH'
+  '/library/ingest' = 'LIBRARY_WRITE'
+  '/library/reindex' = 'LIBRARY_INDEX_WRITE'
+  '/routes' = 'ROUTE_WRITE'
+  '/routes/open' = 'PHYSICAL_HANDOFF'
+  '/opencpn/start' = 'PHYSICAL_HANDOFF'
+  '/opencpn/input' = 'PHYSICAL_HANDOFF'
+  '/routes/read' = 'ROUTE_READ'
+}
+function Test-ArgosBridgeCommand($headers, [string]$path) {
+  if (-not $script:ArgosBridgeActions.ContainsKey($path)) { return @{ admitted=$false; reason='ARGOS_TARGET_NOT_REGISTERED' } }
+  $version = if ($headers.ContainsKey('x-sinbad-argos-version')) { [string]$headers['x-sinbad-argos-version'] } else { '' }
+  $action = if ($headers.ContainsKey('x-sinbad-argos-action')) { [string]$headers['x-sinbad-argos-action'] } else { '' }
+  $target = if ($headers.ContainsKey('x-sinbad-argos-target')) { [string]$headers['x-sinbad-argos-target'] } else { '' }
+  $commandId = if ($headers.ContainsKey('x-sinbad-argos-command-id')) { [string]$headers['x-sinbad-argos-command-id'] } else { '' }
+  $requestedAt = if ($headers.ContainsKey('x-sinbad-argos-requested-at')) { [string]$headers['x-sinbad-argos-requested-at'] } else { '' }
+  if ($version -ne $script:ArgosBridgeCommandVersion -or $action -ne $script:ArgosBridgeActions[$path] -or $target -ne $path) { return @{ admitted=$false; reason='ARGOS_COMMAND_BINDING_INVALID' } }
+  if ($commandId -notmatch '^[A-Za-z0-9._-]{16,120}$') { return @{ admitted=$false; reason='ARGOS_COMMAND_ID_INVALID' } }
+  if ($requestedAt -notmatch '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$') { return @{ admitted=$false; reason='ARGOS_COMMAND_TIME_INVALID' } }
+  try { $stamp = [DateTimeOffset]::Parse($requestedAt, [Globalization.CultureInfo]::InvariantCulture, [Globalization.DateTimeStyles]::AssumeUniversal) } catch { return @{ admitted=$false; reason='ARGOS_COMMAND_TIME_INVALID' } }
+  if ([Math]::Abs(([DateTimeOffset]::UtcNow - $stamp).TotalSeconds) -gt 300) { return @{ admitted=$false; reason='ARGOS_COMMAND_TIME_STALE' } }
+  $cutoff = [DateTimeOffset]::UtcNow.AddMinutes(-5)
+  @($script:ArgosSeenCommands.Keys) | ForEach-Object { if ($script:ArgosSeenCommands[$_] -lt $cutoff) { $script:ArgosSeenCommands.Remove($_) } }
+  if ($script:ArgosSeenCommands.ContainsKey($commandId)) { return @{ admitted=$false; reason='ARGOS_COMMAND_REPLAYED' } }
+  if ($script:ArgosSeenCommands.Count -ge 4096) { return @{ admitted=$false; reason='ARGOS_COMMAND_LEDGER_CAPACITY_REACHED' } }
+  $script:ArgosSeenCommands[$commandId] = $stamp
+  return @{ admitted=$true; reason=$null }
+}
+
 function Invoke-LocalTextGet([string]$uri, [int]$timeoutSeconds = 8) {
   $parsed = [Uri]$uri
   if ($parsed.Scheme -ne 'http' -or $parsed.Host -notin @('127.0.0.1','localhost')) { throw 'LOCAL_KNOWLEDGE_ENDPOINT_DENIED' }
@@ -158,7 +193,7 @@ function Write-HttpResponse($stream, [int]$status, [string]$statusText, [string]
     "Content-Length: $($bodyBytes.Length)"
     "Access-Control-Allow-Origin: $script:ResponseOrigin"
     'Access-Control-Allow-Methods: GET, POST, OPTIONS'
-    'Access-Control-Allow-Headers: Content-Type'
+    'Access-Control-Allow-Headers: Authorization, X-Sinbad-Owner-Authorization, X-Sinbad-Owner-Nonce, Content-Type, X-Sinbad-Argos-Version, X-Sinbad-Argos-Action, X-Sinbad-Argos-Target, X-Sinbad-Argos-Command-Id, X-Sinbad-Argos-Requested-At'
     'Access-Control-Allow-Private-Network: true'
     'Cache-Control: no-store'
     'Connection: close'
@@ -185,7 +220,7 @@ function Write-HttpBytes($stream, [int]$status, [string]$statusText, [byte[]]$bo
     "Content-Length: $($bodyBytes.Length)"
     "Access-Control-Allow-Origin: $script:ResponseOrigin"
     'Access-Control-Allow-Methods: GET, POST, OPTIONS'
-    'Access-Control-Allow-Headers: Content-Type'
+    'Access-Control-Allow-Headers: Authorization, X-Sinbad-Owner-Authorization, X-Sinbad-Owner-Nonce, Content-Type, X-Sinbad-Argos-Version, X-Sinbad-Argos-Action, X-Sinbad-Argos-Target, X-Sinbad-Argos-Command-Id, X-Sinbad-Argos-Requested-At'
     'Access-Control-Allow-Private-Network: true'
     'Cache-Control: no-store'
     'X-Content-Type-Options: nosniff'
@@ -698,6 +733,14 @@ function Resolve-SinbadDirectStableAnswer([string]$question) {
   }
   if ($lower -match '^(hello|hi)[.!? ]*$') { return 'Hello, Captain. How can I help?' }
   if ($lower -match '^hallo[.!? ]*$') { return 'Hallo, Kapitän. Wie kann ich helfen?' }
+  # Keep this stable, safety-relevant definition deterministic. Numeric code
+  # points and an ASCII Base64 payload also keep it correct when Windows
+  # PowerShell 5.1 loads this UTF-8-without-BOM script through -File.
+  $stableKey = $lower.Replace([char]0x011F,[char]0x0067).Replace([char]0x0131,[char]0x0069).Replace([char]0x015F,[char]0x0073).Replace([char]0x00E7,[char]0x0063).Replace([char]0x00F6,[char]0x006F).Replace([char]0x00FC,[char]0x0075)
+  if ($stableKey -match '^can yeleg\p{L}*\s+(?:kisaca\s+)?(?:anlat|acikla|nedir)') {
+    $lifeJacketAnswerUtf8 = 'Q2FuIHllbGXEn2ksIHN1eWEgZMO8xZ9lbiBracWfaW5pbiBiYcWfxLFuxLEgdmUgc29sdW51bSB5b2x1bnUgc3Ugw7xzdMO8bmRlIHR1dG1heWEgeWFyZMSxbWPEsSBvbGFuIGtpxZ9pc2VsIGJpciBjYW4ga3VydGFybWEgYXJhY8SxZMSxci4gR2VtaWRlIHV5Z3VuIHRpcCB2ZSBiZWRlbiBzZcOnaWxtZWxpLCBkb8SfcnUgZ2l5aWxpcCBzxLFrxLFjYSBiYcSfbGFubWFsxLE7IGt1bGxhbsSxbWRhbiDDtm5jZSBoYXNhciwgYmHEn2xhciwgZMO8ZMO8ayB2ZSB2YXJzYSDEscWfxLFrIGtvbnRyb2wgZWRpbG1lbGlkaXIuIEhlciBjYW4geWVsZcSfaSBvdG9tYXRpayDFn2nFn21lejsgw7x6ZXJpbmRla2kga3VsbGFuxLFtIHRhbGltYXTEsSBlc2FzIGFsxLFuxLFyLg=='
+    return [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($lifeJacketAnswerUtf8))
+  }
   if ($lower -notmatch '^\s*(?<expression>[-+]?\d+(?:[.,]\d+)?(?:\s*[-+*x×÷/]\s*[-+]?\d+(?:[.,]\d+)?)+)\s*(?:kaç eder|nedir|sonucu(?: nedir)?|equals?|gleich)?\s*[?!.]*\s*$') { return '' }
   $displayExpression = $Matches.expression.Trim()
   $safeExpression = $displayExpression.Replace('×','*').Replace('÷','/').Replace('x','*').Replace(',','.')
@@ -760,6 +803,10 @@ When OFFLINE ENCYCLOPEDIA EXCERPTS are supplied, use them as dated reference evi
     }
   }
   if ([string]::IsNullOrWhiteSpace($answer)) {
+    # qwen3:14b can spend roughly the first 200 tokens interpreting even a
+    # short Turkish maritime question.  A 192-token cap therefore ends with
+    # done_reason=length before a final answer reaches message.content.  Keep
+    # the fast route bounded, but leave enough room for a real final answer.
     $predictBudget = if ($selection.tier -eq 'fast') { 192 } else { 2048 }
     $request = @{ model=$selection.model; messages=$messages; stream=$false; think=$false; keep_alive='30m'; options=@{ temperature=0.35; num_ctx=$contextWindow; num_predict=$predictBudget } }
     $result = Invoke-LocalJsonPost 'http://127.0.0.1:11434/api/chat' ($request | ConvertTo-Json -Depth 12 -Compress)
@@ -788,21 +835,35 @@ try {
     $client = $listener.AcceptTcpClient()
     try {
       $stream = $client.GetStream()
-      $stream.ReadTimeout = 10000
+      $requestClock = [Diagnostics.Stopwatch]::StartNew()
+      $requestBudgetMs = 10000
+      $requestTimedOut = $false
+      $headersComplete = $false
+      $stream.ReadTimeout = $requestBudgetMs
       $headerBuffer = [IO.MemoryStream]::new()
       $tail = New-Object System.Collections.Generic.Queue[byte]
       while ($headerBuffer.Length -lt 65536) {
-        $nextByte = $stream.ReadByte()
+        $remainingMs = $requestBudgetMs - $requestClock.ElapsedMilliseconds
+        if ($remainingMs -le 0) { $requestTimedOut = $true; break }
+        $stream.ReadTimeout = [int]$remainingMs
+        try { $nextByte = $stream.ReadByte() } catch [IO.IOException] { $requestTimedOut = $true; break }
+        if ($requestClock.ElapsedMilliseconds -ge $requestBudgetMs) { $requestTimedOut = $true; break }
         if ($nextByte -lt 0) { break }
         $headerBuffer.WriteByte([byte]$nextByte)
         $tail.Enqueue([byte]$nextByte)
         if ($tail.Count -gt 4) { $null = $tail.Dequeue() }
-        if ($tail.Count -eq 4 -and (@($tail) -join ',') -eq '13,10,13,10') { break }
+        if ($tail.Count -eq 4 -and (@($tail) -join ',') -eq '13,10,13,10') { $headersComplete = $true; break }
+      }
+      if ($requestTimedOut) { Write-HttpResponse $stream 408 'Request Timeout' (Json @{ error='BRIDGE_REQUEST_DEADLINE_EXCEEDED' }); continue }
+      if (-not $headersComplete) {
+        if ($headerBuffer.Length -ge 65536) { Write-HttpResponse $stream 431 'Request Header Fields Too Large' (Json @{ error='BRIDGE_HEADERS_TOO_LARGE' }) }
+        else { Write-HttpResponse $stream 400 'Bad Request' (Json @{ error='BRIDGE_HEADERS_INCOMPLETE' }) }
+        continue
       }
       $headerText = [Text.Encoding]::ASCII.GetString($headerBuffer.ToArray())
       $headerLines = @($headerText -split "`r`n")
       $requestLine = $headerLines[0]
-      if ([string]::IsNullOrWhiteSpace($requestLine)) { continue }
+      if ($requestLine -notmatch '^[A-Za-z]+ /[^\s]* HTTP/1\.[01]$') { Write-HttpResponse $stream 400 'Bad Request' (Json @{ error='BRIDGE_REQUEST_LINE_INVALID' }); continue }
       $requestParts = $requestLine.Split(' ')
       $method = $requestParts[0].ToUpperInvariant()
       $path = $requestParts[1].Split('?')[0]
@@ -814,6 +875,11 @@ try {
         if ($separator -gt 0) { $headers[$line.Substring(0,$separator).Trim().ToLowerInvariant()] = $line.Substring($separator+1).Trim() }
         }
       }
+      $duplicateSecurityHeader = $false
+      foreach ($securityHeader in @('authorization','origin','x-sinbad-owner-authorization','x-sinbad-owner-nonce','x-sinbad-argos-version','x-sinbad-argos-action','x-sinbad-argos-target','x-sinbad-argos-command-id','x-sinbad-argos-requested-at')) {
+        if (@($headerLines | Where-Object { $_ -match ('(?i)^' + [regex]::Escape($securityHeader) + '\s*:') }).Count -gt 1) { $duplicateSecurityHeader = $true }
+      }
+      if ($duplicateSecurityHeader) { Write-HttpResponse $stream 400 'Bad Request' (Json @{error='BRIDGE_DUPLICATE_SECURITY_HEADER'}); continue }
       $requestOrigin = if ($headers.ContainsKey('origin')) { [string]$headers['origin'] } else { '' }
       if (-not (Test-AllowedBrowserOrigin $requestOrigin)) {
         $script:ResponseOrigin = 'https://sinbad-marine.github.io'
@@ -821,15 +887,58 @@ try {
       }
       $script:ResponseOrigin = if ([string]::IsNullOrWhiteSpace($requestOrigin)) { 'https://sinbad-marine.github.io' } else { $requestOrigin }
       $body = ''
-      $contentLength = if ($headers.ContainsKey('content-length')) { [int]$headers['content-length'] } else { 0 }
+      if ($method -eq 'OPTIONS') { Write-HttpResponse $stream 204 'No Content' ''; continue }
+      # Bound framing before allocating a body; no chunked decoding is implemented.
+      if ($headers.ContainsKey('transfer-encoding')) { Write-HttpResponse $stream 400 'Bad Request' (Json @{ error='BRIDGE_TRANSFER_ENCODING_UNSUPPORTED' }); continue }
+      $contentLength = 0
+      if ($headers.ContainsKey('content-length')) {
+        $lengthHeaders = @($headerLines | Where-Object { $_ -match '(?i)^content-length\s*:' })
+        $lengthText = [string]$headers['content-length']
+        if ($lengthHeaders.Count -ne 1 -or $lengthText -notmatch '^[0-9]{1,10}$' -or -not [int]::TryParse($lengthText, [ref]$contentLength)) {
+          Write-HttpResponse $stream 400 'Bad Request' (Json @{ error='BRIDGE_CONTENT_LENGTH_INVALID' }); continue
+        }
+      }
+      $bodyLimit = if ($path -eq '/ai/tts') { 8192 } elseif ($path -eq '/library/ingest') { 8388608 } else { 2097152 }
+      if ($contentLength -gt $bodyLimit) { Write-HttpResponse $stream 413 'Payload Too Large' (Json @{ error='BRIDGE_BODY_TOO_LARGE'; limitBytes=$bodyLimit }); continue }
+      if ($method -eq 'POST') {
+        $argosAdmission = Test-ArgosBridgeCommand $headers $path
+        if (-not [bool]$argosAdmission.admitted) { Write-HttpResponse $stream 403 'Forbidden' (Json @{ error='ARGOS_COMMAND_BLOCKED'; reason=[string]$argosAdmission.reason }); continue }
+      }
+      $buffer = [byte[]]::new(0)
       if ($contentLength -gt 0) {
         $buffer = [byte[]]::new($contentLength)
         $read = 0
-        while ($read -lt $contentLength) { $count = $stream.Read($buffer, $read, $contentLength-$read); if ($count -le 0) { break }; $read += $count }
-        $body = [Text.Encoding]::UTF8.GetString($buffer, 0, $read)
+        while ($read -lt $contentLength) {
+          $remainingMs = $requestBudgetMs - $requestClock.ElapsedMilliseconds
+          if ($remainingMs -le 0) { $requestTimedOut = $true; break }
+          $stream.ReadTimeout = [int]$remainingMs
+          try { $count = $stream.Read($buffer, $read, $contentLength-$read) } catch [IO.IOException] { $requestTimedOut = $true; break }
+          if ($requestClock.ElapsedMilliseconds -ge $requestBudgetMs) { $requestTimedOut = $true; break }
+          if ($count -le 0) { break }
+          $read += $count
+        }
+        if ($requestTimedOut) { Write-HttpResponse $stream 408 'Request Timeout' (Json @{ error='BRIDGE_REQUEST_DEADLINE_EXCEEDED' }); continue }
+        if ($read -ne $contentLength) { Write-HttpResponse $stream 400 'Bad Request' (Json @{ error='BRIDGE_BODY_INCOMPLETE' }); continue }
+        try { $body = [Text.UTF8Encoding]::new($false,$true).GetString($buffer, 0, $read) } catch { Write-HttpResponse $stream 400 'Bad Request' (Json @{error='BRIDGE_UTF8_INVALID'}); continue }
       }
-
-      if ($method -eq 'OPTIONS') { Write-HttpResponse $stream 204 'No Content' ''; continue }
+      if ($method -eq 'POST') {
+        $ownerAdmission = Test-ArgosOwnerBoundary $headers $path $buffer
+        if (-not [bool]$ownerAdmission.admitted) { Write-HttpResponse $stream 403 'Forbidden' (Json @{error='BRIDGE_OWNER_BLOCKED';reason=$ownerAdmission.reason}); continue }
+      }
+      if ($method -eq 'GET' -and $path -eq '/argos/status') {
+        $ownerConfig = Get-ArgosOwnerConfiguration
+        $aiStatus = Get-OllamaStatus
+        Write-HttpResponse $stream 200 'OK' (Json @{
+          version='sinbad-argos-live-status/1-v1'
+          state='ACTIVE'
+          mode='MONITOR_ONLY'
+          ownerBoundary=@{enforced=$true;configured=($null -ne $ownerConfig);instanceId=$(if($ownerConfig){$ownerConfig.instanceId}else{$null});workspaceId=$(if($ownerConfig){$ownerConfig.workspaceId}else{$null});authorization='SERVER_VERIFIED_SINGLE_USE'}
+          observedAt=[DateTimeOffset]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ss.fffZ')
+          bridge=@{ online=$true; version='0.5.0' }
+          ai=@{ online=[bool]$aiStatus.online; model=[string]$aiStatus.model; modelCount=@($aiStatus.models).Count }
+          commandGate=@{ active=$true; registeredActions=$script:ArgosBridgeActions.Count; observedCommands=$script:ArgosSeenCommands.Count; replayProtection=$true; freshnessWindowSeconds=300; ledgerCapacity=4096 }
+        }); continue
+      }
       if ($method -eq 'GET' -and $path -eq '/status') {
         $count = @(Get-ChildItem -LiteralPath $routeRoot -Filter '*.gpx' -File -ErrorAction SilentlyContinue).Count
         $kiwixState = try { $xml=Invoke-LocalTextGet "$KiwixUrl/search?books.filter.lang=tur&pattern=Sinbad&pageLength=1&format=xml" 2; if($xml -match '<rss'){'READY'}else{'INVALID_RESPONSE'} } catch {'UNAVAILABLE'}

@@ -1,6 +1,21 @@
 
 
 const $=id=>document.getElementById(id);
+function argosBridgeHeaders(action,target){const random=globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random().toString(16).slice(2)}`;return {'X-Sinbad-Argos-Version':'sinbad-argos-command/1-v1','X-Sinbad-Argos-Action':action,'X-Sinbad-Argos-Target':target,'X-Sinbad-Argos-Command-Id':`browser-${random}`,'X-Sinbad-Argos-Requested-At':new Date().toISOString()};}
+async function ownerBridgeFetch(path,action,body){
+  if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId)throw new Error('OWNER_SIGN_IN_REQUIRED');
+  const workspaceId=selectedWorkspaceId,exactBody=String(body),headers=argosBridgeHeaders(action,path);
+  const statusResponse=await fetch(`${SINBAD_BRIDGE_URL}/argos/status`,{cache:'no-store',signal:AbortSignal.timeout(5000)});
+  if(!statusResponse.ok)throw new Error('BRIDGE_OWNER_UPDATE_REQUIRED');
+  const boundary=(await statusResponse.json()).ownerBoundary;
+  if(!boundary?.enforced||!boundary.configured||boundary.workspaceId!==workspaceId||!/^[0-9a-f-]{36}$/i.test(boundary.instanceId||''))throw new Error('BRIDGE_OWNER_NOT_CONFIGURED_FOR_WORKSPACE');
+  const bytes=new TextEncoder().encode(exactBody),bodySha256=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),byte=>byte.toString(16).padStart(2,'0')).join('');
+  const command={action,bodyBytes:bytes.length,bodySha256,commandId:headers['X-Sinbad-Argos-Command-Id'],instanceId:boundary.instanceId,method:'POST',path,requestedAt:headers['X-Sinbad-Argos-Requested-At'],workspaceId};
+  const security=await ownerSecurityClient(),proof=await security.authorize({action:`core.bridge.${action.toLowerCase()}`,resourceType:'bridge_instance',resourceId:boundary.instanceId,workspaceId,command},`Authorize local Bridge: ${action}`);
+  const {data,error}=await cloudClient.auth.getSession();
+  if(error||!data?.session?.access_token)throw new Error('OWNER_SIGN_IN_REQUIRED');
+  return fetch(`${SINBAD_BRIDGE_URL}${path}`,{method:'POST',headers:{'Content-Type':'application/json',...headers,Authorization:`Bearer ${data.session.access_token}`,'X-Sinbad-Owner-Authorization':proof.authorizationId,'X-Sinbad-Owner-Nonce':proof.nonce},body:exactBody,cache:'no-store'});
+}
 const APP_LANGUAGES=[['tr-TR','Türkçe'],['en-US','English'],['ru-RU','Русский'],['fr-FR','Français'],['de-DE','Deutsch'],['ar-SA','العربية'],['es-ES','Español'],['it-IT','Italiano']];
 const APP_I18N={
  'tr-TR':{gatewayTitle:'Sinbad Marine şu anda geliştiriliyor.',gatewayText:'Güvenli denizcilik zekâsı ve yat operasyon platformumuz kullanıma hazırlanıyor.',signIn:'Üye Girişi',createAccount:'Hesap Oluştur',checkCloud:'Bulut Bağlantısını Kontrol Et',heroTitle:'Tek Köprü. Tüm Operasyonlar.'},
@@ -147,7 +162,7 @@ function downloadCalculatedRouteGpx(route){
 async function openCalculatedRouteInOpenCpn(route,downloadOnFailure=false){
   const gpx=window.SinbadRouteVisualizer.toGpx(route,{name:'Sinbad calculated DR route'});
   try{
-    const response=await fetch(`${SINBAD_BRIDGE_URL}/routes/open`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({filename:'sinbad-calculated-route.gpx',name:'Sinbad calculated DR route',gpx})});
+    const response=await ownerBridgeFetch('/routes/open','PHYSICAL_HANDOFF',JSON.stringify({filename:'sinbad-calculated-route.gpx',name:'Sinbad calculated DR route',gpx}));
     if(!response.ok)throw new Error(`Bridge returned ${response.status}`);
     const result=await response.json();
     if(result.importRequired)return {ok:true,message:`OpenCPN’yi güvenli biçimde açtım ve GPX rotasını kaydettim: ${result.path}. OpenCPN’de Route & Mark Manager → Import GPX ile bu dosyayı seçin. Otomatik aktarım için güvenli REST eşleştirmesi ayrıca kurulacak.`};
@@ -309,14 +324,14 @@ async function refreshEncPassageRoutes(){
 }
 async function readEncPassageRoute(){
   const filename=$('encRouteSelect').value;if(!filename){$('encPassageStatus').textContent='Önce listeden bir rota seçin.';return}
-  try{const response=await fetch(`${SINBAD_BRIDGE_URL}/routes/read`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({filename})});if(!response.ok)throw new Error(`Bridge ${response.status}`);const data=await response.json();loadEncPassageGpx(data.gpx,data.filename);}
+  try{const response=await fetch(`${SINBAD_BRIDGE_URL}/routes/read`,{method:'POST',headers:{'Content-Type':'application/json',...argosBridgeHeaders('ROUTE_READ','/routes/read')},body:JSON.stringify({filename})});if(!response.ok)throw new Error(`Bridge ${response.status}`);const data=await response.json();loadEncPassageGpx(data.gpx,data.filename);}
   catch(error){$('encPassageStatus').textContent=`Rota okunamadı: ${error.message}`;}
 }
 function downloadEncPassageGpx(){if(!encPassageRoute)return;const link=document.createElement('a');link.href=URL.createObjectURL(new Blob([encPassageRoute.gpx],{type:'application/gpx+xml'}));link.download=encPassageRoute.filename||'sinbad-passage-route.gpx';link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000)}
 async function sendEncPassageToOpenCpn(){
   if(!encPassageRoute?.plan)return;if(!confirm(`“${encPassageRoute.plan.name}” rotasını yerel OpenCPN'e göndermeyi ve içe aktarmayı onaylıyor musunuz?`))return;
   const button=$('encSendPassageToOpenCpn');button.disabled=true;$('encPassageStatus').textContent='Rota OpenCPN’e gönderiliyor…';
-  try{const response=await fetch(`${SINBAD_BRIDGE_URL}/routes/open`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({filename:encPassageRoute.filename,name:encPassageRoute.name,gpx:encPassageRoute.gpx})});if(!response.ok)throw new Error(`Bridge ${response.status}`);const result=await response.json();$('encPassageStatus').textContent=result.imported?'Rota OpenCPN’e aktarıldı ve etkinleştirildi.':'OpenCPN açıldı; GPX yerel Routes klasörüne kaydedildi. REST içe aktarımı yoksa Route & Mark Manager’dan içe aktarın.';setOpenCpnPreviewMode(true);}
+  try{const response=await ownerBridgeFetch('/routes/open','PHYSICAL_HANDOFF',JSON.stringify({filename:encPassageRoute.filename,name:encPassageRoute.name,gpx:encPassageRoute.gpx}));if(!response.ok)throw new Error(`Bridge ${response.status}`);const result=await response.json();$('encPassageStatus').textContent=result.imported?'Rota OpenCPN’e aktarıldı ve etkinleştirildi.':'OpenCPN açıldı; GPX yerel Routes klasörüne kaydedildi. REST içe aktarımı yoksa Route & Mark Manager’dan içe aktarın.';setOpenCpnPreviewMode(true);}
   catch(error){$('encPassageStatus').textContent=`OpenCPN aktarımı başarısız: ${error.message}`;}finally{button.disabled=false}
 }
 function initEncPassagePlanner(){
@@ -346,12 +361,12 @@ async function refreshOpenCpnPreview(){
   }catch(error){releaseOpenCpnFrame();status.textContent=`${error.message} Sinbad Bridge açık olmalıdır.`;status.className='enc-map-status error';}
 }
 async function ensureOpenCpnRunning(){
-  const response=await fetch(`${SINBAD_BRIDGE_URL}/opencpn/start`,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+  const response=await ownerBridgeFetch('/opencpn/start','PHYSICAL_HANDOFF','{}');
   if(!response.ok)throw new Error('OpenCPN otomatik başlatılamadı. Sinbad Bridge açık olmalıdır.');
   return response.json();
 }
 async function sendOpenCpnInput(payload){
-  const response=await fetch(`${SINBAD_BRIDGE_URL}/opencpn/input`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  const response=await ownerBridgeFetch('/opencpn/input','PHYSICAL_HANDOFF',JSON.stringify(payload));
   if(!response.ok)throw new Error('OpenCPN denetimi uygulanamadı.');
   return response.json();
 }
@@ -1549,7 +1564,7 @@ async function speakSinbadXttsClone(text,onVoiceReady){
   const loadChunk=async index=>{
     const timeout=setTimeout(()=>{timedOut=true;controller.abort();},150000);
     try{
-      const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/tts`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:chunks[index],language:sinbadState.language}),signal:controller.signal});
+      const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/tts`,{method:'POST',headers:{'Content-Type':'application/json',...argosBridgeHeaders('SPEECH_SYNTHESIS','/ai/tts')},body:JSON.stringify({text:chunks[index],language:sinbadState.language}),signal:controller.signal});
       if(!response.ok)throw new Error(`XTTS returned ${response.status}: ${await response.text()}`);
       const blob=await response.blob();
       if(!blob.size)throw new Error('XTTS returned empty audio');
@@ -1871,7 +1886,7 @@ function downloadBridgeGpx(){
 }
 async function sendBridgeGpx(){
   try{
-    const response=await fetch(`${SINBAD_BRIDGE_URL}/routes`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({filename:safeBridgeFilename(),name:bridgeRouteName(),gpx:buildBridgeGpx()})});
+    const response=await ownerBridgeFetch('/routes','ROUTE_WRITE',JSON.stringify({filename:safeBridgeFilename(),name:bridgeRouteName(),gpx:buildBridgeGpx()}));
     if(!response.ok)throw new Error(`Bridge returned ${response.status}`);const result=await response.json();$('bridgeMessage').textContent=`Route saved locally: ${result.path}. Import it from OpenCPN Route & Mark Manager.`;checkBridgeStatus();setSinbadAssistantState('success');
   }catch(error){$('bridgeMessage').textContent='Local Bridge is not reachable. Start bridge/start-sinbad-bridge.cmd, or use Download GPX.';setSinbadAssistantState(error.message===SINBAD_MISSING_WAYPOINTS_MESSAGE?'warning':'error');}
 }
@@ -1881,7 +1896,8 @@ async function checkBridgeStatus(){
   catch(error){badge.textContent='Bridge offline';badge.className='bridge-status offline';}
 }
 async function sinbadBridgeJson(path,options={}){
-  const response=await fetch(`${SINBAD_BRIDGE_URL}${path}`,{cache:'no-store',...options,headers:{'Content-Type':'application/json',...(options.headers||{})}});
+  const actionByPath={'/library/ingest':'LIBRARY_WRITE','/library/reindex':'LIBRARY_INDEX_WRITE'};const action=actionByPath[path];
+  const response=action&&String(options.method).toUpperCase()==='POST'?await ownerBridgeFetch(path,action,options.body||''):await fetch(`${SINBAD_BRIDGE_URL}${path}`,{cache:'no-store',...options,headers:{'Content-Type':'application/json',...(options.headers||{})}});
   if(!response.ok)throw new Error(`Bridge returned ${response.status}`);
   return response.json();
 }
@@ -2101,7 +2117,7 @@ async function sinbadOfflineAiAnswer(question){
     if(status)status.textContent='Connecting to Sinbad offline brain…';
     const history=sinbadHistoryForModel(true);
     const coreEnvelope=window.SinbadCore?.aiEnvelope?.(question,history);
-    const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/chat`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question,language:sinbadState.language||appLanguage,history,coreEnvelope})});
+    const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/chat`,{method:'POST',headers:{'Content-Type':'application/json',...argosBridgeHeaders('AI_INFERENCE','/ai/chat')},body:JSON.stringify({question,language:sinbadState.language||appLanguage,history,coreEnvelope})});
     if(!response.ok)throw new Error(`Offline brain returned ${response.status}`);
     const data=await response.json();
     const answer=String(data?.answer||'').trim();
@@ -2194,7 +2210,38 @@ $('sinbadMessages')?.addEventListener('click',event=>{const button=event.target.
 $('sinbadInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendToSinbad($('sinbadInput').value)}});
 document.querySelectorAll('.sinbad-prompt').forEach(b=>b.addEventListener('click',()=>sendToSinbad(b.textContent)));
 
-const SINBAD_WORKSPACE_TABS=Object.freeze(['chat','academy']);
+const SINBAD_WORKSPACE_TABS=Object.freeze(['chat','academy','argos']);
+let argosStatusRequest=null;
+function setArgosCardState(component,state){
+  const card=document.querySelector(`[data-argos-component="${component}"]`);if(!card)return;
+  card.classList.toggle('healthy',state==='healthy');card.classList.toggle('degraded',state==='degraded');
+}
+async function refreshArgosStatus(){
+  const overall=$('argosOverallStatus'),evidence=$('argosEvidenceText');if(!overall||!evidence)return;
+  argosStatusRequest?.abort();const controller=new AbortController();argosStatusRequest=controller;
+  const timer=setTimeout(()=>controller.abort(),5000);
+  overall.textContent='Kontrol ediliyor…';overall.className='argos-overall checking';
+  try{
+    const response=await fetch(`${SINBAD_BRIDGE_URL}/argos/status`,{cache:'no-store',signal:controller.signal});
+    if(!response.ok)throw new Error(`HTTP ${response.status}`);const status=await response.json();
+    const healthy=status?.version==='sinbad-argos-live-status/1-v1'&&status?.state==='ACTIVE'&&status?.commandGate?.active===true&&status?.bridge?.online===true&&status?.ownerBoundary?.enforced===true&&status?.ownerBoundary?.configured===true;
+    $('argosBridgeState').textContent=status?.bridge?.online?'ÇEVRİMİÇİ':'ULAŞILAMIYOR';
+    $('argosBridgeDetail').textContent=status?.bridge?.online?`Bridge ${status.bridge.version||'yerel'} · salt-okunur sağlık açık`:'Yerel Bridge yanıt vermedi';
+    $('argosAiState').textContent=status?.ai?.online?'HAZIR':'ÇEVRİMDIŞI';
+    $('argosAiDetail').textContent=status?.ai?.online?`${status.ai.model||'Yerel model'} · ${status.ai.modelCount||0} model kayıtlı`:'Yerel model servisi erişilebilir değil';
+    $('argosGateState').textContent=healthy?'OWNER KONTROLÜ AÇIK':'OWNER KURULUMU EKSİK';
+    $('argosGateDetail').textContent=status?.commandGate?.active?`${status.commandGate.registeredActions||0} eylem · tekrar koruması açık · ${status.commandGate.observedCommands||0} yakın komut`:'ARGOS komut kabul kapısı doğrulanamadı';
+    $('argosModeState').textContent=status?.mode||'UNKNOWN';
+    setArgosCardState('bridge',status?.bridge?.online?'healthy':'degraded');setArgosCardState('ai',status?.ai?.online?'healthy':'degraded');setArgosCardState('gate',healthy?'healthy':'degraded');setArgosCardState('mode',status?.mode==='MONITOR_ONLY'?'healthy':'degraded');
+    overall.textContent=healthy?'YEREL DURUM ALINDI':'ARGOS UYARI';overall.className=`argos-overall ${healthy?'checking':'degraded'}`;
+    evidence.textContent=`Bridge beyanı; bağımsız kimlik veya uçtan uca sağlık kanıtı değildir. Gözlem: ${new Date(status.observedAt).toLocaleString('tr-TR')} · Şema ${status.version}`;
+  }catch(error){
+    if(error.name==='AbortError'&&argosStatusRequest!==controller)return;
+    overall.textContent='ARGOS ERİŞİLEMİYOR';overall.className='argos-overall degraded';
+    $('argosBridgeState').textContent='ULAŞILAMIYOR';$('argosAiState').textContent='BİLİNMİYOR';$('argosGateState').textContent='DOĞRULANAMADI';
+    ['bridge','ai','gate'].forEach(component=>setArgosCardState(component,'degraded'));evidence.textContent='Yerel Bridge sağlık özeti alınamadı. Komutlar güvenli biçimde kapalı kabul edilmelidir.';
+  }finally{clearTimeout(timer);if(argosStatusRequest===controller)argosStatusRequest=null;}
+}
 function setSinbadWorkspaceTab(requested,{focus=false}={}){
   const tab=SINBAD_WORKSPACE_TABS.includes(requested)?requested:'chat';
   document.querySelectorAll('[data-sinbad-tab]').forEach(button=>{
@@ -2205,6 +2252,7 @@ function setSinbadWorkspaceTab(requested,{focus=false}={}){
     if(active&&focus)button.focus();
   });
   document.querySelectorAll('[data-sinbad-panel]').forEach(panel=>{panel.hidden=panel.dataset.sinbadPanel!==tab;});
+  if(tab==='argos')refreshArgosStatus();
   try{sessionStorage.setItem('atlas_sinbad_workspace_tab',tab);}catch{}
 }
 document.querySelectorAll('[data-sinbad-tab]').forEach(button=>{
@@ -2223,6 +2271,7 @@ document.querySelectorAll('[data-sinbad-tab]').forEach(button=>{
 let initialSinbadWorkspaceTab='chat';
 try{initialSinbadWorkspaceTab=sessionStorage.getItem('atlas_sinbad_workspace_tab')||'chat';}catch{}
 setSinbadWorkspaceTab(initialSinbadWorkspaceTab);
+$('refreshArgosStatus')?.addEventListener('click',refreshArgosStatus);
 
 $('sinbadFloat').addEventListener('click',()=>openWorkspace('sinbad'));
 $('backToSinbad')?.addEventListener('click',()=>openWorkspace('sinbad'));
@@ -2889,8 +2938,26 @@ async function settingsSignOut(scope='local'){
 }
 async function invokeMemberAdmin(action,payload={}){
   if(!roleCanManageMembers())throw new Error('Only the workspace Owner can manage members.');
-  const {data,error}=await cloudClient.functions.invoke('manage-members',{body:{action,workspaceId:selectedWorkspaceId,...payload}});
+  const request={action,workspaceId:selectedWorkspaceId,...payload};
+  if(action==='set_role'||action==='set_active'){
+    const command={workspaceId:request.workspaceId,userId:String(request.userId||'')};
+    if(action==='set_role')command.role=String(request.role||'');else command.isActive=Boolean(request.isActive);
+    const owner=await ownerSecurityClient();
+    request.stepUp=await owner.authorize({action:`identity.member.${action}`,resourceType:'workspace_member',resourceId:command.userId,workspaceId:command.workspaceId,command},action==='set_role'?`Change member role to ${command.role}`:`${command.isActive?'Restore':'Suspend'} member access`);
+  }
+  const {data,error}=await cloudClient.functions.invoke('manage-members',{body:request});
   if(error)throw error;if(data?.error)throw new Error(data.error);return data;
+}
+async function ownerSecurityClient(){
+  if(!cloudClient||!cloudSession?.user)throw new Error('Sign in before Owner verification.');
+  await import('./founder-owner-mfa.js');
+  await import('./founder-owner-ui.js');
+  return globalThis.SinbadOwnerUi.create(cloudClient);
+}
+if($('accountSettingsStatus')&&!$('settingsOwnerAuthenticator')){
+  const button=document.createElement('button');button.id='settingsOwnerAuthenticator';button.type='button';button.className='btn';button.textContent='Authenticator / Owner verification';
+  button.addEventListener('click',async()=>{try{await (await ownerSecurityClient()).manage();}catch(error){$('accountSettingsStatus').textContent=error.message||'Owner verification is unavailable.';}});
+  $('accountSettingsStatus').before(button);
 }
 async function sendMemberInvite(){
   const email=$('memberInviteEmail').value.trim(), role=$('memberInviteRole').value, note=$('memberInviteNote').value.trim();

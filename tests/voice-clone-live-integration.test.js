@@ -72,7 +72,7 @@ test('the optional xtts-clone provider (not default, kept for later) requests se
 });
 
 test('OpenCPN-first route transfer is bounded to the verified local bridge',()=>{
-  assert.match(app,/SINBAD_BRIDGE_URL}\/routes\/open/);
+  assert.match(app,/ownerBridgeFetch\('\/routes\/open','PHYSICAL_HANDOFF'/);
   assert.match(app,/isOpenCpnRequest/);
   assert.match(app,/openCalculatedRouteInOpenCpn\(route,explicitOpenCpn\)/);
   assert.match(visualizer,/function toGpx/);

@@ -586,6 +586,7 @@
       <div class="sinbad-workspace-tabs" role="tablist" aria-label="Captain Sinbad navigation">
         <button type="button" class="sinbad-workspace-tab active" id="sinbad-tab-chat" role="tab" aria-selected="true" aria-controls="sinbad-panel-chat" data-sinbad-tab="chat">💬 Chat</button>
         <button type="button" class="sinbad-workspace-tab" id="sinbad-tab-academy" role="tab" aria-selected="false" aria-controls="sinbad-panel-academy" data-sinbad-tab="academy" tabindex="-1">🎓 Academy</button>
+        <button type="button" class="sinbad-workspace-tab" id="sinbad-tab-argos" role="tab" aria-selected="false" aria-controls="sinbad-panel-argos" data-sinbad-tab="argos" tabindex="-1">◉ ARGOS</button>
       </div>
 
       <section class="chat-panel sinbad-workspace-panel" id="sinbad-panel-chat" role="tabpanel" aria-labelledby="sinbad-tab-chat" data-sinbad-panel="chat">
@@ -632,6 +633,25 @@
         <div><strong id="academyLaunchTitle">🎓 Sinbad Navigation Academy</strong><p>Open Sinbad’s resizable classroom in a separate workspace window.</p></div>
         <div class="academy-actions"><button type="button" class="btn primary" id="openSinbadAcademyClassroom" data-open-sinbad-academy>Open classroom</button><button type="button" class="btn" id="openSinbadProfessorWorkspace">Open Professor · Hands-free Beta</button></div>
       </section>
+      </section>
+
+      <section class="sinbad-workspace-panel argos-panel" id="sinbad-panel-argos" role="tabpanel" aria-labelledby="sinbad-tab-argos" data-sinbad-panel="argos" hidden>
+        <div class="sinbad-panel-heading">
+          <div><span class="eyebrow">SYSTEM SENTINEL</span><h3>ARGOS Control Watch</h3></div>
+          <span class="argos-overall checking" id="argosOverallStatus" role="status" aria-live="polite">Checking…</span>
+        </div>
+        <p class="argos-summary">Salt-okunur sistem görünümü. ARGOS burada sağlık ve komut kabul durumunu raporlar; bu panel onarım, yayın veya veri değişikliği başlatmaz.</p>
+        <div class="argos-status-grid" id="argosStatusGrid" aria-live="polite">
+          <article class="argos-status-card" data-argos-component="bridge"><span>Bridge</span><strong id="argosBridgeState">Bekleniyor</strong><small id="argosBridgeDetail">Yerel bağlantı ölçülüyor</small></article>
+          <article class="argos-status-card" data-argos-component="ai"><span>Yerel AI</span><strong id="argosAiState">Bekleniyor</strong><small id="argosAiDetail">Model durumu ölçülüyor</small></article>
+          <article class="argos-status-card" data-argos-component="gate"><span>Komut kapısı</span><strong id="argosGateState">Bekleniyor</strong><small id="argosGateDetail">Zarf ve tekrar koruması</small></article>
+          <article class="argos-status-card" data-argos-component="mode"><span>Yetki modu</span><strong id="argosModeState">MONITOR_ONLY</strong><small>Otomatik onarım ve yayın kapalı</small></article>
+        </div>
+        <section class="argos-evidence" aria-labelledby="argosEvidenceTitle">
+          <div><span class="eyebrow" id="argosEvidenceTitle">LIVE EVIDENCE</span><p id="argosEvidenceText">Henüz canlı kanıt alınmadı.</p></div>
+          <button type="button" class="btn" id="refreshArgosStatus">Yeniden kontrol et</button>
+        </section>
+        <div class="notice argos-boundary"><strong>Güvenlik sınırı:</strong> Kimlik bilgileri, komut içerikleri ve olay raflarının özel kayıtları tarayıcıya açılmaz.</div>
       </section>
     </div>
   </div>

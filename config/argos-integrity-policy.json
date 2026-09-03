@@ -1,0 +1,486 @@
+{
+  "schemaVersion": "sinbad-argos-integrity-policy/1-v1",
+  "scopeId": "sinbad-marine",
+  "protectedFiles": [
+    {
+      "path": "tests/sql/argos-bridge-identity.sql",
+      "sha256": "16e6868d55b329b7e5e824b0e99853a48533f6564bd8e20d26fa6c90c7ff8487",
+      "kind": "TEST"
+    },
+    {
+      "path": "tests/argos-owner-boundary.test.js",
+      "sha256": "d1c0b680a11378d63b6bb2e31ddb28655f6b7a4231b94b1f796422f8c06478eb",
+      "kind": "TEST"
+    },
+    {
+      "path": "bridge/argos-owner-boundary.ps1",
+      "sha256": "227f906f373c8d328facebdc9c7f32b5b679b0c2016759a99cb259460d2890a5",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "supabase/migrations/20260903000300_argos_bridge_identity.sql",
+      "sha256": "9cb264c330a89a253ea831e43299059be84f4c03e2d158ec089cd6ecfecf7303",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "supabase/functions/argos-bridge-authorize/index.ts",
+      "sha256": "b10c560024552884fcd7eda5766bfdeaae024a5ceff3c0efcba365ed0a8f969e",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "tests/browser/owner-verification.spec.js",
+      "sha256": "b436a8e66aec2d08ecf73f92371076e8b8acdce4e2408107193e7f337fa245f2",
+      "kind": "TEST"
+    },
+    {
+      "path": "founder-owner-ui.js",
+      "sha256": "88043c4d9baaa2f9a86c9159f6d392d5e155e0dbe83e5a18b4040e010ec8a98b",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "sw.js",
+      "sha256": "1855f03085d7ff0bb5d49547ee5ca40b5ac4796d2163f6e3e43d4a0b16f6c7e5",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "tests/sql/founder-owner-access.sql",
+      "sha256": "ee0696323b0312bd69c98caa7e9ed209bf4e2c7c64b2bffd6f243646a4b57a57",
+      "kind": "TEST"
+    },
+    {
+      "path": "supabase/migrations/20260903000200_founder_owner_consumption_expiry.sql",
+      "sha256": "79424bdacaf7cfebf31ac65c44273c67af19f368216672474f548728fcd9c22b",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "supabase/migrations/20260903000100_founder_owner_consumption_lock.sql",
+      "sha256": "1edffb2a01d0e1df29e0eac970d0ecec27f2f8799c68c439c461d6df6d4c5a19",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "tools/argos-test-owner-concurrency.js",
+      "sha256": "b9c80d6cc50293dc10118eb65ea96162b54067d33a09da0315640cc52bc414e9",
+      "kind": "TEST"
+    },
+    {
+      "path": "tools/argos-test-owner-sql.js",
+      "sha256": "b550e70d6c64d3ff38bac9ef07be3c5bdc24682ca6f1406c3c85093d4e1e40a2",
+      "kind": "TEST"
+    },
+    {
+      "path": "tests/sql/founder-owner-atomic-issuance.sql",
+      "sha256": "7bfbdc316824c41f89bdf49ff5ba3db4c7247a8bd91c667334ad76247edf3b19",
+      "kind": "TEST"
+    },
+    {
+      "path": "supabase/migrations/20260903_founder_owner_atomic_issuance.sql",
+      "sha256": "50770b560c2f421d2b6135e59d7c9c0123e9b784983e1eef00848ecff60c9644",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "supabase/migrations/20260829_founder_owner_step_up.sql",
+      "sha256": "27f78b6877a6708ffce17afde0e0f4a4aad8f3d0ed63225fadfb3a4d6194c455",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "tests/founder-owner-sdk.test.js",
+      "sha256": "f6fe959e15f719165f2eb6927e6b553a696d92f619a6f8a4e263b92e0f541d06",
+      "kind": "TEST"
+    },
+    {
+      "path": "tests/founder-owner-mfa.test.js",
+      "sha256": "660d1fc3de4c91b1faf73b0f3baeece99de845bc85c18a584dc0c1fdf8b9ea90",
+      "kind": "TEST"
+    },
+    {
+      "path": "supabase/functions/manage-members/index.ts",
+      "sha256": "afe5e5a8437c3aa3ea668e76b8d1666386e50ea28e6878379a8dca12a1f4a9f1",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "supabase/functions/founder-owner-step-up/index.ts",
+      "sha256": "9f9f485ee7f68bc2a42addb5d90f20b4aeae9922e7cf70a9183a5f7b29b9e057",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "tests/founder-owner-boundary.test.js",
+      "sha256": "552f6135a61b516ecb2ad9af45637c70cf5bf9e67438f4b033420da1988481fe",
+      "kind": "TEST"
+    },
+    {
+      "path": "tests/argos-archive-recovery.test.js",
+      "sha256": "bb1cb7ed3fffa7bf455ba60a146399981d959d863e36169f38cb1c133af66a9d",
+      "kind": "TEST"
+    },
+    {
+      "path": "tools/argos-load-archive-shelves.js",
+      "sha256": "c4a18cfd17303f050e8127a23ca2656e8a3fc9a87a1508c40e430514e9b4c834",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "tests/argos-release-evidence.test.js",
+      "sha256": "80bb5850cba067ae81a74c005a125296c72175db8d2d42efc03254515f5ed487",
+      "kind": "TEST"
+    },
+    {
+      "path": "tools/argos-release-evidence.js",
+      "sha256": "7ebb1a617be41b9a66e3be581ba0356d90aba6a41bbcc69c632236b5ec7fd79a",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "tools/argos-bridge-candidate.js",
+      "sha256": "fc814d86d03b76f9f5d48405b913ef24317e392017d99b673a0b1f7845aa9051",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "tests/argos-bridge-candidate.test.js",
+      "sha256": "afb34e07ecd5a82e886cf035cefd8dd1290a620c72c8ca8ad77ee7a3488c1696",
+      "kind": "TEST"
+    },
+    {
+      "path": "tests/argos-bridge-http.test.js",
+      "sha256": "37c4d519ee5bee3010fb2bb3b45f0a13d9c31ce15a0c2d19d7bbd35aefd036f9",
+      "kind": "TEST"
+    },
+    {
+      "path": "tests/fixtures/argos-http-isolation.ps1",
+      "sha256": "45d91ed8f2670aea9a7e4b5812a3d3f596570ab107235467f46d0228348da757",
+      "kind": "TEST"
+    },
+    {
+      "path": "tests/argos-checkpoint.test.js",
+      "sha256": "ca30f8ca758d5067c6e75e4bd39af6987eeb1ee51169cf6e0d2b480884228591",
+      "kind": "TEST"
+    },
+    {
+      "path": "tests/argos-bridge-status.test.js",
+      "sha256": "777215692e4b182224f1ba9665ff95c4721529f3885dedbc7ebd62169340fcf6",
+      "kind": "TEST"
+    },
+    {
+      "path": "tests/argos-record-health.test.js",
+      "sha256": "9bc73b7f2dec9e782ba2c022b1080248c7bba9679395b5ab44ce59dc250f1791",
+      "kind": "TEST"
+    },
+    {
+      "path": "tools/argos-verify-checkpoint.js",
+      "sha256": "560c3e5c08143751ba327723d6193972e5f0a7a9f81b5c04f33fbf328970f9bc",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "tools/argos-bridge-status.js",
+      "sha256": "6068a87c3f6cf472819910fb9f03407a5742070122f043f87e91f9ed8f14b499",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "tools/argos-record-health.js",
+      "sha256": "a0d5671663f0d2563b9a8a5067d9b0b37afe6a6fdb80b762f1a373c58ec24f7c",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "tests/argos-bridge-runtime.test.js",
+      "sha256": "3aa12c016ce538189075a0e7eb6dd2b5aac4e04696c5b5c44bfc5628a0bcdf6b",
+      "kind": "TEST"
+    },
+    {
+      "path": "tests/argos-health-cli.test.js",
+      "sha256": "a8db2c8306bdd250ae3f9ae4e272981c4328c4fdfe7789bbf5ae61fe21612221",
+      "kind": "TEST"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "687b041a47051ae785aeaba061414a71eda9f67a77ae4ff3ae383541438e98c9",
+      "kind": "CONFIG"
+    },
+    {
+      "path": ".github/workflows/pages-release.yml",
+      "sha256": "7d6d90cc2005384b3268d99d549170e15156d48f5f153edc5ee5286b7933fff8",
+      "kind": "WORKFLOW"
+    },
+    {
+      "path": ".github/workflows/argos-assurance.yml",
+      "sha256": "4180c4eafeaa910d1848eaee024afbc29705927518f224c19d64c362df370631",
+      "kind": "WORKFLOW"
+    },
+    {
+      "path": ".github/workflows/release-quality.yml",
+      "sha256": "4cd7af2071ee73f1fdba60de3d683008abeb7d437de03130964502d7da14070e",
+      "kind": "WORKFLOW"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "9ef72abefb3d3773e6d7546c781c0e89fadd626cdcf16a21b6cef41c98433bfd",
+      "kind": "DOCUMENT"
+    },
+    {
+      "path": "OWNER_GOVERNANCE.md",
+      "sha256": "3f5c3a0ca9618567c10d50dae590b0fbf459f40e0a0ee38395726b3a860b28bf",
+      "kind": "DOCUMENT"
+    },
+    {
+      "path": "academy-classroom-window.js",
+      "sha256": "f3d324007fde2dbb1c8f10c21b760aa6c917ebe238a7fbbbafbe8be4eae889f8",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "academy-window.js",
+      "sha256": "8bfec7aa68439775ebb558f10ba24165dc8ce8a1ecc90521d9b8368468a15c72",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "app.js",
+      "sha256": "4f928abb10f9df3e7906c0807592b7671e2df1020f54e6597c606ab958d40f9b",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "bridge/sinbad-bridge.ps1",
+      "sha256": "b89f2a1001fa8824837c3e417b1b3d2dac228b92d495d069fc0c223301c7409f",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "config/ui-design-contract.json",
+      "sha256": "4f6353d68d932f452dc3a314c709bbf0dc01732ed148f925750f1fde58d6d2dc",
+      "kind": "CONFIG"
+    },
+    {
+      "path": "docs/ARGOS_SYSTEM_GOVERNANCE.md",
+      "sha256": "0de0ae263943611de5c9237a515ec68fcabcb1be27e1c986d0288c31a34b4eee",
+      "kind": "DOCUMENT"
+    },
+    {
+      "path": "index.html",
+      "sha256": "af9d799a84ab4db9ad1d112a4238f7b333f26b7891e4c0528b8b3817f235e1f4",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "package.json",
+      "sha256": "684734cd38c27bbfa6d941d3f6f0c628b1342250a6d9ebb80727ff2605dcd913",
+      "kind": "CONFIG"
+    },
+    {
+      "path": "sinbad-ai-core/SINBAD_CORE_CHARTER.md",
+      "sha256": "e12bbbfb999e4ee0f7d9b3fe07b66ce359f601f73f044dc89de6798cf20f00a2",
+      "kind": "DOCUMENT"
+    },
+    {
+      "path": "sinbad-ai-core/argos-agent-envelope.js",
+      "sha256": "4ba2493c7cd93591a1f3aad898c469419b301128bde065eab9b8c3a9ee593bf1",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "sinbad-ai-core/argos-encrypted-archive.js",
+      "sha256": "ccd922906b694bda0b8f421171e45af9ff80f26889058afaa6de7114a460f6e8",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "sinbad-ai-core/argos-event-shelf.js",
+      "sha256": "151410b2524a78038c8b71fed99ce8d207a6ce0cd871a79a4f979f83952fadfc",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "sinbad-ai-core/argos-governance-core.js",
+      "sha256": "d3efe6845a37bd05bb0f92925095fe874d721b04880851cbf11ef51687750196",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "sinbad-ai-core/argos-health-contracts.js",
+      "sha256": "9a7d65ec14a53ad44ef5cb96d0e2f0411db74ebe048b27db9c573baa979fd812",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "sinbad-ai-core/argos-operations-ledger.js",
+      "sha256": "7e1dafa07eb9b12226fcf983a4adce946ac15cebee5d519170634e65afff60c2",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "sinbad-ai-core/argos-readonly-sensors.js",
+      "sha256": "ce90acd48dc76c18bf9a48ddfd411ffb4221554d2d0802933066e9fe88287ce4",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "sinbad-ai-core/argos-repair-proposal.js",
+      "sha256": "338ef826d2fa99b73047df43b2712345109a1c1d5367a78455fbd86499e01af8",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "sinbad-ai-core/argos-supervisor.js",
+      "sha256": "cd213eb039c576eed57ba916438b0c5f12d559ff513a4a0befdf028c347059db",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "sinbad-ai-core/core-activation-gate.js",
+      "sha256": "9d974209c44301900b5f725d75259d3d023e662064d8903b194b9344c3a899b0",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "sinbad-ai-core/tests/argos-agent-envelope.test.js",
+      "sha256": "b57dc56d338bebec52f7d861d9195fa01362be5e4710295d088d3a936f7cbc8b",
+      "kind": "TEST"
+    },
+    {
+      "path": "sinbad-ai-core/tests/argos-encrypted-archive.test.js",
+      "sha256": "386a4459f3be6c24757e026dc2e943ed194e4ec03d304da0da74f0e402ddd06c",
+      "kind": "TEST"
+    },
+    {
+      "path": "sinbad-ai-core/tests/argos-governance-core.test.js",
+      "sha256": "96f429e37b2f0ea019e671377eaf61a0609eba75d11d7ee610207c144249f8db",
+      "kind": "TEST"
+    },
+    {
+      "path": "sinbad-ai-core/tests/argos-health-contracts.test.js",
+      "sha256": "f184f4045bd0bd0db46dc931e824cd804cf4f42d4cb7eefa25251cdbf689fa11",
+      "kind": "TEST"
+    },
+    {
+      "path": "sinbad-ai-core/tests/argos-operations-ledger.test.js",
+      "sha256": "a6715d2fa415bc638ae2d0bddbfc3769e832acc43ac1528a92a40d37acda3e32",
+      "kind": "TEST"
+    },
+    {
+      "path": "sinbad-ai-core/tests/argos-readonly-sensors.test.js",
+      "sha256": "0425faaaff26f13af0011740e204e4228640aa1c6ef65d2ab155d3919727fb55",
+      "kind": "TEST"
+    },
+    {
+      "path": "sinbad-ai-core/tests/argos-supervisor.test.js",
+      "sha256": "b6a7d4ab7ec509d0cd824e590ee9135d33289f864bf5a8476a6ccb9886d2d89d",
+      "kind": "TEST"
+    },
+    {
+      "path": "sinbad-visuals.js",
+      "sha256": "bebb6159f2019248995c3af784446135f0b0d946085b9509eb59344dce6ecd64",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "styles.css",
+      "sha256": "a7b45fc9c86ad19afa18c7e99507cb30f25d83f0dd964d6d0364cb25a57684a4",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "supabase/rollout-recovery-migration-manifest.json",
+      "sha256": "35866bab185736bbb7793f87f71be5a6f3fcb43fe580436a051eefa90af8345c",
+      "kind": "MIGRATION"
+    },
+    {
+      "path": "tests/argos-runtime-adapters.test.js",
+      "sha256": "ce24d7e7df595a526dafc03ad11e3efe29fcbd2c5b35d24adca8c61d3facfb0b",
+      "kind": "TEST"
+    },
+    {
+      "path": "tests/argos-windows-archive.test.js",
+      "sha256": "bab9b55b4afb0824aec22720d1b312a30c51f2a80b73c04336fbdcd9c125aa2e",
+      "kind": "TEST"
+    },
+    {
+      "path": "tests/argos-bridge-admission.test.js",
+      "sha256": "97a3f5f2640edc5128fb1dad51626e22319caa350a0b589de7787c39d0e0b0b9",
+      "kind": "TEST"
+    },
+    {
+      "path": "tests/argos-assurance-workflow.test.js",
+      "sha256": "05782460d2c7a6b7ee0e725bc68cd3421e1ca9262b80d1d94f2bee344ee9584c",
+      "kind": "TEST"
+    },
+    {
+      "path": "tests/sinbad-assistant-animation.test.js",
+      "sha256": "6b6ff9b87929181cde0dc923b552a5e07b0367574728a2e54d88203bdc981094",
+      "kind": "TEST"
+    },
+    {
+      "path": "tests/ui-design-contract.test.js",
+      "sha256": "587aa2fc950f3d08e82e4344d97416467fbb28f75b1b88c5f3fd5058388cfa3e",
+      "kind": "TEST"
+    },
+    {
+      "path": "tools/argos-repository-observer.js",
+      "sha256": "7963a7f26db3818136cc5395ae64e96c699e81229d794ab943df858b65c89ed0",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "tools/argos-encrypted-archive.js",
+      "sha256": "458d3fcbc5935234f2e5ebd345b396644fe9c1ae69ea730398104545feffe617",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "tools/argos-windows-archive.ps1",
+      "sha256": "67d64919426e67859fb60810f8a99efb43c6e8ca30f96ae62f5857a73125f26b",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "tools/argos-assurance-ledger.js",
+      "sha256": "288953bda96967c559cfe31c6b1300e63c6f640903dff8d5f2acb5a300788d50",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "tools/run-argos-health.js",
+      "sha256": "8ab3c69229f3706d7ddb11a85ff8f6f2fff927513f45c0161ab4f9dd845c4d58",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "tools/build-pages-artifact.js",
+      "sha256": "63d5099c011e84aefb5428928d46564b6212a65b20439cd7a39966ff5dd569a6",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "tools/verify-argos-integrity.js",
+      "sha256": "8f8a46e045b6fbd788e45fcc623191b6d1eeb0b0f1c594c4921c4fff54145825",
+      "kind": "SOURCE"
+    },
+    {
+      "path": "tools/argos-prepare-owner-deployment.ps1",
+      "kind": "SOURCE",
+      "sha256": "dc9e2e272ae6182f0ec4716422e08ef711fb8a76b45a85087d1ae91d79cd6ebd"
+    },
+    {
+      "path": "tests/voice-clone-live-integration.test.js",
+      "kind": "TEST",
+      "sha256": "60075dc8d4e26914a087f0fbf08c0b7b0b99556fd21e79bd0b2785ac0a6f8c3b"
+    },
+    {
+      "path": "tests/sinbad-academy-window.test.js",
+      "kind": "TEST",
+      "sha256": "8b66d8b4728b84c052c6a06f5ea0d80d29a054b1d9f4195cd9f12f71c3ef7ef8"
+    },
+    {
+      "path": "founder-owner-mfa.js",
+      "kind": "SOURCE",
+      "sha256": "8204e0e52ddbca98aa88f116f8e1ba9b64eb18b941091e71c00cc968c545e3f0"
+    },
+    {
+      "path": "tools/argos-package-bridge.js",
+      "kind": "SOURCE",
+      "sha256": "e6d4ab94943308f1c07ac08d6c3b334cb5bdc9f728a6ca9b0c8851c74a359f5e"
+    },
+    {
+      "path": "tools/argos-install-bridge.ps1",
+      "kind": "SOURCE",
+      "sha256": "ba3b37bebd4ae8c7062c5b2a449cd8840e1f7842ddc8fe73cf60cb78d46f4e69"
+    },
+    {
+      "path": "tests/argos-bridge-full-runtime.test.js",
+      "kind": "TEST",
+      "sha256": "c230f044de71c401085ed1cd9893d514c3983dd184d2d88c5d31fccdcc766591"
+    },
+    {
+      "path": "tests/browser/enc-controls.spec.js",
+      "kind": "TEST",
+      "sha256": "0db0741a405311afdf12dc360c17332f92bd2518969a481f46626339c90991a7"
+    },
+    {
+      "path": "tests/browser/surface-smoke.spec.js",
+      "kind": "TEST",
+      "sha256": "57cc38dae1846da30ef402750123d143a0ca89a1f7c96d4689345f4dd9cc79ae"
+    },
+    {
+      "path": "tools/argos-ci-retention.ps1",
+      "kind": "SOURCE",
+      "sha256": "dd959a5777b462e6b78c712764079318ccede1ec0051d9679a7b774942666908"
+    },
+    {
+      "path": "package-lock.json",
+      "kind": "CONFIG",
+      "sha256": "7aa1f4dd76326af8f428ee7e3226a498d869531319f15a2dc3da6012ef1638db"
+    }
+  ]
+}
