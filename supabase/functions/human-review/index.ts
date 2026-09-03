@@ -5,7 +5,7 @@ const allowedOrigins=new Set((Deno.env.get('HUMAN_REVIEW_ALLOWED_ORIGINS')||'').
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 const HASH=/^[0-9a-f]{64}$/
 const encoder=new TextEncoder()
-const safeCodes=new Set(['HUMAN_REVIEW_INPUT_INVALID','HUMAN_REVIEW_OWNER_REQUIRED','HUMAN_REVIEW_ACTIVE_MEMBER_REQUIRED','HUMAN_REVIEW_PACKAGE_NOT_FOUND','HUMAN_REVIEW_REVIEWER_REQUIRED','HUMAN_REVIEW_PACKAGE_ALREADY_CLAIMED','HUMAN_REVIEW_STALE_WRITE','HUMAN_REVIEW_TARGET_REVIEWER_INVALID','HUMAN_REVIEW_NOT_ASSIGNED','HUMAN_REVIEW_QUESTION_NOT_FOUND','HUMAN_REVIEW_QUESTIONS_PENDING'])
+const safeCodes=new Set(['HUMAN_REVIEW_INPUT_INVALID','HUMAN_REVIEW_OWNER_REQUIRED','HUMAN_REVIEW_ACTIVE_MEMBER_REQUIRED','HUMAN_REVIEW_PACKAGE_NOT_FOUND','HUMAN_REVIEW_REVIEWER_REQUIRED','HUMAN_REVIEW_PACKAGE_ALREADY_CLAIMED','HUMAN_REVIEW_STALE_WRITE','HUMAN_REVIEW_TARGET_REVIEWER_INVALID','HUMAN_REVIEW_NOT_ASSIGNED','HUMAN_REVIEW_QUESTION_NOT_FOUND','HUMAN_REVIEW_QUESTIONS_PENDING','HUMAN_REVIEW_COMPLETE_PACKAGE_REQUIRED','HUMAN_REVIEW_SUBMISSION_REQUIRED','HUMAN_REVIEW_COUNT_MISMATCH','HUMAN_REVIEW_MANIFEST_EXISTS'])
 
 function respond(origin:string,status:number,body:unknown){return new Response(JSON.stringify(body),{status,headers:{...jsonHeaders,'Access-Control-Allow-Origin':origin,'Vary':'Origin'}})}
 function originFor(request:Request){const value=request.headers.get('Origin')||'';return allowedOrigins.has(value)?value:null}
@@ -79,6 +79,14 @@ Deno.serve(async request=>{
   }
 
   const requestId=uuid(body.requestId,'request')
+  if(action==='import_package'){
+   if(!isOwner)return respond(origin,403,{error:'OWNER_REQUIRED'})
+   const manifest=body.manifest as Record<string,unknown>,questions=Array.isArray(manifest?.questions)?manifest.questions:[];if(manifest?.schemaVersion!=='sinbad-human-review-manifest/1'||questions.length>250)throw coded('INPUT_INVALID')
+   for(const item of questions){const q=item as Record<string,unknown>,questionId=String(q.questionId||''),sourceRevision=String(q.sourceRevision||manifest.sourceRevision||''),technicalStatus=String(q.technicalStatus||'');if(questionId.length<1||questionId.length>200||sourceRevision.length<1||sourceRevision.length>200||technicalStatus.length<1||technicalStatus.length>100||!HASH.test(String(q.contentSha256||''))||typeof q.questionPayload!=='object'||q.questionPayload===null||Array.isArray(q.questionPayload)||typeof (q.evidencePayload??{})!=='object'||Array.isArray(q.evidencePayload??{}))throw coded('INPUT_INVALID')}
+   const command={workspaceId,manifest};await requireOwnerStepUp(userClient,admin,auth,user.id,body.stepUp,{action:'identity.human_review.package_import',resourceType:'review_manifest',resourceId:String(manifest.sourceBatchId||''),workspaceId,command})
+   const rows=questions.map((q:any,i:number)=>({question_id:q.questionId,position:i+1,source_revision:String(q.sourceRevision||manifest.sourceRevision||''),content_sha256:String(q.contentSha256||''),technical_status:String(q.technicalStatus||''),question_payload:q.questionPayload,evidence_payload:q.evidencePayload??{}}))
+   const {data,error}=await admin.rpc('human_review_import_package',{p_workspace_id:workspaceId,p_actor_id:user.id,p_source_batch_id:String(manifest.sourceBatchId||''),p_source_revision:String(manifest.sourceRevision||''),p_content_sha256:String(manifest.contentSha256||''),p_title:String(manifest.title||''),p_package_size:integer(manifest.packageSize,'package size',25,250),p_expected_count:integer(manifest.expectedCount,'expected count',1,250),p_missing_count:integer(manifest.missingCount,'missing count',0,250),p_deferred_count:integer(manifest.deferredCount,'deferred count',0,250),p_questions:rows,p_request_id:requestId});if(error)return respond(origin,409,{error:databaseCode(error)});return respond(origin,200,{result:data})
+  }
   if(action==='claim_package'){
    const packageId=uuid(body.packageId,'package'),lockVersion=integer(body.expectedLockVersion,'lock version')
    const {data,error}=await admin.rpc('human_review_claim_package',{p_workspace_id:workspaceId,p_package_id:packageId,p_actor_id:user.id,p_expected_lock_version:lockVersion,p_request_id:requestId});if(error)return respond(origin,409,{error:databaseCode(error)});return respond(origin,200,{result:data})
@@ -102,6 +110,12 @@ Deno.serve(async request=>{
    const packageId=uuid(body.packageId,'package'),targetUserId=body.targetUserId===null?null:uuid(body.targetUserId,'target reviewer'),lockVersion=integer(body.expectedLockVersion,'lock version'),note=String(body.note||'').trim();if(note.length>2000)throw coded('INPUT_INVALID')
    const command={workspaceId,packageId,targetUserId,expectedLockVersion:lockVersion,note};await requireOwnerStepUp(userClient,admin,auth,user.id,body.stepUp,{action:'identity.human_review.package_transfer',resourceType:'review_package',resourceId:packageId,workspaceId,command})
    const {data,error}=await admin.rpc('human_review_transfer_package',{p_workspace_id:workspaceId,p_package_id:packageId,p_actor_id:user.id,p_target_user_id:targetUserId,p_expected_lock_version:lockVersion,p_request_id:requestId,p_note:note});if(error)return respond(origin,409,{error:databaseCode(error)});return respond(origin,200,{result:data})
+  }
+  if(action==='owner_finalize_package'){
+   if(!isOwner)return respond(origin,403,{error:'OWNER_REQUIRED'})
+   const packageId=uuid(body.packageId,'package'),decision=String(body.decision||''),note=String(body.note||'').trim(),lockVersion=integer(body.expectedLockVersion,'lock version');if(!['ACCEPTED','RETURNED'].includes(decision)||note.length>2000)throw coded('INPUT_INVALID')
+   const command={workspaceId,packageId,decision,note,expectedLockVersion:lockVersion};await requireOwnerStepUp(userClient,admin,auth,user.id,body.stepUp,{action:'identity.human_review.package_finalize',resourceType:'review_package',resourceId:packageId,workspaceId,command})
+   const {data,error}=await admin.rpc('human_review_owner_finalize_package',{p_workspace_id:workspaceId,p_package_id:packageId,p_actor_id:user.id,p_decision:decision,p_note:note,p_expected_lock_version:lockVersion,p_request_id:requestId});if(error)return respond(origin,409,{error:databaseCode(error)});return respond(origin,200,{result:data})
   }
   return respond(origin,400,{error:'ACTION_UNSUPPORTED'})
  }catch(error){const code=String((error as any)?.code||'REQUEST_INVALID');return respond(origin,code==='INPUT_INVALID'?400:code==='MFA_AAL2_REQUIRED'||code==='FOUNDER_STEP_UP_REQUIRED'||code==='FOUNDER_STEP_UP_REJECTED'?403:400,{error:code})}

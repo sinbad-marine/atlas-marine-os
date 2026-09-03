@@ -105,6 +105,35 @@ drop trigger if exists human_review_audit_immutable on public.human_review_audit
 create trigger human_review_audit_immutable before update or delete on public.human_review_audit
 for each row execute function public.reject_human_review_audit_mutation();
 
+create or replace function public.human_review_import_package(
+  p_workspace_id uuid,p_actor_id uuid,p_source_batch_id text,p_source_revision text,p_content_sha256 text,p_title text,
+  p_package_size integer,p_expected_count integer,p_missing_count integer,p_deferred_count integer,p_questions jsonb,p_request_id uuid)
+returns jsonb language plpgsql security definer set search_path='' as $$
+declare v_present integer;v_package_id uuid;v_result jsonb;
+begin
+  if not exists(select 1 from public.workspace_members m where m.workspace_id=p_workspace_id and m.user_id=p_actor_id and m.is_active and m.role::text='owner') then raise exception 'HUMAN_REVIEW_OWNER_REQUIRED'; end if;
+  if p_package_size not in (25,50,100,250) or jsonb_typeof(p_questions)<>'array' or jsonb_array_length(p_questions)>250
+    or char_length(coalesce(p_source_batch_id,'')) not between 1 and 200 or char_length(coalesce(p_source_revision,'')) not between 1 and 200
+    or char_length(coalesce(p_title,'')) not between 1 and 200 or p_content_sha256!~'^[a-f0-9]{64}$' then raise exception 'HUMAN_REVIEW_INPUT_INVALID'; end if;
+  v_present=jsonb_array_length(p_questions);
+  if p_expected_count<1 or p_expected_count>p_package_size or v_present>p_package_size or p_missing_count<0 or p_deferred_count<0
+    or v_present+p_missing_count+p_deferred_count<>p_expected_count then raise exception 'HUMAN_REVIEW_COUNT_MISMATCH'; end if;
+  select (new_state->>'packageId')::uuid into v_package_id from public.human_review_audit where request_id=p_request_id and actor_id=p_actor_id;
+  if found then return jsonb_build_object('packageId',v_package_id,'duplicate',true); end if;
+  insert into public.human_review_packages(workspace_id,source_batch_id,source_revision,content_sha256,title,package_size,expected_count,present_count,missing_count,deferred_count,created_by)
+  values(p_workspace_id,p_source_batch_id,p_source_revision,p_content_sha256,p_title,p_package_size,p_expected_count,v_present,p_missing_count,p_deferred_count,p_actor_id)
+  returning id into v_package_id;
+  insert into public.human_review_package_questions(package_id,question_id,position,source_revision,content_sha256,technical_status,question_payload,evidence_payload)
+  select v_package_id,x.question_id,x.position,x.source_revision,x.content_sha256,x.technical_status,x.question_payload,coalesce(x.evidence_payload,'{}'::jsonb)
+  from jsonb_to_recordset(p_questions) as x(question_id text,position integer,source_revision text,content_sha256 text,technical_status text,question_payload jsonb,evidence_payload jsonb);
+  if (select count(*) from public.human_review_package_questions where package_id=v_package_id)<>v_present then raise exception 'HUMAN_REVIEW_COUNT_MISMATCH'; end if;
+  v_result=jsonb_build_object('packageId',v_package_id,'presentCount',v_present,'expectedCount',p_expected_count,'packageComplete',v_present=p_expected_count and p_missing_count=0 and p_deferred_count=0,'duplicate',false);
+  insert into public.human_review_audit(request_id,workspace_id,package_id,actor_id,actor_kind,action,new_state)
+  values(p_request_id,p_workspace_id,v_package_id,p_actor_id,'OWNER','PACKAGE_IMPORTED',v_result);
+  return v_result;
+exception when unique_violation then raise exception 'HUMAN_REVIEW_MANIFEST_EXISTS';
+end $$;
+
 create or replace function public.human_review_authorize_reviewer(
   p_workspace_id uuid,p_actor_id uuid,p_user_id uuid,p_state text,p_request_id uuid,p_note text default null)
 returns jsonb language plpgsql security definer set search_path='' as $$
@@ -214,15 +243,42 @@ begin
   return v_result;
 end $$;
 
+create or replace function public.human_review_owner_finalize_package(
+  p_workspace_id uuid,p_package_id uuid,p_actor_id uuid,p_decision text,p_note text,p_expected_lock_version bigint,p_request_id uuid)
+returns jsonb language plpgsql security definer set search_path='' as $$
+declare v_package public.human_review_packages%rowtype;v_previous jsonb;v_result jsonb;
+begin
+  if p_decision not in ('ACCEPTED','RETURNED') or char_length(coalesce(p_note,''))>2000 then raise exception 'HUMAN_REVIEW_INPUT_INVALID'; end if;
+  if not exists(select 1 from public.workspace_members m where m.workspace_id=p_workspace_id and m.user_id=p_actor_id and m.is_active and m.role::text='owner') then raise exception 'HUMAN_REVIEW_OWNER_REQUIRED'; end if;
+  select * into v_package from public.human_review_packages where id=p_package_id and workspace_id=p_workspace_id for update;
+  if not found then raise exception 'HUMAN_REVIEW_PACKAGE_NOT_FOUND'; end if;
+  select new_state into v_result from public.human_review_audit where request_id=p_request_id and actor_id=p_actor_id;
+  if found then return v_result||jsonb_build_object('duplicate',true); end if;
+  if v_package.lock_version<>p_expected_lock_version then raise exception 'HUMAN_REVIEW_STALE_WRITE'; end if;
+  if p_decision='ACCEPTED' and v_package.status<>'SUBMITTED_COMPLETE' then raise exception 'HUMAN_REVIEW_COMPLETE_PACKAGE_REQUIRED'; end if;
+  if p_decision='RETURNED' and v_package.status not in ('SUBMITTED_COMPLETE','SUBMITTED_INCOMPLETE') then raise exception 'HUMAN_REVIEW_SUBMISSION_REQUIRED'; end if;
+  v_previous=to_jsonb(v_package);
+  update public.human_review_packages set status=case when p_decision='ACCEPTED' then 'OWNER_ACCEPTED' else 'OWNER_RETURNED' end,last_activity_at=clock_timestamp(),lock_version=lock_version+1 where id=p_package_id returning * into v_package;
+  update public.human_question_reviews set owner_decision=p_decision,owner_id=p_actor_id,owner_note=nullif(p_note,''),owner_reviewed_at=clock_timestamp() where package_id=p_package_id;
+  v_result=jsonb_build_object('packageId',p_package_id,'status',v_package.status,'ownerDecision',p_decision,'lockVersion',v_package.lock_version,'duplicate',false);
+  insert into public.human_review_audit(request_id,workspace_id,package_id,actor_id,actor_kind,action,previous_state,new_state,note)
+  values(p_request_id,p_workspace_id,p_package_id,p_actor_id,'OWNER','OWNER_PACKAGE_'||p_decision,v_previous,v_result,nullif(p_note,''));
+  return v_result;
+end $$;
+
 revoke all on function public.human_review_authorize_reviewer(uuid,uuid,uuid,text,uuid,text) from public,anon,authenticated;
+revoke all on function public.human_review_import_package(uuid,uuid,text,text,text,text,integer,integer,integer,integer,jsonb,uuid) from public,anon,authenticated;
 revoke all on function public.human_review_claim_package(uuid,uuid,uuid,bigint,uuid) from public,anon,authenticated;
 revoke all on function public.human_review_transfer_package(uuid,uuid,uuid,uuid,bigint,uuid,text) from public,anon,authenticated;
 revoke all on function public.human_review_save_decision(uuid,uuid,text,uuid,text,text,bigint,bigint,uuid) from public,anon,authenticated;
 revoke all on function public.human_review_submit_package(uuid,uuid,uuid,bigint,bigint,uuid) from public,anon,authenticated;
+revoke all on function public.human_review_owner_finalize_package(uuid,uuid,uuid,text,text,bigint,uuid) from public,anon,authenticated;
 grant execute on function public.human_review_authorize_reviewer(uuid,uuid,uuid,text,uuid,text) to service_role;
+grant execute on function public.human_review_import_package(uuid,uuid,text,text,text,text,integer,integer,integer,integer,jsonb,uuid) to service_role;
 grant execute on function public.human_review_claim_package(uuid,uuid,uuid,bigint,uuid) to service_role;
 grant execute on function public.human_review_transfer_package(uuid,uuid,uuid,uuid,bigint,uuid,text) to service_role;
 grant execute on function public.human_review_save_decision(uuid,uuid,text,uuid,text,text,bigint,bigint,uuid) to service_role;
 grant execute on function public.human_review_submit_package(uuid,uuid,uuid,bigint,bigint,uuid) to service_role;
+grant execute on function public.human_review_owner_finalize_package(uuid,uuid,uuid,text,text,bigint,uuid) to service_role;
 
 commit;
