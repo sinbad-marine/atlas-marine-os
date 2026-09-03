@@ -234,7 +234,7 @@
     },
     {
       "path": "bridge/sinbad-bridge.ps1",
-      "sha256": "3078fd7e473535a01708db3452ab5d046f20f44a3b2ab09a4239c7c7a482800a",
+      "sha256": "7112cb7cd77ec5df031508db92d52adf0a85cafe6b19b9606cda439512419759",
       "kind": "SOURCE"
     },
     {
@@ -460,7 +460,7 @@
     {
       "path": "tests/argos-bridge-full-runtime.test.js",
       "kind": "TEST",
-      "sha256": "51daf7202e951dd7aa7aefaee5dea66d78379efa393ff3d70d97e36fd7558053"
+      "sha256": "5fa25eb13199b9a36c643785ebb1df09f0e2676629c4f34e8e4466778f282e3f"
     },
     {
       "path": "tests/browser/enc-controls.spec.js",

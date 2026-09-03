@@ -863,7 +863,7 @@ try {
       $headerText = [Text.Encoding]::ASCII.GetString($headerBuffer.ToArray())
       $headerLines = @($headerText -split "`r`n")
       $requestLine = $headerLines[0]
-      if ($requestLine -notmatch '^[A-Za-z]+ /[^\s]* HTTP/1\.[01]$') { Write-HttpResponse $stream 400 'Bad Request' (Json @{ error='BRIDGE_REQUEST_LINE_INVALID' }); continue }
+      if ($requestLine -cnotmatch '^[A-Za-z]+ /[^\s]* HTTP/1\.[01]$') { Write-HttpResponse $stream 400 'Bad Request' (Json @{ error='BRIDGE_REQUEST_LINE_INVALID' }); continue }
       $requestParts = $requestLine.Split(' ')
       $method = $requestParts[0].ToUpperInvariant()
       $path = $requestParts[1].Split('?')[0]
