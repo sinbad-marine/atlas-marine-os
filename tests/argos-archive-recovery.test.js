@@ -95,3 +95,23 @@ test('linked archive ancestors are rejected before creating directories outside 
   assert.equal(fs.existsSync(path.join(outside, 'child')), false);
   assert.throws(() => loadArchiveShelves(link), /LINK_BLOCKED/);
 });
+
+test('restore recreates authenticated event journals in a new directory and refuses overwrite',t=>{
+ const f=fixture(t),created=f.cli(['create']);assert.equal(created.status,0,created.stderr);
+ const file=path.join(f.archive,fs.readdirSync(f.archive)[0]),destination=path.join(f.root,'restored');
+ const before=loadArchiveShelves(f.runtime);
+ const result=f.cli(['restore',file,destination]);assert.equal(result.status,0,result.stderr);
+ assert.equal(JSON.parse(result.stdout).status,'ARGOS_ARCHIVE_RESTORED');
+ const restored=loadArchiveShelves(destination);assert.deepEqual(restored,before);
+ const repeated=f.cli(['restore',file,destination]);assert.notEqual(repeated.status,0);assert.deepEqual(loadArchiveShelves(destination),before);
+ const wrong=path.join(f.root,'wrong-key');assert.notEqual(f.cli(['restore',file,wrong],{ARGOS_ARCHIVE_KEY:crypto.randomBytes(32).toString('base64')}).status,0);assert.equal(fs.existsSync(wrong),false);
+});
+
+test('restore rejects authenticated traversal and Windows-reserved shelf paths before writing',t=>{
+ const f=fixture(t),api=require('../sinbad-ai-core/argos-encrypted-archive'),{restoreArchive}=require('../tools/argos-restore-archive');
+ const key=crypto.randomBytes(32).toString('base64'),original=loadArchiveShelves(f.runtime)[0];
+ for(const shelfId of ['..','.','CON','nul.txt','trailing.']){
+  const value=api.createArchive({archiveId:'restore-fixture',createdAt:'2026-09-03T00:00:00.000Z',sourceInventoryHash:'a'.repeat(64),shelves:[{...original,shelfId}]},key);
+  const destination=path.join(f.root,'rejected');assert.throws(()=>restoreArchive(value,key,destination),/PATH_INVALID/);assert.equal(fs.existsSync(destination),false);
+ }
+});

@@ -88,3 +88,24 @@ test('Bridge binds exact UTF-8 bytes and obtains the refreshed token after MFA',
   expect(grant.resourceId).toBe(instance);expect(grant.workspaceId).toBe(workspace);
   expect(sent.headers['x-sinbad-owner-nonce']).toBe('ab'.repeat(32));
 });
+
+for(const initialStatus of [201,403])test(`Bridge protection check preserves the exact request and stops on initial ${initialStatus}`,async({page})=>{
+  await prepare(page,{aal:'aal2'});
+  const workspace='22222222-2222-4222-8222-222222222222',instance='33333333-3333-4333-8333-333333333333',sent=[];
+  await page.route('http://127.0.0.1:31983/**',async route=>{
+    const request=route.request();
+    if(request.url().endsWith('/argos/status'))return route.fulfill({json:{ownerBoundary:{enforced:true,configured:true,workspaceId:workspace,instanceId:instance}}});
+    sent.push({headers:request.headers(),body:request.postData(),url:request.url()});
+    if(sent.length===1)return route.fulfill({status:initialStatus,json:initialStatus===201?{ok:true,filename:JSON.parse(request.postData()).filename}:{error:'BRIDGE_OWNER_BLOCKED'}});
+    return route.fulfill({status:403,json:{error:'ARGOS_COMMAND_BLOCKED',reason:'ARGOS_COMMAND_REPLAYED'}});
+  });
+  await page.evaluate(workspace=>{selectedWorkspaceId=workspace;cloudClient.auth.getSession=async()=>({data:{session:{access_token:'synthetic.refreshed.token'}}});},workspace);
+  await page.getByRole('button',{name:'Check local Bridge protection',exact:true}).click();
+  const status=page.locator('#settingsBridgeVerificationStatus');
+  await expect(status).toContainText(initialStatus===201?'Protection verified:':'Protection check incomplete:');
+  expect(sent).toHaveLength(initialStatus===201?2:1);
+  if(initialStatus===201)expect(sent[1]).toEqual(sent[0]);
+  const body=JSON.parse(sent[0].body);expect(body.filename).toMatch(/^ARGOS-TEST-NOT-FOR-NAVIGATION-[a-f0-9-]+\.gpx$/);expect(body.gpx).not.toMatch(/<(rte|wpt|trk)/);
+  expect(sent[0].url).toBe('http://127.0.0.1:31983/routes');
+  expect(await status.innerText()).not.toContain('synthetic.refreshed.token');expect(await status.innerText()).not.toContain('ab'.repeat(32));
+});

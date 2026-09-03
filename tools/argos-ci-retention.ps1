@@ -1,4 +1,4 @@
-param([Parameter(Mandatory=$true)][ValidateSet('provision','verify')][string]$Command,[string]$ArchiveFile)
+param([Parameter(Mandatory=$true)][ValidateSet('provision','verify','restore')][string]$Command,[string]$ArchiveFile,[string]$RestoreDirectory)
 $ErrorActionPreference='Stop'
 Add-Type -AssemblyName System.Security
 $root=Join-Path $env:LOCALAPPDATA 'SinbadMarine\Argos'
@@ -28,7 +28,8 @@ try {
   $key=[Security.Cryptography.ProtectedData]::Unprotect([IO.File]::ReadAllBytes($keyFile),$entropy,[Security.Cryptography.DataProtectionScope]::CurrentUser)
   $env:ARGOS_ARCHIVE_KEY=[Convert]::ToBase64String($key)
   $env:ARGOS_ARCHIVE_ROOT=Split-Path -Parent ([IO.Path]::GetFullPath($ArchiveFile))
-  & node (Join-Path $PSScriptRoot 'argos-encrypted-archive.js') verify ([IO.Path]::GetFullPath($ArchiveFile))
+  if($Command -eq 'restore' -and [string]::IsNullOrWhiteSpace($RestoreDirectory)){throw 'RESTORE_DIRECTORY_REQUIRED'}
+  & node (Join-Path $PSScriptRoot 'argos-encrypted-archive.js') $Command ([IO.Path]::GetFullPath($ArchiveFile)) $RestoreDirectory
   if($LASTEXITCODE -ne 0){throw 'RETAINED_ARCHIVE_VERIFICATION_FAILED'}
  }
 }finally{

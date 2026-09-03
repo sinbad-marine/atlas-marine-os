@@ -98,3 +98,9 @@ tools/argos-ci-retention.ps1 text eol=lf
 package-lock.json text eol=lf
 
 bridge/qwen-tier-router.ps1 text eol=lf
+
+tools/argos-host-identity.ps1 text eol=lf
+tools/run-argos-host-health.js text eol=lf
+tools/argos-restore-archive.js text eol=lf
+tests/argos-host-health.test.js text eol=lf
+docs/ARGOS_FINAL_ACCEPTANCE.md text eol=lf

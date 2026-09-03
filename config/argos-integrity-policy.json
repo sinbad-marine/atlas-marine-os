@@ -29,7 +29,7 @@
     },
     {
       "path": "tests/browser/owner-verification.spec.js",
-      "sha256": "b436a8e66aec2d08ecf73f92371076e8b8acdce4e2408107193e7f337fa245f2",
+      "sha256": "b6f943378e3b53a22bd4c4cc1e7fb5f114e83d8ecfc50342ade441f64c4dba5a",
       "kind": "TEST"
     },
     {
@@ -39,7 +39,7 @@
     },
     {
       "path": "sw.js",
-      "sha256": "1855f03085d7ff0bb5d49547ee5ca40b5ac4796d2163f6e3e43d4a0b16f6c7e5",
+      "sha256": "173585124c768f62bf34898d9e20b4c45f02ae5494bcdf8592db4b3fd9ec7025",
       "kind": "SOURCE"
     },
     {
@@ -109,7 +109,7 @@
     },
     {
       "path": "tests/argos-archive-recovery.test.js",
-      "sha256": "bb1cb7ed3fffa7bf455ba60a146399981d959d863e36169f38cb1c133af66a9d",
+      "sha256": "0ef7c7911bce15d97061352f29167cd015599b308cf4b9bfb555255a27e58e85",
       "kind": "TEST"
     },
     {
@@ -139,7 +139,7 @@
     },
     {
       "path": "tests/argos-bridge-http.test.js",
-      "sha256": "37c4d519ee5bee3010fb2bb3b45f0a13d9c31ce15a0c2d19d7bbd35aefd036f9",
+      "sha256": "1209e385c3d8650f82f688f0919d5698d247626a6c6c8889fb36093c76942e2f",
       "kind": "TEST"
     },
     {
@@ -229,7 +229,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "4f928abb10f9df3e7906c0807592b7671e2df1020f54e6597c606ab958d40f9b",
+      "sha256": "c30f69a24780bbbc867b9b2ae992b53c1c015d94917a977d02e3708c692fe12f",
       "kind": "SOURCE"
     },
     {
@@ -269,7 +269,7 @@
     },
     {
       "path": "sinbad-ai-core/argos-encrypted-archive.js",
-      "sha256": "ccd922906b694bda0b8f421171e45af9ff80f26889058afaa6de7114a460f6e8",
+      "sha256": "9b49bc93243eea111411ac15aab3a596c7d5218bf9ed114271313b580dffa3c8",
       "kind": "SOURCE"
     },
     {
@@ -319,7 +319,7 @@
     },
     {
       "path": "sinbad-ai-core/tests/argos-encrypted-archive.test.js",
-      "sha256": "386a4459f3be6c24757e026dc2e943ed194e4ec03d304da0da74f0e402ddd06c",
+      "sha256": "feacb14121c71d0c34de59cd0fcd6388de2492fc19996e3b2005791fbafcf96f",
       "kind": "TEST"
     },
     {
@@ -399,7 +399,7 @@
     },
     {
       "path": "tools/argos-encrypted-archive.js",
-      "sha256": "458d3fcbc5935234f2e5ebd345b396644fe9c1ae69ea730398104545feffe617",
+      "sha256": "c0e36be24b86de27646d20385562309cf1d59f1602c2342e3d11459c5a1497f3",
       "kind": "SOURCE"
     },
     {
@@ -440,7 +440,7 @@
     {
       "path": "tests/sinbad-academy-window.test.js",
       "kind": "TEST",
-      "sha256": "8b66d8b4728b84c052c6a06f5ea0d80d29a054b1d9f4195cd9f12f71c3ef7ef8"
+      "sha256": "13ed7877001bd9d89eb2331f1cecc464452051f411d7cf6cfd76533c1bcbab27"
     },
     {
       "path": "founder-owner-mfa.js",
@@ -455,7 +455,7 @@
     {
       "path": "tools/argos-install-bridge.ps1",
       "kind": "SOURCE",
-      "sha256": "ba3b37bebd4ae8c7062c5b2a449cd8840e1f7842ddc8fe73cf60cb78d46f4e69"
+      "sha256": "ba747cfd313b749aeab435041881c1ace6b07fac015ee8758c52cae83e8e2e6a"
     },
     {
       "path": "tests/argos-bridge-full-runtime.test.js",
@@ -475,7 +475,7 @@
     {
       "path": "tools/argos-ci-retention.ps1",
       "kind": "SOURCE",
-      "sha256": "dd959a5777b462e6b78c712764079318ccede1ec0051d9679a7b774942666908"
+      "sha256": "d90cebe90efc5045879d446f959f04f289209a9f3e809d47e735250b1044e24b"
     },
     {
       "path": "package-lock.json",
@@ -486,6 +486,31 @@
       "path": "bridge/qwen-tier-router.ps1",
       "kind": "SOURCE",
       "sha256": "a81802d534ae5ff28a4ac53d69463eb6010bbe20a0c95a97273d7ee12e14c80a"
+    },
+    {
+      "path": "tools/argos-host-identity.ps1",
+      "kind": "SOURCE",
+      "sha256": "1540f35568445ebe35ecd63caa360fed4dd0505a048b15087ba247ec764df286"
+    },
+    {
+      "path": "tools/run-argos-host-health.js",
+      "kind": "SOURCE",
+      "sha256": "3268562d3b01935fa69eac64c08f05a6a652e8751cceacf851a04d75784ec7b2"
+    },
+    {
+      "path": "tools/argos-restore-archive.js",
+      "kind": "SOURCE",
+      "sha256": "838726928f5bff43eb56b1517687f3bfbfe36127995b5e46ee51bfa16eb48645"
+    },
+    {
+      "path": "tests/argos-host-health.test.js",
+      "kind": "TEST",
+      "sha256": "02fc6dcb2cdc15e8d1e2ed8267a75e7f6e0033cb54b08529aeba73b06282b6b1"
+    },
+    {
+      "path": "docs/ARGOS_FINAL_ACCEPTANCE.md",
+      "kind": "DOCUMENT",
+      "sha256": "2203b8ae1324c8515e5f41a145167ba61ab0a7a51e1dfe90aee8c0338f2cd974"
     }
   ]
 }

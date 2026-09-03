@@ -24,8 +24,8 @@ try{
     const destination=path.join(archiveRoot,`${archiveId}.json`);if(!inside(archiveRoot,destination))throw new Error('ARCHIVE_PATH_INVALID');
     const descriptor=fs.openSync(destination,'wx',0o600);try{fs.writeFileSync(descriptor,`${JSON.stringify(container)}\n`,'utf8');fs.fsyncSync(descriptor);}finally{fs.closeSync(descriptor);}
     const written=fs.readFileSync(destination,'utf8');const summary=archiveApi.verifyArchive(JSON.parse(written),masterKey);process.stdout.write(`${JSON.stringify({...summary,archiveSha256:hash(written),file:path.relative(projectRoot,destination).replaceAll('\\','/')})}\n`);
-  }else if(command==='verify'){
+  }else if(command==='verify'||command==='restore'){
     const requested=String(process.argv[3]||'');if(!requested)throw new Error('ARCHIVE_FILE_REQUIRED');const target=path.resolve(projectRoot,requested);if(!inside(archiveRoot,target))throw new Error('ARCHIVE_PATH_INVALID');const stat=fs.lstatSync(target);if(!stat.isFile()||stat.isSymbolicLink())throw new Error('ARCHIVE_FILE_INVALID');
-    assertUnlinked(target);if(stat.size>100663296)throw new Error('ARCHIVE_SIZE_LIMIT');const container=JSON.parse(fs.readFileSync(target,'utf8'));process.stdout.write(`${JSON.stringify(archiveApi.verifyArchive(container,masterKey))}\n`);
+    assertUnlinked(target);if(stat.size>100663296)throw new Error('ARCHIVE_SIZE_LIMIT');const container=JSON.parse(fs.readFileSync(target,'utf8'));if(command==='restore'){const destination=String(process.argv[4]||'');if(!destination)throw new Error('RESTORE_DESTINATION_REQUIRED');process.stdout.write(`${JSON.stringify(require('./argos-restore-archive').restoreArchive(container,masterKey,destination))}\n`);}else process.stdout.write(`${JSON.stringify(archiveApi.verifyArchive(container,masterKey))}\n`);
   }else throw new Error('COMMAND_INVALID');
 }catch(error){fail(error instanceof Error&&/^[A-Z][A-Z0-9_]+$/.test(error.message)?error.message:'ARGOS_ARCHIVE_IO_FAILED');}
