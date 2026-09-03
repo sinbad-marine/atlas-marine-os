@@ -2232,7 +2232,7 @@ async function refreshArgosStatus(){
     $('argosGateState').textContent=healthy?'OWNER KONTROLÜ AÇIK':'OWNER KURULUMU EKSİK';
     $('argosGateDetail').textContent=status?.commandGate?.active?`${status.commandGate.registeredActions||0} eylem · tekrar koruması açık · ${status.commandGate.observedCommands||0} yakın komut`:'ARGOS komut kabul kapısı doğrulanamadı';
     $('argosModeState').textContent=status?.mode||'UNKNOWN';
-    setArgosCardState('bridge',status?.bridge?.online?'healthy':'degraded');setArgosCardState('ai',status?.ai?.online?'healthy':'degraded');setArgosCardState('gate',status?.commandGate?.active?'healthy':'degraded');setArgosCardState('mode',status?.mode==='MONITOR_ONLY'?'healthy':'degraded');
+    setArgosCardState('bridge',status?.bridge?.online?'healthy':'degraded');setArgosCardState('ai',status?.ai?.online?'healthy':'degraded');setArgosCardState('gate',healthy?'healthy':'degraded');setArgosCardState('mode',status?.mode==='MONITOR_ONLY'?'healthy':'degraded');
     overall.textContent=healthy?'YEREL DURUM ALINDI':'ARGOS UYARI';overall.className=`argos-overall ${healthy?'checking':'degraded'}`;
     evidence.textContent=`Bridge beyanı; bağımsız kimlik veya uçtan uca sağlık kanıtı değildir. Gözlem: ${new Date(status.observedAt).toLocaleString('tr-TR')} · Şema ${status.version}`;
   }catch(error){
