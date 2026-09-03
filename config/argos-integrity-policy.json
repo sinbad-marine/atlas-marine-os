@@ -511,6 +511,21 @@
       "path": "docs/ARGOS_FINAL_ACCEPTANCE.md",
       "kind": "DOCUMENT",
       "sha256": "2203b8ae1324c8515e5f41a145167ba61ab0a7a51e1dfe90aee8c0338f2cd974"
+    },
+    {
+      "path": ".github/workflows/argos-recovery-check.yml",
+      "kind": "WORKFLOW",
+      "sha256": "ac8a12c2eadde56cbb40abe5d2d6323bdd1537e4a2059b457c3accbe6be4cdb2"
+    },
+    {
+      "path": "tools/argos-independent-recovery.js",
+      "kind": "SOURCE",
+      "sha256": "d73eac176b0f40c1e21dc233527f56afe9ae5f6ca69376ac1c40ccad88975c9d"
+    },
+    {
+      "path": "tests/argos-independent-recovery.test.js",
+      "kind": "TEST",
+      "sha256": "c484a716b1c9f91be11ce571bae76cbc49b81a2bb012c6827249fed0567c42a9"
     }
   ]
 }
