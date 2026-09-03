@@ -1,4 +1,4 @@
-function Select-SinbadModelTier {
+﻿function Select-SinbadModelTier {
   param(
     [Parameter(Mandatory=$true)][string]$Question,
     [int]$HistoryCount = 0,

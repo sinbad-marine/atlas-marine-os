@@ -14,5 +14,7 @@ test('full Bridge boots with isolated data and rejects every protected write wit
   const r=await fetch(base+route,{method:'POST',headers:{'Content-Type':'application/json','X-Sinbad-Argos-Version':'sinbad-argos-command/1-v1','X-Sinbad-Argos-Action':action,'X-Sinbad-Argos-Target':route,'X-Sinbad-Argos-Command-Id':'browser-'+randomUUID(),'X-Sinbad-Argos-Requested-At':new Date().toISOString()},body:'{}',signal:AbortSignal.timeout(5000)});
   assert.equal(r.status,403,route);assert.equal((await r.json()).error,'BRIDGE_OWNER_BLOCKED',route);
  }
+ const answer=await fetch(base+'/ai/chat',{method:'POST',headers:{'Content-Type':'application/json','X-Sinbad-Argos-Version':'sinbad-argos-command/1-v1','X-Sinbad-Argos-Action':'AI_INFERENCE','X-Sinbad-Argos-Target':'/ai/chat','X-Sinbad-Argos-Command-Id':'browser-'+randomUUID(),'X-Sinbad-Argos-Requested-At':new Date().toISOString()},body:JSON.stringify({question:'2+2'}),signal:AbortSignal.timeout(10000)});
+ assert.equal(answer.status,200);assert.equal((await answer.json()).answer,'2+2 e\u015fittir 4.');
  assert.deepEqual(fs.readdirSync(path.join(data,'Routes')),[]);assert.deepEqual(fs.readdirSync(path.join(data,'Library/Imported')),[]);
 });

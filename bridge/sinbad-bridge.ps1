@@ -1,4 +1,4 @@
-param(
+﻿param(
   [int]$Port = 31983,
   [string]$ExchangeRoot = '',
   [string]$AiModel = 'qwen3:14b',
