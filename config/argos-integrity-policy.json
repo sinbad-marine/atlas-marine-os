@@ -515,7 +515,7 @@
     {
       "path": ".github/workflows/argos-recovery-check.yml",
       "kind": "WORKFLOW",
-      "sha256": "ac8a12c2eadde56cbb40abe5d2d6323bdd1537e4a2059b457c3accbe6be4cdb2"
+      "sha256": "a9b15b1dc8e106c33a4ceb3b09ce085a267d19c209253c78d4e35ccd490ff860"
     },
     {
       "path": "tools/argos-independent-recovery.js",
