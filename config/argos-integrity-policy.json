@@ -476,6 +476,11 @@
       "path": "tools/argos-ci-retention.ps1",
       "kind": "SOURCE",
       "sha256": "dd959a5777b462e6b78c712764079318ccede1ec0051d9679a7b774942666908"
+    },
+    {
+      "path": "package-lock.json",
+      "kind": "CONFIG",
+      "sha256": "7aa1f4dd76326af8f428ee7e3226a498d869531319f15a2dc3da6012ef1638db"
     }
   ]
 }
