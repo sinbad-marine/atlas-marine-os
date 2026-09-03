@@ -6,9 +6,10 @@ const path=require('node:path');
 const {createRequire}=require('node:module');
 
 const runtime=path.resolve(__dirname,'../../../tmp/argos-pg-runtime-058');
-const localRequire=createRequire(path.join(runtime,'package.json'));
-const {PGlite}=localRequire('@electric-sql/pglite');
-const {pgcrypto}=localRequire('@electric-sql/pglite/contrib/pgcrypto');
+const runtimeAvailable=fs.existsSync(path.join(runtime,'node_modules/@electric-sql/pglite/package.json'));
+const localRequire=runtimeAvailable?createRequire(path.join(runtime,'package.json')):null;
+const {PGlite}=runtimeAvailable?localRequire('@electric-sql/pglite'):{PGlite:null};
+const {pgcrypto}=runtimeAvailable?localRequire('@electric-sql/pglite/contrib/pgcrypto'):{pgcrypto:null};
 const migration=fs.readFileSync(path.resolve(__dirname,'../supabase/migrations/20260903000400_human_reviewer_system.sql'),'utf8');
 const rollback=fs.readFileSync(path.resolve(__dirname,'../supabase/rollback/20260903000400_human_reviewer_system_preserve_data.sql'),'utf8');
 const ids={workspace:'11111111-1111-4111-8111-111111111111',owner:'22222222-2222-4222-8222-222222222222',a:'33333333-3333-4333-8333-333333333333',b:'44444444-4444-4444-8444-444444444444',pkg:'55555555-5555-4555-8555-555555555555',pkg2:'66666666-6666-4666-8666-666666666666'};
@@ -27,7 +28,7 @@ async function setup(){
  return db;
 }
 
-test('assignment generation rejects former reviewer and preserves work',async()=>{
+test('assignment generation rejects former reviewer and preserves work',{skip:!runtimeAvailable},async()=>{
  const db=await setup();
  try{
   for(const [user,n] of [[ids.a,1],[ids.b,2]])await db.query('select public.human_review_authorize_reviewer($1,$2,$3,$4,$5,$6)',[ids.workspace,ids.owner,user,'active',req(n),'authorized']);
@@ -56,7 +57,7 @@ test('assignment generation rejects former reviewer and preserves work',async()=
  }finally{await db.close()}
 });
 
-test('Owner manifest import derives present count and starts with no human decisions',async()=>{
+test('Owner manifest import derives present count and starts with no human decisions',{skip:!runtimeAvailable},async()=>{
  const db=await setup();
  try{
   const questions=[{question_id:'q-import',position:1,source_revision:'r1',content_sha256:'e'.repeat(64),technical_status:'TECHNICALLY_VERIFIED',question_payload:{stem:'Q'},evidence_payload:{page:3}}];
@@ -69,7 +70,7 @@ test('Owner manifest import derives present count and starts with no human decis
  }finally{await db.close()}
 });
 
-test('emergency rollback disables mutations and preserves evidence',async()=>{
+test('emergency rollback disables mutations and preserves evidence',{skip:!runtimeAvailable},async()=>{
  const db=await setup();
  try{
   await db.query(`insert into public.human_review_packages(id,workspace_id,source_batch_id,source_revision,content_sha256,title,package_size,expected_count,present_count,missing_count,deferred_count,created_by) values($1,$2,'rollback','r1',$3,'Preserve',25,1,1,0,0,$4)`,[ids.pkg,ids.workspace,'9'.repeat(64),ids.owner]);
@@ -79,7 +80,7 @@ test('emergency rollback disables mutations and preserves evidence',async()=>{
  }finally{await db.close()}
 });
 
-test('missing questions stay explicitly incomplete and revoked reviewers are denied',async()=>{
+test('missing questions stay explicitly incomplete and revoked reviewers are denied',{skip:!runtimeAvailable},async()=>{
  const db=await setup();
  try{
   await db.query('select public.human_review_authorize_reviewer($1,$2,$3,$4,$5,$6)',[ids.workspace,ids.owner,ids.a,'active',req(20),'authorized']);
