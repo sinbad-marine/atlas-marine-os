@@ -1,5 +1,15 @@
 const {test,expect}=require('@playwright/test');
 
+async function prepareVerifiedOwner(page){
+  const workspace='22222222-2222-4222-8222-222222222222',instance='33333333-3333-4333-8333-333333333333';
+  await page.route('http://127.0.0.1:31983/argos/status',route=>route.fulfill({json:{ownerBoundary:{enforced:true,configured:true,workspaceId:workspace,instanceId:instance}}}));
+  await page.evaluate(workspace=>{
+    cloudSession={user:{id:'isolated-owner'}};selectedWorkspaceId=workspace;
+    cloudClient={auth:{getSession:async()=>({data:{session:{access_token:'synthetic.owner.token'}}}),mfa:{listFactors:async()=>({data:{totp:[]}}),getAuthenticatorAssuranceLevel:async()=>({data:{currentLevel:'aal2'}})}},functions:{invoke:async()=>({data:{authorizationId:crypto.randomUUID(),nonce:'ab'.repeat(32),expiresAt:new Date(Date.now()+300000).toISOString()}})}};
+  },workspace);
+}
+
+
 test('desktop chart console keeps route tools left, chart centre and settings right',async({page})=>{
   await page.setViewportSize({width:2400,height:1000});
   await page.route('http://127.0.0.1:31983/**',route=>route.fulfill({status:503,contentType:'application/json',body:'{}'}));
@@ -56,6 +66,7 @@ test('armed OpenCPN surface forwards bounded local mouse and keyboard controls',
   });
   await page.goto('/index.html?workspace=enc-viewer');
   await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');});
+  await prepareVerifiedOwner(page);
   await page.locator('#encMapAppsMenu > summary').click();
   await page.getByRole('button',{name:'OpenCPN Yerel Canlı Görüntü'}).click();
   await page.getByRole('button',{name:'OpenCPN kontrolü: Kapalı'}).click();
@@ -88,6 +99,7 @@ test('imports a local Bridge GPX, calculates legs and sends it to OpenCPN after 
   page.on('dialog',dialog=>dialog.accept());
   await page.goto('/index.html?workspace=enc-viewer');
   await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated')});
+  await prepareVerifiedOwner(page);
   await page.locator('#encRouteSelect').selectOption('marmaris-rodos.gpx');
   await page.locator('#encLoadRoute').click();
   await expect(page.locator('#encPassageSummary')).toContainText('Marmaris Rodos');

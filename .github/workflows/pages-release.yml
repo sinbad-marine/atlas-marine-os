@@ -46,6 +46,8 @@ jobs:
         run: npm ci
       - name: Install locked navigation dependencies
         run: npm ci --prefix sinbad-ai-core/engines/navigation
+      - name: ARGOS integrity gate
+        run: npm run verify:argos
       - name: Reject vulnerable dependencies
         run: npm audit --audit-level=moderate
       - name: Reject vulnerable navigation dependencies

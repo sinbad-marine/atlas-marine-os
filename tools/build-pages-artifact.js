@@ -19,7 +19,7 @@ const STORE_RELEASE_FILES=Object.freeze(fs.readdirSync(storeSourceRoot,{recursiv
   .map(entry=>`store/${path.relative(storeSourceRoot,path.join(entry.parentPath,entry.name)).split(path.sep).join('/')}`)
   .sort());
 const RELEASE_FILES=Object.freeze([
-  'index.html','styles.css','app.js','academy.html','academy.css','academy-window.js','academy-classroom-window.js','academy-gasm-catalog.js','exam-intelligence-local-required.html','owner-review-local-required.html','exam-review.html','exam-review.css','exam-review.js',
+  'index.html','styles.css','app.js','founder-owner-mfa.js','founder-owner-ui.js','academy.html','academy.css','academy-window.js','academy-classroom-window.js','academy-gasm-catalog.js','exam-intelligence-local-required.html','owner-review-local-required.html','exam-review.html','exam-review.css','exam-review.js',
   'academy-professor.html','academy-professor.css','academy-professor-guidance.css','academy-professor.js','sinbad-professor.js','academy-professor-v3.html','academy-professor-handsfree.css','academy-professor-handsfree.js','academy-professor-native.html','academy-professor-native.css','academy-professor-native.js','sinbad-speaker-identity.js','sinbad-tutor-orchestrator.js','sinbad-tutor-controller.js','pilot-data.js','route-data.js',
   'resource-data.js','store-data.js',
   'official-publications.js','sinbad-core.js','sinbad-passage-planner.js','sinbad-visuals.js','sinbad-training-data.js',

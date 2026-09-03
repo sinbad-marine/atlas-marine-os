@@ -39,10 +39,11 @@ test('every protected dashboard workspace has a launcher and one canonical surfa
 test('Captain Sinbad cannot silently restore retired navigation',()=>{
   assert.match(index,/data-sinbad-tab="chat"/u);
   assert.match(index,/data-sinbad-tab="academy"/u);
+  assert.match(index,/data-sinbad-tab="argos"/u);
   assert.doesNotMatch(index,/data-sinbad-tab="(?:passage|sources)"/u);
   assert.doesNotMatch(index,/id="sinbad-panel-(?:passage|sources)"/u);
   assert.doesNotMatch(index,/sinbad-tools-menu/u);
-  assert.match(app,/const SINBAD_WORKSPACE_TABS=Object\.freeze\(\['chat','academy'\]\)/u);
+  assert.match(app,/const SINBAD_WORKSPACE_TABS=Object\.freeze\(\['chat','academy','argos'\]\)/u);
 });
 
 test('dashboard and Captain Sinbad keep exactly two Academy entrances',()=>{

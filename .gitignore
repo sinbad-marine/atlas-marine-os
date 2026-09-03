@@ -8,6 +8,8 @@ playwright-report/
 test-results/
 debug.log
 .knowledge-cache/
+.argos-runtime/
+.argos-archive/
 __pycache__/
 *.pyc
 sinbad-ai-core/visual-library/assets/nga-chart-no-1-table-atlas/highlight-cache/

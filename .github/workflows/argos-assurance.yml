@@ -1,0 +1,91 @@
+name: ARGOS scheduled assurance
+
+on:
+  schedule:
+    - cron: '17 1,7,13,19 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: argos-assurance
+  cancel-in-progress: false
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  full-system-assurance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out exact source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+      - name: Use verified Node runtime
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 24.19.0
+          package-manager-cache: false
+      - name: Install locked application dependencies
+        run: npm ci
+      - name: Install locked navigation dependencies
+        run: npm ci --prefix sinbad-ai-core/engines/navigation
+      - name: Open immutable ARGOS assurance run
+        run: npm run argos:run:start
+        env:
+          ARGOS_LEDGER_ROOT: ${{ runner.temp }}/sinbad-argos-ledger
+          ARGOS_RUN_ID: run-${{ github.run_id }}-${{ github.run_attempt }}
+          ARGOS_SCOPE_REF: ${{ github.sha }}
+      - name: ARGOS integrity gate
+        run: npm run verify:argos
+      - name: Observe repository state
+        run: npm run observe:argos
+      - name: Reject vulnerable dependencies
+        run: npm audit --audit-level=moderate
+      - name: Verify navigation release gates
+        run: npm run verify --prefix sinbad-ai-core/engines/navigation
+      - name: Run complete contract and integration suite
+        run: npm test
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run complete desktop mobile and accessibility suite
+        run: npm run test:web
+      - name: Observe ARGOS application and service health
+        if: ${{ !cancelled() }}
+        run: npm run health:argos -- --record
+        env:
+          ARGOS_HEALTH_LEDGER_ROOT: ${{ runner.temp }}/sinbad-argos-ledger/health-runs
+          ARGOS_GITHUB_OWNER: ${{ github.repository_owner }}
+          ARGOS_GITHUB_REPO: ${{ github.event.repository.name }}
+          ARGOS_GITHUB_REF: ${{ github.sha }}
+          ARGOS_GITHUB_TOKEN: ${{ github.token }}
+      - name: Seal ARGOS assurance run result
+        id: seal_argos
+        if: always()
+        run: npm run argos:run:finish
+        env:
+          ARGOS_LEDGER_ROOT: ${{ runner.temp }}/sinbad-argos-ledger
+          ARGOS_RUN_ID: run-${{ github.run_id }}-${{ github.run_attempt }}
+          ARGOS_SCOPE_REF: ${{ github.sha }}
+          ARGOS_RUN_OUTCOME: ${{ job.status }}
+      - name: Encrypt and verify ARGOS retention archive
+        id: archive_argos
+        if: ${{ always() && vars.ARGOS_ARCHIVE_RETENTION_ENABLED == 'true' && steps.seal_argos.outcome == 'success' }}
+        run: npm run argos:archive:create
+        env:
+          ARGOS_LEDGER_ROOT: ${{ runner.temp }}/sinbad-argos-ledger
+          ARGOS_ARCHIVE_ROOT: ${{ runner.temp }}/sinbad-argos-retention
+          ARGOS_ARCHIVE_KEY: ${{ secrets.ARGOS_ARCHIVE_KEY }}
+      - name: Retain verified encrypted ARGOS archive
+        if: ${{ always() && vars.ARGOS_ARCHIVE_RETENTION_ENABLED == 'true' && steps.archive_argos.outcome == 'success' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: argos-encrypted-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/sinbad-argos-retention/*.json
+          retention-days: 30
+          if-no-files-found: error
+          overwrite: false
