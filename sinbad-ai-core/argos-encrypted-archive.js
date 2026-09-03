@@ -66,7 +66,7 @@ function createArchive(input,masterKey){
   const ciphertext=Buffer.concat([cipher.update(plaintext),cipher.final()]),tag=cipher.getAuthTag();
   return Object.freeze({...container,tag:tag.toString('base64'),ciphertext:ciphertext.toString('base64')});
 }
-function verifyArchive(value,masterKey){
+function openArchive(value,masterKey){
   const container=exact(value,['version','archiveId','createdAt','algorithm','salt','nonce','plaintextHash','tag','ciphertext']);
   if(!container||container.version!==VERSION||!ID.test(container.archiveId)||!ISO.test(container.createdAt)||container.algorithm!==ALGORITHM||!HASH.test(container.plaintextHash)||typeof container.salt!=='string'||typeof container.nonce!=='string'||typeof container.tag!=='string'||typeof container.ciphertext!=='string')throw new TypeError('ARGOS_ARCHIVE_CONTAINER_INVALID');
   let salt,nonce,tag,ciphertext;
@@ -79,8 +79,12 @@ function verifyArchive(value,masterKey){
     const parsed=JSON.parse(plaintext.toString('utf8'));
     const payload=normalizePayload({archiveId:parsed.archiveId,createdAt:parsed.createdAt,sourceInventoryHash:parsed.sourceInventoryHash,shelves:parsed.shelves});
     if(parsed.version!==PAYLOAD_VERSION||canonical(parsed)!==canonical(payload)||payload.archiveId!==container.archiveId||payload.createdAt!==container.createdAt)throw new Error('payload');
-    return Object.freeze({version:VERSION,status:'ARGOS_ARCHIVE_VERIFIED',archiveId:payload.archiveId,createdAt:payload.createdAt,sourceInventoryHash:payload.sourceInventoryHash,plaintextHash:container.plaintextHash,shelves:Object.freeze(payload.shelves.map(shelf=>Object.freeze({shelfId:shelf.shelfId,eventCount:shelf.eventCount,headHash:shelf.headHash})))});
+    return payload;
   }catch(error){if(error instanceof TypeError&&error.message==='ARGOS_ARCHIVE_KEY_INVALID')throw error;throw new Error('ARGOS_ARCHIVE_AUTHENTICATION_FAILED');}
 }
 
-module.exports=Object.freeze({VERSION,ALGORITHM,createArchive,verifyArchive});
+function verifyArchive(value,masterKey){
+  const payload=openArchive(value,masterKey);
+  return Object.freeze({version:VERSION,status:'ARGOS_ARCHIVE_VERIFIED',archiveId:payload.archiveId,createdAt:payload.createdAt,sourceInventoryHash:payload.sourceInventoryHash,plaintextHash:value.plaintextHash,shelves:Object.freeze(payload.shelves.map(shelf=>Object.freeze({shelfId:shelf.shelfId,eventCount:shelf.eventCount,headHash:shelf.headHash})))});
+}
+module.exports=Object.freeze({VERSION,ALGORITHM,createArchive,verifyArchive,openArchive});

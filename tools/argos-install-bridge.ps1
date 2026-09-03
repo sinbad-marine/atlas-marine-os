@@ -52,6 +52,13 @@ $hadConfig=Test-Path -LiteralPath $configPath
 if($hadConfig){Copy-Item -LiteralPath $configPath -Destination (Join-Path $rollback 'bridge-owner.json')}
 $record=@{schemaVersion='sinbad-argos-bridge-cutover/1';oldProcessId=$ExpectedProcessId;oldScript=$oldScript;oldScriptSha256=(Get-FileHash -LiteralPath $oldScript).Hash.ToLowerInvariant();sourceCommit=$manifest.sourceCommit;packageId=$manifest.packageId;release=$release;rollback=$rollback;instanceId=$ownerConfig.instanceId;userData='Preserved in existing Documents/Sinbad Bridge and external runtime locations'}
 $record | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $rollback 'CUTOVER.json') -Encoding UTF8
+function Start-IndependentBridge([string]$executable,[string]$scriptPath){
+ $startup=New-CimInstance -ClassName Win32_ProcessStartup -ClientOnly -Property @{ShowWindow=[uint16]0}
+ $command='"'+$executable+'" -NoProfile -NonInteractive -ExecutionPolicy Bypass -WindowStyle Hidden -File "'+$scriptPath+'"'
+ $launched=Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{CommandLine=$command;CurrentDirectory=(Split-Path -Parent $scriptPath);ProcessStartupInformation=$startup}
+ if($launched.ReturnValue -ne 0){throw 'INDEPENDENT_BRIDGE_START_FAILED'}
+ return Get-Process -Id $launched.ProcessId -ErrorAction Stop
+}
 $newProcess=$null
 try {
  Copy-Item -LiteralPath $OwnerConfiguration -Destination $configPath -Force
@@ -62,7 +69,7 @@ try {
  Stop-Process -Id $ExpectedProcessId
  Wait-Process -Id $ExpectedProcessId -Timeout 10 -ErrorAction SilentlyContinue
  $newScript=Join-Path $release 'bridge\sinbad-bridge.ps1'
- $newProcess=Start-Process -FilePath $process.ExecutablePath -ArgumentList @('-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',('"'+$newScript+'"')) -WorkingDirectory (Split-Path -Parent $newScript) -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $installRoot 'bridge-runtime.log') -RedirectStandardError (Join-Path $installRoot 'bridge-runtime-errors.log')
+ $newProcess=Start-IndependentBridge $process.ExecutablePath $newScript
  $ready=$false
  for($attempt=0;$attempt -lt 15;$attempt++){
   Start-Sleep -Milliseconds 500
@@ -77,7 +84,7 @@ try {
  $shortcut.TargetPath=Join-Path $env:WINDIR 'System32\wscript.exe'
  $shortcut.Arguments='"'+(Join-Path $release 'bridge\start-sinbad-bridge-silent.vbs')+'"'
  $shortcut.WorkingDirectory=Join-Path $release 'bridge';$shortcut.Save()
- $record['status']='ACTIVATED';$record['newProcessId']=$newProcess.Id
+ $record['status']='ACTIVATED';$record['newProcessId']=$newProcess.Id;$record['launchMethod']='WINDOWS_PROCESS_MANAGEMENT_HIDDEN'
  $record | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $installRoot 'active-release.json') -Encoding UTF8
  $record | ConvertTo-Json -Compress
 }catch{
@@ -87,7 +94,7 @@ try {
  if($hadConfig){Copy-Item -LiteralPath (Join-Path $rollback 'bridge-owner.json') -Destination $configPath -Force}
  if(-not (Get-Process -Id $ExpectedProcessId -ErrorAction SilentlyContinue)){
   $restore=Join-Path $rollback 'bridge\sinbad-bridge.ps1'
-  Start-Process -FilePath $process.ExecutablePath -ArgumentList @('-NoProfile','-ExecutionPolicy','Bypass','-File',('"'+$restore+'"')) -WorkingDirectory (Split-Path -Parent $restore) -WindowStyle Hidden | Out-Null
+  Start-IndependentBridge $process.ExecutablePath $restore | Out-Null
  }
  throw ('BRIDGE_CUTOVER_ROLLED_BACK: '+$failure)
 }

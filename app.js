@@ -2,7 +2,8 @@
 
 const $=id=>document.getElementById(id);
 function argosBridgeHeaders(action,target){const random=globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random().toString(16).slice(2)}`;return {'X-Sinbad-Argos-Version':'sinbad-argos-command/1-v1','X-Sinbad-Argos-Action':action,'X-Sinbad-Argos-Target':target,'X-Sinbad-Argos-Command-Id':`browser-${random}`,'X-Sinbad-Argos-Requested-At':new Date().toISOString()};}
-async function ownerBridgeFetch(path,action,body){
+async function ownerBridgeFetch(path,action,body,checkReplay=false){
+  if(checkReplay&&(path!=='/routes'||action!=='ROUTE_WRITE'))throw new Error('BRIDGE_CHECK_TARGET_INVALID');
   if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId)throw new Error('OWNER_SIGN_IN_REQUIRED');
   const workspaceId=selectedWorkspaceId,exactBody=String(body),headers=argosBridgeHeaders(action,path);
   const statusResponse=await fetch(`${SINBAD_BRIDGE_URL}/argos/status`,{cache:'no-store',signal:AbortSignal.timeout(5000)});
@@ -14,7 +15,17 @@ async function ownerBridgeFetch(path,action,body){
   const security=await ownerSecurityClient(),proof=await security.authorize({action:`core.bridge.${action.toLowerCase()}`,resourceType:'bridge_instance',resourceId:boundary.instanceId,workspaceId,command},`Authorize local Bridge: ${action}`);
   const {data,error}=await cloudClient.auth.getSession();
   if(error||!data?.session?.access_token)throw new Error('OWNER_SIGN_IN_REQUIRED');
-  return fetch(`${SINBAD_BRIDGE_URL}${path}`,{method:'POST',headers:{'Content-Type':'application/json',...headers,Authorization:`Bearer ${data.session.access_token}`,'X-Sinbad-Owner-Authorization':proof.authorizationId,'X-Sinbad-Owner-Nonce':proof.nonce},body:exactBody,cache:'no-store'});
+  const request={method:'POST',headers:{'Content-Type':'application/json',...headers,Authorization:`Bearer ${data.session.access_token}`,'X-Sinbad-Owner-Authorization':proof.authorizationId,'X-Sinbad-Owner-Nonce':proof.nonce},body:exactBody,cache:'no-store'};
+  const response=await fetch(`${SINBAD_BRIDGE_URL}${path}`,{...request,signal:AbortSignal.timeout(20000)});
+  if(!checkReplay)return response;
+  if(response.status!==201)throw new Error(`BRIDGE_CHECK_WRITE_FAILED_${response.status}`);
+  const saved=await response.json();
+  if(saved.ok!==true||saved.filename!==JSON.parse(exactBody).filename)throw new Error('BRIDGE_CHECK_WRITE_RESPONSE_INVALID');
+  // Same body, nonce, approval and command ID. Never log or persist credentials.
+  const replay=await fetch(`${SINBAD_BRIDGE_URL}${path}`,{...request,signal:AbortSignal.timeout(20000)});
+  const rejection=await replay.json();
+  if(replay.status!==403||rejection.error!=='ARGOS_COMMAND_BLOCKED'||rejection.reason!=='ARGOS_COMMAND_REPLAYED')throw new Error('BRIDGE_CHECK_REPLAY_NOT_REJECTED');
+  return {status:'BRIDGE_OWNER_ACCEPTANCE_PASSED',filename:saved.filename,authorizationId:proof.authorizationId,commandId:command.commandId,checkedAt:new Date().toISOString(),writeStatus:201,replayStatus:403};
 }
 const APP_LANGUAGES=[['tr-TR','Türkçe'],['en-US','English'],['ru-RU','Русский'],['fr-FR','Français'],['de-DE','Deutsch'],['ar-SA','العربية'],['es-ES','Español'],['it-IT','Italiano']];
 const APP_I18N={
@@ -2958,6 +2969,24 @@ if($('accountSettingsStatus')&&!$('settingsOwnerAuthenticator')){
   const button=document.createElement('button');button.id='settingsOwnerAuthenticator';button.type='button';button.className='btn';button.textContent='Authenticator / Owner verification';
   button.addEventListener('click',async()=>{try{await (await ownerSecurityClient()).manage();}catch(error){$('accountSettingsStatus').textContent=error.message||'Owner verification is unavailable.';}});
   $('accountSettingsStatus').before(button);
+}
+async function verifyLocalBridgeProtection(){
+  const button=$('settingsVerifyBridge'),status=$('settingsBridgeVerificationStatus');
+  if(button.disabled)return;button.disabled=true;
+  status.textContent='Checking Owner approval and duplicate request protection…';
+  try{
+    const filename=`ARGOS-TEST-NOT-FOR-NAVIGATION-${crypto.randomUUID()}.gpx`;
+    const gpx='<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1" creator="ARGOS acceptance" xmlns="http://www.topografix.com/GPX/1/1"><metadata><name>ARGOS TEST — NOT FOR NAVIGATION</name><desc>Empty diagnostic document. No waypoints, route or OpenCPN handoff.</desc></metadata></gpx>';
+    const result=await ownerBridgeFetch('/routes','ROUTE_WRITE',JSON.stringify({filename,gpx}),true);
+    status.textContent=`Protection verified: test file saved; duplicate request rejected. File: ${result.filename}. Approval: ${result.authorizationId}. Checked: ${result.checkedAt}.`;
+  }catch(error){status.textContent=`Protection check incomplete: ${error.message}`;}
+  finally{button.disabled=false;}
+}
+if($('accountSettingsStatus')&&!$('settingsVerifyBridge')){
+  const button=document.createElement('button');button.id='settingsVerifyBridge';button.type='button';button.className='btn';button.textContent='Check local Bridge protection';button.addEventListener('click',verifyLocalBridgeProtection);
+  const description=document.createElement('p');description.textContent='Creates an empty ARGOS test GPX file and checks that a duplicate request is rejected. No navigation points or OpenCPN commands are sent.';
+  const status=document.createElement('p');status.id='settingsBridgeVerificationStatus';status.setAttribute('role','status');
+  $('accountSettingsStatus').after(button,description,status);
 }
 async function sendMemberInvite(){
   const email=$('memberInviteEmail').value.trim(), role=$('memberInviteRole').value, note=$('memberInviteNote').value.trim();
