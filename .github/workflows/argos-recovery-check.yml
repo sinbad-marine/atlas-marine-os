@@ -27,7 +27,6 @@ jobs:
       ARGOS_SOURCE_RUN: ${{ inputs.source_run }}
       ARGOS_SOURCE_COMMIT: ${{ inputs.source_commit }}
       ARGOS_EXPECTED_ARCHIVE_SHA256: ${{ inputs.archive_sha256 }}
-      ARGOS_RECOVERY_ROOT: ${{ runner.temp }}/argos-independent-recovery
     steps:
       - name: Check out approved recovery source
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -41,10 +40,12 @@ jobs:
       - name: Download exact retained artifact and verify checkpoint
         run: node tools/argos-independent-recovery.js download
         env:
+          ARGOS_RECOVERY_ROOT: ${{ runner.temp }}/argos-independent-recovery
           GH_TOKEN: ${{ github.token }}
       - name: Restore and revalidate journals using off-device key custody
         run: node tools/argos-independent-recovery.js restore
         env:
+          ARGOS_RECOVERY_ROOT: ${{ runner.temp }}/argos-independent-recovery
           ARGOS_ARCHIVE_KEY: ${{ secrets.ARGOS_ARCHIVE_KEY }}
       - name: Retain recovery receipts only
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
