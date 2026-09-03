@@ -74,8 +74,11 @@ test('isolated HTTP parser and gate deny invalid requests before stubbed effects
     const started=Date.now();
     const timer=setTimeout(()=>{socket.destroy();reject(Error('Total request deadline was not enforced'));},15000);
     const cleanup=()=>{clearTimeout(timer);clearInterval(interval);socket.destroy();};
-    socket.on('error',error=>{cleanup();reject(error);});
-    socket.on('data',chunk=>{response+=chunk;});
+    const completeResponse=()=>{const split=response.indexOf('\r\n\r\n');if(split<0)return false;const length=response.slice(0,split).match(/\r\nContent-Length: (\d+)/i);return Boolean(length)&&Buffer.byteLength(response.slice(split+4))===Number(length[1]);};
+    // Windows can reset a socket with unread trickled bytes after sending its
+    // complete 408. Require the full framed response, never accept a bare reset.
+    socket.on('error',error=>{const complete=completeResponse();cleanup();if(error.code==='ECONNRESET'&&complete)resolve({response,elapsed:Date.now()-started});else reject(error);});
+    socket.on('data',chunk=>{response+=chunk;if(completeResponse()){cleanup();resolve({response,elapsed:Date.now()-started});}});
     socket.on('end',()=>{cleanup();resolve({response,elapsed:Date.now()-started});});
     socket.on('connect',()=>{socket.write(prefix);interval=setInterval(()=>socket.write(byte),200);});
   });

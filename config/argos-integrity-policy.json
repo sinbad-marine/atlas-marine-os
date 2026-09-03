@@ -139,7 +139,7 @@
     },
     {
       "path": "tests/argos-bridge-http.test.js",
-      "sha256": "37c4d519ee5bee3010fb2bb3b45f0a13d9c31ce15a0c2d19d7bbd35aefd036f9",
+      "sha256": "1209e385c3d8650f82f688f0919d5698d247626a6c6c8889fb36093c76942e2f",
       "kind": "TEST"
     },
     {
@@ -440,7 +440,7 @@
     {
       "path": "tests/sinbad-academy-window.test.js",
       "kind": "TEST",
-      "sha256": "8b66d8b4728b84c052c6a06f5ea0d80d29a054b1d9f4195cd9f12f71c3ef7ef8"
+      "sha256": "13ed7877001bd9d89eb2331f1cecc464452051f411d7cf6cfd76533c1bcbab27"
     },
     {
       "path": "founder-owner-mfa.js",
