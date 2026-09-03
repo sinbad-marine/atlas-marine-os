@@ -104,3 +104,7 @@ tools/run-argos-host-health.js text eol=lf
 tools/argos-restore-archive.js text eol=lf
 tests/argos-host-health.test.js text eol=lf
 docs/ARGOS_FINAL_ACCEPTANCE.md text eol=lf
+
+.github/workflows/argos-recovery-check.yml text eol=lf
+tools/argos-independent-recovery.js text eol=lf
+tests/argos-independent-recovery.test.js text eol=lf

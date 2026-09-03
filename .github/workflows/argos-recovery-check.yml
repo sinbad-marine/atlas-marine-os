@@ -1,0 +1,56 @@
+name: ARGOS independent recovery check
+on:
+  workflow_dispatch:
+    inputs:
+      source_run:
+        description: Existing ARGOS assurance run ID
+        required: true
+        type: string
+      source_commit:
+        description: Exact source commit from its retained checkpoint
+        required: true
+        type: string
+      archive_sha256:
+        description: Ciphertext JSON SHA-256 from the independent checkpoint
+        required: true
+        type: string
+permissions:
+  contents: read
+  actions: read
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      ARGOS_SOURCE_RUN: ${{ inputs.source_run }}
+      ARGOS_SOURCE_COMMIT: ${{ inputs.source_commit }}
+      ARGOS_EXPECTED_ARCHIVE_SHA256: ${{ inputs.archive_sha256 }}
+      ARGOS_RECOVERY_ROOT: ${{ runner.temp }}/argos-independent-recovery
+    steps:
+      - name: Check out approved recovery source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Use verified Node runtime
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 24.19.0
+          package-manager-cache: false
+      - name: Verify recovery source integrity
+        run: node tools/verify-argos-integrity.js
+      - name: Download exact retained artifact and verify checkpoint
+        run: node tools/argos-independent-recovery.js download
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Restore and revalidate journals using off-device key custody
+        run: node tools/argos-independent-recovery.js restore
+        env:
+          ARGOS_ARCHIVE_KEY: ${{ secrets.ARGOS_ARCHIVE_KEY }}
+      - name: Retain recovery receipts only
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: argos-recovery-receipt-${{ github.run_id }}
+          path: ${{ runner.temp }}/argos-independent-recovery/report/*.json
+          retention-days: 30
+          if-no-files-found: error
+          overwrite: false
