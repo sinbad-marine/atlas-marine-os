@@ -234,7 +234,7 @@
     },
     {
       "path": "bridge/sinbad-bridge.ps1",
-      "sha256": "b89f2a1001fa8824837c3e417b1b3d2dac228b92d495d069fc0c223301c7409f",
+      "sha256": "3078fd7e473535a01708db3452ab5d046f20f44a3b2ab09a4239c7c7a482800a",
       "kind": "SOURCE"
     },
     {
@@ -460,7 +460,7 @@
     {
       "path": "tests/argos-bridge-full-runtime.test.js",
       "kind": "TEST",
-      "sha256": "c230f044de71c401085ed1cd9893d514c3983dd184d2d88c5d31fccdcc766591"
+      "sha256": "51daf7202e951dd7aa7aefaee5dea66d78379efa393ff3d70d97e36fd7558053"
     },
     {
       "path": "tests/browser/enc-controls.spec.js",
@@ -481,6 +481,11 @@
       "path": "package-lock.json",
       "kind": "CONFIG",
       "sha256": "7aa1f4dd76326af8f428ee7e3226a498d869531319f15a2dc3da6012ef1638db"
+    },
+    {
+      "path": "bridge/qwen-tier-router.ps1",
+      "kind": "SOURCE",
+      "sha256": "a81802d534ae5ff28a4ac53d69463eb6010bbe20a0c95a97273d7ee12e14c80a"
     }
   ]
 }

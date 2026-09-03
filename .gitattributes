@@ -96,3 +96,5 @@ tests/browser/enc-controls.spec.js text eol=lf
 tests/browser/surface-smoke.spec.js text eol=lf
 tools/argos-ci-retention.ps1 text eol=lf
 package-lock.json text eol=lf
+
+bridge/qwen-tier-router.ps1 text eol=lf
