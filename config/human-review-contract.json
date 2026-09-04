@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "sinbad-human-review/1",
+  "authority": {
+    "owner": [
+      "reviewer.authorize",
+      "reviewer.suspend",
+      "reviewer.revoke",
+      "package.create",
+      "package.assign",
+      "package.reclaim",
+      "package.transfer",
+      "package.read_all",
+      "audit.read_all",
+      "owner.finalize"
+    ],
+    "humanReviewer": [
+      "package.list_available",
+      "package.claim",
+      "package.read_assigned",
+      "question.review_assigned",
+      "package.submit_assigned"
+    ]
+  },
+  "roleSeparation": {
+    "workspaceDeveloperIsHumanReviewer": false,
+    "humanReviewerIsOwner": false,
+    "humanReviewerCanControlGasm": false,
+    "humanReviewerCanAdministerSystem": false
+  },
+  "package": {
+    "allowedSizes": [25, 50, 100, 250],
+    "states": [
+      "AVAILABLE",
+      "ASSIGNED",
+      "IN_REVIEW",
+      "SUBMITTED_COMPLETE",
+      "SUBMITTED_INCOMPLETE",
+      "OWNER_ACCEPTED",
+      "OWNER_RETURNED",
+      "CANCELLED"
+    ],
+    "reviewerWritableStates": ["ASSIGNED", "IN_REVIEW"],
+    "terminalStates": ["OWNER_ACCEPTED", "CANCELLED"],
+    "assignmentGenerationRequired": true,
+    "lockVersionRequired": true,
+    "idempotencyKeyRequired": true
+  },
+  "question": {
+    "humanDecisions": ["PENDING", "APPROVED", "CORRECTION_REQUIRED", "SOURCE_HOLD"],
+    "ownerDecisions": ["PENDING", "ACCEPTED", "RETURNED"],
+    "technicalStateReadOnlyForHumanReview": true,
+    "humanDecisionRequiresAuthenticatedActor": true,
+    "ownerDecisionRequiresOwnerActor": true,
+    "maxNoteCharacters": 2000
+  },
+  "invariants": {
+    "technicalVerificationDoesNotSetHumanDecision": true,
+    "deliveryDoesNotSetHumanDecision": true,
+    "humanDecisionDoesNotSetOwnerDecision": true,
+    "transferPreservesReviewHistory": true,
+    "formerAssigneeWritesRejected": true,
+    "completeFormula": "expectedCount == presentCount && missingCount == 0 && deferredCount == 0",
+    "submittedIncompleteMayNotAppearComplete": true
+  },
+  "sourceBoundary": {
+    "producer": "GASM_INDEPENDENT_TEAM",
+    "consumer": "OWNER_CONSOLE_HUMAN_REVIEW",
+    "transport": "VERSIONED_IMMUTABLE_MANIFEST",
+    "requiredManifestFields": [
+      "schemaVersion",
+      "sourceBatchId",
+      "sourceRevision",
+      "contentSha256",
+      "expectedCount",
+      "presentCount",
+      "missingCount",
+      "deferredCount",
+      "questions"
+    ],
+    "humanReviewMayMutateSource": false,
+    "importMayApproveQuestions": false
+  },
+  "concurrency": {
+    "authoritativeBoundary": "DATABASE_TRANSACTION",
+    "packageRowLock": "FOR_UPDATE",
+    "writeBinding": [
+      "workspaceId",
+      "packageId",
+      "actorUserId",
+      "assignmentGeneration",
+      "expectedLockVersion",
+      "idempotencyKey"
+    ],
+    "conflictBehavior": "REJECT_AND_RELOAD",
+    "silentMergeAllowed": false
+  },
+  "scale": {
+    "targetQuestionCount": 30000,
+    "defaultPageSize": 25,
+    "maximumPageSize": 100,
+    "pagination": "KEYSET",
+    "loadEntireBankInBrowser": false
+  },
+  "security": {
+    "clientRoleTrusted": false,
+    "clientActorTrusted": false,
+    "clientCountsTrusted": false,
+    "clientCompletionTrusted": false,
+    "authorizationEveryProtectedAction": true,
+    "safeErrorCodes": true,
+    "secretsInClientOrLogs": false
+  }
+}
