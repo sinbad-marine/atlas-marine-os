@@ -11,6 +11,7 @@ test('workspace invite access waits for email confirmation',()=>{
   assert.match(migration,/if new\.email_confirmed_at is null then\s+return new;/u);
   assert.match(migration,/after insert or update of email_confirmed_at on auth\.users/u);
   assert.match(migration,/and i\.status='pending'/u);
+  assert.match(migration,/i\.role::public\.workspace_role/u);
   assert.match(migration,/set status='accepted',accepted_at=clock_timestamp\(\)/u);
 });
 
