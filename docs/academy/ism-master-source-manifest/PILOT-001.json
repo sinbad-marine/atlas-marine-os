@@ -1,7 +1,9 @@
 {
   "manifestVersion": "PILOT-001",
   "createdAt": "2026-09-06T09:14:34Z",
+  "updatedAt": "2026-09-06T10:05:00Z",
   "note": "This is a provenance/reference record, not a database write. It asserts no verification_stage and is not consumed by tools/academy-ism-promote-accepted-package.js, which only ever reads Owner-accepted Human Review question packages. Real questions written from this text are a separate, later, out-of-scope phase.",
+  "roundsNote": "Elements 1-3 were added in the initial PILOT-001 round. Elements 4-6 were added in a follow-up round (referred to as PILOT-002 in discussion) appended to this same file on the same manifestVersion, rather than as a separate file, per instruction.",
   "verifiedSources": [
     {
       "sourceId": "IMO-ISM-A741-18-EL1",
@@ -46,6 +48,49 @@
       "verificationMethod": "Grok and Gemini independently verbatim-agreed. Claude Code additionally fetched a mirror of the 1993 original text (admiraltylawguide.com) directly today and confirmed the same three paragraphs (that mirror renders 3.3 as 'shore based support', without a hyphen, versus the hyphenated 'shore-based' in the Grok/Gemini text above - a minor, non-substantive styling difference, noted rather than silently normalized).",
       "verifiedBy": ["GROK", "GEMINI", "PRIMARY_SOURCE_CROSSCHECK"],
       "verifiedAt": "2026-09-06"
+    },
+    {
+      "sourceId": "IMO-ISM-A741-18-EL4",
+      "title": "Designated Person(s)",
+      "authority": "IMO",
+      "moduleCode": "ism-code-foundations",
+      "flagAdministration": null,
+      "section": "Element 4",
+      "fullText": "4 DESIGNATED PERSON(S)\n\nTo ensure the safe operation of each ship and to provide a link between the company and those on board, every company, as appropriate, should designate a person or persons ashore having direct access to the highest level of management. The responsibility and authority of the designated person or persons should include monitoring the safety and pollution prevention aspects of the operation of each ship and to ensure that adequate resources and shore based support are applied, as required.",
+      "variantNote": "Gemini's version paraphrases this into modern consolidated style ('Company' capitalized, 'and ensuring' instead of 'and to ensure', hyphenated 'pollution-prevention'/'shore-based'). Claude Code independently fetched a mirror of the 1993 original text (admiraltylawguide.com) today and it matches Grok's version character-for-character, including 'and to ensure' and the unhyphenated forms.",
+      "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)). No amendment to Element 4 identified by either AI or by Claude Code's own independent search today.",
+      "verificationMethod": "Grok and Gemini substantively agree. Claude Code independently fetched the 1993 original text today and confirmed Grok's exact wording verbatim.",
+      "verifiedBy": ["GROK", "GEMINI", "PRIMARY_SOURCE_CROSSCHECK"],
+      "verifiedAt": "2026-09-06"
+    },
+    {
+      "sourceId": "IMO-ISM-A741-18-EL5",
+      "title": "Master's Responsibility and Authority",
+      "authority": "IMO",
+      "moduleCode": "ism-code-foundations",
+      "flagAdministration": null,
+      "section": "Element 5 (paras 5.1-5.2)",
+      "fullText": "5 MASTER'S RESPONSIBILITY AND AUTHORITY\n\n5.1 The Company should clearly define and document the master's responsibility with regard to:\n.1 implementing the safety and environmental protection policy of the Company;\n.2 motivating the crew in the observation of that policy;\n.3 issuing appropriate orders and instructions in a clear and simple manner;\n.4 verifying that specified requirements are observed; and\n.5 periodically reviewing the SMS and reporting its deficiencies to the shore based management.\n\n5.2 The Company should ensure that the SMS operating on board the ship contains a clear statement emphasizing the Master's authority. The Company should establish in the SMS that the master has the overriding authority and the responsibility to make decisions with respect to safety and pollution prevention and to request the Company's assistance as may be necessary.",
+      "variantNote": "Gemini spells out 'safety management system' instead of using the 'SMS' abbreviation, and hyphenates 'shore-based'. Treated as edition/style variant, consistent with the pattern already documented for Elements 1-4.",
+      "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)). Amended by resolution MSC.273(85) (adopted 4 December 2008, in force 1 July 2010): inserted 'periodically' at the start of para 5.1.5. Claude Code independently confirmed two things today: (1) a direct fetch of the 1993 original text (admiraltylawguide.com) shows para 5.1.5 without 'periodically' ('reviewing the SMS...'), consistent with it being a later addition; (2) an independent web search (distinct from the sources originally supplied) confirms MSC.273(85), in force 1 July 2010, specifically added the word 'periodically' to this paragraph.",
+      "verificationMethod": "Grok and Gemini independently agree on the text and on this amendment attribution. Claude Code independently corroborated both the pre-amendment 1993 wording and the specific resolution/date via separate fetch and search today.",
+      "verifiedBy": ["GROK", "GEMINI", "PRIMARY_SOURCE_CROSSCHECK"],
+      "verifiedAt": "2026-09-06"
+    },
+    {
+      "sourceId": "IMO-ISM-A741-18-EL6",
+      "title": "Resources and Personnel",
+      "authority": "IMO",
+      "moduleCode": "ism-code-foundations",
+      "flagAdministration": null,
+      "section": "Element 6 (paras 6.1-6.7)",
+      "fullText": "6 RESOURCES AND PERSONNEL\n\n6.1 The Company should ensure that the master is:\n.1 properly qualified for command;\n.2 fully conversant with the Company's SMS; and\n.3 given the necessary support so that the Master's duties can be safely performed.\n\n6.2 The Company should ensure that each ship is:\n.1 manned with qualified, certificated and medically fit seafarers in accordance with national and international requirements; and\n.2 appropriately manned in order to encompass all aspects of maintaining safe operations on board.\n\n6.3 The Company should establish procedures to ensure that new personnel and personnel transferred to new assignments related to safety and protection of the environment are given proper familiarization with their duties. Instructions which are essential to be provided prior to sailing should be identified, documented and given.\n\n6.4 The Company should ensure that all personnel involved in the Company's SMS have an adequate understanding of relevant rules, regulations, codes and guidelines.\n\n6.5 The Company should establish and maintain procedures for identifying any training which may be required in support of the SMS and ensure that such training is provided for all personnel concerned.\n\n6.6 The Company should establish procedures by which the ship's personnel receive relevant information on the SMS in a working language or languages understood by them.\n\n6.7 The Company should ensure that the ship's personnel are able to communicate effectively in the execution of their duties related to the SMS.",
+      "variantNote": "Gemini spells out 'safety management system' instead of 'SMS' in several places; substance identical to Grok's text.",
+      "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)) with a single-sentence para 6.2. Amended by resolution MSC.353(92) (adopted 21 June 2013, in force 1 January 2015): replaced para 6.2 with two sub-paragraphs adding the 'appropriately manned' requirement. Claude Code independently confirmed two things today: (1) a direct fetch of the 1993 original text (admiraltylawguide.com) shows para 6.2 as a single sentence with no sub-items and no mention of 'appropriately manned', consistent with a later amendment restructuring it; (2) an independent web search (distinct sources from those originally supplied, including imorules.com and an irclass.org technical circular) confirms MSC.353(92), adopted 21 June 2013 and in force 1 January 2015, is what actually added the 'appropriately manned' sub-paragraph.",
+      "verificationMethod": "Grok and Gemini agree on the substantive text of 6.2, but disagreed on which resolution amended it (Grok: MSC.353(92); Gemini: MSC.273(85)). Claude Code independently checked this today via web search and confirmed MSC.353(92) is correct, not MSC.273(85).",
+      "verifiedBy": ["GROK", "PRIMARY_SOURCE_CROSSCHECK"],
+      "verifiedAt": "2026-09-06",
+      "knownDiscrepancy": "Gemini attributed the 6.2 'appropriately manned' amendment to MSC.273(85) (2008/2010) instead of the correct MSC.353(92) (2013/2015). This is the third documented instance in this project of Gemini citing a specific, confident but independently-disproven MSC resolution number/date for an amendment (the first being the 1.2.2.2 attribution to MSC.104(73) instead of MSC.273(85), and the second being Gemini's 'develop' vs 'establish' error in Element 2, both documented earlier in this file). Recorded here as a pattern: Gemini's verbatim text quotes have generally been reliable, but its specific amendment/resolution-number attributions have now been wrong on two separate occasions and should not be trusted without independent primary-source cross-check, which Claude Code performed here."
     }
   ],
   "unresolvedSources": []
