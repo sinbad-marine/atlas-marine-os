@@ -1,0 +1,46 @@
+{
+  "project": "SINBAD Academy ISM-ISPS-MLC Pilot",
+  "current_phase": "Phase 2 - Verified-source ingestion (pilot)",
+  "current_task": "ism-code-foundations module: ISM Code source manifest (GROK->GEMINI->provenance file), 16/16 elements complete",
+  "last_verified_checkpoint": "Phase 0 audit was delivered as a chat message in the Claude Code conversation on 2026-09-05, not committed to this repo as a file. No file named SINBAD_ACADEMY_ISM_ISPS_MLC_PHASE_0_AUDIT_2026-09-05.md exists in this repo - a similarly-named but unrelated file, docs/HUMAN_REVIEWER_PHASE_0_AUDIT_2026-09-03.md, does exist and should not be confused with it. No formal Phase 1/2 GO/REVISE/STOP decision has been recorded in-repo as an artifact; work has proceeded under the Owner's continuous, turn-by-turn direction in conversation instead.",
+  "completed_work": [
+    "PR #212 (draft, branch codex/academy-ism-pilot-slice): academy_ism_* schema/RLS/tooling, additive migration, 5 commits",
+    "PR #213 (draft, branch codex/academy-ism-pilot-001-manifest): docs/academy/ism-master-source-manifest/PILOT-001.json - ISM Code 16/16 elements verified via GROK+GEMINI independent agreement plus primary-source cross-check, 5 commits"
+  ],
+  "pending_work": [
+    "PR #212: the real @supabase/supabase-js network layer in tools/academy-ism-promote-accepted-package.js has never been exercised against a live Supabase project - needs manual verification before real use",
+    "PR #212: config/human-review-contract.json's requiredManifestFields omits 'title' and 'packageSize' - flagged, not fixed, awaiting a separate Owner governance decision",
+    "Next: Owner decision on whether to proceed to another ism-code-foundations sub-scope, or begin wiring the completed manifest into curriculum/question-writing (an explicitly separate, later, out-of-scope phase per every commit in PR #213)"
+  ],
+  "GO_REVISE_HOLD_STOP": "GO (implicit, via the Owner's continuous per-turn direction) for the Phase 2 pilot scope executed so far; no explicit HOLD or STOP is currently in force; no formal written GO/REVISE/STOP record exists in this repo as an artifact (see last_verified_checkpoint)",
+  "active_work_orders": [],
+  "known_defects": [
+    "tools/academy-ism-promote-accepted-package.js's groupKey() function joins its key fields with a literal U+0000 (null) byte. Independently confirmed today by fetching the committed file from GitHub and finding a raw null byte at file offset 1669 - this is real, not a suspected/reported-only issue. It causes tools like grep and git's own binary-file heuristic to treat this source file as binary. Cosmetic (does not affect the pure key-comparison logic, since JS string equality on strings containing U+0000 still works correctly), but should be fixed to a visible delimiter for tooling compatibility. Not fixed here - out of scope for this PROJECT_STATE.json addition.",
+    "GEMINI has produced 7 independently-verified errors in amendment/resolution attribution and paragraph-history narrative across Elements 1, 2, 6, 8, 12, 13 and 14 of docs/academy/ism-master-source-manifest/PILOT-001.json (see each element's knownDiscrepancy field, or EL1's amendmentHistory field for the one recorded before that field existed). Its quoted regulatory text has been reliable in every element checked; its specific claims about which resolution or paragraph changed something have not. Recount this number directly from the file rather than trusting this note if it might be stale."
+  ],
+  "safety_governance_boundaries": [
+    "No direct push to main; codex/ branches + draft PRs only, per AGENTS.md",
+    "No curriculum, question, or readiness content generated from source material that has not cleared the Human Review acceptance flow (enforced at the RLS level in the academy_ism_* schema, not just by convention)",
+    "No ISM/ISPS/MLC regulatory content generated from model memory - only GROK+GEMINI output cross-checked against a directly-fetched or independently-searched primary source, with the verification method and any discrepancy documented inline, never silently resolved",
+    "GASM, the Human Reviewer system, ARGOS, Owner Console, and Core navigation/stability/voice systems are out of scope and have not been modified by this pilot",
+    "sinbad-ai-core's Pedagogy Foundation ADRs (ADR-0036 through ADR-0040, confirmed present in this repo today) describe a separate, pre-existing, deliberately inert deny-only foundation for future adaptive-learning/animation work - this pilot has not built on it, activated it, or relied on it for anything"
+  ],
+  "source_verification_status": {
+    "module": "ism-code-foundations",
+    "source_document": "IMO ISM Code (resolution A.741(18) as amended)",
+    "elements_total": 16,
+    "elements_verified_and_committed": 16,
+    "elements_remaining": 0,
+    "manifest_file": "docs/academy/ism-master-source-manifest/PILOT-001.json",
+    "note": "This is a provenance/reference record only, not a database write - it does not create any academy_ism_source_manifest row, verification_stage, or question. See the manifest file's own top-level 'note' field."
+  },
+  "relevant_PRs_commits": {
+    "PR_212": "sinbad-marine/atlas-marine-os#212 (draft, open, not merged, 5 commits as of 2026-09-06)",
+    "PR_213": "sinbad-marine/atlas-marine-os#213 (draft, open, not merged, 5 commits as of 2026-09-06)"
+  },
+  "corrections_made_when_writing_this_file": [
+    "The last_verified_checkpoint field originally supplied referenced a Phase 0 audit file that does not exist in this repo; corrected to state plainly that no such file exists and that the real audit was a conversational deliverable, not a committed artifact.",
+    "The known_defects entry about a Gemini error count originally read 'this is the eighth documented Gemini error'; recounting directly from PILOT-001.json's own fields today found 7 distinct instances, not 8 - corrected here and in PR #213's description."
+  ],
+  "last_verified_timestamp": "2026-09-06T11:32:10Z"
+}
