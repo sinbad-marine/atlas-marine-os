@@ -1,0 +1,80 @@
+{
+  "note": "First end-to-end pilot question for the ISM Academy source-to-question pipeline. This is a locally-validated candidate manifest, NOT yet imported into any live Human Review system - no live Supabase/database credentials exist in this environment (verified today: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY and SUPABASE_ANON_KEY are all unset). This file is the exact JSON body a real import_package call would submit; it has not been sent over any network.",
+  "verifiedAgainstRealCode": {
+    "checkIsmQuestionPayload": "PASSED - tools/academy-ism-question-payload-contract.js's real checkIsmQuestionPayload() function, run directly against questionPayload below, returned valid:true with zero errors.",
+    "validateManifest": "PASSED - tools/academy-ism-manifest-builder.js's real validateManifest() function, run directly against the manifest below, returned without throwing.",
+    "humanReviewImportPackageRPC": "PASSED, via @electric-sql/pglite (embedded Postgres), not a live network call. The manifest below was mapped into human_review_import_package()'s exact call signature - the same field-by-field mapping supabase/functions/human-review/index.ts performs for action:'import_package' - and executed against the REAL, unmodified human_review_import_package() function from supabase/migrations/20260903000400_human_reviewer_system.sql. Result: {\"duplicate\":false,\"packageId\":\"04b1d53d-51b6-45df-ba17-a2007dc515d2\",\"presentCount\":1,\"expectedCount\":1,\"packageComplete\":true}. The resulting package row's actual status is AVAILABLE, package_complete is true. This packageId exists only inside a disposable, in-memory PGlite instance created for this one test run - it does not exist in any real database and this exact import must be re-run for real before the Owner can act on it.",
+    "ownerOnlySteps": "NOT executed and NOT simulated, per explicit instruction: claim_package, save_decision, submit_package and owner_finalize_package were never called. Only import_package's effect was exercised."
+  },
+  "sourceVersionDerivation": "PILOT-001.json's Element 2 entry (IMO-ISM-A741-18-EL2) has no field literally named 'sourceVersion' - its schema is sourceId/title/authority/moduleCode/flagAdministration/section/fullText/amendmentHistory/.... The sourceVersion value below ('A.741(18) (1993, unamended)') was derived from EL2's own amendmentHistory field ('Adopted 4 November 1993 (resolution A.741(18)). No amendment identified to paras 2.1-2.2 in any source consulted.'), not copied from a literal field that does not exist. sourceSection below is copied directly from EL2's real 'section' field.",
+  "manifest": {
+    "schemaVersion": "sinbad-human-review-manifest/1",
+    "sourceBatchId": "ISM-M1-EL2-PILOT-Q1",
+    "sourceRevision": "PILOT-001-2026-09-06",
+    "title": "ISM Code Element 2 - Pilot Question 1 (end-to-end pipeline proof)",
+    "packageSize": 25,
+    "expectedCount": 1,
+    "presentCount": 1,
+    "missingCount": 0,
+    "deferredCount": 0,
+    "contentSha256": "c7c5aae2ba31228aab402b2686073ea26320dfcdd242362a6c608c482620645b",
+    "questions": [
+      {
+        "questionId": "ISM-M1-EL2-Q001",
+        "sourceRevision": "PILOT-001-2026-09-06",
+        "contentSha256": "f5c21fcee3566453ec22f788803c73e64dcbaa6151c97ec507fab79ccd0b4cb8",
+        "technicalStatus": "TECHNICALLY_VERIFIED",
+        "questionPayload": {
+          "authority": "IMO",
+          "moduleCode": "ism-code-foundations",
+          "flagAdministration": null,
+          "sourceVersion": "A.741(18) (1993, unamended)",
+          "sourceSection": "Element 2 (paras 2.1-2.2)",
+          "learningObjective": "Identify the Company's primary obligation under ISM Code Element 2 regarding a safety and environmental-protection policy.",
+          "difficulty": "foundation",
+          "competencyDimension": "ism_knowledge",
+          "questionKind": "multiple_choice",
+          "prompt": "According to Element 2 of the ISM Code, what is the Company's primary obligation regarding a safety and environmental-protection policy?",
+          "choices": [
+            {
+              "key": "A",
+              "text": "Establish a safety and environmental-protection policy describing how the objectives in paragraph 1.2 will be achieved"
+            },
+            {
+              "key": "B",
+              "text": "Develop it in cooperation with the flag State"
+            },
+            {
+              "key": "C",
+              "text": "Submit it to the IMO for approval"
+            },
+            {
+              "key": "D",
+              "text": "Review it only after an accident occurs"
+            }
+          ],
+          "correctAnswer": "A",
+          "expectedReasoning": "The verbatim ISM Code text (para 2.1) uses 'establish', not 'develop' - this exact distinction was a documented, twice-repeated Gemini verification error during source sourcing (see PILOT-001.json's Element 2 knownDiscrepancy field). Distractor B intentionally encodes that error.",
+          "markingRubric": {
+            "type": "single_answer_mcq",
+            "correctKey": "A",
+            "scoring": {
+              "A": 1,
+              "B": 0,
+              "C": 0,
+              "D": 0
+            }
+          },
+          "passThreshold": 1
+        },
+        "evidencePayload": {
+          "status": "PILOT_QUESTION_TRACEABILITY",
+          "sourceManifestFile": "docs/academy/ism-master-source-manifest/PILOT-001.json",
+          "sourceId": "IMO-ISM-A741-18-EL2"
+        }
+      }
+    ]
+  },
+  "ownerNextStep": "This package must first be genuinely imported by the Owner into a real Human Review environment - this file alone does not do that. Once imported for real (see the 'howToActuallyImport' field), the Owner (or a Human Reviewer the Owner has authorized) proceeds exactly as for any other package: open the Owner Console's Human Review area, find this package by its sourceBatchId (ISM-M1-EL2-PILOT-Q1) in the AVAILABLE list, claim it, review the single question, save a decision (APPROVED/CORRECTION_REQUIRED/SOURCE_HOLD), submit the package, and then the Owner performs owner_finalize_package (ACCEPTED/RETURNED) - the AAL2 step-up-gated action only the Owner's own account can perform. None of this was done or simulated here.",
+  "howToActuallyImport": "Requires a real Supabase project with SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY set, and calling supabase/functions/human-review's action:'import_package' with this file's 'manifest' object as the body (recomputing contentSha256 fields is not needed - they are already computed correctly) plus a valid stepUp token from an authenticated Owner session. This has not been done from this environment."
+}
