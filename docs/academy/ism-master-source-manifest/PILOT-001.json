@@ -17,7 +17,11 @@
       "variantNote": "Gemini's fullText renders the 1.4 heading and opening sentence as 'Functional requirements for a safety management system' / 'a safety management system' - no hyphen, no '(SMS)' abbreviation - versus Grok's 'safety-management system (SMS)'. Claude Code independently fetched a mirror of the 1993 original text (admiraltylawguide.com) today: it renders the heading as 'Functional requirements for a Safety Management System (SMS)' - capitalized, and crucially DOES include the '(SMS)' abbreviation, which Gemini's version omits entirely. This does not fully match either AI's exact styling (case and hyphen placement both differ from both), but on the substantive question of whether '(SMS)' appears at all, it supports Grok's version over Gemini's. Note this fetch was extracted via an AI summarization step, not a raw byte-level diff, so treat the exact punctuation as indicative, not a legal-grade citation.",
       "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)). Para 1.2.2.2 was amended by resolution MSC.273(85) (adopted 4 December 2008, in force 1 July 2010) to its current risk-assessment wording - NOT by MSC.104(73) as one earlier Gemini note claimed. MSC.104(73) (adopted 5 December 2000, in force 1 July 2002) instead introduced the additional 1.1 definitions (including 1.1.4 onward) and did not touch 1.2.2.2. This correction was independently re-verified by Claude Code today via two searches that did not rely on the four links originally supplied (results included safety4sea.com and an ABS guidance document specifically titled 'Guidance on the Revised ISM Code Clause 1.2.2.2', plus a separate search confirming MSC.104(73)'s 5 Dec 2000 / 1 Jul 2002 dates and its role adding 1.1 definitions).",
       "verificationMethod": "Grok and Gemini independently verbatim-agreed on 1.2, 1.3 and (substantively) 1.4; Claude Code additionally cross-checked the amendment attribution via independent web search (distinct sources from the four originally supplied) and fetched a mirror of the 1993 original text directly.",
-      "verifiedBy": ["GROK", "GEMINI", "PRIMARY_SOURCE_CROSSCHECK"],
+      "verifiedBy": [
+        "GROK",
+        "GEMINI",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
       "verifiedAt": "2026-09-06"
     },
     {
@@ -31,7 +35,10 @@
       "variantNote": "Gemini renders 2.2 as 'both ship-based and shore-based' (hyphenated, 'and'). Claude Code independently fetched a mirror of the 1993 original text (admiraltylawguide.com) today and it reads 'both ship based as well as shore based' - matching Grok's phrasing exactly, not Gemini's. Treated as Gemini reflecting a later consolidated-edition style rather than the 1993 original, not an error, but the 1993 original itself now directly supports Grok's exact wording here.",
       "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)). No amendment identified to paras 2.1-2.2 in any source consulted.",
       "verificationMethod": "Grok gave identical text across two independent rounds (an initial round and a blind re-ask that did not see the first round's answer or any flag of a discrepancy). Claude Code independently verified para 2.1's verb via a live web search today (found 'establish' via an unrelated synthesis, not sourced from the four links originally supplied) and by directly fetching a mirror of the 1993 original text (admiraltylawguide.com), which also reads 'establish'.",
-      "verifiedBy": ["GROK", "PRIMARY_SOURCE_CROSSCHECK"],
+      "verifiedBy": [
+        "GROK",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
       "verifiedAt": "2026-09-06",
       "knownDiscrepancy": "Gemini independently produced 'develop' instead of 'establish' in para 2.1, reproducibly across two rounds (an initial round and a blind re-ask). This contradicts Grok and contradicts both independent checks Claude Code performed today (a web search and a direct fetch of a 1993-original-text mirror, admiraltylawguide.com). Documented here as a reproducible Gemini error on this specific point, not silently dropped or averaged away. Claude Code did not itself independently confirm the previously-claimed ClassNK or University of Washington mirrors specifically - a ClassNK fetch attempt today returned HTTP 403, and the University of Washington PDF was seen only inside a web-search result summary, not fetched directly - so those two sources are not claimed as personally verified here, only the admiraltylawguide.com fetch and the independent web search are."
     },
@@ -46,7 +53,11 @@
       "variantNote": "None - Grok and Gemini produced character-for-character identical text.",
       "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)). No amendment identified to paras 3.1-3.3 in any source consulted.",
       "verificationMethod": "Grok and Gemini independently verbatim-agreed. Claude Code additionally fetched a mirror of the 1993 original text (admiraltylawguide.com) directly today and confirmed the same three paragraphs (that mirror renders 3.3 as 'shore based support', without a hyphen, versus the hyphenated 'shore-based' in the Grok/Gemini text above - a minor, non-substantive styling difference, noted rather than silently normalized).",
-      "verifiedBy": ["GROK", "GEMINI", "PRIMARY_SOURCE_CROSSCHECK"],
+      "verifiedBy": [
+        "GROK",
+        "GEMINI",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
       "verifiedAt": "2026-09-06"
     },
     {
@@ -60,7 +71,11 @@
       "variantNote": "Gemini's version paraphrases this into modern consolidated style ('Company' capitalized, 'and ensuring' instead of 'and to ensure', hyphenated 'pollution-prevention'/'shore-based'). Claude Code independently fetched a mirror of the 1993 original text (admiraltylawguide.com) today and it matches Grok's version character-for-character, including 'and to ensure' and the unhyphenated forms.",
       "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)). No amendment to Element 4 identified by either AI or by Claude Code's own independent search today.",
       "verificationMethod": "Grok and Gemini substantively agree. Claude Code independently fetched the 1993 original text today and confirmed Grok's exact wording verbatim.",
-      "verifiedBy": ["GROK", "GEMINI", "PRIMARY_SOURCE_CROSSCHECK"],
+      "verifiedBy": [
+        "GROK",
+        "GEMINI",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
       "verifiedAt": "2026-09-06"
     },
     {
@@ -74,7 +89,11 @@
       "variantNote": "Gemini spells out 'safety management system' instead of using the 'SMS' abbreviation, and hyphenates 'shore-based'. Treated as edition/style variant, consistent with the pattern already documented for Elements 1-4.",
       "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)). Amended by resolution MSC.273(85) (adopted 4 December 2008, in force 1 July 2010): inserted 'periodically' at the start of para 5.1.5. Claude Code independently confirmed two things today: (1) a direct fetch of the 1993 original text (admiraltylawguide.com) shows para 5.1.5 without 'periodically' ('reviewing the SMS...'), consistent with it being a later addition; (2) an independent web search (distinct from the sources originally supplied) confirms MSC.273(85), in force 1 July 2010, specifically added the word 'periodically' to this paragraph.",
       "verificationMethod": "Grok and Gemini independently agree on the text and on this amendment attribution. Claude Code independently corroborated both the pre-amendment 1993 wording and the specific resolution/date via separate fetch and search today.",
-      "verifiedBy": ["GROK", "GEMINI", "PRIMARY_SOURCE_CROSSCHECK"],
+      "verifiedBy": [
+        "GROK",
+        "GEMINI",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
       "verifiedAt": "2026-09-06"
     },
     {
@@ -88,7 +107,10 @@
       "variantNote": "Gemini spells out 'safety management system' instead of 'SMS' in several places; substance identical to Grok's text.",
       "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)) with a single-sentence para 6.2. Amended by resolution MSC.353(92) (adopted 21 June 2013, in force 1 January 2015): replaced para 6.2 with two sub-paragraphs adding the 'appropriately manned' requirement. Claude Code independently confirmed two things today: (1) a direct fetch of the 1993 original text (admiraltylawguide.com) shows para 6.2 as a single sentence with no sub-items and no mention of 'appropriately manned', consistent with a later amendment restructuring it; (2) an independent web search (distinct sources from those originally supplied, including imorules.com and an irclass.org technical circular) confirms MSC.353(92), adopted 21 June 2013 and in force 1 January 2015, is what actually added the 'appropriately manned' sub-paragraph.",
       "verificationMethod": "Grok and Gemini agree on the substantive text of 6.2, but disagreed on which resolution amended it (Grok: MSC.353(92); Gemini: MSC.273(85)). Claude Code independently checked this today via web search and confirmed MSC.353(92) is correct, not MSC.273(85).",
-      "verifiedBy": ["GROK", "PRIMARY_SOURCE_CROSSCHECK"],
+      "verifiedBy": [
+        "GROK",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
       "verifiedAt": "2026-09-06",
       "knownDiscrepancy": "Gemini attributed the 6.2 'appropriately manned' amendment to MSC.273(85) (2008/2010) instead of the correct MSC.353(92) (2013/2015). This is the third documented instance in this project of Gemini citing a specific, confident but independently-disproven MSC resolution number/date for an amendment (the first being the 1.2.2.2 attribution to MSC.104(73) instead of MSC.273(85), and the second being Gemini's 'develop' vs 'establish' error in Element 2, both documented earlier in this file). Recorded here as a pattern: Gemini's verbatim text quotes have generally been reliable, but its specific amendment/resolution-number attributions have now been wrong on two separate occasions and should not be trusted without independent primary-source cross-check, which Claude Code performed here."
     },
@@ -102,7 +124,11 @@
       "fullText": "7 SHIPBOARD OPERATIONS\n\nThe Company should establish procedures, plans and instructions, including checklists as appropriate, for key shipboard operations concerning the safety of the personnel, ship and protection of the environment. The various tasks should be defined and assigned to qualified personnel.",
       "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)) under the original title 'Development of Plans for Shipboard Operations', with text: 'The Company should establish procedures for the preparation of plans and instructions for key shipboard operations concerning the safety of the ship and the prevention of pollution. The various tasks involved should be defined and assigned to qualified personnel.' Claude Code independently fetched this exact 1993 wording today (admiraltylawguide.com) and confirmed it differs substantively from the current text above (no 'checklists as appropriate', no 'personnel' among protected interests, 'prevention of pollution' rather than 'protection of the environment') - confirming a real amendment occurred, consistent with the retitle. The specific attribution to MSC.273(85) (2008/2010) is Grok and Gemini's shared claim; Claude Code's own search today could not pin the exact resolution number to this specific retitle/rewrite with full certainty (found only general confirmation that MSC.273(85) was a broad 2008/2010 amendment package), so this attribution is treated as probable, not independently nailed down to the same standard as Elements 5, 6 and 9.",
       "verificationMethod": "Grok and Gemini produced character-for-character identical current-text and identical resolution attribution. Claude Code independently confirmed the underlying fact that the text changed (via direct 1993-original fetch and diff) but did not independently pin the exact resolution number with full certainty.",
-      "verifiedBy": ["GROK", "GEMINI", "PRIMARY_SOURCE_CROSSCHECK"],
+      "verifiedBy": [
+        "GROK",
+        "GEMINI",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
       "verifiedAt": "2026-09-06",
       "confidenceNote": "Text-change confirmed with high confidence (direct diff against 1993 original). Resolution-number attribution (MSC.273(85)) confirmed only to 'probable', not to the same certainty as Elements 5, 6 and 9's resolution attributions, which had cleaner independent search corroboration."
     },
@@ -117,7 +143,10 @@
       "variantNote": "Gemini spells out 'safety management system' instead of 'SMS' in 8.3; substance identical.",
       "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)). Original 8.1 read 'The Company should establish procedures to identify, describe and respond to potential emergency shipboard situations.' - resolution MSC.273(85) (adopted 4 December 2008, in force 1 July 2010) replaced it with the wording shown above. Claude Code independently fetched the full 1993 text of paragraphs 8.1, 8.2 and 8.3 today (admiraltylawguide.com) and diffed all three directly: 8.1 differs from the 1993 original (confirming it was amended), 8.2 and 8.3 are character-for-character identical to the 1993 original (confirming neither was amended).",
       "verificationMethod": "Grok and Gemini agree on the substantive text of all three sub-paragraphs, but disagreed on which one was amended (Grok: 8.1; Gemini: 8.2). Claude Code independently resolved this today by fetching the 1993 original text directly and diffing each of the three sub-paragraphs against it - a direct textual proof, not a secondary claim: 8.1 is different, 8.2 and 8.3 are identical to 1993.",
-      "verifiedBy": ["GROK", "PRIMARY_SOURCE_CROSSCHECK"],
+      "verifiedBy": [
+        "GROK",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
       "verifiedAt": "2026-09-06",
       "knownDiscrepancy": "Gemini attributed the amendment to paragraph 8.2 instead of the correct paragraph 8.1. This is the fourth documented instance in this file of a specific, confident Gemini claim about which provision changed being independently disproven (see EL1's MSC.104(73) case, Element 2's 'develop' case, and Element 6's MSC.273(85)/MSC.353(92) case). Here Claude Code did not rely on a secondary source's summary at all - it fetched the 1993 original directly and compared each sub-paragraph itself, which is the most direct form of verification used anywhere in this file so far."
     },
@@ -132,8 +161,65 @@
       "variantNote": "Gemini spells out 'safety management system' instead of 'SMS' in 9.1; substance identical. British/American spelling of 'analysed'/'analyzed' varies across mirrors and is not treated as substantive.",
       "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)). Original 9.2 read 'The Company should establish procedures for the implementation of corrective action.' (full stop, no further clause) - resolution MSC.273(85) (adopted 4 December 2008, in force 1 July 2010) added ', including measures intended to prevent recurrence.' Para 9.1 is otherwise unchanged from 1993. Claude Code independently fetched the 1993 original text of both paragraphs today (admiraltylawguide.com) and confirmed 9.2's original wording lacks the added clause entirely, and 9.1 is substantively identical apart from spelling.",
       "verificationMethod": "Grok and Gemini produced character-for-character identical current-text and identical amendment attribution. Claude Code independently confirmed the underlying text change today via a direct fetch and diff of the 1993 original.",
-      "verifiedBy": ["GROK", "GEMINI", "PRIMARY_SOURCE_CROSSCHECK"],
+      "verifiedBy": [
+        "GROK",
+        "GEMINI",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
       "verifiedAt": "2026-09-06"
+    },
+    {
+      "sourceId": "IMO-ISM-A741-18-EL10",
+      "title": "Maintenance of the Ship and Equipment",
+      "authority": "IMO",
+      "moduleCode": "ism-code-foundations",
+      "flagAdministration": null,
+      "section": "Element 10 (paras 10.1-10.4)",
+      "fullText": "10 MAINTENANCE OF THE SHIP AND EQUIPMENT\n\n10.1 The Company should establish procedures to ensure that the ship is maintained in conformity with the provisions of the relevant rules and regulations and with any additional requirements which may be established by the Company.\n\n10.2 In meeting these requirements the Company should ensure that:\n.1 inspections are held at appropriate intervals;\n.2 any non-conformity is reported, with its possible cause, if known;\n.3 appropriate corrective action is taken; and\n.4 records of these activities are maintained.\n\n10.3 The Company should identify equipment and technical systems the sudden operational failure of which may result in hazardous situations. The SMS should provide for specific measures aimed at promoting the reliability of such equipment or systems. These measures should include the regular testing of stand-by arrangements and equipment or technical systems that are not in continuous use.\n\n10.4 The inspections mentioned in 10.2 as well as the measures referred to in 10.3 should be integrated into the ship's operational maintenance routine.",
+      "variantNote": "Gemini spells out 'safety management system' instead of 'SMS'; substance identical.",
+      "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)). Para 10.3 originally began 'The Company should establish procedures in SMS to identify equipment and...' - resolution MSC.273(85) (adopted 4 December 2008, in force 1 July 2010) removed that opening clause, so it now begins 'The Company should identify equipment...'. Claude Code independently fetched the 1993 original today (admiraltylawguide.com) and confirmed the original opening clause verbatim, directly corroborating the claimed edit. Paragraphs 10.1, 10.2, 10.4 confirmed unchanged.",
+      "verificationMethod": "Grok and Gemini agree on text and amendment attribution. Claude Code independently confirmed the underlying text change today via direct 1993-original fetch; did not run a separate search specifically to re-pin the MSC.273(85) resolution number for this paragraph beyond its now-established role as the 2008/2010 package resolution.",
+      "verifiedBy": [
+        "GROK",
+        "GEMINI",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-06"
+    },
+    {
+      "sourceId": "IMO-ISM-A741-18-EL11",
+      "title": "Documentation",
+      "authority": "IMO",
+      "moduleCode": "ism-code-foundations",
+      "flagAdministration": null,
+      "section": "Element 11 (paras 11.1-11.3)",
+      "fullText": "11 DOCUMENTATION\n\n11.1 The Company should establish and maintain procedures to control all documents and data which are relevant to the SMS.\n\n11.2 The Company should ensure that:\n.1 valid documents are available at all relevant locations;\n.2 changes to documents are reviewed and approved by authorized personnel; and\n.3 obsolete documents are promptly removed.\n\n11.3 The documents used to describe and implement the SMS may be referred to as the \"Safety Management Manual\". Documentation should be kept in a form that the Company considers most effective. Each ship should carry on board all documentation relevant to that ship.",
+      "variantNote": "Gemini spells out 'safety management system'/drops quotation marks around 'Safety Management Manual'; substance identical.",
+      "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)). No amendment identified by either AI. Claude Code independently fetched the 1993 original text of 11.1-11.3 today and confirmed all three paragraphs' openings match the current text, consistent with no amendment.",
+      "verificationMethod": "Grok and Gemini agree on text. Claude Code independently confirmed via direct 1993-original fetch today.",
+      "verifiedBy": [
+        "GROK",
+        "GEMINI",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-06"
+    },
+    {
+      "sourceId": "IMO-ISM-A741-18-EL12",
+      "title": "Company Verification, Review and Evaluation",
+      "authority": "IMO",
+      "moduleCode": "ism-code-foundations",
+      "flagAdministration": null,
+      "section": "Element 12 (paras 12.1-12.7)",
+      "fullText": "12 COMPANY VERIFICATION, REVIEW AND EVALUATION\n\n12.1 The Company should carry out internal safety audits on board and ashore at intervals not exceeding twelve months to verify whether safety and pollution-prevention activities comply with the safety management system. In exceptional circumstances, this interval may be exceeded by not more than three months.\n\n12.2 The Company should periodically verify whether all those undertaking delegated ISM-related tasks are acting in conformity with the Company's responsibilities under the Code.\n\n12.3 The Company should periodically evaluate the effectiveness of the SMS in accordance with procedures established by the Company.\n\n12.4 The audits and possible corrective actions should be carried out in accordance with documented procedures.\n\n12.5 Personnel carrying out audits should be independent of the areas being audited unless this is impracticable due to the size and the nature of the Company.\n\n12.6 The results of the audits and reviews should be brought to the attention of all personnel having responsibility in the area involved.\n\n12.7 The management personnel responsible for the area involved should take timely corrective action on deficiencies found.",
+      "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)), originally 6 paragraphs. Resolution MSC.273(85) (adopted 4 December 2008, in force 1 July 2010) replaced para 12.1 (adding the twelve-month/three-month-exception language). Resolution MSC.353(92) (adopted 21 June 2013, in force 1 January 2015) inserted a brand new paragraph 12.2 ('periodically verify whether all those undertaking delegated ISM-related tasks...') and renumbered the former 12.2-12.6 to 12.3-12.7, bringing the element to its current 7 paragraphs. Claude Code independently confirmed the entire restructuring today via two separate steps: (1) a direct fetch of the 1993 original text (admiraltylawguide.com) confirmed the original had exactly 6 paragraphs, with the original 12.2 reading 'The Company should periodically evaluate the efficiency and when needed review the SMS...' - i.e. today's 12.3 under a different, pre-amendment wording; (2) a direct fetch of imorules.com's current Element 12 page independently confirmed the current 7-paragraph structure verbatim, including 12.1's twelve-month/three-month language, 12.2's exact delegated-tasks wording, and 12.3's effectiveness-evaluation wording - matching the fullText above exactly.",
+      "verificationMethod": "Grok gave the correct current 7-paragraph structure including the MSC.353(92)-inserted 12.2. Gemini's version omitted this paragraph entirely, giving only 6 paragraphs with its own 12.2 corresponding to the real 12.3. Claude Code independently confirmed Grok's version is correct via two direct fetches today (the 1993 original and imorules.com's current text), not by trusting either AI's account of what a third party had checked.",
+      "verifiedBy": [
+        "GROK",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-06",
+      "knownDiscrepancy": "Gemini's Element 12 output omitted paragraph 12.2 (the MSC.353(92)-inserted 'delegated ISM-related tasks' verification requirement) entirely, giving only 6 paragraphs where 7 exist, with its 12.2 actually corresponding to the real 12.3. This is the fifth documented Gemini error in this file's source-verification pipeline (see Elements 1, 2, 6 and 8 for the prior four) and the most significant so far, since it is a missing substantive requirement rather than a citation or numbering nuance. Independently confirmed wrong via two direct fetches (a 1993-original mirror and imorules.com's current-text page), neither of which were among the sources originally supplied for this element. Project-level pattern: Gemini's output should never be accepted on its own for regulatory completeness; Grok's independent agreement or a primary-source cross-check is required every time - and this instance shows the failure mode can be an entire missing paragraph, not just a word or a citation."
     }
   ],
   "unresolvedSources": []
