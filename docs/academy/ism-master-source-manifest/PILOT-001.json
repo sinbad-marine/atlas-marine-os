@@ -91,6 +91,49 @@
       "verifiedBy": ["GROK", "PRIMARY_SOURCE_CROSSCHECK"],
       "verifiedAt": "2026-09-06",
       "knownDiscrepancy": "Gemini attributed the 6.2 'appropriately manned' amendment to MSC.273(85) (2008/2010) instead of the correct MSC.353(92) (2013/2015). This is the third documented instance in this project of Gemini citing a specific, confident but independently-disproven MSC resolution number/date for an amendment (the first being the 1.2.2.2 attribution to MSC.104(73) instead of MSC.273(85), and the second being Gemini's 'develop' vs 'establish' error in Element 2, both documented earlier in this file). Recorded here as a pattern: Gemini's verbatim text quotes have generally been reliable, but its specific amendment/resolution-number attributions have now been wrong on two separate occasions and should not be trusted without independent primary-source cross-check, which Claude Code performed here."
+    },
+    {
+      "sourceId": "IMO-ISM-A741-18-EL7",
+      "title": "Shipboard Operations",
+      "authority": "IMO",
+      "moduleCode": "ism-code-foundations",
+      "flagAdministration": null,
+      "section": "Element 7",
+      "fullText": "7 SHIPBOARD OPERATIONS\n\nThe Company should establish procedures, plans and instructions, including checklists as appropriate, for key shipboard operations concerning the safety of the personnel, ship and protection of the environment. The various tasks should be defined and assigned to qualified personnel.",
+      "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)) under the original title 'Development of Plans for Shipboard Operations', with text: 'The Company should establish procedures for the preparation of plans and instructions for key shipboard operations concerning the safety of the ship and the prevention of pollution. The various tasks involved should be defined and assigned to qualified personnel.' Claude Code independently fetched this exact 1993 wording today (admiraltylawguide.com) and confirmed it differs substantively from the current text above (no 'checklists as appropriate', no 'personnel' among protected interests, 'prevention of pollution' rather than 'protection of the environment') - confirming a real amendment occurred, consistent with the retitle. The specific attribution to MSC.273(85) (2008/2010) is Grok and Gemini's shared claim; Claude Code's own search today could not pin the exact resolution number to this specific retitle/rewrite with full certainty (found only general confirmation that MSC.273(85) was a broad 2008/2010 amendment package), so this attribution is treated as probable, not independently nailed down to the same standard as Elements 5, 6 and 9.",
+      "verificationMethod": "Grok and Gemini produced character-for-character identical current-text and identical resolution attribution. Claude Code independently confirmed the underlying fact that the text changed (via direct 1993-original fetch and diff) but did not independently pin the exact resolution number with full certainty.",
+      "verifiedBy": ["GROK", "GEMINI", "PRIMARY_SOURCE_CROSSCHECK"],
+      "verifiedAt": "2026-09-06",
+      "confidenceNote": "Text-change confirmed with high confidence (direct diff against 1993 original). Resolution-number attribution (MSC.273(85)) confirmed only to 'probable', not to the same certainty as Elements 5, 6 and 9's resolution attributions, which had cleaner independent search corroboration."
+    },
+    {
+      "sourceId": "IMO-ISM-A741-18-EL8",
+      "title": "Emergency Preparedness",
+      "authority": "IMO",
+      "moduleCode": "ism-code-foundations",
+      "flagAdministration": null,
+      "section": "Element 8 (paras 8.1-8.3)",
+      "fullText": "8 EMERGENCY PREPAREDNESS\n\n8.1 The Company should identify potential emergency shipboard situations, and establish procedures to respond to them.\n\n8.2 The Company should establish programmes for drills and exercises to prepare for emergency actions.\n\n8.3 The SMS should provide for measures ensuring that the Company's organization can respond at any time to hazards, accidents and emergency situations involving its ships.",
+      "variantNote": "Gemini spells out 'safety management system' instead of 'SMS' in 8.3; substance identical.",
+      "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)). Original 8.1 read 'The Company should establish procedures to identify, describe and respond to potential emergency shipboard situations.' - resolution MSC.273(85) (adopted 4 December 2008, in force 1 July 2010) replaced it with the wording shown above. Claude Code independently fetched the full 1993 text of paragraphs 8.1, 8.2 and 8.3 today (admiraltylawguide.com) and diffed all three directly: 8.1 differs from the 1993 original (confirming it was amended), 8.2 and 8.3 are character-for-character identical to the 1993 original (confirming neither was amended).",
+      "verificationMethod": "Grok and Gemini agree on the substantive text of all three sub-paragraphs, but disagreed on which one was amended (Grok: 8.1; Gemini: 8.2). Claude Code independently resolved this today by fetching the 1993 original text directly and diffing each of the three sub-paragraphs against it - a direct textual proof, not a secondary claim: 8.1 is different, 8.2 and 8.3 are identical to 1993.",
+      "verifiedBy": ["GROK", "PRIMARY_SOURCE_CROSSCHECK"],
+      "verifiedAt": "2026-09-06",
+      "knownDiscrepancy": "Gemini attributed the amendment to paragraph 8.2 instead of the correct paragraph 8.1. This is the fourth documented instance in this file of a specific, confident Gemini claim about which provision changed being independently disproven (see EL1's MSC.104(73) case, Element 2's 'develop' case, and Element 6's MSC.273(85)/MSC.353(92) case). Here Claude Code did not rely on a secondary source's summary at all - it fetched the 1993 original directly and compared each sub-paragraph itself, which is the most direct form of verification used anywhere in this file so far."
+    },
+    {
+      "sourceId": "IMO-ISM-A741-18-EL9",
+      "title": "Reports and Analysis of Non-Conformities, Accidents and Hazardous Occurrences",
+      "authority": "IMO",
+      "moduleCode": "ism-code-foundations",
+      "flagAdministration": null,
+      "section": "Element 9 (paras 9.1-9.2)",
+      "fullText": "9 REPORTS AND ANALYSIS OF NON-CONFORMITIES, ACCIDENTS AND HAZARDOUS OCCURRENCES\n\n9.1 The SMS should include procedures ensuring that non-conformities, accidents and hazardous situations are reported to the Company, investigated and analysed with the objective of improving safety and pollution prevention.\n\n9.2 The Company should establish procedures for the implementation of corrective action, including measures intended to prevent recurrence.",
+      "variantNote": "Gemini spells out 'safety management system' instead of 'SMS' in 9.1; substance identical. British/American spelling of 'analysed'/'analyzed' varies across mirrors and is not treated as substantive.",
+      "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)). Original 9.2 read 'The Company should establish procedures for the implementation of corrective action.' (full stop, no further clause) - resolution MSC.273(85) (adopted 4 December 2008, in force 1 July 2010) added ', including measures intended to prevent recurrence.' Para 9.1 is otherwise unchanged from 1993. Claude Code independently fetched the 1993 original text of both paragraphs today (admiraltylawguide.com) and confirmed 9.2's original wording lacks the added clause entirely, and 9.1 is substantively identical apart from spelling.",
+      "verificationMethod": "Grok and Gemini produced character-for-character identical current-text and identical amendment attribution. Claude Code independently confirmed the underlying text change today via a direct fetch and diff of the 1993 original.",
+      "verifiedBy": ["GROK", "GEMINI", "PRIMARY_SOURCE_CROSSCHECK"],
+      "verifiedAt": "2026-09-06"
     }
   ],
   "unresolvedSources": []
