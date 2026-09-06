@@ -106,6 +106,11 @@ function validateManifest(manifest) {
   }
   if (!isBoundedString(manifest.sourceBatchId, 200)) fail('SOURCE_BATCH_ID_INVALID', { value: manifest.sourceBatchId });
   if (!isBoundedString(manifest.sourceRevision, 200)) fail('SOURCE_REVISION_INVALID', { value: manifest.sourceRevision });
+  // title and packageSize are an ISM-specific requirement enforced only here, not
+  // in the shared config/human-review-contract.json's requiredManifestFields.
+  // Owner decision, 2026-09-06: adding them to the shared contract could affect
+  // GASM's existing import manifests (not independently verified either way),
+  // while keeping this ISM-only is zero-risk and keeps the two concerns separate.
   if (!isBoundedString(manifest.title, 200)) fail('TITLE_INVALID', { value: manifest.title });
   if (!HEX64.test(manifest.contentSha256 || '')) fail('CONTENT_SHA256_INVALID', { value: manifest.contentSha256 });
   if (!ALLOWED_PACKAGE_SIZES.includes(manifest.packageSize)) {
