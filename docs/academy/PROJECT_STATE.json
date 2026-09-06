@@ -1,20 +1,23 @@
 {
   "project": "SINBAD Academy ISM-ISPS-MLC Pilot",
   "current_phase": "Phase 2 - Verified-source ingestion (pilot)",
-  "current_task": "ism-code-foundations module: ISM Code source manifest (GROK->GEMINI->provenance file), 16/16 elements complete",
+  "current_task": "ISM Code source verification complete (16/16 elements). Question generation paused after one pilot question (PILOT-001-first-question-package.json) pending its live Human Review verification. In parallel: ISPS Code (Part A) source verification is newly starting - no element/section has been committed yet.",
   "last_verified_checkpoint": "Phase 0 audit was delivered as a chat message in the Claude Code conversation on 2026-09-05, not committed to this repo as a file. No file named SINBAD_ACADEMY_ISM_ISPS_MLC_PHASE_0_AUDIT_2026-09-05.md exists in this repo - a similarly-named but unrelated file, docs/HUMAN_REVIEWER_PHASE_0_AUDIT_2026-09-03.md, does exist and should not be confused with it. No formal Phase 1/2 GO/REVISE/STOP decision has been recorded in-repo as an artifact; work has proceeded under the Owner's continuous, turn-by-turn direction in conversation instead.",
   "completed_work": [
     "PR #212 (draft, branch codex/academy-ism-pilot-slice): academy_ism_* schema/RLS/tooling, additive migration, plus the two fixes below, 5 commits",
-    "PR #213 (draft, branch codex/academy-ism-pilot-001-manifest): docs/academy/ism-master-source-manifest/PILOT-001.json - ISM Code 16/16 elements verified via GROK+GEMINI independent agreement plus primary-source cross-check, 6 commits"
+    "PR #213 (draft, branch codex/academy-ism-pilot-001-manifest): docs/academy/ism-master-source-manifest/PILOT-001.json - ISM Code 16/16 elements verified via GROK+GEMINI independent agreement plus primary-source cross-check, 8 commits",
+    "PR #213: PILOT-001-first-question-package.json - one pilot question (ISM Element 2) locally validated against the real checkIsmQuestionPayload()/validateManifest() code and against the real human_review_import_package() function via PGlite (packageComplete:true, status AVAILABLE) - not yet imported into any live Supabase project; that is the Owner's pending step below"
   ],
   "pending_work": [
     "PR #212: the real @supabase/supabase-js network layer in tools/academy-ism-promote-accepted-package.js has never been exercised against a live Supabase project - needs manual verification before real use",
+    "Owner to personally import PILOT-001-first-question-package.json into a real Supabase project and run it through Human Review to owner_finalize_package - full audit trail to be reported here once done.",
     "Next: Owner decision on whether to proceed to another ism-code-foundations sub-scope, or begin wiring the completed manifest into curriculum/question-writing (an explicitly separate, later, out-of-scope phase per every commit in PR #213)"
   ],
   "resolved_decisions": [
-    "RESOLVED 2026-09-06 by Owner: title/packageSize remain an ISM-specific requirement, enforced only in tools/academy-ism-manifest-builder.js, and are deliberately NOT added to the shared config/human-review-contract.json's requiredManifestFields - widening that shared contract could affect GASM's existing import manifests (not independently verified either way), while keeping this ISM-only is zero-risk and keeps the two concerns separate. Documented inline as a code comment at the validation site, plus in PR #212's commit 8bbaabd."
+    "RESOLVED 2026-09-06 by Owner: title/packageSize remain an ISM-specific requirement, enforced only in tools/academy-ism-manifest-builder.js, and are deliberately NOT added to the shared config/human-review-contract.json's requiredManifestFields - widening that shared contract could affect GASM's existing import manifests (not independently verified either way), while keeping this ISM-only is zero-risk and keeps the two concerns separate. Documented inline as a code comment at the validation site, plus in PR #212's commit 8bbaabd.",
+    "Chief AI Checkpoint, 2026-09-06: explicit GO recorded for the completed pilot package (PILOT-001-first-question-package.json) and the PROJECT_STATE/audit changes in PR #213 - accepted for the Owner's own live Supabase -> Human Review -> Owner Finalization verification. Scope of the GO is explicitly bounded: it authorizes the Owner running the existing pilot package through that live loop, not any further question-generation volume (see GO_REVISE_HOLD_STOP for the exact constraint)."
   ],
-  "GO_REVISE_HOLD_STOP": "GO (implicit, via the Owner's continuous per-turn direction) for the Phase 2 pilot scope executed so far; no explicit HOLD or STOP is currently in force; no formal written GO/REVISE/STOP record exists in this repo as an artifact (see last_verified_checkpoint)",
+  "GO_REVISE_HOLD_STOP": "GO (explicit Chief AI Checkpoint, 2026-09-06) for the completed pilot package - Owner will personally run it through the live Supabase -> Human Review -> Owner Finalization loop. Constraint: no question-generation volume expansion (no 2nd+ pilot question) until that live loop is completed and verified end-to-end once. Source verification (non-question work) may continue in parallel.",
   "active_work_orders": [],
   "known_defects": [
     "FIXED in PR #212 commit 8bbaabd7908d8a685e7c6ffdef6c8c5a73706fa0 (2026-09-06): tools/academy-ism-promote-accepted-package.js's groupKey() previously joined its key fields with a literal U+0000 (null) byte, confirmed by finding a raw null byte at file offset 1669 in the committed file, which caused grep/git to treat the source file as binary. Delimiter changed to 0x1F (Unit Separator); exactly one byte differs from the prior version (verified by full-file diff), and the existing test suite passes unmodified (8/8, including the grouping test that exercises groupKey() directly). PR #212 is still open/unmerged as of this update - the fix exists on that branch but has not reached main yet.",
@@ -37,13 +40,13 @@
     "note": "This is a provenance/reference record only, not a database write - it does not create any academy_ism_source_manifest row, verification_stage, or question. See the manifest file's own top-level 'note' field."
   },
   "relevant_PRs_commits": {
-    "PR_212": "sinbad-marine/atlas-marine-os#212 (draft, open, not merged, 5 commits as of 2026-09-06T11:52Z)",
-    "PR_213": "sinbad-marine/atlas-marine-os#213 (draft, open, not merged, 7 commits as of this update, 2026-09-06T11:52Z - this file's own addition is the 7th)"
+    "PR_212": "sinbad-marine/atlas-marine-os#212 (draft, open, not merged, 5 commits as of 2026-09-06T12:16Z)",
+    "PR_213": "sinbad-marine/atlas-marine-os#213 (draft, open, not merged, 9 commits as of this update, 2026-09-06T12:16Z - this file's own addition is the 9th)"
   },
   "corrections_made_when_writing_this_file": [
     "The last_verified_checkpoint field originally supplied referenced a Phase 0 audit file that does not exist in this repo; corrected to state plainly that no such file exists and that the real audit was a conversational deliverable, not a committed artifact.",
     "The known_defects entry about a Gemini error count originally read 'this is the eighth documented Gemini error'; recounting directly from PILOT-001.json's own fields today found 7 distinct instances, not 8 - corrected here and in PR #213's description.",
-    "This update's own predecessor version of this file stated PR #212 had '5 commits as of 2026-09-06', which was actually inaccurate at the time it was written (PR #212 had 4 commits then); it happens to be numerically correct now only because a 5th commit (the null-byte fix) was since added - noted here so a future reader does not assume the earlier version was verified when it was not."
+    "An earlier version of this file stated PR #212 had '5 commits as of 2026-09-06', which was actually inaccurate at the time it was written (PR #212 had 4 commits then); it happened to become numerically correct only after a 5th commit (the null-byte fix) was separately added - noted so a future reader does not assume that earlier figure was verified when it was not."
   ],
-  "last_verified_timestamp": "2026-09-06T11:52:11Z"
+  "last_verified_timestamp": "2026-09-06T12:16:06Z"
 }
