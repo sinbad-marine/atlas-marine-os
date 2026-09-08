@@ -1,0 +1,37 @@
+{
+  "manifestVersion": "MLC-PILOT-003",
+  "createdAt": "2026-09-08T08:33:34Z",
+  "note": "This is a provenance/reference record only, not a database write. Same status as PILOT-001.json and PILOT-002.json in this same directory: no academy_mlc_source_manifest table exists in this repo, this file asserts no verification_stage, and it is not consumed by any promotion tooling in this repo today. No migration, schema, or tooling change accompanies this file - it is an additive docs/ file only, on its own branch (codex/academy-mlc-pilot-003-manifest), separate from PR #212/#213/#214/#215/#216 and containing neither PILOT-001.json nor PILOT-002.json.",
+  "schemaExtensionNote": "Uses the same regulationRef/standardARef/guidelineBRef fields introduced in PILOT-001.json to represent MLC's Article/Regulation/Standard(A)/Guideline(B) tiered structure. For this entry, standardARef and guidelineBRef are explicitly null - see structuralFinding below - rather than omitted, so the absence is a documented, verified fact rather than a gap that looks like an oversight.",
+  "structuralFinding": "Regulation 1.3 (Training and qualifications) has NO accompanying Standard A1.3 and NO accompanying Guideline B1.3. This is a genuine structural feature of the Convention, not an extraction error: both independent primary-source mirrors show 'Regulation 1.3 - Training and qualifications' followed immediately by 'Regulation 1.4 - Recruitment and placement' with no Standard/Guideline heading in between, and this is corroborated by the Convention's own front-matter Table of Contents (both mirrors), which lists Regulation 1.3 with no separate Standard/Guideline sub-entry. Substantively, Regulation 1.3 paragraph 3 explains why: training and certification under the IMO's own mandatory instruments (STCW) is deemed to satisfy Regulation 1.3, so the MLC Code does not layer its own separate Standard/Guideline on top of STCW for this subject.",
+  "verificationMethodNote": "Same method as PILOT-001.json and PILOT-002.json, explicitly different from PR #213/#214's GROK+GEMINI+primary-source method: this session has no GROK/GEMINI access. Verification used (1) a direct fetch and local pdftotext -layout extraction of the same two independently hosted mirrors of the ILO's original 2006 published Convention text used in PILOT-001/002 - register-iri.com (Marshall Islands flag registry's copy) and ilo.org/media/269841 (ILO's own hosted copy) - diffed against each other for this entire Regulation 1.3 block, byte-for-byte identical, no variant; (2) a targeted web search across the five MLC amendment rounds (2014, 2016, 2018, 2022, 2025) to confirm none of them amended this provision, consistent with the same amended-provisions accounting built and cross-checked in PILOT-001/002 (including PILOT-002's direct IRClass fetch for the 2022 round). No independent secondary paraphrase source was fetched for this entry, same as PILOT-002.",
+  "verifiedSources": [
+    {
+      "sourceId": "ILO-MLC2006-T1-REG1.3",
+      "title": "Training and Qualifications",
+      "authority": "ILO",
+      "moduleCode": "mlc-code-foundations",
+      "flagAdministration": null,
+      "section": "Title 1, Regulation 1.3 (no accompanying Standard A1.3 or Guideline B1.3 - see structuralFinding)",
+      "regulationRef": "Regulation 1.3 - Training and qualifications",
+      "standardARef": null,
+      "guidelineBRef": null,
+      "fullText": "Regulation 1.3 - Training and qualifications\n\nPurpose: To ensure that seafarers are trained or qualified to carry out their duties on board ship\n\n1. Seafarers shall not work on a ship unless they are trained or certified as competent or otherwise qualified to perform their duties.\n\n2. Seafarers shall not be permitted to work on a ship unless they have successfully completed training for personal safety on board ship.\n\n3. Training and certification in accordance with the mandatory instruments adopted by the International Maritime Organization shall be considered as meeting the requirements of paragraphs 1 and 2 of this Regulation.\n\n4. Any Member which, at the time of its ratification of this Convention, was bound by the Certification of Able Seamen Convention, 1946 (No. 74), shall continue to carry out the obligations under that Convention unless and until mandatory provisions covering its subject matter have been adopted by the International Maritime Organization and entered into force, or until five years have elapsed since the entry into force of this Convention in accordance with paragraph 3 of Article VIII, whichever date is earlier.",
+      "variantNote": "None - the two primary-source mirrors (register-iri.com and ilo.org/media/269841) are byte-for-byte identical for this entire block, including the absence of any Standard A1.3 or Guideline B1.3 heading between Regulation 1.3 and Regulation 1.4 in both.",
+      "amendmentHistory": "Convention adopted 23 February 2006; entered into force 20 August 2013 (same Convention-level dates as PILOT-001/002). Checked against all five post-2006 Code amendment rounds specifically for Regulation 1.3: 2014 amended Regulations 2.5 and 4.2 only; 2016 amended Regulation 4.3 only; 2018 amended Standards A2.1 and A2.2 only; 2022 amended Regulations 1.4, 2.5, 3.1, 3.2, 4.1 and 4.3 only (per PILOT-002's direct IRClass circular fetch); 2025 amended Regulations 1.4, 2.4 and 2.5 only. Regulation 1.3 does not appear in any of the five rounds' affected-provisions lists - and since it has no Standard A1.3 or Guideline B1.3 to begin with, there is also no Code-level provision under it that any round could have amended.",
+      "verificationMethod": "Direct fetch and local pdftotext -layout extraction of the same two independently hosted primary-source mirrors used in PILOT-001/002 (register-iri.com and ilo.org/media/269841), diffed against each other for this entire block and found byte-for-byte identical, including the structural absence of a Standard/Guideline heading (independently corroborated by both mirrors' own front-matter Table of Contents, which lists Regulation 1.3 with no separate Standard/Guideline sub-entry). Amendment history independently checked via web search across all five post-2006 amendment rounds, reusing the amended-provisions accounting already built and cross-checked in PILOT-002 (including its direct IRClass fetch for 2022).",
+      "verifiedBy": [
+        "PRIMARY_SOURCE_DUAL_MIRROR_DIFF",
+        "AMENDMENT_HISTORY_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-08",
+      "primarySources": [
+        "https://www.register-iri.com/wp-content/uploads/MLC-2006.pdf",
+        "https://www.ilo.org/media/269841/download"
+      ],
+      "secondarySources": []
+    }
+  ],
+  "unresolvedSources": [],
+  "relatedButOutOfScope": "Same boundary as PILOT-001.json and PILOT-002.json: ISM Code (16/16 elements) and ISPS Code Part A (19/19 sections) are separately closed, frozen baselines and are not reopened, re-verified, or modified by this file. This file also does not touch config/human-review-contract.json, any academy_ism_* schema/RLS/tooling, PR #212/213/214/215/216, or the GASM Human Review Cloud staging work - it is a standalone, additive provenance record on its own branch, deliberately kept independent of PILOT-001.json (PR #215) and PILOT-002.json (PR #216) per Owner instruction."
+}
