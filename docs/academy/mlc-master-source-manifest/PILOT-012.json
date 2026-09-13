@@ -1,0 +1,356 @@
+{
+  "manifestVersion": "MLC-PILOT-012",
+  "createdAt": "2026-09-13T07:21:53Z",
+  "note": "Provenance/reference record only, not a database write. Same status as PILOT-001 through 009.json: no academy_mlc_source_manifest table exists, no verification_stage asserted, not consumed by any promotion tooling. No migration, schema, or tooling change. Additive docs/ file only, on its own branch, separate from every other open PR in this series.",
+  "batchNote": "Prepared under the Owner's 2026-09-08 full-scope MLC Title 1-5 instruction and the Owner's 2026-09-12 GO on the resumption plan, which released this Regulation from SOURCE HOLD only after the current consolidated ILO text and the authentic amendment texts were reacquired and their provenance recorded (see primarySources/amendmentTextSources). 'Prepared/draft' is not 'verified', 'human-accepted', 'merged' or 'live'. This file is source-text verification only.",
+  "schemaExtensionNote": "Uses the regulationRef/standardARef/guidelineBRef fields introduced in PILOT-001.json and adds textEdition, pendingAmendments2025, diffEvidence and amendmentTextSources. No further schema change; no tooling reads these files.",
+  "verificationMethodNote": "No GROK/GEMINI access this session. Method: PRIMARY_SOURCE_FOUR_STAGE_DIFF (see verifiedSources[0].verificationMethod) over the ILO consolidated 2022 text, the ILO 2014+2016 consolidated text and two 2006-original mirrors, with every substantive diff span matched to the authentic ILO amendment texts of 2014, 2016, 2018 and 2022. The 2025 amendments (ILC 113, adopted 6 June 2025, expected entry into force 23 December 2027) are NOT in force and are NOT blended into fullText; they are recorded in pendingAmendments2025 only. Running headers, page numbers and soft hyphenation were removed when re-flowing fullText; every hyphen join is listed in diffEvidence.hyphenJoinsApplied for audit.",
+  "verifiedSources": [
+    {
+      "sourceId": "ILO-MLC2006-T1-REG1.4",
+      "title": "Recruitment and placement",
+      "authority": "ILO",
+      "moduleCode": "mlc-code-foundations",
+      "flagAdministration": null,
+      "section": "Title 1, Regulation 1.4 / Standard A1.4 / Guideline B1.4 (including Guideline B1.4.1)",
+      "regulationRef": "Regulation 1.4 - Recruitment and placement",
+      "standardARef": "Standard A1.4 - Recruitment and placement",
+      "guidelineBRef": "Guideline B1.4 - Recruitment and placement; Guideline B1.4.1 - Organizational and operational guidelines",
+      "textEdition": "Maritime Labour Convention, 2006, as amended - consolidated text established by the International Labour Office including the Amendments of 2014, 2016, 2018 and 2022 to the Code (ILO publication dated 2 October 2024). This is the text in force on the verification date.",
+      "fullText": "Regulation 1.4 - Recruitment and placement\n\nPurpose: To ensure that seafarers have access to an efficient and well-regulated seafarer recruitment and placement system\n\n1. All seafarers shall have access to an efficient, adequate and accountable system for finding employment on board ship without charge to the seafarer.\n\n2. Seafarer recruitment and placement services operating in a Member's territory shall conform to the standards set out in the Code.\n\n3. Each Member shall require, in respect of seafarers who work on ships that fly its flag, that shipowners who use seafarer recruitment and placement services that are based in countries or territories in which this Convention does not apply, ensure that those services conform to the requirements set out in the Code.\n\nStandard A1.4 - Recruitment and placement\n\n1. Each Member that operates a public seafarer recruitment and placement service shall ensure that the service is operated in an orderly manner that protects and promotes seafarers' employment rights as provided in this Convention.\n\n2. Where a Member has private seafarer recruitment and placement services operating in its territory whose primary purpose is the recruitment and placement of seafarers or which recruit and place a significant number of seafarers, they shall be operated only in conformity with a standardized system of licensing or certification or other form of regulation. This system shall be established, modified or changed only after consultation with the shipowners' and seafarers' organizations concerned. In the event of doubt as to whether this Convention applies to a private recruitment and placement service, the question shall be determined by the competent authority in each Member after consultation with the shipowners' and seafarers' organizations concerned. Undue proliferation of private seafarer recruitment and placement services shall not be encouraged.\n\n3. The provisions of paragraph 2 of this Standard shall also apply - to the extent that they are determined by the competent authority, in consultation with the shipowners' and seafarers' organizations concerned, to be appropriate - in the context of recruitment and placement services operated by a seafarers' organization in the territory of the Member for the supply of seafarers who are nationals of that Member to ships which fly its flag. The services covered by this paragraph are those fulfilling the following conditions:\n\n(a) the recruitment and placement service is operated pursuant to a collective bargaining agreement between that organization and a shipowner;\n\n(b) both the seafarers' organization and the shipowner are based in the territory of the Member;\n\n(c) the Member has national laws or regulations or a procedure to authorize or register the collective bargaining agreement permitting the operation of the recruitment and placement service; and\n\n(d) the recruitment and placement service is operated in an orderly manner and measures are in place to protect and promote seafarers' employment rights comparable to those provided in paragraph 5 of this Standard.\n\n4. Nothing in this Standard or Regulation 1.4 shall be deemed to:\n\n(a) prevent a Member from maintaining a free public seafarer recruitment and placement service for seafarers in the framework of a policy to meet the needs of seafarers and shipowners, whether the service forms part of or is coordinated with a public employment service for all workers and employers; or\n\n(b) impose on a Member the obligation to establish a system for the operation of private seafarer recruitment or placement services in its territory.\n\n5. A Member adopting a system referred to in paragraph 2 of this Standard shall, in its laws and regulations or other measures, at a minimum:\n\n(a) prohibit seafarer recruitment and placement services from using means, mechanisms or lists intended to prevent or deter seafarers from gaining employment for which they are qualified;\n\n(b) require that no fees or other charges for seafarer recruitment or placement or for providing employment to seafarers are borne directly or indirectly, in whole or in part, by the seafarer, other than the cost of the seafarer obtaining a national statutory medical certificate, the national seafarer's book and a passport or other similar personal travel documents, not including, however, the cost of visas, which shall be borne by the shipowner; and\n\n(c) ensure that seafarer recruitment and placement services operating in its territory:\n\n(i) maintain an up-to-date register of all seafarers recruited or placed through them, to be available for inspection by the competent authority;\n\n(ii) make sure that seafarers are informed of their rights and duties under their employment agreements prior to or in the process of engagement and that proper arrangements are made for seafarers to examine their employment agreements before and after they are signed and for them to receive a copy of the agreements;\n\n(iii) verify that seafarers recruited or placed by them are qualified and hold the documents necessary for the job concerned, and that the seafarers' employment agreements are in accordance with applicable laws and regulations and any collective bargaining agreement that forms part of the employment agreement;\n\n(iv) make sure, as far as practicable, that the shipowner has the means to protect seafarers from being stranded in a foreign port;\n\n(v) examine and respond to any complaint concerning their activities and advise the competent authority of any unresolved complaint;\n\n(vi) establish a system of protection, by way of insurance or an equivalent appropriate measure, to compensate seafarers for monetary loss that they may incur as a result of the failure of a recruitment and placement service or the relevant shipowner under the seafarers' employment agreement to meet its obligations to them, and ensure that seafarers are informed, prior to or in the process of engagement, of their rights under that system.\n\n6. The competent authority shall closely supervise and control all seafarer recruitment and placement services operating in the territory of the Member concerned. Any licences or certificates or similar authorizations for the operation of private services in the territory are granted or renewed only after verification that the seafarer recruitment and placement service concerned meets the requirements of national laws and regulations.\n\n7. The competent authority shall ensure that adequate machinery and procedures exist for the investigation, if necessary, of complaints concerning the activities of seafarer recruitment and placement services, involving, as appropriate, representatives of shipowners and seafarers.\n\n8. Each Member which has ratified this Convention shall, in so far as practicable, advise its nationals on the possible problems of signing on a ship that flies the flag of a State which has not ratified the Convention, until it is satisfied that standards equivalent to those fixed by this Convention are being applied. Measures taken to this effect by the Member that has ratified this Convention shall not be in contradiction with the principle of free movement of workers stipulated by the treaties to which the two States concerned may be parties.\n\n9. Each Member which has ratified this Convention shall require that shipowners of ships that fly its flag, who use seafarer recruitment and placement services based in countries or territories in which this Convention does not apply, ensure, as far as practicable, that those services meet the requirements of this Standard.\n\n10. Nothing in this Standard shall be understood as diminishing the obligations and responsibilities of shipowners or of a Member with respect to ships that fly its flag.\n\nGuideline B1.4 - Recruitment and placement\n\nGuideline B1.4.1 - Organizational and operational guidelines\n\n1. When fulfilling its obligations under Standard A1.4, paragraph 1, the compe-tent authority should consider:\n\n(a) taking the necessary measures to promote effective cooperation among seafarer recruitment and placement services, whether public or private;\n\n(b) the needs of the maritime industry at both the national and international levels, when developing training programmes for seafarers that form the part of the ship's crew that is responsible for the ship's safe navigation and pollution prevention operations, with the participation of shipowners, seafarers and the relevant training institutions;\n\n(c) making suitable arrangements for the cooperation of representative shipowners' and seafarers' organizations in the organization and operation of the public seafarer recruitment and placement services, where they exist;\n\n(d) determining, with due regard to the right to privacy and the need to protect confidentiality, the conditions under which seafarers' personal data may be processed by seafarer recruitment and placement services, including the collection, storage, combination and communication of such data to third parties;\n\n(e) maintaining an arrangement for the collection and analysis of all relevant information on the maritime labour market, including the current and prospective supply of seafarers that work as crew classified by age, sex, rank and qualifications, and the industry's requirements, the collection of data on age or sex being admissible only for statistical purposes or if used in the framework of a programme to prevent discrimination based on age or sex;\n\n(f) ensuring that the staff responsible for the supervision of public and private seafarer recruitment and placement services for ship's crew with responsibility for the ship's safe navigation and pollution prevention operations have had adequate training, including approved sea-service experience, and have relevant knowledge of the maritime industry, including the relevant maritime international instruments on training, certification and labour standards;\n\n(g) prescribing operational standards and adopting codes of conduct and ethical practices for seafarer recruitment and placement services; and\n\n(h) exercising supervision of the licensing or certification system on the basis of a system of quality standards.\n\n2. In establishing the system referred to in Standard A1.4, paragraph 2, each Member should consider requiring seafarer recruitment and placement services, established in its territory, to develop and maintain verifiable operational practices. These operational practices for private seafarer recruitment and placement services and, to the extent that they are applicable, for public seafarer recruitment and placement services should address the following matters:\n\n(a) medical examinations, seafarers' identity documents and such other items as may be required for the seafarer to gain employment;\n\n(b) maintaining, with due regard to the right to privacy and the need to protect confidentiality, full and complete records of the seafarers covered by their recruitment and placement system, which should include but not be limited to:\n\n(i) the seafarers' qualifications;\n\n(ii) record of employment;\n\n(iii) personal data relevant to employment; and\n\n(iv) medical data relevant to employment;\n\n(c) maintaining up-to-date lists of the ships for which the seafarer recruitment and placement services provide seafarers and ensuring that there is a means by which the services can be contacted in an emergency at all hours;\n\n(d) procedures to ensure that seafarers are not subject to exploitation by the seafarer recruitment and placement services or their personnel with regard to the offer of engagement on particular ships or by particular companies;\n\n(e) procedures to prevent the opportunities for exploitation of seafarers arising from the issue of joining advances or any other financial transaction between the shipowner and the seafarers which are handled by the seafarer recruitment and placement services;\n\n(f) clearly publicizing costs, if any, which the seafarer will be expected to bear in the recruitment process;\n\n(g) ensuring that seafarers are advised of any particular conditions applicable to the job for which they are to be engaged and of the particular shipowner's policies relating to their employment;\n\n(h) procedures which are in accordance with the principles of natural justice for dealing with cases of incompetence or indiscipline consistent with national laws and practice and, where applicable, with collective agreements;\n\n(i) procedures to ensure, as far as practicable, that all mandatory certificates and documents submitted for employment are up to date and have not been fraudulently obtained and that employment references are verified;\n\n(j) procedures to ensure that requests for information or advice by families of seafarers while the seafarers are at sea are dealt with promptly and sympathetically and at no cost; and\n\n(k) verifying that labour conditions on ships where seafarers are placed are in conformity with applicable collective bargaining agreements concluded between a shipowner and a representative seafarers' organization and, as a matter of policy, supplying seafarers only to shipowners that offer terms and conditions of employment to seafarers which comply with applicable laws or regulations or collective agreements.\n\n3. Consideration should be given to encouraging international cooperation between Members and relevant organizations, such as:\n\n(a) the systematic exchange of information on the maritime industry and labour market on a bilateral, regional and multilateral basis;\n\n(b) the exchange of information on maritime labour legislation;\n\n(c) the harmonization of policies, working methods and legislation governing recruitment and placement of seafarers;\n\n(d) the improvement of procedures and conditions for the international recruitment and placement of seafarers; and\n\n(e) workforce planning, taking account of the supply of and demand for seafarers and the requirements of the maritime industry.",
+      "variantNote": "No substantive variant between sources. Residual diff spans are PDF extraction artifacts only (running headers, page numbers, line-break hyphenation, spacing before punctuation), inspected individually. The two 2006 mirrors differ in one capitalisation ('the'/'The'), same wording.",
+      "amendmentHistory": "Amended once in force. 2022 (ILC 110, approved 6 June 2022, in force 23 December 2024): Standard A1.4 paragraph 5(c)(vi) replaced - the recruitment and placement service protection system must now also 'ensure that seafarers are informed, prior to or in the process of engagement, of their rights under that system'. Everything else is 2006 text. Not named in the 2014, 2016 or 2018 amendment texts. Diff evidence: the single substantive span in consolidated2016 -> consolidated2022 is exactly that added clause.",
+      "pendingAmendments2025": "2025 (ILC 113, adopted 6 June 2025, NOT in force, expected 23 December 2027): Guideline B1.4.1 - new paragraph 2(l) (measures to prevent and address violence and harassment, including sexual harassment, bullying and sexual assault, in recruitment and placement processes), with the conjunction moved from 2(j) to 2(k). Not blended into fullText.",
+      "verificationMethod": "PRIMARY_SOURCE_FOUR_STAGE_DIFF: (1) the two 2006-original mirrors were sliced and word-diffed against each other; (2) the 2006 original was word-diffed against the ILO 2014+2016 consolidated text; (3) that text was word-diffed against the ILO 2014+2016+2018+2022 consolidated text; (4) every non-artifact diff span was matched against the authentic amendment texts (ILO 2014, 2016, 2018 and 2022 amendment documents). fullText is the stage-3 target block re-flowed to undo PDF line wrapping; its word sequence was re-diffed against the raw block (consistencyCheck).",
+      "diffEvidence": {
+        "mirror2006_ilo_vs_registerIri": {
+          "wordDiffSpans": 1,
+          "similarityRatio": 0.9995
+        },
+        "original2006_vs_consolidated2016": {
+          "wordDiffSpans": 7,
+          "similarityRatio": 0.979
+        },
+        "consolidated2016_vs_consolidated2022": {
+          "wordDiffSpans": 4,
+          "similarityRatio": 0.99
+        },
+        "consistencyCheck_reflow_vs_raw": {
+          "wordDiffSpans": 2,
+          "similarityRatio": 0.9957
+        },
+        "hyphenDecisions": [
+          {
+            "token": "well-regulated",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "terri-tory",
+            "decision": "JOIN",
+            "joinedForms": 78,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ship-owners",
+            "decision": "JOIN",
+            "joinedForms": 345,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "terri-tory",
+            "decision": "JOIN",
+            "joinedForms": 78,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "bar-gaining",
+            "decision": "JOIN",
+            "joinedForms": 64,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "reg-ister",
+            "decision": "JOIN",
+            "joinedForms": 30,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "recruit-ment",
+            "decision": "JOIN",
+            "joinedForms": 176,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "com-parable",
+            "decision": "JOIN",
+            "joinedForms": 14,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "place-ment",
+            "decision": "JOIN",
+            "joinedForms": 196,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "sea-farers",
+            "decision": "JOIN_MAJORITY",
+            "joinedForms": 2076,
+            "hyphenForms": 1,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "mech-anisms",
+            "decision": "JOIN",
+            "joinedForms": 4,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "na-tional",
+            "decision": "JOIN",
+            "joinedForms": 528,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "up-to",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 28,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "employ-ment",
+            "decision": "JOIN",
+            "joinedForms": 486,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ap-propriate",
+            "decision": "JOIN",
+            "joinedForms": 319,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "recruit-ment",
+            "decision": "JOIN",
+            "joinedForms": 176,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ship-owners",
+            "decision": "JOIN",
+            "joinedForms": 345,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "equiva-lent",
+            "decision": "JOIN",
+            "joinedForms": 51,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ship-owners",
+            "decision": "JOIN",
+            "joinedForms": 345,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "com-pe",
+            "decision": "JOIN",
+            "joinedForms": 17,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "preven-tion",
+            "decision": "JOIN",
+            "joinedForms": 170,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "sea-farer",
+            "decision": "JOIN",
+            "joinedForms": 763,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "con-fidentiality",
+            "decision": "JOIN",
+            "joinedForms": 4,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "infor-mation",
+            "decision": "JOIN",
+            "joinedForms": 191,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "admis-sible",
+            "decision": "JOIN",
+            "joinedForms": 1,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "sea-farer",
+            "decision": "JOIN",
+            "joinedForms": 763,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "train-ing",
+            "decision": "JOIN",
+            "joinedForms": 149,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "sea-service",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 8,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "estab-lished",
+            "decision": "JOIN",
+            "joinedForms": 65,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "confi-dentiality",
+            "decision": "JOIN",
+            "joinedForms": 4,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "up-to",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 28,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "fraudu-lently",
+            "decision": "MANUAL",
+            "result": "fraudulently",
+            "reason": "line-break hyphenation of a single English word (no such hyphenated compound exists); joined form is standard orthography.",
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "sea-farers",
+            "decision": "JOIN_MAJORITY",
+            "joinedForms": 2076,
+            "hyphenForms": 1,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "con-formity",
+            "decision": "JOIN",
+            "joinedForms": 20,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "pol-icy",
+            "decision": "JOIN",
+            "joinedForms": 35,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "recruit-ment",
+            "decision": "JOIN",
+            "joinedForms": 176,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          }
+        ],
+        "hyphenRule": "Every hyphenated token whose second part is lower-case (line-end hyphenation and stray in-line hyphens from PDF extraction alike) was decided on evidence from the four source texts: JOIN when only the joined form occurs in the sources, KEEP when only the hyphenated form occurs, majority when both occur, KEEP_UNRESOLVED (hyphen retained, listed here) when neither occurs. Upper-case continuations (e.g. Director-General) keep the hyphen.",
+        "artifactNote": "Non-zero span counts in the mirror and stage-2/3 comparisons are explained field by field in amendmentHistory and variantNote; the remainder are PDF extraction artifacts (running headers, page numbers, line-break hyphenation, spacing before punctuation) that were inspected individually."
+      },
+      "verifiedBy": [
+        "PRIMARY_SOURCE_FOUR_STAGE_DIFF",
+        "AMENDMENT_TEXT_CROSSCHECK",
+        "AMENDMENT_HISTORY_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-13",
+      "primarySources": [
+        {
+          "file": "ILO_MLC2006_consolidated_2022.pdf",
+          "url": "https://www.ilo.org/sites/default/files/2024-10/NORMES_MLC%20Amendments-EN_2022_Web_1.pdf",
+          "sha256": "bc444a84c177558dfc043b027b47681f06d7155f793819e755984f1b785f7e43",
+          "bytes": 610483,
+          "fetchedUtc": "2026-09-12T20:28:04Z"
+        },
+        {
+          "file": "ILO_267866_MLC2006_2014_2016_consolidated.pdf",
+          "url": "https://www.ilo.org/media/267866/download",
+          "sha256": "3c3f1542f72e67a5df9fefb75c56117d223a74ccf06c7c8104a3332cec926ebb",
+          "bytes": 745545,
+          "fetchedUtc": "2026-09-12T20:30:52Z"
+        },
+        {
+          "file": "ILO_269841_MLC2006_original.pdf",
+          "url": "https://www.ilo.org/media/269841/download",
+          "sha256": "74f3f95ceda4d787027629ee6f2848cd9fda3695c6cd37ca57c894d0dffed422",
+          "bytes": 1163116,
+          "fetchedUtc": "2026-09-12T20:30:50Z"
+        },
+        {
+          "file": "RegisterIRI_MLC2006_original.pdf",
+          "url": "https://www.register-iri.com/wp-content/uploads/MLC-2006.pdf",
+          "sha256": "a335e8c065a4e8122ed486b487bd2e8d05fde1bfa8f70383946d6af537519ad9",
+          "bytes": 1098370,
+          "fetchedUtc": "2026-09-12T20:30:49Z"
+        }
+      ],
+      "amendmentTextSources": [
+        {
+          "file": "ILO_wcms_848492_2022_amendments.pdf",
+          "url": "https://www.ilo.org/sites/default/files/wcmsp5/groups/public/%40ed_norm/%40relconf/documents/meetingdocument/wcms_848492.pdf",
+          "sha256": "d9c0e177c0a1dd9fb60c59ae0bfc679f5074bc8d60024d8f1b2d42d7255ed340",
+          "bytes": 95665,
+          "fetchedUtc": "2026-09-12T21:28:35Z"
+        },
+        {
+          "file": "ILO_ILC113_2025_amendments.pdf",
+          "url": "https://www.ilo.org/sites/default/files/2025-06/ILC113-Instruments-[RELMEETINGS-250605-001]-Web-EN.pdf",
+          "sha256": "fb6aad9e90ddc3a916bc4d7ace7c011ff3474767cd70775f11cc8d1e2951f8bc",
+          "bytes": 160387,
+          "fetchedUtc": "2026-09-12T20:28:04Z"
+        }
+      ],
+      "secondarySources": []
+    }
+  ],
+  "unresolvedSources": [],
+  "relatedButOutOfScope": "ISM Code and ISPS Code Part A remain closed, frozen baselines. Appendices A2-I, A4-I, A5-I to A5-III and B5-I are not part of any Regulation block and are not reproduced here; where an amendment changed an Appendix it is mentioned in amendmentHistory only. Does not touch config/human-review-contract.json, academy_ism_* schema/RLS/tooling, any open PR in this series, or GASM Human Review Cloud staging."
+}
