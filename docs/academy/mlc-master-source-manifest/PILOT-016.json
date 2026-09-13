@@ -1,0 +1,272 @@
+{
+  "manifestVersion": "MLC-PILOT-016",
+  "createdAt": "2026-09-13T07:21:55Z",
+  "note": "Provenance/reference record only, not a database write. Same status as PILOT-001 through 009.json: no academy_mlc_source_manifest table exists, no verification_stage asserted, not consumed by any promotion tooling. No migration, schema, or tooling change. Additive docs/ file only, on its own branch, separate from every other open PR in this series.",
+  "batchNote": "Prepared under the Owner's 2026-09-08 full-scope MLC Title 1-5 instruction and the Owner's 2026-09-12 GO on the resumption plan, which released this Regulation from SOURCE HOLD only after the current consolidated ILO text and the authentic amendment texts were reacquired and their provenance recorded (see primarySources/amendmentTextSources). 'Prepared/draft' is not 'verified', 'human-accepted', 'merged' or 'live'. This file is source-text verification only.",
+  "schemaExtensionNote": "Uses the regulationRef/standardARef/guidelineBRef fields introduced in PILOT-001.json and adds textEdition, pendingAmendments2025, diffEvidence and amendmentTextSources. No further schema change; no tooling reads these files.",
+  "verificationMethodNote": "No GROK/GEMINI access this session. Method: PRIMARY_SOURCE_FOUR_STAGE_DIFF (see verifiedSources[0].verificationMethod) over the ILO consolidated 2022 text, the ILO 2014+2016 consolidated text and two 2006-original mirrors, with every substantive diff span matched to the authentic ILO amendment texts of 2014, 2016, 2018 and 2022. The 2025 amendments (ILC 113, adopted 6 June 2025, expected entry into force 23 December 2027) are NOT in force and are NOT blended into fullText; they are recorded in pendingAmendments2025 only. Running headers, page numbers and soft hyphenation were removed when re-flowing fullText; every hyphen join is listed in diffEvidence.hyphenJoinsApplied for audit.",
+  "verifiedSources": [
+    {
+      "sourceId": "ILO-MLC2006-T4-REG4.2",
+      "title": "Shipowners' liability",
+      "authority": "ILO",
+      "moduleCode": "mlc-code-foundations",
+      "flagAdministration": null,
+      "section": "Title 4, Regulation 4.2 / Standards A4.2.1 and A4.2.2 / Guidelines B4.2.1 and B4.2.2",
+      "regulationRef": "Regulation 4.2 - Shipowners' liability",
+      "standardARef": "Standard A4.2.1 - Shipowners' liability; Standard A4.2.2 - Treatment of contractual claims",
+      "guidelineBRef": "Guideline B4.2.1 - Shipowners' liability; Guideline B4.2.2 - Treatment of contractual claims",
+      "textEdition": "Maritime Labour Convention, 2006, as amended - consolidated text established by the International Labour Office including the Amendments of 2014, 2016, 2018 and 2022 to the Code (ILO publication dated 2 October 2024). This is the text in force on the verification date.",
+      "fullText": "Regulation 4.2 - Shipowners' liability\n\nPurpose: To ensure that seafarers are protected from the financial consequences of sickness, injury or death occurring in connection with their employment\n\n1. Each Member shall ensure that measures, in accordance with the Code, are in place on ships that fly its flag to provide seafarers employed on the ships with a right to material assistance and support from the shipowner with respect to the financial consequences of sickness, injury or death occurring while they are serving under a seafarers' employment agreement or arising from their employment under such agreement.\n\n2. This Regulation does not affect any other legal remedies that a seafarer may seek.\n\nStandard A4.2.1 - Shipowners' liability\n\n1. Each Member shall adopt laws and regulations requiring that shipowners of ships that fly its flag are responsible for health protection and medical care of all seafarers working on board the ships in accordance with the following minimum standards:\n\n(a) shipowners shall be liable to bear the costs for seafarers working on their ships in respect of sickness and injury of the seafarers occurring between the date of commencing duty and the date upon which they are deemed duly repatriated, or arising from their employment between those dates;\n\n(b) shipowners shall provide financial security to assure compensation in the event of the death or long-term disability of seafarers due to an occupational injury, illness or hazard, as set out in national law, the seafarers' employment agreement or collective agreement;\n\n(c) shipowners shall be liable to defray the expense of medical care, including medical treatment and the supply of the necessary medicines and therapeutic appliances, and board and lodging away from home until the sick or injured seafarer has recovered, or until the sickness or incapacity has been declared of a permanent character; and\n\n(d) shipowners shall be liable to pay the cost of burial expenses in the case of death occurring on board or ashore during the period of engagement.\n\n2. National laws or regulations may limit the liability of the shipowner to defray the expense of medical care and board and lodging to a period which shall not be less than 16 weeks from the day of the injury or the commencement of the sickness.\n\n3. Where the sickness or injury results in incapacity for work the shipowner shall be liable:\n\n(a) to pay full wages as long as the sick or injured seafarers remain on board or until the seafarers have been repatriated in accordance with this Convention; and\n\n(b) to pay wages in whole or in part as prescribed by national laws or regulations or as provided for in collective agreements from the time when the seafarers are repatriated or landed until their recovery or, if earlier, until they are entitled to cash benefits under the legislation of the Member concerned.\n\n4. National laws or regulations may limit the liability of the shipowner to pay wages in whole or in part in respect of a seafarer no longer on board to a period which shall not be less than 16 weeks from the day of the injury or the commencement of the sickness.\n\n5. National laws or regulations may exclude the shipowner from liability in respect of:\n\n(a) injury incurred otherwise than in the service of the ship;\n\n(b) injury or sickness due to the wilful misconduct of the sick, injured or deceased seafarer; and\n\n(c) sickness or infirmity intentionally concealed when the engagement is entered into.\n\n6. National laws or regulations may exempt the shipowner from liability to defray the expense of medical care and board and lodging and burial expenses in so far as such liability is assumed by the public authorities.\n\n7. Shipowners or their representatives shall take measures for safeguarding property left on board by sick, injured or deceased seafarers and for returning it to them or to their next of kin.\n\n8. National laws and regulations shall provide that the system of financial security to assure compensation as provided by paragraph 1(b) of this Standard for contractual claims, as defined in Standard A4.2.2, meet the following minimum requirements:\n\n(a) the contractual compensation, where set out in the seafarer's employment agreement and without prejudice to subparagraph (c) of this paragraph, shall be paid in full and without delay;\n\n(b) there shall be no pressure to accept a payment less than the contractual amount;\n\n(c) where the nature of the long-term disability of a seafarer makes it difficult to assess the full compensation to which the seafarer may be entitled, an interim payment or payments shall be made to the seafarer so as to avoid undue hardship;\n\n(d) in accordance with Regulation 4.2, paragraph 2, the seafarer shall receive payment without prejudice to other legal rights, but such payment may be offset by the shipowner against any damages resulting from any other claim made by the seafarer against the shipowner and arising from the same incident; and\n\n(e) the claim for contractual compensation may be brought directly by the seafarer concerned, or their next of kin, or a representative of the seafarer or designated beneficiary.\n\n9. National laws and regulations shall ensure that seafarers receive prior notification if a shipowner's financial security is to be cancelled or terminated.\n\n10. National laws and regulations shall ensure that the competent authority of the flag State is notified by the provider of the financial security if a shipowner's financial security is cancelled or terminated.\n\n11. Each Member shall require that ships that fly its flag carry on board a certificate or other documentary evidence of financial security issued by the financial security provider. A copy shall be posted in a conspicuous place on board where it is available to the seafarers. Where more than one financial security provider provides cover, the document provided by each provider shall be carried on board.\n\n12. The financial security shall not cease before the end of the period of validity of the financial security unless the financial security provider has given prior notification of at least 30 days to the competent authority of the flag State.\n\n13. The financial security shall provide for the payment of all contractual claims covered by it which arise during the period for which the document is valid.\n\n14. The certificate or other documentary evidence of financial security shall contain the information required in Appendix A4-I. It shall be in English or accompanied by an English translation.\n\nStandard A4.2.2 - Treatment of contractual claims\n\n1. For the purposes of Standard A4.2.1, paragraph 8, and the present Standard, the term \"contractual claim\" means any claim which relates to death or long-term disability of seafarers due to an occupational injury, illness or hazard as set out in national law, the seafarers' employment agreement or collective agreement.\n\n2. The system of financial security, as provided for in Standard A4.2.1, paragraph 1(b), may be in the form of a social security scheme or insurance or fund or other similar arrangements. Its form shall be determined by the Member after consultation with the shipowners' and seafarers' organizations concerned.\n\n3. National laws and regulations shall ensure that effective arrangements are in place to receive, deal with and impartially settle contractual claims relating to compensation referred to in Standard A4.2.1, paragraph 8, through expeditious and fair procedures.\n\nGuideline B4.2.1 - Shipowners' liability\n\n1. The payment of full wages required by Standard A4.2.1, paragraph 3(a), may be exclusive of bonuses.\n\n2. National laws or regulations may provide that a shipowner shall cease to be liable to bear the costs of a sick or injured seafarer from the time at which that seafarer can claim medical benefits under a scheme of compulsory sickness insurance, compulsory accident insurance or workers' compensation for accidents.\n\n3. National laws or regulations may provide that burial expenses paid by the shipowner shall be reimbursed by an insurance institution in cases in which funeral benefit is payable in respect of the deceased seafarer under laws or regulations relating to social insurance or workers' compensation.\n\nGuideline B4.2.2 - Treatment of contractual claims\n\n1. National laws or regulations should provide that the parties to the payment of a contractual claim may use the Model Receipt and Release Form set out in Appendix B4-I.",
+      "variantNote": "No substantive variant between sources. Residual diff spans are PDF extraction artifacts only (running headers, page numbers, line-break hyphenation, spacing before punctuation), inspected individually.",
+      "amendmentHistory": "Amended once in force within this block. 2014 (ILC 103, approved 11 June 2014, in force 18 January 2017): Standard A4.2 renamed 'Standard A4.2.1 - Shipowners' liability' and extended with new paragraphs 8-14 (financial security for contractual claims in case of death or long-term disability); new 'Standard A4.2.2 - Treatment of contractual claims'; Guideline B4.2 renamed B4.2.1; new 'Guideline B4.2.2 - Treatment of contractual claims'; Appendices A4-I and B4-I added. 2022 (ILC 110): Appendix A4-I item (g) replaced (registered owner) - appendix only, no change inside this block. Diff evidence: original -> consolidated2016 shows exactly the renames and insertions; consolidated2016 -> consolidated2022 shows no substantive span.",
+      "pendingAmendments2025": "None of the 2025 amendments (ILC 113, adopted 6 June 2025, expected entry into force 23 December 2027) touch this Regulation, its Standard or its Guidelines.",
+      "verificationMethod": "PRIMARY_SOURCE_FOUR_STAGE_DIFF: (1) the two 2006-original mirrors were sliced and word-diffed against each other; (2) the 2006 original was word-diffed against the ILO 2014+2016 consolidated text; (3) that text was word-diffed against the ILO 2014+2016+2018+2022 consolidated text; (4) every non-artifact diff span was matched against the authentic amendment texts (ILO 2014, 2016, 2018 and 2022 amendment documents). fullText is the stage-3 target block re-flowed to undo PDF line wrapping; its word sequence was re-diffed against the raw block (consistencyCheck).",
+      "diffEvidence": {
+        "mirror2006_ilo_vs_registerIri": {
+          "wordDiffSpans": 0,
+          "similarityRatio": 1.0
+        },
+        "original2006_vs_consolidated2016": {
+          "wordDiffSpans": 6,
+          "similarityRatio": 0.7027
+        },
+        "consolidated2016_vs_consolidated2022": {
+          "wordDiffSpans": 2,
+          "similarityRatio": 0.9935
+        },
+        "consistencyCheck_reflow_vs_raw": {
+          "wordDiffSpans": 1,
+          "similarityRatio": 0.9967
+        },
+        "hyphenDecisions": [
+          {
+            "token": "con-sequences",
+            "decision": "JOIN",
+            "joinedForms": 5,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "seafar-ers",
+            "decision": "JOIN",
+            "joinedForms": 2076,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "sea-farers",
+            "decision": "JOIN_MAJORITY",
+            "joinedForms": 2076,
+            "hyphenForms": 1,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "long-term",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 8,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "med-ical",
+            "decision": "JOIN",
+            "joinedForms": 538,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "appli-ances",
+            "decision": "MANUAL",
+            "result": "appliances",
+            "reason": "line-break hyphenation of a single English word (no such hyphenated compound exists); joined form is standard orthography.",
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "per-manent",
+            "decision": "JOIN",
+            "joinedForms": 1,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "re-spect",
+            "decision": "JOIN",
+            "joinedForms": 194,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "de-fray",
+            "decision": "JOIN",
+            "joinedForms": 9,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "prop-erty",
+            "decision": "JOIN",
+            "joinedForms": 4,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "agree-ment",
+            "decision": "JOIN",
+            "joinedForms": 301,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "long-term",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 8,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "as-sess",
+            "decision": "JOIN_SUBSTRING",
+            "joinedForms": 28,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "pay-ment",
+            "decision": "JOIN",
+            "joinedForms": 30,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "pay-ment",
+            "decision": "JOIN",
+            "joinedForms": 30,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "notifi-cation",
+            "decision": "JOIN",
+            "joinedForms": 28,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "finan-cial",
+            "decision": "JOIN",
+            "joinedForms": 106,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "certifi-cate",
+            "decision": "JOIN",
+            "joinedForms": 314,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "notifica-tion",
+            "decision": "JOIN",
+            "joinedForms": 28,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "accompa-nied",
+            "decision": "JOIN",
+            "joinedForms": 48,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "Stand-ard",
+            "decision": "JOIN",
+            "joinedForms": 577,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "long-term",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 8,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "sim-ilar",
+            "decision": "JOIN",
+            "joinedForms": 43,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "compul-sory",
+            "decision": "JOIN",
+            "joinedForms": 8,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          }
+        ],
+        "hyphenRule": "Every hyphenated token whose second part is lower-case (line-end hyphenation and stray in-line hyphens from PDF extraction alike) was decided on evidence from the four source texts: JOIN when only the joined form occurs in the sources, KEEP when only the hyphenated form occurs, majority when both occur, KEEP_UNRESOLVED (hyphen retained, listed here) when neither occurs. Upper-case continuations (e.g. Director-General) keep the hyphen.",
+        "artifactNote": "Non-zero span counts in the mirror and stage-2/3 comparisons are explained field by field in amendmentHistory and variantNote; the remainder are PDF extraction artifacts (running headers, page numbers, line-break hyphenation, spacing before punctuation) that were inspected individually."
+      },
+      "verifiedBy": [
+        "PRIMARY_SOURCE_FOUR_STAGE_DIFF",
+        "AMENDMENT_TEXT_CROSSCHECK",
+        "AMENDMENT_HISTORY_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-13",
+      "primarySources": [
+        {
+          "file": "ILO_MLC2006_consolidated_2022.pdf",
+          "url": "https://www.ilo.org/sites/default/files/2024-10/NORMES_MLC%20Amendments-EN_2022_Web_1.pdf",
+          "sha256": "bc444a84c177558dfc043b027b47681f06d7155f793819e755984f1b785f7e43",
+          "bytes": 610483,
+          "fetchedUtc": "2026-09-12T20:28:04Z"
+        },
+        {
+          "file": "ILO_267866_MLC2006_2014_2016_consolidated.pdf",
+          "url": "https://www.ilo.org/media/267866/download",
+          "sha256": "3c3f1542f72e67a5df9fefb75c56117d223a74ccf06c7c8104a3332cec926ebb",
+          "bytes": 745545,
+          "fetchedUtc": "2026-09-12T20:30:52Z"
+        },
+        {
+          "file": "ILO_269841_MLC2006_original.pdf",
+          "url": "https://www.ilo.org/media/269841/download",
+          "sha256": "74f3f95ceda4d787027629ee6f2848cd9fda3695c6cd37ca57c894d0dffed422",
+          "bytes": 1163116,
+          "fetchedUtc": "2026-09-12T20:30:50Z"
+        },
+        {
+          "file": "RegisterIRI_MLC2006_original.pdf",
+          "url": "https://www.register-iri.com/wp-content/uploads/MLC-2006.pdf",
+          "sha256": "a335e8c065a4e8122ed486b487bd2e8d05fde1bfa8f70383946d6af537519ad9",
+          "bytes": 1098370,
+          "fetchedUtc": "2026-09-12T20:30:49Z"
+        }
+      ],
+      "amendmentTextSources": [
+        {
+          "file": "ILO_175166_2014_amendments.pdf",
+          "url": "https://www.ilo.org/media/175166/download",
+          "sha256": "0e14ce4c98147f467f5a7a44a38520867d614c61e1347e63ba231bbd8cb40c54",
+          "bytes": 1164466,
+          "fetchedUtc": "2026-09-13T05:50:03Z"
+        },
+        {
+          "file": "ILO_wcms_848492_2022_amendments.pdf",
+          "url": "https://www.ilo.org/sites/default/files/wcmsp5/groups/public/%40ed_norm/%40relconf/documents/meetingdocument/wcms_848492.pdf",
+          "sha256": "d9c0e177c0a1dd9fb60c59ae0bfc679f5074bc8d60024d8f1b2d42d7255ed340",
+          "bytes": 95665,
+          "fetchedUtc": "2026-09-12T21:28:35Z"
+        }
+      ],
+      "secondarySources": []
+    }
+  ],
+  "unresolvedSources": [],
+  "relatedButOutOfScope": "ISM Code and ISPS Code Part A remain closed, frozen baselines. Appendices A2-I, A4-I, A5-I to A5-III and B5-I are not part of any Regulation block and are not reproduced here; where an amendment changed an Appendix it is mentioned in amendmentHistory only. Does not touch config/human-review-contract.json, academy_ism_* schema/RLS/tooling, any open PR in this series, or GASM Human Review Cloud staging."
+}
