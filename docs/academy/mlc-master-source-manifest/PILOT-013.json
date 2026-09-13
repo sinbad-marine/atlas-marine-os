@@ -1,0 +1,181 @@
+{
+  "manifestVersion": "MLC-PILOT-013",
+  "createdAt": "2026-09-13T07:21:53Z",
+  "note": "Provenance/reference record only, not a database write. Same status as PILOT-001 through 009.json: no academy_mlc_source_manifest table exists, no verification_stage asserted, not consumed by any promotion tooling. No migration, schema, or tooling change. Additive docs/ file only, on its own branch, separate from every other open PR in this series.",
+  "batchNote": "Prepared under the Owner's 2026-09-08 full-scope MLC Title 1-5 instruction and the Owner's 2026-09-12 GO on the resumption plan, which released this Regulation from SOURCE HOLD only after the current consolidated ILO text and the authentic amendment texts were reacquired and their provenance recorded (see primarySources/amendmentTextSources). 'Prepared/draft' is not 'verified', 'human-accepted', 'merged' or 'live'. This file is source-text verification only.",
+  "schemaExtensionNote": "Uses the regulationRef/standardARef/guidelineBRef fields introduced in PILOT-001.json and adds textEdition, pendingAmendments2025, diffEvidence and amendmentTextSources. No further schema change; no tooling reads these files.",
+  "verificationMethodNote": "No GROK/GEMINI access this session. Method: PRIMARY_SOURCE_FOUR_STAGE_DIFF (see verifiedSources[0].verificationMethod) over the ILO consolidated 2022 text, the ILO 2014+2016 consolidated text and two 2006-original mirrors, with every substantive diff span matched to the authentic ILO amendment texts of 2014, 2016, 2018 and 2022. The 2025 amendments (ILC 113, adopted 6 June 2025, expected entry into force 23 December 2027) are NOT in force and are NOT blended into fullText; they are recorded in pendingAmendments2025 only. Running headers, page numbers and soft hyphenation were removed when re-flowing fullText; every hyphen join is listed in diffEvidence.hyphenJoinsApplied for audit.",
+  "verifiedSources": [
+    {
+      "sourceId": "ILO-MLC2006-T2-REG2.4",
+      "title": "Entitlement to leave",
+      "authority": "ILO",
+      "moduleCode": "mlc-code-foundations",
+      "flagAdministration": null,
+      "section": "Title 2, Regulation 2.4 / Standard A2.4 / Guideline B2.4 (including Guidelines B2.4.1 to B2.4.4)",
+      "regulationRef": "Regulation 2.4 - Entitlement to leave",
+      "standardARef": "Standard A2.4 - Entitlement to leave",
+      "guidelineBRef": "Guideline B2.4 - Entitlement to leave; Guideline B2.4.1 - Calculation of entitlement; Guideline B2.4.2 - Taking of annual leave; Guideline B2.4.3 - Division and accumulation; Guideline B2.4.4 - Young seafarers",
+      "textEdition": "Maritime Labour Convention, 2006, as amended - consolidated text established by the International Labour Office including the Amendments of 2014, 2016, 2018 and 2022 to the Code (ILO publication dated 2 October 2024). This is the text in force on the verification date.",
+      "fullText": "Regulation 2.4 - Entitlement to leave\n\nPurpose: To ensure that seafarers have adequate leave\n\n1. Each Member shall require that seafarers employed on ships that fly its flag are given paid annual leave under appropriate conditions, in accordance with the provisions in the Code.\n\n2. Seafarers shall be granted shore leave to benefit their health and well-being and consistent with the operational requirements of their positions.\n\nStandard A2.4 - Entitlement to leave\n\n1. Each Member shall adopt laws and regulations determining the minimum standards for annual leave for seafarers serving on ships that fly its flag, taking proper account of the special needs of seafarers with respect to such leave.\n\n2. Subject to any collective agreement or laws or regulations providing for an appropriate method of calculation that takes account of the special needs of seafarers in this respect, the annual leave with pay entitlement shall be calculated on the basis of a minimum of 2.5 calendar days per month of employment. The manner in which the length of service is calculated shall be determined by the competent authority or through the appropriate machinery in each country. Justified absences from work shall not be considered as annual leave.\n\n3. Any agreement to forgo the minimum annual leave with pay prescribed in this Standard, except in cases provided for by the competent authority, shall be prohibited.\n\nGuideline B2.4 - Entitlement to leave\n\nGuideline B2.4.1 - Calculation of entitlement\n\n1. Under conditions as determined by the competent authority or through the appropriate machinery in each country, service off-articles should be counted as part of the period of service.\n\n2. Under conditions as determined by the competent authority or in an applicable collective agreement, absence from work to attend an approved maritime vocational training course or for such reasons as illness or injury or for maternity should be counted as part of the period of service.\n\n3. The level of pay during annual leave should be at the seafarer's normal level of remuneration provided for by national laws or regulations or in the applicable seafarers' employment agreement. For seafarers employed for periods shorter than one year or in the event of termination of the employment relationship, entitlement to leave should be calculated on a pro-rata basis.\n\n4. The following should not be counted as part of annual leave with pay:\n\n(a) public and customary holidays recognized as such in the flag State, whether or not they fall during the annual leave with pay;\n\n(b) periods of incapacity for work resulting from illness or injury or from maternity, under conditions as determined by the competent authority or through the appropriate machinery in each country;\n\n(c) temporary shore leave granted to a seafarer while under an employment agreement; and\n\n(d) compensatory leave of any kind, under conditions as determined by the competent authority or through the appropriate machinery in each country.\n\nGuideline B2.4.2 - Taking of annual leave\n\n1. The time at which annual leave is to be taken should, unless it is fixed by regulation, collective agreement, arbitration award or other means consistent with national practice, be determined by the shipowner after consultation and, as far as possible, in agreement with the seafarers concerned or their representatives.\n\n2. Seafarers should in principle have the right to take annual leave in the place with which they have a substantial connection, which would normally be the same as the place to which they are entitled to be repatriated. Seafarers should not be required without their consent to take annual leave due to them in another place except under the provisions of a seafarers' employment agreement or of national laws or regulations.\n\n3. If seafarers are required to take their annual leave from a place other than that permitted by paragraph 2 of this Guideline, they should be entitled to free transportation to the place where they were engaged or recruited, whichever is nearer their home; subsistence and other costs directly involved should be for the account of the shipowner; the travel time involved should not be deducted from the annual leave with pay due to the seafarer.\n\n4. A seafarer taking annual leave should be recalled only in cases of extreme emergency and with the seafarer's consent.\n\nGuideline B2.4.3 - Division and accumulation\n\n1. The division of the annual leave with pay into parts, or the accumulation of such annual leave due in respect of one year together with a subsequent period of leave, may be authorized by the competent authority or through the appropriate machinery in each country.\n\n2. Subject to paragraph 1 of this Guideline and unless otherwise provided in an agreement applicable to the shipowner and the seafarer concerned, the annual leave with pay recommended in this Guideline should consist of an uninterrupted period.\n\nGuideline B2.4.4 - Young seafarers\n\n1. Special measures should be considered with respect to young seafarers under the age of 18 who have served six months or any other shorter period of time under a collective agreement or seafarers' employment agreement without leave on a foreign-going ship which has not returned to their country of residence in that time, and will not return in the subsequent three months of the voyage. Such measures could consist of their repatriation at no expense to themselves to the place of original engagement in their country of residence for the purpose of taking any leave earned during the voyage.",
+      "variantNote": "No substantive variant between sources. Residual diff spans are PDF extraction artifacts only (running headers, page numbers, line-break hyphenation, spacing before punctuation), inspected individually. One 2006 mirror drops the word 'consistent' at a page boundary (extraction artifact, the other mirror and both consolidated texts carry it).",
+      "amendmentHistory": "Text unchanged since the Convention was adopted on 23 February 2006 (entered into force 20 August 2013): the 2006 mirrors, the 2014+2016 consolidated text and the 2014+2016+2018+2022 consolidated text agree word for word apart from extraction artifacts. Not named in the 2014, 2016, 2018 or 2022 amendment texts. Diff evidence: no substantive span in either consolidated comparison.",
+      "pendingAmendments2025": "2025 (ILC 113, adopted 6 June 2025, NOT in force, expected 23 December 2027): the heading 'Standard A2.4 - Entitlement to leave' becomes 'Standard A2.4.1 - Annual leave'; a new 'Standard A2.4.2 - Shore leave' (paragraphs 1-7) and a new 'Guideline B2.4.5 - Facilitation of shore leave' are added. Not blended into fullText; the in-force heading A2.4 is kept.",
+      "verificationMethod": "PRIMARY_SOURCE_FOUR_STAGE_DIFF: (1) the two 2006-original mirrors were sliced and word-diffed against each other; (2) the 2006 original was word-diffed against the ILO 2014+2016 consolidated text; (3) that text was word-diffed against the ILO 2014+2016+2018+2022 consolidated text; (4) every non-artifact diff span was matched against the authentic amendment texts (ILO 2014, 2016, 2018 and 2022 amendment documents). fullText is the stage-3 target block re-flowed to undo PDF line wrapping; its word sequence was re-diffed against the raw block (consistencyCheck).",
+      "diffEvidence": {
+        "mirror2006_ilo_vs_registerIri": {
+          "wordDiffSpans": 1,
+          "similarityRatio": 0.9995
+        },
+        "original2006_vs_consolidated2016": {
+          "wordDiffSpans": 5,
+          "similarityRatio": 0.9846
+        },
+        "consolidated2016_vs_consolidated2022": {
+          "wordDiffSpans": 2,
+          "similarityRatio": 0.9967
+        },
+        "consistencyCheck_reflow_vs_raw": {
+          "wordDiffSpans": 2,
+          "similarityRatio": 0.9972
+        },
+        "hyphenDecisions": [
+          {
+            "token": "pro-visions",
+            "decision": "JOIN",
+            "joinedForms": 311,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "well-being",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 20,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "off-articles",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "appli-cable",
+            "decision": "JOIN",
+            "joinedForms": 228,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "voca-tional",
+            "decision": "JOIN",
+            "joinedForms": 12,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "sea-farers",
+            "decision": "JOIN_MAJORITY",
+            "joinedForms": 2076,
+            "hyphenForms": 1,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "pro-rata",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "appro-priate",
+            "decision": "JOIN",
+            "joinedForms": 319,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "compe-tent",
+            "decision": "JOIN",
+            "joinedForms": 670,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "pos-sible",
+            "decision": "JOIN",
+            "joinedForms": 105,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "trans-portation",
+            "decision": "JOIN",
+            "joinedForms": 4,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "foreign-going",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 6,
+            "origin": "line-end-or-inline"
+          }
+        ],
+        "hyphenRule": "Every hyphenated token whose second part is lower-case (line-end hyphenation and stray in-line hyphens from PDF extraction alike) was decided on evidence from the four source texts: JOIN when only the joined form occurs in the sources, KEEP when only the hyphenated form occurs, majority when both occur, KEEP_UNRESOLVED (hyphen retained, listed here) when neither occurs. Upper-case continuations (e.g. Director-General) keep the hyphen.",
+        "artifactNote": "Non-zero span counts in the mirror and stage-2/3 comparisons are explained field by field in amendmentHistory and variantNote; the remainder are PDF extraction artifacts (running headers, page numbers, line-break hyphenation, spacing before punctuation) that were inspected individually."
+      },
+      "verifiedBy": [
+        "PRIMARY_SOURCE_FOUR_STAGE_DIFF",
+        "AMENDMENT_TEXT_CROSSCHECK",
+        "AMENDMENT_HISTORY_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-13",
+      "primarySources": [
+        {
+          "file": "ILO_MLC2006_consolidated_2022.pdf",
+          "url": "https://www.ilo.org/sites/default/files/2024-10/NORMES_MLC%20Amendments-EN_2022_Web_1.pdf",
+          "sha256": "bc444a84c177558dfc043b027b47681f06d7155f793819e755984f1b785f7e43",
+          "bytes": 610483,
+          "fetchedUtc": "2026-09-12T20:28:04Z"
+        },
+        {
+          "file": "ILO_267866_MLC2006_2014_2016_consolidated.pdf",
+          "url": "https://www.ilo.org/media/267866/download",
+          "sha256": "3c3f1542f72e67a5df9fefb75c56117d223a74ccf06c7c8104a3332cec926ebb",
+          "bytes": 745545,
+          "fetchedUtc": "2026-09-12T20:30:52Z"
+        },
+        {
+          "file": "ILO_269841_MLC2006_original.pdf",
+          "url": "https://www.ilo.org/media/269841/download",
+          "sha256": "74f3f95ceda4d787027629ee6f2848cd9fda3695c6cd37ca57c894d0dffed422",
+          "bytes": 1163116,
+          "fetchedUtc": "2026-09-12T20:30:50Z"
+        },
+        {
+          "file": "RegisterIRI_MLC2006_original.pdf",
+          "url": "https://www.register-iri.com/wp-content/uploads/MLC-2006.pdf",
+          "sha256": "a335e8c065a4e8122ed486b487bd2e8d05fde1bfa8f70383946d6af537519ad9",
+          "bytes": 1098370,
+          "fetchedUtc": "2026-09-12T20:30:49Z"
+        }
+      ],
+      "amendmentTextSources": [
+        {
+          "file": "ILO_ILC113_2025_amendments.pdf",
+          "url": "https://www.ilo.org/sites/default/files/2025-06/ILC113-Instruments-[RELMEETINGS-250605-001]-Web-EN.pdf",
+          "sha256": "fb6aad9e90ddc3a916bc4d7ace7c011ff3474767cd70775f11cc8d1e2951f8bc",
+          "bytes": 160387,
+          "fetchedUtc": "2026-09-12T20:28:04Z"
+        }
+      ],
+      "secondarySources": []
+    }
+  ],
+  "unresolvedSources": [],
+  "relatedButOutOfScope": "ISM Code and ISPS Code Part A remain closed, frozen baselines. Appendices A2-I, A4-I, A5-I to A5-III and B5-I are not part of any Regulation block and are not reproduced here; where an amendment changed an Appendix it is mentioned in amendmentHistory only. Does not touch config/human-review-contract.json, academy_ism_* schema/RLS/tooling, any open PR in this series, or GASM Human Review Cloud staging."
+}

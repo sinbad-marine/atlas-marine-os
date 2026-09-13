@@ -1,0 +1,38 @@
+{
+  "manifestVersion": "MLC-PILOT-006",
+  "createdAt": "2026-09-08T09:30:46Z",
+  "note": "Provenance/reference record only, not a database write. Same status as PILOT-001 through 005.json: no academy_mlc_source_manifest table exists, no verification_stage asserted, not consumed by any promotion tooling. No migration, schema, or tooling change. Additive docs/ file only, on its own branch, separate from every other open PR in this series.",
+  "batchNote": "Prepared under an Owner-issued full-scope MLC Title 1-5 preparation instruction (2026-09-08). That instruction explicitly separates 'prepared/draft' from 'verified', 'human-accepted', 'merged' and 'live'. This file is source-text verification only, not a claim of curriculum readiness, Human Review acceptance, or Owner Finalization.",
+  "schemaExtensionNote": "Uses the same regulationRef/standardARef/guidelineBRef fields introduced in PILOT-001.json. No further schema change.",
+  "verificationMethodNote": "Same method as PILOT-004/005.json: no GROK/GEMINI access this session; diffed against two 2006-original mirrors plus the ILO's 2014+2016-consolidated 'as amended' text (ilo.org/media/267866), plus a targeted web search for 2018/2022/2025 amendment mentions.",
+  "verifiedSources": [
+    {
+      "sourceId": "ILO-MLC2006-T2-REG2.7",
+      "title": "Manning Levels",
+      "authority": "ILO",
+      "moduleCode": "mlc-code-foundations",
+      "flagAdministration": null,
+      "section": "Title 2, Regulation 2.7 / Standard A2.7 / Guideline B2.7 (including Guideline B2.7.1)",
+      "regulationRef": "Regulation 2.7 - Manning levels",
+      "standardARef": "Standard A2.7 - Manning levels",
+      "guidelineBRef": "Guideline B2.7 - Manning levels (Guideline B2.7.1 - Dispute settlement)",
+      "fullText": "Regulation 2.7 - Manning levels\n\nPurpose: To ensure that seafarers work on board ships with sufficient personnel for the safe, efficient and secure operation of the ship\n\n1. Each Member shall require that all ships that fly its flag have a sufficient number of seafarers employed on board to ensure that ships are operated safely, efficiently and with due regard to security under all conditions, taking into account concerns about seafarer fatigue and the particular nature and conditions of the voyage.\n\nStandard A2.7 - Manning levels\n\n1. Each Member shall require that all ships that fly its flag have a sufficient number of seafarers on board to ensure that ships are operated safely, efficiently and with due regard to security. Every ship shall be manned by a crew that is adequate, in terms of size and qualifications, to ensure the safety and security of the ship and its personnel, under all operating conditions, in accordance with the minimum safe manning document or an equivalent issued by the competent authority, and to comply with the standards of this Convention.\n\n2. When determining, approving or revising manning levels, the competent authority shall take into account the need to avoid or minimize excessive hours of work to ensure sufficient rest and to limit fatigue, as well as the principles in applicable international instruments, especially those of the International Maritime Organization, on manning levels.\n\n3. When determining manning levels, the competent authority shall take into account all the requirements within Regulation 3.2 and Standard A3.2 concerning food and catering.\n\nGuideline B2.7 - Manning levels\n\nGuideline B2.7.1 - Dispute settlement\n\n1. Each Member should maintain, or satisfy itself that there is maintained, efficient machinery for the investigation and settlement of complaints or disputes concerning the manning levels on a ship.\n\n2. Representatives of shipowners' and seafarers' organizations should participate, with or without other persons or authorities, in the operation of such machinery.",
+      "variantNote": "No substantive variant across all three sources - pagination/header artifacts only.",
+      "amendmentHistory": "Convention adopted 23 February 2006; entered into force 20 August 2013. Confirmed unchanged through the 2014+2016 consolidated edition by direct diff. No mention found in the 2018, 2022, or 2025 amendment rounds. Regulation 2.7 does not appear in any round's affected-provisions list. Note: Standard A2.7 paragraph 3 itself cross-references Regulation 3.2/Standard A3.2 (Food and catering, SOURCE HOLD - amended 2022) - this cross-reference is part of Regulation 2.7's own unamended text and does not affect its own amendment status.",
+      "verificationMethod": "Diffed across two 2006-original primary-source mirrors (byte-identical) plus the 2014+2016-consolidated ILO source (pagination artifacts only, no wording change).",
+      "verifiedBy": [
+        "PRIMARY_SOURCE_TRIPLE_MIRROR_DIFF",
+        "AMENDMENT_HISTORY_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-08",
+      "primarySources": [
+        "https://www.register-iri.com/wp-content/uploads/MLC-2006.pdf",
+        "https://www.ilo.org/media/269841/download",
+        "https://www.ilo.org/media/267866/download"
+      ],
+      "secondarySources": []
+    }
+  ],
+  "unresolvedSources": [],
+  "relatedButOutOfScope": "Same boundary as PILOT-001 through 005.json: ISM Code and ISPS Code Part A remain closed, frozen baselines, not reopened or modified. Does not touch config/human-review-contract.json, academy_ism_* schema/RLS/tooling, any open PR in this series, or GASM Human Review Cloud staging - standalone additive provenance record."
+}
