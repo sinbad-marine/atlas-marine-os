@@ -1,0 +1,299 @@
+{
+  "manifestVersion": "PILOT-001",
+  "createdAt": "2026-09-06T09:14:34Z",
+  "updatedAt": "2026-09-06T10:05:00Z",
+  "note": "This is a provenance/reference record, not a database write. It asserts no verification_stage and is not consumed by tools/academy-ism-promote-accepted-package.js, which only ever reads Owner-accepted Human Review question packages. Real questions written from this text are a separate, later, out-of-scope phase.",
+  "roundsNote": "Elements 1-3 were added in the initial PILOT-001 round. Elements 4-6 were added in a follow-up round (referred to as PILOT-002 in discussion) appended to this same file on the same manifestVersion, rather than as a separate file, per instruction.",
+  "verifiedSources": [
+    {
+      "sourceId": "IMO-ISM-A741-18-EL1",
+      "title": "General",
+      "authority": "IMO",
+      "moduleCode": "ism-code-foundations",
+      "flagAdministration": null,
+      "section": "Element 1 (paras 1.1-1.4)",
+      "fullText": "1 GENERAL\n\n1.1 Definitions\nThe following definitions apply to parts A and B of this Code.\n1.1.1 \"International Safety Management (ISM) Code\" means the International Management Code for the Safe Operation of Ships and for Pollution Prevention as adopted by the Assembly, as may be amended by the Organization.\n1.1.2 \"Company\" means the Owner of the ship or any other organization or person such as the Manager, or the Bareboat Charterer, who has assumed the responsibility for operation of the ship from the Shipowner and who on assuming such responsibility has agreed to take over all the duties and responsibility imposed by the Code.\n1.1.3 \"Administration\" means the Government of the State whose flag the ship is entitled to fly.\n\n1.2 Objectives\n1.2.1 The objectives of the Code are to ensure safety at sea, prevention of human injury or loss of life, and avoidance of damage to the environment, in particular to the marine environment and to property.\n1.2.2 Safety management objectives of the Company should, inter alia:\n.1 provide for safe practices in ship operation and a safe working environment;\n.2 assess all identified risks to its ships, personnel and the environment and establish appropriate safeguards; and\n.3 continuously improve safety management skills of personnel ashore and aboard ships, including preparing for emergencies related both to safety and environmental protection.\n1.2.3 The safety management system should ensure:\n.1 compliance with mandatory rules and regulations; and\n.2 that applicable codes, guidelines and standards recommended by the Organization, Administrations, classification societies and maritime industry organizations are taken into account.\n\n1.3 Application\nThe requirements of this Code may be applied to all ships.\n\n1.4 Functional requirements for a safety-management system (SMS)\nEvery Company should develop, implement and maintain a safety-management system (SMS) which includes the following functional requirements:\n.1 a safety and environmental-protection policy;\n.2 instructions and procedures to ensure safe operation of ships and protection of the environment in compliance with relevant international and flag State legislation;\n.3 defined levels of authority and lines of communication between, and amongst, shore and shipboard personnel;\n.4 procedures for reporting accidents and non-conformities with the provisions of this Code;\n.5 procedures to prepare for and respond to emergency situations; and\n.6 procedures for internal audits and management reviews.",
+      "scopeNote": "1.1 lists only definitions 1.1.1-1.1.3 (Grok's stated scope). Gemini's independent output additionally supplied 1.1.4 through 1.1.12 as a superset, not a contradiction. Claude Code independently confirmed via a live web search today that 1.1.4 (Safety Management System), 1.1.5 (Document of Compliance) and 1.1.6 (Safety Management Certificate) do genuinely exist in the current ISM Code - consistent with Gemini's superset - but did not independently verify the exact wording of 1.1.4-1.1.12 word for word in this pass, only that they exist and roughly match. Treat the extended definitions as plausible, not yet fully character-verified.",
+      "variantNote": "Gemini's fullText renders the 1.4 heading and opening sentence as 'Functional requirements for a safety management system' / 'a safety management system' - no hyphen, no '(SMS)' abbreviation - versus Grok's 'safety-management system (SMS)'. Claude Code independently fetched a mirror of the 1993 original text (admiraltylawguide.com) today: it renders the heading as 'Functional requirements for a Safety Management System (SMS)' - capitalized, and crucially DOES include the '(SMS)' abbreviation, which Gemini's version omits entirely. This does not fully match either AI's exact styling (case and hyphen placement both differ from both), but on the substantive question of whether '(SMS)' appears at all, it supports Grok's version over Gemini's. Note this fetch was extracted via an AI summarization step, not a raw byte-level diff, so treat the exact punctuation as indicative, not a legal-grade citation.",
+      "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)). Para 1.2.2.2 was amended by resolution MSC.273(85) (adopted 4 December 2008, in force 1 July 2010) to its current risk-assessment wording - NOT by MSC.104(73) as one earlier Gemini note claimed. MSC.104(73) (adopted 5 December 2000, in force 1 July 2002) instead introduced the additional 1.1 definitions (including 1.1.4 onward) and did not touch 1.2.2.2. This correction was independently re-verified by Claude Code today via two searches that did not rely on the four links originally supplied (results included safety4sea.com and an ABS guidance document specifically titled 'Guidance on the Revised ISM Code Clause 1.2.2.2', plus a separate search confirming MSC.104(73)'s 5 Dec 2000 / 1 Jul 2002 dates and its role adding 1.1 definitions).",
+      "verificationMethod": "Grok and Gemini independently verbatim-agreed on 1.2, 1.3 and (substantively) 1.4; Claude Code additionally cross-checked the amendment attribution via independent web search (distinct sources from the four originally supplied) and fetched a mirror of the 1993 original text directly.",
+      "verifiedBy": [
+        "GROK",
+        "GEMINI",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-06"
+    },
+    {
+      "sourceId": "IMO-ISM-A741-18-EL2",
+      "title": "Safety and Environmental-Protection Policy",
+      "authority": "IMO",
+      "moduleCode": "ism-code-foundations",
+      "flagAdministration": null,
+      "section": "Element 2 (paras 2.1-2.2)",
+      "fullText": "2 SAFETY AND ENVIRONMENTAL-PROTECTION POLICY\n\n2.1 The Company should establish a safety and environmental-protection policy which describes how the objectives, given in paragraph 1.2, will be achieved.\n\n2.2 The Company should ensure that the policy is implemented and maintained at all levels of the organization both ship based as well as shore based.",
+      "variantNote": "Gemini renders 2.2 as 'both ship-based and shore-based' (hyphenated, 'and'). Claude Code independently fetched a mirror of the 1993 original text (admiraltylawguide.com) today and it reads 'both ship based as well as shore based' - matching Grok's phrasing exactly, not Gemini's. Treated as Gemini reflecting a later consolidated-edition style rather than the 1993 original, not an error, but the 1993 original itself now directly supports Grok's exact wording here.",
+      "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)). No amendment identified to paras 2.1-2.2 in any source consulted.",
+      "verificationMethod": "Grok gave identical text across two independent rounds (an initial round and a blind re-ask that did not see the first round's answer or any flag of a discrepancy). Claude Code independently verified para 2.1's verb via a live web search today (found 'establish' via an unrelated synthesis, not sourced from the four links originally supplied) and by directly fetching a mirror of the 1993 original text (admiraltylawguide.com), which also reads 'establish'.",
+      "verifiedBy": [
+        "GROK",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-06",
+      "knownDiscrepancy": "Gemini independently produced 'develop' instead of 'establish' in para 2.1, reproducibly across two rounds (an initial round and a blind re-ask). This contradicts Grok and contradicts both independent checks Claude Code performed today (a web search and a direct fetch of a 1993-original-text mirror, admiraltylawguide.com). Documented here as a reproducible Gemini error on this specific point, not silently dropped or averaged away. Claude Code did not itself independently confirm the previously-claimed ClassNK or University of Washington mirrors specifically - a ClassNK fetch attempt today returned HTTP 403, and the University of Washington PDF was seen only inside a web-search result summary, not fetched directly - so those two sources are not claimed as personally verified here, only the admiraltylawguide.com fetch and the independent web search are."
+    },
+    {
+      "sourceId": "IMO-ISM-A741-18-EL3",
+      "title": "Company Responsibilities and Authority",
+      "authority": "IMO",
+      "moduleCode": "ism-code-foundations",
+      "flagAdministration": null,
+      "section": "Element 3 (paras 3.1-3.3)",
+      "fullText": "3 COMPANY RESPONSIBILITIES AND AUTHORITY\n\n3.1 If the entity who is responsible for the operation of the ship is other than the owner, the owner must report the full name and details of such entity to the Administration.\n\n3.2 The Company should define and document the responsibility, authority and interrelation of all personnel who manage, perform and verify work relating to and affecting safety and pollution prevention.\n\n3.3 The Company is responsible for ensuring that adequate resources and shore-based support are provided to enable the designated person or persons to carry out their functions.",
+      "variantNote": "None - Grok and Gemini produced character-for-character identical text.",
+      "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)). No amendment identified to paras 3.1-3.3 in any source consulted.",
+      "verificationMethod": "Grok and Gemini independently verbatim-agreed. Claude Code additionally fetched a mirror of the 1993 original text (admiraltylawguide.com) directly today and confirmed the same three paragraphs (that mirror renders 3.3 as 'shore based support', without a hyphen, versus the hyphenated 'shore-based' in the Grok/Gemini text above - a minor, non-substantive styling difference, noted rather than silently normalized).",
+      "verifiedBy": [
+        "GROK",
+        "GEMINI",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-06"
+    },
+    {
+      "sourceId": "IMO-ISM-A741-18-EL4",
+      "title": "Designated Person(s)",
+      "authority": "IMO",
+      "moduleCode": "ism-code-foundations",
+      "flagAdministration": null,
+      "section": "Element 4",
+      "fullText": "4 DESIGNATED PERSON(S)\n\nTo ensure the safe operation of each ship and to provide a link between the company and those on board, every company, as appropriate, should designate a person or persons ashore having direct access to the highest level of management. The responsibility and authority of the designated person or persons should include monitoring the safety and pollution prevention aspects of the operation of each ship and to ensure that adequate resources and shore based support are applied, as required.",
+      "variantNote": "Gemini's version paraphrases this into modern consolidated style ('Company' capitalized, 'and ensuring' instead of 'and to ensure', hyphenated 'pollution-prevention'/'shore-based'). Claude Code independently fetched a mirror of the 1993 original text (admiraltylawguide.com) today and it matches Grok's version character-for-character, including 'and to ensure' and the unhyphenated forms.",
+      "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)). No amendment to Element 4 identified by either AI or by Claude Code's own independent search today.",
+      "verificationMethod": "Grok and Gemini substantively agree. Claude Code independently fetched the 1993 original text today and confirmed Grok's exact wording verbatim.",
+      "verifiedBy": [
+        "GROK",
+        "GEMINI",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-06"
+    },
+    {
+      "sourceId": "IMO-ISM-A741-18-EL5",
+      "title": "Master's Responsibility and Authority",
+      "authority": "IMO",
+      "moduleCode": "ism-code-foundations",
+      "flagAdministration": null,
+      "section": "Element 5 (paras 5.1-5.2)",
+      "fullText": "5 MASTER'S RESPONSIBILITY AND AUTHORITY\n\n5.1 The Company should clearly define and document the master's responsibility with regard to:\n.1 implementing the safety and environmental protection policy of the Company;\n.2 motivating the crew in the observation of that policy;\n.3 issuing appropriate orders and instructions in a clear and simple manner;\n.4 verifying that specified requirements are observed; and\n.5 periodically reviewing the SMS and reporting its deficiencies to the shore based management.\n\n5.2 The Company should ensure that the SMS operating on board the ship contains a clear statement emphasizing the Master's authority. The Company should establish in the SMS that the master has the overriding authority and the responsibility to make decisions with respect to safety and pollution prevention and to request the Company's assistance as may be necessary.",
+      "variantNote": "Gemini spells out 'safety management system' instead of using the 'SMS' abbreviation, and hyphenates 'shore-based'. Treated as edition/style variant, consistent with the pattern already documented for Elements 1-4.",
+      "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)). Amended by resolution MSC.273(85) (adopted 4 December 2008, in force 1 July 2010): inserted 'periodically' at the start of para 5.1.5. Claude Code independently confirmed two things today: (1) a direct fetch of the 1993 original text (admiraltylawguide.com) shows para 5.1.5 without 'periodically' ('reviewing the SMS...'), consistent with it being a later addition; (2) an independent web search (distinct from the sources originally supplied) confirms MSC.273(85), in force 1 July 2010, specifically added the word 'periodically' to this paragraph.",
+      "verificationMethod": "Grok and Gemini independently agree on the text and on this amendment attribution. Claude Code independently corroborated both the pre-amendment 1993 wording and the specific resolution/date via separate fetch and search today.",
+      "verifiedBy": [
+        "GROK",
+        "GEMINI",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-06"
+    },
+    {
+      "sourceId": "IMO-ISM-A741-18-EL6",
+      "title": "Resources and Personnel",
+      "authority": "IMO",
+      "moduleCode": "ism-code-foundations",
+      "flagAdministration": null,
+      "section": "Element 6 (paras 6.1-6.7)",
+      "fullText": "6 RESOURCES AND PERSONNEL\n\n6.1 The Company should ensure that the master is:\n.1 properly qualified for command;\n.2 fully conversant with the Company's SMS; and\n.3 given the necessary support so that the Master's duties can be safely performed.\n\n6.2 The Company should ensure that each ship is:\n.1 manned with qualified, certificated and medically fit seafarers in accordance with national and international requirements; and\n.2 appropriately manned in order to encompass all aspects of maintaining safe operations on board.\n\n6.3 The Company should establish procedures to ensure that new personnel and personnel transferred to new assignments related to safety and protection of the environment are given proper familiarization with their duties. Instructions which are essential to be provided prior to sailing should be identified, documented and given.\n\n6.4 The Company should ensure that all personnel involved in the Company's SMS have an adequate understanding of relevant rules, regulations, codes and guidelines.\n\n6.5 The Company should establish and maintain procedures for identifying any training which may be required in support of the SMS and ensure that such training is provided for all personnel concerned.\n\n6.6 The Company should establish procedures by which the ship's personnel receive relevant information on the SMS in a working language or languages understood by them.\n\n6.7 The Company should ensure that the ship's personnel are able to communicate effectively in the execution of their duties related to the SMS.",
+      "variantNote": "Gemini spells out 'safety management system' instead of 'SMS' in several places; substance identical to Grok's text.",
+      "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)) with a single-sentence para 6.2. Amended by resolution MSC.353(92) (adopted 21 June 2013, in force 1 January 2015): replaced para 6.2 with two sub-paragraphs adding the 'appropriately manned' requirement. Claude Code independently confirmed two things today: (1) a direct fetch of the 1993 original text (admiraltylawguide.com) shows para 6.2 as a single sentence with no sub-items and no mention of 'appropriately manned', consistent with a later amendment restructuring it; (2) an independent web search (distinct sources from those originally supplied, including imorules.com and an irclass.org technical circular) confirms MSC.353(92), adopted 21 June 2013 and in force 1 January 2015, is what actually added the 'appropriately manned' sub-paragraph.",
+      "verificationMethod": "Grok and Gemini agree on the substantive text of 6.2, but disagreed on which resolution amended it (Grok: MSC.353(92); Gemini: MSC.273(85)). Claude Code independently checked this today via web search and confirmed MSC.353(92) is correct, not MSC.273(85).",
+      "verifiedBy": [
+        "GROK",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-06",
+      "knownDiscrepancy": "Gemini attributed the 6.2 'appropriately manned' amendment to MSC.273(85) (2008/2010) instead of the correct MSC.353(92) (2013/2015). This is the third documented instance in this project of Gemini citing a specific, confident but independently-disproven MSC resolution number/date for an amendment (the first being the 1.2.2.2 attribution to MSC.104(73) instead of MSC.273(85), and the second being Gemini's 'develop' vs 'establish' error in Element 2, both documented earlier in this file). Recorded here as a pattern: Gemini's verbatim text quotes have generally been reliable, but its specific amendment/resolution-number attributions have now been wrong on two separate occasions and should not be trusted without independent primary-source cross-check, which Claude Code performed here."
+    },
+    {
+      "sourceId": "IMO-ISM-A741-18-EL7",
+      "title": "Shipboard Operations",
+      "authority": "IMO",
+      "moduleCode": "ism-code-foundations",
+      "flagAdministration": null,
+      "section": "Element 7",
+      "fullText": "7 SHIPBOARD OPERATIONS\n\nThe Company should establish procedures, plans and instructions, including checklists as appropriate, for key shipboard operations concerning the safety of the personnel, ship and protection of the environment. The various tasks should be defined and assigned to qualified personnel.",
+      "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)) under the original title 'Development of Plans for Shipboard Operations', with text: 'The Company should establish procedures for the preparation of plans and instructions for key shipboard operations concerning the safety of the ship and the prevention of pollution. The various tasks involved should be defined and assigned to qualified personnel.' Claude Code independently fetched this exact 1993 wording today (admiraltylawguide.com) and confirmed it differs substantively from the current text above (no 'checklists as appropriate', no 'personnel' among protected interests, 'prevention of pollution' rather than 'protection of the environment') - confirming a real amendment occurred, consistent with the retitle. The specific attribution to MSC.273(85) (2008/2010) is Grok and Gemini's shared claim; Claude Code's own search today could not pin the exact resolution number to this specific retitle/rewrite with full certainty (found only general confirmation that MSC.273(85) was a broad 2008/2010 amendment package), so this attribution is treated as probable, not independently nailed down to the same standard as Elements 5, 6 and 9.",
+      "verificationMethod": "Grok and Gemini produced character-for-character identical current-text and identical resolution attribution. Claude Code independently confirmed the underlying fact that the text changed (via direct 1993-original fetch and diff) but did not independently pin the exact resolution number with full certainty.",
+      "verifiedBy": [
+        "GROK",
+        "GEMINI",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-06",
+      "confidenceNote": "Text-change confirmed with high confidence (direct diff against 1993 original). Resolution-number attribution (MSC.273(85)) confirmed only to 'probable', not to the same certainty as Elements 5, 6 and 9's resolution attributions, which had cleaner independent search corroboration."
+    },
+    {
+      "sourceId": "IMO-ISM-A741-18-EL8",
+      "title": "Emergency Preparedness",
+      "authority": "IMO",
+      "moduleCode": "ism-code-foundations",
+      "flagAdministration": null,
+      "section": "Element 8 (paras 8.1-8.3)",
+      "fullText": "8 EMERGENCY PREPAREDNESS\n\n8.1 The Company should identify potential emergency shipboard situations, and establish procedures to respond to them.\n\n8.2 The Company should establish programmes for drills and exercises to prepare for emergency actions.\n\n8.3 The SMS should provide for measures ensuring that the Company's organization can respond at any time to hazards, accidents and emergency situations involving its ships.",
+      "variantNote": "Gemini spells out 'safety management system' instead of 'SMS' in 8.3; substance identical.",
+      "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)). Original 8.1 read 'The Company should establish procedures to identify, describe and respond to potential emergency shipboard situations.' - resolution MSC.273(85) (adopted 4 December 2008, in force 1 July 2010) replaced it with the wording shown above. Claude Code independently fetched the full 1993 text of paragraphs 8.1, 8.2 and 8.3 today (admiraltylawguide.com) and diffed all three directly: 8.1 differs from the 1993 original (confirming it was amended), 8.2 and 8.3 are character-for-character identical to the 1993 original (confirming neither was amended).",
+      "verificationMethod": "Grok and Gemini agree on the substantive text of all three sub-paragraphs, but disagreed on which one was amended (Grok: 8.1; Gemini: 8.2). Claude Code independently resolved this today by fetching the 1993 original text directly and diffing each of the three sub-paragraphs against it - a direct textual proof, not a secondary claim: 8.1 is different, 8.2 and 8.3 are identical to 1993.",
+      "verifiedBy": [
+        "GROK",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-06",
+      "knownDiscrepancy": "Gemini attributed the amendment to paragraph 8.2 instead of the correct paragraph 8.1. This is the fourth documented instance in this file of a specific, confident Gemini claim about which provision changed being independently disproven (see EL1's MSC.104(73) case, Element 2's 'develop' case, and Element 6's MSC.273(85)/MSC.353(92) case). Here Claude Code did not rely on a secondary source's summary at all - it fetched the 1993 original directly and compared each sub-paragraph itself, which is the most direct form of verification used anywhere in this file so far."
+    },
+    {
+      "sourceId": "IMO-ISM-A741-18-EL9",
+      "title": "Reports and Analysis of Non-Conformities, Accidents and Hazardous Occurrences",
+      "authority": "IMO",
+      "moduleCode": "ism-code-foundations",
+      "flagAdministration": null,
+      "section": "Element 9 (paras 9.1-9.2)",
+      "fullText": "9 REPORTS AND ANALYSIS OF NON-CONFORMITIES, ACCIDENTS AND HAZARDOUS OCCURRENCES\n\n9.1 The SMS should include procedures ensuring that non-conformities, accidents and hazardous situations are reported to the Company, investigated and analysed with the objective of improving safety and pollution prevention.\n\n9.2 The Company should establish procedures for the implementation of corrective action, including measures intended to prevent recurrence.",
+      "variantNote": "Gemini spells out 'safety management system' instead of 'SMS' in 9.1; substance identical. British/American spelling of 'analysed'/'analyzed' varies across mirrors and is not treated as substantive.",
+      "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)). Original 9.2 read 'The Company should establish procedures for the implementation of corrective action.' (full stop, no further clause) - resolution MSC.273(85) (adopted 4 December 2008, in force 1 July 2010) added ', including measures intended to prevent recurrence.' Para 9.1 is otherwise unchanged from 1993. Claude Code independently fetched the 1993 original text of both paragraphs today (admiraltylawguide.com) and confirmed 9.2's original wording lacks the added clause entirely, and 9.1 is substantively identical apart from spelling.",
+      "verificationMethod": "Grok and Gemini produced character-for-character identical current-text and identical amendment attribution. Claude Code independently confirmed the underlying text change today via a direct fetch and diff of the 1993 original.",
+      "verifiedBy": [
+        "GROK",
+        "GEMINI",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-06"
+    },
+    {
+      "sourceId": "IMO-ISM-A741-18-EL10",
+      "title": "Maintenance of the Ship and Equipment",
+      "authority": "IMO",
+      "moduleCode": "ism-code-foundations",
+      "flagAdministration": null,
+      "section": "Element 10 (paras 10.1-10.4)",
+      "fullText": "10 MAINTENANCE OF THE SHIP AND EQUIPMENT\n\n10.1 The Company should establish procedures to ensure that the ship is maintained in conformity with the provisions of the relevant rules and regulations and with any additional requirements which may be established by the Company.\n\n10.2 In meeting these requirements the Company should ensure that:\n.1 inspections are held at appropriate intervals;\n.2 any non-conformity is reported, with its possible cause, if known;\n.3 appropriate corrective action is taken; and\n.4 records of these activities are maintained.\n\n10.3 The Company should identify equipment and technical systems the sudden operational failure of which may result in hazardous situations. The SMS should provide for specific measures aimed at promoting the reliability of such equipment or systems. These measures should include the regular testing of stand-by arrangements and equipment or technical systems that are not in continuous use.\n\n10.4 The inspections mentioned in 10.2 as well as the measures referred to in 10.3 should be integrated into the ship's operational maintenance routine.",
+      "variantNote": "Gemini spells out 'safety management system' instead of 'SMS'; substance identical.",
+      "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)). Para 10.3 originally began 'The Company should establish procedures in SMS to identify equipment and...' - resolution MSC.273(85) (adopted 4 December 2008, in force 1 July 2010) removed that opening clause, so it now begins 'The Company should identify equipment...'. Claude Code independently fetched the 1993 original today (admiraltylawguide.com) and confirmed the original opening clause verbatim, directly corroborating the claimed edit. Paragraphs 10.1, 10.2, 10.4 confirmed unchanged.",
+      "verificationMethod": "Grok and Gemini agree on text and amendment attribution. Claude Code independently confirmed the underlying text change today via direct 1993-original fetch; did not run a separate search specifically to re-pin the MSC.273(85) resolution number for this paragraph beyond its now-established role as the 2008/2010 package resolution.",
+      "verifiedBy": [
+        "GROK",
+        "GEMINI",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-06"
+    },
+    {
+      "sourceId": "IMO-ISM-A741-18-EL11",
+      "title": "Documentation",
+      "authority": "IMO",
+      "moduleCode": "ism-code-foundations",
+      "flagAdministration": null,
+      "section": "Element 11 (paras 11.1-11.3)",
+      "fullText": "11 DOCUMENTATION\n\n11.1 The Company should establish and maintain procedures to control all documents and data which are relevant to the SMS.\n\n11.2 The Company should ensure that:\n.1 valid documents are available at all relevant locations;\n.2 changes to documents are reviewed and approved by authorized personnel; and\n.3 obsolete documents are promptly removed.\n\n11.3 The documents used to describe and implement the SMS may be referred to as the \"Safety Management Manual\". Documentation should be kept in a form that the Company considers most effective. Each ship should carry on board all documentation relevant to that ship.",
+      "variantNote": "Gemini spells out 'safety management system'/drops quotation marks around 'Safety Management Manual'; substance identical.",
+      "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)). No amendment identified by either AI. Claude Code independently fetched the 1993 original text of 11.1-11.3 today and confirmed all three paragraphs' openings match the current text, consistent with no amendment.",
+      "verificationMethod": "Grok and Gemini agree on text. Claude Code independently confirmed via direct 1993-original fetch today.",
+      "verifiedBy": [
+        "GROK",
+        "GEMINI",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-06"
+    },
+    {
+      "sourceId": "IMO-ISM-A741-18-EL12",
+      "title": "Company Verification, Review and Evaluation",
+      "authority": "IMO",
+      "moduleCode": "ism-code-foundations",
+      "flagAdministration": null,
+      "section": "Element 12 (paras 12.1-12.7)",
+      "fullText": "12 COMPANY VERIFICATION, REVIEW AND EVALUATION\n\n12.1 The Company should carry out internal safety audits on board and ashore at intervals not exceeding twelve months to verify whether safety and pollution-prevention activities comply with the safety management system. In exceptional circumstances, this interval may be exceeded by not more than three months.\n\n12.2 The Company should periodically verify whether all those undertaking delegated ISM-related tasks are acting in conformity with the Company's responsibilities under the Code.\n\n12.3 The Company should periodically evaluate the effectiveness of the SMS in accordance with procedures established by the Company.\n\n12.4 The audits and possible corrective actions should be carried out in accordance with documented procedures.\n\n12.5 Personnel carrying out audits should be independent of the areas being audited unless this is impracticable due to the size and the nature of the Company.\n\n12.6 The results of the audits and reviews should be brought to the attention of all personnel having responsibility in the area involved.\n\n12.7 The management personnel responsible for the area involved should take timely corrective action on deficiencies found.",
+      "amendmentHistory": "Adopted 4 November 1993 (resolution A.741(18)), originally 6 paragraphs. Resolution MSC.273(85) (adopted 4 December 2008, in force 1 July 2010) replaced para 12.1 (adding the twelve-month/three-month-exception language). Resolution MSC.353(92) (adopted 21 June 2013, in force 1 January 2015) inserted a brand new paragraph 12.2 ('periodically verify whether all those undertaking delegated ISM-related tasks...') and renumbered the former 12.2-12.6 to 12.3-12.7, bringing the element to its current 7 paragraphs. Claude Code independently confirmed the entire restructuring today via two separate steps: (1) a direct fetch of the 1993 original text (admiraltylawguide.com) confirmed the original had exactly 6 paragraphs, with the original 12.2 reading 'The Company should periodically evaluate the efficiency and when needed review the SMS...' - i.e. today's 12.3 under a different, pre-amendment wording; (2) a direct fetch of imorules.com's current Element 12 page independently confirmed the current 7-paragraph structure verbatim, including 12.1's twelve-month/three-month language, 12.2's exact delegated-tasks wording, and 12.3's effectiveness-evaluation wording - matching the fullText above exactly.",
+      "verificationMethod": "Grok gave the correct current 7-paragraph structure including the MSC.353(92)-inserted 12.2. Gemini's version omitted this paragraph entirely, giving only 6 paragraphs with its own 12.2 corresponding to the real 12.3. Claude Code independently confirmed Grok's version is correct via two direct fetches today (the 1993 original and imorules.com's current text), not by trusting either AI's account of what a third party had checked.",
+      "verifiedBy": [
+        "GROK",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-06",
+      "knownDiscrepancy": "Gemini's Element 12 output omitted paragraph 12.2 (the MSC.353(92)-inserted 'delegated ISM-related tasks' verification requirement) entirely, giving only 6 paragraphs where 7 exist, with its 12.2 actually corresponding to the real 12.3. This is the fifth documented Gemini error in this file's source-verification pipeline (see Elements 1, 2, 6 and 8 for the prior four) and the most significant so far, since it is a missing substantive requirement rather than a citation or numbering nuance. Independently confirmed wrong via two direct fetches (a 1993-original mirror and imorules.com's current-text page), neither of which were among the sources originally supplied for this element. Project-level pattern: Gemini's output should never be accepted on its own for regulatory completeness; Grok's independent agreement or a primary-source cross-check is required every time - and this instance shows the failure mode can be an entire missing paragraph, not just a word or a citation."
+    },
+    {
+      "sourceId": "IMO-ISM-A741-18-EL13",
+      "title": "Certification and Periodical Verification",
+      "authority": "IMO",
+      "moduleCode": "ism-code-foundations",
+      "flagAdministration": null,
+      "section": "Element 13 (Part B, paras 13.1-13.14)",
+      "fullText": "13 CERTIFICATION AND PERIODICAL VERIFICATION\n\n13.1 The ship should be operated by a Company which has been issued with a Document of Compliance, or with an Interim Document of Compliance in accordance with paragraph 14.1, relevant to that ship.\n\n13.2 The Document of Compliance should be issued by the Administration, by an organization recognized by the Administration or, at the request of the Administration, by another Contracting Government to the Convention for a period specified by the Administration which should not exceed five years. Such a document should be accepted as evidence that the Company is capable of complying with the requirements of this Code.\n\n13.3 The Document of Compliance is only valid for the ship types explicitly indicated in the document. Such indication should be based on the types of ships on which the initial verification was based. Other ship types should only be added after verification of the Company's capability to comply with the requirements of this Code applicable to such ship types. In this context, ship types are those referred to in regulation IX/1 of the Convention.\n\n13.4 The validity of a Document of Compliance should be subject to annual verification by the Administration or by an organization recognized by the Administration or, at the request of the Administration, by another Contracting Government within three months before or after the anniversary date.\n\n13.5 The Document of Compliance should be withdrawn by the Administration or, at its request, by the Contracting Government which issued the document when the annual verification required in paragraph 13.4 is not requested or if there is evidence of major non-conformities with this Code.\n\n13.5.1 All associated Safety Management Certificates and/or Interim Safety Management Certificates should also be withdrawn if the Document of Compliance is withdrawn.\n\n13.6 A copy of the Document of Compliance should be placed on board in order that the master of the ship, if so requested, may produce it for verification by the Administration or by an organization recognized by the Administration or for the purposes of the control referred to in regulation IX/6.2 of the Convention. The copy of the document is not required to be authenticated or certified.\n\n13.7 The Safety Management Certificate should be issued to a ship for a period which should not exceed five years by the Administration or an organization recognized by the Administration or, at the request of the Administration, by another Contracting Government. The Safety Management Certificate should be issued after verifying that the Company and its shipboard management operate in accordance with the approved safety management system. Such a certificate should be accepted as evidence that the ship complies with the requirements of this Code.\n\n13.8 The validity of the Safety Management Certificate should be subject to at least one intermediate verification by the Administration or an organization recognized by the Administration or, at the request of the Administration, by another Contracting Government. If only one intermediate verification is to be carried out and the period of validity of the Safety Management Certificate is five years, it should take place between the second and third anniversary date of the Safety Management Certificate.\n\n13.9 In addition to the requirements of paragraph 13.5.1, the Safety Management Certificate should be withdrawn by the Administration or, at the request of the Administration, by the Contracting Government which issued it when the intermediate verification required in paragraph 13.8 is not requested or if there is evidence of major non-conformity with this Code.\n\n13.10 Notwithstanding the requirements of paragraphs 13.2 and 13.7, when the renewal verification is completed within three months before the expiry date of the existing Document of Compliance or Safety Management Certificate, the new Document of Compliance or the new Safety Management Certificate should be valid from the date of completion of the renewal verification for a period not exceeding five years from the date of expiry of the existing Document of Compliance or Safety Management Certificate.\n\n13.11 When the renewal verification is completed more than three months before the expiry date of the existing Document of Compliance or Safety Management Certificate, the new Document of Compliance or the new Safety Management Certificate should be valid from the date of completion of the renewal verification for a period not exceeding five years from the date of completion of the renewal verification.\n\n13.12 When the renewal verification is completed after the expiry date of the existing Safety Management Certificate, the new Safety Management Certificate should be valid from the date of completion of the renewal verification to a date not exceeding five years from the date of expiry of the existing Safety Management Certificate.\n\n13.13 If a renewal verification has been completed and a new Safety Management Certificate cannot be issued or placed on board the ship before the expiry date of the existing certificate, the Administration or organization recognized by the Administration may endorse the existing certificate and such a certificate should be accepted as valid for a further period which should not exceed five months from the expiry date.\n\n13.14 If a ship at the time when a Safety Management Certificate expires is not in a port in which it is to be verified, the Administration may extend the period of validity of the Safety Management Certificate but this extension should be granted only for the purpose of allowing the ship to complete its voyage to the port in which it is to be verified, and then only in cases where it appears proper and reasonable to do so. No Safety Management Certificate should be extended for a period of longer than three months, and the ship to which an extension is granted should not, on its arrival in the port in which it is to be verified, be entitled by virtue of such extension to leave that port without having a new Safety Management Certificate. When the renewal verification is completed, the new Safety Management Certificate should be valid to a date not exceeding five years from the expiry date of the existing Safety Management Certificate before the extension was granted.",
+      "variantNote": "Grok's version of 13.2 keeps this as one continuous sentence, while Gemini splits it into two sentences and drops a clause. Neither was independently confirmed byte-for-byte against a single official PDF for this specific sentence - recorded as an open variant, not silently resolved. Grok did not supply 13.5-13.11 at all (marked its own output UNCERTAIN, citing inability to source a complete official PDF); Gemini supplied the full range.",
+      "amendmentHistory": "Adopted 4 November 1993 (A.741(18)) as a single chapter 13 titled 'CERTIFICATION, VERIFICATION AND CONTROL'. Replaced by MSC.104(73) (adopted 5 December 2000, in force 1 July 2002), which split it into new chapters 13 ('Certification and Periodical Verification'), 14, 15 and 16 (newly added, not renumbered from a pre-existing element). MSC.273(85) (adopted 4 December 2008, in force 1 July 2010) added new paragraphs 13.12, 13.13 and 13.14 after the existing paragraph 13.11. MSC.195(80) (adopted 20 May 2005, in force 1 January 2009) does NOT amend Element 13's operative text at all - it only adds a 'Company identification number' field to the certificate forms under Element 16's Appendix.",
+      "verificationMethod": "Grok supplied and confirmed 13.1-13.4; Gemini supplied the full 13.1-13.14 range. Claude Code attempted to fetch the official MSC.104(73) and MSC.273(85) resolution PDFs directly today from four different mirrors; all four returned unreadable/corrupted binary content, not extractable text. Verification instead relied on independent web searches (distinct from the sources originally supplied): one search returned the 13.12-13.14 text nearly verbatim, matching the fullText above and attributing it to MSC.273(85); a separate search confirmed MSC.104(73) split the original chapter 13 into new chapters 13-16 rather than renumbering; a third confirmed MSC.195(80)'s scope is limited to a certificate-form field addition. This is a lower standard of proof than the direct-PDF-fetch verification used for most other elements in this file and is noted here explicitly.",
+      "verifiedBy": [
+        "GROK",
+        "GEMINI",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-06",
+      "confidenceNote": "Unlike most other elements in this file, Claude Code could not directly fetch and read the underlying MSC.104(73) or MSC.273(85) resolution PDFs today (all four mirrors attempted returned unreadable binary content). The claims here rest on independent web-search corroboration only, which is weaker evidence than a direct primary-document fetch. Treat this element's amendment attributions as well-supported but not verified to the same standard as, for example, Elements 5, 6, 8, 9, 10 or 12.",
+      "knownDiscrepancy": "Gemini attributed the addition of paragraphs 13.10-13.14 to MSC.195(80). Independent web search today indicates MSC.195(80) does not touch Element 13's operative paragraphs at all - it only adds a 'Company identification number' field to certificate forms (Element 16's territory). The paragraph text Gemini quoted for 13.12-13.14 itself matches independent search results closely and was actually added by MSC.273(85). This is treated as one further documented instance (not independently re-derived as a PDF-level certainty) of Gemini's specific resolution-number attributions being unreliable, consistent with the pattern already established across Elements 1, 2, 6, 8 and 12."
+    },
+    {
+      "sourceId": "IMO-ISM-A741-18-EL14",
+      "title": "Interim Certification",
+      "authority": "IMO",
+      "moduleCode": "ism-code-foundations",
+      "flagAdministration": null,
+      "section": "Element 14 (Part B, paras 14.1-14.4)",
+      "fullText": "14 INTERIM CERTIFICATION\n\n14.1 An Interim Document of Compliance may be issued to facilitate initial implementation of this Code when:\n.1 a Company is newly established; or\n.2 new ship types are to be added to an existing Document of Compliance,\nfollowing verification that the Company has a safety management system that meets the objectives of paragraph 1.2.3 of this Code, provided the Company demonstrates plans to implement a safety management system meeting the full requirements of this Code within the period of validity of the Interim Document of Compliance. Such an Interim Document of Compliance should be issued for a period not exceeding 12 months by the Administration or by an organization recognized by the Administration or, at the request of the Administration, by another Contracting Government. A copy of the Interim Document of Compliance should be placed on board in order that the master of the ship, if so requested, may produce it for verification by the Administration or by an organization recognized by the Administration or for the purposes of the control referred to in regulation IX/6.2 of the Convention. The copy of the document is not required to be authenticated or certified.\n\n14.2 An Interim Safety Management Certificate may be issued:\n.1 to new ships on delivery;\n.2 when a Company takes on responsibility for the operation of a ship which is new to the Company; or\n.3 when a ship changes flag.\nSuch an Interim Safety Management Certificate should be issued for a period not exceeding 6 months by the Administration or an organization recognized by the Administration or, at the request of the Administration, by another Contracting Government.\n\n14.3 An Administration or, at the request of the Administration, another Contracting Government may, in special cases, extend the validity of an Interim Safety Management Certificate for a further period which should not exceed 6 months from the date of expiry.\n\n14.4 An Interim Safety Management Certificate may be issued following verification that:\n.1 the Document of Compliance, or the Interim Document of Compliance, is relevant to the ship concerned;\n.2 the safety management system provided by the Company for the ship concerned includes key elements of this Code and has been assessed during the audit for issuance of the Document of Compliance or demonstrated for issuance of the Interim Document of Compliance;\n.3 the Company has planned the internal audit of the ship within three months;\n.4 the master and officers are familiar with the safety management system and the planned arrangements for its implementation;\n.5 instructions identified as essential have been given prior to sailing; and\n.6 relevant information on the safety management system has been given in a working language or languages understood by the ship's personnel.",
+      "variantNote": "Grok and Gemini agree on substance; minor phrasing differences in 14.4.1 and 14.4.5 (immaterial).",
+      "amendmentHistory": "Element 14 (INTERIM CERTIFICATION) did not exist before 2002. It was newly added by MSC.104(73) (adopted 5 December 2000, in force 1 July 2002) as part of splitting the original single chapter 13 into new chapters 13-16.",
+      "verificationMethod": "Grok and Gemini agree on text. The amendment history claim (new chapter, not a renumbering) is corroborated only via independent web search today (a direct PDF fetch of MSC.104(73) failed across three mirrors - see Element 13's confidenceNote for the same limitation).",
+      "verifiedBy": [
+        "GROK",
+        "GEMINI",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-06",
+      "knownDiscrepancy": "Gemini's amendmentHistory claimed the 1993 original had a separate 'VERIFICATION' element that was later renumbered to become today's Element 15, implying Element 14 itself was a renumbering of something pre-existing. Independent web search today corroborates that the 1993 original had a single chapter 13 covering certification, verification and control together, which MSC.104(73) replaced with four new, distinct chapters (13, 14, 15, 16) - there was no pre-existing separate 'Element 14' to rename. This is documented as a further instance of Gemini constructing a specific but unsupported historical narrative, consistent with the pattern in Elements 1, 6, 8, 12 and 13."
+    },
+    {
+      "sourceId": "IMO-ISM-A741-18-EL15",
+      "title": "Verification",
+      "authority": "IMO",
+      "moduleCode": "ism-code-foundations",
+      "flagAdministration": null,
+      "section": "Element 15 (Part B)",
+      "fullText": "15 VERIFICATION\n\n15.1 All verifications required by the provisions of this Code should be carried out in accordance with procedures acceptable to the Administration, taking into account the guidelines developed by the Organization.",
+      "amendmentHistory": "Element 15 (VERIFICATION) was newly added by MSC.104(73) (adopted 5 December 2000, in force 1 July 2002) as part of splitting the original single chapter 13 into new chapters 13-16. Not a renumbering of a pre-existing element (see Element 14's knownDiscrepancy).",
+      "verificationMethod": "Grok and Gemini agree on text and both correctly describe MSC.104(73) as the resolution that added this element (Gemini's separate renumbering narrative appears only under its Element 14 entry, not here). Corroborated via independent web search today; direct PDF fetch of MSC.104(73) was not achievable (see Element 13's confidenceNote).",
+      "verifiedBy": [
+        "GROK",
+        "GEMINI",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-06"
+    },
+    {
+      "sourceId": "IMO-ISM-A741-18-EL16",
+      "title": "Forms of Certificates",
+      "authority": "IMO",
+      "moduleCode": "ism-code-foundations",
+      "flagAdministration": null,
+      "section": "Element 16 (Part B) + Appendix",
+      "fullText": "16 FORMS OF CERTIFICATES\n\n16.1 The Document of Compliance, the Safety Management Certificate, the Interim Document of Compliance and the Interim Safety Management Certificate should be drawn up in a form corresponding to the models given in the appendix to this Code. If the language used is neither English nor French, the text should include a translation into one of these languages.\n\n16.2 In addition to the requirements of paragraph 13.3, the ship types indicated on the Document of Compliance and the Interim Document of Compliance may be endorsed to reflect any limitations in the operations of the ships described in the safety management system.",
+      "amendmentHistory": "Element 16 (FORMS OF CERTIFICATES) newly added by MSC.104(73) (adopted 5 December 2000, in force 1 July 2002) together with the Appendix of certificate models, as part of splitting the original chapter 13. MSC.179(79) (adopted 10 December 2004, in force 1 July 2006) is reported by the AIs to have revised the Appendix's model certificate forms - not independently checked by Claude Code today. MSC.195(80) (adopted 20 May 2005, in force 1 January 2009) added a 'Company identification number' field to the Document of Compliance, Interim Document of Compliance, Safety Management Certificate and Interim Safety Management Certificate model forms in the Appendix - independently confirmed today via web search, which directly quotes this exact field addition. MSC.273(85) (adopted 4 December 2008, in force 1 July 2010) is reported by the AIs to have added two further endorsement forms to the Appendix - not independently checked by Claude Code today.",
+      "verificationMethod": "Grok and Gemini agree on the core 16.1-16.2 text. Gemini separately (and correctly, in terms of the underlying fact) identified MSC.195(80)'s true subject matter as a certificate-form field addition, but had filed this fact under Element 13 instead of here; independently confirmed via web search today and relocated to Element 16, which is where it actually belongs. The MSC.179(79) and 'two further endorsement forms' claims are relayed from the AIs' agreement only and were not independently re-derived today.",
+      "verifiedBy": [
+        "GROK",
+        "GEMINI",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-06"
+    }
+  ],
+  "unresolvedSources": []
+}

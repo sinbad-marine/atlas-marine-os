@@ -1,0 +1,64 @@
+{
+  "manifestVersion": "ISPS-PILOT-002",
+  "createdAt": "2026-09-06T13:28:00Z",
+  "note": "This is a provenance/reference record, not a database write. Same architecture decision as PILOT-001.json in this directory: no academy_isps_source_manifest table exists in this repo, so this file is not consumed by any promotion tooling today. Separate file from PILOT-001.json, per instruction, though committed to the same PR (see PR body for rationale).",
+  "verifiedSources": [
+    {
+      "sourceId": "IMO-ISPS-A-SEC4",
+      "title": "4 Responsibilities of Contracting Governments",
+      "authority": "IMO",
+      "moduleCode": "isps-code-foundations",
+      "flagAdministration": null,
+      "section": "Section 4",
+      "fullText": "4 Responsibilities of Contracting Governments\n\n4.1 Subject to the provisions of regulation XI-2/3 and XI-2/7, Contracting Governments shall set security levels and provide guidance for protection from security incidents. Higher security levels indicate greater likelihood of occurrence of a security incident. Factors to be considered in setting the appropriate security level include:\n.1 the degree that the threat information is credible;\n.2 the degree that the threat information is corroborated;\n.3 the degree that the threat information is specific or imminent; and\n.4 the potential consequences of such a security incident.\n\n4.2 Contracting Governments, when they set security level 3, shall issue, as necessary, appropriate instructions and shall provide security-related information to the ships and port facilities that may be affected.\n\n4.3 Contracting Governments may delegate to a recognized security organization certain of their security-related duties under chapter XI-2 and this Part of the Code with the exception of:\n.1 setting of the applicable security level;\n.2 approving a port facility security assessment and subsequent amendments to an approved assessment;\n.3 determining the port facilities which will be required to designate a port facility security officer;\n.4 approving a port facility security plan and subsequent amendments to an approved plan;\n.5 exercising control and compliance measures pursuant to regulation XI-2/9; and\n.6 establishing the requirements for a Declaration of Security.\n\n4.4 Contracting Governments shall, to the extent they consider appropriate, test the effectiveness of the ship security plans or the port facility security plans, or of amendments to such plans, they have approved, or, in the case of ships, of plans which have been approved on their behalf.",
+      "variantNote": "Grok's fullText renders 4.3's opening as 'security-related duties' (hyphenated). Cowork's ClassNK_ISPS_Code_Part_A.pdf cross-check found the primary source reads 'security related duties' (unhyphenated) - a formatting difference, not a content difference, treated the same way as PILOT-001.json's Section 1.4/SMS and Section 3.3/or-vs-and variants: noted here, fullText left unchanged. Claude Code's own independent web search today for the 4.3 exception list also rendered this phrase unhyphenated in its summary, consistent with Cowork's ClassNK finding.",
+      "amendmentHistory": "Adopted by Conference resolution 2 of 12 December 2002; entered into force 1 July 2004. No subsequent amendments to Section 4 of Part A identified.",
+      "verificationMethod": "Grok candidate cross-checked via pdftotext exact-phrase match (12/12) against ClassNK_ISPS_Code_Part_A.pdf primary-source mirror. Claude Code additionally, independently re-verified today via its own web search (distinct from Cowork's ClassNK check): Section 4.3's six-item non-delegable exception list was corroborated (5 of 6 items appeared explicitly in the search synthesis; the sixth, 'setting of the applicable security level', is consistent with Section 4.1's subject matter and was not separately contradicted).",
+      "verifiedBy": [
+        "GROK",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-06",
+      "confidence": "VERIFIED_QUOTE",
+      "uncertaintyReason": null
+    },
+    {
+      "sourceId": "IMO-ISPS-A-SEC5",
+      "title": "5 Declaration of Security",
+      "authority": "IMO",
+      "moduleCode": "isps-code-foundations",
+      "flagAdministration": null,
+      "section": "Section 5",
+      "fullText": "5 Declaration of Security\n\n5.1 Contracting Governments shall determine when a Declaration of Security is required by assessing the risk the ship/port interface or ship-to-ship activity poses to persons, property or the environment.\n\n5.2 A ship can request completion of a Declaration of Security when:\n.1 the ship is operating at a higher security level than the port facility or another ship it is interfacing with;\n.2 there is an agreement on a Declaration of Security between Contracting Governments covering certain international voyages or specific ships on those voyages;\n.3 there has been a security threat or a security incident involving the ship or involving the port facility, as applicable;\n.4 the ship is at a port which is not required to have and implement an approved port facility security plan; or\n.5 the ship is conducting ship-to-ship activities with another ship not required to have and implement an approved ship security plan.\n\n5.3 Requests for the completion of a Declaration of Security, under this section, shall be acknowledged by the applicable port facility or ship.\n\n5.4 The Declaration of Security shall be completed by:\n.1 the master or the ship security officer on behalf of the ship(s); and, if appropriate,\n.2 the port facility security officer or, if the Contracting Government determines otherwise, by any other body responsible for shore-side security, on behalf of the port facility.\n\n5.5 The Declaration of Security shall address the security requirements that could be shared between a port facility and a ship (or between ships) and shall state the responsibility for each.\n\n5.6 Contracting Governments shall specify, bearing in mind the provisions of regulation XI-2/9.2.3, the minimum period for which Declarations of Security shall be kept by the port facilities located within their territory.\n\n5.7 Administrations shall specify, bearing in mind the provisions of regulation XI-2/9.2.3, the minimum period for which Declarations of Security shall be kept by ships entitled to fly their flag.",
+      "amendmentHistory": "Adopted by Conference resolution 2 of 12 December 2002; entered into force 1 July 2004. No subsequent amendments to Section 5 of Part A identified.",
+      "verificationMethod": "Grok candidate cross-checked via pdftotext exact-phrase match (12/12) against ClassNK_ISPS_Code_Part_A.pdf primary-source mirror. Claude Code did not separately, independently re-verify Section 5's specific text today beyond this check - unlike Sections 4 and 6, no additional web search was run for Section 5 in this pass.",
+      "verifiedBy": [
+        "GROK",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-06",
+      "confidence": "VERIFIED_QUOTE",
+      "uncertaintyReason": null
+    },
+    {
+      "sourceId": "IMO-ISPS-A-SEC6",
+      "title": "6 Obligations of the Company",
+      "authority": "IMO",
+      "moduleCode": "isps-code-foundations",
+      "flagAdministration": null,
+      "section": "Section 6",
+      "fullText": "6 Obligations of the Company\n\n6.1 The Company shall ensure that the ship security plan contains a clear statement emphasizing the master's authority. The Company shall establish in the ship security plan that the master has the overriding authority and responsibility to make decisions with respect to the safety and security of the ship and to request the assistance of the Company or of any Contracting Government as may be necessary.\n\n6.2 The Company shall ensure that the company security officer, the master and the ship security officer are given the necessary support to fulfil their duties and responsibilities in accordance with chapter XI-2 and this Part of the Code.",
+      "amendmentHistory": "Adopted by Conference resolution 2 of 12 December 2002; entered into force 1 July 2004. No subsequent amendments to Section 6 of Part A identified.",
+      "verificationMethod": "Grok candidate cross-checked via pdftotext exact-phrase match (12/12) against ClassNK_ISPS_Code_Part_A.pdf primary-source mirror. Claude Code additionally, independently re-verified 6.1 today via its own web search (distinct from Cowork's ClassNK check) - the master's-authority statement matched verbatim.",
+      "verifiedBy": [
+        "GROK",
+        "PRIMARY_SOURCE_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-06",
+      "confidence": "VERIFIED_QUOTE",
+      "uncertaintyReason": null
+    }
+  ],
+  "unresolvedSources": [],
+  "geminiBehaviorNote": "Same as PILOT-001.json: Gemini did not participate in this round's text verification (it declined full-text reproduction citing IMO copyright during the ISPS PILOT-001 round). The second independent check for Sections 4-6 came from a primary-source document (ClassNK PDF, cross-checked by Cowork) and from Claude Code's own independent web searches, not from Gemini."
+}
