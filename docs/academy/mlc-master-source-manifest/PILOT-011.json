@@ -1,0 +1,293 @@
+{
+  "manifestVersion": "MLC-PILOT-011",
+  "createdAt": "2026-09-13T07:21:52Z",
+  "note": "Provenance/reference record only, not a database write. Same status as PILOT-001 through 009.json: no academy_mlc_source_manifest table exists, no verification_stage asserted, not consumed by any promotion tooling. No migration, schema, or tooling change. Additive docs/ file only, on its own branch, separate from every other open PR in this series.",
+  "batchNote": "Prepared under the Owner's 2026-09-08 full-scope MLC Title 1-5 instruction and the Owner's 2026-09-12 GO on the resumption plan, which released this Regulation from SOURCE HOLD only after the current consolidated ILO text and the authentic amendment texts were reacquired and their provenance recorded (see primarySources/amendmentTextSources). 'Prepared/draft' is not 'verified', 'human-accepted', 'merged' or 'live'. This file is source-text verification only.",
+  "schemaExtensionNote": "Uses the regulationRef/standardARef/guidelineBRef fields introduced in PILOT-001.json and adds textEdition, pendingAmendments2025, diffEvidence and amendmentTextSources. No further schema change; no tooling reads these files.",
+  "verificationMethodNote": "No GROK/GEMINI access this session. Method: PRIMARY_SOURCE_FOUR_STAGE_DIFF (see verifiedSources[0].verificationMethod) over the ILO consolidated 2022 text, the ILO 2014+2016 consolidated text and two 2006-original mirrors, with every substantive diff span matched to the authentic ILO amendment texts of 2014, 2016, 2018 and 2022. The 2025 amendments (ILC 113, adopted 6 June 2025, expected entry into force 23 December 2027) are NOT in force and are NOT blended into fullText; they are recorded in pendingAmendments2025 only. Running headers, page numbers and soft hyphenation were removed when re-flowing fullText; every hyphen join is listed in diffEvidence.hyphenJoinsApplied for audit.",
+  "verifiedSources": [
+    {
+      "sourceId": "ILO-MLC2006-T2-REG2.2",
+      "title": "Wages",
+      "authority": "ILO",
+      "moduleCode": "mlc-code-foundations",
+      "flagAdministration": null,
+      "section": "Title 2, Regulation 2.2 / Standard A2.2 / Guideline B2.2 (including Guidelines B2.2.1 to B2.2.4)",
+      "regulationRef": "Regulation 2.2 - Wages",
+      "standardARef": "Standard A2.2 - Wages",
+      "guidelineBRef": "Guideline B2.2 - Wages; Guideline B2.2.1 - Specific definitions; Guideline B2.2.2 - Calculation and payment; Guideline B2.2.3 - Minimum wages; Guideline B2.2.4 - Minimum monthly basic pay or wage figure for able seafarers",
+      "textEdition": "Maritime Labour Convention, 2006, as amended - consolidated text established by the International Labour Office including the Amendments of 2014, 2016, 2018 and 2022 to the Code (ILO publication dated 2 October 2024). This is the text in force on the verification date.",
+      "fullText": "Regulation 2.2 - Wages\n\nPurpose: To ensure that seafarers are paid for their services\n\n1. All seafarers shall be paid for their work regularly and in full in accordance with their employment agreements.\n\nStandard A2.2 - Wages\n\n1. Each Member shall require that payments due to seafarers working on ships that fly its flag are made at no greater than monthly intervals and in accordance with any applicable collective agreement.\n\n2. Seafarers shall be given a monthly account of the payments due and the amounts paid, including wages, additional payments and the rate of exchange used where payment has been made in a currency or at a rate different from the one agreed to.\n\n3. Each Member shall require that shipowners take measures, such as those set out in paragraph 4 of this Standard, to provide seafarers with a means to transmit all or part of their earnings to their families or dependants or legal beneficiaries.\n\n4. Measures to ensure that seafarers are able to transmit their earnings to their families include:\n\n(a) a system for enabling seafarers, at the time of their entering employment or during it, to allot, if they so desire, a proportion of their wages for remittance at regular intervals to their families by bank transfers or similar means; and\n\n(b) a requirement that allotments should be remitted in due time and directly to the person or persons nominated by the seafarers.\n\n5. Any charge for the service under paragraphs 3 and 4 of this Standard shall be reasonable in amount, and the rate of currency exchange, unless otherwise provided, shall, in accordance with national laws or regulations, be at the prevailing market rate or the official published rate and not unfavourable to the seafarer.\n\n6. Member that adopts national laws or regulations governing seafarers' wages shall give due consideration to the guidance provided in Part B of the Code.\n\n7. Where a seafarer is held captive on or off the ship as a result of acts of piracy or armed robbery against ships, wages and other entitlements under the seafarers' employment agreement, relevant collective bargaining agreement or applicable national laws, including the remittance of any allotments as provided in paragraph 4 of this Standard, shall continue to be paid during the entire period of captivity and until the seafarer is released and duly repatriated in accordance with Standard A2.5.1 or, where the seafarer dies while in captivity, until the date of death as determined in accordance with applicable national laws or regulations. The terms piracy and armed robbery against ships shall have the same meaning as in Standard A2.1, paragraph 7.\n\nGuideline B2.2 - Wages\n\nGuideline B2.2.1 - Specific definitions\n\n1. For the purpose of this Guideline, the term:\n\n(a) able seafarer means any seafarer who is deemed competent to perform any duty which may be required of a rating serving in the deck department, other than the duties of a supervisory or specialist rating, or who is defined as such by national laws, regulations or practice, or by collective agreement;\n\n(b) basic pay or wages means the pay, however composed, for normal hours of work; it does not include payments for overtime worked, bonuses, allowances, paid leave or any other additional remuneration;\n\n(c) consolidated wage means a wage or salary which includes the basic pay and other pay-related benefits; a consolidated wage may include compensation for all overtime hours which are worked and all other pay-related benefits, or it may include only certain benefits in a partial consolidation;\n\n(d) hours of work means time during which seafarers are required to do work on account of the ship;\n\n(e) overtime means time worked in excess of the normal hours of work.\n\nGuideline B2.2.2 - Calculation and payment\n\n1. For seafarers whose remuneration includes separate compensation for overtime worked:\n\n(a) for the purpose of calculating wages, the normal hours of work at sea and in port should not exceed eight hours per day;\n\n(b) for the purpose of calculating overtime, the number of normal hours per week covered by the basic pay or wages should be prescribed by national laws or regulations, if not determined by collective agreements, but should not exceed 48 hours per week; collective agreements may provide for a different but not less favourable treatment;\n\n(c) the rate or rates of compensation for overtime, which should be not less than one and one-quarter times the basic pay or wages per hour, should be prescribed by national laws or regulations or by collective agreements, if applicable; and\n\n(d) records of all overtime worked should be maintained by the master, or a person assigned by the master, and endorsed by the seafarer at no greater than monthly intervals.\n\n2. For seafarers whose wages are fully or partially consolidated:\n\n(a) the seafarers' employment agreement should specify clearly, where appropriate, the number of hours of work expected of the seafarer in return for this remuneration, and any additional allowances which might be due in addition to the consolidated wage, and in which circumstances;\n\n(b) where hourly overtime is payable for hours worked in excess of those covered by the consolidated wage, the hourly rate should be not less than one and one-quarter times the basic rate corresponding to the normal hours of work as defined in paragraph 1 of this Guideline; the same principle should be applied to the overtime hours included in the consolidated wage;\n\n(c) remuneration for that portion of the fully or partially consolidated wage representing the normal hours of work as defined in paragraph 1(a) of this Guideline should be no less than the applicable minimum wage; and\n\n(d) for seafarers whose wages are partially consolidated, records of all overtime worked should be maintained and endorsed as provided for in paragraph 1(d) of this Guideline.\n\n3. National laws or regulations or collective agreements may provide for compensation for overtime or for work performed on the weekly day of rest and on public holidays by at least equivalent time off duty and off the ship or additional leave in lieu of remuneration or any other compensation so provided.\n\n4. National laws and regulations adopted after consulting the representative shipowners' and seafarers' organizations or, as appropriate, collective agreements should take into account the following principles:\n\n(a) equal remuneration for work of equal value should apply to all seafarers employed on the same ship without discrimination based upon race, colour, sex, religion, political opinion, national extraction or social origin;\n\n(b) the seafarers' employment agreement specifying the applicable wages or wage rates should be carried on board the ship; information on the amount of wages or wage rates should be made available to each seafarer, either by providing at least one signed copy of the relevant information to the seafarer in a language which the seafarer understands, or by posting a copy of the agreement in a place accessible to seafarers or by some other appropriate means;\n\n(c) wages should be paid in legal tender; where appropriate, they may be paid by bank transfer, bank cheque, postal cheque or money order;\n\n(d) on termination of engagement all remuneration due should be paid without undue delay;\n\n(e) adequate penalties or other appropriate remedies should be imposed by the competent authority where shipowners unduly delay, or fail to make, payment of all remuneration due;\n\n(f) wages should be paid directly to seafarers' designated bank accounts unless they request otherwise in writing;\n\n(g) subject to subparagraph (h) of this paragraph, the shipowner should impose no limit on seafarers' freedom to dispose of their remuneration;\n\n(h) deduction from remuneration should be permitted only if:\n\n(i) there is an express provision in national laws or regulations or in an applicable collective agreement and the seafarer has been informed, in the manner deemed most appropriate by the competent authority, of the conditions for such deductions; and\n\n(ii) the deductions do not in total exceed the limit that may have been established by national laws or regulations or collective agreements or court decisions for making such deductions;\n\n(i) no deductions should be made from a seafarer's remuneration in respect of obtaining or retaining employment;\n\n(j) monetary fines against seafarers other than those authorized by national laws or regulations, collective agreements or other measures should be prohibited;\n\n(k) the competent authority should have the power to inspect stores and services provided on board ship to ensure that fair and reasonable prices are applied for the benefit of the seafarers concerned; and\n\n(l) to the extent that seafarers' claims for wages and other sums due in respect of their employment are not secured in accordance with the provisions of the International Convention on Maritime Liens and Mortgages, 1993, such claims should be protected in accordance with the Protection of Workers' Claims (Employer's Insolvency) Convention, 1992 (No. 173).\n\n5. Each Member should, after consulting with representative shipowners' and seafarers' organizations, have procedures to investigate complaints relating to any matter contained in this Guideline.\n\nGuideline B2.2.3 - Minimum wages\n\n1. Without prejudice to the principle of free collective bargaining, each Member should, after consulting representative shipowners' and seafarers' organizations, establish procedures for determining minimum wages for seafarers. Representative shipowners' and seafarers' organizations should participate in the operation of such procedures.\n\n2. When establishing such procedures and in fixing minimum wages, due regard should be given to international labour standards concerning minimum wage fixing, as well as the following principles:\n\n(a) the level of minimum wages should take into account the nature of maritime employment, crewing levels of ships, and seafarers' normal hours of work; and\n\n(b) the level of minimum wages should be adjusted to take into account changes in the cost of living and in the needs of seafarers.\n\n3. The competent authority should ensure:\n\n(a) by means of a system of supervision and sanctions, that wages are paid at not less than the rate or rates fixed; and\n\n(b) that any seafarers who have been paid at a rate lower than the minimum wage are enabled to recover, by an inexpensive and expeditious judicial or other procedure, the amount by which they have been underpaid.\n\nGuideline B2.2.4 - Minimum monthly basic pay or wage figure for able seafarers\n\n1. The basic pay or wages for a calendar month of service for an able seafarer should be no less than the amount periodically set by the Joint Maritime Commission or another body authorized by the Governing Body of the International Labour Office. Upon a decision of the Governing Body, the Director-General shall notify any revised amount to the Members of the Organization.\n\n2. Nothing in this Guideline should be deemed to prejudice arrangements agreed between shipowners or their organizations and seafarers' organizations with regard to the regulation of standard minimum terms and conditions of employment, provided such terms and conditions are recognized by the competent authority.",
+      "variantNote": "No substantive variant between sources. Residual diff spans are PDF extraction artifacts only (running headers, page numbers, line-break hyphenation, spacing before punctuation), inspected individually.",
+      "amendmentHistory": "Amended once. 2018 (ILC 107, approved 5 June 2018, in force 26 December 2020): Standard A2.2 - new paragraph 7 inserted (wages and other entitlements continue to be paid during the entire period of captivity following piracy or armed robbery, until release and repatriation or death). Everything else is 2006 text. Not named in the 2014, 2016 or 2022 amendment texts. Diff evidence: the single substantive span in consolidated2016 -> consolidated2022 is exactly the inserted paragraph 7.",
+      "pendingAmendments2025": "None of the 2025 amendments (ILC 113, adopted 6 June 2025, expected entry into force 23 December 2027) touch this Regulation, its Standard or its Guidelines.",
+      "verificationMethod": "PRIMARY_SOURCE_FOUR_STAGE_DIFF: (1) the two 2006-original mirrors were sliced and word-diffed against each other; (2) the 2006 original was word-diffed against the ILO 2014+2016 consolidated text; (3) that text was word-diffed against the ILO 2014+2016+2018+2022 consolidated text; (4) every non-artifact diff span was matched against the authentic amendment texts (ILO 2014, 2016, 2018 and 2022 amendment documents). fullText is the stage-3 target block re-flowed to undo PDF line wrapping; its word sequence was re-diffed against the raw block (consistencyCheck).",
+      "diffEvidence": {
+        "mirror2006_ilo_vs_registerIri": {
+          "wordDiffSpans": 0,
+          "similarityRatio": 1.0
+        },
+        "original2006_vs_consolidated2016": {
+          "wordDiffSpans": 5,
+          "similarityRatio": 0.99
+        },
+        "consolidated2016_vs_consolidated2022": {
+          "wordDiffSpans": 4,
+          "similarityRatio": 0.9624
+        },
+        "consistencyCheck_reflow_vs_raw": {
+          "wordDiffSpans": 3,
+          "similarityRatio": 0.9978
+        },
+        "hyphenDecisions": [
+          {
+            "token": "em-ployment",
+            "decision": "JOIN",
+            "joinedForms": 486,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "accord-ance",
+            "decision": "JOIN",
+            "joinedForms": 356,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "pay-related",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 8,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "over-time",
+            "decision": "JOIN",
+            "joinedForms": 39,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "pay-related",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 8,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ac-count",
+            "decision": "JOIN",
+            "joinedForms": 227,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "over-time",
+            "decision": "JOIN",
+            "joinedForms": 39,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "reg-ulations",
+            "decision": "JOIN",
+            "joinedForms": 367,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "one-quarter",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "remuner-ation",
+            "decision": "JOIN",
+            "joinedForms": 44,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "con-solidated",
+            "decision": "JOIN",
+            "joinedForms": 28,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "onequar-ter",
+            "decision": "MANUAL",
+            "result": "one-quarter",
+            "reason": "pypdf dropped the real hyphen and added a soft one; 'one-quarter' occurs 4 times across the sources (Standard A2.2 / Guideline B2.2.2 'one and one-quarter times').",
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "over-time",
+            "decision": "JOIN",
+            "joinedForms": 39,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "repre-senting",
+            "decision": "MANUAL",
+            "result": "representing",
+            "reason": "line-break hyphenation of a single English word (no such hyphenated compound exists); joined form is standard orthography.",
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "com-pensation",
+            "decision": "JOIN",
+            "joinedForms": 64,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ship-owners",
+            "decision": "JOIN",
+            "joinedForms": 345,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "em-ployed",
+            "decision": "JOIN",
+            "joinedForms": 66,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "re-ligion",
+            "decision": "JOIN",
+            "joinedForms": 11,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "acces-sible",
+            "decision": "JOIN",
+            "joinedForms": 17,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "com-petent",
+            "decision": "JOIN",
+            "joinedForms": 670,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "applica-ble",
+            "decision": "JOIN",
+            "joinedForms": 228,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ob-taining",
+            "decision": "JOIN",
+            "joinedForms": 5,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "pro-vided",
+            "decision": "JOIN",
+            "joinedForms": 512,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "mat-ter",
+            "decision": "JOIN",
+            "joinedForms": 69,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "estab-lish",
+            "decision": "JOIN",
+            "joinedForms": 46,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "shipown-ers",
+            "decision": "JOIN",
+            "joinedForms": 345,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "em-ployment",
+            "decision": "JOIN",
+            "joinedForms": 486,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "pro-cedure",
+            "decision": "JOIN",
+            "joinedForms": 24,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          }
+        ],
+        "hyphenRule": "Every hyphenated token whose second part is lower-case (line-end hyphenation and stray in-line hyphens from PDF extraction alike) was decided on evidence from the four source texts: JOIN when only the joined form occurs in the sources, KEEP when only the hyphenated form occurs, majority when both occur, KEEP_UNRESOLVED (hyphen retained, listed here) when neither occurs. Upper-case continuations (e.g. Director-General) keep the hyphen.",
+        "artifactNote": "Non-zero span counts in the mirror and stage-2/3 comparisons are explained field by field in amendmentHistory and variantNote; the remainder are PDF extraction artifacts (running headers, page numbers, line-break hyphenation, spacing before punctuation) that were inspected individually."
+      },
+      "verifiedBy": [
+        "PRIMARY_SOURCE_FOUR_STAGE_DIFF",
+        "AMENDMENT_TEXT_CROSSCHECK",
+        "AMENDMENT_HISTORY_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-13",
+      "primarySources": [
+        {
+          "file": "ILO_MLC2006_consolidated_2022.pdf",
+          "url": "https://www.ilo.org/sites/default/files/2024-10/NORMES_MLC%20Amendments-EN_2022_Web_1.pdf",
+          "sha256": "bc444a84c177558dfc043b027b47681f06d7155f793819e755984f1b785f7e43",
+          "bytes": 610483,
+          "fetchedUtc": "2026-09-12T20:28:04Z"
+        },
+        {
+          "file": "ILO_267866_MLC2006_2014_2016_consolidated.pdf",
+          "url": "https://www.ilo.org/media/267866/download",
+          "sha256": "3c3f1542f72e67a5df9fefb75c56117d223a74ccf06c7c8104a3332cec926ebb",
+          "bytes": 745545,
+          "fetchedUtc": "2026-09-12T20:30:52Z"
+        },
+        {
+          "file": "ILO_269841_MLC2006_original.pdf",
+          "url": "https://www.ilo.org/media/269841/download",
+          "sha256": "74f3f95ceda4d787027629ee6f2848cd9fda3695c6cd37ca57c894d0dffed422",
+          "bytes": 1163116,
+          "fetchedUtc": "2026-09-12T20:30:50Z"
+        },
+        {
+          "file": "RegisterIRI_MLC2006_original.pdf",
+          "url": "https://www.register-iri.com/wp-content/uploads/MLC-2006.pdf",
+          "sha256": "a335e8c065a4e8122ed486b487bd2e8d05fde1bfa8f70383946d6af537519ad9",
+          "bytes": 1098370,
+          "fetchedUtc": "2026-09-12T20:30:49Z"
+        }
+      ],
+      "amendmentTextSources": [
+        {
+          "file": "ILO_wcms_632462_2018_amendments.pdf",
+          "url": "https://www.ilo.org/sites/default/files/wcmsp5/groups/public/%40ed_norm/%40relconf/documents/meetingdocument/wcms_632462.pdf",
+          "sha256": "3106ff1b6cc71c066c2626f11c980dc5be3115d95c6a4049afa2a48d71566919",
+          "bytes": 1740940,
+          "fetchedUtc": "2026-09-12T20:57:38Z"
+        }
+      ],
+      "secondarySources": []
+    }
+  ],
+  "unresolvedSources": [],
+  "relatedButOutOfScope": "ISM Code and ISPS Code Part A remain closed, frozen baselines. Appendices A2-I, A4-I, A5-I to A5-III and B5-I are not part of any Regulation block and are not reproduced here; where an amendment changed an Appendix it is mentioned in amendmentHistory only. Does not touch config/human-review-contract.json, academy_ism_* schema/RLS/tooling, any open PR in this series, or GASM Human Review Cloud staging."
+}
