@@ -1,0 +1,257 @@
+{
+  "manifestVersion": "MLC-PILOT-026",
+  "createdAt": "2026-09-13T07:22:01Z",
+  "note": "Provenance/reference record only, not a database write. Same status as PILOT-001 through 009.json: no academy_mlc_source_manifest table exists, no verification_stage asserted, not consumed by any promotion tooling. No migration, schema, or tooling change. Additive docs/ file only, on its own branch, separate from every other open PR in this series.",
+  "batchNote": "Prepared under the Owner's 2026-09-08 full-scope MLC Title 1-5 instruction and the Owner's 2026-09-12 GO on the resumption plan, which released this Regulation from SOURCE HOLD only after the current consolidated ILO text and the authentic amendment texts were reacquired and their provenance recorded (see primarySources/amendmentTextSources). 'Prepared/draft' is not 'verified', 'human-accepted', 'merged' or 'live'. This file is source-text verification only.",
+  "schemaExtensionNote": "Uses the regulationRef/standardARef/guidelineBRef fields introduced in PILOT-001.json and adds textEdition, pendingAmendments2025, diffEvidence and amendmentTextSources. No further schema change; no tooling reads these files.",
+  "verificationMethodNote": "No GROK/GEMINI access this session. Method: PRIMARY_SOURCE_FOUR_STAGE_DIFF (see verifiedSources[0].verificationMethod) over the ILO consolidated 2022 text, the ILO 2014+2016 consolidated text and two 2006-original mirrors, with every substantive diff span matched to the authentic ILO amendment texts of 2014, 2016, 2018 and 2022. The 2025 amendments (ILC 113, adopted 6 June 2025, expected entry into force 23 December 2027) are NOT in force and are NOT blended into fullText; they are recorded in pendingAmendments2025 only. Running headers, page numbers and soft hyphenation were removed when re-flowing fullText; every hyphen join is listed in diffEvidence.hyphenJoinsApplied for audit.",
+  "verifiedSources": [
+    {
+      "sourceId": "ILO-MLC2006-T5-REG5.2.1",
+      "title": "Inspections in port",
+      "authority": "ILO",
+      "moduleCode": "mlc-code-foundations",
+      "flagAdministration": null,
+      "section": "Title 5, Regulation 5.2.1 / Standard A5.2.1 / Guideline B5.2.1",
+      "regulationRef": "Regulation 5.2.1 - Inspections in port",
+      "standardARef": "Standard A5.2.1 - Inspections in port",
+      "guidelineBRef": "Guideline B5.2.1 - Inspections in port",
+      "textEdition": "Maritime Labour Convention, 2006, as amended - consolidated text established by the International Labour Office including the Amendments of 2014, 2016, 2018 and 2022 to the Code (ILO publication dated 2 October 2024). This is the text in force on the verification date.",
+      "fullText": "Regulation 5.2.1 - Inspections in port\n\n1. Every foreign ship calling, in the normal course of its business or for operational reasons, in the port of a Member may be the subject of inspection in accordance with paragraph 4 of Article V for the purpose of reviewing compliance with the requirements of this Convention (including seafarers' rights) relating to the working and living conditions of seafarers on the ship.\n\n2. Each Member shall accept the maritime labour certificate and the declaration of maritime labour compliance required under Regulation 5.1.3 as prima facie evidence of compliance with the requirements of this Convention (including seafarers' rights). Accordingly, the inspection in its ports shall, except in the circumstances specified in the Code, be limited to a review of the certificate and declaration.\n\n3. Inspections in a port shall be carried out by authorized officers in accordance with the provisions of the Code and other applicable international arrangements governing port State control inspections in the Member. Any such inspection shall be limited to verifying that the matter inspected is in conformity with the relevant requirements set out in the Articles and Regulations of this Convention and in Part A only of the Code.\n\n4. Inspections that may be carried out in accordance with this Regulation shall be based on an effective port State inspection and monitoring system to help ensure that the working and living conditions for seafarers on ships entering a port of the Member concerned meet the requirements of this Convention (including seafarers' rights).\n\n5. Information about the system referred to in paragraph 4 of this Regulation, including the method used for assessing its effectiveness, shall be included in the Member's reports pursuant to article 22 of the Constitution.\n\nStandard A5.2.1 - Inspections in port\n\n1. Where an authorized officer, having come on board to carry out an inspection and requested, where applicable, the maritime labour certificate and the declaration of maritime labour compliance, finds that:\n\n(a) the required documents are not produced or maintained or are falsely maintained or that the documents produced do not contain the information required by this Convention or are otherwise invalid; or\n\n(b) there are clear grounds for believing that the working and living conditions on the ship do not conform to the requirements of this Convention; or\n\n(c) there are reasonable grounds to believe that the ship has changed flag for the purpose of avoiding compliance with this Convention; or\n\n(d) there is a complaint alleging that specific working and living conditions on the ship do not conform to the requirements of this Convention; a more detailed inspection may be carried out to ascertain the working and living conditions on board the ship. Such inspection shall in any case be carried out where the working and living conditions believed or alleged to be defective could constitute a clear hazard to the safety, health or security of seafarers or where the authorized officer has grounds to believe that any deficiencies constitute a serious breach of the requirements of this Convention (including seafarers' rights).\n\n2. Where a more detailed inspection is carried out on a foreign ship in the port of a Member by authorized officers in the circumstances set out in subparagraph (a),\n\n(b) or (c) of paragraph 1 of this Standard, it shall in principle cover the matters listed in Appendix A5-III.\n\n3. In the case of a complaint under paragraph 1(d) of this Standard, the inspection shall generally be limited to matters within the scope of the complaint, although a complaint, or its investigation, may provide clear grounds for a detailed inspection in accordance with paragraph 1(b) of this Standard. For the purpose of paragraph 1(d) of this Standard, \"complaint\" means information submitted by a seafarer, a professional body, an association, a trade union or, generally, any person with an interest in the safety of the ship, including an interest in safety or health hazards to seafarers on board.\n\n4. Where, following a more detailed inspection, the working and living conditions on the ship are found not to conform to the requirements of this Convention, the authorized officer shall forthwith bring the deficiencies to the attention of the master of the ship, with required deadlines for their rectification. In the event that such deficiencies are considered by the authorized officer to be significant, or if they relate to a complaint made in accordance with paragraph 3 of this Standard, the authorized officer shall bring the deficiencies to the attention of the appropriate seafarers' and shipowners' organizations in the Member in which the inspection is carried out, and may:\n\n(a) notify a representative of the flag State;\n\n(b) provide the competent authorities of the next port of call with the relevant information.\n\n5. The Member in which the inspection is carried out shall have the right to transmit a copy of the officer's report, which must be accompanied by any reply received from the competent authorities of the flag State within the prescribed deadline, to the Director-General of the International Labour Office with a view to such action as may be considered appropriate and expedient in order to ensure that a record is kept of such information and that it is brought to the attention of parties which might be interested in availing themselves of relevant recourse procedures.\n\n6. Where, following a more detailed inspection by an authorized officer, the ship is found not to conform to the requirements of this Convention and:\n\n(a) the conditions on board are clearly hazardous to the safety, health or security of seafarers; or\n\n(b) the non-conformity constitutes a serious or repeated breach of the requirements of this Convention (including seafarers' rights); the authorized officer shall take steps to ensure that the ship shall not proceed to sea until any non-conformities that fall within the scope of subparagraph (a) or (b) of this paragraph have been rectified, or until the authorized officer has accepted a plan of action to rectify such non-conformities and is satisfied that the plan will be implemented in an expeditious manner. If the ship is prevented from sailing, the authorized officer shall forthwith notify the flag State accordingly and invite a representative of the flag State to be present, if possible, requesting the flag State to reply within a prescribed deadline. The authorized officer shall also inform forthwith the appropriate shipowners' and seafarers' organizations in the port State in which the inspection was carried out.\n\n7. Each Member shall ensure that its authorized officers are given guidance, of the kind indicated in Part B of the Code, as to the kinds of circumstances justifying detention of a ship under paragraph 6 of this Standard.\n\n8. When implementing their responsibilities under this Standard, each Member shall make all possible efforts to avoid a ship being unduly detained or delayed. If a ship is found to be unduly detained or delayed, compensation shall be paid for any loss or damage suffered. The burden of proof in each case shall be on the complainant.\n\nGuideline B5.2.1 - Inspections in port\n\n1. The competent authority should develop an inspection policy for authorized officers carrying out inspections under Regulation 5.2.1. The objective of the policy should be to ensure consistency and to otherwise guide inspection and enforcement activities related to the requirements of this Convention (including seafarers' rights). Copies of this policy should be provided to all authorized officers and should be available to the public and shipowners and seafarers.\n\n2. When developing a policy relating to the circumstances warranting a detention of the ship under Standard A5.2.1, paragraph 6, the competent authority should consider that, with respect to the breaches referred to in Standard A5.2.1, paragraph 6(b), the seriousness could be due to the nature of the deficiency concerned. This would be particularly relevant in the case of the violation of fundamental rights and principles or seafarers' employment and social rights under Articles III and IV. For example, the employment of a person who is under age should be considered as a serious breach even if there is only one such person on board. In other cases, the number of different defects found during a particular inspection should be taken into account: for example, several instances of defects relating to accommodation or food and catering which do not threaten safety or health might be needed before they should be considered as constituting a serious breach.\n\n3. Members should cooperate with each other to the maximum extent possible in the adoption of internationally agreed guidelines on inspection policies, especially those relating to the circumstances warranting the detention of a ship.",
+      "variantNote": "No substantive variant between sources. Residual diff spans are PDF extraction artifacts only (running headers, page numbers, line-break hyphenation, spacing before punctuation), inspected individually.",
+      "amendmentHistory": "Text unchanged since the Convention was adopted on 23 February 2006 (entered into force 20 August 2013): the 2006 mirrors, the 2014+2016 consolidated text and the 2014+2016+2018+2022 consolidated text agree word for word apart from extraction artifacts. Not named in the 2014, 2016, 2018 or 2022 amendment texts.",
+      "pendingAmendments2025": "None of the 2025 amendments (ILC 113, adopted 6 June 2025, expected entry into force 23 December 2027) touch this Regulation, its Standard or its Guidelines.",
+      "verificationMethod": "PRIMARY_SOURCE_FOUR_STAGE_DIFF: (1) the two 2006-original mirrors were sliced and word-diffed against each other; (2) the 2006 original was word-diffed against the ILO 2014+2016 consolidated text; (3) that text was word-diffed against the ILO 2014+2016+2018+2022 consolidated text; (4) every non-artifact diff span was matched against the authentic amendment texts (ILO 2014, 2016, 2018 and 2022 amendment documents). fullText is the stage-3 target block re-flowed to undo PDF line wrapping; its word sequence was re-diffed against the raw block (consistencyCheck).",
+      "diffEvidence": {
+        "mirror2006_ilo_vs_registerIri": {
+          "wordDiffSpans": 0,
+          "similarityRatio": 1.0
+        },
+        "original2006_vs_consolidated2016": {
+          "wordDiffSpans": 4,
+          "similarityRatio": 0.9913
+        },
+        "consolidated2016_vs_consolidated2022": {
+          "wordDiffSpans": 2,
+          "similarityRatio": 0.9979
+        },
+        "consistencyCheck_reflow_vs_raw": {
+          "wordDiffSpans": 1,
+          "similarityRatio": 0.999
+        },
+        "hyphenDecisions": [
+          {
+            "token": "opera-tional",
+            "decision": "JOIN",
+            "joinedForms": 36,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "re-quirements",
+            "decision": "JOIN",
+            "joinedForms": 480,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "evi-dence",
+            "decision": "JOIN",
+            "joinedForms": 30,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "accord-ance",
+            "decision": "JOIN",
+            "joinedForms": 356,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "arrange-ments",
+            "decision": "JOIN",
+            "joinedForms": 101,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "rele-vant",
+            "decision": "JOIN",
+            "joinedForms": 197,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "Mem-ber",
+            "decision": "JOIN",
+            "joinedForms": 911,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "main-tained",
+            "decision": "JOIN",
+            "joinedForms": 44,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "con-ditions",
+            "decision": "JOIN",
+            "joinedForms": 328,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "inspec-tion",
+            "decision": "JOIN",
+            "joinedForms": 310,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "condi-tions",
+            "decision": "JOIN",
+            "joinedForms": 328,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "defi-ciencies",
+            "decision": "JOIN",
+            "joinedForms": 44,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "of-ficer",
+            "decision": "JOIN",
+            "joinedForms": 131,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ship-owners",
+            "decision": "JOIN",
+            "joinedForms": 345,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "re-ceived",
+            "decision": "JOIN",
+            "joinedForms": 22,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "in-terested",
+            "decision": "JOIN",
+            "joinedForms": 13,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "non-conformity",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 8,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "non-conformities",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 8,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ac-tion",
+            "decision": "JOIN",
+            "joinedForms": 60,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "non-conformities",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 8,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "Mem-ber",
+            "decision": "JOIN",
+            "joinedForms": 911,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "avail-able",
+            "decision": "JOIN",
+            "joinedForms": 164,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "deten-tion",
+            "decision": "JOIN",
+            "joinedForms": 15,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "para-graph",
+            "decision": "JOIN_MAJORITY",
+            "joinedForms": 613,
+            "hyphenForms": 1,
+            "origin": "line-end-or-inline"
+          }
+        ],
+        "hyphenRule": "Every hyphenated token whose second part is lower-case (line-end hyphenation and stray in-line hyphens from PDF extraction alike) was decided on evidence from the four source texts: JOIN when only the joined form occurs in the sources, KEEP when only the hyphenated form occurs, majority when both occur, KEEP_UNRESOLVED (hyphen retained, listed here) when neither occurs. Upper-case continuations (e.g. Director-General) keep the hyphen.",
+        "artifactNote": "Non-zero span counts in the mirror and stage-2/3 comparisons are explained field by field in amendmentHistory and variantNote; the remainder are PDF extraction artifacts (running headers, page numbers, line-break hyphenation, spacing before punctuation) that were inspected individually."
+      },
+      "verifiedBy": [
+        "PRIMARY_SOURCE_FOUR_STAGE_DIFF",
+        "AMENDMENT_TEXT_CROSSCHECK",
+        "AMENDMENT_HISTORY_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-13",
+      "primarySources": [
+        {
+          "file": "ILO_MLC2006_consolidated_2022.pdf",
+          "url": "https://www.ilo.org/sites/default/files/2024-10/NORMES_MLC%20Amendments-EN_2022_Web_1.pdf",
+          "sha256": "bc444a84c177558dfc043b027b47681f06d7155f793819e755984f1b785f7e43",
+          "bytes": 610483,
+          "fetchedUtc": "2026-09-12T20:28:04Z"
+        },
+        {
+          "file": "ILO_267866_MLC2006_2014_2016_consolidated.pdf",
+          "url": "https://www.ilo.org/media/267866/download",
+          "sha256": "3c3f1542f72e67a5df9fefb75c56117d223a74ccf06c7c8104a3332cec926ebb",
+          "bytes": 745545,
+          "fetchedUtc": "2026-09-12T20:30:52Z"
+        },
+        {
+          "file": "ILO_269841_MLC2006_original.pdf",
+          "url": "https://www.ilo.org/media/269841/download",
+          "sha256": "74f3f95ceda4d787027629ee6f2848cd9fda3695c6cd37ca57c894d0dffed422",
+          "bytes": 1163116,
+          "fetchedUtc": "2026-09-12T20:30:50Z"
+        },
+        {
+          "file": "RegisterIRI_MLC2006_original.pdf",
+          "url": "https://www.register-iri.com/wp-content/uploads/MLC-2006.pdf",
+          "sha256": "a335e8c065a4e8122ed486b487bd2e8d05fde1bfa8f70383946d6af537519ad9",
+          "bytes": 1098370,
+          "fetchedUtc": "2026-09-12T20:30:49Z"
+        }
+      ],
+      "amendmentTextSources": [],
+      "secondarySources": []
+    }
+  ],
+  "unresolvedSources": [],
+  "relatedButOutOfScope": "ISM Code and ISPS Code Part A remain closed, frozen baselines. Appendices A2-I, A4-I, A5-I to A5-III and B5-I are not part of any Regulation block and are not reproduced here; where an amendment changed an Appendix it is mentioned in amendmentHistory only. Does not touch config/human-review-contract.json, academy_ism_* schema/RLS/tooling, any open PR in this series, or GASM Human Review Cloud staging."
+}
