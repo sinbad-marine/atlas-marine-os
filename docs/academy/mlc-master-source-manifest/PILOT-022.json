@@ -1,0 +1,419 @@
+{
+  "manifestVersion": "MLC-PILOT-022",
+  "createdAt": "2026-09-13T07:22:00Z",
+  "note": "Provenance/reference record only, not a database write. Same status as PILOT-001 through 009.json: no academy_mlc_source_manifest table exists, no verification_stage asserted, not consumed by any promotion tooling. No migration, schema, or tooling change. Additive docs/ file only, on its own branch, separate from every other open PR in this series.",
+  "batchNote": "Prepared under the Owner's 2026-09-08 full-scope MLC Title 1-5 instruction and the Owner's 2026-09-12 GO on the resumption plan, which released this Regulation from SOURCE HOLD only after the current consolidated ILO text and the authentic amendment texts were reacquired and their provenance recorded (see primarySources/amendmentTextSources). 'Prepared/draft' is not 'verified', 'human-accepted', 'merged' or 'live'. This file is source-text verification only.",
+  "schemaExtensionNote": "Uses the regulationRef/standardARef/guidelineBRef fields introduced in PILOT-001.json and adds textEdition, pendingAmendments2025, diffEvidence and amendmentTextSources. No further schema change; no tooling reads these files.",
+  "verificationMethodNote": "No GROK/GEMINI access this session. Method: PRIMARY_SOURCE_FOUR_STAGE_DIFF (see verifiedSources[0].verificationMethod) over the ILO consolidated 2022 text, the ILO 2014+2016 consolidated text and two 2006-original mirrors, with every substantive diff span matched to the authentic ILO amendment texts of 2014, 2016, 2018 and 2022. The 2025 amendments (ILC 113, adopted 6 June 2025, expected entry into force 23 December 2027) are NOT in force and are NOT blended into fullText; they are recorded in pendingAmendments2025 only. Running headers, page numbers and soft hyphenation were removed when re-flowing fullText; every hyphen join is listed in diffEvidence.hyphenJoinsApplied for audit.",
+  "verifiedSources": [
+    {
+      "sourceId": "ILO-MLC2006-T5-REG5.1.3",
+      "title": "Maritime labour certificate and declaration of maritime labour compliance",
+      "authority": "ILO",
+      "moduleCode": "mlc-code-foundations",
+      "flagAdministration": null,
+      "section": "Title 5, Regulation 5.1.3 / Standard A5.1.3 / Guideline B5.1.3",
+      "regulationRef": "Regulation 5.1.3 - Maritime labour certificate and declaration of maritime labour compliance",
+      "standardARef": "Standard A5.1.3 - Maritime labour certificate and declaration of maritime labour compliance",
+      "guidelineBRef": "Guideline B5.1.3 - Maritime labour certificate and declaration of maritime labour compliance",
+      "textEdition": "Maritime Labour Convention, 2006, as amended - consolidated text established by the International Labour Office including the Amendments of 2014, 2016, 2018 and 2022 to the Code (ILO publication dated 2 October 2024). This is the text in force on the verification date.",
+      "fullText": "Regulation 5.1.3 - Maritime labour certificate and declaration of maritime labour compliance\n\n1. This Regulation applies to ships of:\n\n(a) 500 gross tonnage or over, engaged in international voyages; and\n\n(b) 500 gross tonnage or over, flying the flag of a Member and operating from a port, or between ports, in another country. For the purpose of this Regulation, \"international voyage\" means a voyage from a country to a port outside such a country.\n\n2. This Regulation also applies to any ship that flies the flag of a Member and is not covered by paragraph 1 of this Regulation, at the request of the shipowner to the Member concerned.\n\n3. Each Member shall require ships that fly its flag to carry and maintain a maritime labour certificate certifying that the working and living conditions of seafarers on the ship, including measures for ongoing compliance to be included in the declaration of maritime labour compliance referred to in paragraph 4 of this Regulation, have been inspected and meet the requirements of national laws or regulations or other measures implementing this Convention.\n\n4. Each Member shall require ships that fly its flag to carry and maintain a declaration of maritime labour compliance stating the national requirements implementing this Convention for the working and living conditions for seafarers and setting out the measures adopted by the shipowner to ensure compliance with the requirements on the ship or ships concerned.\n\n5. The maritime labour certificate and the declaration of maritime labour compliance shall conform to the model prescribed by the Code.\n\n6. Where the competent authority of the Member or a recognized organization duly authorized for this purpose has ascertained through inspection that a ship that flies the Member's flag meets or continues to meet the standards of this Convention, it shall issue or renew a maritime labour certificate to that effect and maintain a publicly available record of that certificate.\n\n7. Detailed requirements for the maritime labour certificate and the declaration of maritime labour compliance, including a list of the matters that must be inspected and approved, are set out in Part A of the Code.\n\nStandard A5.1.3 - Maritime labour certificate and declaration of maritime labour compliance\n\n1. The maritime labour certificate shall be issued to a ship by the competent authority, or by a recognized organization duly authorized for this purpose, for a period which shall not exceed five years. A list of matters that must be inspected and found to meet national laws and regulations or other measures implementing the requirements of this Convention regarding the working and living conditions of seafarers on ships before a maritime labour certificate can be issued is found in Appendix A5-I.\n\n2. The validity of the maritime labour certificate shall be subject to an intermediate inspection by the competent authority, or by a recognized organization duly authorized for this purpose, to ensure continuing compliance with the national requirements implementing this Convention. If only one intermediate inspection is carried out and the period of validity of the certificate is five years, it shall take place between the second and third anniversary dates of the certificate. Anniversary date means the day and month of each year which will correspond to the date of expiry of the maritime labour certificate. The scope and depth of the intermediate inspection shall be equal to an inspection for renewal of the certificate. The certificate shall be endorsed following satisfactory intermediate inspection.\n\n3. Notwithstanding paragraph 1 of this Standard, when the renewal inspection has been completed within three months before the expiry of the existing maritime labour certificate, the new maritime labour certificate shall be valid from the date of completion of the renewal inspection for a period not exceeding five years from the date of expiry of the existing certificate. When the renewal inspection is completed more than three months before the expiry date of the existing maritime labour certificate, the new maritime labour certificate shall be valid for a period not exceeding five years starting from the date of completion of the renewal inspection.\n\n4. Notwithstanding paragraph 1 of this Standard, where, after a renewal inspection completed prior to the expiry of a maritime labour certificate, the ship is found to continue to meet national laws and regulations or other measures implementing the requirements of this Convention, but a new certificate cannot immediately be issued to and made available on board that ship, the competent authority, or the recognized organization duly authorized for this purpose, may extend the validity of the certificate for a further period not exceeding five months from the expiry date of the existing certificate, and endorse the certificate accordingly. The new certificate shall be valid for a period not exceeding five years starting from the date provided for in paragraph 3 of this Standard.\n\n5. A maritime labour certificate may be issued on an interim basis:\n\n(a) to new ships on delivery;\n\n(b) when a ship changes flag; or\n\n(c) when a shipowner assumes responsibility for the operation of a ship which is new to that shipowner.\n\n6. An interim maritime labour certificate may be issued for a period not exceeding six months by the competent authority or a recognized organization duly authorized for this purpose.\n\n7. An interim maritime labour certificate may only be issued following verification that:\n\n(a) the ship has been inspected, as far as reasonable and practicable, for the matters listed in Appendix A5-I, taking into account verification of items under subparagraphs (b), (c) and (d) of this paragraph;\n\n(b) the shipowner has demonstrated to the competent authority or recognized organization that the ship has adequate procedures to comply with this Convention;\n\n(c) the master is familiar with the requirements of this Convention and the responsibilities for implementation; and\n\n(d) relevant information has been submitted to the competent authority or recognized organization to produce a declaration of maritime labour compliance.\n\n8. A full inspection in accordance with paragraph 1 of this Standard shall be carried out prior to expiry of the interim certificate to enable issue of the full-term maritime labour certificate. No further interim certificate may be issued following the initial six months referred to in paragraph 6 of this Standard. A declaration of maritime labour compliance need not be issued for the period of validity of the interim certificate.\n\n9. The maritime labour certificate, the interim maritime labour certificate and the declaration of maritime labour compliance shall be drawn up in the form corresponding to the models given in Appendix A5-II.\n\n10. The declaration of maritime labour compliance shall be attached to the maritime labour certificate. It shall have two parts:\n\n(a) Part I shall be drawn up by the competent authority which shall: (i) identify the list of matters to be inspected in accordance with paragraph 1 of this Standard; (ii) identify the national requirements embodying the relevant provisions of this Convention by providing a reference to the relevant national legal provisions as well as, to the extent necessary, concise information on the main content of the national requirements; (iii) refer to ship-type specific requirements under national legislation; (iv) record any substantially equivalent provisions adopted pursuant to paragraph 3 of Article VI; and (v) clearly indicate any exemption granted by the competent authority as provided in Title 3; and\n\n(b) Part II shall be drawn up by the shipowner and shall identify the measures adopted to ensure ongoing compliance with the national requirements between inspections and the measures proposed to ensure that there is continuous improvement. The competent authority or recognized organization duly authorized for this purpose shall certify Part II and shall issue the declaration of maritime labour compliance.\n\n11. The results of all subsequent inspections or other verifications carried out with respect to the ship concerned and any significant deficiencies found during any such verification shall be recorded, together with the date when the deficiencies were found to have been remedied. This record, accompanied by an English-language translation where it is not in English, shall, in accordance with national laws or regulations, be inscribed upon or appended to the declaration of maritime labour compliance or made available in some other way to seafarers, flag State inspectors, authorized officers in port States and shipowners' and seafarers' representatives.\n\n12. A current valid maritime labour certificate and declaration of maritime labour compliance, accompanied by an English-language translation where it is not in English, shall be carried on the ship and a copy shall be posted in a conspicuous place on board where it is available to the seafarers. A copy shall be made available in accordance with national laws and regulations, upon request, to seafarers, flag State inspectors, authorized officers in port States, and shipowners' and seafarers' representatives.\n\n13. The requirement for an English-language translation in paragraphs 11 and 12 of this Standard does not apply in the case of a ship not engaged in an international voyage.\n\n14. A certificate issued under paragraph 1 or 5 of this Standard shall cease to be valid in any of the following cases:\n\n(a) if the relevant inspections are not completed within the periods specified under paragraph 2 of this Standard;\n\n(b) if the certificate is not endorsed in accordance with paragraph 2 of this Standard;\n\n(c) when a ship changes flag;\n\n(d) when a shipowner ceases to assume the responsibility for the operation of a ship; and\n\n(e) when substantial changes have been made to the structure or equipment covered in Title 3.\n\n15. In the case referred to in paragraph 14(c), (d) or (e) of this Standard, a new certificate shall only be issued when the competent authority or recognized organization issuing the new certificate is fully satisfied that the ship is in compliance with the requirements of this Standard.\n\n16. A maritime labour certificate shall be withdrawn by the competent authority or the recognized organization duly authorized for this purpose by the flag State, if there is evidence that the ship concerned does not comply with the requirements of this Convention and any required corrective action has not been taken.\n\n17. When considering whether a maritime labour certificate should be withdrawn in accordance with paragraph 16 of this Standard, the competent authority or the recognized organization shall take into account the seriousness or the frequency of the deficiencies.\n\nGuideline B5.1.3 - Maritime labour certificate and declaration of maritime labour compliance\n\n1. The statement of national requirements in Part I of the declaration of maritime labour compliance should include or be accompanied by references to the legislative provisions relating to seafarers' working and living conditions in each of the matters listed in Appendix A5-I. Where national legislation precisely follows the requirements stated in this Convention, a reference may be all that is necessary. Where a provision of the Convention is implemented through substantial equivalence as provided under Article VI, paragraph 3, this provision should be identified and a concise explanation should be provided. Where an exemption is granted by the competent authority as provided in Title 3, the particular provision or provisions concerned should be clearly indicated.\n\n2. The measures referred to in Part II of the declaration of maritime labour compliance, drawn up by the shipowner, should, in particular, indicate the occasions on which ongoing compliance with particular national requirements will be verified, the persons responsible for verification, the records to be taken, as well as the procedures to be followed where non-compliance is noted. Part II may take a number of forms. It could make reference to other more comprehensive documentation covering policies and procedures relating to other aspects of the maritime sector, for example documents required by the International Safety Management (ISM) Code or the information required by Regulation 5 of the SOLAS Convention, Chapter XI-1 relating to the ship's Continuous Synopsis Record.\n\n3. The measures to ensure ongoing compliance should include general international requirements for the shipowner and master to keep themselves informed of the latest advances in technology and scientific findings concerning workplace design, taking into account the inherent dangers of seafarers' work, and to inform the seafarers' representatives accordingly, thereby guaranteeing a better level of protection of the seafarers' working and living conditions on board.\n\n4. The declaration of maritime labour compliance should, above all, be drafted in clear terms designed to help all persons concerned, such as flag State inspectors, authorized officers in port States and seafarers, to check that the requirements are being properly implemented.\n\n5. An example of the kind of information that might be contained in a declaration of maritime labour compliance is given in Appendix B5-I.\n\n6. When a ship changes flag as referred to in Standard A5.1.3, paragraph 14(c), and where both States concerned have ratified this Convention, the Member whose flag the ship was formerly entitled to fly should, as soon as possible, transmit to the competent authority of the other Member copies of the maritime labour certificate and the declaration of maritime labour compliance carried by the ship before the change of flag and, if applicable, copies of the relevant inspection reports if the competent authority so requests within three months after the change of flag has taken place.",
+      "variantNote": "No substantive variant between sources. Residual diff spans are PDF extraction artifacts only (running headers, page numbers, line-break hyphenation, spacing before punctuation), inspected individually.",
+      "amendmentHistory": "Amended once. 2016 (ILC 105, approved 9 June 2016, in force 8 January 2019): Standard A5.1.3 paragraph 4 replaced - where a renewal inspection has been completed before expiry and the ship still complies, the existing certificate may be extended for up to five months until the new certificate is issued; a matching extension endorsement was added to the model form in Appendix A5-II (appendix only). Everything else is 2006 text. Not named in the 2014, 2018 or 2022 amendment texts. Diff evidence: original -> consolidated2016 shows exactly the replaced paragraph 4; consolidated2016 -> consolidated2022 shows no substantive span.",
+      "pendingAmendments2025": "None of the 2025 amendments (ILC 113, adopted 6 June 2025, expected entry into force 23 December 2027) touch this Regulation, its Standard or its Guidelines.",
+      "verificationMethod": "PRIMARY_SOURCE_FOUR_STAGE_DIFF: (1) the two 2006-original mirrors were sliced and word-diffed against each other; (2) the 2006 original was word-diffed against the ILO 2014+2016 consolidated text; (3) that text was word-diffed against the ILO 2014+2016+2018+2022 consolidated text; (4) every non-artifact diff span was matched against the authentic amendment texts (ILO 2014, 2016, 2018 and 2022 amendment documents). fullText is the stage-3 target block re-flowed to undo PDF line wrapping; its word sequence was re-diffed against the raw block (consistencyCheck).",
+      "diffEvidence": {
+        "mirror2006_ilo_vs_registerIri": {
+          "wordDiffSpans": 0,
+          "similarityRatio": 1.0
+        },
+        "original2006_vs_consolidated2016": {
+          "wordDiffSpans": 8,
+          "similarityRatio": 0.9597
+        },
+        "consolidated2016_vs_consolidated2022": {
+          "wordDiffSpans": 3,
+          "similarityRatio": 0.9982
+        },
+        "consistencyCheck_reflow_vs_raw": {
+          "wordDiffSpans": 3,
+          "similarityRatio": 0.9982
+        },
+        "hyphenDecisions": [
+          {
+            "token": "coun-try",
+            "decision": "JOIN",
+            "joinedForms": 74,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "mari-time",
+            "decision": "JOIN",
+            "joinedForms": 313,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "implement-ing",
+            "decision": "JOIN",
+            "joinedForms": 56,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "com-pliance",
+            "decision": "JOIN",
+            "joinedForms": 231,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "be-fore",
+            "decision": "JOIN",
+            "joinedForms": 83,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "inter-mediate",
+            "decision": "JOIN",
+            "joinedForms": 16,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "require-ments",
+            "decision": "JOIN",
+            "joinedForms": 480,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "la-bour",
+            "decision": "JOIN",
+            "joinedForms": 315,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "inspec-tion",
+            "decision": "JOIN",
+            "joinedForms": 310,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "or-ganization",
+            "decision": "JOIN",
+            "joinedForms": 174,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "cer-tificate",
+            "decision": "JOIN",
+            "joinedForms": 314,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "verifica-tion",
+            "decision": "JOIN",
+            "joinedForms": 32,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "subpara-graphs",
+            "decision": "JOIN",
+            "joinedForms": 4,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "organ-ization",
+            "decision": "JOIN",
+            "joinedForms": 174,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "responsi-bilities",
+            "decision": "JOIN",
+            "joinedForms": 134,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "recog-nized",
+            "decision": "JOIN",
+            "joinedForms": 158,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "car-ried",
+            "decision": "JOIN",
+            "joinedForms": 100,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "full-term",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "mari-time",
+            "decision": "JOIN",
+            "joinedForms": 313,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "la-bour",
+            "decision": "JOIN",
+            "joinedForms": 315,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "cor-responding",
+            "decision": "JOIN",
+            "joinedForms": 32,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "mar-itime",
+            "decision": "JOIN",
+            "joinedForms": 313,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "Stand-ard",
+            "decision": "JOIN",
+            "joinedForms": 577,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "provi-sions",
+            "decision": "JOIN",
+            "joinedForms": 311,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ship-type",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 12,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "English-language",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 12,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "trans-lation",
+            "decision": "JOIN",
+            "joinedForms": 16,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "offi-cers",
+            "decision": "JOIN",
+            "joinedForms": 76,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "la-bour",
+            "decision": "JOIN",
+            "joinedForms": 315,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "English-language",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 12,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "accord-ance",
+            "decision": "JOIN",
+            "joinedForms": 356,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "inspec-tors",
+            "decision": "JOIN",
+            "joinedForms": 69,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "English-language",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 12,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "inter-national",
+            "decision": "JOIN",
+            "joinedForms": 208,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "author-ity",
+            "decision": "JOIN",
+            "joinedForms": 679,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "rec-ognized",
+            "decision": "JOIN",
+            "joinedForms": 158,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "proce-dures",
+            "decision": "JOIN",
+            "joinedForms": 233,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "non-compliance",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "infor-mation",
+            "decision": "JOIN",
+            "joinedForms": 191,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "interna-tional",
+            "decision": "JOIN",
+            "joinedForms": 208,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "tak-ing",
+            "decision": "JOIN",
+            "joinedForms": 105,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "sea-farers",
+            "decision": "JOIN_MAJORITY",
+            "joinedForms": 2076,
+            "hyphenForms": 1,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "sea-farers",
+            "decision": "JOIN_MAJORITY",
+            "joinedForms": 2076,
+            "hyphenForms": 1,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "au-thorized",
+            "decision": "JOIN",
+            "joinedForms": 215,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "declara-tion",
+            "decision": "JOIN",
+            "joinedForms": 118,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "com-petent",
+            "decision": "JOIN",
+            "joinedForms": 670,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          }
+        ],
+        "hyphenRule": "Every hyphenated token whose second part is lower-case (line-end hyphenation and stray in-line hyphens from PDF extraction alike) was decided on evidence from the four source texts: JOIN when only the joined form occurs in the sources, KEEP when only the hyphenated form occurs, majority when both occur, KEEP_UNRESOLVED (hyphen retained, listed here) when neither occurs. Upper-case continuations (e.g. Director-General) keep the hyphen.",
+        "artifactNote": "Non-zero span counts in the mirror and stage-2/3 comparisons are explained field by field in amendmentHistory and variantNote; the remainder are PDF extraction artifacts (running headers, page numbers, line-break hyphenation, spacing before punctuation) that were inspected individually."
+      },
+      "verifiedBy": [
+        "PRIMARY_SOURCE_FOUR_STAGE_DIFF",
+        "AMENDMENT_TEXT_CROSSCHECK",
+        "AMENDMENT_HISTORY_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-13",
+      "primarySources": [
+        {
+          "file": "ILO_MLC2006_consolidated_2022.pdf",
+          "url": "https://www.ilo.org/sites/default/files/2024-10/NORMES_MLC%20Amendments-EN_2022_Web_1.pdf",
+          "sha256": "bc444a84c177558dfc043b027b47681f06d7155f793819e755984f1b785f7e43",
+          "bytes": 610483,
+          "fetchedUtc": "2026-09-12T20:28:04Z"
+        },
+        {
+          "file": "ILO_267866_MLC2006_2014_2016_consolidated.pdf",
+          "url": "https://www.ilo.org/media/267866/download",
+          "sha256": "3c3f1542f72e67a5df9fefb75c56117d223a74ccf06c7c8104a3332cec926ebb",
+          "bytes": 745545,
+          "fetchedUtc": "2026-09-12T20:30:52Z"
+        },
+        {
+          "file": "ILO_269841_MLC2006_original.pdf",
+          "url": "https://www.ilo.org/media/269841/download",
+          "sha256": "74f3f95ceda4d787027629ee6f2848cd9fda3695c6cd37ca57c894d0dffed422",
+          "bytes": 1163116,
+          "fetchedUtc": "2026-09-12T20:30:50Z"
+        },
+        {
+          "file": "RegisterIRI_MLC2006_original.pdf",
+          "url": "https://www.register-iri.com/wp-content/uploads/MLC-2006.pdf",
+          "sha256": "a335e8c065a4e8122ed486b487bd2e8d05fde1bfa8f70383946d6af537519ad9",
+          "bytes": 1098370,
+          "fetchedUtc": "2026-09-12T20:30:49Z"
+        }
+      ],
+      "amendmentTextSources": [
+        {
+          "file": "ILO_wcms_488452_2016_amendments.pdf",
+          "url": "https://www.ilo.org/sites/default/files/wcmsp5/groups/public/%40ed_norm/%40relconf/documents/meetingdocument/wcms_488452.pdf",
+          "sha256": "32eef7d0cd0a1f4eb5eca6c3781c481f22ee21602406380625c655384cff60ad",
+          "bytes": 1573951,
+          "fetchedUtc": "2026-09-13T06:16:06Z"
+        }
+      ],
+      "secondarySources": []
+    }
+  ],
+  "unresolvedSources": [],
+  "relatedButOutOfScope": "ISM Code and ISPS Code Part A remain closed, frozen baselines. Appendices A2-I, A4-I, A5-I to A5-III and B5-I are not part of any Regulation block and are not reproduced here; where an amendment changed an Appendix it is mentioned in amendmentHistory only. Does not touch config/human-review-contract.json, academy_ism_* schema/RLS/tooling, any open PR in this series, or GASM Human Review Cloud staging."
+}
