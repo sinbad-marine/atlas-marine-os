@@ -1,0 +1,181 @@
+{
+  "manifestVersion": "MLC-PILOT-010",
+  "createdAt": "2026-09-13T07:21:51Z",
+  "note": "Provenance/reference record only, not a database write. Same status as PILOT-001 through 009.json: no academy_mlc_source_manifest table exists, no verification_stage asserted, not consumed by any promotion tooling. No migration, schema, or tooling change. Additive docs/ file only, on its own branch, separate from every other open PR in this series.",
+  "batchNote": "Prepared under the Owner's 2026-09-08 full-scope MLC Title 1-5 instruction and the Owner's 2026-09-12 GO on the resumption plan, which released this Regulation from SOURCE HOLD only after the current consolidated ILO text and the authentic amendment texts were reacquired and their provenance recorded (see primarySources/amendmentTextSources). 'Prepared/draft' is not 'verified', 'human-accepted', 'merged' or 'live'. This file is source-text verification only.",
+  "schemaExtensionNote": "Uses the regulationRef/standardARef/guidelineBRef fields introduced in PILOT-001.json and adds textEdition, pendingAmendments2025, diffEvidence and amendmentTextSources. No further schema change; no tooling reads these files.",
+  "verificationMethodNote": "No GROK/GEMINI access this session. Method: PRIMARY_SOURCE_FOUR_STAGE_DIFF (see verifiedSources[0].verificationMethod) over the ILO consolidated 2022 text, the ILO 2014+2016 consolidated text and two 2006-original mirrors, with every substantive diff span matched to the authentic ILO amendment texts of 2014, 2016, 2018 and 2022. The 2025 amendments (ILC 113, adopted 6 June 2025, expected entry into force 23 December 2027) are NOT in force and are NOT blended into fullText; they are recorded in pendingAmendments2025 only. Running headers, page numbers and soft hyphenation were removed when re-flowing fullText; every hyphen join is listed in diffEvidence.hyphenJoinsApplied for audit.",
+  "verifiedSources": [
+    {
+      "sourceId": "ILO-MLC2006-T2-REG2.1",
+      "title": "Seafarers' employment agreements",
+      "authority": "ILO",
+      "moduleCode": "mlc-code-foundations",
+      "flagAdministration": null,
+      "section": "Title 2, Regulation 2.1 / Standard A2.1 / Guideline B2.1 (including Guideline B2.1.1)",
+      "regulationRef": "Regulation 2.1 - Seafarers' employment agreements",
+      "standardARef": "Standard A2.1 - Seafarers' employment agreements",
+      "guidelineBRef": "Guideline B2.1 - Seafarers' employment agreements; Guideline B2.1.1 - Record of employment",
+      "textEdition": "Maritime Labour Convention, 2006, as amended - consolidated text established by the International Labour Office including the Amendments of 2014, 2016, 2018 and 2022 to the Code (ILO publication dated 2 October 2024). This is the text in force on the verification date.",
+      "fullText": "Regulation 2.1 - Seafarers' employment agreements\n\nPurpose: To ensure that seafarers have a fair employment agreement\n\n1. The terms and conditions for employment of a seafarer shall be set out or referred to in a clear written legally enforceable agreement and shall be consistent with the standards set out in the Code.\n\n2. Seafarers' employment agreements shall be agreed to by the seafarer under conditions which ensure that the seafarer has an opportunity to review and seek advice on the terms and conditions in the agreement and freely accepts them before signing.\n\n3. To the extent compatible with the Member's national law and practice, seafarers' employment agreements shall be understood to incorporate any applicable collective bargaining agreements.\n\nStandard A2.1 - Seafarers' employment agreements\n\n1. Each Member shall adopt laws or regulations requiring that ships that fly its flag comply with the following requirements:\n\n(a) seafarers working on ships that fly its flag shall have a seafarers' employment agreement signed by both the seafarer and the shipowner or a representative of the shipowner (or, where they are not employees, evidence of contractual or similar arrangements) providing them with decent working and living conditions on board the ship as required by this Convention;\n\n(b) seafarers signing a seafarers' employment agreement shall be given an opportunity to examine and seek advice on the agreement before signing, as well as such other facilities as are necessary to ensure that they have freely entered into an agreement with a sufficient understanding of their rights and responsibilities;\n\n(c) the shipowner and seafarer concerned shall each have a signed original of the seafarers' employment agreement;\n\n(d) measures shall be taken to ensure that clear information as to the conditions of their employment can be easily obtained on board by seafarers, including the ship's master, and that such information, including a copy of the seafarers' employment agreement, is also accessible for review by officers of a competent authority, including those in ports to be visited; and\n\n(e) seafarers shall be given a document containing a record of their employment on board the ship.\n\n2. Where a collective bargaining agreement forms all or part of a seafarers' employment agreement, a copy of that agreement shall be available on board. Where the language of the seafarers' employment agreement and any applicable collective bargaining agreement is not in English, the following shall also be available in English (except for ships engaged only in domestic voyages):\n\n(a) a copy of a standard form of the agreement; and\n\n(b) the portions of the collective bargaining agreement that are subject to a port State inspection under Regulation 5.2.\n\n3. The document referred to in paragraph 1(e) of this Standard shall not contain any statement as to the quality of the seafarers' work or as to their wages. The form of the document, the particulars to be recorded and the manner in which such particulars are to be entered, shall be determined by national law.\n\n4. Each Member shall adopt laws and regulations specifying the matters that are to be included in all seafarers' employment agreements governed by its national law. Seafarers' employment agreements shall in all cases contain the following particulars:\n\n(a) the seafarer's full name, date of birth or age, and birthplace;\n\n(b) the shipowner's name and address;\n\n(c) the place where and date when the seafarers' employment agreement is entered into;\n\n(d) the capacity in which the seafarer is to be employed;\n\n(e) the amount of the seafarer's wages or, where applicable, the formula used for calculating them;\n\n(f) the amount of paid annual leave or, where applicable, the formula used for calculating it;\n\n(g) the termination of the agreement and the conditions thereof, including:\n\n(i) if the agreement has been made for an indefinite period, the conditions entitling either party to terminate it, as well as the required notice period, which shall not be less for the shipowner than for the seafarer;\n\n(ii) if the agreement has been made for a definite period, the date fixed for its expiry; and\n\n(iii) if the agreement has been made for a voyage, the port of destination and the time which has to expire after arrival before the seafarer should be discharged;\n\n(h) the health and social security protection benefits to be provided to the seafarer by the shipowner;\n\n(i) the seafarer's entitlement to repatriation;\n\n(j) reference to the collective bargaining agreement, if applicable; and\n\n(k) any other particulars which national law may require.\n\n5. Each Member shall adopt laws or regulations establishing minimum notice periods to be given by the seafarers and shipowners for the early termination of a seafarers' employment agreement. The duration of these minimum periods shall be determined after consultation with the shipowners' and seafarers' organizations concerned, but shall not be shorter than seven days.\n\n6. A notice period shorter than the minimum may be given in circumstances which are recognized under national law or regulations or applicable collective bargaining agreements as justifying termination of the employment agreement at shorter notice or without notice. In determining those circumstances, each Member shall ensure that the need of the seafarer to terminate, without penalty, the employment agreement on shorter notice or without notice for compassionate or other urgent reasons is taken into account.\n\n7. Each Member shall require that a seafarer's employment agreement shall continue to have effect while a seafarer is held captive on or off the ship as a result of acts of piracy or armed robbery against ships, regardless of whether the date fixed for its expiry has passed or either party has given notice to suspend or terminate it. For the purpose of this paragraph, the term:\n\n(a) piracy shall have the same meaning as in the United Nations Convention on the Law of the Sea, 1982;\n\n(b) armed robbery against ships means any illegal act of violence or detention or any act of depredation, or threat thereof, other than an act of piracy, committed for private ends and directed against a ship or against persons or property on board such a ship, within a State's internal waters, archipelagic waters and territorial sea, or any act of inciting or of intentionally facilitating an act described above.\n\nGuideline B2.1 - Seafarers' employment agreements\n\nGuideline B2.1.1 - Record of employment\n\n1. In determining the particulars to be recorded in the record of employment referred to in Standard A2.1, paragraph 1(e), each Member should ensure that this document contains sufficient information, with a translation in English, to facilitate the acquisition of further work or to satisfy the sea-service requirements for upgrading or promotion. A seafarers' discharge book may satisfy the requirements of paragraph 1(e) of that Standard.",
+      "variantNote": "No substantive variant between sources. Residual diff spans are PDF extraction artifacts only (running headers, page numbers, line-break hyphenation, spacing before punctuation), inspected individually. The two 2006 mirrors differ only in the position of one line break inside Standard A2.1 paragraph 2 ('(except for ships engaged only in domestic voyages):'), same wording.",
+      "amendmentHistory": "Amended once. 2018 (ILC 107, approved 5 June 2018, in force 26 December 2020): Standard A2.1 - new paragraph 7 inserted (seafarers' employment agreement continues to have effect while the seafarer is held captive on or off the ship as a result of piracy or armed robbery against ships; definitions of piracy and armed robbery). Regulation 2.1, Standard A2.1 paragraphs 1-6 and Guideline B2.1 are 2006 text. Not named in the 2014, 2016 or 2022 amendment texts. Diff evidence: the single substantive span in consolidated2016 -> consolidated2022 is exactly the inserted paragraph 7.",
+      "pendingAmendments2025": "None of the 2025 amendments (ILC 113, adopted 6 June 2025, expected entry into force 23 December 2027) touch this Regulation, its Standard or its Guidelines.",
+      "verificationMethod": "PRIMARY_SOURCE_FOUR_STAGE_DIFF: (1) the two 2006-original mirrors were sliced and word-diffed against each other; (2) the 2006 original was word-diffed against the ILO 2014+2016 consolidated text; (3) that text was word-diffed against the ILO 2014+2016+2018+2022 consolidated text; (4) every non-artifact diff span was matched against the authentic amendment texts (ILO 2014, 2016, 2018 and 2022 amendment documents). fullText is the stage-3 target block re-flowed to undo PDF line wrapping; its word sequence was re-diffed against the raw block (consistencyCheck).",
+      "diffEvidence": {
+        "mirror2006_ilo_vs_registerIri": {
+          "wordDiffSpans": 2,
+          "similarityRatio": 0.9918
+        },
+        "original2006_vs_consolidated2016": {
+          "wordDiffSpans": 3,
+          "similarityRatio": 0.9875
+        },
+        "consolidated2016_vs_consolidated2022": {
+          "wordDiffSpans": 1,
+          "similarityRatio": 0.9238
+        },
+        "consistencyCheck_reflow_vs_raw": {
+          "wordDiffSpans": 1,
+          "similarityRatio": 0.9986
+        },
+        "hyphenDecisions": [
+          {
+            "token": "sea-farers",
+            "decision": "JOIN_MAJORITY",
+            "joinedForms": 2076,
+            "hyphenForms": 1,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "opportu-nity",
+            "decision": "JOIN",
+            "joinedForms": 12,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "cal-culating",
+            "decision": "JOIN",
+            "joinedForms": 10,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "calcu-lating",
+            "decision": "JOIN",
+            "joinedForms": 10,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "enti-tling",
+            "decision": "JOIN",
+            "joinedForms": 1,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "sea-farers",
+            "decision": "JOIN_MAJORITY",
+            "joinedForms": 2076,
+            "hyphenForms": 1,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "deter-mined",
+            "decision": "JOIN",
+            "joinedForms": 77,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "bar-gaining",
+            "decision": "JOIN",
+            "joinedForms": 64,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "con-tinue",
+            "decision": "JOIN",
+            "joinedForms": 29,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "re-ferred",
+            "decision": "JOIN",
+            "joinedForms": 288,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "doc-ument",
+            "decision": "JOIN",
+            "joinedForms": 25,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "sea-service",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 8,
+            "origin": "line-end-or-inline"
+          }
+        ],
+        "hyphenRule": "Every hyphenated token whose second part is lower-case (line-end hyphenation and stray in-line hyphens from PDF extraction alike) was decided on evidence from the four source texts: JOIN when only the joined form occurs in the sources, KEEP when only the hyphenated form occurs, majority when both occur, KEEP_UNRESOLVED (hyphen retained, listed here) when neither occurs. Upper-case continuations (e.g. Director-General) keep the hyphen.",
+        "artifactNote": "Non-zero span counts in the mirror and stage-2/3 comparisons are explained field by field in amendmentHistory and variantNote; the remainder are PDF extraction artifacts (running headers, page numbers, line-break hyphenation, spacing before punctuation) that were inspected individually."
+      },
+      "verifiedBy": [
+        "PRIMARY_SOURCE_FOUR_STAGE_DIFF",
+        "AMENDMENT_TEXT_CROSSCHECK",
+        "AMENDMENT_HISTORY_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-13",
+      "primarySources": [
+        {
+          "file": "ILO_MLC2006_consolidated_2022.pdf",
+          "url": "https://www.ilo.org/sites/default/files/2024-10/NORMES_MLC%20Amendments-EN_2022_Web_1.pdf",
+          "sha256": "bc444a84c177558dfc043b027b47681f06d7155f793819e755984f1b785f7e43",
+          "bytes": 610483,
+          "fetchedUtc": "2026-09-12T20:28:04Z"
+        },
+        {
+          "file": "ILO_267866_MLC2006_2014_2016_consolidated.pdf",
+          "url": "https://www.ilo.org/media/267866/download",
+          "sha256": "3c3f1542f72e67a5df9fefb75c56117d223a74ccf06c7c8104a3332cec926ebb",
+          "bytes": 745545,
+          "fetchedUtc": "2026-09-12T20:30:52Z"
+        },
+        {
+          "file": "ILO_269841_MLC2006_original.pdf",
+          "url": "https://www.ilo.org/media/269841/download",
+          "sha256": "74f3f95ceda4d787027629ee6f2848cd9fda3695c6cd37ca57c894d0dffed422",
+          "bytes": 1163116,
+          "fetchedUtc": "2026-09-12T20:30:50Z"
+        },
+        {
+          "file": "RegisterIRI_MLC2006_original.pdf",
+          "url": "https://www.register-iri.com/wp-content/uploads/MLC-2006.pdf",
+          "sha256": "a335e8c065a4e8122ed486b487bd2e8d05fde1bfa8f70383946d6af537519ad9",
+          "bytes": 1098370,
+          "fetchedUtc": "2026-09-12T20:30:49Z"
+        }
+      ],
+      "amendmentTextSources": [
+        {
+          "file": "ILO_wcms_632462_2018_amendments.pdf",
+          "url": "https://www.ilo.org/sites/default/files/wcmsp5/groups/public/%40ed_norm/%40relconf/documents/meetingdocument/wcms_632462.pdf",
+          "sha256": "3106ff1b6cc71c066c2626f11c980dc5be3115d95c6a4049afa2a48d71566919",
+          "bytes": 1740940,
+          "fetchedUtc": "2026-09-12T20:57:38Z"
+        }
+      ],
+      "secondarySources": []
+    }
+  ],
+  "unresolvedSources": [],
+  "relatedButOutOfScope": "ISM Code and ISPS Code Part A remain closed, frozen baselines. Appendices A2-I, A4-I, A5-I to A5-III and B5-I are not part of any Regulation block and are not reproduced here; where an amendment changed an Appendix it is mentioned in amendmentHistory only. Does not touch config/human-review-contract.json, academy_ism_* schema/RLS/tooling, any open PR in this series, or GASM Human Review Cloud staging."
+}
