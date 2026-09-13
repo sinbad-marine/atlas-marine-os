@@ -1,0 +1,316 @@
+{
+  "manifestVersion": "MLC-PILOT-008",
+  "createdAt": "2026-09-08T09:30:46Z",
+  "note": "Provenance/reference record only, not a database write. Same status as PILOT-001 through 009.json: no academy_mlc_source_manifest table exists, no verification_stage asserted, not consumed by any promotion tooling. No migration, schema, or tooling change. Additive docs/ file only, on its own branch, separate from every other open PR in this series.",
+  "batchNote": "Prepared under the Owner's 2026-09-08 full-scope MLC Title 1-5 instruction and the Owner's 2026-09-12 GO on the resumption plan, which released this Regulation from SOURCE HOLD only after the current consolidated ILO text and the authentic amendment texts were reacquired and their provenance recorded (see primarySources/amendmentTextSources). 'Prepared/draft' is not 'verified', 'human-accepted', 'merged' or 'live'. This file is source-text verification only.",
+  "schemaExtensionNote": "Uses the regulationRef/standardARef/guidelineBRef fields introduced in PILOT-001.json and adds textEdition, pendingAmendments2025, diffEvidence and amendmentTextSources. No further schema change; no tooling reads these files.",
+  "verificationMethodNote": "No GROK/GEMINI access this session. Method: PRIMARY_SOURCE_FOUR_STAGE_DIFF (see verifiedSources[0].verificationMethod) over the ILO consolidated 2022 text, the ILO 2014+2016 consolidated text and two 2006-original mirrors, with every substantive diff span matched to the authentic ILO amendment texts of 2014, 2016, 2018 and 2022. The 2025 amendments (ILC 113, adopted 6 June 2025, expected entry into force 23 December 2027) are NOT in force and are NOT blended into fullText; they are recorded in pendingAmendments2025 only. Running headers, page numbers and soft hyphenation were removed when re-flowing fullText; every hyphen join is listed in diffEvidence.hyphenJoinsApplied for audit.",
+  "verifiedSources": [
+    {
+      "sourceId": "ILO-MLC2006-T4-REG4.4",
+      "title": "Access to shore-based welfare facilities",
+      "authority": "ILO",
+      "moduleCode": "mlc-code-foundations",
+      "flagAdministration": null,
+      "section": "Title 4, Regulation 4.4 / Standard A4.4 / Guideline B4.4 (including Guidelines B4.4.1 to B4.4.6)",
+      "regulationRef": "Regulation 4.4 - Access to shore-based welfare facilities",
+      "standardARef": "Standard A4.4 - Access to shore-based welfare facilities",
+      "guidelineBRef": "Guideline B4.4 - Access to shore-based welfare facilities; Guideline B4.4.1 - Responsibilities of Members; Guideline B4.4.2 - Welfare facilities and services in ports; Guideline B4.4.3 - Welfare boards; Guideline B4.4.4 - Financing of welfare facilities; Guideline B4.4.5 - Dissemination of information and facilitation measures; Guideline B4.4.6 - Seafarers in a foreign port",
+      "textEdition": "Maritime Labour Convention, 2006, as amended - consolidated text established by the International Labour Office including the Amendments of 2014, 2016, 2018 and 2022 to the Code (ILO publication dated 2 October 2024). This is the text in force on the verification date.",
+      "fullText": "Regulation 4.4 - Access to shore-based welfare facilities\n\nPurpose: To ensure that seafarers working on board a ship have access to shore-based facilities and services to secure their health and well-being\n\n1. Each Member shall ensure that shore-based welfare facilities, where they exist, are easily accessible. The Member shall also promote the development of welfare facilities, such as those listed in the Code, in designated ports to provide seafarers on ships that are in its ports with access to adequate welfare facilities and services.\n\n2. The responsibilities of each Member with respect to shore-based facilities, such as welfare, cultural, recreational and information facilities and services, are set out in the Code.\n\nStandard A4.4 - Access to shore-based welfare facilities\n\n1. Each Member shall require, where welfare facilities exist on its territory, that they are available for the use of all seafarers, irrespective of nationality, race, colour, sex, religion, political opinion or social origin and irrespective of the flag State of the ship on which they are employed or engaged or work.\n\n2. Each Member shall promote the development of welfare facilities in appropriate ports of the country and determine, after consultation with the shipowners' and seafarers' organizations concerned, which ports are to be regarded as appropriate.\n\n3. Each Member shall encourage the establishment of welfare boards which shall regularly review welfare facilities and services to ensure that they are appropriate in the light of changes in the needs of seafarers resulting from technical, operational and other developments in the shipping industry.\n\nGuideline B4.4 - Access to shore-based welfare facilities\n\nGuideline B4.4.1 - Responsibilities of Members\n\n1. Each Member should:\n\n(a) take measures to ensure that adequate welfare facilities and services are provided for seafarers in designated ports of call and that adequate protection is provided to seafarers in the exercise of their profession; and\n\n(b) take into account, in the implementation of these measures, the special needs of seafarers, especially when in foreign countries and when entering war zones, in respect of their safety, health and spare-time activities.\n\n2. Arrangements for the supervision of welfare facilities and services should include participation by representative shipowners' and seafarers' organizations concerned.\n\n3. Each Member should take measures designed to expedite the free circulation among ships, central supply agencies and welfare establishments of welfare materials such as films, books, newspapers and sports equipment for use by seafarers on board their ships and in welfare centres ashore.\n\n4. Members should cooperate with one another in promoting the welfare of seafarers at sea and in port. Such cooperation should include the following:\n\n(a) consultations among competent authorities aimed at the provision and improvement of seafarers' welfare facilities and services, both in port and on board ships;\n\n(b) agreements on the pooling of resources and the joint provision of welfare facilities in major ports so as to avoid unnecessary duplication;\n\n(c) organization of international sports competitions and encouragement of the participation of seafarers in sports activities; and\n\n(d) organization of international seminars on the subject of welfare of seafarers at sea and in port.\n\nGuideline B4.4.2 - Welfare facilities and services in ports\n\n1. Each Member should provide or ensure the provision of such welfare facilities and services as may be required, in appropriate ports of the country.\n\n2. Welfare facilities and services should be provided, in accordance with national conditions and practice, by one or more of the following:\n\n(a) public authorities;\n\n(b) shipowners' and seafarers' organizations concerned under collective agreements or other agreed arrangements; and\n\n(c) voluntary organizations.\n\n3. Necessary welfare and recreational facilities should be established or developed in ports. These should include:\n\n(a) meeting and recreation rooms as required;\n\n(b) facilities for sports and outdoor facilities, including competitions;\n\n(c) educational facilities; and\n\n(d) where appropriate, facilities for religious observances and for personal counselling.\n\n4. These facilities may be provided by making available to seafarers in accordance with their needs facilities designed for more general use.\n\n5. Members should, so far as is reasonably practicable, provide seafarers on board ships in their ports and at their associated anchorages with internet access, with charges, if any, being reasonable in amount.\n\n6. Where large numbers of seafarers of different nationalities require facilities such as hotels, clubs and sports facilities in a particular port, the competent authorities or bodies of the countries of origin of the seafarers and of the flag States, as well as the international associations concerned, should consult and cooperate with the competent authorities and bodies of the country in which the port is situated and with one another, with a view to the pooling of resources and to avoiding unnecessary duplication.\n\n7. Hotels or hostels suitable for seafarers should be available where there is need for them. They should provide facilities equal to those found in a good-class hotel, and should wherever possible be located in good surroundings away from the immediate vicinity of the docks. Such hotels or hostels should be properly supervised, the prices charged should be reasonable in amount and, where necessary and possible, provision should be made for accommodating seafarers' families.\n\n8. These accommodation facilities should be open to all seafarers, irrespective of nationality, race, colour, sex, religion, political opinion or social origin and irrespective of the flag State of the ship on which they are employed or engaged or work. Without in any way infringing this principle, it may be necessary in certain ports to provide several types of facilities, comparable in standard but adapted to the customs and needs of different groups of seafarers.\n\n9. Measures should be taken to ensure that, as necessary, technically competent persons are employed full time in the operation of seafarers' welfare facilities and services, in addition to any voluntary workers.\n\nGuideline B4.4.3 - Welfare boards\n\n1. Welfare boards should be established, at the port, regional and national levels, as appropriate. Their functions should include:\n\n(a) keeping under review the adequacy of existing welfare facilities and monitoring the need for the provision of additional facilities or the withdrawal of under-utilized facilities; and\n\n(b) assisting and advising those responsible for providing welfare facilities and ensuring coordination between them.\n\n2. Welfare boards should include among their members representatives of shipowners' and seafarers' organizations, the competent authorities and, where appropriate, voluntary organizations and social bodies.\n\n3. As appropriate, consuls of maritime States and local representatives of foreign welfare organizations should, in accordance with national laws and regulations, be associated with the work of port, regional and national welfare boards.\n\nGuideline B4.4.4 - Financing of welfare facilities\n\n1. In accordance with national conditions and practice, financial support for port welfare facilities should be made available through one or more of the following:\n\n(a) grants from public funds;\n\n(b) levies or other special dues from shipping sources;\n\n(c) voluntary contributions from shipowners, seafarers, or their organizations; and\n\n(d) voluntary contributions from other sources.\n\n2. Where welfare taxes, levies and special dues are imposed, they should be used only for the purposes for which they are raised.\n\nGuideline B4.4.5 - Dissemination of information and facilitation measures\n\n1. Information should be disseminated among seafarers concerning facilities open to the general public in ports of call, particularly transport, welfare, entertainment and educational facilities and places of worship, as well as facilities provided specifically for seafarers.\n\n2. Adequate means of transport at moderate prices should be available at any reasonable time in order to enable seafarers to reach urban areas from convenient locations in the port.\n\n3. All suitable measures should be taken by the competent authorities to make known to shipowners and to seafarers entering port any special laws and customs, the contravention of which may jeopardize their freedom.\n\n4. Port areas and access roads should be provided by the competent authorities with adequate lighting and signposting and regular patrols for the protection of seafarers.\n\nGuideline B4.4.6 - Seafarers in a foreign port\n\n1. For the protection of seafarers in foreign ports, measures should be taken to facilitate:\n\n(a) access to consuls of their State of nationality or State of residence; and\n\n(b) effective cooperation between consuls and the local or national authorities.\n\n2. Seafarers who are detained in a foreign port should be dealt with promptly under due process of law and with appropriate consular protection.\n\n3. Whenever a seafarer is detained for any reason in the territory of a Member, the competent authority should, if the seafarer so requests, immediately inform the flag State and the State of nationality of the seafarer. The competent authority should promptly inform the seafarer of the right to make such a request. The State of nationality of the seafarer should promptly notify the seafarer's next of kin. The competent authority should allow consular officers of these States immediate access to the seafarer and regular visits thereafter so long as the seafarer is detained.\n\n4. Each Member should take measures, whenever necessary, to ensure the safety of seafarers from aggression and other unlawful acts while ships are in their territorial waters and especially in approaches to ports.\n\n5. Every effort should be made by those responsible in port and on board a ship to facilitate shore leave for seafarers as soon as possible after a ship's arrival in port.",
+      "variantNote": "No substantive variant between sources. Residual diff spans are PDF extraction artifacts only (running headers, page numbers, line-break hyphenation, spacing before punctuation), inspected individually.",
+      "amendmentHistory": "Amended once in force. 2022 (ILC 110, approved 6 June 2022, in force 23 December 2024): Guideline B4.4.2 - new paragraph 5 inserted ('Members should, so far as is reasonably practicable, provide seafarers on board ships in their ports and at their associated anchorages with internet access, with charges, if any, being reasonable in amount') and the former paragraphs 5-8 renumbered 6-9. Regulation 4.4, Standard A4.4 and all other Guidelines are 2006 text. Not named in the 2014, 2016 or 2018 amendment texts. Diff evidence: the substantive spans in consolidated2016 -> consolidated2022 are exactly the inserted paragraph and the renumbering. CORRECTION 2026-09-13: the first version of this file (commit 24c824a, 2026-09-08) recorded 'No mention found in the 2018, 2022, or 2025 amendment rounds' and carried the 2006 text of Guideline B4.4.2; that was wrong - the 2022 amendment round did amend Guideline B4.4.2. The error was found by re-diffing the committed fullText against the ILO 2022 consolidated text on 2026-09-12 and is corrected here with the amended text and this note; the earlier reading was not silently overwritten.",
+      "pendingAmendments2025": "2025 (ILC 113, adopted 6 June 2025, NOT in force, expected 23 December 2027): Guideline B4.4.6 paragraph 2 amended (detained seafarers to be dealt with promptly under due process of law and with appropriate consular protection, taking due account of the ILO/IMO Guidelines on Fair Treatment of Seafarers detained in connection with alleged crimes). Not blended into fullText.",
+      "verificationMethod": "PRIMARY_SOURCE_FOUR_STAGE_DIFF: (1) the two 2006-original mirrors were sliced and word-diffed against each other; (2) the 2006 original was word-diffed against the ILO 2014+2016 consolidated text; (3) that text was word-diffed against the ILO 2014+2016+2018+2022 consolidated text; (4) every non-artifact diff span was matched against the authentic amendment texts (ILO 2014, 2016, 2018 and 2022 amendment documents). fullText is the stage-3 target block re-flowed to undo PDF line wrapping; its word sequence was re-diffed against the raw block (consistencyCheck).",
+      "diffEvidence": {
+        "mirror2006_ilo_vs_registerIri": {
+          "wordDiffSpans": 0,
+          "similarityRatio": 1.0
+        },
+        "original2006_vs_consolidated2016": {
+          "wordDiffSpans": 5,
+          "similarityRatio": 0.9822
+        },
+        "consolidated2016_vs_consolidated2022": {
+          "wordDiffSpans": 9,
+          "similarityRatio": 0.9748
+        },
+        "consistencyCheck_reflow_vs_raw": {
+          "wordDiffSpans": 4,
+          "similarityRatio": 0.9928
+        },
+        "hyphenDecisions": [
+          {
+            "token": "shore-based",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 28,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "shore-based",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 28,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "well-being",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 20,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "shore-based",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 28,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "shore-based",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 28,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "shore-based",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 28,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "appro-priate",
+            "decision": "JOIN",
+            "joinedForms": 319,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "shore-based",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 28,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "pro-vided",
+            "decision": "JOIN",
+            "joinedForms": 512,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "spare-time",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "con-cerned",
+            "decision": "JOIN",
+            "joinedForms": 385,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "sea-farers",
+            "decision": "JOIN_MAJORITY",
+            "joinedForms": 2076,
+            "hyphenForms": 1,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "improve-ment",
+            "decision": "JOIN",
+            "joinedForms": 22,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "facil-ities",
+            "decision": "JOIN_MAJORITY",
+            "joinedForms": 415,
+            "hyphenForms": 1,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "par-ticipation",
+            "decision": "JOIN",
+            "joinedForms": 9,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "facil-ities",
+            "decision": "JOIN_MAJORITY",
+            "joinedForms": 415,
+            "hyphenForms": 1,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "devel-oped",
+            "decision": "MANUAL",
+            "result": "developed",
+            "reason": "line-break hyphenation of a single English word (no such hyphenated compound exists); joined form is standard orthography.",
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "counsel-ling",
+            "decision": "JOIN",
+            "joinedForms": 2,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "accord-ance",
+            "decision": "JOIN",
+            "joinedForms": 356,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "facil-ities",
+            "decision": "JOIN_MAJORITY",
+            "joinedForms": 415,
+            "hyphenForms": 1,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "an-other",
+            "decision": "JOIN",
+            "joinedForms": 74,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "good-class",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ser-vices",
+            "decision": "JOIN",
+            "joinedForms": 220,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "monitor-ing",
+            "decision": "JOIN",
+            "joinedForms": 26,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "under-utilized",
+            "decision": "MANUAL",
+            "result": "under-utilized",
+            "reason": "all four sources break 'under-' + 'utilized' at the same point and no unhyphenated 'underutilized' occurs anywhere; the 2006-mirror-based first version of this file (commit 24c824a) also carried 'under-utilized' (Guideline B4.4.2).",
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ensur-ing",
+            "decision": "JOIN",
+            "joinedForms": 48,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ship-owners",
+            "decision": "JOIN",
+            "joinedForms": 345,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "entertain-ment",
+            "decision": "MANUAL",
+            "result": "entertainment",
+            "reason": "line-break hyphenation of a single English word (no such hyphenated compound exists); joined form is standard orthography.",
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "lo-cations",
+            "decision": "JOIN",
+            "joinedForms": 3,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "nation-ality",
+            "decision": "JOIN",
+            "joinedForms": 36,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          }
+        ],
+        "hyphenRule": "Every hyphenated token whose second part is lower-case (line-end hyphenation and stray in-line hyphens from PDF extraction alike) was decided on evidence from the four source texts: JOIN when only the joined form occurs in the sources, KEEP when only the hyphenated form occurs, majority when both occur, KEEP_UNRESOLVED (hyphen retained, listed here) when neither occurs. Upper-case continuations (e.g. Director-General) keep the hyphen.",
+        "artifactNote": "Non-zero span counts in the mirror and stage-2/3 comparisons are explained field by field in amendmentHistory and variantNote; the remainder are PDF extraction artifacts (running headers, page numbers, line-break hyphenation, spacing before punctuation) that were inspected individually."
+      },
+      "verifiedBy": [
+        "PRIMARY_SOURCE_FOUR_STAGE_DIFF",
+        "AMENDMENT_TEXT_CROSSCHECK",
+        "AMENDMENT_HISTORY_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-13",
+      "primarySources": [
+        {
+          "file": "ILO_MLC2006_consolidated_2022.pdf",
+          "url": "https://www.ilo.org/sites/default/files/2024-10/NORMES_MLC%20Amendments-EN_2022_Web_1.pdf",
+          "sha256": "bc444a84c177558dfc043b027b47681f06d7155f793819e755984f1b785f7e43",
+          "bytes": 610483,
+          "fetchedUtc": "2026-09-12T20:28:04Z"
+        },
+        {
+          "file": "ILO_267866_MLC2006_2014_2016_consolidated.pdf",
+          "url": "https://www.ilo.org/media/267866/download",
+          "sha256": "3c3f1542f72e67a5df9fefb75c56117d223a74ccf06c7c8104a3332cec926ebb",
+          "bytes": 745545,
+          "fetchedUtc": "2026-09-12T20:30:52Z"
+        },
+        {
+          "file": "ILO_269841_MLC2006_original.pdf",
+          "url": "https://www.ilo.org/media/269841/download",
+          "sha256": "74f3f95ceda4d787027629ee6f2848cd9fda3695c6cd37ca57c894d0dffed422",
+          "bytes": 1163116,
+          "fetchedUtc": "2026-09-12T20:30:50Z"
+        },
+        {
+          "file": "RegisterIRI_MLC2006_original.pdf",
+          "url": "https://www.register-iri.com/wp-content/uploads/MLC-2006.pdf",
+          "sha256": "a335e8c065a4e8122ed486b487bd2e8d05fde1bfa8f70383946d6af537519ad9",
+          "bytes": 1098370,
+          "fetchedUtc": "2026-09-12T20:30:49Z"
+        }
+      ],
+      "amendmentTextSources": [
+        {
+          "file": "ILO_wcms_848492_2022_amendments.pdf",
+          "url": "https://www.ilo.org/sites/default/files/wcmsp5/groups/public/%40ed_norm/%40relconf/documents/meetingdocument/wcms_848492.pdf",
+          "sha256": "d9c0e177c0a1dd9fb60c59ae0bfc679f5074bc8d60024d8f1b2d42d7255ed340",
+          "bytes": 95665,
+          "fetchedUtc": "2026-09-12T21:28:35Z"
+        },
+        {
+          "file": "ILO_ILC113_2025_amendments.pdf",
+          "url": "https://www.ilo.org/sites/default/files/2025-06/ILC113-Instruments-[RELMEETINGS-250605-001]-Web-EN.pdf",
+          "sha256": "fb6aad9e90ddc3a916bc4d7ace7c011ff3474767cd70775f11cc8d1e2951f8bc",
+          "bytes": 160387,
+          "fetchedUtc": "2026-09-12T20:28:04Z"
+        }
+      ],
+      "secondarySources": []
+    }
+  ],
+  "unresolvedSources": [],
+  "relatedButOutOfScope": "ISM Code and ISPS Code Part A remain closed, frozen baselines. Appendices A2-I, A4-I, A5-I to A5-III and B5-I are not part of any Regulation block and are not reproduced here; where an amendment changed an Appendix it is mentioned in amendmentHistory only. Does not touch config/human-review-contract.json, academy_ism_* schema/RLS/tooling, any open PR in this series, or GASM Human Review Cloud staging.",
+  "correctedAt": "2026-09-13T07:23:46Z",
+  "correctionNote": "2026-09-13 correction of the 2026-09-08 version (commit 24c824a): fullText replaced with the ILO 2022 consolidated text of Regulation 4.4 (adds Guideline B4.4.2 paragraph 5 and renumbers 6-9), amendmentHistory corrected, verification method upgraded to PRIMARY_SOURCE_FOUR_STAGE_DIFF with the authentic 2022 amendment text as evidence, pendingAmendments2025 added. Regulation 4.4, Standard A4.4 and Guidelines B4.4.1, B4.4.3-B4.4.6 wording is unchanged from the first version apart from re-flow."
+}
