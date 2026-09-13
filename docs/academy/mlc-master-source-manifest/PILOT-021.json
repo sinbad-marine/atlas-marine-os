@@ -1,0 +1,145 @@
+{
+  "manifestVersion": "MLC-PILOT-021",
+  "createdAt": "2026-09-13T07:21:59Z",
+  "note": "Provenance/reference record only, not a database write. Same status as PILOT-001 through 009.json: no academy_mlc_source_manifest table exists, no verification_stage asserted, not consumed by any promotion tooling. No migration, schema, or tooling change. Additive docs/ file only, on its own branch, separate from every other open PR in this series.",
+  "batchNote": "Prepared under the Owner's 2026-09-08 full-scope MLC Title 1-5 instruction and the Owner's 2026-09-12 GO on the resumption plan, which released this Regulation from SOURCE HOLD only after the current consolidated ILO text and the authentic amendment texts were reacquired and their provenance recorded (see primarySources/amendmentTextSources). 'Prepared/draft' is not 'verified', 'human-accepted', 'merged' or 'live'. This file is source-text verification only.",
+  "schemaExtensionNote": "Uses the regulationRef/standardARef/guidelineBRef fields introduced in PILOT-001.json and adds textEdition, pendingAmendments2025, diffEvidence and amendmentTextSources. No further schema change; no tooling reads these files.",
+  "verificationMethodNote": "No GROK/GEMINI access this session. Method: PRIMARY_SOURCE_FOUR_STAGE_DIFF (see verifiedSources[0].verificationMethod) over the ILO consolidated 2022 text, the ILO 2014+2016 consolidated text and two 2006-original mirrors, with every substantive diff span matched to the authentic ILO amendment texts of 2014, 2016, 2018 and 2022. The 2025 amendments (ILC 113, adopted 6 June 2025, expected entry into force 23 December 2027) are NOT in force and are NOT blended into fullText; they are recorded in pendingAmendments2025 only. Running headers, page numbers and soft hyphenation were removed when re-flowing fullText; every hyphen join is listed in diffEvidence.hyphenJoinsApplied for audit.",
+  "verifiedSources": [
+    {
+      "sourceId": "ILO-MLC2006-T5-REG5.1.2",
+      "title": "Authorization of recognized organizations",
+      "authority": "ILO",
+      "moduleCode": "mlc-code-foundations",
+      "flagAdministration": null,
+      "section": "Title 5, Regulation 5.1.2 / Standard A5.1.2 / Guideline B5.1.2",
+      "regulationRef": "Regulation 5.1.2 - Authorization of recognized organizations",
+      "standardARef": "Standard A5.1.2 - Authorization of recognized organizations",
+      "guidelineBRef": "Guideline B5.1.2 - Authorization of recognized organizations",
+      "textEdition": "Maritime Labour Convention, 2006, as amended - consolidated text established by the International Labour Office including the Amendments of 2014, 2016, 2018 and 2022 to the Code (ILO publication dated 2 October 2024). This is the text in force on the verification date.",
+      "fullText": "Regulation 5.1.2 - Authorization of recognized organizations\n\n1. The public institutions or other organizations referred to in paragraph 3 of\n\nRegulation 5.1.1 (\"recognized organizations\") shall have been recognized by the competent authority as meeting the requirements in the Code regarding competency and independence. The inspection or certification functions which the recognized organizations may be authorized to carry out shall come within the scope of the activities that are expressly mentioned in the Code as being carried out by the competent authority or a recognized organization.\n\n2. The reports referred to in paragraph 5 of Regulation 5.1.1 shall contain information regarding any recognized organization, the extent of authorizations given and the arrangements made by the Member to ensure that the authorized activities are carried out completely and effectively.\n\nStandard A5.1.2 - Authorization of recognized organizations\n\n1. For the purpose of recognition in accordance with paragraph 1 of Regulation 5.1.2, the competent authority shall review the competency and independence of the organization concerned and determine whether the organization has demonstrated, to the extent necessary for carrying out the activities covered by the authorization conferred on it, that the organization:\n\n(a) has the necessary expertise in the relevant aspects of this Convention and an appropriate knowledge of ship operations, including the minimum requirements for seafarers to work on a ship, conditions of employment, accommodation, recreational facilities, food and catering, accident prevention, health protection, medical care, welfare and social security protection;\n\n(b) has the ability to maintain and update the expertise of its personnel;\n\n(c) has the necessary knowledge of the requirements of this Convention as well as of applicable national laws and regulations and relevant international instruments; and\n\n(d) is of the appropriate size, structure, experience and capability commensurate with the type and degree of authorization.\n\n2. Any authorizations granted with respect to inspections shall, as a minimum, empower the recognized organization to require the rectification of deficiencies that it identifies in seafarers' working and living conditions and to carry out inspections in this regard at the request of a port State.\n\n3. Each Member shall establish:\n\n(a) a system to ensure the adequacy of work performed by recognized organizations, which includes information on all applicable national laws and regulations and relevant international instruments; and\n\n(b) procedures for communication with and oversight of such organizations.\n\n4. Each Member shall provide the International Labour Office with a current list of any recognized organizations authorized to act on its behalf and it shall keep this list up to date. The list shall specify the functions that the recognized organizations have been authorized to carry out. The Office shall make the list publicly available.\n\nGuideline B5.1.2 - Authorization of recognized organizations\n\n1. The organization seeking recognition should demonstrate the technical, administrative and managerial competence and capacity to ensure the provision of timely service of satisfactory quality.\n\n2. In evaluating the capability of an organization, the competent authority should determine whether the organization:\n\n(a) has adequate technical, managerial and support staff;\n\n(b) has sufficient qualified professional staff to provide the required service, representing an adequate geographical coverage;\n\n(c) has proven ability to provide a timely service of satisfactory quality; and\n\n(d) is independent and accountable in its operations.\n\n3. The competent authority should conclude a written agreement with any organization that it recognizes for purposes of an authorization. The agreement should include the following elements:\n\n(a) scope of application;\n\n(b) purpose;\n\n(c) general conditions;\n\n(d) the execution of functions under authorization;\n\n(e) legal basis of the functions under authorization;\n\n(f) reporting to the competent authority;\n\n(g) specification of the authorization from the competent authority to the recognized organization; and\n\n(h) the competent authority's supervision of activities delegated to the recognized organization.\n\n4. Each Member should require the recognized organizations to develop a system for qualification of staff employed by them as inspectors to ensure the timely updating of their knowledge and expertise.\n\n5. Each Member should require the recognized organizations to maintain records of the services performed by them such that they are able to demonstrate achievement of the required standards in the items covered by the services.\n\n6. In establishing the oversight procedures referred to in Standard A5.1.2, paragraph 3(b), each Member should take into account the Guidelines for the Authorization of Organizations Acting on Behalf of the Administration , adopted in the framework of the International Maritime Organization.",
+      "variantNote": "No substantive variant between sources. Residual diff spans are PDF extraction artifacts only (running headers, page numbers, line-break hyphenation, spacing before punctuation), inspected individually.",
+      "amendmentHistory": "Text unchanged since the Convention was adopted on 23 February 2006 (entered into force 20 August 2013): the 2006 mirrors, the 2014+2016 consolidated text and the 2014+2016+2018+2022 consolidated text agree word for word apart from extraction artifacts. Not named in the 2014, 2016, 2018 or 2022 amendment texts.",
+      "pendingAmendments2025": "None of the 2025 amendments (ILC 113, adopted 6 June 2025, expected entry into force 23 December 2027) touch this Regulation, its Standard or its Guidelines.",
+      "verificationMethod": "PRIMARY_SOURCE_FOUR_STAGE_DIFF: (1) the two 2006-original mirrors were sliced and word-diffed against each other; (2) the 2006 original was word-diffed against the ILO 2014+2016 consolidated text; (3) that text was word-diffed against the ILO 2014+2016+2018+2022 consolidated text; (4) every non-artifact diff span was matched against the authentic amendment texts (ILO 2014, 2016, 2018 and 2022 amendment documents). fullText is the stage-3 target block re-flowed to undo PDF line wrapping; its word sequence was re-diffed against the raw block (consistencyCheck).",
+      "diffEvidence": {
+        "mirror2006_ilo_vs_registerIri": {
+          "wordDiffSpans": 0,
+          "similarityRatio": 1.0
+        },
+        "original2006_vs_consolidated2016": {
+          "wordDiffSpans": 2,
+          "similarityRatio": 0.9837
+        },
+        "consolidated2016_vs_consolidated2022": {
+          "wordDiffSpans": 0,
+          "similarityRatio": 1.0
+        },
+        "consistencyCheck_reflow_vs_raw": {
+          "wordDiffSpans": 1,
+          "similarityRatio": 0.9979
+        },
+        "hyphenDecisions": [
+          {
+            "token": "com-petent",
+            "decision": "JOIN",
+            "joinedForms": 670,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "organiza-tions",
+            "decision": "JOIN",
+            "joinedForms": 317,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "infor-mation",
+            "decision": "JOIN",
+            "joinedForms": 191,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "Regula-tion",
+            "decision": "JOIN",
+            "joinedForms": 558,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "repre-senting",
+            "decision": "MANUAL",
+            "result": "representing",
+            "reason": "line-break hyphenation of a single English word (no such hyphenated compound exists); joined form is standard orthography.",
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "sys-tem",
+            "decision": "JOIN",
+            "joinedForms": 161,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "re-cords",
+            "decision": "JOIN",
+            "joinedForms": 42,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "achieve-ment",
+            "decision": "JOIN",
+            "joinedForms": 6,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          }
+        ],
+        "hyphenRule": "Every hyphenated token whose second part is lower-case (line-end hyphenation and stray in-line hyphens from PDF extraction alike) was decided on evidence from the four source texts: JOIN when only the joined form occurs in the sources, KEEP when only the hyphenated form occurs, majority when both occur, KEEP_UNRESOLVED (hyphen retained, listed here) when neither occurs. Upper-case continuations (e.g. Director-General) keep the hyphen.",
+        "artifactNote": "Non-zero span counts in the mirror and stage-2/3 comparisons are explained field by field in amendmentHistory and variantNote; the remainder are PDF extraction artifacts (running headers, page numbers, line-break hyphenation, spacing before punctuation) that were inspected individually."
+      },
+      "verifiedBy": [
+        "PRIMARY_SOURCE_FOUR_STAGE_DIFF",
+        "AMENDMENT_TEXT_CROSSCHECK",
+        "AMENDMENT_HISTORY_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-13",
+      "primarySources": [
+        {
+          "file": "ILO_MLC2006_consolidated_2022.pdf",
+          "url": "https://www.ilo.org/sites/default/files/2024-10/NORMES_MLC%20Amendments-EN_2022_Web_1.pdf",
+          "sha256": "bc444a84c177558dfc043b027b47681f06d7155f793819e755984f1b785f7e43",
+          "bytes": 610483,
+          "fetchedUtc": "2026-09-12T20:28:04Z"
+        },
+        {
+          "file": "ILO_267866_MLC2006_2014_2016_consolidated.pdf",
+          "url": "https://www.ilo.org/media/267866/download",
+          "sha256": "3c3f1542f72e67a5df9fefb75c56117d223a74ccf06c7c8104a3332cec926ebb",
+          "bytes": 745545,
+          "fetchedUtc": "2026-09-12T20:30:52Z"
+        },
+        {
+          "file": "ILO_269841_MLC2006_original.pdf",
+          "url": "https://www.ilo.org/media/269841/download",
+          "sha256": "74f3f95ceda4d787027629ee6f2848cd9fda3695c6cd37ca57c894d0dffed422",
+          "bytes": 1163116,
+          "fetchedUtc": "2026-09-12T20:30:50Z"
+        },
+        {
+          "file": "RegisterIRI_MLC2006_original.pdf",
+          "url": "https://www.register-iri.com/wp-content/uploads/MLC-2006.pdf",
+          "sha256": "a335e8c065a4e8122ed486b487bd2e8d05fde1bfa8f70383946d6af537519ad9",
+          "bytes": 1098370,
+          "fetchedUtc": "2026-09-12T20:30:49Z"
+        }
+      ],
+      "amendmentTextSources": [],
+      "secondarySources": []
+    }
+  ],
+  "unresolvedSources": [],
+  "relatedButOutOfScope": "ISM Code and ISPS Code Part A remain closed, frozen baselines. Appendices A2-I, A4-I, A5-I to A5-III and B5-I are not part of any Regulation block and are not reproduced here; where an amendment changed an Appendix it is mentioned in amendmentHistory only. Does not touch config/human-review-contract.json, academy_ism_* schema/RLS/tooling, any open PR in this series, or GASM Human Review Cloud staging."
+}
