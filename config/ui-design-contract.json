@@ -5,7 +5,7 @@
   "protectedFileSha256": {
     "index.html": "09d1434cab68056fef25d9f4becf212496603b524943eb111aa72040b794cf5f",
     "styles.css": "a7b45fc9c86ad19afa18c7e99507cb30f25d83f0dd964d6d0364cb25a57684a4",
-    "academy.html": "5f66e3da0e5d8ad90095e01e1cc5fe75f96f86b87a6649b92e0c0115c1ad6d20",
+    "academy.html": "67f937a7cacc343a98153a808078e4149ff5b5b0a620d108c336fa5e37b958e7",
     "academy.css": "9d2c9e160eaa0ed785e3125cbc0f878511d49aeaac31fbff765b1fbb599937fe"
   },
   "dashboardWorkspaces": [
@@ -69,6 +69,7 @@
         "[data-academy-section=\"stcw\"]",
         "[data-academy-section=\"goc\"]",
         "[data-academy-section=\"general-maritime-education\"]",
+        "[data-academy-section=\"ism-isps-mlc\"]",
         "#academyLanguage",
         "#academyBackButton",
         "#academyHomeButton",
