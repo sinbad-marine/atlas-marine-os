@@ -219,7 +219,7 @@
     },
     {
       "path": "academy-classroom-window.js",
-      "sha256": "f3d324007fde2dbb1c8f10c21b760aa6c917ebe238a7fbbbafbe8be4eae889f8",
+      "sha256": "d137d480e09bb09ba12e6ec2720b8c2b72af675d6b428b63ec73b8c43b26c7b4",
       "kind": "SOURCE"
     },
     {
@@ -239,7 +239,7 @@
     },
     {
       "path": "config/ui-design-contract.json",
-      "sha256": "fdda9e78faf89f7c33816aed6423f3615a6dd49b20263e4589dbec2522928c38",
+      "sha256": "c6c5294269d1475f8daa04bd1a2715f2219578e9b10dd5a37a07919842fd0bb4",
       "kind": "CONFIG"
     },
     {
@@ -389,7 +389,7 @@
     },
     {
       "path": "tests/ui-design-contract.test.js",
-      "sha256": "587aa2fc950f3d08e82e4344d97416467fbb28f75b1b88c5f3fd5058388cfa3e",
+      "sha256": "3d0d5b4ae5779f3a9364395d1d368215b688322355c633ed49982390fe7e714a",
       "kind": "TEST"
     },
     {

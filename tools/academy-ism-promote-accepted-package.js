@@ -1,0 +1,222 @@
+'use strict';
+// Manual, on-demand pipeline: an Owner-accepted Human Review package's
+// questions -> academy_ism_source_manifest / academy_ism_questions. This is a
+// transport, not a content pipeline: it never invents, fills in, or treats
+// placeholder content differently from real content. A question_payload is
+// promoted only if it already satisfies the ISM payload contract in full;
+// anything else is rejected and reported, never guessed.
+//
+// Read-only against human_review_packages / human_review_package_questions.
+// Write-only against academy_ism_source_manifest / academy_ism_questions.
+// Nothing here mutates, triggers off, or is invoked automatically by the
+// Human Review system - it stays exactly as it already is. Run by hand:
+//   node tools/academy-ism-promote-accepted-package.js \
+//     --workspace-id=<uuid> --package-id=<uuid> --actor-id=<uuid> [--dry-run]
+const crypto = require('node:crypto');
+const { checkIsmQuestionPayload } = require('./academy-ism-question-payload-contract');
+
+const ACCEPTED_PACKAGE_STATUS = 'OWNER_ACCEPTED';
+const PROMOTED_VERIFICATION_STAGE = 'HUMAN_REVIEW_ACCEPTED';
+
+class IsmPromotionError extends Error {
+  constructor(code, detail) {
+    super(`ACADEMY_ISM_PROMOTE_${code}`);
+    this.name = 'IsmPromotionError';
+    this.code = `ACADEMY_ISM_PROMOTE_${code}`;
+    this.detail = detail;
+  }
+}
+
+function sha256Hex(input) {
+  return crypto.createHash('sha256').update(String(input), 'utf8').digest('hex');
+}
+
+function groupKey({ authority, moduleCode, flagAdministration, sourceVersion, sourceSection }) {
+  return [authority, moduleCode, flagAdministration ?? '', sourceVersion, sourceSection ?? ''].join('');
+}
+
+// --- Pure logic: no I/O, no network, safe to call with placeholder or real
+// content alike. Nothing here can tell the two apart, by design. ---
+
+function planPromotion({ packageRow, questionRows }) {
+  if (!packageRow || packageRow.status !== ACCEPTED_PACKAGE_STATUS) {
+    throw new IsmPromotionError('PACKAGE_NOT_ACCEPTED', { packageId: packageRow && packageRow.id, status: packageRow && packageRow.status });
+  }
+  const groups = new Map();
+  const rejected = [];
+  for (const row of questionRows) {
+    const check = checkIsmQuestionPayload(row.question_payload);
+    if (!check.valid) {
+      rejected.push({ questionId: row.question_id, errors: check.errors });
+      continue;
+    }
+    const payload = row.question_payload;
+    const key = groupKey(payload);
+    if (!groups.has(key)) {
+      groups.set(key, {
+        authority: payload.authority,
+        moduleCode: payload.moduleCode,
+        flagAdministration: payload.flagAdministration ?? null,
+        sourceVersion: payload.sourceVersion,
+        sourceSection: payload.sourceSection ?? null,
+        questions: [],
+      });
+    }
+    groups.get(key).questions.push({ row, payload });
+  }
+  return { groups: [...groups.values()], rejected };
+}
+
+function buildSourceManifestRow({ workspaceId, packageRow, group, actorId }) {
+  const contentSha256 = sha256Hex(group.questions.map((q) => q.row.content_sha256).sort().join(':'));
+  const sourceId = [packageRow.source_batch_id, group.moduleCode, group.flagAdministration || 'CORE'].join(':');
+  return {
+    workspace_id: workspaceId,
+    source_id: sourceId,
+    title: packageRow.title,
+    authority: group.authority,
+    flag_administration: group.flagAdministration,
+    module_code: group.moduleCode,
+    version: group.sourceVersion,
+    section: group.sourceSection,
+    content_sha256: contentSha256,
+    verification_stage: PROMOTED_VERIFICATION_STAGE,
+    review_package_id: packageRow.id,
+    created_by: actorId,
+  };
+}
+
+function buildQuestionRow({ workspaceId, item, sourceManifestId, actorId }) {
+  const { row, payload } = item;
+  return {
+    workspace_id: workspaceId,
+    question_id: row.question_id,
+    module_code: payload.moduleCode,
+    flag_administration: payload.flagAdministration ?? null,
+    learning_objective: payload.learningObjective,
+    difficulty: payload.difficulty,
+    competency_dimension: payload.competencyDimension,
+    source_manifest_id: sourceManifestId,
+    source_version: payload.sourceVersion,
+    source_section: payload.sourceSection ?? null,
+    question_kind: payload.questionKind,
+    prompt: payload.prompt,
+    choices: payload.choices ?? null,
+    correct_answer: payload.correctAnswer,
+    expected_reasoning: payload.expectedReasoning ?? null,
+    marking_rubric: payload.markingRubric,
+    pass_threshold: payload.passThreshold,
+    verification_stage: PROMOTED_VERIFICATION_STAGE,
+    review_package_id: row.package_id,
+    created_by: actorId,
+  };
+}
+
+// --- I/O boundary. Every human_review_* call below is read-only (.select
+// only); every academy_ism_* call is write-only (.upsert, immediately
+// reading back only the row it just wrote, never pre-existing data). ---
+
+async function fetchAcceptedPackage(client, { workspaceId, packageId }) {
+  const { data, error } = await client.from('human_review_packages').select('*').eq('id', packageId).eq('workspace_id', workspaceId).single();
+  if (error) throw new IsmPromotionError('PACKAGE_FETCH_FAILED', { error: error.message });
+  return data;
+}
+
+async function fetchPackageQuestions(client, { packageId }) {
+  const { data, error } = await client.from('human_review_package_questions').select('*').eq('package_id', packageId).order('position');
+  if (error) throw new IsmPromotionError('QUESTIONS_FETCH_FAILED', { error: error.message });
+  return data;
+}
+
+async function writeSourceManifest(client, row) {
+  const { data, error } = await client
+    .from('academy_ism_source_manifest')
+    .upsert(row, { onConflict: 'workspace_id,source_id,version' })
+    .select()
+    .single();
+  if (error) throw new IsmPromotionError('SOURCE_MANIFEST_WRITE_FAILED', { error: error.message, row });
+  return data;
+}
+
+async function writeQuestion(client, row) {
+  const { error } = await client.from('academy_ism_questions').upsert(row, { onConflict: 'workspace_id,question_id' });
+  if (error) throw new IsmPromotionError('QUESTION_WRITE_FAILED', { error: error.message, row });
+}
+
+async function promoteAcceptedPackage(client, { workspaceId, packageId, actorId, dryRun = false }) {
+  const packageRow = await fetchAcceptedPackage(client, { workspaceId, packageId });
+  const questionRows = await fetchPackageQuestions(client, { packageId });
+  const { groups, rejected } = planPromotion({ packageRow, questionRows });
+  const promoted = [];
+  for (const group of groups) {
+    const manifestRow = buildSourceManifestRow({ workspaceId, packageRow, group, actorId });
+    if (dryRun) {
+      promoted.push(...group.questions.map((item) => buildQuestionRow({ workspaceId, item, sourceManifestId: null, actorId })));
+      continue;
+    }
+    const savedManifest = await writeSourceManifest(client, manifestRow);
+    for (const item of group.questions) {
+      const questionRow = buildQuestionRow({ workspaceId, item, sourceManifestId: savedManifest.id, actorId });
+      await writeQuestion(client, questionRow);
+      promoted.push(questionRow);
+    }
+  }
+  return { promotedCount: promoted.length, rejectedCount: rejected.length, groupCount: groups.length, rejected };
+}
+
+function parseArgs(argv) {
+  const args = { 'dry-run': false };
+  for (const arg of argv) {
+    if (arg === '--dry-run') { args['dry-run'] = true; continue; }
+    const match = /^--([a-z-]+)=(.*)$/.exec(arg);
+    if (match) args[match[1]] = match[2];
+  }
+  return args;
+}
+
+async function main() {
+  const args = parseArgs(process.argv.slice(2));
+  if (!args['workspace-id'] || !args['package-id'] || !args['actor-id']) {
+    process.stderr.write('Usage: node tools/academy-ism-promote-accepted-package.js --workspace-id=<uuid> --package-id=<uuid> --actor-id=<uuid> [--dry-run]\n');
+    process.exitCode = 1;
+    return;
+  }
+  const url = process.env.SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !serviceKey) {
+    process.stderr.write('SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set in the environment.\n');
+    process.exitCode = 1;
+    return;
+  }
+  const { createClient } = require('@supabase/supabase-js');
+  const client = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
+  const result = await promoteAcceptedPackage(client, {
+    workspaceId: args['workspace-id'],
+    packageId: args['package-id'],
+    actorId: args['actor-id'],
+    dryRun: args['dry-run'],
+  });
+  process.stdout.write(`${JSON.stringify({ dryRun: args['dry-run'], ...result }, null, 2)}\n`);
+  if (result.rejectedCount > 0) process.exitCode = 2;
+}
+
+if (require.main === module) {
+  main().catch((error) => {
+    process.stderr.write(`ACADEMY_ISM_PROMOTE_FAILED: ${error instanceof Error ? error.message : 'UNKNOWN'}\n`);
+    process.exitCode = 1;
+  });
+}
+
+module.exports = {
+  IsmPromotionError,
+  ACCEPTED_PACKAGE_STATUS,
+  PROMOTED_VERIFICATION_STAGE,
+  planPromotion,
+  buildSourceManifestRow,
+  buildQuestionRow,
+  fetchAcceptedPackage,
+  fetchPackageQuestions,
+  writeSourceManifest,
+  writeQuestion,
+  promoteAcceptedPackage,
+};

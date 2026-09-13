@@ -8,7 +8,8 @@ const ACADEMY_SECTIONS=Object.freeze({
   'goss-gasm':Object.freeze({title:'GOSS / GASM Classroom',label:'GOSS / GASM',modules:Object.freeze(['gasm-seyir-sinav'])}),
   stcw:Object.freeze({title:'STCW Classroom',label:'STCW',modules:Object.freeze(['stcw-foundation','colregs-navigation-rules','electronic-navigation','marine-weather'])}),
   goc:Object.freeze({title:'GOC Classroom',label:'GOC',modules:Object.freeze(['goc-foundation'])}),
-  'general-maritime-education':Object.freeze({title:'General Maritime Education',label:'GENERAL MARITIME EDUCATION',modules:Object.freeze(['general-maritime-education','chart-reading','tides-water-levels','currents-set-drift'])})
+  'general-maritime-education':Object.freeze({title:'General Maritime Education',label:'GENERAL MARITIME EDUCATION',modules:Object.freeze(['general-maritime-education','chart-reading','tides-water-levels','currents-set-drift'])}),
+  'ism-isps-mlc':Object.freeze({title:'ISM / ISPS / MLC Classroom',label:'ISM / ISPS / MLC',modules:Object.freeze(['ism-code-foundations'])})
 });
 const GEOMETRY_KEY='atlas_sinbad_academy_native_window';
 const LANGUAGE_KEY='atlas_sinbad_academy_language';
