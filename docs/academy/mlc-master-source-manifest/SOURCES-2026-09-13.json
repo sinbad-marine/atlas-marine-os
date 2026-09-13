@@ -1,0 +1,90 @@
+[
+  {
+    "file": "ILO_ILC113_2025_amendments.pdf",
+    "url": "https://www.ilo.org/sites/default/files/2025-06/ILC113-Instruments-[RELMEETINGS-250605-001]-Web-EN.pdf",
+    "bytes": 160387,
+    "sha256": "fb6aad9e90ddc3a916bc4d7ace7c011ff3474767cd70775f11cc8d1e2951f8bc",
+    "fetchedUtc": "2026-09-12T20:28:04Z",
+    "extraction": "pypdf 6.18.1: already extracted"
+  },
+  {
+    "file": "ILO_MLC2006_consolidated_2022.pdf",
+    "url": "https://www.ilo.org/sites/default/files/2024-10/NORMES_MLC%20Amendments-EN_2022_Web_1.pdf",
+    "bytes": 610483,
+    "sha256": "bc444a84c177558dfc043b027b47681f06d7155f793819e755984f1b785f7e43",
+    "fetchedUtc": "2026-09-12T20:28:04Z",
+    "extraction": "pypdf 6.18.1: already extracted"
+  },
+  {
+    "file": "ILO_267866_MLC2006_2014_2016_consolidated.pdf",
+    "url": "https://www.ilo.org/media/267866/download",
+    "bytes": 745545,
+    "sha256": "3c3f1542f72e67a5df9fefb75c56117d223a74ccf06c7c8104a3332cec926ebb",
+    "fetchedUtc": "2026-09-12T20:30:52Z",
+    "extraction": "pypdf 6.18.1: pages 120 chars 312481"
+  },
+  {
+    "file": "RegisterIRI_MLC2006_original.pdf",
+    "url": "https://www.register-iri.com/wp-content/uploads/MLC-2006.pdf",
+    "bytes": 1098370,
+    "sha256": "a335e8c065a4e8122ed486b487bd2e8d05fde1bfa8f70383946d6af537519ad9",
+    "fetchedUtc": "2026-09-12T20:30:49Z",
+    "extraction": "pypdf 6.18.1: pages 110 chars 297592"
+  },
+  {
+    "file": "ILO_269841_MLC2006_original.pdf",
+    "url": "https://www.ilo.org/media/269841/download",
+    "bytes": 1163116,
+    "sha256": "74f3f95ceda4d787027629ee6f2848cd9fda3695c6cd37ca57c894d0dffed422",
+    "fetchedUtc": "2026-09-12T20:30:50Z",
+    "extraction": "pypdf 6.18.1: pages 112 chars 297750"
+  },
+  {
+    "file": "ClassNK_2022_amendments.pdf",
+    "url": "https://www.classnk.or.jp/hp/pdf/rules/amendments/e-amend/20241220/24-0-01e_am.pdf",
+    "bytes": 152206,
+    "sha256": "32074df03716bdf0c2f5548e5ee03a0e7ab7dcd964fb9109de7a155025c06769",
+    "fetchedUtc": "2026-09-12T20:30:55Z",
+    "extraction": "pypdf 6.18.1: "
+  },
+  {
+    "file": "HKMarDep_msin2455_2022_amendments.pdf",
+    "url": "https://www.mardep.gov.hk/filemanager/en/share/msnote/pdf/msin2455.pdf",
+    "bytes": 239818,
+    "sha256": "e8110f5274bde0e3ecc32f6c7070c0f33afc67f6a9fcd4111637e8feefe2085c",
+    "fetchedUtc": "2026-09-12T20:30:52Z",
+    "extraction": "pypdf 6.18.1: pages 3 chars 5833"
+  },
+  {
+    "file": "ILO_wcms_632462_2018_amendments.pdf",
+    "url": "https://www.ilo.org/sites/default/files/wcmsp5/groups/public/%40ed_norm/%40relconf/documents/meetingdocument/wcms_632462.pdf",
+    "bytes": 1740940,
+    "sha256": "3106ff1b6cc71c066c2626f11c980dc5be3115d95c6a4049afa2a48d71566919",
+    "fetchedUtc": "2026-09-12T20:57:38Z",
+    "extraction": "pypdf 6.18.1"
+  },
+  {
+    "file": "ILO_wcms_848492_2022_amendments.pdf",
+    "url": "https://www.ilo.org/sites/default/files/wcmsp5/groups/public/%40ed_norm/%40relconf/documents/meetingdocument/wcms_848492.pdf",
+    "bytes": 95665,
+    "sha256": "d9c0e177c0a1dd9fb60c59ae0bfc679f5074bc8d60024d8f1b2d42d7255ed340",
+    "fetchedUtc": "2026-09-12T21:28:35Z",
+    "extraction": "pypdf 6.18.1"
+  },
+  {
+    "file": "ILO_wcms_488452_2016_amendments.pdf",
+    "url": "https://www.ilo.org/sites/default/files/wcmsp5/groups/public/%40ed_norm/%40relconf/documents/meetingdocument/wcms_488452.pdf",
+    "bytes": 1573951,
+    "sha256": "32eef7d0cd0a1f4eb5eca6c3781c481f22ee21602406380625c655384cff60ad",
+    "fetchedUtc": "2026-09-13T06:16:06Z",
+    "extraction": "pypdf 6.18.1"
+  },
+  {
+    "file": "ILO_175166_2014_amendments.pdf",
+    "url": "https://www.ilo.org/media/175166/download",
+    "bytes": 1164466,
+    "sha256": "0e14ce4c98147f467f5a7a44a38520867d614c61e1347e63ba231bbd8cb40c54",
+    "fetchedUtc": "2026-09-13T05:50:03Z",
+    "extraction": "pypdf 6.18.1"
+  }
+]
