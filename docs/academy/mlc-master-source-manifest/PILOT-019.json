@@ -1,0 +1,216 @@
+{
+  "manifestVersion": "MLC-PILOT-019",
+  "createdAt": "2026-09-13T07:21:58Z",
+  "note": "Provenance/reference record only, not a database write. Same status as PILOT-001 through 009.json: no academy_mlc_source_manifest table exists, no verification_stage asserted, not consumed by any promotion tooling. No migration, schema, or tooling change. Additive docs/ file only, on its own branch, separate from every other open PR in this series.",
+  "batchNote": "Prepared under the Owner's 2026-09-08 full-scope MLC Title 1-5 instruction and the Owner's 2026-09-12 GO on the resumption plan, which released this Regulation from SOURCE HOLD only after the current consolidated ILO text and the authentic amendment texts were reacquired and their provenance recorded (see primarySources/amendmentTextSources). 'Prepared/draft' is not 'verified', 'human-accepted', 'merged' or 'live'. This file is source-text verification only.",
+  "schemaExtensionNote": "Uses the regulationRef/standardARef/guidelineBRef fields introduced in PILOT-001.json and adds textEdition, pendingAmendments2025, diffEvidence and amendmentTextSources. No further schema change; no tooling reads these files.",
+  "verificationMethodNote": "No GROK/GEMINI access this session. Method: PRIMARY_SOURCE_FOUR_STAGE_DIFF (see verifiedSources[0].verificationMethod) over the ILO consolidated 2022 text, the ILO 2014+2016 consolidated text and two 2006-original mirrors, with every substantive diff span matched to the authentic ILO amendment texts of 2014, 2016, 2018 and 2022. The 2025 amendments (ILC 113, adopted 6 June 2025, expected entry into force 23 December 2027) are NOT in force and are NOT blended into fullText; they are recorded in pendingAmendments2025 only. Running headers, page numbers and soft hyphenation were removed when re-flowing fullText; every hyphen join is listed in diffEvidence.hyphenJoinsApplied for audit.",
+  "verifiedSources": [
+    {
+      "sourceId": "ILO-MLC2006-T3-REG3.2",
+      "title": "Food and catering",
+      "authority": "ILO",
+      "moduleCode": "mlc-code-foundations",
+      "flagAdministration": null,
+      "section": "Title 3, Regulation 3.2 / Standard A3.2 / Guideline B3.2 (including Guidelines B3.2.1 and B3.2.2)",
+      "regulationRef": "Regulation 3.2 - Food and catering",
+      "standardARef": "Standard A3.2 - Food and catering",
+      "guidelineBRef": "Guideline B3.2 - Food and catering; Guideline B3.2.1 - Inspection, education, research and publication; Guideline B3.2.2 - Ships' cooks",
+      "textEdition": "Maritime Labour Convention, 2006, as amended - consolidated text established by the International Labour Office including the Amendments of 2014, 2016, 2018 and 2022 to the Code (ILO publication dated 2 October 2024). This is the text in force on the verification date.",
+      "fullText": "Regulation 3.2 - Food and catering\n\nPurpose: To ensure that seafarers have access to good quality food and drinking water provided under regulated hygienic conditions\n\n1. Each Member shall ensure that ships that fly its flag carry on board and serve food and drinking water of appropriate quality, nutritional value and quantity that adequately covers the requirements of the ship and takes into account the differing cultural and religious backgrounds.\n\n2. Seafarers on board a ship shall be provided with food free of charge during the period of engagement.\n\n3. Seafarers employed as ships' cooks with responsibility for food preparation must be trained and qualified for their position on board ship.\n\nStandard A3.2 - Food and catering\n\n1. Each Member shall adopt laws and regulations or other measures to provide minimum standards for the quantity and quality of food and drinking water and for the catering standards that apply to meals provided to seafarers on ships that fly its flag, and shall undertake educational activities to promote awareness and implementation of the standards referred to in this paragraph.\n\n2. Each Member shall ensure that ships that fly its flag meet the following minimum standards:\n\n(a) food and drinking water supplies, having regard to the number of seafarers on board, their religious requirements and cultural practices as they pertain to food, and the duration and nature of the voyage, shall be suitable in respect of quantity, nutritional value, quality and variety, and shall be provided free of charge during the period of engagement;\n\n(b) the organization and equipment of the catering department shall be such as to permit the provision to the seafarers of adequate, varied, balanced and nutritious meals prepared and served in hygienic conditions; and\n\n(c) catering staff shall be properly trained or instructed for their positions.\n\n3. Shipowners shall ensure that seafarers who are engaged as ships' cooks are trained, qualified and found competent for the position in accordance with requirements set out in the laws and regulations of the Member concerned.\n\n4. The requirements under paragraph 3 of this Standard shall include a completion of a training course approved or recognized by the competent authority, which covers practical cookery, food and personal hygiene, food storage, stock control, and environmental protection and catering health and safety.\n\n5. On ships operating with a prescribed manning of less than ten which, by virtue of the size of the crew or the trading pattern, may not be required by the competent authority to carry a fully qualified cook, anyone processing food in the galley shall be trained or instructed in areas including food and personal hygiene as well as handling and storage of food on board ship.\n\n6. In circumstances of exceptional necessity, the competent authority may issue a dispensation permitting a non-fully qualified cook to serve in a specified ship for a specified limited period, until the next convenient port of call or for a period not exceeding one month, provided that the person to whom the dispensation is issued is trained or instructed in areas including food and personal hygiene as well as handling and storage of food on board ship.\n\n7. In accordance with the ongoing compliance procedures under Title 5, the competent authority shall require that frequent documented inspections be carried out on board ships, by or under the authority of the master, with respect to:\n\n(a) supplies of food and drinking water in relation to their quantity, nutritional value, quality and variety;\n\n(b) all spaces and equipment used for the storage and handling of food and drinking water; and\n\n(c) galley and other equipment for the preparation and service of meals.\n\n8. No seafarer under the age of 18 shall be employed or engaged or work as a ship's cook.\n\nGuideline B3.2 - Food and catering\n\nGuideline B3.2.1 - Inspection, education, research and publication\n\n1. The competent authority should, in cooperation with other relevant agencies and organizations, collect up-to-date information on nutrition and on methods of purchasing, storing, preserving, cooking and serving food, with special reference to the requirements of catering on board a ship. This information should be made available, free of charge or at reasonable cost, to manufacturers of and traders in ships' food supplies and equipment, masters, stewards and cooks, and to shipowners' and seafarers' organizations concerned. Appropriate forms of publicity, such as manuals, brochures, posters, charts or advertisements in trade journals, should be used for this purpose.\n\n2. The competent authority should issue recommendations to avoid wastage of food, facilitate the maintenance of a proper standard of hygiene, and ensure the maximum practicable convenience in working arrangements.\n\n3. The competent authority should work with relevant agencies and organizations to develop educational materials and on-board information concerning methods of ensuring proper food supply and catering services.\n\n4. The competent authority should work in close cooperation with the shipowners' and seafarers' organizations concerned and with national or local authorities dealing with questions of food and health, and may where necessary utilize the services of such authorities.\n\nGuideline B3.2.2 - Ships' cooks\n\n1. Seafarers should only be qualified as ships' cooks if they have:\n\n(a) served at sea for a minimum period to be prescribed by the competent authority, which could be varied to take into account existing relevant qualifications or experience;\n\n(b) passed an examination prescribed by the competent authority or passed an equivalent examination at an approved training course for cooks.\n\n2. The prescribed examination may be conducted and certificates granted either directly by the competent authority or, subject to its control, by an approved school for the training of cooks.\n\n3. The competent authority should provide for the recognition, where appropriate, of certificates of qualification as ships' cooks issued by other Members, which have ratified this Convention or the Certification of Ships' Cooks Convention, 1946 (No. 69), or other approved body. and soCial sECurity protECtion",
+      "variantNote": "No substantive variant between sources. Residual diff spans are PDF extraction artifacts only (running headers, page numbers, line-break hyphenation, spacing before punctuation), inspected individually. One 2006 mirror misspells 'hygiene' as 'hygene' (mirror typo).",
+      "amendmentHistory": "Amended once in force. 2022 (ILC 110, approved 6 June 2022, in force 23 December 2024): Standard A3.2 paragraphs 2(a) and 2(b) replaced (food and drinking water 'provided free of charge during the period of engagement'; meals 'adequate, varied, balanced and nutritious'); Standard A3.2 paragraph 7(a) replaced (inspection of supplies 'in relation to their quantity, nutritional value, quality and variety'). Everything else is 2006 text. Not named in the 2014, 2016 or 2018 amendment texts. Diff evidence: the three substantive spans in consolidated2016 -> consolidated2022 are exactly those replacements.",
+      "pendingAmendments2025": "None of the 2025 amendments (ILC 113, adopted 6 June 2025, expected entry into force 23 December 2027) touch this Regulation, its Standard or its Guidelines.",
+      "verificationMethod": "PRIMARY_SOURCE_FOUR_STAGE_DIFF: (1) the two 2006-original mirrors were sliced and word-diffed against each other; (2) the 2006 original was word-diffed against the ILO 2014+2016 consolidated text; (3) that text was word-diffed against the ILO 2014+2016+2018+2022 consolidated text; (4) every non-artifact diff span was matched against the authentic amendment texts (ILO 2014, 2016, 2018 and 2022 amendment documents). fullText is the stage-3 target block re-flowed to undo PDF line wrapping; its word sequence was re-diffed against the raw block (consistencyCheck).",
+      "diffEvidence": {
+        "mirror2006_ilo_vs_registerIri": {
+          "wordDiffSpans": 1,
+          "similarityRatio": 0.999
+        },
+        "original2006_vs_consolidated2016": {
+          "wordDiffSpans": 5,
+          "similarityRatio": 0.9688
+        },
+        "consolidated2016_vs_consolidated2022": {
+          "wordDiffSpans": 6,
+          "similarityRatio": 0.9767
+        },
+        "consistencyCheck_reflow_vs_raw": {
+          "wordDiffSpans": 1,
+          "similarityRatio": 0.9969
+        },
+        "hyphenDecisions": [
+          {
+            "token": "ad-equately",
+            "decision": "JOIN",
+            "joinedForms": 31,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "cul-tural",
+            "decision": "JOIN",
+            "joinedForms": 13,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "min-imum",
+            "decision": "JOIN",
+            "joinedForms": 174,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "quan-tity",
+            "decision": "JOIN",
+            "joinedForms": 15,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "com-pletion",
+            "decision": "JOIN",
+            "joinedForms": 12,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "gal-ley",
+            "decision": "JOIN",
+            "joinedForms": 11,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "non-fully",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ex-ceeding",
+            "decision": "JOIN",
+            "joinedForms": 22,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "com-petent",
+            "decision": "JOIN",
+            "joinedForms": 670,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "agen-cies",
+            "decision": "JOIN",
+            "joinedForms": 10,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "up-to",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 28,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "avail-able",
+            "decision": "JOIN",
+            "joinedForms": 164,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "max-imum",
+            "decision": "JOIN",
+            "joinedForms": 48,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "organiza-tions",
+            "decision": "JOIN",
+            "joinedForms": 317,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "on-board",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 75,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ship-owners",
+            "decision": "JOIN",
+            "joinedForms": 345,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "appropri-ate",
+            "decision": "JOIN",
+            "joinedForms": 319,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          }
+        ],
+        "hyphenRule": "Every hyphenated token whose second part is lower-case (line-end hyphenation and stray in-line hyphens from PDF extraction alike) was decided on evidence from the four source texts: JOIN when only the joined form occurs in the sources, KEEP when only the hyphenated form occurs, majority when both occur, KEEP_UNRESOLVED (hyphen retained, listed here) when neither occurs. Upper-case continuations (e.g. Director-General) keep the hyphen.",
+        "artifactNote": "Non-zero span counts in the mirror and stage-2/3 comparisons are explained field by field in amendmentHistory and variantNote; the remainder are PDF extraction artifacts (running headers, page numbers, line-break hyphenation, spacing before punctuation) that were inspected individually."
+      },
+      "verifiedBy": [
+        "PRIMARY_SOURCE_FOUR_STAGE_DIFF",
+        "AMENDMENT_TEXT_CROSSCHECK",
+        "AMENDMENT_HISTORY_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-13",
+      "primarySources": [
+        {
+          "file": "ILO_MLC2006_consolidated_2022.pdf",
+          "url": "https://www.ilo.org/sites/default/files/2024-10/NORMES_MLC%20Amendments-EN_2022_Web_1.pdf",
+          "sha256": "bc444a84c177558dfc043b027b47681f06d7155f793819e755984f1b785f7e43",
+          "bytes": 610483,
+          "fetchedUtc": "2026-09-12T20:28:04Z"
+        },
+        {
+          "file": "ILO_267866_MLC2006_2014_2016_consolidated.pdf",
+          "url": "https://www.ilo.org/media/267866/download",
+          "sha256": "3c3f1542f72e67a5df9fefb75c56117d223a74ccf06c7c8104a3332cec926ebb",
+          "bytes": 745545,
+          "fetchedUtc": "2026-09-12T20:30:52Z"
+        },
+        {
+          "file": "ILO_269841_MLC2006_original.pdf",
+          "url": "https://www.ilo.org/media/269841/download",
+          "sha256": "74f3f95ceda4d787027629ee6f2848cd9fda3695c6cd37ca57c894d0dffed422",
+          "bytes": 1163116,
+          "fetchedUtc": "2026-09-12T20:30:50Z"
+        },
+        {
+          "file": "RegisterIRI_MLC2006_original.pdf",
+          "url": "https://www.register-iri.com/wp-content/uploads/MLC-2006.pdf",
+          "sha256": "a335e8c065a4e8122ed486b487bd2e8d05fde1bfa8f70383946d6af537519ad9",
+          "bytes": 1098370,
+          "fetchedUtc": "2026-09-12T20:30:49Z"
+        }
+      ],
+      "amendmentTextSources": [
+        {
+          "file": "ILO_wcms_848492_2022_amendments.pdf",
+          "url": "https://www.ilo.org/sites/default/files/wcmsp5/groups/public/%40ed_norm/%40relconf/documents/meetingdocument/wcms_848492.pdf",
+          "sha256": "d9c0e177c0a1dd9fb60c59ae0bfc679f5074bc8d60024d8f1b2d42d7255ed340",
+          "bytes": 95665,
+          "fetchedUtc": "2026-09-12T21:28:35Z"
+        }
+      ],
+      "secondarySources": []
+    }
+  ],
+  "unresolvedSources": [],
+  "relatedButOutOfScope": "ISM Code and ISPS Code Part A remain closed, frozen baselines. Appendices A2-I, A4-I, A5-I to A5-III and B5-I are not part of any Regulation block and are not reproduced here; where an amendment changed an Appendix it is mentioned in amendmentHistory only. Does not touch config/human-review-contract.json, academy_ism_* schema/RLS/tooling, any open PR in this series, or GASM Human Review Cloud staging."
+}
