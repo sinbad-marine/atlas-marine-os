@@ -1,0 +1,223 @@
+{
+  "manifestVersion": "MLC-PILOT-024",
+  "createdAt": "2026-09-13T07:22:01Z",
+  "note": "Provenance/reference record only, not a database write. Same status as PILOT-001 through 009.json: no academy_mlc_source_manifest table exists, no verification_stage asserted, not consumed by any promotion tooling. No migration, schema, or tooling change. Additive docs/ file only, on its own branch, separate from every other open PR in this series.",
+  "batchNote": "Prepared under the Owner's 2026-09-08 full-scope MLC Title 1-5 instruction and the Owner's 2026-09-12 GO on the resumption plan, which released this Regulation from SOURCE HOLD only after the current consolidated ILO text and the authentic amendment texts were reacquired and their provenance recorded (see primarySources/amendmentTextSources). 'Prepared/draft' is not 'verified', 'human-accepted', 'merged' or 'live'. This file is source-text verification only.",
+  "schemaExtensionNote": "Uses the regulationRef/standardARef/guidelineBRef fields introduced in PILOT-001.json and adds textEdition, pendingAmendments2025, diffEvidence and amendmentTextSources. No further schema change; no tooling reads these files.",
+  "verificationMethodNote": "No GROK/GEMINI access this session. Method: PRIMARY_SOURCE_FOUR_STAGE_DIFF (see verifiedSources[0].verificationMethod) over the ILO consolidated 2022 text, the ILO 2014+2016 consolidated text and two 2006-original mirrors, with every substantive diff span matched to the authentic ILO amendment texts of 2014, 2016, 2018 and 2022. The 2025 amendments (ILC 113, adopted 6 June 2025, expected entry into force 23 December 2027) are NOT in force and are NOT blended into fullText; they are recorded in pendingAmendments2025 only. Running headers, page numbers and soft hyphenation were removed when re-flowing fullText; every hyphen join is listed in diffEvidence.hyphenJoinsApplied for audit.",
+  "verifiedSources": [
+    {
+      "sourceId": "ILO-MLC2006-T5-REG5.1.5",
+      "title": "On-board complaint procedures",
+      "authority": "ILO",
+      "moduleCode": "mlc-code-foundations",
+      "flagAdministration": null,
+      "section": "Title 5, Regulation 5.1.5 / Standard A5.1.5 / Guideline B5.1.5",
+      "regulationRef": "Regulation 5.1.5 - On-board complaint procedures",
+      "standardARef": "Standard A5.1.5 - On-board complaint procedures",
+      "guidelineBRef": "Guideline B5.1.5 - On-board complaint procedures",
+      "textEdition": "Maritime Labour Convention, 2006, as amended - consolidated text established by the International Labour Office including the Amendments of 2014, 2016, 2018 and 2022 to the Code (ILO publication dated 2 October 2024). This is the text in force on the verification date.",
+      "fullText": "Regulation 5.1.5 - On-board complaint procedures\n\n1. Each Member shall require that ships that fly its flag have on-board procedures for the fair, effective and expeditious handling of seafarer complaints alleging breaches of the requirements of this Convention (including seafarers' rights).\n\n2. Each Member shall prohibit and penalize any kind of victimization of a seafarer for filing a complaint.\n\n3. The provisions in this Regulation and related sections of the Code are without prejudice to a seafarer's right to seek redress through whatever legal means the seafarer considers appropriate.\n\nStandard A5.1.5 - On-board complaint procedures\n\n1. Without prejudice to any wider scope that may be given in national laws or regulations or collective agreements, the on-board procedures may be used by seafarers to lodge complaints relating to any matter that is alleged to constitute a breach of the requirements of this Convention (including seafarers' rights).\n\n2. Each Member shall ensure that, in its laws or regulations, appropriate on-board complaint procedures are in place to meet the requirements of Regulation 5.1.5. Such procedures shall seek to resolve complaints at the lowest level possible. However, in all cases, seafarers shall have a right to complain directly to the master and, where they consider it necessary, to appropriate external authorities.\n\n3. The on-board complaint procedures shall include the right of the seafarer to be accompanied or represented during the complaints procedure, as well as safeguards against the possibility of victimization of seafarers for filing complaints. The term \"victimization\" covers any adverse action taken by any person with respect to a seafarer for lodging a complaint which is not manifestly vexatious or maliciously made.\n\n4. In addition to a copy of their seafarers' employment agreement, all seafarers shall be provided with a copy of the on-board complaint procedures applicable on the ship. This shall include contact information for the competent authority in the flag State and, where different, in the seafarers' country of residence, and the name of a person or persons on board the ship who can, on a confidential basis, provide seafarers with impartial advice on their complaint and otherwise assist them in following the complaint procedures available to them on board the ship.\n\nGuideline B5.1.5 - On-board complaint procedures\n\n1. Subject to any relevant provisions of an applicable collective agreement, the competent authority should, in close consultation with shipowners' and seafarers' organizations, develop a model for fair, expeditious and well-documented on-board complaint-handling procedures for all ships that fly the Member's flag. In developing these procedures the following matters should be considered:\n\n(a) many complaints may relate specifically to those individuals to whom the complaint is to be made or even to the master of the ship. In all cases seafarers should also be able to complain directly to the master and to make a complaint externally; and\n\n(b) in order to help avoid problems of victimization of seafarers making complaints about matters under this Convention, the procedures should encourage the nomination of a person on board who can advise seafarers on the procedures available to them and, if requested by the complainant seafarer, also attend any meetings or hearings into the subject matter of the complaint.\n\n2. At a minimum the procedures discussed during the consultative process referred to in paragraph 1 of this Guideline should include the following:\n\n(a) complaints should be addressed to the head of the department of the seafarer lodging the complaint or to the seafarer's superior officer;\n\n(b) the head of department or superior officer should then attempt to resolve the matter within prescribed time limits appropriate to the seriousness of the issues involved;\n\n(c) if the head of department or superior officer cannot resolve the complaint to the satisfaction of the seafarer, the latter may refer it to the master, who should handle the matter personally;\n\n(d) seafarers should at all times have the right to be accompanied and to be represented by another seafarer of their choice on board the ship concerned;\n\n(e) all complaints and the decisions on them should be recorded and a copy provided to the seafarer concerned;\n\n(f) if a complaint cannot be resolved on board, the matter should be referred ashore to the shipowner, who should be given an appropriate time limit for resolving the matter, where appropriate, in consultation with the seafarers concerned or any person they may appoint as their representative; and\n\n(g) in all cases seafarers should have a right to file their complaints directly with the master and the shipowner and competent authorities.",
+      "variantNote": "No substantive variant between sources. Residual diff spans are PDF extraction artifacts only (running headers, page numbers, line-break hyphenation, spacing before punctuation), inspected individually.",
+      "amendmentHistory": "Text unchanged since the Convention was adopted on 23 February 2006 (entered into force 20 August 2013): the 2006 mirrors, the 2014+2016 consolidated text and the 2014+2016+2018+2022 consolidated text agree word for word apart from extraction artifacts. Not named in the 2014, 2016, 2018 or 2022 amendment texts.",
+      "pendingAmendments2025": "2025 (ILC 113, adopted 6 June 2025, NOT in force, expected 23 December 2027): Standard A5.1.5 paragraphs 2 and 3 amended (right to complain directly to the master, external authorities; safeguards for complainants, victims, witnesses and whistle-blowers) and new paragraph 5 (confidentiality). Not blended into fullText.",
+      "verificationMethod": "PRIMARY_SOURCE_FOUR_STAGE_DIFF: (1) the two 2006-original mirrors were sliced and word-diffed against each other; (2) the 2006 original was word-diffed against the ILO 2014+2016 consolidated text; (3) that text was word-diffed against the ILO 2014+2016+2018+2022 consolidated text; (4) every non-artifact diff span was matched against the authentic amendment texts (ILO 2014, 2016, 2018 and 2022 amendment documents). fullText is the stage-3 target block re-flowed to undo PDF line wrapping; its word sequence was re-diffed against the raw block (consistencyCheck).",
+      "diffEvidence": {
+        "mirror2006_ilo_vs_registerIri": {
+          "wordDiffSpans": 0,
+          "similarityRatio": 1.0
+        },
+        "original2006_vs_consolidated2016": {
+          "wordDiffSpans": 3,
+          "similarityRatio": 0.9881
+        },
+        "consolidated2016_vs_consolidated2022": {
+          "wordDiffSpans": 0,
+          "similarityRatio": 1.0
+        },
+        "consistencyCheck_reflow_vs_raw": {
+          "wordDiffSpans": 2,
+          "similarityRatio": 0.9967
+        },
+        "hyphenDecisions": [
+          {
+            "token": "On-board",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 64,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "on-board",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 75,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "pro-cedures",
+            "decision": "JOIN",
+            "joinedForms": 233,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "sea-farer",
+            "decision": "JOIN",
+            "joinedForms": 763,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "with-out",
+            "decision": "JOIN",
+            "joinedForms": 104,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "On-board",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 64,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "on-board",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 75,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "on-board",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 75,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "on-board",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 75,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "vic-timization",
+            "decision": "JOIN",
+            "joinedForms": 12,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "on-board",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 75,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "On-board",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 64,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "well-documented",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "on-board",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 75,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "complaint-handling",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 20,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "com-plaint",
+            "decision": "JOIN",
+            "joinedForms": 216,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "nomi-nation",
+            "decision": "JOIN",
+            "joinedForms": 1,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "repre-sented",
+            "decision": "JOIN",
+            "joinedForms": 16,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          }
+        ],
+        "hyphenRule": "Every hyphenated token whose second part is lower-case (line-end hyphenation and stray in-line hyphens from PDF extraction alike) was decided on evidence from the four source texts: JOIN when only the joined form occurs in the sources, KEEP when only the hyphenated form occurs, majority when both occur, KEEP_UNRESOLVED (hyphen retained, listed here) when neither occurs. Upper-case continuations (e.g. Director-General) keep the hyphen.",
+        "artifactNote": "Non-zero span counts in the mirror and stage-2/3 comparisons are explained field by field in amendmentHistory and variantNote; the remainder are PDF extraction artifacts (running headers, page numbers, line-break hyphenation, spacing before punctuation) that were inspected individually."
+      },
+      "verifiedBy": [
+        "PRIMARY_SOURCE_FOUR_STAGE_DIFF",
+        "AMENDMENT_TEXT_CROSSCHECK",
+        "AMENDMENT_HISTORY_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-13",
+      "primarySources": [
+        {
+          "file": "ILO_MLC2006_consolidated_2022.pdf",
+          "url": "https://www.ilo.org/sites/default/files/2024-10/NORMES_MLC%20Amendments-EN_2022_Web_1.pdf",
+          "sha256": "bc444a84c177558dfc043b027b47681f06d7155f793819e755984f1b785f7e43",
+          "bytes": 610483,
+          "fetchedUtc": "2026-09-12T20:28:04Z"
+        },
+        {
+          "file": "ILO_267866_MLC2006_2014_2016_consolidated.pdf",
+          "url": "https://www.ilo.org/media/267866/download",
+          "sha256": "3c3f1542f72e67a5df9fefb75c56117d223a74ccf06c7c8104a3332cec926ebb",
+          "bytes": 745545,
+          "fetchedUtc": "2026-09-12T20:30:52Z"
+        },
+        {
+          "file": "ILO_269841_MLC2006_original.pdf",
+          "url": "https://www.ilo.org/media/269841/download",
+          "sha256": "74f3f95ceda4d787027629ee6f2848cd9fda3695c6cd37ca57c894d0dffed422",
+          "bytes": 1163116,
+          "fetchedUtc": "2026-09-12T20:30:50Z"
+        },
+        {
+          "file": "RegisterIRI_MLC2006_original.pdf",
+          "url": "https://www.register-iri.com/wp-content/uploads/MLC-2006.pdf",
+          "sha256": "a335e8c065a4e8122ed486b487bd2e8d05fde1bfa8f70383946d6af537519ad9",
+          "bytes": 1098370,
+          "fetchedUtc": "2026-09-12T20:30:49Z"
+        }
+      ],
+      "amendmentTextSources": [
+        {
+          "file": "ILO_ILC113_2025_amendments.pdf",
+          "url": "https://www.ilo.org/sites/default/files/2025-06/ILC113-Instruments-[RELMEETINGS-250605-001]-Web-EN.pdf",
+          "sha256": "fb6aad9e90ddc3a916bc4d7ace7c011ff3474767cd70775f11cc8d1e2951f8bc",
+          "bytes": 160387,
+          "fetchedUtc": "2026-09-12T20:28:04Z"
+        }
+      ],
+      "secondarySources": []
+    }
+  ],
+  "unresolvedSources": [],
+  "relatedButOutOfScope": "ISM Code and ISPS Code Part A remain closed, frozen baselines. Appendices A2-I, A4-I, A5-I to A5-III and B5-I are not part of any Regulation block and are not reproduced here; where an amendment changed an Appendix it is mentioned in amendmentHistory only. Does not touch config/human-review-contract.json, academy_ism_* schema/RLS/tooling, any open PR in this series, or GASM Human Review Cloud staging."
+}
