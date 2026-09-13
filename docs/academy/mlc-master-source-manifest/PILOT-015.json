@@ -1,0 +1,384 @@
+{
+  "manifestVersion": "MLC-PILOT-015",
+  "createdAt": "2026-09-13T07:21:55Z",
+  "note": "Provenance/reference record only, not a database write. Same status as PILOT-001 through 009.json: no academy_mlc_source_manifest table exists, no verification_stage asserted, not consumed by any promotion tooling. No migration, schema, or tooling change. Additive docs/ file only, on its own branch, separate from every other open PR in this series.",
+  "batchNote": "Prepared under the Owner's 2026-09-08 full-scope MLC Title 1-5 instruction and the Owner's 2026-09-12 GO on the resumption plan, which released this Regulation from SOURCE HOLD only after the current consolidated ILO text and the authentic amendment texts were reacquired and their provenance recorded (see primarySources/amendmentTextSources). 'Prepared/draft' is not 'verified', 'human-accepted', 'merged' or 'live'. This file is source-text verification only.",
+  "schemaExtensionNote": "Uses the regulationRef/standardARef/guidelineBRef fields introduced in PILOT-001.json and adds textEdition, pendingAmendments2025, diffEvidence and amendmentTextSources. No further schema change; no tooling reads these files.",
+  "verificationMethodNote": "No GROK/GEMINI access this session. Method: PRIMARY_SOURCE_FOUR_STAGE_DIFF (see verifiedSources[0].verificationMethod) over the ILO consolidated 2022 text, the ILO 2014+2016 consolidated text and two 2006-original mirrors, with every substantive diff span matched to the authentic ILO amendment texts of 2014, 2016, 2018 and 2022. The 2025 amendments (ILC 113, adopted 6 June 2025, expected entry into force 23 December 2027) are NOT in force and are NOT blended into fullText; they are recorded in pendingAmendments2025 only. Running headers, page numbers and soft hyphenation were removed when re-flowing fullText; every hyphen join is listed in diffEvidence.hyphenJoinsApplied for audit.",
+  "verifiedSources": [
+    {
+      "sourceId": "ILO-MLC2006-T4-REG4.1",
+      "title": "Medical care on board ship and ashore",
+      "authority": "ILO",
+      "moduleCode": "mlc-code-foundations",
+      "flagAdministration": null,
+      "section": "Title 4, Regulation 4.1 / Standard A4.1 / Guideline B4.1 (including Guidelines B4.1.1 to B4.1.5)",
+      "regulationRef": "Regulation 4.1 - Medical care on board ship and ashore",
+      "standardARef": "Standard A4.1 - Medical care on board ship and ashore",
+      "guidelineBRef": "Guideline B4.1 - Medical care on board ship and ashore; Guideline B4.1.1 - Provision of medical care; Guideline B4.1.2 - Medical report form; Guideline B4.1.3 - Medical care ashore; Guideline B4.1.4 - Medical assistance to other ships and international cooperation; Guideline B4.1.5 - Dependants of seafarers",
+      "textEdition": "Maritime Labour Convention, 2006, as amended - consolidated text established by the International Labour Office including the Amendments of 2014, 2016, 2018 and 2022 to the Code (ILO publication dated 2 October 2024). This is the text in force on the verification date.",
+      "fullText": "Regulation 4.1 - Medical care on board ship and ashore\n\nPurpose: To protect the health of seafarers and ensure their prompt access to medical care on board ship and ashore\n\n1. Each Member shall ensure that all seafarers on ships that fly its flag are covered by adequate measures for the protection of their health and that they have access to prompt and adequate medical care whilst working on board.\n\n2. The protection and care under paragraph 1 of this Regulation shall, in principle, be provided at no cost to the seafarers.\n\n3. Each Member shall ensure that seafarers on board ships in its territory who are in need of immediate medical care are given access to the Member's medical facilities on shore.\n\n4. The requirements for on-board health protection and medical care set out in the Code include standards for measures aimed at providing seafarers with health protection and medical care as comparable as possible to that which is generally available to workers ashore.\n\nStandard A4.1 - Medical care on board ship and ashore\n\n1. Each Member shall ensure that measures providing for health protection and medical care, including essential dental care, for seafarers working on board a ship that flies its flag are adopted which:\n\n(a) ensure the application to seafarers of any general provisions on occupational health protection and medical care relevant to their duties, as well as of special provisions specific to work on board ship;\n\n(b) ensure that seafarers are given health protection and medical care as comparable as possible to that which is generally available to workers ashore, including prompt access to the necessary medicines, medical equipment and facilities for diagnosis and treatment and to medical information and expertise;\n\n(c) give seafarers the right to visit a qualified medical doctor or dentist without delay in ports of call, where practicable;\n\n(d) ensure that, to the extent consistent with the Member's national law and practice, medical care and health protection services while a seafarer is on board ship or landed in a foreign port are provided free of charge to seafarers; and\n\n(e) are not limited to treatment of sick or injured seafarers but include measures of a preventive character such as health promotion and health education programmes.\n\n2. The competent authority shall adopt a standard medical report form for use by the ships' masters and relevant onshore and on-board medical personnel. The form, when completed, and its contents shall be kept confidential and shall only be used to facilitate the treatment of seafarers.\n\n3. Each Member shall adopt laws and regulations establishing requirements for on-board hospital and medical care facilities and equipment and training on ships that fly its flag.\n\n4. National laws and regulations shall as a minimum provide for the following requirements:\n\n(a) all ships shall carry a medicine chest, medical equipment and a medical guide, the specifics of which shall be prescribed and subject to regular inspection by the competent authority; the national requirements shall take into account the type of ship, the number of persons on board and the nature, destination and duration of voyages and relevant national and international recommended medical standards;\n\n(b) ships carrying 100 or more persons and ordinarily engaged on international voyages of more than three days' duration shall carry a qualified medical doctor who is responsible for providing medical care; national laws or regulations shall also specify which other ships shall be required to carry a medical doctor, taking into account, inter alia, such factors as the duration, nature and conditions of the voyage and the number of seafarers on board;\n\n(c) ships which do not carry a medical doctor shall be required to have either at least one seafarer on board who is in charge of medical care and administering medicine as part of their regular duties or at least one seafarer on board competent to provide medical first aid; persons in charge of medical care on board who are not medical doctors shall have satisfactorily completed training in medical care that meets the requirements of the International Convention on Standards of Training, Certification and Watchkeeping for Seafarers, 1978, as amended (\"STCW\"); seafarers designated to provide medical first aid shall have satisfactorily completed training in medical first aid that meets the requirements of STCW; national laws or regulations shall specify the level of approved training required taking into account, inter alia, such factors as the duration, nature and conditions of the voyage and the number of seafarers on board; and\n\n(d) the competent authority shall ensure by a prearranged system that medical advice by radio or satellite communication to ships at sea, including specialist advice, is available 24 hours a day; medical advice, including the onward transmission of medical messages by radio or satellite communication between a ship and those ashore giving the advice, shall be available free of charge to all ships irrespective of the flag that they fly.\n\n5. Each Member shall ensure prompt disembarkation of seafarers in need of immediate medical care from ships in its territory and access to medical facilities ashore for the provision of appropriate treatment.\n\n6. Where a seafarer has died during a ship's voyage, the Member in whose territory the death has occurred or, where the death has occurred on the high seas, into whose territorial waters the ship next enters, shall facilitate the repatriation of the body or ashes by the shipowner, in accordance with the wishes of the seafarer or their next of kin, as appropriate.\n\nGuideline B4.1 - Medical care on board ship and ashore\n\nGuideline B4.1.1 - Provision of medical care\n\n1. When determining the level of medical training to be provided on board ships that are not required to carry a medical doctor, the competent authority should require that:\n\n(a) ships which ordinarily are capable of reaching qualified medical care and medical facilities within eight hours should have at least one designated seafarer with the approved medical first-aid training required by STCW which will enable such persons to take immediate, effective action in case of accidents or illnesses likely to occur on board a ship and to make use of medical advice by radio or satellite communication; and\n\n(b) all other ships should have at least one designated seafarer with approved training in medical care required by STCW, including practical training and training in life-saving techniques such as intravenous therapy, which will enable the persons concerned to participate effectively in coordinated schemes for medical assistance to ships at sea, and to provide the sick or injured with a satisfactory standard of medical care during the period they are likely to remain on board.\n\n2. The training referred to in paragraph 1 of this Guideline should be based on the contents of the most recent editions of the International Medical Guide for Ships , the Medical First Aid Guide for Use in Accidents Involving Dangerous Goods , the Document for Guidance - An International Maritime Training Guide, and the medical section of the International Code of Signals as well as similar national guides.\n\n3. Persons referred to in paragraph 1 of this Guideline and such other seafarers as may be required by the competent authority should undergo, at approximately five-year intervals, refresher courses to enable them to maintain and increase their knowledge and skills and to keep up-to-date with new developments.\n\n4. The medicine chest and its contents, as well as the medical equipment and medical guide carried on board, should be properly maintained and inspected at regular intervals, not exceeding 12 months, by responsible persons designated by the competent authority, who should ensure that the labelling, expiry dates and conditions of storage of all medicines and directions for their use are checked and all equipment functioning as required. In adopting or reviewing the ship's medical guide used nationally, and in determining the contents of the medicine chest and medical equipment, the competent authority should take into account international recommendations in this field, including the latest edition of the International Medical Guide for Ships , and other guides mentioned in paragraph 2 of this Guideline.\n\n5. Where a cargo which is classified dangerous has not been included in the most recent edition of the Medical First Aid Guide for Use in Accidents Involving Dangerous Goods , the necessary information on the nature of the substances, the risks involved, the necessary personal protective devices, the relevant medical procedures and specific antidotes should be made available to the seafarers. Such specific antidotes and personal protective devices should be on board whenever dangerous goods are carried. This information should be integrated with the ship's policies and programmes on occupational safety and health described in Regulation 4.3 and related Code provisions.\n\n6. All ships should carry a complete and up-to-date list of radio stations through which medical advice can be obtained; and, if equipped with a system of satellite communication, carry an up-to-date and complete list of coast earth stations through which medical advice can be obtained. Seafarers with responsibility for medical care or medical first aid on board should be instructed in the use of the ship's medical guide and the medical section of the most recent edition of the International Code of Signals so as to enable them to understand the type of information needed by the advising doctor as well as the advice received.\n\nGuideline B4.1.2 - Medical report form\n\n1. The standard medical report form for seafarers required under Part A of this Code should be designed to facilitate the exchange of medical and related information concerning individual seafarers between ship and shore in cases of illness or injury.\n\nGuideline B4.1.3 - Medical care ashore\n\n1. Shore-based medical facilities for treating seafarers should be adequate for the purposes. The doctors, dentists and other medical personnel should be properly qualified.\n\n2. Measures should be taken to ensure that seafarers have access when in port to:\n\n(a) outpatient treatment for sickness and injury;\n\n(b) hospitalization when necessary; and\n\n(c) facilities for dental treatment, especially in cases of emergency.\n\n3. Suitable measures should be taken to facilitate the treatment of seafarers suffering from disease. In particular, seafarers should be promptly admitted to clinics and hospitals ashore, without difficulty and irrespective of nationality or religious belief, and, whenever possible, arrangements should be made to ensure, when necessary, continuation of treatment to supplement the medical facilities available to them.\n\n4. Each Member should ensure that seafarers are not prevented from disembarking for public health reasons, and that they are able to replenish ships' stores, fuel, water, food and supplies.\n\n5. Seafarers should be considered to be in need of immediate medical care in cases of, but not limited to:\n\n(a) any serious injury or disease;\n\n(b) any injury or disease which might lead to temporary or permanent disability;\n\n(c) any communicable disease which poses a risk of transmission to other members of the crew;\n\n(d) any injury involving broken bones, severe bleeding, broken or inflamed teeth or severe burns;\n\n(e) severe pain which cannot be managed on board ship, taking account of the operational pattern of the ship, the availability of suitable analgesics and the health impacts of taking these for an extended period;\n\n(f) suicide risk; and\n\n(g) a tele-medical advisory service recommending treatment ashore.\n\nGuideline B4.1.4 - Medical assistance to other ships and international cooperation\n\n1. Each Member should give due consideration to participating in international cooperation in the area of assistance, programmes and research in health protection and medical care. Such cooperation might cover:\n\n(a) developing and coordinating search and rescue efforts and arranging prompt medical help and evacuation at sea for the seriously ill or injured on board a ship through such means as periodic ship position reporting systems, rescue coordination centres and emergency helicopter services, in conformity with the International Convention on Maritime Search and Rescue, 1979, as amended, and the International Aeronautical and Maritime Search and Rescue (IAMSAR) Manual;\n\n(b) making optimum use of all ships carrying a doctor and stationing ships at sea which can provide hospital and rescue facilities;\n\n(c) compiling and maintaining an international list of doctors and medical care facilities available worldwide to provide emergency medical care to seafarers;\n\n(d) landing seafarers ashore for emergency treatment;\n\n(e) repatriating seafarers hospitalized abroad as soon as practicable, in accordance with the medical advice of the doctors responsible for the case, which takes into account the seafarer's wishes and needs;\n\n(f) arranging personal assistance for seafarers during repatriation, in accordance with the medical advice of the doctors responsible for the case, which takes into account the seafarer's wishes and needs;\n\n(g) endeavouring to set up health centres for seafarers to:\n\n(i) conduct research on the health status, medical treatment and preventive health care of seafarers; and\n\n(ii) train medical and health service staff in maritime medicine;\n\n(h) collecting and evaluating statistics concerning occupational accidents, diseases and fatalities of seafarers and integrating and harmonizing the statistics with any existing national system of statistics on occupational accidents and diseases covering other categories of workers;\n\n(i) organizing international exchanges of technical information, training material and personnel, as well as international training courses, seminars and working groups;\n\n(j) providing all seafarers with special curative and preventive health and medical services in port, or making available to them general health, medical and rehabilitation services; and\n\n(k) arranging for the repatriation of the bodies or ashes of deceased seafarers, in accordance with their wishes or those of their next of kin, as appropriate, and as soon as practicable.\n\n2. International cooperation in the field of health protection and medical care for seafarers should be based on bilateral or multilateral agreements or consultations among Members.\n\nGuideline B4.1.5 - Dependants of seafarers\n\n1. Each Member should adopt measures to secure proper and sufficient medical care for the dependants of seafarers domiciled in its territory pending the development of a medical care service which would include within its scope workers generally and their dependants where such services do not exist and should inform the International Labour Office concerning the measures taken for this purpose.",
+      "variantNote": "No substantive variant between sources. Residual diff spans are PDF extraction artifacts only (running headers, page numbers, line-break hyphenation, spacing before punctuation), inspected individually.",
+      "amendmentHistory": "Amended once in force. 2022 (ILC 110, approved 6 June 2022, in force 23 December 2024): Standard A4.1 - new paragraphs 5 (prompt disembarkation of seafarers needing immediate medical care) and 6 (repatriation of the body or ashes of a seafarer who died during a voyage); Guideline B4.1.3 - new paragraphs 4 and 5; Guideline B4.1.4 paragraph 1(k) replaced. Everything else is 2006 text. Not named in the 2014, 2016 or 2018 amendment texts. Diff evidence: the substantive spans in consolidated2016 -> consolidated2022 are exactly those insertions and the 1(k) wording change ('the'/'their', 'or those', 'kin, as appropriate').",
+      "pendingAmendments2025": "2025 (ILC 113, adopted 6 June 2025, NOT in force, expected 23 December 2027): Guideline B4.1.1 paragraphs 2 and 4 amended (International Medical Guide for Seafarers and Fishers added to the reference guides). Not blended into fullText.",
+      "verificationMethod": "PRIMARY_SOURCE_FOUR_STAGE_DIFF: (1) the two 2006-original mirrors were sliced and word-diffed against each other; (2) the 2006 original was word-diffed against the ILO 2014+2016 consolidated text; (3) that text was word-diffed against the ILO 2014+2016+2018+2022 consolidated text; (4) every non-artifact diff span was matched against the authentic amendment texts (ILO 2014, 2016, 2018 and 2022 amendment documents). fullText is the stage-3 target block re-flowed to undo PDF line wrapping; its word sequence was re-diffed against the raw block (consistencyCheck).",
+      "diffEvidence": {
+        "mirror2006_ilo_vs_registerIri": {
+          "wordDiffSpans": 0,
+          "similarityRatio": 1.0
+        },
+        "original2006_vs_consolidated2016": {
+          "wordDiffSpans": 9,
+          "similarityRatio": 0.9812
+        },
+        "consolidated2016_vs_consolidated2022": {
+          "wordDiffSpans": 13,
+          "similarityRatio": 0.932
+        },
+        "consistencyCheck_reflow_vs_raw": {
+          "wordDiffSpans": 3,
+          "similarityRatio": 0.9943
+        },
+        "hyphenDecisions": [
+          {
+            "token": "ac-cess",
+            "decision": "JOIN",
+            "joinedForms": 111,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "prin-ciple",
+            "decision": "JOIN",
+            "joinedForms": 32,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "fa-cilities",
+            "decision": "JOIN",
+            "joinedForms": 415,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "on-board",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 75,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "pro-tection",
+            "decision": "JOIN",
+            "joinedForms": 454,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "pro-grammes",
+            "decision": "JOIN",
+            "joinedForms": 58,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "on-board",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 75,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "on-board",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 75,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "voy-ages",
+            "decision": "JOIN",
+            "joinedForms": 39,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "medi-cine",
+            "decision": "JOIN",
+            "joinedForms": 28,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "Train-ing",
+            "decision": "JOIN",
+            "joinedForms": 23,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "com-pleted",
+            "decision": "JOIN",
+            "joinedForms": 30,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "na-tional",
+            "decision": "JOIN",
+            "joinedForms": 528,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "im-mediate",
+            "decision": "JOIN",
+            "joinedForms": 17,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ter-ritory",
+            "decision": "JOIN",
+            "joinedForms": 78,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "first-aid",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "train-ing",
+            "decision": "JOIN",
+            "joinedForms": 149,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "life-saving",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "per-sons",
+            "decision": "JOIN",
+            "joinedForms": 137,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "as-sistance",
+            "decision": "JOIN",
+            "joinedForms": 46,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "five-year",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 2,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "up-to",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 28,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "includ-ing",
+            "decision": "JOIN",
+            "joinedForms": 272,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "proce-dures",
+            "decision": "JOIN",
+            "joinedForms": 233,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "re-lated",
+            "decision": "JOIN",
+            "joinedForms": 57,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "up-to",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 28,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "com-munication",
+            "decision": "JOIN",
+            "joinedForms": 24,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "up-to",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 28,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "med-ical",
+            "decision": "JOIN",
+            "joinedForms": 538,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "Shore-based",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "suf-fering",
+            "decision": "JOIN",
+            "joinedForms": 4,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "con-tinuation",
+            "decision": "MANUAL",
+            "result": "continuation",
+            "reason": "line-break hyphenation of a single English word (no such hyphenated compound exists); joined form is standard orthography.",
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "disem-barking",
+            "decision": "MANUAL",
+            "result": "disembarking",
+            "reason": "line-break hyphenation of a single English word (no such hyphenated compound exists); joined form is standard orthography.",
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "op-erational",
+            "decision": "JOIN",
+            "joinedForms": 36,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "tele-medical",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 1,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "co-ordination",
+            "decision": "JOIN",
+            "joinedForms": 4,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "facil-ities",
+            "decision": "JOIN_MAJORITY",
+            "joinedForms": 415,
+            "hyphenForms": 1,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "cov-ering",
+            "decision": "JOIN",
+            "joinedForms": 19,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "re-habilitation",
+            "decision": "JOIN",
+            "joinedForms": 1,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ac-cordance",
+            "decision": "JOIN",
+            "joinedForms": 356,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          }
+        ],
+        "hyphenRule": "Every hyphenated token whose second part is lower-case (line-end hyphenation and stray in-line hyphens from PDF extraction alike) was decided on evidence from the four source texts: JOIN when only the joined form occurs in the sources, KEEP when only the hyphenated form occurs, majority when both occur, KEEP_UNRESOLVED (hyphen retained, listed here) when neither occurs. Upper-case continuations (e.g. Director-General) keep the hyphen.",
+        "artifactNote": "Non-zero span counts in the mirror and stage-2/3 comparisons are explained field by field in amendmentHistory and variantNote; the remainder are PDF extraction artifacts (running headers, page numbers, line-break hyphenation, spacing before punctuation) that were inspected individually."
+      },
+      "verifiedBy": [
+        "PRIMARY_SOURCE_FOUR_STAGE_DIFF",
+        "AMENDMENT_TEXT_CROSSCHECK",
+        "AMENDMENT_HISTORY_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-13",
+      "primarySources": [
+        {
+          "file": "ILO_MLC2006_consolidated_2022.pdf",
+          "url": "https://www.ilo.org/sites/default/files/2024-10/NORMES_MLC%20Amendments-EN_2022_Web_1.pdf",
+          "sha256": "bc444a84c177558dfc043b027b47681f06d7155f793819e755984f1b785f7e43",
+          "bytes": 610483,
+          "fetchedUtc": "2026-09-12T20:28:04Z"
+        },
+        {
+          "file": "ILO_267866_MLC2006_2014_2016_consolidated.pdf",
+          "url": "https://www.ilo.org/media/267866/download",
+          "sha256": "3c3f1542f72e67a5df9fefb75c56117d223a74ccf06c7c8104a3332cec926ebb",
+          "bytes": 745545,
+          "fetchedUtc": "2026-09-12T20:30:52Z"
+        },
+        {
+          "file": "ILO_269841_MLC2006_original.pdf",
+          "url": "https://www.ilo.org/media/269841/download",
+          "sha256": "74f3f95ceda4d787027629ee6f2848cd9fda3695c6cd37ca57c894d0dffed422",
+          "bytes": 1163116,
+          "fetchedUtc": "2026-09-12T20:30:50Z"
+        },
+        {
+          "file": "RegisterIRI_MLC2006_original.pdf",
+          "url": "https://www.register-iri.com/wp-content/uploads/MLC-2006.pdf",
+          "sha256": "a335e8c065a4e8122ed486b487bd2e8d05fde1bfa8f70383946d6af537519ad9",
+          "bytes": 1098370,
+          "fetchedUtc": "2026-09-12T20:30:49Z"
+        }
+      ],
+      "amendmentTextSources": [
+        {
+          "file": "ILO_wcms_848492_2022_amendments.pdf",
+          "url": "https://www.ilo.org/sites/default/files/wcmsp5/groups/public/%40ed_norm/%40relconf/documents/meetingdocument/wcms_848492.pdf",
+          "sha256": "d9c0e177c0a1dd9fb60c59ae0bfc679f5074bc8d60024d8f1b2d42d7255ed340",
+          "bytes": 95665,
+          "fetchedUtc": "2026-09-12T21:28:35Z"
+        },
+        {
+          "file": "ILO_ILC113_2025_amendments.pdf",
+          "url": "https://www.ilo.org/sites/default/files/2025-06/ILC113-Instruments-[RELMEETINGS-250605-001]-Web-EN.pdf",
+          "sha256": "fb6aad9e90ddc3a916bc4d7ace7c011ff3474767cd70775f11cc8d1e2951f8bc",
+          "bytes": 160387,
+          "fetchedUtc": "2026-09-12T20:28:04Z"
+        }
+      ],
+      "secondarySources": []
+    }
+  ],
+  "unresolvedSources": [],
+  "relatedButOutOfScope": "ISM Code and ISPS Code Part A remain closed, frozen baselines. Appendices A2-I, A4-I, A5-I to A5-III and B5-I are not part of any Regulation block and are not reproduced here; where an amendment changed an Appendix it is mentioned in amendmentHistory only. Does not touch config/human-review-contract.json, academy_ism_* schema/RLS/tooling, any open PR in this series, or GASM Human Review Cloud staging."
+}
