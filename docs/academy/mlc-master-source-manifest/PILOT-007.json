@@ -1,0 +1,38 @@
+{
+  "manifestVersion": "MLC-PILOT-007",
+  "createdAt": "2026-09-08T09:30:46Z",
+  "note": "Provenance/reference record only, not a database write. Same status as PILOT-001 through 006.json: no academy_mlc_source_manifest table exists, no verification_stage asserted, not consumed by any promotion tooling. No migration, schema, or tooling change. Additive docs/ file only, on its own branch, separate from every other open PR in this series.",
+  "batchNote": "Prepared under an Owner-issued full-scope MLC Title 1-5 preparation instruction (2026-09-08). That instruction explicitly separates 'prepared/draft' from 'verified', 'human-accepted', 'merged' and 'live'. This file is source-text verification only, not a claim of curriculum readiness, Human Review acceptance, or Owner Finalization.",
+  "schemaExtensionNote": "Uses the same regulationRef/standardARef/guidelineBRef fields introduced in PILOT-001.json. No further schema change.",
+  "verificationMethodNote": "Same method as PILOT-004/005/006.json: no GROK/GEMINI access this session; diffed against two 2006-original mirrors plus the ILO's 2014+2016-consolidated 'as amended' text (ilo.org/media/267866), plus a targeted web search for 2018/2022/2025 amendment mentions.",
+  "verifiedSources": [
+    {
+      "sourceId": "ILO-MLC2006-T2-REG2.8",
+      "title": "Career and Skill Development and Opportunities for Seafarers' Employment",
+      "authority": "ILO",
+      "moduleCode": "mlc-code-foundations",
+      "flagAdministration": null,
+      "section": "Title 2, Regulation 2.8 / Standard A2.8 / Guideline B2.8 (including Guideline B2.8.1 and B2.8.2)",
+      "regulationRef": "Regulation 2.8 - Career and skill development and opportunities for seafarers' employment",
+      "standardARef": "Standard A2.8 - Career and skill development and employment opportunities for seafarers",
+      "guidelineBRef": "Guideline B2.8 - Career and skill development and employment opportunities for seafarers (Guideline B2.8.1 - Measures to promote career and skill development and employment opportunities for seafarers; Guideline B2.8.2 - Register of seafarers)",
+      "fullText": "Regulation 2.8 - Career and skill development and opportunities for seafarers' employment\n\nPurpose: To promote career and skill development and employment opportunities for seafarers\n\n1. Each Member shall have national policies to promote employment in the maritime sector and to encourage career and skill development and greater employment opportunities for seafarers domiciled in its territory.\n\nStandard A2.8 - Career and skill development and employment opportunities for seafarers\n\n1. Each Member shall have national policies that encourage career and skill development and employment opportunities for seafarers, in order to provide the maritime sector with a stable and competent workforce.\n\n2. The aim of the policies referred to in paragraph 1 of this Standard shall be to help seafarers strengthen their competencies, qualifications and employment opportunities.\n\n3. Each Member shall, after consulting the shipowners' and seafarers' organizations concerned, establish clear objectives for the vocational guidance, education and training of seafarers whose duties on board ship primarily relate to the safe operation and navigation of the ship, including ongoing training.\n\nGuideline B2.8 - Career and skill development and employment opportunities for seafarers\n\nGuideline B2.8.1 - Measures to promote career and skill development and employment opportunities for seafarers\n\n1. Measures to achieve the objectives set out in Standard A2.8 might include:\n(a) agreements providing for career development and skills training with a shipowner or an organization of shipowners; or\n(b) arrangements for promoting employment through the establishment and maintenance of registers or lists, by categories, of qualified seafarers; or\n(c) promotion of opportunities, both on board and ashore, for further training and education of seafarers to provide for skill development and portable competencies in order to secure and retain decent work, to improve individual employment prospects and to meet the changing technology and labour market conditions of the maritime industry.\n\nGuideline B2.8.2 - Register of seafarers\n\n1. Where registers or lists govern the employment of seafarers, these registers or lists should include all occupational categories of seafarers in a manner determined by national law or practice or by collective agreement.\n\n2. Seafarers on such a register or list should have priority of engagement for seafaring.\n\n3. Seafarers on such a register or list should be required to be available for work in a manner to be determined by national law or practice or by collective agreement.\n\n4. To the extent that national laws or regulations permit, the number of seafarers on such registers or lists should be periodically reviewed so as to achieve levels adapted to the needs of the maritime industry.\n\n5. When a reduction in the number of seafarers on such a register or list becomes necessary, all appropriate measures should be taken to prevent or minimize detrimental effects on seafarers, account being taken of the economic and social situation of the country concerned.",
+      "variantNote": "No substantive variant across all three sources - pagination/header artifacts only.",
+      "amendmentHistory": "Convention adopted 23 February 2006; entered into force 20 August 2013. Confirmed unchanged through the 2014+2016 consolidated edition by direct diff. No mention found in the 2018, 2022, or 2025 amendment rounds. Regulation 2.8 does not appear in any round's affected-provisions list.",
+      "verificationMethod": "Diffed across two 2006-original primary-source mirrors (byte-identical) plus the 2014+2016-consolidated ILO source (pagination artifacts only, no wording change).",
+      "verifiedBy": [
+        "PRIMARY_SOURCE_TRIPLE_MIRROR_DIFF",
+        "AMENDMENT_HISTORY_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-08",
+      "primarySources": [
+        "https://www.register-iri.com/wp-content/uploads/MLC-2006.pdf",
+        "https://www.ilo.org/media/269841/download",
+        "https://www.ilo.org/media/267866/download"
+      ],
+      "secondarySources": []
+    }
+  ],
+  "unresolvedSources": [],
+  "relatedButOutOfScope": "Same boundary as PILOT-001 through 006.json: ISM Code and ISPS Code Part A remain closed, frozen baselines, not reopened or modified. Does not touch config/human-review-contract.json, academy_ism_* schema/RLS/tooling, any open PR in this series, or GASM Human Review Cloud staging - standalone additive provenance record."
+}
