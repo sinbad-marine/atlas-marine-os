@@ -1,0 +1,38 @@
+{
+  "manifestVersion": "MLC-PILOT-005",
+  "createdAt": "2026-09-08T09:30:46Z",
+  "note": "Provenance/reference record only, not a database write. Same status as PILOT-001 through 004.json: no academy_mlc_source_manifest table exists, no verification_stage asserted, not consumed by any promotion tooling. No migration, schema, or tooling change. Additive docs/ file only, on its own branch, separate from every other open PR in this series.",
+  "batchNote": "Prepared under an Owner-issued full-scope MLC Title 1-5 preparation instruction (2026-09-08). That instruction explicitly separates 'prepared/draft' from 'verified', 'human-accepted', 'merged' and 'live'. This file is source-text verification only, not a claim of curriculum readiness, Human Review acceptance, or Owner Finalization.",
+  "schemaExtensionNote": "Uses the same regulationRef/standardARef/guidelineBRef fields introduced in PILOT-001.json. No further schema change.",
+  "verificationMethodNote": "Same method as PILOT-004.json: no GROK/GEMINI access this session; diffed against two 2006-original mirrors plus the ILO's 2014+2016-consolidated 'as amended' text (ilo.org/media/267866), plus a targeted web search for 2018/2022/2025 amendment mentions.",
+  "verifiedSources": [
+    {
+      "sourceId": "ILO-MLC2006-T2-REG2.6",
+      "title": "Seafarer Compensation for the Ship's Loss or Foundering",
+      "authority": "ILO",
+      "moduleCode": "mlc-code-foundations",
+      "flagAdministration": null,
+      "section": "Title 2, Regulation 2.6 / Standard A2.6 / Guideline B2.6 (including Guideline B2.6.1)",
+      "regulationRef": "Regulation 2.6 - Seafarer compensation for the ship's loss or foundering",
+      "standardARef": "Standard A2.6 - Seafarer compensation for the ship's loss or foundering",
+      "guidelineBRef": "Guideline B2.6 - Seafarer compensation for the ship's loss or foundering (Guideline B2.6.1 - Calculation of indemnity against unemployment)",
+      "fullText": "Regulation 2.6 - Seafarer compensation for the ship's loss or foundering\n\nPurpose: To ensure that seafarers are compensated when a ship is lost or has foundered\n\n1. Seafarers are entitled to adequate compensation in the case of injury, loss or unemployment arising from the ship's loss or foundering.\n\nStandard A2.6 - Seafarer compensation for the ship's loss or foundering\n\n1. Each Member shall make rules ensuring that, in every case of loss or foundering of any ship, the shipowner shall pay to each seafarer on board an indemnity against unemployment resulting from such loss or foundering.\n\n2. The rules referred to in paragraph 1 of this Standard shall be without prejudice to any other rights a seafarer may have under the national law of the Member concerned for losses or injuries arising from a ship's loss or foundering.\n\nGuideline B2.6 - Seafarer compensation for the ship's loss or foundering\n\nGuideline B2.6.1 - Calculation of indemnity against unemployment\n\n1. The indemnity against unemployment resulting from a ship's foundering or loss should be paid for the days during which the seafarer remains in fact unemployed at the same rate as the wages payable under the employment agreement, but the total indemnity payable to any one seafarer may be limited to two months' wages.\n\n2. Each Member should ensure that seafarers have the same legal remedies for recovering such indemnities as they have for recovering arrears of wages earned during the service.",
+      "variantNote": "No substantive variant across all three sources - pagination/header artifacts only.",
+      "amendmentHistory": "Convention adopted 23 February 2006; entered into force 20 August 2013. Confirmed unchanged through the 2014+2016 consolidated edition by direct diff. No mention found in the 2018, 2022, or 2025 amendment rounds (amended provisions: 2018 - A2.1, A2.2; 2022 - Regs 1.4, 2.5, 3.1, 3.2, 4.1, 4.3; 2025 - Regs 1.4, 2.4, 2.5). Regulation 2.6 does not appear in any round's affected-provisions list.",
+      "verificationMethod": "Diffed across two 2006-original primary-source mirrors (byte-identical) plus the 2014+2016-consolidated ILO source (pagination artifacts only, no wording change).",
+      "verifiedBy": [
+        "PRIMARY_SOURCE_TRIPLE_MIRROR_DIFF",
+        "AMENDMENT_HISTORY_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-08",
+      "primarySources": [
+        "https://www.register-iri.com/wp-content/uploads/MLC-2006.pdf",
+        "https://www.ilo.org/media/269841/download",
+        "https://www.ilo.org/media/267866/download"
+      ],
+      "secondarySources": []
+    }
+  ],
+  "unresolvedSources": [],
+  "relatedButOutOfScope": "Same boundary as PILOT-001 through 004.json: ISM Code and ISPS Code Part A remain closed, frozen baselines, not reopened or modified. Does not touch config/human-review-contract.json, academy_ism_* schema/RLS/tooling, any open PR in this series, or GASM Human Review Cloud staging - standalone additive provenance record."
+}
