@@ -1,0 +1,713 @@
+{
+  "manifestVersion": "MLC-PILOT-018",
+  "createdAt": "2026-09-13T07:21:58Z",
+  "note": "Provenance/reference record only, not a database write. Same status as PILOT-001 through 009.json: no academy_mlc_source_manifest table exists, no verification_stage asserted, not consumed by any promotion tooling. No migration, schema, or tooling change. Additive docs/ file only, on its own branch, separate from every other open PR in this series.",
+  "batchNote": "Prepared under the Owner's 2026-09-08 full-scope MLC Title 1-5 instruction and the Owner's 2026-09-12 GO on the resumption plan, which released this Regulation from SOURCE HOLD only after the current consolidated ILO text and the authentic amendment texts were reacquired and their provenance recorded (see primarySources/amendmentTextSources). 'Prepared/draft' is not 'verified', 'human-accepted', 'merged' or 'live'. This file is source-text verification only.",
+  "schemaExtensionNote": "Uses the regulationRef/standardARef/guidelineBRef fields introduced in PILOT-001.json and adds textEdition, pendingAmendments2025, diffEvidence and amendmentTextSources. No further schema change; no tooling reads these files.",
+  "verificationMethodNote": "No GROK/GEMINI access this session. Method: PRIMARY_SOURCE_FOUR_STAGE_DIFF (see verifiedSources[0].verificationMethod) over the ILO consolidated 2022 text, the ILO 2014+2016 consolidated text and two 2006-original mirrors, with every substantive diff span matched to the authentic ILO amendment texts of 2014, 2016, 2018 and 2022. The 2025 amendments (ILC 113, adopted 6 June 2025, expected entry into force 23 December 2027) are NOT in force and are NOT blended into fullText; they are recorded in pendingAmendments2025 only. Running headers, page numbers and soft hyphenation were removed when re-flowing fullText; every hyphen join is listed in diffEvidence.hyphenJoinsApplied for audit.",
+  "verifiedSources": [
+    {
+      "sourceId": "ILO-MLC2006-T3-REG3.1",
+      "title": "Accommodation and recreational facilities",
+      "authority": "ILO",
+      "moduleCode": "mlc-code-foundations",
+      "flagAdministration": null,
+      "section": "Title 3, Regulation 3.1 / Standard A3.1 / Guideline B3.1 (including Guidelines B3.1.1 to B3.1.12)",
+      "regulationRef": "Regulation 3.1 - Accommodation and recreational facilities",
+      "standardARef": "Standard A3.1 - Accommodation and recreational facilities",
+      "guidelineBRef": "Guideline B3.1 - Accommodation and recreational facilities; Guideline B3.1.1 - Design and construction; Guideline B3.1.2 - Ventilation; Guideline B3.1.3 - Heating; Guideline B3.1.4 - Lighting; Guideline B3.1.5 - Sleeping rooms; Guideline B3.1.6 - Mess rooms; Guideline B3.1.7 - Sanitary accommodation; Guideline B3.1.8 - Hospital accommodation; Guideline B3.1.9 - Other facilities; Guideline B3.1.10 - Bedding, mess utensils and miscellaneous provisions; Guideline B3.1.11 - Recreational facilities, mail and ship visit arrangements; Guideline B3.1.12 - Prevention of noise and vibration",
+      "textEdition": "Maritime Labour Convention, 2006, as amended - consolidated text established by the International Labour Office including the Amendments of 2014, 2016, 2018 and 2022 to the Code (ILO publication dated 2 October 2024). This is the text in force on the verification date.",
+      "fullText": "Regulation 3.1 - Accommodation and recreational facilities\n\nPurpose: To ensure that seafarers have decent accommodation and recreational facilities on board\n\n1. Each Member shall ensure that ships that fly its flag provide and maintain decent accommodations and recreational facilities for seafarers working or living on board, or both, consistent with promoting the seafarers' health and well-being.\n\n2. The requirements in the Code implementing this Regulation which relate to ship construction and equipment apply only to ships constructed on or after the date when this Convention comes into force for the Member concerned. For ships constructed before that date, the requirements relating to ship construction and equipment that are set out in the Accommodation of Crews Convention (Revised), 1949 (No. 92), and the Accommodation of Crews (Supplementary Provisions) Convention, 1970 (No. 133), shall continue to apply to the extent that they were applicable, prior to that date, under the law or practice of the Member concerned. A ship shall be deemed to have been constructed on the date when its keel is laid or when it is at a similar stage of construction.\n\n3. Unless expressly provided otherwise, any requirement under an amendment to the Code relating to the provision of seafarer accommodation and recreational facilities shall apply only to ships constructed on or after the amendment takes effect for the Member concerned.\n\nStandard A3.1 - Accommodation and recreational facilities\n\n1. Each Member shall adopt laws and regulations requiring that ships that fly its flag:\n\n(a) meet minimum standards to ensure that any accommodation for seafarers, working or living on board, or both, is safe, decent and in accordance with the relevant provisions of this Standard; and\n\n(b) are inspected to ensure initial and ongoing compliance with those standards.\n\n2. In developing and applying the laws and regulations to implement this Standard, the competent authority, after consulting the shipowners' and seafarers' organizations concerned, shall:\n\n(a) take into account Regulation 4.3 and the associated Code provisions on health and safety protection and accident prevention, in light of the specific needs of seafarers that both live and work on board ship; and\n\n(b) give due consideration to the guidance contained in Part B of this Code.\n\n3. The inspections required under Regulation 5.1.4 shall be carried out when:\n\n(a) a ship is registered or re-registered; or\n\n(b) the seafarer accommodation on a ship has been substantially altered.\n\n4. The competent authority shall pay particular attention to ensuring implementation of the requirements of this Convention relating to:\n\n(a) the size of rooms and other accommodation spaces;\n\n(b) heating and ventilation;\n\n(c) noise and vibration and other ambient factors;\n\n(d) sanitary facilities;\n\n(e) lighting; and\n\n(f) hospital accommodation.\n\n5. The competent authority of each Member shall require that ships that fly its flag meet the minimum standards for on-board accommodation and recreational facilities that are set out in paragraphs 6 to 17 of this Standard.\n\n6. With respect to general requirements for accommodation:\n\n(a) there shall be adequate headroom in all seafarer accommodation; the minimum permitted headroom in all seafarer accommodation where full and free movement is necessary shall be not less than 203 centimetres; the competent authority may permit some limited reduction in headroom in any space, or part of any space, in such accommodation where it is satisfied that such reduction:\n\n(i) is reasonable; and\n\n(ii) will not result in discomfort to the seafarers;\n\n(b) the accommodation shall be adequately insulated;\n\n(c) in ships other than passenger ships, as defined in Regulation 2(e) and (f) of the International Convention for the Safety of Life at Sea, 1974, as amended (the \"SOLAS Convention\"), sleeping rooms shall be situated above the load line amidships or aft, except that in exceptional cases, where the size, type or intended service of the ship renders any other location impracticable, sleeping rooms may be located in the fore part of the ship, but in no case forward of the collision bulkhead;\n\n(d) in passenger ships, and in special ships constructed in compliance with the IMO Code of Safety for Special Purpose Ships, 1983, and subsequent versions (hereinafter called \"special purpose ships\"), the competent authority may, on condition that satisfactory arrangements are made for lighting and ventilation, permit the location of sleeping rooms below the load line, but in no case shall they be located immediately beneath working alleyways;\n\n(e) there shall be no direct openings into sleeping rooms from cargo and machinery spaces or from galleys, storerooms, drying rooms or communal sanitary areas; that part of a bulkhead separating such places from sleeping rooms and external bulkheads shall be efficiently constructed of steel or other approved substance and be watertight and gas-tight;\n\n(f) the materials used to construct internal bulkheads, panelling and sheeting, floors and joinings shall be suitable for the purpose and conducive to ensuring a healthy environment;\n\n(g) proper lighting and sufficient drainage shall be provided; and\n\n(h) accommodation and recreational and catering facilities shall meet the requirements in Regulation 4.3, and the related provisions in the Code, on health and safety protection and accident prevention, with respect to preventing the risk of exposure to hazardous levels of noise and vibration and other ambient factors and chemicals on board ships, and to provide an acceptable occupational and on-board living environment for seafarers.\n\n7. With respect to requirements for ventilation and heating:\n\n(a) sleeping rooms and mess rooms shall be adequately ventilated;\n\n(b) ships, except those regularly engaged in trade where temperate climatic conditions do not require this, shall be equipped with air conditioning for seafarer accommodation, for any separate radio room and for any centralized machinery control room;\n\n(c) all sanitary spaces shall have ventilation to the open air, independently of any other part of the accommodation; and\n\n(d) adequate heat through an appropriate heating system shall be provided, except in ships exclusively on voyages in tropical climates.\n\n8. With respect to requirements for lighting, subject to such special arrangements as may be permitted in passenger ships, sleeping rooms and mess rooms shall be lit by natural light and provided with adequate artificial light.\n\n9. When sleeping accommodation on board ships is required, the following requirements for sleeping rooms apply:\n\n(a) in ships other than passenger ships, an individual sleeping room shall be provided for each seafarer; in the case of ships of less than 3,000 gross tonnage or special purpose ships, exemptions from this requirement may be granted by the competent authority after consultation with the shipowners' and seafarers' organizations concerned;\n\n(b) separate sleeping rooms shall be provided for men and for women;\n\n(c) sleeping rooms shall be of adequate size and properly equipped so as to ensure reasonable comfort and to facilitate tidiness;\n\n(d) a separate berth for each seafarer shall in all circumstances be provided;\n\n(e) the minimum inside dimensions of a berth shall be at least 198 centimetres by 80 centimetres;\n\n(f) in single berth seafarers' sleeping rooms the floor area shall not be less than:\n\n(i) 4.5 square metres in ships of less than 3,000 gross tonnage;\n\n(ii) 5.5 square metres in ships of 3,000 gross tonnage or over but less than 10,000 gross tonnage;\n\n(iii) 7 square metres in ships of 10,000 gross tonnage or over;\n\n(g) however, in order to provide single berth sleeping rooms on ships of less than 3,000 gross tonnage, passenger ships and special purpose ships, the competent authority may allow a reduced floor area;\n\n(h) in ships of less than 3,000 gross tonnage other than passenger ships and special purpose ships, sleeping rooms may be occupied by a maximum of two seafarers; the floor area of such sleeping rooms shall not be less than 7 square metres;\n\n(i) on passenger ships and special purpose ships the floor area of sleeping rooms for seafarers not performing the duties of ships' officers shall not be less than:\n\n(i) 7.5 square metres in rooms accommodating two persons;\n\n(ii) 11.5 square metres in rooms accommodating three persons;\n\n(iii) 14.5 square metres in rooms accommodating four persons;\n\n(j) on special purpose ships sleeping rooms may accommodate more than four persons; the floor area of such sleeping rooms shall not be less than 3.6 square metres per person;\n\n(k) on ships other than passenger ships and special purpose ships, sleeping rooms for seafarers who perform the duties of ships' officers, where no private sitting room or day room is provided, the floor area per person shall not be less than:\n\n(i) 7.5 square metres in ships of less than 3,000 gross tonnage;\n\n(ii) 8.5 square metres in ships of 3,000 gross tonnage or over but less than 10,000 gross tonnage;\n\n(iii) 10 square metres in ships of 10,000 gross tonnage or over;\n\n(l) on passenger ships and special purpose ships the floor area for seafarers performing the duties of ships' officers where no private sitting room or day room is provided, the floor area per person for junior officers shall not be less than 7.5 square metres and for senior officers not less than 8.5 square metres; junior officers are understood to be at the operational level, and senior officers at the management level;\n\n(m) the master, the chief engineer and the chief navigating officer shall have, in addition to their sleeping rooms, an adjoining sitting room, day room or equivalent additional space; ships of less than 3,000 gross tonnage may be exempted by the competent authority from this requirement after consultation with the shipowners' and seafarers' organizations concerned;\n\n(n) for each occupant, the furniture shall include a clothes locker of ample space (minimum 475 litres) and a drawer or equivalent space of not less than 56 litres; if the drawer is incorporated in the clothes locker then the combined minimum volume of the clothes locker shall be 500 litres; it shall be fitted with a shelf and be able to be locked by the occupant so as to ensure privacy;\n\n(o) each sleeping room shall be provided with a table or desk, which may be of the fixed, drop-leaf or slide-out type, and with comfortable seating accommodation as necessary.\n\n10. With respect to requirements for mess rooms:\n\n(a) mess rooms shall be located apart from the sleeping rooms and as close as practicable to the galley; ships of less than 3,000 gross tonnage may be exempted by the competent authority from this requirement after consultation with the shipowners' and seafarers' organizations concerned; and\n\n(b) mess rooms shall be of adequate size and comfort and properly furnished and equipped (including ongoing facilities for refreshment), taking account of the number of seafarers likely to use them at any one time; provision shall be made for separate or common mess room facilities as appropriate.\n\n11. With respect to requirements for sanitary facilities:\n\n(a) all seafarers shall have convenient access on the ship to sanitary facilities meeting minimum standards of health and hygiene and reasonable standards of comfort, with separate sanitary facilities being provided for men and for women;\n\n(b) there shall be sanitary facilities within easy access of the navigating bridge and the machinery space or near the engine room control centre; ships of less than 3,000 gross tonnage may be exempted by the competent authority from this requirement after consultation with the shipowners' and seafarers' organizations concerned;\n\n(c) in all ships a minimum of one toilet, one wash basin and one tub or shower or both for every six persons or less who do not have personal facilities shall be provided at a convenient location;\n\n(d) with the exception of passenger ships, each sleeping room shall be provided with a washbasin having hot and cold running fresh water, except where such a washbasin is situated in the private bathroom provided;\n\n(e) in passenger ships normally engaged on voyages of not more than four hours' duration, consideration may be given by the competent authority to special arrangements or to a reduction in the number of facilities required; and\n\n(f) hot and cold running fresh water shall be available in all wash places.\n\n12. With respect to requirements for hospital accommodation, ships carrying 15 or more seafarers and engaged in a voyage of more than three days' duration shall provide separate hospital accommodation to be used exclusively for medical purposes; the competent authority may relax this requirement for ships engaged in coastal trade; in approving on-board hospital accommodation, the competent authority shall ensure that the accommodation will, in all weathers, be easy of access, provide comfortable housing for the occupants and be conducive to their receiving prompt and proper attention.\n\n13. Appropriately situated and furnished laundry facilities shall be available.\n\n14. All ships shall have a space or spaces on open deck to which the seafarers can have access when off duty, which are of adequate area having regard to the size of the ship and the number of seafarers on board.\n\n15. All ships shall be provided with separate offices or a common ship's office for use by deck and engine departments; ships of less than 3,000 gross tonnage may be exempted by the competent authority from this requirement after consultation with the shipowners' and seafarers' organizations concerned.\n\n16. Ships regularly trading to mosquito-infested ports shall be fitted with appropriate devices as required by the competent authority.\n\n17. Appropriate seafarers' recreational facilities, amenities and services, including social connectivity, as adapted to meet the special needs of seafarers who must live and work on ships, shall be provided on board for the benefit of all seafarers, taking into account Regulation 4.3 and the associated Code provisions on health and safety protection and accident prevention.\n\n18. The competent authority shall require frequent inspections to be carried out on board ships, by or under the authority of the master, to ensure that seafarer accommodation is clean, decently habitable and maintained in a good state of repair. The results of each such inspection shall be recorded and be available for review.\n\n19. In the case of ships where there is need to take account, without discrimination, of the interests of seafarers having differing and distinctive religious and social practices, the competent authority may, after consultation with the shipowners' and seafarers' organizations concerned, permit fairly applied variations in respect of this Standard on condition that such variations do not result in overall facilities less favourable than those which would result from the application of this Standard.\n\n20. Each Member may, after consultation with the shipowners' and seafarers' organizations concerned, exempt ships of less than 200 gross tonnage where it is reasonable to do so, taking account of the size of the ship and the number of persons on board in relation to the requirements of the following provisions of this Standard:\n\n(a) paragraphs 7(b), 11(d) and 13; and\n\n(b) paragraph 9(f) and (h) to (l) inclusive, with respect to floor area only.\n\n21. Any exemptions with respect to the requirements of this Standard may be made only where they are expressly permitted in this Standard and only for particular circumstances in which such exemptions can be clearly justified on strong grounds and subject to protecting the seafarers' health and safety.\n\nGuideline B3.1 - Accommodation and recreational facilities\n\nGuideline B3.1.1 - Design and construction\n\n1. External bulkheads of sleeping rooms and mess rooms should be adequately insulated. All machinery casings and all boundary bulkheads of galleys and other spaces in which heat is produced should be adequately insulated where there is a possibility of resulting heat effects in adjoining accommodation or passageways. Measures should also be taken to provide protection from heat effects of steam or hot-water service pipes or both.\n\n2. Sleeping rooms, mess rooms, recreation rooms and alleyways in the accommodation space should be adequately insulated to prevent condensation or overheating.\n\n3. The bulkhead surfaces and deckheads should be of material with a surface easily kept clean. No form of construction likely to harbour vermin should be used.\n\n4. The bulkhead surfaces and deckheads in sleeping rooms and mess rooms should be capable of being easily kept clean and light in colour with a durable, non-toxic finish.\n\n5. The decks in all seafarer accommodation should be of approved material and construction and should provide a non-slip surface impervious to damp and easily kept clean.\n\n6. Where the floorings are made of composite materials, the joints with the sides should be profiled to avoid crevices.\n\nGuideline B3.1.2 - Ventilation\n\n1. The system of ventilation for sleeping rooms and mess rooms should be controlled so as to maintain the air in a satisfactory condition and to ensure a sufficiency of air movement in all conditions of weather and climate.\n\n2. Air-conditioning systems, whether of a centralized or individual unit type, should be designed to:\n\n(a) maintain the air at a satisfactory temperature and relative humidity as compared to outside air conditions, ensure a sufficiency of air changes in all air-conditioned spaces, take account of the particular characteristics of operations at sea and not produce excessive noises or vibrations; and\n\n(b) facilitate easy cleaning and disinfection to prevent or control the spread of disease.\n\n3. Power for the operation of the air conditioning and other aids to ventilation required by the preceding paragraphs of this Guideline should be available at all times when seafarers are living or working on board and conditions so require. However, this power need not be provided from an emergency source.\n\nGuideline B3.1.3 - Heating\n\n1. The system of heating the seafarer accommodation should be in operation at all times when seafarers are living or working on board and conditions require its use.\n\n2. In all ships in which a heating system is required, the heating should be by means of hot water, warm air, electricity, steam or equivalent. However, within the accommodation area, steam should not be used as a medium for heat transmission. The heating system should be capable of maintaining the temperature in seafarer accommodation at a satisfactory level under normal conditions of weather and climate likely to be met within the trade in which the ship is engaged. The competent authority should prescribe the standard to be provided.\n\n3. Radiators and other heating apparatus should be placed and, where necessary, shielded so as to avoid risk of fire or danger or discomfort to the occupants.\n\nGuideline B3.1.4 - Lighting\n\n1. In all ships, electric light should be provided in the seafarer accommodation. If there are not two independent sources of electricity for lighting, additional lighting should be provided by properly constructed lamps or lighting apparatus for emergency use.\n\n2. In sleeping rooms an electric reading lamp should be installed at the head of each berth.\n\n3. Suitable standards of natural and artificial lighting should be fixed by the competent authority.\n\nGuideline B3.1.5 - Sleeping rooms\n\n1. There should be adequate berth arrangements on board, making it as comfortable as possible for the seafarer and any partner who may accompany the seafarer.\n\n2. Where the size of the ship, the activity in which it is to be engaged and its layout make it reasonable and practicable, sleeping rooms should be planned and equipped with a private bathroom, including a toilet, so as to provide reasonable comfort for the occupants and to facilitate tidiness.\n\n3. As far as practicable, sleeping rooms of seafarers should be so arranged that watches are separated and that no seafarers working during the day share a room with watchkeepers.\n\n4. In the case of seafarers performing the duty of petty officers there should be no more than two persons per sleeping room.\n\n5. Consideration should be given to extending the facility referred to in Standard A3.1, paragraph 9(m), to the second engineer officer when practicable.\n\n6. Space occupied by berths and lockers, chests of drawers and seats should be included in the measurement of the floor area. Small or irregularly shaped spaces which do not add effectively to the space available for free movement and cannot be used for installing furniture should be excluded.\n\n7. Berths should not be arranged in tiers of more than two; in the case of berths placed along the ship's side, there should be only a single tier where a sidelight is situated above a berth.\n\n8. The lower berth in a double tier should be not less than 30 centimetres above the floor; the upper berth should be placed approximately midway between the bottom of the lower berth and the lower side of the deckhead beams.\n\n9. The framework and the lee-board, if any, of a berth should be of approved material, hard, smooth, and not likely to corrode or to harbour vermin.\n\n10. If tubular frames are used for the construction of berths, they should be completely sealed and without perforations which would give access to vermin.\n\n11. Each berth should be fitted with a comfortable mattress with cushioning bottom or a combined cushioning mattress, including a spring bottom or a spring mattress. The mattress and cushioning material used should be made of approved material. Stuffing of material likely to harbour vermin should not be used.\n\n12. When one berth is placed over another, a dust-proof bottom should be fitted beneath the bottom mattress or spring bottom of the upper berth.\n\n13. The furniture should be of smooth, hard material not liable to warp or corrode.\n\n14. Sleeping rooms should be fitted with curtains or equivalent for the sidelights.\n\n15. Sleeping rooms should be fitted with a mirror, small cabinets for toilet requisites, a book rack and a sufficient number of coat hooks.\n\nGuideline B3.1.6 - Mess rooms\n\n1. Mess room facilities may be either common or separate. The decision in this respect should be taken after consultation with seafarers' and shipowners' representatives and subject to the approval of the competent authority. Account should be taken of factors such as the size of the ship and the distinctive cultural, religious and social needs of the seafarers.\n\n2. Where separate mess room facilities are to be provided to seafarers, then separate mess rooms should be provided for:\n\n(a) master and officers; and\n\n(b) petty officers and other seafarers.\n\n3. On ships other than passenger ships, the floor area of mess rooms for seafarers should be not less than 1.5 square metres per person of the planned seating capacity.\n\n4. In all ships, mess rooms should be equipped with tables and appropriate seats, fixed or movable, sufficient to accommodate the greatest number of seafarers likely to use them at any one time.\n\n5. There should be available at all times when seafarers are on board:\n\n(a) a refrigerator, which should be conveniently situated and of sufficient capacity for the number of persons using the mess room or mess rooms;\n\n(b) facilities for hot beverages; and\n\n(c) cool water facilities.\n\n6. Where available pantries are not accessible to mess rooms, adequate lockers for mess utensils and proper facilities for washing utensils should be provided.\n\n7. The tops of tables and seats should be of damp-resistant material.\n\nGuideline B3.1.7 - Sanitary accommodation\n\n1. Washbasins and tub baths should be of adequate size and constructed of approved material with a smooth surface not liable to crack, flake or corrode.\n\n2. All toilets should be of an approved pattern and provided with an ample flush of water or with some other suitable flushing means, such as air, which are available at all times and independently controllable.\n\n3. Sanitary accommodation intended for the use of more than one person should comply with the following:\n\n(a) floors should be of approved durable material, impervious to damp, and should be properly drained;\n\n(b) bulkheads should be of steel or other approved material and should be watertight up to at least 23 centimetres above the level of the deck;\n\n(c) the accommodation should be sufficiently lit, heated and ventilated;\n\n(d) toilets should be situated convenient to, but separate from, sleeping rooms and wash rooms, without direct access from the sleeping rooms or from a passage between sleeping rooms and toilets to which there is no other access; this requirement does not apply where a toilet is located in a compartment between two sleeping rooms having a total of not more than four seafarers; and\n\n(e) where there is more than one toilet in a compartment, they should be sufficiently screened to ensure privacy.\n\n4. The laundry facilities provided for seafarers' use should include:\n\n(a) washing machines;\n\n(b) drying machines or adequately heated and ventilated drying rooms; and\n\n(c) irons and ironing boards or their equivalent.\n\nGuideline B3.1.8 - Hospital accommodation\n\n1. The hospital accommodation should be designed so as to facilitate consultation and the giving of medical first aid and to help prevent the spread of infectious diseases.\n\n2. The arrangement of the entrance, berths, lighting, ventilation, heating and water supply should be designed to ensure the comfort and facilitate the treatment of the occupants.\n\n3. The number of hospital berths required should be prescribed by the competent authority.\n\n4. Sanitary accommodation should be provided for the exclusive use of the occupants of the hospital accommodation, either as part of the accommodation or in close proximity thereto. Such sanitary accommodation should comprise a minimum of one toilet, one washbasin and one tub or shower.\n\nGuideline B3.1.9 - Other facilities\n\n1. Where separate facilities for engine department personnel to change their clothes are provided, they should be:\n\n(a) located outside the machinery space but with easy access to it; and\n\n(b) fitted with individual clothes lockers as well as with tubs or showers or both and washbasins having hot and cold running fresh water.\n\nGuideline B3.1.10 - Bedding, mess utensils and miscellaneous provisions\n\n1. Each Member should consider applying the following principles:\n\n(a) clean bedding and mess utensils should be supplied by the shipowner to all seafarers for use on board during service on the ship, and such seafarers should be responsible for their return at times specified by the master and on completion of service in the ship;\n\n(b) bedding should be of good quality, and plates, cups and other mess utensils should be of approved material which can be easily cleaned; and\n\n(c) towels, soap and toilet paper for all seafarers should be provided by the shipowner.\n\nGuideline B3.1.11 - Recreational facilities, mail and ship visit arrangements\n\n1. Recreational facilities and services should be reviewed frequently to ensure that they are appropriate in the light of changes in the needs of seafarers resulting from technical, operational and other developments in the shipping industry.\n\n2. Furnishings for recreational facilities should as a minimum include a bookcase and facilities for reading, writing and, where practicable, games.\n\n3. In connection with the planning of recreation facilities, the competent authority should give consideration to the provision of a canteen.\n\n4. Consideration should also be given to including the following facilities at no cost to the seafarer, where practicable:\n\n(a) a smoking room;\n\n(b) television viewing and the reception of radio broadcasts;\n\n(c) showing of films, the stock of which should be adequate for the duration of the voyage and, where necessary, changed at reasonable intervals;\n\n(d) sports equipment including exercise equipment, table games and deck games;\n\n(e) where possible, facilities for swimming;\n\n(f) a library containing vocational and other books, the stock of which should be adequate for the duration of the voyage and changed at reasonable intervals;\n\n(g) facilities for recreational handicrafts;\n\n(h) electronic equipment such as a radio, television, video recorders, DVD/CD player, personal computer and software and cassette recorder/player;\n\n(i) where appropriate, the provision of bars on board for seafarers unless these are contrary to national, religious or social customs; and\n\n(j) reasonable access to ship-to-shore telephone communications, where available, with any charges for the use of these services being reasonable in amount.\n\n5. Every effort should be given to ensuring that the forwarding of seafarers' mail is as reliable and expeditious as possible. Efforts should also be considered for avoiding seafarers being required to pay additional postage when mail has to be readdressed owing to circumstances beyond their control.\n\n6. Measures should be considered to ensure, subject to any applicable national or international laws or regulations, that whenever possible and reasonable seafarers are expeditiously granted permission to have their partners, relatives and friends as visitors on board their ship when in port. Such measures should meet any concerns for security clearances.\n\n7. Consideration should be given to the possibility of allowing seafarers to be accompanied by their partners on occasional voyages where this is practicable and reasonable. Such partners should carry adequate insurance cover against accident and illness; the shipowners should give every assistance to the seafarer to effect such insurance.\n\n8. Shipowners should, so far as is reasonably practicable, provide seafarers on board their ships with internet access, with charges, if any, being reasonable in amount.\n\nGuideline B3.1.12 - Prevention of noise and vibration\n\n1. Accommodation and recreational and catering facilities should be located as far as practicable from the engines, steering gear rooms, deck winches, ventilation, heating and air-conditioning equipment and other noisy machinery and apparatus.\n\n2. Acoustic insulation or other appropriate sound-absorbing materials should be used in the construction and finishing of bulkheads, deckheads and decks within the sound-producing spaces as well as self-closing noise-isolating doors for machinery spaces.\n\n3. Engine rooms and other machinery spaces should be provided, wherever practicable, with soundproof centralized control rooms for engine-room personnel. Working spaces, such as the machine shop, should be insulated, as far as practicable, from the general engine-room noise and measures should be taken to reduce noise in the operation of machinery.\n\n4. The limits for noise levels for working and living spaces should be in conformity with the ILO international guidelines on exposure levels, including those in the ILO code of practice entitled Ambient factors in the workplace, 2001, and, where applicable, the specific protection recommended by the International Maritime Organization, and with any subsequent amending and supplementary instruments for acceptable noise levels on board ships. A copy of the applicable instruments in English or the working language of the ship should be carried on board and should be accessible to seafarers.\n\n5. No accommodation or recreational or catering facilities should be exposed to excessive vibration.",
+      "variantNote": "No substantive variant between sources. Residual diff spans are PDF extraction artifacts only (running headers, page numbers, line-break hyphenation, spacing before punctuation), inspected individually. The 2006 mirrors carry two typographical extraction defects ('con truction'/'contruction', '(hereinafer') that the consolidated texts do not; wording identical.",
+      "amendmentHistory": "Amended once in force. 2022 (ILC 110, approved 6 June 2022, in force 23 December 2024): Standard A3.1 paragraph 17 replaced ('including social connectivity'); Guideline B3.1.11 paragraph 4(j) replaced (ship-to-shore telephone communications at reasonable charges; the words 'and email and Internet facilities' removed); Guideline B3.1.11 - new paragraph 8 (internet access on board at reasonable charges). Everything else is 2006 text. Not named in the 2014, 2016 or 2018 amendment texts. Diff evidence: the substantive spans in consolidated2016 -> consolidated2022 are exactly those three changes.",
+      "pendingAmendments2025": "2025 (ILC 113, adopted 6 June 2025, NOT in force, expected 23 December 2027): Guideline B3.1.10 - new paragraph 1(d) (menstrual hygiene products and means of disposal). Not blended into fullText.",
+      "verificationMethod": "PRIMARY_SOURCE_FOUR_STAGE_DIFF: (1) the two 2006-original mirrors were sliced and word-diffed against each other; (2) the 2006 original was word-diffed against the ILO 2014+2016 consolidated text; (3) that text was word-diffed against the ILO 2014+2016+2018+2022 consolidated text; (4) every non-artifact diff span was matched against the authentic amendment texts (ILO 2014, 2016, 2018 and 2022 amendment documents). fullText is the stage-3 target block re-flowed to undo PDF line wrapping; its word sequence was re-diffed against the raw block (consistencyCheck).",
+      "diffEvidence": {
+        "mirror2006_ilo_vs_registerIri": {
+          "wordDiffSpans": 3,
+          "similarityRatio": 0.9994
+        },
+        "original2006_vs_consolidated2016": {
+          "wordDiffSpans": 18,
+          "similarityRatio": 0.9843
+        },
+        "consolidated2016_vs_consolidated2022": {
+          "wordDiffSpans": 16,
+          "similarityRatio": 0.9894
+        },
+        "consistencyCheck_reflow_vs_raw": {
+          "wordDiffSpans": 8,
+          "similarityRatio": 0.996
+        },
+        "hyphenDecisions": [
+          {
+            "token": "well-being",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 20,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "con-structed",
+            "decision": "JOIN",
+            "joinedForms": 29,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "equip-ment",
+            "decision": "JOIN",
+            "joinedForms": 130,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "work-ing",
+            "decision": "JOIN",
+            "joinedForms": 254,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "rele-vant",
+            "decision": "JOIN",
+            "joinedForms": 197,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "Stand-ard",
+            "decision": "JOIN",
+            "joinedForms": 577,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "organiza-tions",
+            "decision": "JOIN",
+            "joinedForms": 317,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "re-registered",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "implemen-tation",
+            "decision": "JOIN",
+            "joinedForms": 95,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "on-board",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 75,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "facil-ities",
+            "decision": "JOIN_MAJORITY",
+            "joinedForms": 415,
+            "hyphenForms": 1,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "herein-after",
+            "decision": "MANUAL",
+            "result": "hereinafter",
+            "reason": "the 2006 ILO mirror carries '(hereinafter' as one word (Standard A3.1 paragraph 6); line-break hyphenation only.",
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "gas-tight",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "require-ments",
+            "decision": "JOIN",
+            "joinedForms": 480,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "on-board",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 75,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "condi-tions",
+            "decision": "JOIN",
+            "joinedForms": 328,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ac-commodation",
+            "decision": "JOIN",
+            "joinedForms": 184,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "re-quirements",
+            "decision": "JOIN",
+            "joinedForms": 480,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "compe-tent",
+            "decision": "JOIN",
+            "joinedForms": 670,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "organiza-tions",
+            "decision": "JOIN",
+            "joinedForms": 317,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "per-sons",
+            "decision": "JOIN",
+            "joinedForms": 137,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "per-forming",
+            "decision": "JOIN",
+            "joinedForms": 12,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "add-ition",
+            "decision": "JOIN",
+            "joinedForms": 24,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "equiva-lent",
+            "decision": "JOIN",
+            "joinedForms": 51,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ship-owners",
+            "decision": "JOIN",
+            "joinedForms": 345,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "drop-leaf",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "slide-out",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "prac-ticable",
+            "decision": "JOIN",
+            "joinedForms": 93,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ship-owners",
+            "decision": "JOIN",
+            "joinedForms": 345,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "pro-vided",
+            "decision": "JOIN",
+            "joinedForms": 512,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "wash-basin",
+            "decision": "JOIN",
+            "joinedForms": 8,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "on-board",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 75,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "hous-ing",
+            "decision": "JOIN",
+            "joinedForms": 3,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "mosquito-infested",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "appro-priate",
+            "decision": "JOIN",
+            "joinedForms": 319,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "includ-ing",
+            "decision": "JOIN",
+            "joinedForms": 272,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "accom-modation",
+            "decision": "JOIN",
+            "joinedForms": 184,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "re-sults",
+            "decision": "JOIN",
+            "joinedForms": 15,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "discrimi-nation",
+            "decision": "JOIN",
+            "joinedForms": 16,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "favour-able",
+            "decision": "JOIN",
+            "joinedForms": 32,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "rea-sonable",
+            "decision": "JOIN",
+            "joinedForms": 103,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ade-quately",
+            "decision": "JOIN",
+            "joinedForms": 31,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "hot-water",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "accom-modation",
+            "decision": "JOIN",
+            "joinedForms": 184,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "non-toxic",
+            "decision": "MANUAL",
+            "result": "non-toxic",
+            "reason": "both ILO consolidated PDFs break the line as 'non-' + 'toxic'; the compound is hyphenated in standard usage and no unhyphenated 'nontoxic' occurs in any source.",
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "non-slip",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "con-trolled",
+            "decision": "MANUAL",
+            "result": "controlled",
+            "reason": "line-break hyphenation of a single English word (no such hyphenated compound exists); joined form is standard orthography.",
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "Air-conditioning",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "air-conditioned",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ac-commodation",
+            "decision": "JOIN",
+            "joinedForms": 184,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "accommoda-tion",
+            "decision": "JOIN",
+            "joinedForms": 184,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "com-fortable",
+            "decision": "JOIN",
+            "joinedForms": 12,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "com-fort",
+            "decision": "JOIN",
+            "joinedForms": 25,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "situ-ated",
+            "decision": "JOIN",
+            "joinedForms": 28,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "lee-board",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "com-pletely",
+            "decision": "JOIN",
+            "joinedForms": 6,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "mat-tress",
+            "decision": "JOIN",
+            "joinedForms": 17,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "dust-proof",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "requi-sites",
+            "decision": "JOIN",
+            "joinedForms": 2,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "representa-tives",
+            "decision": "JOIN",
+            "joinedForms": 90,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "sep-arate",
+            "decision": "JOIN",
+            "joinedForms": 49,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "seafar-ers",
+            "decision": "JOIN",
+            "joinedForms": 2076,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "damp-resistant",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "be-tween",
+            "decision": "JOIN",
+            "joinedForms": 109,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "compe-tent",
+            "decision": "JOIN",
+            "joinedForms": 670,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "occu-pants",
+            "decision": "JOIN",
+            "joinedForms": 17,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "sea-farers",
+            "decision": "JOIN_MAJORITY",
+            "joinedForms": 2076,
+            "hyphenForms": 1,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "book-case",
+            "decision": "MANUAL",
+            "result": "bookcase",
+            "reason": "both ILO consolidated PDFs break the line as 'book-' + 'case'; standard orthography 'bookcase' (Guideline B3.1.5); no hyphenated form occurs in any source.",
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "author-ity",
+            "decision": "JOIN",
+            "joinedForms": 679,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ad-equate",
+            "decision": "JOIN_MAJORITY",
+            "joinedForms": 164,
+            "hyphenForms": 1,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ship-to",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "avoid-ing",
+            "decision": "JOIN",
+            "joinedForms": 10,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ac-companied",
+            "decision": "JOIN",
+            "joinedForms": 48,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "reason-able",
+            "decision": "JOIN",
+            "joinedForms": 103,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "heat-ing",
+            "decision": "JOIN",
+            "joinedForms": 39,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "air-conditioning",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "sound-absorbing",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "sound-producing",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "self-closing",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "noise-isolating",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "prac-ticable",
+            "decision": "JOIN",
+            "joinedForms": 93,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "engine-room",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 8,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "engine-room",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 8,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "oper-ation",
+            "decision": "JOIN",
+            "joinedForms": 81,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "conform-ity",
+            "decision": "JOIN",
+            "joinedForms": 20,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "Eng-lish",
+            "decision": "JOIN",
+            "joinedForms": 63,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ac-cessible",
+            "decision": "JOIN",
+            "joinedForms": 17,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          }
+        ],
+        "hyphenRule": "Every hyphenated token whose second part is lower-case (line-end hyphenation and stray in-line hyphens from PDF extraction alike) was decided on evidence from the four source texts: JOIN when only the joined form occurs in the sources, KEEP when only the hyphenated form occurs, majority when both occur, KEEP_UNRESOLVED (hyphen retained, listed here) when neither occurs. Upper-case continuations (e.g. Director-General) keep the hyphen.",
+        "artifactNote": "Non-zero span counts in the mirror and stage-2/3 comparisons are explained field by field in amendmentHistory and variantNote; the remainder are PDF extraction artifacts (running headers, page numbers, line-break hyphenation, spacing before punctuation) that were inspected individually."
+      },
+      "verifiedBy": [
+        "PRIMARY_SOURCE_FOUR_STAGE_DIFF",
+        "AMENDMENT_TEXT_CROSSCHECK",
+        "AMENDMENT_HISTORY_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-13",
+      "primarySources": [
+        {
+          "file": "ILO_MLC2006_consolidated_2022.pdf",
+          "url": "https://www.ilo.org/sites/default/files/2024-10/NORMES_MLC%20Amendments-EN_2022_Web_1.pdf",
+          "sha256": "bc444a84c177558dfc043b027b47681f06d7155f793819e755984f1b785f7e43",
+          "bytes": 610483,
+          "fetchedUtc": "2026-09-12T20:28:04Z"
+        },
+        {
+          "file": "ILO_267866_MLC2006_2014_2016_consolidated.pdf",
+          "url": "https://www.ilo.org/media/267866/download",
+          "sha256": "3c3f1542f72e67a5df9fefb75c56117d223a74ccf06c7c8104a3332cec926ebb",
+          "bytes": 745545,
+          "fetchedUtc": "2026-09-12T20:30:52Z"
+        },
+        {
+          "file": "ILO_269841_MLC2006_original.pdf",
+          "url": "https://www.ilo.org/media/269841/download",
+          "sha256": "74f3f95ceda4d787027629ee6f2848cd9fda3695c6cd37ca57c894d0dffed422",
+          "bytes": 1163116,
+          "fetchedUtc": "2026-09-12T20:30:50Z"
+        },
+        {
+          "file": "RegisterIRI_MLC2006_original.pdf",
+          "url": "https://www.register-iri.com/wp-content/uploads/MLC-2006.pdf",
+          "sha256": "a335e8c065a4e8122ed486b487bd2e8d05fde1bfa8f70383946d6af537519ad9",
+          "bytes": 1098370,
+          "fetchedUtc": "2026-09-12T20:30:49Z"
+        }
+      ],
+      "amendmentTextSources": [
+        {
+          "file": "ILO_wcms_848492_2022_amendments.pdf",
+          "url": "https://www.ilo.org/sites/default/files/wcmsp5/groups/public/%40ed_norm/%40relconf/documents/meetingdocument/wcms_848492.pdf",
+          "sha256": "d9c0e177c0a1dd9fb60c59ae0bfc679f5074bc8d60024d8f1b2d42d7255ed340",
+          "bytes": 95665,
+          "fetchedUtc": "2026-09-12T21:28:35Z"
+        },
+        {
+          "file": "ILO_ILC113_2025_amendments.pdf",
+          "url": "https://www.ilo.org/sites/default/files/2025-06/ILC113-Instruments-[RELMEETINGS-250605-001]-Web-EN.pdf",
+          "sha256": "fb6aad9e90ddc3a916bc4d7ace7c011ff3474767cd70775f11cc8d1e2951f8bc",
+          "bytes": 160387,
+          "fetchedUtc": "2026-09-12T20:28:04Z"
+        }
+      ],
+      "secondarySources": []
+    }
+  ],
+  "unresolvedSources": [],
+  "relatedButOutOfScope": "ISM Code and ISPS Code Part A remain closed, frozen baselines. Appendices A2-I, A4-I, A5-I to A5-III and B5-I are not part of any Regulation block and are not reproduced here; where an amendment changed an Appendix it is mentioned in amendmentHistory only. Does not touch config/human-review-contract.json, academy_ism_* schema/RLS/tooling, any open PR in this series, or GASM Human Review Cloud staging."
+}

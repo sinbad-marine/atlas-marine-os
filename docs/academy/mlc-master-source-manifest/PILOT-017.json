@@ -1,0 +1,475 @@
+{
+  "manifestVersion": "MLC-PILOT-017",
+  "createdAt": "2026-09-13T07:21:56Z",
+  "note": "Provenance/reference record only, not a database write. Same status as PILOT-001 through 009.json: no academy_mlc_source_manifest table exists, no verification_stage asserted, not consumed by any promotion tooling. No migration, schema, or tooling change. Additive docs/ file only, on its own branch, separate from every other open PR in this series.",
+  "batchNote": "Prepared under the Owner's 2026-09-08 full-scope MLC Title 1-5 instruction and the Owner's 2026-09-12 GO on the resumption plan, which released this Regulation from SOURCE HOLD only after the current consolidated ILO text and the authentic amendment texts were reacquired and their provenance recorded (see primarySources/amendmentTextSources). 'Prepared/draft' is not 'verified', 'human-accepted', 'merged' or 'live'. This file is source-text verification only.",
+  "schemaExtensionNote": "Uses the regulationRef/standardARef/guidelineBRef fields introduced in PILOT-001.json and adds textEdition, pendingAmendments2025, diffEvidence and amendmentTextSources. No further schema change; no tooling reads these files.",
+  "verificationMethodNote": "No GROK/GEMINI access this session. Method: PRIMARY_SOURCE_FOUR_STAGE_DIFF (see verifiedSources[0].verificationMethod) over the ILO consolidated 2022 text, the ILO 2014+2016 consolidated text and two 2006-original mirrors, with every substantive diff span matched to the authentic ILO amendment texts of 2014, 2016, 2018 and 2022. The 2025 amendments (ILC 113, adopted 6 June 2025, expected entry into force 23 December 2027) are NOT in force and are NOT blended into fullText; they are recorded in pendingAmendments2025 only. Running headers, page numbers and soft hyphenation were removed when re-flowing fullText; every hyphen join is listed in diffEvidence.hyphenJoinsApplied for audit.",
+  "verifiedSources": [
+    {
+      "sourceId": "ILO-MLC2006-T4-REG4.3",
+      "title": "Health and safety protection and accident prevention",
+      "authority": "ILO",
+      "moduleCode": "mlc-code-foundations",
+      "flagAdministration": null,
+      "section": "Title 4, Regulation 4.3 / Standard A4.3 / Guideline B4.3 (including Guidelines B4.3.1 to B4.3.11)",
+      "regulationRef": "Regulation 4.3 - Health and safety protection and accident prevention",
+      "standardARef": "Standard A4.3 - Health and safety protection and accident prevention; Standard A4.3 should be in the format, and using the classification, as specified by the International Labour Office.",
+      "guidelineBRef": "Guideline B4.3 - Health and safety protection and accident prevention; Guideline B4.3.1 - Provisions on occupational accidents, injuries and diseases; Guideline B4.3.2 - Exposure to noise; Guideline B4.3.3 - Exposure to vibration; Guideline B4.3.4 - Obligations of shipowners; Guideline B4.3.5 - Reporting and collection of statistics; Guideline B4.3.6 - Investigations; Guideline B4.3.7 - National protection and prevention programmes; Guideline B4.3.8 - Content of protection and prevention programmes; Guideline B4.3.9 - Instruction in occupational safety and health protection and the prevention of occupational accidents; Guideline B4.3.10 - Safety and health education of young seafarers; Guideline B4.3.11 - International cooperation",
+      "textEdition": "Maritime Labour Convention, 2006, as amended - consolidated text established by the International Labour Office including the Amendments of 2014, 2016, 2018 and 2022 to the Code (ILO publication dated 2 October 2024). This is the text in force on the verification date.",
+      "fullText": "Regulation 4.3 - Health and safety protection and accident prevention\n\nPurpose: To ensure that seafarers' work environment on board ships promotes occupational safety and health\n\n1. Each Member shall ensure that seafarers on ships that fly its flag are provided with occupational health protection and live, work and train on board ship in a safe and hygienic environment.\n\n2. Each Member shall develop and promulgate national guidelines for the management of occupational safety and health on board ships that fly its flag, after consultation with representative shipowners' and seafarers' organizations and taking into account applicable codes, guidelines and standards recommended by international organizations, national administrations and maritime industry organizations.\n\n3. Each Member shall adopt laws and regulations and other measures addressing the matters specified in the Code, taking into account relevant international instruments, and set standards for occupational safety and health protection and accident prevention on ships that fly its flag.\n\nStandard A4.3 - Health and safety protection and accident prevention\n\n1. The laws and regulations and other measures to be adopted in accordance with Regulation 4.3, paragraph 3, shall include the following subjects:\n\n(a) the adoption and effective implementation and promotion of occupational safety and health policies and programmes on ships that fly the Member's flag, including risk evaluation as well as training and instruction of seafarers;\n\n(b) reasonable precautions to prevent occupational accidents, injuries and diseases on board ship, including through the provision of all necessary appropriately-sized personal protective equipment and measures to reduce and prevent the risk of exposure to harmful levels of ambient factors and chemicals, as well as the risk of injury or disease that may arise from the use of equipment and machinery on board ships;\n\n(c) on-board programmes for the prevention of occupational accidents, injuries and diseases and for continuous improvement in occupational safety and health protection, involving seafarers' representatives and all other persons concerned in their implementation, taking account of preventive measures, including engineering and design control, substitution of processes and procedures for collective and individual tasks, and the use of personal protective equipment; and\n\n(d) requirements for inspecting, reporting and correcting unsafe conditions and for investigating and reporting on-board occupational accidents.\n\n2. The provisions referred to in paragraph 1 of this Standard shall:\n\n(a) take account of relevant international instruments dealing with occupational safety and health protection in general and with specific risks, and address all matters relevant to the prevention of occupational accidents, injuries and diseases that may be applicable to the work of seafarers and particularly those which are specific to maritime employment;\n\n(b) clearly specify the obligation of shipowners, seafarers and others concerned to comply with the applicable standards and with the ship's occupational safety and health policy and programme with special attention being paid to the safety and health of seafarers under the age of 18;\n\n(c) specify the duties of the master or a person designated by the master, or both, to take specific responsibility for the implementation of and compliance with the ship's occupational safety and health policy and programme; and\n\n(d) specify the authority of the ship's seafarers appointed or elected as safety representatives to participate in meetings of the ship's safety committee. Such a committee shall be established on board a ship on which there are five or more seafarers.\n\n3. The laws and regulations and other measures referred to in Regulation 4.3, paragraph 3, shall be regularly reviewed in consultation with the representatives of the shipowners' and seafarers' organizations and, if necessary, revised to take account of changes in technology and research in order to facilitate continuous improvement in occupational safety and health policies and programmes and to provide a safe occupational environment for seafarers on ships that fly the Member's flag.\n\n4. Compliance with the requirements of applicable international instruments on the acceptable levels of exposure to workplace hazards on board ships and on the development and implementation of ships' occupational safety and health policies and programmes shall be considered as meeting the requirements of this Convention.\n\n5. Each Member shall ensure that:\n\n(a) all deaths of seafarers employed, engaged or working on board ships that fly its flag are adequately investigated and recorded, and reported on an annual basis to the Director-General of the International Labour Office to be published in a global register;\n\n(b) occupational accidents, injuries and diseases are adequately reported, taking into account the guidance provided by the International Labour Organization with respect to the reporting and recording of occupational accidents and diseases;\n\n(c) comprehensive statistics of such accidents and diseases are kept, analysed and published and, where appropriate, followed up by research into general trends and into the hazards identified; and\n\n(d) occupational accidents are investigated.\n\n6. Reporting and investigation of occupational safety and health matters shall be designed to ensure the protection of seafarers' personal data, and shall take account of the guidance provided by the International Labour Organization on this matter.\n\n7. The competent authority shall cooperate with shipowners' and seafarers' organizations to take measures to bring to the attention of all seafarers information concerning particular hazards on board ships, for instance, by posting official notices containing relevant instructions.\n\n8. The competent authority shall require that shipowners conducting risk evalu-ation in relation to management of occupational safety and health refer to appropriate statistical information from their ships and from general statistics provided by the competent authority.\n\nGuideline B4.3 - Health and safety protection and accident prevention\n\nGuideline B4.3.1 - Provisions on occupational accidents, injuries and diseases\n\n1. The provisions required under Standard A4.3 should take into account the ILO code of practice entitled Accident prevention on board ship at sea and in port , 1996, and subsequent versions and other related ILO and other international standards and guidelines and codes of practice regarding occupational safety and health protection, including any exposure levels that they may identify. Account should also be taken of the latest version of the Guidance on eliminating shipboard harassment and bullying jointly published by the International Chamber of Shipping and the International Transport Workers' Federation.\n\n2. The competent authority should ensure that the national guidelines for the management of occupational safety and health address the following matters, in particular:\n\n(a) general and basic provisions;\n\n(b) structural features of the ship, including means of access and asbestos-related risks;\n\n(c) machinery;\n\n(d) the effects of the extremely low or high temperature of any surfaces with which seafarers may be in contact;\n\n(e) the effects of noise in the workplace and in shipboard accommodation;\n\n(f) the effects of vibration in the workplace and in shipboard accommodation;\n\n(g) the effects of ambient factors, other than those referred to in subparagraphs (e) and (f), in the workplace and in shipboard accommodation, including tobacco smoke;\n\n(h) special safety measures on and below deck;\n\n(i) loading and unloading equipment;\n\n(j) fire prevention and fire-fighting;\n\n(k) anchors, chains and lines;\n\n(l) dangerous cargo and ballast;\n\n(m) personal protective equipment for seafarers;\n\n(n) work in enclosed spaces;\n\n(o) physical and mental effects of fatigue;\n\n(p) the effects of drug and alcohol dependency;\n\n(q) HIV/AIDS protection and prevention; and\n\n(r) emergency and accident response.\n\n3. The assessment of risks and reduction of exposure on the matters referred to in paragraph 2 of this Guideline should take account of the physical occupational health effects, including manual handling of loads, noise and vibration, the chemical and biological occupational health effects, the mental occupational health effects, the physical and mental health effects of fatigue, and occupational accidents. The necessary measures should take due account of the preventive principle according to which, among other things, combating risk at the source, adapting work to the individual, especially as regards the design of workplaces, and replacing the dangerous by the non-dangerous or the less dangerous, have precedence over personal protective equipment for seafarers.\n\n4. In addition, the competent authority should ensure that the implications for health and safety are taken into account, particularly in the following areas:\n\n(a) emergency and accident response;\n\n(b) the effects of drug and alcohol dependency;\n\n(c) HIV/AIDS protection and prevention; and\n\n(d) harassment and bullying.\n\nGuideline B4.3.2 - Exposure to noise\n\n1. The competent authority, in conjunction with the competent international bodies and with representatives of shipowners' and seafarers' organizations concerned, should review on an ongoing basis the problem of noise on board ships with the objective of improving the protection of seafarers, in so far as practicable, from the adverse effects of exposure to noise.\n\n2. The review referred to in paragraph 1 of this Guideline should take account of the adverse effects of exposure to excessive noise on the hearing, health and comfort of seafarers and the measures to be prescribed or recommended to reduce shipboard noise to protect seafarers. The measures to be considered should include the following:\n\n(a) instruction of seafarers in the dangers to hearing and health of prolonged exposure to high noise levels and in the proper use of noise protection devices and equipment;\n\n(b) provision of approved hearing protection equipment to seafarers where necessary; and\n\n(c) assessment of risk and reduction of exposure levels to noise in all accommodation and recreational and catering facilities, as well as engine rooms and other machinery spaces.\n\nGuideline B4.3.3 - Exposure to vibration\n\n1. The competent authority, in conjunction with the competent international bodies and with representatives of shipowners' and seafarers' organizations concerned, and taking into account, as appropriate, relevant international standards, should review on an ongoing basis the problem of vibration on board ships with the objective of improving the protection of seafarers, in so far as practicable, from the adverse effects of vibration.\n\n2. The review referred to in paragraph 1 of this Guideline should cover the effect of exposure to excessive vibration on the health and comfort of seafarers and the measures to be prescribed or recommended to reduce shipboard vibration to protect seafarers. The measures to be considered should include the following:\n\n(a) instruction of seafarers in the dangers to their health of prolonged exposure to vibration;\n\n(b) provision of approved personal protective equipment to seafarers where necessary; and\n\n(c) assessment of risks and reduction of exposure to vibration in all accommodation and recreational and catering facilities by adopting measures in accordance with the guidance provided by the ILO code of practice entitled Ambient factors in the workplace, 2001, and any subsequent revisions, taking account of the difference between exposure in those areas and in the workplace.\n\nGuideline B4.3.4 - Obligations of shipowners\n\n1. Any obligation on the shipowner to provide protective equipment or other accident prevention safeguards should, in general, be accompanied by provisions requiring their use by seafarers and by a requirement for seafarers to comply with the relevant accident prevention and health protection measures.\n\n2. Account should also be taken of Articles 7 and 11 of the Guarding of Machinery Convention, 1963 (No. 119), and the corresponding provisions of the Guarding of Machinery Recommendation, 1963 (No. 118), under which the obligation to ensure compliance with the requirement that machinery in use is properly guarded, and its use without appropriate guards prevented, rests on the employer, while there is an obligation on the worker not to use machinery without the guards being in position nor to make inoperative the guards provided.\n\nGuideline B4.3.5 - Reporting and collection of statistics\n\n1. All occupational accidents and occupational injuries and diseases should be reported so that they can be investigated and comprehensive statistics can be kept, analysed and published, taking account of protection of the personal data of the seafarers concerned. Reports should not be limited to fatalities or to accidents involving the ship.\n\n2. The statistics referred to in paragraph 1 of this Guideline should record the numbers, nature, causes and effects of occupational accidents and occupational injuries and diseases, with a clear indication, as applicable, of the department on board a ship, the type of accident and whether at sea or in port.\n\n3. Each Member should have due regard to any international system or model for recording accidents to seafarers which may have been established by the International Labour Organization.\n\n4. The fatality data to be reported under subparagraph (a) of paragraph 5 of\n\nStandard A4.3 should be in the format, and using the classification, as specified by the International Labour Office.\n\n5. The fatality data should include, but not be limited to, information on the type (classification) of death, ship type and gross tonnage, location of fatality (at sea, in port, at anchorage), and seafarer's sex, age, occupational position and department.\n\nGuideline B4.3.6 - Investigations\n\n1. The competent authority should undertake investigations into the causes and circumstances of all occupational accidents and occupational injuries and diseases resulting in loss of life or serious personal injury, and such other cases as may be specified in national laws or regulations.\n\n2. Consideration should be given to including the following as subjects of investigation:\n\n(a) working environment, such as working surfaces, layout of machinery, means of access, lighting and methods of work;\n\n(b) incidence in different age groups of occupational accidents and occupational injuries and diseases;\n\n(c) special physiological or psychological problems created by the shipboard environment;\n\n(d) problems arising from physical stress on board a ship, in particular as a consequence of increased workload;\n\n(e) problems arising from and effects of technical developments and their influence on the composition of crews;\n\n(f) problems arising from any human failures; and\n\n(g) problems arising from harassment and bullying.\n\nGuideline B4.3.7 - National protection and prevention programmes\n\n1. In order to provide a sound basis for measures to promote occupational safety and health protection and prevention of accidents, injuries and diseases which are due to particular hazards of maritime employment, research should be undertaken into general trends and into such hazards as are revealed by statistics.\n\n2. The implementation of protection and prevention programmes for the promotion of occupational safety and health should be so organized that the competent authority, shipowners and seafarers or their representatives and other appropriate bodies may play an active role, including through such means as information sessions, on-board guidelines on maximum exposure levels to potentially harmful ambient workplace factors and other hazards or outcomes of a systematic risk evaluation process. In particular, national or local joint occupational safety and health protection and accident prevention committees or ad hoc working parties and on-board committees, on which shipowners' and seafarers' organizations concerned are represented, should be established.\n\n3. Where such activity takes place at company level, the representation of seafarers on any safety committee on board that shipowner's ships should be considered.\n\nGuideline B4.3.8 - Content of protection and prevention programmes\n\n1. Consideration should be given to including the following in the functions of the committees and other bodies referred to in Guideline B4.3.7, paragraph 2:\n\n(a) the preparation of national guidelines and policies for occupational safety and health management systems and for accident prevention provisions, rules and manuals;\n\n(b) the organization of occupational safety and health protection and accident prevention training and programmes;\n\n(c) the organization of publicity on occupational safety and health protection and accident prevention, including films, posters, notices and brochures; and\n\n(d) the distribution of literature and information on occupational safety and health protection and accident prevention so that it reaches seafarers on board ships.\n\n2. Relevant provisions or recommendations adopted by the appropriate national authorities or organizations or international organizations should be taken into account by those preparing texts of occupational safety and health protection and accident prevention measures or recommended practices.\n\n3. In formulating occupational safety and health protection and accident prevention programmes, each Member should have due regard to any code of practice concerning the safety and health of seafarers which may have been published by the International Labour Organization.\n\nGuideline B4.3.9 - Instruction in occupational safety and health protection and the prevention of occupational accidents\n\n1. The curriculum for the training referred to in Standard A4.3, paragraph 1(a), should be reviewed periodically and brought up to date in the light of development in types and sizes of ships and in their equipment, as well as changes in manning practices, nationality, language and the organization of work on board ships.\n\n2. There should be continuous occupational safety and health protection and accident prevention publicity. Such publicity might take the following forms:\n\n(a) educational audiovisual material, such as films, for use in vocational training centres for seafarers and where possible shown on board ships;\n\n(b) display of posters on board ships;\n\n(c) inclusion in periodicals read by seafarers of articles on the hazards of maritime employment and on occupational safety and health protection and accident prevention measures; and\n\n(d) special campaigns using various publicity media to instruct seafarers, including campaigns on safe working practices.\n\n3. The publicity referred to in paragraph 2 of this Guideline should take account of the different nationalities, languages and cultures of seafarers on board ships.\n\nGuideline B4.3.10 - Safety and health education of young seafarers\n\n1. Safety and health regulations should refer to any general provisions on medical examinations before and during employment and on the prevention of accidents and the protection of health in employment, which may be applicable to the work of seafarers. Such regulations should specify measures which will minimize occupational dangers to young seafarers in the course of their duties.\n\n2. Except where a young seafarer is recognized as fully qualified in a pertinent skill by the competent authority, the regulations should specify restrictions on young seafarers undertaking, without appropriate supervision and instruction, certain types of work presenting special risk of accident or of detrimental effect on their health or physical development, or requiring a particular degree of maturity, experience or skill. In determining the types of work to be restricted by the regulations, the competent authority might consider in particular work involving:\n\n(a) the lifting, moving or carrying of heavy loads or objects;\n\n(b) entry into boilers, tanks and cofferdams;\n\n(c) exposure to harmful noise and vibration levels;\n\n(d) operating hoisting and other power machinery and tools, or acting as signallers to operators of such equipment;\n\n(e) handling mooring or tow lines or anchoring equipment;\n\n(f) rigging;\n\n(g) work aloft or on deck in heavy weather;\n\n(h) nightwatch duties;\n\n(i) servicing of electrical equipment;\n\n(j) exposure to potentially harmful materials, or harmful physical agents such as dangerous or toxic substances and ionizing radiations;\n\n(k) the cleaning of catering machinery; and\n\n(l) the handling or taking charge of ships' boats.\n\n3. Practical measures should be taken by the competent authority or through the appropriate machinery to bring to the attention of young seafarers information concerning the prevention of accidents and the protection of their health on board ships. Such measures could include adequate instruction in courses, official accident prevention publicity intended for young persons and professional instruction and supervision of young seafarers.\n\n4. Education and training of young seafarers both ashore and on board ships should include guidance on the detrimental effects on their health and well-being of the abuse of alcohol and drugs and other potentially harmful substances, and the risk and concerns relating to HIV/AIDS and of other health risk related activities.\n\nGuideline B4.3.11 - International cooperation\n\n1. Members, with the assistance as appropriate of intergovernmental and other international organizations, should endeavour, in cooperation with each other, to achieve the greatest possible uniformity of action for the promotion of occupational safety and health protection and prevention of accidents.\n\n2. In developing programmes for promoting occupational safety and health protection and prevention of accidents under Standard A4.3, each Member should have due regard to relevant codes of practice published by the International Labour Organization and the appropriate standards of international organizations.\n\n3. Members should have regard to the need for international cooperation in the continuous promotion of activity related to occupational safety and health protection and prevention of occupational accidents. Such cooperation might take the form of:\n\n(a) bilateral or multilateral arrangements for uniformity in occupational safety and health protection and accident prevention standards and safeguards;\n\n(b) exchange of information on particular hazards affecting seafarers and on means of promoting occupational safety and health protection and preventing accidents;\n\n(c) assistance in testing of equipment and inspection according to the national regulations of the flag State;\n\n(d) collaboration in the preparation and dissemination of occupational safety and health protection and accident prevention provisions, rules or manuals;\n\n(e) collaboration in the production and use of training aids; and\n\n(f) joint facilities for, or mutual assistance in, the training of seafarers in occupational safety and health protection, accident prevention and safe working practices.",
+      "variantNote": "No substantive variant between sources. Residual diff spans are PDF extraction artifacts only (running headers, page numbers, line-break hyphenation, spacing before punctuation), inspected individually.",
+      "amendmentHistory": "Amended in two rounds in force. 2016 (ILC 105, approved 9 June 2016, in force 8 January 2019): Guideline B4.3.1 paragraph 1 - sentence added referring to the ICS/ITF 'Guidance on eliminating shipboard harassment and bullying'; Guideline B4.3.1 paragraph 4 - new subparagraph (d) 'harassment and bullying'; Guideline B4.3.6 paragraph 2 - new subparagraph (g) 'problems arising from harassment and bullying'. 2022 (ILC 110, in force 23 December 2024): Standard A4.3 paragraph 1(b) replaced (appropriately-sized personal protective equipment); Standard A4.3 paragraph 5 chapeau replaced, new subparagraph 5(a) (all deaths investigated, recorded and reported annually to the ILO) with former (a)-(c) renumbered (b)-(d); Guideline B4.3.5 - new paragraphs 4 and 5 (fatality data). Diff evidence: original -> consolidated2016 shows exactly the three 2016 insertions; consolidated2016 -> consolidated2022 shows exactly the 2022 changes (one apparent move of '(c) exposure to harmful noise and vibration levels' is a diff-alignment artifact of the renumbering, same wording).",
+      "pendingAmendments2025": "2025 (ILC 113, adopted 6 June 2025, NOT in force, expected 23 December 2027): Standard A4.3 - new paragraph 1(e) and new paragraphs 2(e)-(h) on shipboard violence and harassment; Guideline B4.3.1 paragraphs 1, 2(m) and 4(d) amended; Guideline B4.3.6 paragraph 2(g) amended and new paragraph 3; Guideline B4.3.11 new paragraph 4. Not blended into fullText.",
+      "verificationMethod": "PRIMARY_SOURCE_FOUR_STAGE_DIFF: (1) the two 2006-original mirrors were sliced and word-diffed against each other; (2) the 2006 original was word-diffed against the ILO 2014+2016 consolidated text; (3) that text was word-diffed against the ILO 2014+2016+2018+2022 consolidated text; (4) every non-artifact diff span was matched against the authentic amendment texts (ILO 2014, 2016, 2018 and 2022 amendment documents). fullText is the stage-3 target block re-flowed to undo PDF line wrapping; its word sequence was re-diffed against the raw block (consistencyCheck).",
+      "diffEvidence": {
+        "mirror2006_ilo_vs_registerIri": {
+          "wordDiffSpans": 0,
+          "similarityRatio": 1.0
+        },
+        "original2006_vs_consolidated2016": {
+          "wordDiffSpans": 17,
+          "similarityRatio": 0.9714
+        },
+        "consolidated2016_vs_consolidated2022": {
+          "wordDiffSpans": 18,
+          "similarityRatio": 0.9686
+        },
+        "consistencyCheck_reflow_vs_raw": {
+          "wordDiffSpans": 5,
+          "similarityRatio": 0.9945
+        },
+        "hyphenDecisions": [
+          {
+            "token": "man-agement",
+            "decision": "JOIN",
+            "joinedForms": 20,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "con-sultation",
+            "decision": "JOIN",
+            "joinedForms": 116,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "address-ing",
+            "decision": "MANUAL",
+            "result": "addressing",
+            "reason": "line-break hyphenation of a single English word (no such hyphenated compound exists); joined form is standard orthography.",
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "instru-ments",
+            "decision": "JOIN",
+            "joinedForms": 47,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "acci-dent",
+            "decision": "JOIN_MAJORITY",
+            "joinedForms": 128,
+            "hyphenForms": 1,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "includ-ing",
+            "decision": "JOIN",
+            "joinedForms": 272,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "appropriate-ly",
+            "decision": "MANUAL",
+            "result": "appropriately",
+            "reason": "the 2022 authentic amendment text reads 'appropriately-sized personal protective equipment' (Standard A4.3 paragraph 1(b)); line-break hyphenation only.",
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "on-board",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 75,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "pro-tection",
+            "decision": "JOIN",
+            "joinedForms": 454,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "engineer-ing",
+            "decision": "MANUAL",
+            "result": "engineering",
+            "reason": "line-break hyphenation of a single English word (no such hyphenated compound exists); joined form is standard orthography.",
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "on-board",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 75,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "dis-eases",
+            "decision": "JOIN",
+            "joinedForms": 64,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "rep-resentatives",
+            "decision": "JOIN",
+            "joinedForms": 90,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ac-count",
+            "decision": "JOIN",
+            "joinedForms": 227,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "improve-ment",
+            "decision": "JOIN",
+            "joinedForms": 22,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "re-spect",
+            "decision": "JOIN",
+            "joinedForms": 194,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "eva-lu",
+            "decision": "JOIN",
+            "joinedForms": 1,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "appro-priate",
+            "decision": "JOIN",
+            "joinedForms": 319,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "inter-national",
+            "decision": "JOIN",
+            "joinedForms": 208,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "asbestos-related",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "fire-fighting",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 8,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "non-dangerous",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 2,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "con-cerned",
+            "decision": "JOIN",
+            "joinedForms": 385,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ad-verse",
+            "decision": "JOIN",
+            "joinedForms": 13,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "accommo-dation",
+            "decision": "JOIN",
+            "joinedForms": 184,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "con-cerned",
+            "decision": "JOIN",
+            "joinedForms": 385,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ef-fect",
+            "decision": "JOIN",
+            "joinedForms": 48,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "neces-sary",
+            "decision": "JOIN",
+            "joinedForms": 185,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ac-cident",
+            "decision": "JOIN",
+            "joinedForms": 128,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "Ma-chinery",
+            "decision": "JOIN",
+            "joinedForms": 5,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "Guard-ing",
+            "decision": "JOIN",
+            "joinedForms": 7,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "sea-farers",
+            "decision": "JOIN_MAJORITY",
+            "joinedForms": 2076,
+            "hyphenForms": 1,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "Inter-national",
+            "decision": "JOIN",
+            "joinedForms": 233,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "re-sulting",
+            "decision": "JOIN",
+            "joinedForms": 30,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "envi-ronment",
+            "decision": "JOIN",
+            "joinedForms": 30,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "conse-quence",
+            "decision": "JOIN",
+            "joinedForms": 8,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "gen-eral",
+            "decision": "JOIN",
+            "joinedForms": 105,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "pro-motion",
+            "decision": "JOIN",
+            "joinedForms": 24,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ses-sions",
+            "decision": "JOIN",
+            "joinedForms": 3,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "on-board",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 75,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "pro-cess",
+            "decision": "JOIN",
+            "joinedForms": 20,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "on-board",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 75,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "commit-tees",
+            "decision": "JOIN",
+            "joinedForms": 11,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "sea-farers",
+            "decision": "JOIN_MAJORITY",
+            "joinedForms": 2076,
+            "hyphenForms": 1,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "pre-vention",
+            "decision": "JOIN",
+            "joinedForms": 170,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "na-tional",
+            "decision": "JOIN",
+            "joinedForms": 528,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "pre-vention",
+            "decision": "JOIN",
+            "joinedForms": 170,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "pre-vention",
+            "decision": "JOIN",
+            "joinedForms": 170,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "med-ical",
+            "decision": "JOIN",
+            "joinedForms": 538,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "well-being",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 20,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "Organ-ization",
+            "decision": "JOIN",
+            "joinedForms": 112,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "regu-lations",
+            "decision": "JOIN",
+            "joinedForms": 367,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          }
+        ],
+        "hyphenRule": "Every hyphenated token whose second part is lower-case (line-end hyphenation and stray in-line hyphens from PDF extraction alike) was decided on evidence from the four source texts: JOIN when only the joined form occurs in the sources, KEEP when only the hyphenated form occurs, majority when both occur, KEEP_UNRESOLVED (hyphen retained, listed here) when neither occurs. Upper-case continuations (e.g. Director-General) keep the hyphen.",
+        "artifactNote": "Non-zero span counts in the mirror and stage-2/3 comparisons are explained field by field in amendmentHistory and variantNote; the remainder are PDF extraction artifacts (running headers, page numbers, line-break hyphenation, spacing before punctuation) that were inspected individually."
+      },
+      "verifiedBy": [
+        "PRIMARY_SOURCE_FOUR_STAGE_DIFF",
+        "AMENDMENT_TEXT_CROSSCHECK",
+        "AMENDMENT_HISTORY_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-13",
+      "primarySources": [
+        {
+          "file": "ILO_MLC2006_consolidated_2022.pdf",
+          "url": "https://www.ilo.org/sites/default/files/2024-10/NORMES_MLC%20Amendments-EN_2022_Web_1.pdf",
+          "sha256": "bc444a84c177558dfc043b027b47681f06d7155f793819e755984f1b785f7e43",
+          "bytes": 610483,
+          "fetchedUtc": "2026-09-12T20:28:04Z"
+        },
+        {
+          "file": "ILO_267866_MLC2006_2014_2016_consolidated.pdf",
+          "url": "https://www.ilo.org/media/267866/download",
+          "sha256": "3c3f1542f72e67a5df9fefb75c56117d223a74ccf06c7c8104a3332cec926ebb",
+          "bytes": 745545,
+          "fetchedUtc": "2026-09-12T20:30:52Z"
+        },
+        {
+          "file": "ILO_269841_MLC2006_original.pdf",
+          "url": "https://www.ilo.org/media/269841/download",
+          "sha256": "74f3f95ceda4d787027629ee6f2848cd9fda3695c6cd37ca57c894d0dffed422",
+          "bytes": 1163116,
+          "fetchedUtc": "2026-09-12T20:30:50Z"
+        },
+        {
+          "file": "RegisterIRI_MLC2006_original.pdf",
+          "url": "https://www.register-iri.com/wp-content/uploads/MLC-2006.pdf",
+          "sha256": "a335e8c065a4e8122ed486b487bd2e8d05fde1bfa8f70383946d6af537519ad9",
+          "bytes": 1098370,
+          "fetchedUtc": "2026-09-12T20:30:49Z"
+        }
+      ],
+      "amendmentTextSources": [
+        {
+          "file": "ILO_wcms_488452_2016_amendments.pdf",
+          "url": "https://www.ilo.org/sites/default/files/wcmsp5/groups/public/%40ed_norm/%40relconf/documents/meetingdocument/wcms_488452.pdf",
+          "sha256": "32eef7d0cd0a1f4eb5eca6c3781c481f22ee21602406380625c655384cff60ad",
+          "bytes": 1573951,
+          "fetchedUtc": "2026-09-13T06:16:06Z"
+        },
+        {
+          "file": "ILO_wcms_848492_2022_amendments.pdf",
+          "url": "https://www.ilo.org/sites/default/files/wcmsp5/groups/public/%40ed_norm/%40relconf/documents/meetingdocument/wcms_848492.pdf",
+          "sha256": "d9c0e177c0a1dd9fb60c59ae0bfc679f5074bc8d60024d8f1b2d42d7255ed340",
+          "bytes": 95665,
+          "fetchedUtc": "2026-09-12T21:28:35Z"
+        },
+        {
+          "file": "ILO_ILC113_2025_amendments.pdf",
+          "url": "https://www.ilo.org/sites/default/files/2025-06/ILC113-Instruments-[RELMEETINGS-250605-001]-Web-EN.pdf",
+          "sha256": "fb6aad9e90ddc3a916bc4d7ace7c011ff3474767cd70775f11cc8d1e2951f8bc",
+          "bytes": 160387,
+          "fetchedUtc": "2026-09-12T20:28:04Z"
+        }
+      ],
+      "secondarySources": []
+    }
+  ],
+  "unresolvedSources": [],
+  "relatedButOutOfScope": "ISM Code and ISPS Code Part A remain closed, frozen baselines. Appendices A2-I, A4-I, A5-I to A5-III and B5-I are not part of any Regulation block and are not reproduced here; where an amendment changed an Appendix it is mentioned in amendmentHistory only. Does not touch config/human-review-contract.json, academy_ism_* schema/RLS/tooling, any open PR in this series, or GASM Human Review Cloud staging."
+}

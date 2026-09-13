@@ -1,0 +1,55 @@
+{
+  "manifestVersion": "ISPS-PILOT-004",
+  "createdAt": "2026-09-06T21:12:00Z",
+  "note": "This is a provenance/reference record, not a database write. Same architecture decision as PILOT-001/002/003.json in this directory: no academy_isps_source_manifest table exists in this repo, so this file is not consumed by any promotion tooling today.",
+  "verifiedSources": [
+    {
+      "sourceId": "IMO-ISPS-A-SEC10",
+      "title": "10 Records",
+      "authority": "IMO",
+      "moduleCode": "isps-code-foundations",
+      "flagAdministration": null,
+      "section": "Section 10",
+      "fullText": "10 Records\n\n10.1 Records of the following activities addressed in the ship security plan shall be kept on board for at least the minimum period specified by the Administration, bearing in mind the provisions of regulation XI-2/9.2.3:\n.1 training, drills and exercises;\n.2 security threats and security incidents;\n.3 breaches of security;\n.4 changes in security level;\n.5 communications relating to the direct security of the ship such as specific threats to the ship or to port facilities the ship is, or has been, in;\n.6 internal audits and reviews of security activities;\n.7 periodic review of the ship security assessment;\n.8 periodic review of the ship security plan;\n.9 implementation of any amendments to the plan; and\n.10 maintenance, calibration and testing of any security equipment provided on board, including testing of the ship security alert system.\n\n10.2 The records shall be kept in the working language or languages of the ship. If the language or languages used are not English, French or Spanish, a translation into one of these languages shall be included.\n\n10.3 The records may be kept in an electronic format. In such a case, they shall be protected by procedures aimed at preventing their unauthorized deletion, destruction or amendment.\n\n10.4 The records shall be protected from unauthorized access or disclosure.",
+      "variantNote": "Cowork's ClassNK_ISPS_Code_Part_A.pdf cross-check found a single-comma difference at 10.1.10, assessed as not substantive - content identical, no change made to fullText.",
+      "amendmentHistory": "Adopted by Conference resolution 2 of 12 December 2002; entered into force 1 July 2004. No subsequent amendments to Section 10 of Part A identified.",
+      "verificationMethod": "Grok candidate cross-checked via pdftotext exact-phrase match (9/9) against ClassNK_ISPS_Code_Part_A.pdf primary-source mirror. Claude Code did not separately, independently re-verify Section 10's specific text today beyond this check.",
+      "verifiedBy": ["GROK", "PRIMARY_SOURCE_CROSSCHECK"],
+      "verifiedAt": "2026-09-07",
+      "confidence": "VERIFIED_QUOTE",
+      "uncertaintyReason": null
+    },
+    {
+      "sourceId": "IMO-ISPS-A-SEC11",
+      "title": "11 Company security officer",
+      "authority": "IMO",
+      "moduleCode": "isps-code-foundations",
+      "flagAdministration": null,
+      "section": "Section 11",
+      "fullText": "11 Company security officer\n\n11.1 The Company shall designate a company security officer. A person designated as the company security officer may act as the company security officer for one or more ships, depending on the number or types of ships the Company operates, provided it is clearly identified for which ships this person is responsible. A Company may, depending on the number or types of ships they operate, designate several persons as company security officers provided it is clearly identified for which ships each person is responsible.\n\n11.2 In addition to those specified elsewhere in this Part of the Code, the duties and responsibilities of the company security officer shall include, but are not limited to:\n.1 advising the level of threats likely to be encountered by the ship, using appropriate security assessments and other relevant information;\n.2 ensuring that ship security assessments are carried out;\n.3 ensuring the development, the submission for approval, and thereafter the implementation and maintenance of the ship security plan;\n.4 ensuring that the ship security plan is modified, as appropriate, to correct deficiencies and satisfy the security requirements of the individual ship;\n.5 arranging for internal audits and reviews of security activities;\n.6 arranging for the initial and subsequent verifications of the ship by the Administration or the recognized security organization;\n.7 ensuring that deficiencies and non-conformities identified during internal audits, periodic reviews, security inspections and verifications of compliance are promptly addressed and dealt with;\n.8 enhancing security awareness and vigilance;\n.9 ensuring adequate training for personnel responsible for the security of the ship;\n.10 ensuring effective communication and co-operation between the ship security officer and the relevant port facility security officers;\n.11 ensuring consistency between security requirements and safety requirements;\n.12 ensuring that, if sister-ship or fleet security plans are used, the plan for each ship reflects the ship-specific information accurately; and\n.13 ensuring that any alternative or equivalent arrangements approved for a particular ship or group of ships are implemented and maintained.",
+      "amendmentHistory": "Adopted by Conference resolution 2 of 12 December 2002; entered into force 1 July 2004. No subsequent amendments to Section 11 of Part A identified.",
+      "verificationMethod": "Grok candidate cross-checked via pdftotext exact-phrase match (9/9) against ClassNK_ISPS_Code_Part_A.pdf primary-source mirror. Claude Code additionally, independently re-verified today via its own web search (distinct from Cowork's ClassNK check) - the 11.2 duties list, including the specific 'advising the level of threats' and 'arranging for internal audits' items, matched.",
+      "verifiedBy": ["GROK", "PRIMARY_SOURCE_CROSSCHECK"],
+      "verifiedAt": "2026-09-07",
+      "confidence": "VERIFIED_QUOTE",
+      "uncertaintyReason": null
+    },
+    {
+      "sourceId": "IMO-ISPS-A-SEC12",
+      "title": "12 Ship security officer",
+      "authority": "IMO",
+      "moduleCode": "isps-code-foundations",
+      "flagAdministration": null,
+      "section": "Section 12",
+      "fullText": "12 Ship security officer\n\n12.1 A ship security officer shall be designated on each ship.\n\n12.2 In addition to those specified elsewhere in this Part of the Code, the duties and responsibilities of the ship security officer shall include, but are not limited to:\n.1 undertaking regular security inspections of the ship to ensure that appropriate security measures are maintained;\n.2 maintaining and supervising the implementation of the ship security plan, including any amendments to the plan;\n.3 co-ordinating the security aspects of the handling of cargo and ship's stores with other shipboard personnel and with the relevant port facility security officers;\n.4 proposing modifications to the ship security plan;\n.5 reporting to the company security officer any deficiencies and non-conformities identified during internal audits, periodic reviews, security inspections and verifications of compliance and implementing any corrective actions;\n.6 enhancing security awareness and vigilance on board;\n.7 ensuring that adequate training has been provided to shipboard personnel, as appropriate;\n.8 reporting all security incidents;\n.9 co-ordinating implementation of the ship security plan with the company security officer and the relevant port facility security officer; and\n.10 ensuring that security equipment is properly operated, tested, calibrated and maintained, if any.",
+      "amendmentHistory": "Adopted by Conference resolution 2 of 12 December 2002; entered into force 1 July 2004. No subsequent amendments to Section 12 of Part A identified.",
+      "verificationMethod": "Grok candidate cross-checked via pdftotext exact-phrase match (9/9) against ClassNK_ISPS_Code_Part_A.pdf primary-source mirror. Claude Code additionally, independently re-verified today via its own web search (distinct from Cowork's ClassNK check) - the first five of 12.2's ten duty items matched verbatim, and the search independently confirmed the list has ten items total.",
+      "verifiedBy": ["GROK", "PRIMARY_SOURCE_CROSSCHECK"],
+      "verifiedAt": "2026-09-07",
+      "confidence": "VERIFIED_QUOTE",
+      "uncertaintyReason": null
+    }
+  ],
+  "unresolvedSources": [],
+  "geminiBehaviorNote": "Same as PILOT-001/002/003.json: Gemini did not participate in this round's text verification."
+}
