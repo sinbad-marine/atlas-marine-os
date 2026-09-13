@@ -1,0 +1,335 @@
+{
+  "manifestVersion": "MLC-PILOT-014",
+  "createdAt": "2026-09-13T07:21:54Z",
+  "note": "Provenance/reference record only, not a database write. Same status as PILOT-001 through 009.json: no academy_mlc_source_manifest table exists, no verification_stage asserted, not consumed by any promotion tooling. No migration, schema, or tooling change. Additive docs/ file only, on its own branch, separate from every other open PR in this series.",
+  "batchNote": "Prepared under the Owner's 2026-09-08 full-scope MLC Title 1-5 instruction and the Owner's 2026-09-12 GO on the resumption plan, which released this Regulation from SOURCE HOLD only after the current consolidated ILO text and the authentic amendment texts were reacquired and their provenance recorded (see primarySources/amendmentTextSources). 'Prepared/draft' is not 'verified', 'human-accepted', 'merged' or 'live'. This file is source-text verification only.",
+  "schemaExtensionNote": "Uses the regulationRef/standardARef/guidelineBRef fields introduced in PILOT-001.json and adds textEdition, pendingAmendments2025, diffEvidence and amendmentTextSources. No further schema change; no tooling reads these files.",
+  "verificationMethodNote": "No GROK/GEMINI access this session. Method: PRIMARY_SOURCE_FOUR_STAGE_DIFF (see verifiedSources[0].verificationMethod) over the ILO consolidated 2022 text, the ILO 2014+2016 consolidated text and two 2006-original mirrors, with every substantive diff span matched to the authentic ILO amendment texts of 2014, 2016, 2018 and 2022. The 2025 amendments (ILC 113, adopted 6 June 2025, expected entry into force 23 December 2027) are NOT in force and are NOT blended into fullText; they are recorded in pendingAmendments2025 only. Running headers, page numbers and soft hyphenation were removed when re-flowing fullText; every hyphen join is listed in diffEvidence.hyphenJoinsApplied for audit.",
+  "verifiedSources": [
+    {
+      "sourceId": "ILO-MLC2006-T2-REG2.5",
+      "title": "Repatriation",
+      "authority": "ILO",
+      "moduleCode": "mlc-code-foundations",
+      "flagAdministration": null,
+      "section": "Title 2, Regulation 2.5 / Standards A2.5.1 and A2.5.2 / Guideline B2.5 (including Guidelines B2.5.1 to B2.5.3)",
+      "regulationRef": "Regulation 2.5 - Repatriation",
+      "standardARef": "Standard A2.5.1 - Repatriation; Standard A2.5.2 - Financial security",
+      "guidelineBRef": "Guideline B2.5 - Repatriation; Guideline B2.5.1 - Entitlement; Guideline B2.5.2 - Implementation by Members; Guideline B2.5.3 - Financial security",
+      "textEdition": "Maritime Labour Convention, 2006, as amended - consolidated text established by the International Labour Office including the Amendments of 2014, 2016, 2018 and 2022 to the Code (ILO publication dated 2 October 2024). This is the text in force on the verification date.",
+      "fullText": "Regulation 2.5 - Repatriation\n\nPurpose: To ensure that seafarers are able to return home\n\n1. Seafarers have a right to be repatriated at no cost to themselves in the circumstances and under the conditions specified in the Code.\n\n2. Each Member shall require ships that fly its flag to provide financial security to ensure that seafarers are duly repatriated in accordance with the Code.\n\nStandard A2.5.1 - Repatriation\n\n1. Each Member shall ensure that seafarers on ships that fly its flag are entitled to repatriation in the following circumstances:\n\n(a) if the seafarers' employment agreement expires while they are abroad;\n\n(b) when the seafarers' employment agreement is terminated:\n\n(i) by the shipowner; or\n\n(ii) by the seafarer for justified reasons; and also\n\n(c) when the seafarers are no longer able to carry out their duties under their employment agreement or cannot be expected to carry them out in the specific circumstances.\n\n2. Each Member shall ensure that there are appropriate provisions in its laws and regulations or other measures or in collective bargaining agreements, prescribing:\n\n(a) the circumstances in which seafarers are entitled to repatriation in accordance with paragraph 1(b) and (c) of this Standard;\n\n(b) the maximum duration of service periods on board following which a seafarer is entitled to repatriation - such periods to be less than 12 months; and\n\n(c) the precise entitlements to be accorded by shipowners for repatriation, including those relating to the destinations of repatriation, the mode of transport, the items of expense to be covered and other arrangements to be made by shipowners.\n\n3. Each Member shall prohibit shipowners from requiring that seafarers make an advance payment towards the cost of repatriation at the beginning of their employment, and also from recovering the cost of repatriation from the seafarers' wages or other entitlements except where the seafarer has been found, in accordance with national laws or regulations or other measures or applicable collective bargaining agreements, to be in serious default of the seafarer's employment obligations.\n\n4. National laws and regulations shall not prejudice any right of the shipowner to recover the cost of repatriation under third-party contractual arrangements.\n\n5. If a shipowner fails to make arrangements for or to meet the cost of repatriation of seafarers who are entitled to be repatriated:\n\n(a) the competent authority of the Member whose flag the ship flies shall arrange for repatriation of the seafarers concerned; if it fails to do so, the State from which the seafarers are to be repatriated or the State of which they are a national may arrange for their repatriation and recover the cost from the Member whose flag the ship flies;\n\n(b) costs incurred in repatriating seafarers shall be recoverable from the shipowner by the Member whose flag the ship flies;\n\n(c) the expenses of repatriation shall in no case be a charge upon the seafarers, except as provided for in paragraph 3 of this Standard.\n\n6. Taking into account applicable international instruments, including the International Convention on Arrest of Ships, 1999, a Member which has paid the cost of repatriation pursuant to this Code may detain, or request the detention of, the ships of the shipowner concerned until the reimbursement has been made in accordance with paragraph 5 of this Standard.\n\n7. Each Member shall facilitate the repatriation of seafarers serving on ships which call at its ports or pass through its territorial or internal waters, as well as their replacement on board.\n\n8. In particular, a Member shall not refuse the right of repatriation to any seafarer because of the financial circumstances of a shipowner or because of the shipowner's inability or unwillingness to replace a seafarer.\n\n9. Members shall facilitate the prompt repatriation of seafarers, including when they are deemed abandoned within the meaning of Standard A2.5.2, paragraph 2. Port States, flag States and labour-supplying States shall cooperate to ensure that seafarers engaged on a ship to replace seafarers who have been abandoned in their territory, or on a ship flying their flag, shall be accorded their rights and entitlements under this Convention.\n\n10. Each Member shall require that ships that fly its flag carry and make available to seafarers a copy of the applicable national provisions regarding repatriation written in an appropriate language.\n\nStandard A2.5.2 - Financial security\n\n1. In implementation of Regulation 2.5, paragraph 2, this Standard establishes requirements to ensure the provision of an expeditious and effective financial security system to assist seafarers in the event of their abandonment.\n\n2. For the purposes of this Standard, a seafarer shall be deemed to have been abandoned where, in violation of the requirements of this Convention or the terms of the seafarers' employment agreement, the shipowner:\n\n(a) fails to cover the cost of the seafarer's repatriation; or\n\n(b) has left the seafarer without the necessary maintenance and support; or\n\n(c) has otherwise unilaterally severed their ties with the seafarer including failure to pay contractual wages for a period of at least two months.\n\n3. Each Member shall ensure that a financial security system meeting the requirements of this Standard is in place for ships flying its flag. The financial security system may be in the form of a social security scheme or insurance or a national fund or other similar arrangements. Its form shall be determined by the Member after consultation with the shipowners' and seafarers' organizations concerned.\n\n4. The financial security system shall provide direct access, sufficient coverage and expedited financial assistance, in accordance with this Standard, to any abandoned seafarer on a ship flying the flag of the Member.\n\n5. For the purposes of paragraph 2(b) of this Standard, necessary maintenance and support of seafarers shall include: adequate food, accommodation, drinking water supplies, essential fuel for survival on board the ship and necessary medical care.\n\n6. Each Member shall require that ships that fly its flag, and to which paragraph 1 or 2 of Regulation 5.1.3 applies, carry on board a certificate or other documentary evidence of financial security issued by the financial security provider. A copy shall be posted in a conspicuous place on board where it is available to the seafarers. Where more than one financial security provider provides cover, the document provided by each provider shall be carried on board.\n\n7. The certificate or other documentary evidence of financial security shall contain the information required in Appendix A2-I. It shall be in English or accompanied by an English translation.\n\n8. Assistance provided by the financial security system shall be granted promptly upon request made by the seafarer or the seafarer's nominated representative and supported by the necessary justification of entitlement in accordance with paragraph 2 above.\n\n9. Having regard to Regulations 2.2 and 2.5, assistance provided by the financial security system shall be sufficient to cover the following:\n\n(a) outstanding wages and other entitlements due from the shipowner to the seafarer under their employment agreement, the relevant collective bargaining agreement or the national law of the flag State, limited to four months of any such outstanding wages and four months of any such outstanding entitlements;\n\n(b) all expenses reasonably incurred by the seafarer, including the cost of repatriation referred to in paragraph 10; and\n\n(c) the essential needs of the seafarer including such items as: adequate food, clothing where necessary, accommodation, drinking water supplies, essential fuel for survival on board the ship, necessary medical care and any other reasonable costs or charges from the act or omission constituting the abandonment until the seafarer's arrival at home.\n\n10. The cost of repatriation shall cover travel by appropriate and expeditious means, normally by air, and include provision for food and accommodation of the seafarer from the time of leaving the ship until arrival at the seafarer's home, necessary medical care, passage and transport of personal effects and any other reasonable costs or charges arising from the abandonment.\n\n11. The financial security shall not cease before the end of the period of validity of the financial security unless the financial security provider has given prior notification of at least 30 days to the competent authority of the flag State.\n\n12. If the provider of insurance or other financial security has made any payment to any seafarer in accordance with this Standard, such provider shall, up to the amount it has paid and in accordance with the applicable law, acquire by subrogation, assignment or otherwise, the rights which the seafarer would have enjoyed.\n\n13. Nothing in this Standard shall prejudice any right of recourse of the insurer or provider of financial security against third parties.\n\n14. The provisions in this Standard are not intended to be exclusive or to prejudice any other rights, claims or remedies that may also be available to compensate seafarers who are abandoned. National laws and regulations may provide that any amounts payable under this Standard can be offset against amounts received from other sources arising from any rights, claims or remedies that may be the subject of compensation under the present Standard.\n\nGuideline B2.5 - Repatriation\n\nGuideline B2.5.1 - Entitlement\n\n1. Seafarers should be entitled to repatriation:\n\n(a) in the case covered by Standard A2.5, paragraph 1(a), upon the expiry of the period of notice given in accordance with the provisions of the seafarers' employment agreement;\n\n(b) in the cases covered by Standard A2.5, paragraph 1(b) and (c):\n\n(i) in the event of illness or injury or other medical condition which requires their repatriation when found medically fit to travel;\n\n(ii) in the event of shipwreck;\n\n(iii) in the event of the shipowner not being able to continue to fulfil their legal or contractual obligations as an employer of the seafarers by reason of insolvency, sale of ship, change of ship's registration or any other similar reason;\n\n(iv) in the event of a ship being bound for a war zone, as defined by national laws or regulations or seafarers' employment agreements, to which the seafarer does not consent to go; and\n\n(v) in the event of termination or interruption of employment in accordance with an industrial award or collective agreement, or termination of employment for any other similar reason.\n\n2. In determining the maximum duration of service periods on board following which a seafarer is entitled to repatriation, in accordance with this Code, account should be taken of factors affecting the seafarers' working environment. Each Member should seek, wherever possible, to reduce these periods in the light of technological changes and developments and might be guided by any recommendations made on the matter by the Joint Maritime Commission.\n\n3. The costs to be borne by the shipowner for repatriation under Standard A2.5 should include at least the following:\n\n(a) passage to the destination selected for repatriation in accordance with paragraph 6 of this Guideline;\n\n(b) accommodation and food from the moment the seafarers leave the ship until they reach the repatriation destination;\n\n(c) pay and allowances from the moment the seafarers leave the ship until they reach the repatriation destination, if provided for by national laws or regulations or collective agreements;\n\n(d) transportation of 30 kg of the seafarers' personal luggage to the repatriation destination; and\n\n(e) medical treatment when necessary until the seafarers are medically fit to travel to the repatriation destination.\n\n4. Time spent awaiting repatriation and repatriation travel time should not be deducted from paid leave accrued to the seafarers.\n\n5. Shipowners should be required to continue to cover the costs of repatriation until the seafarers concerned are landed at a destination prescribed pursuant to this Code or are provided with suitable employment on board a ship proceeding to one of those destinations.\n\n6. Each Member should require that shipowners take responsibility for repatriation arrangements by appropriate and expeditious means. The normal mode of transport should be by air. The Member should prescribe the destinations to which seafarers may be repatriated. The destinations should include the countries with which seafarers may be deemed to have a substantial connection including:\n\n(a) the place at which the seafarer agreed to enter into the engagement;\n\n(b) the place stipulated by collective agreement;\n\n(c) the seafarer's country of residence; or\n\n(d) such other place as may be mutually agreed at the time of engagement.\n\n7. Seafarers should have the right to choose from among the prescribed destinations the place to which they are to be repatriated.\n\n8. The entitlement to repatriation may lapse if the seafarers concerned do not claim it within a reasonable period of time to be defined by national laws or regulations or collective agreements, except where they are held captive on or off the ship as a result of acts of piracy or armed robbery against ships. The terms piracy and armed robbery against ships shall have the same meaning as in Standard A2.1, paragraph 7.\n\nGuideline B2.5.2 - Implementation by Members\n\n1. Every possible practical assistance should be given to a seafarer stranded in a foreign port pending repatriation and in the event of delay in the repatriation of the seafarer, the competent authority in the foreign port should ensure that the consular or local representative of the flag State and the seafarer's State of nationality or State of residence, as appropriate, is informed immediately.\n\n2. Each Member should have regard to whether proper provision is made:\n\n(a) for the return of seafarers employed on a ship that flies the flag of a foreign country who are put ashore in a foreign port for reasons for which they are not responsible:\n\n(i) to the port at which the seafarer concerned was engaged; or\n\n(ii) to a port in the seafarer's State of nationality or State of residence, as appropriate; or\n\n(iii) to another port agreed upon between the seafarer and the master or shipowner, with the approval of the competent authority or under other appropriate safeguards;\n\n(b) for medical care and maintenance of seafarers employed on a ship that flies the flag of a foreign country who are put ashore in a foreign port in consequence of sickness or injury incurred in the service of the ship and not due to their own wilful misconduct.\n\n3. If, after young seafarers under the age of 18 have served on a ship for at least four months during their first foreign-going voyage, it becomes apparent that they are unsuited to life at sea, they should be given the opportunity of being repatriated at no expense to themselves from the first suitable port of call in which there are consular services of the flag State, or the State of nationality or residence of the young seafarer. Notification of any such repatriation, with the reasons therefor, should be given to the authority which issued the papers enabling the young seafarers concerned to take up seagoing employment.\n\nGuideline B2.5.3 - Financial security\n\n1. In implementation of paragraph 8 of Standard A2.5.2, if time is needed to check the validity of certain aspects of the request of the seafarer or the seafarer's nominated representative, this should not prevent the seafarer from immediately receiving such part of the assistance requested as is recognized as justified.",
+      "variantNote": "No substantive variant between sources. Residual diff spans are PDF extraction artifacts only (running headers, page numbers, line-break hyphenation, spacing before punctuation), inspected individually.",
+      "amendmentHistory": "Amended in three rounds in force. 2014 (ILC 103, approved 11 June 2014, in force 18 January 2017): Standard A2.5 renamed 'Standard A2.5.1 - Repatriation'; new 'Standard A2.5.2 - Financial security' (abandonment, paragraphs 1-14) inserted; new 'Guideline B2.5.3 - Financial security' inserted; Appendix A2-I (evidence of financial security) added (appendix not part of this block). 2018 (ILC 107, in force 26 December 2020): Guideline B2.5.1 paragraph 8 replaced (entitlement does not lapse while held captive after piracy or armed robbery). 2022 (ILC 110, in force 23 December 2024): Standard A2.5.1 - new paragraph 9 inserted (prompt repatriation including when deemed abandoned; port, flag and labour-supplying State cooperation) and former paragraph 9 renumbered 10; Appendix A2-I item (g) replaced (registered owner) - appendix only. Diff evidence: original -> consolidated2016 shows exactly the A2.5 -> A2.5.1 rename and the A2.5.2 and B2.5.3 insertions; consolidated2016 -> consolidated2022 shows exactly the new A2.5.1 paragraph 9 and the B2.5.1 paragraph 8 replacement.",
+      "pendingAmendments2025": "2025 (ILC 113, adopted 6 June 2025, NOT in force, expected 23 December 2027): Standard A2.5.1 - new paragraph 3 (minimum repatriation costs borne by the shipowner) with renumbering, and new paragraph 10 (repatriation without discrimination); Guideline B2.5.1 paragraph 3 replaced; new 'Guideline B2.5.2 - Key workers' inserted with renumbering of the following Guidelines. Not blended into fullText.",
+      "verificationMethod": "PRIMARY_SOURCE_FOUR_STAGE_DIFF: (1) the two 2006-original mirrors were sliced and word-diffed against each other; (2) the 2006 original was word-diffed against the ILO 2014+2016 consolidated text; (3) that text was word-diffed against the ILO 2014+2016+2018+2022 consolidated text; (4) every non-artifact diff span was matched against the authentic amendment texts (ILO 2014, 2016, 2018 and 2022 amendment documents). fullText is the stage-3 target block re-flowed to undo PDF line wrapping; its word sequence was re-diffed against the raw block (consistencyCheck).",
+      "diffEvidence": {
+        "mirror2006_ilo_vs_registerIri": {
+          "wordDiffSpans": 0,
+          "similarityRatio": 1.0
+        },
+        "original2006_vs_consolidated2016": {
+          "wordDiffSpans": 7,
+          "similarityRatio": 0.7792
+        },
+        "consolidated2016_vs_consolidated2022": {
+          "wordDiffSpans": 7,
+          "similarityRatio": 0.9743
+        },
+        "consistencyCheck_reflow_vs_raw": {
+          "wordDiffSpans": 3,
+          "similarityRatio": 0.9982
+        },
+        "hyphenDecisions": [
+          {
+            "token": "circum-stances",
+            "decision": "JOIN",
+            "joinedForms": 88,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "employ-ment",
+            "decision": "JOIN",
+            "joinedForms": 486,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "agree-ments",
+            "decision": "JOIN",
+            "joinedForms": 196,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "third-party",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 4,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "repatri-ation",
+            "decision": "JOIN",
+            "joinedForms": 150,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "sea-farer",
+            "decision": "JOIN",
+            "joinedForms": 763,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "shipown-er",
+            "decision": "JOIN",
+            "joinedForms": 304,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "labour-supplying",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 5,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "avail-able",
+            "decision": "JOIN",
+            "joinedForms": 164,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "re-quirements",
+            "decision": "JOIN",
+            "joinedForms": 480,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "con-sultation",
+            "decision": "JOIN",
+            "joinedForms": 116,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "con-tain",
+            "decision": "JOIN",
+            "joinedForms": 28,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "sup-ported",
+            "decision": "JOIN",
+            "joinedForms": 4,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "outstand-ing",
+            "decision": "JOIN",
+            "joinedForms": 4,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "repatria-tion",
+            "decision": "JOIN",
+            "joinedForms": 150,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "cloth-ing",
+            "decision": "MANUAL",
+            "result": "clothing",
+            "reason": "line-break hyphenation of a single English word (no such hyphenated compound exists); joined form is standard orthography.",
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "sea-farer",
+            "decision": "JOIN",
+            "joinedForms": 763,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "notifica-tion",
+            "decision": "JOIN",
+            "joinedForms": 28,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "pay-ment",
+            "decision": "JOIN",
+            "joinedForms": 30,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "preju-dice",
+            "decision": "JOIN",
+            "joinedForms": 44,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "sea-farers",
+            "decision": "JOIN_MAJORITY",
+            "joinedForms": 2076,
+            "hyphenForms": 1,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "em-ployment",
+            "decision": "JOIN",
+            "joinedForms": 486,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "insol-vency",
+            "decision": "JOIN",
+            "joinedForms": 1,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "col-lective",
+            "decision": "JOIN",
+            "joinedForms": 196,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "des-tination",
+            "decision": "JOIN",
+            "joinedForms": 31,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "repa-triation",
+            "decision": "JOIN",
+            "joinedForms": 150,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "desti-nations",
+            "decision": "JOIN",
+            "joinedForms": 16,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "ship-owner",
+            "decision": "JOIN",
+            "joinedForms": 304,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "appro-priate",
+            "decision": "JOIN",
+            "joinedForms": 319,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "wil-ful",
+            "decision": "JOIN",
+            "joinedForms": 5,
+            "hyphenForms": 0,
+            "origin": "line-end-or-inline"
+          },
+          {
+            "token": "foreign-going",
+            "decision": "KEEP",
+            "joinedForms": 0,
+            "hyphenForms": 6,
+            "origin": "line-end-or-inline"
+          }
+        ],
+        "hyphenRule": "Every hyphenated token whose second part is lower-case (line-end hyphenation and stray in-line hyphens from PDF extraction alike) was decided on evidence from the four source texts: JOIN when only the joined form occurs in the sources, KEEP when only the hyphenated form occurs, majority when both occur, KEEP_UNRESOLVED (hyphen retained, listed here) when neither occurs. Upper-case continuations (e.g. Director-General) keep the hyphen.",
+        "artifactNote": "Non-zero span counts in the mirror and stage-2/3 comparisons are explained field by field in amendmentHistory and variantNote; the remainder are PDF extraction artifacts (running headers, page numbers, line-break hyphenation, spacing before punctuation) that were inspected individually."
+      },
+      "verifiedBy": [
+        "PRIMARY_SOURCE_FOUR_STAGE_DIFF",
+        "AMENDMENT_TEXT_CROSSCHECK",
+        "AMENDMENT_HISTORY_CROSSCHECK"
+      ],
+      "verifiedAt": "2026-09-13",
+      "primarySources": [
+        {
+          "file": "ILO_MLC2006_consolidated_2022.pdf",
+          "url": "https://www.ilo.org/sites/default/files/2024-10/NORMES_MLC%20Amendments-EN_2022_Web_1.pdf",
+          "sha256": "bc444a84c177558dfc043b027b47681f06d7155f793819e755984f1b785f7e43",
+          "bytes": 610483,
+          "fetchedUtc": "2026-09-12T20:28:04Z"
+        },
+        {
+          "file": "ILO_267866_MLC2006_2014_2016_consolidated.pdf",
+          "url": "https://www.ilo.org/media/267866/download",
+          "sha256": "3c3f1542f72e67a5df9fefb75c56117d223a74ccf06c7c8104a3332cec926ebb",
+          "bytes": 745545,
+          "fetchedUtc": "2026-09-12T20:30:52Z"
+        },
+        {
+          "file": "ILO_269841_MLC2006_original.pdf",
+          "url": "https://www.ilo.org/media/269841/download",
+          "sha256": "74f3f95ceda4d787027629ee6f2848cd9fda3695c6cd37ca57c894d0dffed422",
+          "bytes": 1163116,
+          "fetchedUtc": "2026-09-12T20:30:50Z"
+        },
+        {
+          "file": "RegisterIRI_MLC2006_original.pdf",
+          "url": "https://www.register-iri.com/wp-content/uploads/MLC-2006.pdf",
+          "sha256": "a335e8c065a4e8122ed486b487bd2e8d05fde1bfa8f70383946d6af537519ad9",
+          "bytes": 1098370,
+          "fetchedUtc": "2026-09-12T20:30:49Z"
+        }
+      ],
+      "amendmentTextSources": [
+        {
+          "file": "ILO_175166_2014_amendments.pdf",
+          "url": "https://www.ilo.org/media/175166/download",
+          "sha256": "0e14ce4c98147f467f5a7a44a38520867d614c61e1347e63ba231bbd8cb40c54",
+          "bytes": 1164466,
+          "fetchedUtc": "2026-09-13T05:50:03Z"
+        },
+        {
+          "file": "ILO_wcms_632462_2018_amendments.pdf",
+          "url": "https://www.ilo.org/sites/default/files/wcmsp5/groups/public/%40ed_norm/%40relconf/documents/meetingdocument/wcms_632462.pdf",
+          "sha256": "3106ff1b6cc71c066c2626f11c980dc5be3115d95c6a4049afa2a48d71566919",
+          "bytes": 1740940,
+          "fetchedUtc": "2026-09-12T20:57:38Z"
+        },
+        {
+          "file": "ILO_wcms_848492_2022_amendments.pdf",
+          "url": "https://www.ilo.org/sites/default/files/wcmsp5/groups/public/%40ed_norm/%40relconf/documents/meetingdocument/wcms_848492.pdf",
+          "sha256": "d9c0e177c0a1dd9fb60c59ae0bfc679f5074bc8d60024d8f1b2d42d7255ed340",
+          "bytes": 95665,
+          "fetchedUtc": "2026-09-12T21:28:35Z"
+        },
+        {
+          "file": "ILO_ILC113_2025_amendments.pdf",
+          "url": "https://www.ilo.org/sites/default/files/2025-06/ILC113-Instruments-[RELMEETINGS-250605-001]-Web-EN.pdf",
+          "sha256": "fb6aad9e90ddc3a916bc4d7ace7c011ff3474767cd70775f11cc8d1e2951f8bc",
+          "bytes": 160387,
+          "fetchedUtc": "2026-09-12T20:28:04Z"
+        }
+      ],
+      "secondarySources": []
+    }
+  ],
+  "unresolvedSources": [],
+  "relatedButOutOfScope": "ISM Code and ISPS Code Part A remain closed, frozen baselines. Appendices A2-I, A4-I, A5-I to A5-III and B5-I are not part of any Regulation block and are not reproduced here; where an amendment changed an Appendix it is mentioned in amendmentHistory only. Does not touch config/human-review-contract.json, academy_ism_* schema/RLS/tooling, any open PR in this series, or GASM Human Review Cloud staging."
+}
