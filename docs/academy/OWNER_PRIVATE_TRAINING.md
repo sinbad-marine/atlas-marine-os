@@ -35,6 +35,22 @@ Owner Limited Implementation GO, 2026-09-14. Scope: the minimum path for the Own
 - Classroom panel now walks all of the Owner's `OWNER_ONLY` questions in order (progress "Soru n / N", previous/next, "Sonraki soruya geç" after a recorded attempt), resumes at the first unanswered question on reload, and lists attempts per question.
 - UX corrections from the Owner's live test report: promotion form open by default with the last package/question ids remembered locally; panel measured against the chalkboard and laid below its title (placeholder chalk line hidden while active); board title reads "Owner özel eğitim modu"; status line inside the panel.
 
-## Acceptance evidence
+## Acceptance evidence (live Owner run, 2026-09-14, production)
 
-Recorded in `PROJECT_STATE.json` after the live Owner run. Until then every classification in the Owner's acceptance test is NOT VERIFIED.
+Live code: main `7a4d06e` (PR #245) on Pages; `academy.html` sha256 equals `config/ui-design-contract.json`. All production facts below were read with read-only queries; the agent never held credentials and never clicked a gated button.
+
+| Step | Evidence | Result |
+|---|---|---|
+| PILOT-001 import (Owner, Owner Console, AAL2) | package `b513867b-e4e2-4be1-9595-7a123f8bf792`, `ISM-M1-EL2-PILOT-Q1`, AVAILABLE, lock 0, 06:09Z | PASS |
+| PILOT-002 import (Owner, Owner Console, AAL2) | package `9bf9d8d3-db60-4369-90ef-2e1bfa7c9c83`, `ISM-M1-EL4-PILOT-Q2`, AVAILABLE, lock 0, 20:47Z; `human_review_audit` PACKAGE_IMPORTED by OWNER; package and question hashes equal the repository manifest (`2202205e…`, `c37071c9…`) | PASS |
+| Q001 promotion (classroom, AAL2, edge function) | training row `e3555f88-348f-487e-b06b-48a0f82395fb`, OWNER_ONLY, TECHNICALLY_VERIFIED, promoted 19:48Z | PASS |
+| Q002 promotion (classroom, AAL2, edge function) | training row `712624ff-97d9-48e0-8617-950e2de9b708`, OWNER_ONLY, TECHNICALLY_VERIFIED, `source_content_sha256` == package question hash, promoted 20:59Z; 2 rows, 2 distinct question ids, no duplicate | PASS |
+| Q001 attempt | `ef3549cf-dc88-4449-84c7-af61e2eec605`, key A, correct, score 1, 19:51Z | PASS |
+| Q002 attempt | `2791b25a-d0a3-495c-b1d2-22c74573546f`, key A, correct, score 1, 21:03Z | PASS |
+| Reload | classroom showed "2 özel eğitim sorusu yüklendi · cevaplanan 2/2", "Soru 2 / 2" (Q002) and "Soru 1 / 2" (Q001) each with its attempt listed | PASS |
+| Human Review unchanged | no review/transfer/finalize audit rows for either pilot package; canary still OWNER_ACCEPTED lock 29; 0 rows HUMAN_REVIEW_ACCEPTED | PASS |
+| Owner-only access | foreign authenticated user and anon see 0 training questions, 0 attempts, 0 source manifest rows | PASS |
+| Mastery / readiness | not calculated (no engine) | OUT OF SCOPE |
+| Owner acceptance | no acceptance statement recorded | NOT RECORDED |
+
+Flow note: Q001 was promoted and answered during the Owner's first live test (before PR #245 went live), so the second-question run proceeded Q002 import → promotion → answer → reload, and the classroom resumed at Q002 as designed. STOP applies after this run: no third question, no bulk generation, Hat D HOLD, invited users HOLD.
