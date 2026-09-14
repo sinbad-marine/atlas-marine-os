@@ -1,45 +1,48 @@
 {
   "project": "SINBAD Academy ISM-ISPS-MLC Pilot",
   "current_phase": "Phase 2 - Verified-source ingestion (pilot)",
-  "current_task": "ISM Code source verification complete (16/16 elements, PR #213). ISPS Code Part A source verification complete (Sections 1-19, PR #214). MLC 2006 source verification complete for all 28 Regulations of Titles 1-5 under the Owner's 2026-09-08 full-scope instruction and the 2026-09-12 GO on the resumption plan: 9 Regulations in PRs #215-#223 (2026-09-08), 19 Regulations in PRs #224-#242 (2026-09-13), all draft/unmerged; SOURCE HOLD cleared after the ILO 2022 consolidated text and the authentic amendment texts were acquired; PILOT-008 (Regulation 4.4) corrected on PR #222. The consolidated batch review package (docs/academy/MLC_BATCH_REVIEW_2026-09.md) is on this PR #213 branch awaiting the Owner's batch review. Question generation still paused after one pilot question (PILOT-001-first-question-package.json) pending its live Human Review verification. PR #212 ARGOS integrity reconciliation completed 2026-09-12 (Owner Limited GO).",
-  "last_verified_checkpoint": "2026-09-13, MLC Title 1-5 preparation complete (28/28 in draft PRs) after the Owner's 2026-09-12 GO on the resumption plan. Prior: 2026-09-12, Owner recovery/reconciliation pass (RECOVERY STATUS: PASS) followed by Owner Limited GO for PR #212 ARGOS reconciliation and this PROJECT_STATE synchronization. Prior checkpoints preserved rather than overwritten: 2026-09-06T13:45:45Z Chief AI GO/REVISE checkpoint; Phase 0 audit was delivered as a chat message in the Claude Code conversation on 2026-09-05, not committed to this repo as a file. No file named SINBAD_ACADEMY_ISM_ISPS_MLC_PHASE_0_AUDIT_2026-09-05.md exists in this repo - a similarly-named but unrelated file, docs/HUMAN_REVIEWER_PHASE_0_AUDIT_2026-09-03.md, does exist and should not be confused with it. No formal Phase 1/2 GO/REVISE/STOP decision has been recorded in-repo as an artifact; work has proceeded under the Owner's continuous, turn-by-turn direction in conversation instead.",
-  "state_semantics": "This file records project-wide development state INCLUDING work that exists only in open, unmerged draft PRs. Every entry below is labelled with its real state. 'IN DRAFT PR / UNMERGED / NOT OWNER ACCEPTED' means the work is implemented and source-verified on a codex/ branch and nothing more: not merged to main, not integrated, not Owner accepted. Git history, the PILOT-*.json provenance records and actual Owner decisions are authoritative over this file wherever they differ.",
+  "current_task": "Repository integration of the Academy pilot series is complete: PRs #212 through #242 (31 PRs) were merged to main sequentially on 2026-09-13 under the Owner's MERGE GO, each after its own up-to-date CI (verify) and each followed by green Release quality and Controlled Pages release runs on main. main is 3713a2b. ISM 16/16, ISPS Part A 1-19 and MLC 2006 28/28 source manifests, the ARGOS-reconciled Academy scaffolding (schema/RLS/tooling), the batch review package, the retro check report and the source provenance now live on main. NOT Owner accepted, NOT Human Review verified, NO question generation authorized: MERGED is repository integration only. Next Owner gates: batch review/acceptance of the MLC series, Hat C live Human Review run of the single pilot question package (PENDING_OWNER_ACTION), Hat D question-generation expansion (HOLD until Hat C passes).",
+  "last_verified_checkpoint": "2026-09-13/14, Owner MERGE GO executed: 31 PRs merged sequentially to main with per-PR gates (snapshot identity, changed-file set, up-to-date with current main, green verify, squash merge, linear landing, green post-merge Release quality and Pages release). Prior: 2026-09-13, MLC Title 1-5 preparation complete (28/28 in draft PRs) after the Owner's 2026-09-12 GO on the resumption plan. Prior: 2026-09-12, Owner recovery/reconciliation pass (RECOVERY STATUS: PASS) followed by Owner Limited GO for PR #212 ARGOS reconciliation and this PROJECT_STATE synchronization. Prior checkpoints preserved rather than overwritten: 2026-09-06T13:45:45Z Chief AI GO/REVISE checkpoint; Phase 0 audit was delivered as a chat message in the Claude Code conversation on 2026-09-05, not committed to this repo as a file. No file named SINBAD_ACADEMY_ISM_ISPS_MLC_PHASE_0_AUDIT_2026-09-05.md exists in this repo - a similarly-named but unrelated file, docs/HUMAN_REVIEWER_PHASE_0_AUDIT_2026-09-03.md, does exist and should not be confused with it. No formal Phase 1/2 GO/REVISE/STOP decision has been recorded in-repo as an artifact; work has proceeded under the Owner's continuous, turn-by-turn direction in conversation instead.",
+  "state_semantics": "This file records project-wide development state with real state labels. As of 2026-09-13 the Academy series is MERGED / INTEGRATED on main. MERGED != OWNER ACCEPTED, MERGED != HUMAN REVIEW VERIFIED, MERGED != QUESTION GENERATION AUTHORIZED. Owner acceptance is recorded only when the Owner states it separately. Git history, the PILOT-*.json provenance records and actual Owner decisions are authoritative over this file wherever they differ.",
   "completed_work": [
-    "PR #212 (draft, branch codex/academy-ism-pilot-slice): academy_ism_* schema/RLS/tooling, additive migration, null-byte fix, plus the 2026-09-12 ARGOS integrity reconciliation commit fc2e1a069922175780cb030fab5375cabc0a7abe (three protected-file hash records updated under Owner Limited GO, PR #211 precedent), 6 commits - IMPLEMENTED / TESTED (1993 unit tests: 1976 pass, 0 fail, 17 skip; ARGOS verifier PASS, 105 protected files) / IN DRAFT PR / UNMERGED / NOT OWNER ACCEPTED",
-    "PR #213 (draft, branch codex/academy-ism-pilot-001-manifest): docs/academy/ism-master-source-manifest/PILOT-001.json - ISM Code 16/16 elements verified via GROK+GEMINI independent agreement plus primary-source cross-check, plus this PROJECT_STATE.json - IMPLEMENTED / SOURCE-VERIFIED / IN DRAFT PR / UNMERGED / NOT OWNER ACCEPTED",
+    "PR #212 (merged 2026-09-13, formerly branch codex/academy-ism-pilot-slice): academy_ism_* schema/RLS/tooling, additive migration, null-byte fix, plus the 2026-09-12 ARGOS integrity reconciliation commit fc2e1a069922175780cb030fab5375cabc0a7abe (three protected-file hash records updated under Owner Limited GO, PR #211 precedent), 6 commits - IMPLEMENTED / TESTED (1993 unit tests: 1976 pass, 0 fail, 17 skip; ARGOS verifier PASS, 105 protected files) / MERGED 2026-09-13 / INTEGRATED on main / NOT OWNER ACCEPTED",
+    "PR #213 (merged 2026-09-13, formerly branch codex/academy-ism-pilot-001-manifest): docs/academy/ism-master-source-manifest/PILOT-001.json - ISM Code 16/16 elements verified via GROK+GEMINI independent agreement plus primary-source cross-check, plus this PROJECT_STATE.json - IMPLEMENTED / SOURCE-VERIFIED / MERGED 2026-09-13 / INTEGRATED on main / NOT OWNER ACCEPTED",
     "PR #213: PILOT-001-first-question-package.json - one pilot question (ISM Element 2) locally validated against the real checkIsmQuestionPayload()/validateManifest() code and against the real human_review_import_package() function via PGlite (packageComplete:true, status AVAILABLE) - not yet imported into any live Supabase project; that is the Owner's pending step below. Chief AI GO (2026-09-06) covers only this package's live review run.",
-    "PR #214 (draft, branch codex/academy-isps-pilot-001-manifest): docs/academy/isps-master-source-manifest/PILOT-001.json through PILOT-006.json - ISPS Code Part A Sections 1-19 (all sections, complete) verified via GROK candidate + Cowork's ClassNK primary-source cross-check, every source entry carrying verifiedBy: [GROK, PRIMARY_SOURCE_CROSSCHECK], plus Claude Code's independent supplementary re-verification on a majority of sections and several documented, unresolved variant notes (Sections 3, 4, 7, 10) retained rather than silently resolved, 7 commits - IMPLEMENTED / SOURCE-VERIFIED / IN DRAFT PR / UNMERGED / NOT OWNER ACCEPTED",
-    "PR #215-#223 (nine independent draft PRs, branches codex/academy-mlc-pilot-001-manifest through -009-manifest, each one commit cut directly from origin/main 1f7d584, no shared ancestry between them): docs/academy/mlc-master-source-manifest/PILOT-001.json through PILOT-009.json - MLC 2006 Regulations 1.1 (#215), 1.2 (#216), 1.3 (#217), 2.3 (#218), 2.6 (#219), 2.7 (#220), 2.8 (#221), 4.4 (#222), 4.5 (#223), each with Regulation/Standard A/Guideline B text diffed across two 2006-original mirrors plus the ILO 2014+2016 consolidated text and an amendment-history check (verifiedBy PRIMARY_SOURCE_TRIPLE_MIRROR_DIFF + AMENDMENT_HISTORY_CROSSCHECK; PILOT-001 to -003 used the earlier two-mirror method) - IMPLEMENTED / SOURCE-VERIFIED / IN DRAFT PR / UNMERGED / NOT OWNER ACCEPTED. Retrospectively re-diffed against the ILO 2022 consolidated text on 2026-09-12 (docs/academy/MLC_RETRO_CHECK_2026-09-13.md): eight consistent, PILOT-008 corrected (see PR #222 below).",
-    "PR #222, second commit c8a50d4 (2026-09-13): PILOT-008.json (Regulation 4.4) corrected - the 2026-09-08 version missed the 2022 amendment to Guideline B4.4.2 (new paragraph 5, renumbering 6-9) and stated no 2022 change; regenerated from the ILO 2022 consolidated text with the four-stage diff method, wrong reading quoted inside amendmentHistory, correctionNote/correctedAt and pendingAmendments2025 (Guideline B4.4.6 paragraph 2) added - IMPLEMENTED / SOURCE-VERIFIED / IN DRAFT PR / UNMERGED / NOT OWNER ACCEPTED",
-    "PR #224-#242 (nineteen independent draft PRs, branches codex/academy-mlc-pilot-010-manifest through -028-manifest, each one commit cut directly from origin/main 1f7d584, 2026-09-13): docs/academy/mlc-master-source-manifest/PILOT-010.json through PILOT-028.json - MLC 2006 Regulations 2.1 (#224), 2.2 (#225), 1.4 (#226), 2.4 (#227), 2.5 (#228), 4.1 (#229), 4.2 (#230), 4.3 (#231), 3.1 (#232), 3.2 (#233), 5.1.1 (#234), 5.1.2 (#235), 5.1.3 (#236), 5.1.4 (#237), 5.1.5 (#238), 5.1.6 (#239), 5.2.1 (#240), 5.2.2 (#241), 5.3 (#242), each built from the ILO consolidated text including the Amendments of 2014, 2016, 2018 and 2022 (published 2 October 2024) with verifiedBy PRIMARY_SOURCE_FOUR_STAGE_DIFF + AMENDMENT_TEXT_CROSSCHECK + AMENDMENT_HISTORY_CROSSCHECK, full provenance (URL, SHA-256, fetch time) inside each file, 2025 amendments recorded as pending only - IMPLEMENTED / SOURCE-VERIFIED / IN DRAFT PR / UNMERGED / NOT OWNER ACCEPTED",
-    "PR #213, commit 48e6198 (2026-09-13): docs/academy/MLC_BATCH_REVIEW_2026-09.md (the single consolidated review package required by the 2026-09-08 instruction, item 7), docs/academy/MLC_RETRO_CHECK_2026-09-13.md, docs/academy/mlc-master-source-manifest/SOURCES-2026-09-13.json (provenance of the eleven ILO/mirror documents) and docs/academy/mlc-master-source-manifest/verification/ (reference copies of the Python scripts, documentation only, not tooling) - IMPLEMENTED / IN DRAFT PR / UNMERGED / NOT OWNER ACCEPTED"
+    "PR #214 (merged 2026-09-13, formerly branch codex/academy-isps-pilot-001-manifest): docs/academy/isps-master-source-manifest/PILOT-001.json through PILOT-006.json - ISPS Code Part A Sections 1-19 (all sections, complete) verified via GROK candidate + Cowork's ClassNK primary-source cross-check, every source entry carrying verifiedBy: [GROK, PRIMARY_SOURCE_CROSSCHECK], plus Claude Code's independent supplementary re-verification on a majority of sections and several documented, unresolved variant notes (Sections 3, 4, 7, 10) retained rather than silently resolved, 7 commits - IMPLEMENTED / SOURCE-VERIFIED / MERGED 2026-09-13 / INTEGRATED on main / NOT OWNER ACCEPTED",
+    "PR #215-#223 (nine PRs, merged 2026-09-13, formerly branches codex/academy-mlc-pilot-001-manifest through -009-manifest, each one commit cut directly from origin/main 1f7d584, no shared ancestry between them): docs/academy/mlc-master-source-manifest/PILOT-001.json through PILOT-009.json - MLC 2006 Regulations 1.1 (#215), 1.2 (#216), 1.3 (#217), 2.3 (#218), 2.6 (#219), 2.7 (#220), 2.8 (#221), 4.4 (#222), 4.5 (#223), each with Regulation/Standard A/Guideline B text diffed across two 2006-original mirrors plus the ILO 2014+2016 consolidated text and an amendment-history check (verifiedBy PRIMARY_SOURCE_TRIPLE_MIRROR_DIFF + AMENDMENT_HISTORY_CROSSCHECK; PILOT-001 to -003 used the earlier two-mirror method) - IMPLEMENTED / SOURCE-VERIFIED / MERGED 2026-09-13 / INTEGRATED on main / NOT OWNER ACCEPTED. Retrospectively re-diffed against the ILO 2022 consolidated text on 2026-09-12 (docs/academy/MLC_RETRO_CHECK_2026-09-13.md): eight consistent, PILOT-008 corrected (see PR #222 below).",
+    "PR #222, second commit c8a50d4 (2026-09-13): PILOT-008.json (Regulation 4.4) corrected - the 2026-09-08 version missed the 2022 amendment to Guideline B4.4.2 (new paragraph 5, renumbering 6-9) and stated no 2022 change; regenerated from the ILO 2022 consolidated text with the four-stage diff method, wrong reading quoted inside amendmentHistory, correctionNote/correctedAt and pendingAmendments2025 (Guideline B4.4.6 paragraph 2) added - IMPLEMENTED / SOURCE-VERIFIED / MERGED 2026-09-13 / INTEGRATED on main / NOT OWNER ACCEPTED",
+    "PR #224-#242 (nineteen PRs, merged 2026-09-13, formerly branches codex/academy-mlc-pilot-010-manifest through -028-manifest, each one commit cut directly from origin/main 1f7d584, 2026-09-13): docs/academy/mlc-master-source-manifest/PILOT-010.json through PILOT-028.json - MLC 2006 Regulations 2.1 (#224), 2.2 (#225), 1.4 (#226), 2.4 (#227), 2.5 (#228), 4.1 (#229), 4.2 (#230), 4.3 (#231), 3.1 (#232), 3.2 (#233), 5.1.1 (#234), 5.1.2 (#235), 5.1.3 (#236), 5.1.4 (#237), 5.1.5 (#238), 5.1.6 (#239), 5.2.1 (#240), 5.2.2 (#241), 5.3 (#242), each built from the ILO consolidated text including the Amendments of 2014, 2016, 2018 and 2022 (published 2 October 2024) with verifiedBy PRIMARY_SOURCE_FOUR_STAGE_DIFF + AMENDMENT_TEXT_CROSSCHECK + AMENDMENT_HISTORY_CROSSCHECK, full provenance (URL, SHA-256, fetch time) inside each file, 2025 amendments recorded as pending only - IMPLEMENTED / SOURCE-VERIFIED / MERGED 2026-09-13 / INTEGRATED on main / NOT OWNER ACCEPTED",
+    "PR #213, commit 48e6198 (2026-09-13): docs/academy/MLC_BATCH_REVIEW_2026-09.md (the single consolidated review package required by the 2026-09-08 instruction, item 7), docs/academy/MLC_RETRO_CHECK_2026-09-13.md, docs/academy/mlc-master-source-manifest/SOURCES-2026-09-13.json (provenance of the eleven ILO/mirror documents) and docs/academy/mlc-master-source-manifest/verification/ (reference copies of the Python scripts, documentation only, not tooling) - IMPLEMENTED / MERGED 2026-09-13 / INTEGRATED on main / NOT OWNER ACCEPTED",
+    "2026-09-13 sequential merge of PR #212-#242 to main under the Owner's MERGE GO: 31 squash commits, linear history on top of 1f7d584 (0 multi-parent commits), every merge commit's changed-file set equal to the reviewed snapshot, ARGOS_INTEGRITY_VERIFIED (105 files) on the final main. Evidence per PR in merge_evidence. Two non-content interruptions handled without repair: (a) GitHub's update-branch reported BLOCKED instead of BEHIND under strict protection, so each branch was brought up to date with a plain local merge of main (no rebase, no content change) and, where GitHub failed to synchronize the PR head, a close/reopen of the PR; (b) PR #234's first verify run failed on a 30-second Playwright timeout in tests/browser/surface-smoke.spec.js:11 (unrelated to its one-file docs change), the Owner authorized a re-run of the identical commit, which passed. MERGED / INTEGRATED / NOT OWNER ACCEPTED"
   ],
   "pending_work": [
     "PR #212: the real @supabase/supabase-js network layer in tools/academy-ism-promote-accepted-package.js has never been exercised against a live Supabase project - needs manual verification before real use",
-    "PR #212: local Windows browser run (npm run test:web) on the reconciled commit: 82 passed, 2 failed; the two failures are the same hands-free Professor test (tests/browser/release-quality.spec.js:511) on desktop and mobile Chromium and reproduce identically on origin/main 1f7d584 in the same local environment. GitHub CI run 34715942840 on fc2e1a0 passed every step including 'Run desktop mobile and WCAG browser tests', so the failure is local-environment-specific, not a PR #212 regression and not present on CI - recorded here, not waived",
+    "Local Windows browser run (recorded on PR #212, still true after merge) (npm run test:web) on the reconciled commit: 82 passed, 2 failed; the two failures are the same hands-free Professor test (tests/browser/release-quality.spec.js:511) on desktop and mobile Chromium and reproduce identically on origin/main 1f7d584 in the same local environment. GitHub CI run 34715942840 on fc2e1a0 passed every step including 'Run desktop mobile and WCAG browser tests', so the failure is local-environment-specific, not a PR #212 regression and not present on CI - recorded here, not waived",
     "Owner to personally import PILOT-001-first-question-package.json into a real Supabase project and run it through Human Review to owner_finalize_package - full audit trail to be reported here once done.",
-    "MLC 2006: GitHub CI results for PR #224-#242 and for the PR #222 correction (all pushed 2026-09-13) are to be read from the PRs themselves; they are documentation-only files.",
     "MLC 2006 Amendments of 2025 (ILC 113, adopted 6 June 2025, expected entry into force 23 December 2027, NOT in force): nine manifests carry a pendingAmendments2025 note (Regulations 1.4, 2.4, 2.5, 3.1, 4.1, 4.3, 4.4, 5.1.5, 5.1.6). When the amendments enter into force those nine files need a new edition; nothing to do before then.",
     "Owner batch review of the MLC series (PRs #215-#242) against docs/academy/MLC_BATCH_REVIEW_2026-09.md - PENDING_OWNER_ACTION.",
-    "Next: Owner decisions on merge order and timing for #212 -> #213 -> #214 -> #215-#223 -> #224-#242 (recommendation only, Owner Gate)."
+    "Owner acceptance decision for the merged Academy content (ISM, ISPS, MLC manifests): NOT RECORDED. Merge on 2026-09-13 was repository integration only.",
+    "Next: Owner batch review of the MLC series against docs/academy/MLC_BATCH_REVIEW_2026-09.md (now on main); Hat C live Human Review run; then Hat D decision."
   ],
   "resolved_decisions": [
     "RESOLVED 2026-09-06 by Owner: title/packageSize remain an ISM-specific requirement, enforced only in tools/academy-ism-manifest-builder.js, and are deliberately NOT added to the shared config/human-review-contract.json's requiredManifestFields - widening that shared contract could affect GASM's existing import manifests (not independently verified either way), while keeping this ISM-only is zero-risk and keeps the two concerns separate. Documented inline as a code comment at the validation site, plus in PR #212's commit 8bbaabd.",
     "Chief AI Checkpoint, 2026-09-06: explicit GO recorded for the completed pilot package (PILOT-001-first-question-package.json) and the PROJECT_STATE/audit changes in PR #213 - accepted for the Owner's own live Supabase -> Human Review -> Owner Finalization verification. Scope of the GO is explicitly bounded: it authorizes the Owner running the existing pilot package through that live loop, not any further question-generation volume (see GO_REVISE_HOLD_STOP for the exact constraint).",
     "RESOLVED 2026-09-12 by Owner (Limited GO): PR #212's ARGOS integrity gate failure was a missing authorization record, not a defect - three protected files (academy-classroom-window.js, config/ui-design-contract.json, tests/ui-design-contract.test.js) were intentionally and legitimately changed by PR #212 (one new 'ism-isps-mlc' Academy section, its selector, and the section count 4 -> 5 in the contract test). Only their expected SHA-256 records in config/argos-integrity-policy.json were updated, in one commit (fc2e1a0), following the PR #211 precedent. HASH != TRUTH: semantic verification preceded the record update. No membership, schema, verifier, trust rule or enforcement change.",
-    "RESOLVED 2026-09-12 by Owner: this PROJECT_STATE.json is updated in place on the PR #213 branch (option A), not on a separate reconciliation branch and not after merging; every entry must carry its real state label and nothing may be marked DONE or INTEGRATED while unmerged."
+    "RESOLVED 2026-09-12 by Owner: this PROJECT_STATE.json is updated in place on the PR #213 branch (option A), not on a separate reconciliation branch and not after merging; every entry must carry its real state label and nothing may be marked DONE or INTEGRATED while unmerged.",
+    "RESOLVED 2026-09-13 by Owner (MERGE GO): PRs #212-#242 merged sequentially in the order #212 -> #213 -> #214 -> #215-#223 -> #224-#242, each gated on identity/content match with the reviewed snapshot, up-to-date verify, clean mergeability, linear landing and green post-merge main gates; STOP on any failure. Repository integration only - not Owner acceptance, not Human Review verification, not question-generation authorization."
   ],
-  "GO_REVISE_HOLD_STOP": "GO (explicit Chief AI Checkpoint, 2026-09-06) for the completed pilot package - Owner will personally run it through the live Supabase -> Human Review -> Owner Finalization loop. Constraint: no question-generation volume expansion (no 2nd+ pilot question) until that live loop is completed and verified end-to-end once. Source verification (non-question work) may continue in parallel. 2026-09-12 Owner decision: MLC SOURCE HOLD Regulations and Title 5 stay on hold until PR #212 reconciliation and this synchronization are complete; merge of any PR remains an Owner Gate.",
+  "GO_REVISE_HOLD_STOP": "GO (explicit Chief AI Checkpoint, 2026-09-06) for the completed pilot package - Owner will personally run it through the live Supabase -> Human Review -> Owner Finalization loop. Constraint: no question-generation volume expansion (no 2nd+ pilot question) until that live loop is completed and verified end-to-end once. 2026-09-13 Owner MERGE GO: repository integration of PR #212-#242 executed; Hat C remains HOLD pending Owner action and Hat D remains HOLD until Hat C passes end-to-end.",
   "active_work_orders": [
-    "2026-09-08 09:23 Owner instruction: MLC 2006 full-scope Title 1-5 preparation, small independent draft PRs, all draft/unmerged, single batch review at the end - PREPARATION COMPLETE 2026-09-13 (28/28 Regulations in draft PRs, batch review package delivered on PR #213); awaiting the Owner's batch review. Merge, Human Review and question generation remain Owner Gates.",
-    "2026-09-12 Owner GO on the resumption plan (Hat A: close the PR batch; Hat B: clear MLC SOURCE HOLD with reacquired sources; Hat C: Owner's live Human Review run; Hat D: content generation after Hat C) - Hat A steps 1-2 and Hat B complete; Hat A step 3 (merge) and Hats C/D are Owner-gated."
+    "2026-09-08 09:23 Owner instruction: MLC 2006 full-scope Title 1-5 preparation - PREPARATION COMPLETE 2026-09-13 and MERGED 2026-09-13; awaiting the Owner's batch review/acceptance.",
+    "2026-09-12 Owner GO on the resumption plan - Hat A (PR batch) complete including merge (Hat A step 3, under the separate 2026-09-13 MERGE GO); Hat B complete; Hat C (Owner's live Human Review run) PENDING_OWNER_ACTION; Hat D HOLD."
   ],
   "known_defects": [
-    "FIXED in PR #212 commit 8bbaabd7908d8a685e7c6ffdef6c8c5a73706fa0 (2026-09-06): tools/academy-ism-promote-accepted-package.js's groupKey() previously joined its key fields with a literal U+0000 (null) byte, confirmed by finding a raw null byte at file offset 1669 in the committed file, which caused grep/git to treat the source file as binary. Delimiter changed to 0x1F (Unit Separator); exactly one byte differs from the prior version (verified by full-file diff), and the existing test suite passes unmodified (8/8, including the grouping test that exercises groupKey() directly). PR #212 is still open/unmerged as of this update - the fix exists on that branch but has not reached main yet.",
+    "FIXED in PR #212 commit 8bbaabd7908d8a685e7c6ffdef6c8c5a73706fa0 (2026-09-06): tools/academy-ism-promote-accepted-package.js's groupKey() previously joined its key fields with a literal U+0000 (null) byte, confirmed by finding a raw null byte at file offset 1669 in the committed file, which caused grep/git to treat the source file as binary. Delimiter changed to 0x1F (Unit Separator); exactly one byte differs from the prior version (verified by full-file diff), and the existing test suite passes unmodified (8/8, including the grouping test that exercises groupKey() directly). PR #212 merged to main on 2026-09-13 (3d79319); the fix is on main.",
     "GEMINI has produced 7 independently-verified errors in amendment/resolution attribution and paragraph-history narrative across Elements 1, 2, 6, 8, 12, 13 and 14 of docs/academy/ism-master-source-manifest/PILOT-001.json (see each element's knownDiscrepancy field, or EL1's amendmentHistory field for the one recorded before that field existed). Its quoted regulatory text has been reliable in every element checked; its specific claims about which resolution or paragraph changed something have not. Recount this number directly from the file rather than trusting this note if it might be stale.",
     "FIXED on PR #222 commit c8a50d4 (2026-09-13): docs/academy/mlc-master-source-manifest/PILOT-008.json (Regulation 4.4) as committed on 2026-09-08 missed the Amendments of 2022 to Guideline B4.4.2 (new paragraph 5, renumbering 6-9) and stated that no 2022 change existed; the 2026-09-08 check searched the amendment round by single Regulation number and missed the joint heading 'Regulations 3.1 and 4.4'. Found by the 2026-09-12 retrospective diff of all nine committed files against the ILO 2022 consolidated text; the other eight are consistent. The wrong reading is quoted inside the corrected file's amendmentHistory, not deleted.",
     "OBSERVED 2026-09-12, not fixed, outside Academy scope: OWNER_GOVERNANCE.md is listed in config/argos-integrity-policy.json but has no 'text eol=lf' entry in .gitattributes, so on a Windows clone with core.autocrlf=true it checks out with CRLF and the local ARGOS verifier reports PROTECTED_FILE_DRIFT for it even though index and HEAD blob are identical (committed bytes are LF). CI on Linux is unaffected. Local verification on Windows must be run on exact repository bytes (e.g. a git archive export) until this is addressed under its own Owner decision.",
-    "OBSERVED 2026-09-12, not fixed, outside Academy scope: tests/browser/release-quality.spec.js:511 (hands-free Professor listen-send-answer-listen loop) fails on desktop and mobile Chromium with #handsfreeStatus stuck at 'Sorunuz alındı; Sinbad düşünüyor…' instead of reaching sleep mode, identically on origin/main 1f7d584 and on PR #212 fc2e1a0 in this environment. Cause not investigated (may be environment-dependent). Recorded so it is not attributed to any Academy PR."
+    "OBSERVED 2026-09-12, not fixed, outside Academy scope: tests/browser/release-quality.spec.js:511 (hands-free Professor listen-send-answer-listen loop) fails on desktop and mobile Chromium with #handsfreeStatus stuck at 'Sorunuz alındı; Sinbad düşünüyor…' instead of reaching sleep mode, identically on origin/main 1f7d584 and on PR #212 fc2e1a0 in this environment. Cause not investigated (may be environment-dependent). Recorded so it is not attributed to any Academy PR.",
+    "OBSERVED 2026-09-13, not fixed, outside Academy scope: tests/browser/surface-smoke.spec.js:11 ('every dashboard card opens its canonical independent resizable window') ran 25 s locally and hit the 30 s Playwright test timeout once on GitHub CI (PR #234 first verify run, desktop and mobile Chromium, retry also timed out); it passed on the re-run of the identical commit and on every other run that day. Timing margin, not an Academy defect."
   ],
   "safety_governance_boundaries": [
     "No direct push to main; codex/ branches + draft PRs only, per AGENTS.md",
@@ -49,21 +52,19 @@
     "sinbad-ai-core's Pedagogy Foundation ADRs (ADR-0036 through ADR-0040, confirmed present in this repo) describe a separate, pre-existing, deliberately inert deny-only foundation for future adaptive-learning/animation work - this pilot has not built on it, activated it, or relied on it for anything",
     "Content stays INTERNAL PROFESSIONAL READINESS - NON-CERTIFYING; no official certificate, statutory authority or institutional approval is claimed"
   ],
-  "ism_source_verification": "16/16 VERIFIED (PR #213, draft/unmerged)",
-  "isps_source_verification": "1-19/19 VERIFIED (PR #214, branch codex/academy-isps-pilot-001-manifest, 7 commits, still draft/unmerged) - docs/academy/isps-master-source-manifest/PILOT-001.json through PILOT-006.json. Every source entry carries verifiedBy: [GROK, PRIMARY_SOURCE_CROSSCHECK] (Cowork's ClassNK_ISPS_Code_Part_A.pdf cross-check). Claude Code additionally, independently re-verified roughly half the sections via separate web sources distinct from ClassNK; Section 14 and Section 19 were only partially independently checked (structure/key clauses, not full-text parity) due to this environment's repeated inability to fetch primary-source PDFs directly. Sections 3, 4, 7, and 10 carry documented, unresolved variantNote entries (retained, not silently resolved) - see each PILOT file for detail. Section 19's Grok candidate was specifically rejected as inaccurate and replaced with ClassNK-extracted text cross-checked against a blind third-party (ChatGPT) pass, per PR #214 commit 83dbc2f.",
+  "ism_source_verification": "16/16 VERIFIED (PR #213, merged 2026-09-13, on main)",
+  "isps_source_verification": "1-19/19 VERIFIED (PR #214, 7 commits, merged 2026-09-13 as 269dc1e, on main) - docs/academy/isps-master-source-manifest/PILOT-001.json through PILOT-006.json. Every source entry carries verifiedBy: [GROK, PRIMARY_SOURCE_CROSSCHECK] (Cowork's ClassNK_ISPS_Code_Part_A.pdf cross-check). Claude Code additionally, independently re-verified roughly half the sections via separate web sources distinct from ClassNK; Section 14 and Section 19 were only partially independently checked (structure/key clauses, not full-text parity) due to this environment's repeated inability to fetch primary-source PDFs directly. Sections 3, 4, 7, and 10 carry documented, unresolved variantNote entries (retained, not silently resolved) - see each PILOT file for detail. Section 19's Grok candidate was specifically rejected as inaccurate and replaced with ClassNK-extracted text cross-checked against a blind third-party (ChatGPT) pass, per PR #214 commit 83dbc2f.",
   "mlc_source_verification": {
-    "status": "28/28 Regulations (Titles 1-5) SOURCE-VERIFIED and IN DRAFT PRs (unmerged, not Owner accepted); SOURCE HOLD cleared 2026-09-13; Title 5 reviewed",
-    "verified_in_draft_prs_2026_09_13": {
-      "1.4": "PR #226, PILOT-012.json", "2.1": "PR #224, PILOT-010.json", "2.2": "PR #225, PILOT-011.json", "2.4": "PR #227, PILOT-013.json",
-      "2.5": "PR #228, PILOT-014.json", "3.1": "PR #232, PILOT-018.json", "3.2": "PR #233, PILOT-019.json", "4.1": "PR #229, PILOT-015.json",
-      "4.2": "PR #230, PILOT-016.json", "4.3": "PR #231, PILOT-017.json", "5.1.1": "PR #234, PILOT-020.json", "5.1.2": "PR #235, PILOT-021.json",
-      "5.1.3": "PR #236, PILOT-022.json", "5.1.4": "PR #237, PILOT-023.json", "5.1.5": "PR #238, PILOT-024.json", "5.1.6": "PR #239, PILOT-025.json",
-      "5.2.1": "PR #240, PILOT-026.json", "5.2.2": "PR #241, PILOT-027.json", "5.3": "PR #242, PILOT-028.json"
-    },
+    "status": "28/28 Regulations (Titles 1-5) SOURCE-VERIFIED and MERGED to main 2026-09-13 (INTEGRATED, NOT Owner accepted); SOURCE HOLD cleared 2026-09-13; Title 5 reviewed",
     "text_edition_2026_09_13": "ILO consolidated text including the Amendments of 2014, 2016, 2018 and 2022 (published 2 October 2024), the text in force at verification; authentic amendment texts of 2014 (GB.322/LILS/3), 2016 (ILC 105), 2018 (ILC 107), 2022 (ILC 110) and the 2025 ILC 113 text used as evidence. Provenance: docs/academy/mlc-master-source-manifest/SOURCES-2026-09-13.json.",
     "retro_check_of_pilot_001_to_009": "Done 2026-09-12 against the ILO 2022 consolidated text: eight consistent, PILOT-008 (Regulation 4.4) had missed the 2022 amendment to Guideline B4.4.2 and was corrected on PR #222 (commit c8a50d4). Report: docs/academy/MLC_RETRO_CHECK_2026-09-13.md.",
     "pending_2025_amendments": "Recorded (not blended) in PILOT-012 (1.4), -013 (2.4), -014 (2.5), -018 (3.1), -015 (4.1), -017 (4.3), -008 (4.4), -024 (5.1.5), -025 (5.1.6).",
-    "verified_in_draft_prs": {
+    "source_hold": [],
+    "source_hold_history": "2026-09-08: 1.4, 2.1, 2.2, 2.4, 2.5, 3.1, 3.2, 4.1, 4.2, 4.3 held because the 2006 mirrors and the 2014+2016 consolidated text did not carry the 2018/2022 amended text. 2026-09-12/13: released after the ILO 2022 consolidated text and the authentic amendment texts were acquired and their provenance recorded.",
+    "not_reviewed": "none",
+    "method": "PILOT-010 to -028 and the PILOT-008 correction: PRIMARY_SOURCE_FOUR_STAGE_DIFF + AMENDMENT_TEXT_CROSSCHECK + AMENDMENT_HISTORY_CROSSCHECK. PILOT-004 to -009: PRIMARY_SOURCE_TRIPLE_MIRROR_DIFF + AMENDMENT_HISTORY_CROSSCHECK; PILOT-001 to -003: two-mirror diff + amendment-history check. No GROK/GEMINI access in either session; recorded in each file's verificationMethodNote.",
+    "manifest_directory": "docs/academy/mlc-master-source-manifest/ on main: PILOT-001.json to PILOT-028.json, SOURCES-2026-09-13.json, verification/ (reference scripts)",
+    "verified_and_merged_2026_09_13": {
       "1.1": "PR #215, PILOT-001.json",
       "1.2": "PR #216, PILOT-002.json",
       "1.3": "PR #217, PILOT-003.json (no Standard A1.3/Guideline B1.3 exists in the Code - structural finding, not an extraction gap)",
@@ -72,15 +73,29 @@
       "2.7": "PR #220, PILOT-006.json",
       "2.8": "PR #221, PILOT-007.json",
       "4.4": "PR #222, PILOT-008.json",
-      "4.5": "PR #223, PILOT-009.json"
-    },
-    "source_hold": [],
-    "source_hold_history": "2026-09-08: 1.4, 2.1, 2.2, 2.4, 2.5, 3.1, 3.2, 4.1, 4.2, 4.3 held because the 2006 mirrors and the 2014+2016 consolidated text did not carry the 2018/2022 amended text. 2026-09-12/13: released after the ILO 2022 consolidated text and the authentic amendment texts were acquired and their provenance recorded.",
-    "not_reviewed": "none",
-    "method": "PILOT-010 to -028 and the PILOT-008 correction: PRIMARY_SOURCE_FOUR_STAGE_DIFF + AMENDMENT_TEXT_CROSSCHECK + AMENDMENT_HISTORY_CROSSCHECK. PILOT-004 to -009: PRIMARY_SOURCE_TRIPLE_MIRROR_DIFF + AMENDMENT_HISTORY_CROSSCHECK; PILOT-001 to -003: two-mirror diff + amendment-history check. No GROK/GEMINI access in either session; recorded in each file's verificationMethodNote.",
-    "manifest_directory": "docs/academy/mlc-master-source-manifest/ (files exist only on their own codex/academy-mlc-pilot-00N-manifest branches; none on main)"
+      "4.5": "PR #223, PILOT-009.json",
+      "1.4": "PR #226, PILOT-012.json",
+      "2.1": "PR #224, PILOT-010.json",
+      "2.2": "PR #225, PILOT-011.json",
+      "2.4": "PR #227, PILOT-013.json",
+      "2.5": "PR #228, PILOT-014.json",
+      "3.1": "PR #232, PILOT-018.json",
+      "3.2": "PR #233, PILOT-019.json",
+      "4.1": "PR #229, PILOT-015.json",
+      "4.2": "PR #230, PILOT-016.json",
+      "4.3": "PR #231, PILOT-017.json",
+      "5.1.1": "PR #234, PILOT-020.json",
+      "5.1.2": "PR #235, PILOT-021.json",
+      "5.1.3": "PR #236, PILOT-022.json",
+      "5.1.4": "PR #237, PILOT-023.json",
+      "5.1.5": "PR #238, PILOT-024.json",
+      "5.1.6": "PR #239, PILOT-025.json",
+      "5.2.1": "PR #240, PILOT-026.json",
+      "5.2.2": "PR #241, PILOT-027.json",
+      "5.3": "PR #242, PILOT-028.json"
+    }
   },
-  "pr_212_argos_reconciliation": "DONE 2026-09-12 (Owner Limited GO): commit fc2e1a069922175780cb030fab5375cabc0a7abe on codex/academy-ism-pilot-slice, parent 8bbaabd, pushed to origin. Exactly three sha256 records changed in config/argos-integrity-policy.json: academy-classroom-window.js f3d32400.. -> d137d480.., config/ui-design-contract.json fdda9e78.. -> c6c52942.., tests/ui-design-contract.test.js 587aa2fc.. -> 3d0d5b4a... Local verification on the committed bytes: ARGOS_INTEGRITY_VERIFIED (105 protected files), contract/classroom/admission tests 35/35, full regression 1993 tests / 1976 pass / 0 fail / 17 skip. GitHub CI (Release quality, run 34715942840): SUCCESS on all 19 steps including ARGOS integrity gate, complete regression suite and browser tests. PR #212 classification as of 2026-09-12: IMPLEMENTED / TESTED / DRAFT PR / CI-ARGOS READY; MERGED = NO, INTEGRATED = NO, OWNER ACCEPTED = NO.",
+  "pr_212_argos_reconciliation": "DONE 2026-09-12 (Owner Limited GO): commit fc2e1a069922175780cb030fab5375cabc0a7abe on codex/academy-ism-pilot-slice, parent 8bbaabd, pushed to origin. Exactly three sha256 records changed in config/argos-integrity-policy.json: academy-classroom-window.js f3d32400.. -> d137d480.., config/ui-design-contract.json fdda9e78.. -> c6c52942.., tests/ui-design-contract.test.js 587aa2fc.. -> 3d0d5b4a... Local verification on the committed bytes: ARGOS_INTEGRITY_VERIFIED (105 protected files), contract/classroom/admission tests 35/35, full regression 1993 tests / 1976 pass / 0 fail / 17 skip. GitHub CI (Release quality, run 34715942840): SUCCESS on all 19 steps including ARGOS integrity gate, complete regression suite and browser tests. PR #212 merged 2026-09-13 as 3d79319 (first in the sequence); classification: IMPLEMENTED / TESTED / MERGED / INTEGRATED; OWNER ACCEPTED = NO.",
   "pr_214_section_3_3_variant": "REVISED - both 'or' (authoritative, in fullText) and 'and' (rise.odessa.ua, likely transcription error) retained in the provenance record's variantNote field, not just described in the PR body. Independently confirmed present in the actual committed file, not assumed from conversation history.",
   "live_supabase_human_review_integration_gate": "PENDING_OWNER_ACTION - not started. This is an intermediate integration/acceptance gate (importing PILOT-001-first-question-package.json into a real Supabase project and running it to owner_finalize_package), NOT Phase 9 of the original work order. Unchanged by the 2026-09-12 recovery.",
   "large_scale_academy_content_generation": "HOLD - pending completion of the Supabase -> import_package -> Human Review -> AAL2 owner_finalize_package path for the existing single pilot question. Matches the constraint already recorded in GO_REVISE_HOLD_STOP. Project recovery on 2026-09-12 is explicitly NOT authorization for question generation.",
@@ -95,13 +110,13 @@
     "manifest_file": "docs/academy/ism-master-source-manifest/PILOT-001.json",
     "note": "This is a provenance/reference record only, not a database write - it does not create any academy_ism_source_manifest row, verification_stage, or question. See the manifest file's own top-level 'note' field."
   },
-  "branch_topology": "All Academy branches (codex/academy-ism-pilot-slice, codex/academy-ism-pilot-001-manifest, codex/academy-isps-pilot-001-manifest, codex/academy-mlc-pilot-001..009-manifest) are cut directly from origin/main 1f7d584, contain none of each other's commits, and change disjoint files; merge-tree against main is clean for all 12. The only dependency is semantic: PR #213's pilot question package was validated with PR #212's tools, so #212 should land before #213. Recommended (not authorized) order: #212 -> #213 -> #214 -> #215-#223.",
+  "branch_topology": "Historical: all 31 Academy branches were cut directly from origin/main 1f7d584 with disjoint files. On 2026-09-13 they were merged sequentially (squash, linear history required by branch protection) in the order #212 -> #213 -> #214 -> #215-#223 -> #224-#242; each branch was first brought up to date with the then-current main by a plain merge commit. main after the sequence: 3713a2bf367d14f26f707e8c50980b0fdf0e3340.",
   "relevant_PRs_commits": {
-    "PR_212": "sinbad-marine/atlas-marine-os#212 (draft, open, not merged, 6 commits as of 2026-09-12 - the 6th is the ARGOS reconciliation commit fc2e1a0)",
-    "PR_213": "sinbad-marine/atlas-marine-os#213 (draft, open, not merged, 14 commits as of this update - 12th: 2026-09-12 state sync 16d268f; 13th: 2026-09-13 MLC review package and scripts 48e6198; 14th: this synchronization)",
-    "PR_214": "sinbad-marine/atlas-marine-os#214 (draft, open, not merged, 7 commits as of 2026-09-07) - docs/academy/isps-master-source-manifest/PILOT-001.json through PILOT-006.json, ISPS Code Part A Sections 1-19 (complete)",
-    "PR_215_to_223": "sinbad-marine/atlas-marine-os#215 through #223 (nine draft PRs, open, not merged, 1 commit each dated 2026-09-08, except #222 which has 2 commits after the 2026-09-13 correction c8a50d4) - docs/academy/mlc-master-source-manifest/PILOT-001.json through PILOT-009.json",
-    "PR_224_to_242": "sinbad-marine/atlas-marine-os#224 through #242 (nineteen draft PRs, open, not merged, 1 commit each, all dated 2026-09-13) - docs/academy/mlc-master-source-manifest/PILOT-010.json through PILOT-028.json"
+    "PR_212": "sinbad-marine/atlas-marine-os#212 MERGED 2026-09-13 -> main 3d79319 (6 commits squashed)",
+    "PR_213": "sinbad-marine/atlas-marine-os#213 MERGED 2026-09-13 -> main c4261e1 (14 commits + update-branch merge, squashed)",
+    "PR_214": "sinbad-marine/atlas-marine-os#214 MERGED 2026-09-13 -> main 269dc1e (7 commits squashed)",
+    "PR_215_to_223": "sinbad-marine/atlas-marine-os#215-#223 MERGED 2026-09-13 -> main b57cae5, d5fa7f9, e8024aa, b8b2ffc, 2b86f26, 6147801, 7a80304, fb5f947, 489a555",
+    "PR_224_to_242": "sinbad-marine/atlas-marine-os#224-#242 MERGED 2026-09-13 -> main 97cb8a6 ... 3713a2b (see merge_evidence)"
   },
   "corrections_made_when_writing_this_file": [
     "The last_verified_checkpoint field originally supplied referenced a Phase 0 audit file that does not exist in this repo; corrected to state plainly that no such file exists and that the real audit was a conversational deliverable, not a committed artifact.",
@@ -109,7 +124,232 @@
     "An earlier version of this file stated PR #212 had '5 commits as of 2026-09-06', which was actually inaccurate at the time it was written (PR #212 had 4 commits then); it happened to become numerically correct only after a 5th commit (the null-byte fix) was separately added - noted so a future reader does not assume that earlier figure was verified when it was not.",
     "This update kept the existing last_verified_checkpoint content instead of replacing it outright with only the new Chief AI GO/REVISE checkpoint text, since the prior content (the Phase 0 audit file correction) is still accurate and load-bearing; both are now present together.",
     "isps_source_verification.section_4_6 is written here as Cowork's reported status, not a Claude Code confirmation - Claude Code has never received the actual Grok JSON output for ISPS Sections 4-6 and has not independently verified it, and no PILOT-002.json file exists yet (confirmed today via a fresh repo tree search, not assumed from conversation history).",
-    "2026-09-12 synchronization: the previous version (2026-09-07T13:28Z) predated all nine MLC PRs (#215-#223, 2026-09-08) and the PR #212 ARGOS reconciliation, and still described PR #212 as 5 commits; every PR number, commit count, commit hash and test count written today was read live from git and gh, not carried forward. The 'state_semantics' field was added because the Owner required that unmerged draft work never be mistaken for merged or accepted work."
+    "2026-09-12 synchronization: the previous version (2026-09-07T13:28Z) predated all nine MLC PRs (#215-#223, 2026-09-08) and the PR #212 ARGOS reconciliation, and still described PR #212 as 5 commits; every PR number, commit count, commit hash and test count written today was read live from git and gh, not carried forward. The 'state_semantics' field was added because the Owner required that unmerged draft work never be mistaken for merged or accepted work.",
+    "2026-09-13/14 post-merge synchronization: every label changed from IN DRAFT PR / UNMERGED to MERGED / INTEGRATED was checked against gh pr view state=MERGED and the merge commit on main; OWNER ACCEPTED deliberately left at NO everywhere because no Owner acceptance statement exists."
   ],
-  "last_verified_timestamp": "2026-09-13T08:09:36Z"
+  "last_verified_timestamp": "2026-09-14T04:50:55Z",
+  "merge_evidence": {
+    "mainAfterSequence": "3713a2bf367d14f26f707e8c50980b0fdf0e3340",
+    "mainBeforeSequence": "1f7d584849b9cae34a21decbe00ce6c6aeaf51ed",
+    "mergeMethod": "squash (branch protection: linear history, required check verify, strict up-to-date)",
+    "perPR": {
+      "PR_212": {
+        "mergeCommit": "3d7931989a74a7f1a777980cea6bc710cd62ec04",
+        "mergedAtUtc": "2026-09-13T09:18:25.5176717Z",
+        "filesOnMain": 12,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34749287440",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34749287377"
+      },
+      "PR_213": {
+        "mergeCommit": "c4261e1774efe90304f5e4ec001901f19d1d44f2",
+        "mergedAtUtc": "2026-09-13T13:48:37.1670214Z",
+        "filesOnMain": 12,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34760866219",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34760866230"
+      },
+      "PR_214": {
+        "mergeCommit": "269dc1eb033fa9718e306cb7019f5bbf4960ed66",
+        "mergedAtUtc": "2026-09-13T14:02:31.961283Z",
+        "filesOnMain": 6,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34761503955",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34761503947"
+      },
+      "PR_215": {
+        "mergeCommit": "b57cae5dd130ebc718a7a110a62fe5b4badc899a",
+        "mergedAtUtc": "2026-09-13T14:17:04.5009618Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34762204469",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34762204486"
+      },
+      "PR_216": {
+        "mergeCommit": "d5fa7f9b060f6fafca96c2dc29450fb57e8092bb",
+        "mergedAtUtc": "2026-09-13T14:30:56.5945706Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34762876313",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34762876244"
+      },
+      "PR_217": {
+        "mergeCommit": "e8024aa0d788344ce1ff95fcb0fc8fa390f55bd4",
+        "mergedAtUtc": "2026-09-13T14:43:26.4961064Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34763474816",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34763474832"
+      },
+      "PR_218": {
+        "mergeCommit": "b8b2ffc986a6c3901df858a66197579af434af0b",
+        "mergedAtUtc": "2026-09-13T14:57:17.5516579Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34764139855",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34764139895"
+      },
+      "PR_219": {
+        "mergeCommit": "2b86f26f08ff2d5545b3e673d318506c4eb6ab54",
+        "mergedAtUtc": "2026-09-13T15:11:09.6333555Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34764826987",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34764826982"
+      },
+      "PR_220": {
+        "mergeCommit": "6147801fcde897ea08fb93cdccc72c142381a99d",
+        "mergedAtUtc": "2026-09-13T15:25:02.5889045Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34765523063",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34765523073"
+      },
+      "PR_221": {
+        "mergeCommit": "7a8030408d4778eab7de4006ad23f95722857d66",
+        "mergedAtUtc": "2026-09-13T15:39:37.4770372Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34766254985",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34766254979"
+      },
+      "PR_222": {
+        "mergeCommit": "fb5f947985db757bc6db3f09b10878d0a8cc3b10",
+        "mergedAtUtc": "2026-09-13T15:54:16.7432032Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34766974469",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34766974447"
+      },
+      "PR_223": {
+        "mergeCommit": "489a5551a557aaa00b0c28fb84b90a5c7a26c9ee",
+        "mergedAtUtc": "2026-09-13T16:08:54.313644Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34767694163",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34767694151"
+      },
+      "PR_224": {
+        "mergeCommit": "97cb8a604fabf8b5f75a971a937729252caf4986",
+        "mergedAtUtc": "2026-09-13T16:23:32.5711222Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34768425135",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34768425141"
+      },
+      "PR_225": {
+        "mergeCommit": "9762ced259e27219cf0c01c293664907d19f58a6",
+        "mergedAtUtc": "2026-09-13T16:38:10.1812677Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34769166354",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34769166386"
+      },
+      "PR_226": {
+        "mergeCommit": "2e114c9b420745484929fa07ba29b028bbe89d4b",
+        "mergedAtUtc": "2026-09-13T16:51:26.0531092Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34769822767",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34769822765"
+      },
+      "PR_227": {
+        "mergeCommit": "c829d46d0e4b067391daaf6cdad2047f8d53ee66",
+        "mergedAtUtc": "2026-09-13T17:05:22.2596863Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34770517858",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34770517892"
+      },
+      "PR_228": {
+        "mergeCommit": "5305845db78a41b77d117df59d03c3610f634c55",
+        "mergedAtUtc": "2026-09-13T17:19:19.3357767Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34771224493",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34771224518"
+      },
+      "PR_229": {
+        "mergeCommit": "2178fdd8cf82c20ebee5bd84c1fb1ee38e1e3fd3",
+        "mergedAtUtc": "2026-09-13T17:33:17.3409322Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34771930389",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34771930627"
+      },
+      "PR_230": {
+        "mergeCommit": "415f5fc9edcc65e747ae4dc8058011f8cc6eda31",
+        "mergedAtUtc": "2026-09-13T17:47:57.2749407Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34772664164",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34772664156"
+      },
+      "PR_231": {
+        "mergeCommit": "981f864d1b8e37b82f54c2bc81f6f74c2c72d3df",
+        "mergedAtUtc": "2026-09-13T18:03:14.3186711Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34773423140",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34773423217"
+      },
+      "PR_232": {
+        "mergeCommit": "a0a2886021d6b86eaf28cf7a8b0038ca095e8738",
+        "mergedAtUtc": "2026-09-13T18:17:11.9500776Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34774145549",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34774145574"
+      },
+      "PR_233": {
+        "mergeCommit": "00f849f81a0fcd6dd5ca1f548321af14345761f5",
+        "mergedAtUtc": "2026-09-13T18:32:01.4510188Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34774906980",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34774906981"
+      },
+      "PR_234": {
+        "mergeCommit": "9fdc2a7ee544ea517c59c8770b66cf3ee883111f",
+        "mergedAtUtc": "2026-09-13T20:55:12.5179497Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34782224930",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34782224929"
+      },
+      "PR_235": {
+        "mergeCommit": "56eade0ca8bf42e4e68c9f8943e2187f1b573ad6",
+        "mergedAtUtc": "2026-09-13T21:09:16.6102394Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34782940303",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34782940327"
+      },
+      "PR_236": {
+        "mergeCommit": "11f29502ee86ec68645c571164618dfcd6ae3eb1",
+        "mergedAtUtc": "2026-09-13T21:24:41.8432354Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34783729440",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34783729542"
+      },
+      "PR_237": {
+        "mergeCommit": "ff455d8dc10a996b2f696d5b42be53e35362a572",
+        "mergedAtUtc": "2026-09-13T21:39:27.6093233Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34784468796",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34784468790"
+      },
+      "PR_238": {
+        "mergeCommit": "9f5527a51b2d912d60913bd803fe69f8b91dca6f",
+        "mergedAtUtc": "2026-09-13T21:54:23.1086747Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34785177284",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34785177285"
+      },
+      "PR_239": {
+        "mergeCommit": "a5875d4e924139e21e3f4c2b3ef82045772a0975",
+        "mergedAtUtc": "2026-09-13T22:19:19.1595121Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34786431534",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34786431558"
+      },
+      "PR_240": {
+        "mergeCommit": "5da573d3798219a7799c9b35e9645082b6c48777",
+        "mergedAtUtc": "2026-09-13T22:33:55.0517473Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34787168675",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34787168660"
+      },
+      "PR_241": {
+        "mergeCommit": "90c68d40fb1cea6e89c2d60989e17898d8f18d11",
+        "mergedAtUtc": "2026-09-13T22:47:49.8317266Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34787830976",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34787830978"
+      },
+      "PR_242": {
+        "mergeCommit": "3713a2bf367d14f26f707e8c50980b0fdf0e3340",
+        "mergedAtUtc": "2026-09-13T23:01:47.6680275Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34788480485",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34788480481"
+      }
+    }
+  }
 }
