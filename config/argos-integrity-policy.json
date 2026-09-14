@@ -239,7 +239,7 @@
     },
     {
       "path": "config/ui-design-contract.json",
-      "sha256": "c6c5294269d1475f8daa04bd1a2715f2219578e9b10dd5a37a07919842fd0bb4",
+      "sha256": "9d4ce4eb2bffa314e6e7f52bf37578b78b3b33fe5106f86244b9e23b334adc9d",
       "kind": "CONFIG"
     },
     {
@@ -419,7 +419,7 @@
     },
     {
       "path": "tools/build-pages-artifact.js",
-      "sha256": "63d5099c011e84aefb5428928d46564b6212a65b20439cd7a39966ff5dd569a6",
+      "sha256": "f859c9a0ccfb9e89bfb119ad2854f4c03a4db7f67072460dec381368a169dfbe",
       "kind": "SOURCE"
     },
     {
