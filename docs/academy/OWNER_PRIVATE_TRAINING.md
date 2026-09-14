@@ -29,6 +29,12 @@ Owner Limited Implementation GO, 2026-09-14. Scope: the minimum path for the Own
 3. Merge the PR so the Pages release publishes `academy.html` and `academy-owner-training.js` (allowlisted).
 4. In the classroom: ISM / ISPS / MLC -> ISM Code foundations -> "Owner · Human Review paketinden özel eğitime aktar": package `b513867b-e4e2-4be1-9595-7a123f8bf792`, question `ISM-M1-EL2-Q001`, AAL2 code -> "Eğitim sorularımı yükle" -> answer -> "Cevabı gönder".
 
+## Second pilot question (Owner Limited GO "SECOND PILOT QUESTION ONLY", 2026-09-14)
+
+- `docs/academy/ism-master-source-manifest/PILOT-002-second-question-package.json`: one question, `ISM-M1-EL4-Q002`, grounded verbatim in the verified Element 4 entry (`IMO-ISM-A741-18-EL4`, verifiedBy GROK + GEMINI + PRIMARY_SOURCE_CROSSCHECK, no amendment identified). Own Human Review package identity (`ISM-M1-EL4-PILOT-Q2`, revision `PILOT-002-2026-09-14`); hashes computed with the real manifest builder; validated with the real payload contract; imported and promoted next to Q001 in PGlite (`tests/academy-owner-second-question-database.test.js`). Not bulk generation.
+- Classroom panel now walks all of the Owner's `OWNER_ONLY` questions in order (progress "Soru n / N", previous/next, "Sonraki soruya geç" after a recorded attempt), resumes at the first unanswered question on reload, and lists attempts per question.
+- UX corrections from the Owner's live test report: promotion form open by default with the last package/question ids remembered locally; panel measured against the chalkboard and laid below its title (placeholder chalk line hidden while active); board title reads "Owner özel eğitim modu"; status line inside the panel.
+
 ## Acceptance evidence
 
 Recorded in `PROJECT_STATE.json` after the live Owner run. Until then every classification in the Owner's acceptance test is NOT VERIFIED.

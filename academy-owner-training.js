@@ -19,8 +19,31 @@
   function el(tag,className,text){const node=document.createElement(tag);if(className)node.className=className;if(text!==undefined)node.textContent=text;return node}
   function status(text,error=false){const node=byId('academyOwnerTrainingStatus');if(!node)return;node.textContent=text;node.dataset.state=error?'error':'ok'}
 
+  const LAST_PROMOTE_KEY='atlas_academy_training_last_promote';
+  function applyLayout(){
+    // The panel becomes the chalkboard's content while it is active: it is measured against the classroom's own
+    // .academy-live-board (whose size changes with the lesson phase) and laid over the board area below its title.
+    // The board's placeholder chalk line ("içerik henüz hazır değil") is hidden while the panel is active so nothing
+    // is drawn twice in the same area. Nothing in the classroom's own scripts or stylesheet is modified.
+    Object.assign(root.style,{position:'absolute',zIndex:'6',overflow:'auto',margin:'0',padding:'12px 16px',boxSizing:'border-box',border:'1px solid #6c897d',borderRadius:'10px',background:'rgba(7,28,28,.97)',color:'#eef7dc',lineHeight:'1.5',fontSize:'15px'});
+    placePanel();
+  }
+  function placePanel(){
+    const stage=byId('academyTeachingStage'),board=stage?.querySelector('.academy-live-board'),chalk=byId('academyTeachingText');
+    if(!stage||!board)return;
+    if(root.hidden){if(chalk)chalk.hidden=false;return}
+    const sr=stage.getBoundingClientRect(),br=board.getBoundingClientRect();
+    const tr=byId('academyTeachingTitle')?.getBoundingClientRect();
+    const top=Math.max(0,(tr&&tr.height?tr.bottom-sr.top:br.top-sr.top+40)+10),left=Math.max(0,br.left-sr.left+14),width=Math.max(240,br.width-28);
+    // fill the chalkboard below its title; on the small welcome-phase board extend onto the desk area but never past the stage
+    const boardBased=br.bottom-sr.top-top-14,height=Math.max(160,Math.min(sr.height-top-14,Math.max(boardBased,300)));
+    Object.assign(root.style,{top:`${Math.round(top)}px`,left:`${Math.round(left)}px`,width:`${Math.round(width)}px`,height:`${Math.round(height)}px`});
+    if(chalk)chalk.hidden=true;
+  }
+  window.addEventListener('resize',placePanel);
+  new MutationObserver(placePanel).observe(byId('academyTeachingStage')||root,{attributes:true,attributeFilter:['data-phase','class','style']});
   function build(){
-    root.replaceChildren();
+    root.replaceChildren();applyLayout();
     root.append(el('strong',null,'Owner özel eğitim · ISM Code foundations'));
     const status=el('p','academy-training-status','Oturum denetleniyor…');status.id='academyOwnerTrainingStatus';root.append(status);
     const actions=el('div','academy-actions');
@@ -29,16 +52,24 @@
     const question=el('section','academy-training-question');question.id='academyTrainingQuestion';question.hidden=true;root.append(question);
     const result=el('section','academy-training-result');result.id='academyTrainingResult';result.hidden=true;root.append(result);
     const attempts=el('section','academy-training-attempts');attempts.id='academyTrainingAttempts';attempts.hidden=true;root.append(attempts);
-    const promote=el('details','academy-training-promote');promote.id='academyTrainingPromote';
+    const promote=el('details','academy-training-promote');promote.id='academyTrainingPromote';promote.open=true;
     promote.append(el('summary',null,'Owner · Human Review paketinden özel eğitime aktar (AAL2)'));
-    const pkgLabel=el('label',null,'Kaynak paket ID');const pkg=el('input');pkg.id='academyTrainingPromotePackage';pkg.placeholder='b513867b-…';pkg.autocomplete='off';pkgLabel.append(pkg);promote.append(pkgLabel);
-    const qLabel=el('label',null,'Soru ID');const q=el('input');q.id='academyTrainingPromoteQuestion';q.placeholder='ISM-M1-EL2-Q001';q.autocomplete='off';qLabel.append(q);promote.append(qLabel);
-    const go=el('button','btn','Aktar');go.type='button';go.id='academyTrainingPromoteButton';go.addEventListener('click',promoteQuestion);promote.append(go);
+    let last={};try{last=JSON.parse(localStorage.getItem(LAST_PROMOTE_KEY)||'{}')}catch{last={}}
+    const pkgLabel=el('label',null,'Kaynak paket ID');const pkg=el('input');pkg.id='academyTrainingPromotePackage';pkg.placeholder='b513867b-…';pkg.autocomplete='off';pkg.value=String(last.packageId||'');pkgLabel.append(pkg);promote.append(pkgLabel);
+    const qLabel=el('label',null,'Soru ID');const q=el('input');q.id='academyTrainingPromoteQuestion';q.placeholder='ISM-M1-EL2-Q001';q.autocomplete='off';q.value=String(last.questionId||'');qLabel.append(q);promote.append(qLabel);
+    const go=el('button','btn primary','Aktar');go.type='button';go.id='academyTrainingPromoteButton';go.addEventListener('click',promoteQuestion);promote.append(go);
     root.append(promote);
   }
 
   function visible(){return byId('academyModule')?.value===MODULE}
-  function sync(){root.hidden=!visible();if(!root.hidden&&!session)refreshSession()}
+  const TRAINING_TITLE='Owner özel eğitim modu';
+  function labelBoard(){
+    // The classroom shows "Ders hazırlanıyor" for a module without a verified lesson; while this panel is active the board title
+    // states the real mode instead. The classroom's own lesson clock is untouched.
+    if(root.hidden)return;const title=byId('academyTeachingTitle');if(title&&title.textContent!==TRAINING_TITLE)title.textContent=TRAINING_TITLE;
+  }
+  new MutationObserver(labelBoard).observe(byId('academyTeachingTitle')||root,{childList:true,characterData:true,subtree:true});
+  function sync(){root.hidden=!visible();placePanel();if(!root.hidden){labelBoard();if(!session)refreshSession()}}
 
   async function refreshSession(){
     if(!client){status('Supabase istemcisi yüklenemedi.',true);return}
@@ -57,13 +88,28 @@
     if(error){status(`Sorular okunamadı: ${error.message}`,true);return}
     questions=data||[];
     if(!questions.length){status('Bu çalışma alanında size açık özel eğitim sorusu yok. Owner olarak aşağıdan bir Human Review paketinden aktarabilirsiniz.');byId('academyTrainingQuestion').hidden=true;return}
-    status(`${questions.length} özel eğitim sorusu yüklendi (yalnız siz görebilirsiniz).`);
-    renderQuestion(questions[0]);await loadAttempts(questions[0]);
+    // reload-safe position: resume at the first question without an attempt; if all answered, show the first
+    const answered=await answeredRowIds();
+    const start=Math.max(0,questions.findIndex(q=>!answered.has(q.id)));
+    status(`${questions.length} özel eğitim sorusu yüklendi (yalnız siz görebilirsiniz) · cevaplanan ${[...answered].filter(id=>questions.some(q=>q.id===id)).length}/${questions.length}.`);
+    await showQuestion(start);
+  }
+
+  async function answeredRowIds(){
+    const {data}=await client.from('academy_ism_attempts').select('question_id').eq('workspace_id',workspace());
+    return new Set((data||[]).map(a=>a.question_id));
+  }
+
+  let index=0;
+  async function showQuestion(i){
+    index=Math.min(Math.max(0,i),questions.length-1);
+    renderQuestion(questions[index]);await loadAttempts(questions[index]);
   }
 
   function renderQuestion(row){
     selectedRow=row;selectedKey=null;
     const box=byId('academyTrainingQuestion');box.replaceChildren();box.hidden=false;
+    box.append(el('div','academy-training-progress',`Soru ${index+1} / ${questions.length}`));
     const meta=el('small','academy-source',`${row.question_id} · ${row.source_version} · ${row.source_section||''} · durum ${row.verification_stage} · kapsam ${row.training_scope}`);box.append(meta);
     box.append(el('p','academy-training-objective',row.learning_objective||''));
     box.append(el('strong',null,row.prompt));
@@ -73,7 +119,11 @@
       input.addEventListener('change',()=>{selectedKey=input.value});label.append(input,el('span',null,`${choice.key}. ${choice.text}`));choices.append(label);
     });
     box.append(choices);
-    const submit=el('button','btn primary','Cevabı gönder');submit.type='button';submit.id='academyTrainingSubmit';submit.addEventListener('click',submitAttempt);box.append(submit);
+    const actions=el('div','academy-actions');
+    const submit=el('button','btn primary','Cevabı gönder');submit.type='button';submit.id='academyTrainingSubmit';submit.addEventListener('click',submitAttempt);actions.append(submit);
+    if(index>0){const prev=el('button','btn','← Önceki soru');prev.type='button';prev.id='academyTrainingPrev';prev.addEventListener('click',()=>showQuestion(index-1));actions.append(prev)}
+    if(index<questions.length-1){const next=el('button','btn','Sonraki soru →');next.type='button';next.id='academyTrainingNext';next.addEventListener('click',()=>showQuestion(index+1));actions.append(next)}
+    box.append(actions);
     byId('academyTrainingResult').hidden=true;byId('academyTrainingResult').replaceChildren();
   }
 
@@ -88,6 +138,8 @@
     box.append(el('p',null,`Seçtiğiniz: ${data.selectedKey} · Doğru cevap: ${data.correctKey} · Puan: ${data.score} / geçme eşiği ${data.passThreshold}`));
     if(data.expectedReasoning)box.append(el('p','academy-training-reasoning',data.expectedReasoning));
     box.append(el('small','academy-source',`Deneme kaydı ${data.attemptId} · ${data.attemptedAt}`));
+    if(index<questions.length-1){const next=el('button','btn primary','Sonraki soruya geç →');next.type='button';next.id='academyTrainingAdvance';next.addEventListener('click',()=>showQuestion(index+1));box.append(next)}
+    else box.append(el('p','academy-training-done','Bu modüldeki tüm özel eğitim soruları cevaplandı.'));
     status('Deneme kaydedildi ve sunucudan doğrulandı.');
     await loadAttempts(selectedRow);
   }
@@ -106,6 +158,7 @@
       if(!ownerSecurity)throw new Error('Owner güvenlik modülü yüklenemedi.');
       const packageId=byId('academyTrainingPromotePackage').value.trim(),questionId=byId('academyTrainingPromoteQuestion').value.trim();
       if(!packageId||!questionId)throw new Error('Paket ID ve soru ID gerekli.');
+      try{localStorage.setItem(LAST_PROMOTE_KEY,JSON.stringify({packageId,questionId}))}catch{}
       const requestId=crypto.randomUUID(),command={workspaceId:workspace(),packageId,questionId};
       const descriptor={action:TRAINING_ACTION,resourceType:'academy_question',resourceId:questionId,workspaceId:workspace(),command};
       status('Owner doğrulaması bekleniyor…');

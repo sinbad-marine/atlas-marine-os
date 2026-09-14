@@ -1,0 +1,80 @@
+{
+  "note": "Second end-to-end pilot question for the ISM Academy, authored under the Owner Limited GO \"SECOND PILOT QUESTION ONLY\" (2026-09-14). One question, grounded verbatim in the verified Element 4 entry of PILOT-001.json (verifiedBy GROK, GEMINI, PRIMARY_SOURCE_CROSSCHECK; no amendment identified). Not bulk generation. This file is the exact JSON body the Owner imports through the Owner Console (import_package, AAL2); it has not been sent over any network by the author.",
+  "verifiedAgainstRealCode": {
+    "checkIsmQuestionPayload": "PASSED - tools/academy-ism-question-payload-contract.js checkIsmQuestionPayload() returned valid:true (run by the generator script build_pilot002.cjs).",
+    "validateManifest": "PASSED - tools/academy-ism-manifest-builder.js validateManifest() returned without throwing; contentSha256 values computed with the builder's own sha256Hex.",
+    "humanReviewImportPackageRPC": "PASSED via PGlite in tests/academy-owner-private-training-database.test.js (second-package test): the manifest below was imported with the real human_review_import_package() and promoted with academy_ism_owner_promote_training() as a distinct question row alongside Q001, no duplicate.",
+    "ownerOnlySteps": "NOT executed and NOT simulated by the author: live import and training promotion are Owner AAL2 actions."
+  },
+  "sourceVersionDerivation": "sourceVersion 'A.741(18) (1993, unamended)' is derived from the EL4 amendmentHistory field ('Adopted 4 November 1993 (resolution A.741(18)). No amendment to Element 4 identified...'); sourceSection is copied from EL4's own 'section' field ('Element 4').",
+  "verbatimAnchor": "designate a person or persons ashore having direct access to the highest level of management",
+  "manifest": {
+    "schemaVersion": "sinbad-human-review-manifest/1",
+    "sourceBatchId": "ISM-M1-EL4-PILOT-Q2",
+    "sourceRevision": "PILOT-002-2026-09-14",
+    "title": "ISM Code Element 4 - Pilot Question 2 (Owner-private training, second question)",
+    "packageSize": 25,
+    "expectedCount": 1,
+    "presentCount": 1,
+    "missingCount": 0,
+    "deferredCount": 0,
+    "contentSha256": "2202205ed35fa0d09f68924488a9b8106bfefdfab81c8bfb63d44fadb21d9efc",
+    "questions": [
+      {
+        "questionId": "ISM-M1-EL4-Q002",
+        "sourceRevision": "PILOT-002-2026-09-14",
+        "contentSha256": "c37071c91d19c3f68630c387e93b68fdaeeb711e4f2fb24f80a2707df6f78cd0",
+        "technicalStatus": "TECHNICALLY_VERIFIED",
+        "questionPayload": {
+          "authority": "IMO",
+          "moduleCode": "ism-code-foundations",
+          "flagAdministration": null,
+          "sourceVersion": "A.741(18) (1993, unamended)",
+          "sourceSection": "Element 4",
+          "learningObjective": "Identify the defining characteristic of the designated person or persons ashore under ISM Code Element 4 and their role as the link between the Company and those on board.",
+          "difficulty": "foundation",
+          "competencyDimension": "dpa_competence",
+          "questionKind": "multiple_choice",
+          "prompt": "Under Element 4 of the ISM Code, which characteristic must the designated person or persons ashore have?",
+          "choices": [
+            {
+              "key": "A",
+              "text": "Direct access to the highest level of management"
+            },
+            {
+              "key": "B",
+              "text": "A valid master's certificate of competency"
+            },
+            {
+              "key": "C",
+              "text": "Formal approval by the flag State administration"
+            },
+            {
+              "key": "D",
+              "text": "A permanent position on board one of the Company's ships"
+            }
+          ],
+          "correctAnswer": "A",
+          "expectedReasoning": "Element 4 (verbatim from the verified source, IMO-ISM-A741-18-EL4): every company 'should designate a person or persons ashore having direct access to the highest level of management', so that there is a link between the company and those on board. The text does not require a certificate of competency, flag State approval or a shipboard position; distractors B, C and D are not in the Code text.",
+          "markingRubric": {
+            "type": "single_answer_mcq",
+            "correctKey": "A",
+            "scoring": {
+              "A": 1,
+              "B": 0,
+              "C": 0,
+              "D": 0
+            }
+          },
+          "passThreshold": 1
+        },
+        "evidencePayload": {
+          "status": "PILOT_QUESTION_TRACEABILITY",
+          "sourceManifestFile": "docs/academy/ism-master-source-manifest/PILOT-001.json",
+          "sourceId": "IMO-ISM-A741-18-EL4"
+        }
+      }
+    ]
+  },
+  "ownerNextStep": "Owner Console -> Human Review -> Manifestten paket oluştur: paste the manifest object, \"Manifesti doğrula ve içe al\", AAL2. Then classroom -> ISM Code foundations -> promotion form with the new package id and question id ISM-M1-EL4-Q002, AAL2. Training on this question is Owner-private; it is not Human Review accepted."
+}
