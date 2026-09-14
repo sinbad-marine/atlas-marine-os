@@ -41,10 +41,12 @@ Live code: main `7a4d06e` (PR #245) on Pages; `academy.html` sha256 equals `conf
 
 | Step | Evidence | Result |
 |---|---|---|
-| PILOT-001 import (Owner, Owner Console, AAL2) | package `b513867b-e4e2-4be1-9595-7a123f8bf792`, `ISM-M1-EL2-PILOT-Q1`, AVAILABLE, lock 0, 06:09Z | PASS |
-| PILOT-002 import (Owner, Owner Console, AAL2) | package `9bf9d8d3-db60-4369-90ef-2e1bfa7c9c83`, `ISM-M1-EL4-PILOT-Q2`, AVAILABLE, lock 0, 20:47Z; `human_review_audit` PACKAGE_IMPORTED by OWNER; package and question hashes equal the repository manifest (`2202205e…`, `c37071c9…`) | PASS |
-| Q001 promotion (classroom, AAL2, edge function) | training row `e3555f88-348f-487e-b06b-48a0f82395fb`, OWNER_ONLY, TECHNICALLY_VERIFIED, promoted 19:48Z | PASS |
-| Q002 promotion (classroom, AAL2, edge function) | training row `712624ff-97d9-48e0-8617-950e2de9b708`, OWNER_ONLY, TECHNICALLY_VERIFIED, `source_content_sha256` == package question hash, promoted 20:59Z; 2 rows, 2 distinct question ids, no duplicate | PASS |
+| PILOT-001 import (Owner, Owner Console) | package `b513867b-e4e2-4be1-9595-7a123f8bf792`, `ISM-M1-EL2-PILOT-Q1`, AVAILABLE, lock 0, 06:09Z | PASS |
+| PILOT-002 import (Owner, Owner Console) | package `9bf9d8d3-db60-4369-90ef-2e1bfa7c9c83`, `ISM-M1-EL4-PILOT-Q2`, AVAILABLE, lock 0, 20:47Z; `human_review_audit` PACKAGE_IMPORTED by OWNER; package and question hashes equal the repository manifest (`2202205e…`, `c37071c9…`) | PASS |
+| Q001 promotion (classroom, edge function) | training row `e3555f88-348f-487e-b06b-48a0f82395fb`, OWNER_ONLY, TECHNICALLY_VERIFIED, promoted 19:48Z | PASS |
+| Q002 promotion (classroom, edge function) | training row `712624ff-97d9-48e0-8617-950e2de9b708`, OWNER_ONLY, TECHNICALLY_VERIFIED, `source_content_sha256` == package question hash, promoted 20:59Z; 2 rows, 2 distinct question ids, no duplicate | PASS |
+| AAL2 enforcement on import/promotion | Owner reports no new 6-digit AAL2 code was requested during the live import or promotion. Not determined whether an already-elevated session satisfied the gate or enforcement is missing. | NOT VERIFIED |
+| Classroom refresh UI state | after browser refresh the selected training module reset to General Maritime Education; data and attempts persisted once section/module were reselected | UI-STATE ISSUE (follow-up) |
 | Q001 attempt | `ef3549cf-dc88-4449-84c7-af61e2eec605`, key A, correct, score 1, 19:51Z | PASS |
 | Q002 attempt | `2791b25a-d0a3-495c-b1d2-22c74573546f`, key A, correct, score 1, 21:03Z | PASS |
 | Reload | classroom showed "2 özel eğitim sorusu yüklendi · cevaplanan 2/2", "Soru 2 / 2" (Q002) and "Soru 1 / 2" (Q001) each with its attempt listed | PASS |
@@ -52,5 +54,7 @@ Live code: main `7a4d06e` (PR #245) on Pages; `academy.html` sha256 equals `conf
 | Owner-only access | foreign authenticated user and anon see 0 training questions, 0 attempts, 0 source manifest rows | PASS |
 | Mastery / readiness | not calculated (no engine) | OUT OF SCOPE |
 | Owner acceptance | no acceptance statement recorded | NOT RECORDED |
+
+Owner decision (2026-09-15): the core Q002 Owner-private training test is accepted as PASS; the two findings above are follow-up items, deliberately not fixed in the documentation/state-sync PR; AAL2 is not claimed as PASS without evidence.
 
 Flow note: Q001 was promoted and answered during the Owner's first live test (before PR #245 went live), so the second-question run proceeded Q002 import → promotion → answer → reload, and the classroom resumed at Q002 as designed. STOP applies after this run: no third question, no bulk generation, Hat D HOLD, invited users HOLD.
