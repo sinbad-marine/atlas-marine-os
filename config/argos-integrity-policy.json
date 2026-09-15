@@ -440,7 +440,7 @@
     {
       "path": "tests/sinbad-academy-window.test.js",
       "kind": "TEST",
-      "sha256": "13ed7877001bd9d89eb2331f1cecc464452051f411d7cf6cfd76533c1bcbab27"
+      "sha256": "930d1a40f8b877ad3c6cf5325b278c0ad9cf389dd59f4105ca676a77da8aa90e"
     },
     {
       "path": "founder-owner-mfa.js",
