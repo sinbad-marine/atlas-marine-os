@@ -45,7 +45,7 @@ Live code: main `7a4d06e` (PR #245) on Pages; `academy.html` sha256 equals `conf
 | PILOT-002 import (Owner, Owner Console) | package `9bf9d8d3-db60-4369-90ef-2e1bfa7c9c83`, `ISM-M1-EL4-PILOT-Q2`, AVAILABLE, lock 0, 20:47Z; `human_review_audit` PACKAGE_IMPORTED by OWNER; package and question hashes equal the repository manifest (`2202205e…`, `c37071c9…`) | PASS |
 | Q001 promotion (classroom, edge function) | training row `e3555f88-348f-487e-b06b-48a0f82395fb`, OWNER_ONLY, TECHNICALLY_VERIFIED, promoted 19:48Z | PASS |
 | Q002 promotion (classroom, edge function) | training row `712624ff-97d9-48e0-8617-950e2de9b708`, OWNER_ONLY, TECHNICALLY_VERIFIED, `source_content_sha256` == package question hash, promoted 20:59Z; 2 rows, 2 distinct question ids, no duplicate | PASS |
-| AAL2 enforcement on import/promotion | Owner reports no new 6-digit AAL2 code was requested during the live import or promotion. Not determined whether an already-elevated session satisfied the gate or enforcement is missing. | NOT VERIFIED |
+| AAL2 enforcement on import/promotion | Read-only evidence review 2026-09-15 (Owner Limited GO): the Owner session (`cf8e8223`) was at AAL2 after a TOTP challenge verified 06:09:23Z; the step-up issuer checked the JWT AAL level server-side; the package-import and academy-training functions each enforced AAL2 again; every gated operation (PILOT-001 import, Q001 promotion, PILOT-002 import, Q002 promotion) consumed its own nonce-bound, command-bound, session-bound, 5-minute, single-use step-up authorization; no rejected step-up in the sequence. See "AAL2 semantics" below. | VERIFIED |
 | Classroom refresh UI state | after browser refresh the selected training module reset to General Maritime Education; data and attempts persisted once section/module were reselected | UI-STATE ISSUE (follow-up) |
 | Q001 attempt | `ef3549cf-dc88-4449-84c7-af61e2eec605`, key A, correct, score 1, 19:51Z | PASS |
 | Q002 attempt | `2791b25a-d0a3-495c-b1d2-22c74573546f`, key A, correct, score 1, 21:03Z | PASS |
@@ -55,6 +55,12 @@ Live code: main `7a4d06e` (PR #245) on Pages; `academy.html` sha256 equals `conf
 | Mastery / readiness | not calculated (no engine) | OUT OF SCOPE |
 | Owner acceptance | no acceptance statement recorded | NOT RECORDED |
 
-Owner decision (2026-09-15): the core Q002 Owner-private training test is accepted as PASS; the two findings above are follow-up items, deliberately not fixed in the documentation/state-sync PR; AAL2 is not claimed as PASS without evidence.
+Owner decision (2026-09-15): the core Q002 Owner-private training test is accepted as PASS. The AAL2 finding was closed on 2026-09-15 by the read-only evidence review recorded above and in `PROJECT_STATE.json` (`owner_private_training_pilot.aal2_evidence`). The classroom refresh UI-state finding remains an open follow-up, deliberately not fixed in a documentation/state PR.
+
+### AAL2 semantics (recorded 2026-09-15)
+
+- **AAL2 ENFORCEMENT VERIFIED does NOT mean NEW TOTP PROMPT REQUIRED FOR EVERY OPERATION.** The live Owner session had already been elevated to AAL2 following the 06:09Z TOTP verification, so the client (`founder-owner-ui.js` `verify()`) correctly skipped a new 6-digit prompt while that session remained AAL2. This is consistent with the current implementation.
+- **Three separate controls:** session AAL2 state; the TOTP challenge/prompt; the per-operation single-use step-up authorization. Gated operations still use separate step-up authorizations (issued by `founder-owner-step-up` after its own JWT AAL2 check, consumed by the target function after its own JWT AAL2 check) even when no new TOTP prompt is shown.
+- **Not implemented, not claimed:** mandatory TOTP re-entry for every gated action; an Owner-defined AAL2 freshness / re-authentication interval. Either would require a separate Owner GO and an implementation change.
 
 Flow note: Q001 was promoted and answered during the Owner's first live test (before PR #245 went live), so the second-question run proceeded Q002 import → promotion → answer → reload, and the classroom resumed at Q002 as designed. STOP applies after this run: no third question, no bulk generation, Hat D HOLD, invited users HOLD.
