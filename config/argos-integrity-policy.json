@@ -219,7 +219,7 @@
     },
     {
       "path": "academy-classroom-window.js",
-      "sha256": "d137d480e09bb09ba12e6ec2720b8c2b72af675d6b428b63ec73b8c43b26c7b4",
+      "sha256": "0d20fb890a0dd6ed6f303278f155370893ab4d27362c9905d32a37fce89a6901",
       "kind": "SOURCE"
     },
     {
@@ -440,7 +440,7 @@
     {
       "path": "tests/sinbad-academy-window.test.js",
       "kind": "TEST",
-      "sha256": "13ed7877001bd9d89eb2331f1cecc464452051f411d7cf6cfd76533c1bcbab27"
+      "sha256": "930d1a40f8b877ad3c6cf5325b278c0ad9cf389dd59f4105ca676a77da8aa90e"
     },
     {
       "path": "founder-owner-mfa.js",

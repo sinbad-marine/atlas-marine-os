@@ -109,6 +109,18 @@ test('GOSS GASM exposes qualification, mandatory subject, topic and one-question
   assert.match(academyApp,/function openOwnerQuestionReview\(\)/);
 });
 
+test('chosen department and module survive a browser refresh (UI state only, validated against the section table)',()=>{
+  assert.match(academyApp,/const SELECTION_KEY='atlas_sinbad_academy_selection'/);
+  assert.match(academyApp,/function saveAcademySelection\(\)/);
+  assert.match(academyApp,/function restoreAcademySelection\(\)/);
+  assert.match(academyApp,/^restoreAcademySelection\(\);$/m,'startup restores the last selection instead of hard-coding the default');
+  assert.doesNotMatch(academyApp,/^selectAcademySection\('general-maritime-education'\);$/m);
+  assert.match(academyApp,/Object\.prototype\.hasOwnProperty\.call\(ACADEMY_SECTIONS,saved\.section\)/,'saved section must be a real department');
+  assert.match(academyApp,/ACADEMY_SECTIONS\[sectionId\]\.modules\.includes\(module\)/,'saved module must belong to that department');
+  assert.match(academyApp,/byId\('academyModule'\)\.addEventListener\('change',saveAcademySelection\)/);
+  assert.match(academyApp,/selectAcademySection\(sectionId\);\s*\n\s*const select=byId\('academyModule'\)/,'restore goes through the normal section switch, so phase/board/clock still reset to welcome');
+});
+
 test('student Academy never renders the verified GASM answer key',()=>{
   assert.match(academyApp,/Doğrulanmış cevap anahtarı yalnız yetkili Owner inceleme ekranında gösterilir/);
   assert.doesNotMatch(academyApp,/Object\.entries\(item\.answers\)/);
