@@ -46,7 +46,7 @@ Live code: main `7a4d06e` (PR #245) on Pages; `academy.html` sha256 equals `conf
 | Q001 promotion (classroom, edge function) | training row `e3555f88-348f-487e-b06b-48a0f82395fb`, OWNER_ONLY, TECHNICALLY_VERIFIED, promoted 19:48Z | PASS |
 | Q002 promotion (classroom, edge function) | training row `712624ff-97d9-48e0-8617-950e2de9b708`, OWNER_ONLY, TECHNICALLY_VERIFIED, `source_content_sha256` == package question hash, promoted 20:59Z; 2 rows, 2 distinct question ids, no duplicate | PASS |
 | AAL2 enforcement on import/promotion | Read-only evidence review 2026-09-15 (Owner Limited GO): the Owner session (`cf8e8223`) was at AAL2 after a TOTP challenge verified 06:09:23Z; the step-up issuer checked the JWT AAL level server-side; the package-import and academy-training functions each enforced AAL2 again; every gated operation (PILOT-001 import, Q001 promotion, PILOT-002 import, Q002 promotion) consumed its own nonce-bound, command-bound, session-bound, 5-minute, single-use step-up authorization; no rejected step-up in the sequence. See "AAL2 semantics" below. | VERIFIED |
-| Classroom refresh UI state | after browser refresh the selected training module reset to General Maritime Education; data and attempts persisted once section/module were reselected | UI-STATE ISSUE (follow-up) |
+| Classroom refresh UI state | after browser refresh the selected training module reset to General Maritime Education; data and attempts persisted once section/module were reselected. FIXED by PR #248 (main `11cb710`, 2026-09-15): department and module are remembered per browser and restored at startup after validation; lesson phase, board and clock still start from welcome (`tests/browser/academy-selection.spec.js`). | FIXED (PR #248) |
 | Q001 attempt | `ef3549cf-dc88-4449-84c7-af61e2eec605`, key A, correct, score 1, 19:51Z | PASS |
 | Q002 attempt | `2791b25a-d0a3-495c-b1d2-22c74573546f`, key A, correct, score 1, 21:03Z | PASS |
 | Reload | classroom showed "2 özel eğitim sorusu yüklendi · cevaplanan 2/2", "Soru 2 / 2" (Q002) and "Soru 1 / 2" (Q001) each with its attempt listed | PASS |
@@ -55,7 +55,7 @@ Live code: main `7a4d06e` (PR #245) on Pages; `academy.html` sha256 equals `conf
 | Mastery / readiness | not calculated (no engine) | OUT OF SCOPE |
 | Owner acceptance | no acceptance statement recorded | NOT RECORDED |
 
-Owner decision (2026-09-15): the core Q002 Owner-private training test is accepted as PASS. The AAL2 finding was closed on 2026-09-15 by the read-only evidence review recorded above and in `PROJECT_STATE.json` (`owner_private_training_pilot.aal2_evidence`). The classroom refresh UI-state finding remains an open follow-up, deliberately not fixed in a documentation/state PR.
+Owner decision (2026-09-15): the core Q002 Owner-private training test is accepted as PASS. The AAL2 finding was closed on 2026-09-15 by the read-only evidence review recorded above and in `PROJECT_STATE.json` (`owner_private_training_pilot.aal2_evidence`). The classroom refresh UI-state finding was fixed on 2026-09-15 by PR #248 under a separate Owner Limited GO. Owner acceptance of the training pilot itself remains NOT RECORDED.
 
 ### AAL2 semantics (recorded 2026-09-15)
 
