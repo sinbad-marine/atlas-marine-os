@@ -13,6 +13,7 @@ const ACADEMY_SECTIONS=Object.freeze({
 });
 const GEOMETRY_KEY='atlas_sinbad_academy_native_window';
 const LANGUAGE_KEY='atlas_sinbad_academy_language';
+const SELECTION_KEY='atlas_sinbad_academy_selection';
 const SINBAD_BRIDGE_URL='http://127.0.0.1:31983';
 function argosBridgeHeaders(action,target){const random=globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random().toString(16).slice(2)}`;return {'X-Sinbad-Argos-Version':'sinbad-argos-command/1-v1','X-Sinbad-Argos-Action':action,'X-Sinbad-Argos-Target':target,'X-Sinbad-Argos-Command-Id':`academy-${random}`,'X-Sinbad-Argos-Requested-At':new Date().toISOString()};}
 const SINBAD_OWNER_REVIEW_URL='http://127.0.0.1:4177/';
@@ -361,11 +362,26 @@ function selectAcademySection(sectionId){
   const gasmMenu=byId('gasmQualificationMenu'),gasmButton=byId('gasmMenuButton');if(gasmMenu)gasmMenu.hidden=sectionId!=='goss-gasm';if(gasmButton)gasmButton.setAttribute('aria-expanded',String(sectionId==='goss-gasm'));
   academyModuleOptions.filter(option=>section.modules.includes(option.value)).forEach(option=>{const node=document.createElement('option');node.value=option.value;node.textContent=option.label;select.append(node);});
   stopBoardTeaching();resetAcademyLessonClock();setAcademyClassroomPhase('welcome');const output=byId('academyOutput');output.replaceChildren();output.hidden=true;byId('academyTeachingTitle').textContent="Professor Sinbad's board";byId('academyTeachingText').replaceChildren();byId('academyTeachingText').setAttribute('aria-hidden','true');
+  saveAcademySelection();
 }
 function handleAcademySectionClick(button){
   const sectionId=button.dataset.academySection,menu=byId('gasmQualificationMenu');
   if(sectionId==='goss-gasm'&&button.classList.contains('active')&&menu){menu.hidden=!menu.hidden;button.setAttribute('aria-expanded',String(!menu.hidden));return;}
   selectAcademySection(sectionId);
+}
+// The chosen department and training module survive a browser refresh (UI state only, this browser only).
+// Nothing else is restored: lesson phase, board content and clock still start from the welcome state.
+function activeAcademySectionId(){return document.querySelector('[data-academy-section].active')?.dataset.academySection||'general-maritime-education';}
+function saveAcademySelection(){
+  try{localStorage.setItem(SELECTION_KEY,JSON.stringify({section:activeAcademySectionId(),module:byId('academyModule').value}));}catch{}
+}
+function restoreAcademySelection(){
+  let saved=null;try{saved=JSON.parse(localStorage.getItem(SELECTION_KEY)||'null');}catch{saved=null;}
+  const sectionId=saved&&typeof saved.section==='string'&&Object.prototype.hasOwnProperty.call(ACADEMY_SECTIONS,saved.section)?saved.section:'general-maritime-education';
+  selectAcademySection(sectionId);
+  const select=byId('academyModule'),module=saved&&typeof saved.module==='string'?saved.module:'';
+  if(module&&ACADEMY_SECTIONS[sectionId].modules.includes(module)&&[...select.options].some(option=>option.value===module)&&select.value!==module){select.value=module;select.dispatchEvent(new Event('change',{bubbles:true}));}
+  saveAcademySelection();
 }
 function appendAcademyMessage(role,text){
   const conversation=byId('academyConversation'),message=document.createElement('p');message.className=`academy-message ${role}`;message.textContent=text;conversation.append(message);
@@ -503,7 +519,7 @@ function goBackFromAcademy(){
 }
 document.title='Sinbad Academy — Professor Sinbad Classroom';
 renderGasmQualificationMenu();
-selectAcademySection('general-maritime-education');
+restoreAcademySelection();
 restoreWindowGeometry();
 preloadAcademyCharacterAssets();
 renderAcademyCharacterCue({state:'idle',gesture:'rest',gaze:'audience',emotion:'warm',energy:.12},'');
@@ -512,6 +528,7 @@ refreshAcademyExamStatus();
 const academyRuntimeStatusTimer=setInterval(refreshAcademyRuntimeStatus,15000);
 window.addEventListener('focus',refreshAcademyRuntimeStatus);window.addEventListener('online',refreshAcademyRuntimeStatus);document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAcademyIdleBlink();else{refreshAcademyRuntimeStatus();scheduleAcademyIdleBlink();}});
 document.querySelectorAll('[data-academy-section]').forEach(button=>button.addEventListener('click',()=>handleAcademySectionClick(button)));
+byId('academyModule').addEventListener('change',saveAcademySelection);
 byId('startAcademyLesson').addEventListener('click',renderLesson);
 byId('startAcademyQuiz').addEventListener('click',renderQuiz);
 byId('openExamIntelligence').addEventListener('click',openExamIntelligence);
