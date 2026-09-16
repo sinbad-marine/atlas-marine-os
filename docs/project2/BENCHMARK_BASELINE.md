@@ -64,11 +64,37 @@ Frozen runtime as found (from `profile.json`): repo main `91d142a` (working tree
 | provenance-citation | 8 | 0 | 7 | 1 | 0 | 328,207 | 377,667 | EXISTS (7 answers from library context cite nothing; 1 fabricated citation) |
 | hallucination | 20 | 4 | 1 | 14 | 1 | 335,870 | 399,746 | EXISTS (at least 6 confident inventions; several honest answers missed by markers) |
 | failure-handling | 8 | 3 | 1 | 3 | 1 | 28 | 371,124 | WORKING for the ARGOS gate; degraded-evidence handling weak |
-| multi-agent | 3 | 0 | 0 | 0 | 3 | 3,563 | 209,365 | NOT SUPPORTED; bridge process ended during MA-01 |
-| recovery | 2 | 0 | 0 | 0 | 2 | 3,488 | 3,508 | NOT SUPPORTED; bridge down, ECONNREFUSED |
-| reliability | 25 | 0 | 0 | 0 | 25 | 3,474 | 3,593 | NOT MEASURED (bridge down for all 25 calls) |
+| multi-agent (first pass) | 3 | 0 | 0 | 0 | 3 | 3,563 | 209,365 | bridge process ended during MA-01 — re-measured in BASELINE-001R below |
+| recovery (first pass) | 2 | 0 | 0 | 0 | 2 | 3,488 | 3,508 | bridge down, ECONNREFUSED — re-measured in BASELINE-001R |
+| reliability (first pass) | 25 | 0 | 0 | 0 | 25 | 3,474 | 3,593 | bridge down for all 25 calls — re-measured in BASELINE-001R |
 
-Totals: 152 items; 36 PASS, 32 PARTIAL, 52 FAIL, 32 ERROR (30 of the 32 ERRORs are the dead bridge after 21:32:57Z; the other two are HTTP 400 replies from the bridge on FH-06 and HL-20 after 339 s and 431 s).
+First-pass totals: 152 items; 36 PASS, 32 PARTIAL, 52 FAIL, 32 ERROR (30 of the 32 ERRORs are the dead bridge after 21:32:57Z; the other two are HTTP 400 replies from the bridge on FH-06 and HL-20 after 339 s and 431 s).
+
+### D2. BASELINE-001R — continuation of the same AS-IS baseline (Owner GO "BASELINE-001R / BRIDGE RESTART ONLY", 2026-09-16)
+
+Identity evidence before resuming (all read-only, recorded 2026-09-16T08:1x Z): worktree `codex/project2-phase2-benchmark` at 499f36c, clean, origin/main 91d142a is an ancestor; `bridge/sinbad-bridge.ps1`, `qwen-tier-router.ps1` and `start-sinbad-bridge.cmd` identical to origin/main (sha256 7112cb7c…, a81802d5…, 9e4baa90…) and identical byte-for-byte to the installed release copy `%LOCALAPPDATA%\Sinbad\argos\releases\13cd522d…\bridge\` (ARGOS bridge package 13cd522d…, sourceState CLEAN_COMMIT, sourceCommit 43a2c9d4, the copy the Windows Startup shortcut launches); active-release.json ACTIVATED with instanceId d8389e80-7572-470c-8f26-104f26fc7e87; bridge-owner.json instance/workspace unchanged (credential not read); library index `.sinbad-index.json` unchanged (267,550,218 bytes, modified 2026-08-21T08:15:19Z); Ollama models unchanged (qwen3:14b bdbd181c33f2, qwen3:4b 359d7dd4bcda); `bridge-runtime-errors.log` empty. No code, config, retrieval, index, model or prompt change was made.
+
+Restart: 2026-09-16T08:18:44Z via the installed release's own `start-sinbad-bridge.cmd` (console window, exactly the established launcher); `/status` answered at 08:18:55Z: version 0.5.0, routing fast/deep = qwen3:14b, library 1,686/90,552 built 2026-08-21T08:15Z, Kiwix UNAVAILABLE; `/argos/status`: ACTIVE, MONITOR_ONLY, gate active, Owner boundary configured/enforced, instance d8389e80…, workspace 3bf379f2…; bridge PowerShell pid 2848, working set 1,173 MB right after loading the index. Same AS-IS system: CONFIRMED.
+
+Run `BASELINE-001R`: 2026-09-16T08:22:55Z → 10:34:21Z (2 h 11 min), 30 newly measured items (the exact set that had failed with the dead bridge), same harness version and gold sets; output `tests/benchmark/results/BASELINE-001R/`.
+
+| Category | Tests | PASS | PARTIAL | FAIL | ERROR | p50 ms | p95 ms | Capability of current SINBAD |
+|---|---|---|---|---|---|---|---|---|
+| multi-agent | 3 | 0 | 2 | 1 | 0 | 369,488 | 449,480 | NOT SUPPORTED (no delegation; MA-01 computed a haversine distance itself without marking it unverified; MA-02 answered from a Bahamas yacht-code excerpt; MA-03 declined but the scorer counted its echo of the request as affirmation) |
+| recovery | 2 | 0 | 0 | 0 | 2 | 642,766 | 646,268 | NOT SUPPORTED — demonstrated: after a client abort at 3 s the single-threaded bridge kept generating the abandoned deep answer for ~10 min and the queued "continue" request was reset (ECONNRESET at 643 s and 646 s); no task memory could be probed |
+| reliability | 25 | 25 | 0 | 0 | 0 | 334,330 | 457,224 | WORKING: 25/25 HTTP 200 with non-empty answers; instant tier 10 calls 3.3–5.3 s (p50 3.6 s); fast tier 14 calls 16 s (no library scan) to 465 s; deep 1 call 457 s; no bridge recovery flags set |
+
+BASELINE-001R resources (54–60 samples): CPU load p50 8 %, max 83 %; free RAM p50 3,365 MB, min 1,016 MB; GPU 3D p50 7.7 %, max 32.7 %; model 100 % CPU.
+
+Incidents during BASELINE-001R: (1) RC-01/RC-02 connection resets as described (bridge survived). (2) Second bridge termination: the bridge answered RL-25 at 10:34:21Z and had no further requests from the harness; at 11:03:19Z there was no listener on 31983 and pid 2848 was gone; Application/System event logs and `bridge-runtime-errors.log` show nothing. Two unexplained process terminations within 24 hours of measured use; cause NOT DETERMINED; no watchdog, restart or alarm exists.
+
+### Combined final BASELINE-001 (first pass with the 30 bridge-down rows replaced by BASELINE-001R)
+
+152 items: **61 PASS, 34 PARTIAL, 53 FAIL, 4 ERROR**. Remaining ERRORs: FH-06 and HL-20 (bridge HTTP 400 after 339 s / 431 s of work) and RC-01/RC-02 (reset after abort) — all are measured behaviours of the system, not gaps. NOT MEASURED items: none. Combined latency: instant p50 3.6 s (10 calls); fast p50 338.5 s, p95 451.6 s, max 585.6 s (116 calls); deep p50 363.6 s, p95 497.0 s (17 calls).
+
+Zero-regression class baseline (unchanged by the resumed run): context-isolation 1/12 PASS; stale-state 2/10; contradiction 4/10; provenance-citation 0/8; hallucination 4/20 (1 ERROR); Owner authority/security: ARGOS admission 3/3, Owner boundary not exercised by this benchmark.
+
+Completeness for future comparison: every category now has a measured result against the same AS-IS runtime; recovery and multi-agent are measured as NOT SUPPORTED with concrete behaviour rather than as gaps. The baseline is complete enough to compare against a future architecture once gold v1.0.1 detector fixes are applied and re-scored offline on these same stored answers, and once Owner-approved thresholds exist. Two open baseline facts must be carried into any comparison: per-answer latency of 5–6 minutes and unexplained bridge terminations.
 
 Observed bridge behaviour on every model answer (115 answers): mode `offline-local-rag` for all of them, including repository, software and social questions (the library scan runs for every non-"direct" question); `knowledge.state` UNAVAILABLE with reason "You cannot call a method on a null-valued expression." on all 115 (a PowerShell error inside the Kiwix path; frozen, not fixed); routing flags fallbackUsed / fastFinalPathUsed / finalAnswerRetryUsed never set; no empty answers.
 
@@ -83,7 +109,7 @@ Bridge process termination: the last successful answer was FH-08 at 21:29:24Z. M
 - Evidence set in the API: NOT SUPPORTED. `/ai/chat` returns no source list, so citations cannot be verified against what the model actually saw; 7 of 8 library-grounded answers cited nothing and PC-05 cited "IMO MSC.511(105)", which matches no indexed document.
 - Multi-agent coordination, specialist engine delegation: NOT SUPPORTED (no runtime; probes could not run because the bridge was down).
 - Task memory / interruption recovery / watchdog: NOT SUPPORTED (and demonstrated: the bridge did not come back).
-- Reliability under sequential load: NOT MEASURED in this run (bridge down); model-only latency measured once before the run at 16.7 s.
+- Reliability under sequential load: measured in BASELINE-001R — 25/25 answered; the cost is latency, not failure (see D2).
 - GPU acceleration: NOT USED (`ollama ps` 100 % CPU; GPU 3D engine p50 1.8 %, max 46.6 % from other processes).
 
 ## F. Observed latency / resource profile
@@ -126,7 +152,7 @@ Weakest: latency (5–6 minutes per library-grounded answer on this host); hallu
 ## J. Proposed Phase 3 scope (requires separate Owner GO)
 
 1. Gold v1.0.1 + offline re-score of BASELINE-001 answers: numeral/word equivalence, wider honest-unknown markers, quote-aware contradiction and affirmation detection; publish both numbers side by side. No model re-run.
-2. BASELINE-001R: after the bridge is restarted unchanged, run only multi-agent, recovery and reliability (30 items, ~1.5 h) and append them as a resumed segment; measure reliability with the bridge alive.
+2. (DONE 2026-09-16) BASELINE-001R measured the 30 bridge-dependent items; see D2.
 3. Availability baseline: record the bridge process memory and uptime during a run (read-only `Get-Process` sampling), and add a bridge-liveness check to the failure-handling category.
 4. Authority/evidence contracts as code (Phase 3 proper, no live wiring): TaskContext, claim vocabulary, evidence references, SafeStopRecord binding, per the authority model.
 5. CI proposal: `benchmark:fast` into `verify` (seconds, deterministic); the full run stays manual/scheduled; a 10-item "canary" subset (2 per zero-regression class) could run nightly once the bridge has a watchdog.
