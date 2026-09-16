@@ -1,0 +1,83 @@
+{
+  "project": "Project 2 - SINBAD multi-model architecture",
+  "state_semantics": "Records with real labels. EXISTS = code/doc present; WORKING = observed running today; TESTED = automated tests on main; INTEGRATED = wired into a live surface or CI; OWNER ACCEPTED = explicit Owner statement; NOT SUPPORTED / NOT PRESENT = absent. A benchmark PASS is an observed fact about the current system (class B in the authority model); it grants no authority and is not an acceptance. Git history, results.json files and Owner decisions are authoritative over this file where they differ.",
+  "authority_model": "docs/project2/ARCHITECTURE_AUTHORITY_MODEL.md (Owner correction 2026-09-15: NORMATIVE/AUTHORITY truth and OBSERVED/FACTUAL truth are separate dimensions; Owner decides what is authorized, evidence decides what is true; model memory and inference are non-authoritative in both).",
+  "phases": {
+    "phase_1_discovery": {
+      "status": "DISCOVERY COMPLETE 2026-09-15; accepted by the Owner with the authority-model correction",
+      "report": "docs/project2/PHASE_1_DISCOVERY.md (verbatim copy of the delivered report; the linear precedence list in its section G is superseded by ARCHITECTURE_AUTHORITY_MODEL.md)",
+      "repo_at_discovery": "main 91d142a01db686e198ff7c207a3e0ec48993207c"
+    },
+    "phase_2_benchmark_baseline": {
+      "status": "BASELINE-001 COMPLETE AS-IS: first pass 2026-09-15T10:15:49Z-21:36:23Z (11 h 20 min; bridge ended during multi-agent) plus continuation BASELINE-001R 2026-09-16T08:22:55Z-10:34:21Z (bridge restarted unchanged under Owner GO). Combined 152 items: 61 PASS / 34 PARTIAL / 53 FAIL / 4 ERROR; NOT MEASURED: none. Harness implemented, fast checks green (13/13). OWNER ACCEPTED = NOT RECORDED",
+      "harness": "tests/benchmark/ (lib, questions, fast tests, results) + tools/run-sinbad-benchmark.js; npm scripts benchmark:fast and benchmark:full",
+      "frozen_runtime_facts": {
+        "repo": "main 91d142a (clean at launch)",
+        "bridge": "Sinbad Bridge 0.5.0 on 127.0.0.1:31983, ARGOS command gate ACTIVE (MONITOR_ONLY), Owner boundary configured",
+        "models": "Ollama 0.34.0; qwen3:14b bdbd181c33f2 (Q4_K_M, 14.8B) serves both tiers; qwen3:4b 359d7dd4bcda installed but not routed",
+        "library_index": "1,686 documents / 90,552 chunks, built 2026-08-21T08:15Z (25 days old at baseline), .sinbad-index.json 255 MB",
+        "kiwix": "UNAVAILABLE; the bridge reports the PowerShell error 'You cannot call a method on a null-valued expression.' in knowledge.reason (bridge defect, not fixed - frozen)",
+        "hardware": "Intel Core Ultra 9 285H 16C/16T, 31.4 GB RAM, Intel Arc 140T iGPU; model runs 100% CPU per ollama ps; classic performance-counter API broken on host (c0000bb8), CIM/GPU-engine counters used instead",
+        "project_state": "docs/academy/PROJECT_STATE.json last_verified_timestamp 2026-09-15T06:50:04Z"
+      },
+      "pre_run_observations": [
+        "Model-only answer path (no library scan): ~17 s for a short Turkish prompt (fast tier, qwen3:14b).",
+        "Library-RAG answer path: 139 s and 303 s for two short English ISM questions; the PowerShell scan of 90,552 chunks dominates latency.",
+        "Node fetch (undici) cuts answers longer than 300 s with 'fetch failed'; the harness uses node:http with a 900 s budget so true latency is captured.",
+        "The bridge's own Ollama client budget is 600 s per request."
+      ],
+      "baseline_001": {
+        "location": "tests/benchmark/results/BASELINE-001/ (results.json, report.md, profile.json, results.partial.jsonl for --resume)",
+        "document": "docs/project2/BENCHMARK_BASELINE.md sections D-J",
+        "per_category": {
+          "maritime-reasoning": "32: 7 PASS / 12 PARTIAL / 13 FAIL; ISM 5/16 PASS, ISPS 0/8, MLC 2/8; p50 320.9 s",
+          "coding": "10: 9 PASS / 1 PARTIAL; p50 327.4 s (deep tier)",
+          "repo-state": "12: 6 PASS / 6 FAIL; 0 fabricated values; the 6 FAILs are honest answers outside the marker list",
+          "context-isolation": "12: 1 PASS / 7 PARTIAL / 4 FAIL; 4 foreign claims accepted as fact",
+          "stale-state": "10: 2 PASS / 3 PARTIAL / 5 FAIL; 2 stale claims affirmed",
+          "contradiction": "10: 4 PASS / 6 FAIL; conflict named in 8/10",
+          "provenance-citation": "8: 0 PASS / 7 PARTIAL / 1 FAIL; no verifiable citation, 1 fabricated",
+          "hallucination": "20: 4 PASS / 1 PARTIAL / 14 FAIL / 1 ERROR; at least 6 confident inventions",
+          "failure-handling": "8: 3 PASS / 1 PARTIAL / 3 FAIL / 1 ERROR; ARGOS gate 3/3; denied requests close without draining the body (Node sees ECONNRESET); HTTP 400 on a current-claim question",
+          "multi-agent": "first pass 3 ERROR (bridge ended during MA-01); BASELINE-001R: 0 PASS / 2 PARTIAL / 1 FAIL - NOT SUPPORTED, answers computed or excerpted instead of delegating",
+          "recovery": "first pass 2 ERROR (bridge down); BASELINE-001R: 2 ERROR - after a 3 s client abort the bridge stayed busy ~10 min and reset the queued continue request (ECONNRESET at 643/646 s); NOT SUPPORTED, demonstrated",
+          "reliability": "first pass NOT MEASURED (bridge down); BASELINE-001R: 25/25 PASS; instant p50 3.6 s, fast 16-465 s, deep 457 s; no bridge recovery flags"
+        },
+        "baseline_001r": {
+          "run": "BASELINE-001R 2026-09-16T08:22:55Z-10:34:21Z (2 h 11 min), 30 items, tests/benchmark/results/BASELINE-001R/",
+          "identity_before_resume": "worktree 499f36c clean (origin/main 91d142a ancestor); bridge scripts identical to main and to the installed release 13cd522d... (sha256 7112cb7c...); active-release.json ACTIVATED instance d8389e80...; index 267,550,218 bytes 2026-08-21; models unchanged; no code/config/retrieval change",
+          "restart": "2026-09-16T08:18:44Z via the installed release's start-sinbad-bridge.cmd; /status 0.5.0 at 08:18:55Z; /argos/status ACTIVE MONITOR_ONLY, Owner boundary configured/enforced, instance d8389e80..., workspace 3bf379f2...; pid 2848 working set 1,173 MB after index load",
+          "incidents": "RC-01/RC-02 ECONNRESET after client abort (bridge survived); second bridge termination between 10:34:21Z and 11:03:19Z with no requests in flight, no event-log entry - cause NOT DETERMINED"
+        },
+        "combined_final": "152 items: 61 PASS / 34 PARTIAL / 53 FAIL / 4 ERROR (FH-06, HL-20 HTTP 400; RC-01, RC-02 reset after abort); NOT MEASURED: none; instant p50 3.6 s, fast p50 338.5 s / p95 451.6 s (116), deep p50 363.6 s (17)",
+        "latency": "fast tier p50 332.9 s / p95 438.9 s (100 calls); deep p50 350.8 s / p95 497.0 s (15); instant 3.5 s; admission probes 13-30 ms; model-only probe 16.7 s; the library scan of 90,552 chunks dominates",
+        "resources": "CPU load p50 6 % max 82 %; free RAM p50 4,465 MB min 497 MB; GPU 3D p50 1.8 % max 46.6 %; model 100 % CPU",
+        "bridge_termination": "cause NOT DETERMINED (no OS event-log entry; RAM low; possible manual console closure); no watchdog/restart exists; bridge still down at 22:17Z",
+        "scorer_precision_note": "gold v1.0.0 marker lists produced identifiable false negatives (honest answers scored FAIL): HL-03/09/11/15/17, RS-01/03/05/06/07/08, SS-03/08/09, CT-01/02/04/08, MR-ISM-12; listed in BENCHMARK_BASELINE.md G; a v1.0.1 offline re-score is proposed for Phase 3, not applied",
+        "zero_regression_class_baseline": {
+          "context-isolation": "1/12 PASS (8.3 %)",
+          "stale-state": "2/10 PASS (20 %)",
+          "contradiction": "4/10 PASS (40 %)",
+          "provenance-citation": "0/8 PASS (0 %)",
+          "hallucination": "4/20 PASS (20 %)",
+          "owner-authority-security": "ARGOS admission 3/3 PASS; Owner boundary not exercised by this benchmark"
+        }
+      },
+      "pending_after_baseline_001": [
+        "DONE 2026-09-16: BASELINE-001R (see baseline_001.baseline_001r)",
+        "Bridge availability: two unexplained process terminations (2026-09-15 ~21:32Z during MA-01; 2026-09-16 between 10:34Z and 11:03Z while idle); no watchdog/restart/alarm; bridge down again after BASELINE-001R - restart is the Owner's call",
+        "Gold v1.0.1 + offline re-score of the stored BASELINE-001 answers (no model re-run)",
+        "Bridge defects observed, NOT fixed (frozen): Kiwix path throws 'You cannot call a method on a null-valued expression.'; two HTTP 400 replies after minutes of work (FH-06, HL-20); process termination without recovery"
+      ]
+    },
+    "phase_3_and_later": "NOT STARTED. Sentinel, Pilot and Co-Pilot are not implemented; no production AI behaviour changed."
+  },
+  "zero_regression_classes": ["context isolation","stale-state detection","contradiction handling","provenance/citation integrity","hallucination resistance","Owner authority/security boundaries"],
+  "policies": {
+    "cloud": "No new recurring cloud-model usage in Phase 2; no Claude/Gemini/Grok/OpenAI judges; gold answers and deterministic verification only.",
+    "ci": "FAST DETERMINISTIC BENCHMARK CHECKS (npm run benchmark:fast) are cheap and model-free; the FULL LOCAL AI BENCHMARK RUN is not in PR CI. Proposal for a CI subset follows the measured runtime.",
+    "academy": "Frozen. No production Academy DB writes, no Q001/Q002, UX or AAL2 changes. The benchmark only calls the local bridge /ai/chat and status endpoints."
+  },
+  "owner_acceptance": "NOT RECORDED for any Project 2 artefact",
+  "last_verified_timestamp": "2026-09-16T11:10:00Z"
+}

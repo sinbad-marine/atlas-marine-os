@@ -1,0 +1,113 @@
+{
+  "capturedAt": "2026-09-16T08:22:59.042Z",
+  "repo": {
+    "head": "499f36ca4e89a4a0bc93759e0d609138dcee2bd6",
+    "shortHead": "499f36c",
+    "branch": "codex/project2-phase2-benchmark",
+    "dirty": false,
+    "commitDate": "2026-09-16T08:44:01+03:00",
+    "commitCount": 878,
+    "projectState": {
+      "last_verified_timestamp": "2026-09-15T06:50:04Z",
+      "current_phase": "Phase 2 - Verified-source ingestion (pilot) + Owner-private training pilot (LIVE, 2 questions)",
+      "sha256": "c04111bfddf366b85ce22f952653309ac9576af0ee4da5befd8a3cb5ab8933bc"
+    }
+  },
+  "bridge": {
+    "reachable": true,
+    "version": "0.5.0",
+    "name": "Sinbad Bridge",
+    "routes": 2,
+    "ai": {
+      "models": [
+        "qwen3:4b",
+        "qwen3:14b"
+      ],
+      "installed": true,
+      "routing": {
+        "fast": "qwen3:14b",
+        "deepInstalled": true,
+        "deep": "qwen3:14b",
+        "fastInstalled": true
+      },
+      "model": "qwen3:14b",
+      "online": true
+    },
+    "worldKnowledge": {
+      "endpoint": "http://127.0.0.1:8181",
+      "provider": "kiwix",
+      "snapshot": "wikipedia_tr_top_mini_2026-04",
+      "state": "UNAVAILABLE"
+    },
+    "argos": {
+      "state": "ACTIVE",
+      "mode": "MONITOR_ONLY",
+      "commandGate": {
+        "replayProtection": true,
+        "ledgerCapacity": 4096,
+        "freshnessWindowSeconds": 300,
+        "active": true,
+        "observedCommands": 0,
+        "registeredActions": 10
+      },
+      "ownerBoundary": {
+        "configured": true,
+        "enforced": true,
+        "authorization": "SERVER_VERIFIED_SINGLE_USE"
+      }
+    }
+  },
+  "library": {
+    "status": {
+      "chunks": 90552,
+      "documents": 1686,
+      "folder": "C:\\Users\\ASUS\\OneDrive\\Belgeler\\Sinbad Bridge\\Library",
+      "skipped": 1434,
+      "builtAt": "2026-08-21T08:15:16.8480308Z"
+    },
+    "indexFile": {
+      "path": "C:\\Users\\ASUS\\OneDrive\\Belgeler\\Sinbad Bridge\\Library\\.sinbad-index.json",
+      "bytes": 267550218,
+      "modifiedUtc": "2026-08-21T08:15:19.950Z"
+    }
+  },
+  "ollama": {
+    "version": "0.34.0",
+    "models": [
+      {
+        "name": "qwen3:4b",
+        "digest": "359d7dd4bcdab3d86b87d73ac27966f4dbb9f5efdfcc75d34a8764a09474fae7",
+        "size": 2497293931,
+        "quantization": "Q4_K_M",
+        "parameters": "4.0B",
+        "contextLength": 262144,
+        "modifiedAt": "2026-08-21T18:07:59.3464337+03:00"
+      },
+      {
+        "name": "qwen3:14b",
+        "digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+        "size": 9276198565,
+        "quantization": "Q4_K_M",
+        "parameters": "14.8B",
+        "contextLength": 40960,
+        "modifiedAt": "2026-08-08T22:21:43.0402318+03:00"
+      }
+    ]
+  },
+  "host": {
+    "platform": "win32",
+    "release": "10.0.26200",
+    "node": "v24.19.0",
+    "hardware": {
+      "cpu": "Intel(R) Core(TM) Ultra 9 285H",
+      "cores": 16,
+      "threads": 16,
+      "ramTotalGb": 31.4,
+      "ramFreeGb": 11.8,
+      "gpu": [
+        "Intel(R) Arc(TM) 140T GPU (16GB)"
+      ],
+      "osVersion": "10.0.26200"
+    }
+  }
+}

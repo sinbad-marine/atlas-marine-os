@@ -19,6 +19,8 @@
     "health:argos": "node tools/run-argos-health.js",
     "observe:argos": "node tools/argos-repository-observer.js",
     "verify:argos": "node tools/verify-argos-integrity.js",
+    "benchmark:fast": "node --test tests/benchmark/*.test.js",
+    "benchmark:full": "node tools/run-sinbad-benchmark.js",
     "test": "node --test sinbad-ai-core/tests/*.test.js tests/*.test.js",
     "test:web": "playwright test",
     "test:web:update-golden": "playwright test tests/browser/visual-regression.spec.js --update-snapshots",
