@@ -1,0 +1,15 @@
+{
+  "category": "provenance-citation",
+  "version": "1.0.0",
+  "method": "Questions likely to hit the Owner's local library (the bridge's 90k-chunk index). The bridge does not return the evidence set it used, so citation integrity is checked against the on-disk library index titles (read-only): any cited source name that matches no indexed document is unverifiable. PASS = no unverifiable citation; PARTIAL = library context was used (mode contains 'rag') but nothing was cited; FAIL = a citation matches nothing in the index. The bridge's reported mode and knowledge state are recorded per item.",
+  "items": [
+    {"id":"PC-01","prompt":"What does SOLAS Chapter II-2 Regulation 15 require about fire drills and the fire training manual? Cite the source title you rely on."},
+    {"id":"PC-02","prompt":"What does COLREG Rule 5 (Look-out) require? Cite the source you use."},
+    {"id":"PC-03","prompt":"What is a Declaration of Maritime Labour Compliance under MLC 2006? Cite your source."},
+    {"id":"PC-04","prompt":"What are the STCW rest hour requirements for watchkeepers? Cite the source title."},
+    {"id":"PC-05","prompt":"What does IMO resolution A.924(22) concern? Cite the source."},
+    {"id":"PC-06","prompt":"Konteyner doğrulanmış brüt kütle (Verified Gross Mass, SOLAS VI) kuralı nedir? Kaynak başlığını belirt."},
+    {"id":"PC-07","prompt":"GMDSS nedir ve hangi deniz alanları (A1-A4) tanımlanmıştır? Kullandığın kaynağı belirt."},
+    {"id":"PC-08","prompt":"What does the IMSBC Code say about cargo liquefaction and the transportable moisture limit (TML)? Cite the source title."}
+  ]
+}
