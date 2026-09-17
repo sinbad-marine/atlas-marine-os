@@ -1,0 +1,338 @@
+{
+  "schemaVersion": "sinbad-baseline-freeze/1",
+  "baselineId": "BASELINE-001",
+  "title": "BASELINE-001 - CURRENT SINBAD AS-IS (frozen reference for Project 2)",
+  "frozenAt": "2026-09-17T09:29:10Z",
+  "frozenBy": "Owner MASTER TASK DIRECTIVE 2026-09-16 (Phase 2 OWNER ACCEPTED, BASELINE FREEZE)",
+  "acceptedCommit": "aee0ad545c6517df707c5f969269900222f6f849",
+  "acceptedPullRequest": 250,
+  "ownerAcceptance": "PROJECT 2 PHASE 2 = OWNER ACCEPTED against main aee0ad5 (Owner directive of 2026-09-16, after the read-only audit)",
+  "hashing": "sha256 of the file content with CRLF normalized to LF (the committed bytes on aee0ad5 are LF); paths relative to the repository root",
+  "benchmarkVersion": "sinbad-benchmark/1.0.0",
+  "runs": {
+    "BASELINE-001": {
+      "startedAt": "2026-09-15T10:15:49.827Z",
+      "finishedAt": "2026-09-15T21:36:23.718Z",
+      "items": 152,
+      "summaryOutcomes": {
+        "PASS": 36,
+        "PARTIAL": 32,
+        "FAIL": 52,
+        "ERROR": 32
+      }
+    },
+    "BASELINE-001R": {
+      "startedAt": "2026-09-16T08:22:55.748Z",
+      "finishedAt": "2026-09-16T10:34:21.899Z",
+      "items": 30,
+      "summaryOutcomes": {
+        "PARTIAL": 2,
+        "FAIL": 1,
+        "ERROR": 2,
+        "PASS": 25
+      },
+      "note": "continuation of the same AS-IS baseline after the bridge restart (Owner GO 2026-09-16); replaces the 30 bridge-down rows of the first pass"
+    }
+  },
+  "combinedFinal": {
+    "items": 152,
+    "PASS": 61,
+    "PARTIAL": 34,
+    "FAIL": 53,
+    "ERROR": 4,
+    "NOT_MEASURED": 0,
+    "method": "first pass with the 30 bridge-dependent ERROR rows (multi-agent, recovery, reliability) replaced by BASELINE-001R"
+  },
+  "runtimeIdentity": {
+    "repoAtRun": "91d142a01db686e198ff7c207a3e0ec48993207c",
+    "bridgeVersion": "0.5.0",
+    "bridgeInstance": "d8389e80-7572-470c-8f26-104f26fc7e87 (installed ARGOS bridge release 13cd522d3c1c15efeadde61fba68cf24b2a7916f17486c8e317f2877d560b64c, scripts byte-identical to main)",
+    "models": [
+      {
+        "name": "qwen3:4b",
+        "digest": "359d7dd4bcdab3d86b87d73ac27966f4dbb9f5efdfcc75d34a8764a09474fae7",
+        "quantization": "Q4_K_M",
+        "parameters": "4.0B"
+      },
+      {
+        "name": "qwen3:14b",
+        "digest": "bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+        "quantization": "Q4_K_M",
+        "parameters": "14.8B"
+      }
+    ],
+    "routing": {
+      "fast": "qwen3:14b",
+      "deepInstalled": true,
+      "deep": "qwen3:14b",
+      "fastInstalled": true
+    },
+    "ollamaVersion": "0.34.0",
+    "libraryIndex": {
+      "documents": 1686,
+      "chunks": 90552,
+      "builtAt": "2026-08-21T08:15:16.8480308Z",
+      "bytes": 267550218
+    },
+    "kiwix": "UNAVAILABLE",
+    "host": {
+      "cpu": "Intel(R) Core(TM) Ultra 9 285H",
+      "cores": 16,
+      "threads": 16,
+      "ramTotalGb": 31.4,
+      "ramFreeGb": 3.6,
+      "gpu": [
+        "Intel(R) Arc(TM) 140T GPU (16GB)"
+      ],
+      "osVersion": "10.0.26200"
+    },
+    "node": "v24.19.0"
+  },
+  "zeroRegressionClassBaseline": {
+    "context-isolation": "1/12 PASS",
+    "stale-state": "2/10 PASS",
+    "contradiction": "4/10 PASS",
+    "provenance-citation": "0/8 PASS",
+    "hallucination": "4/20 PASS (1 ERROR)",
+    "owner-authority-security": "ARGOS admission 3/3 PASS; Owner boundary not exercised"
+  },
+  "knownLimitations": [
+    "Gold v1.0.0 marker lists produce identifiable false negatives (honest answers scored FAIL): HL-03/09/11/15/17, RS-01/03/05/06/07/08, SS-03/08/09, CT-01/02/04/08, MR-ISM-12 (numeral vs word). Listed in BENCHMARK_BASELINE.md section G; not re-scored.",
+    "The bridge API returns no evidence set; citation integrity was checked against the on-disk library index titles only.",
+    "Model output is not deterministic (bridge temperature 0.35); per-item verdicts can vary between runs; harness, gold sets and scoring are deterministic.",
+    "FH-04/FH-05 admission probes recorded ECONNRESET because the bridge closes denied connections without draining the request body; the isolated HTTP tests prove the 403/413 codes.",
+    "Two HTTP 400 replies (FH-06, HL-20) and two post-abort resets (RC-01, RC-02) are recorded as ERROR; they are measured system behaviour."
+  ],
+  "unresolvedFindings": [
+    "Bridge process terminated twice without any recorded error (2026-09-15 ~21:32Z during MA-01; 2026-09-16 between 10:34Z and 11:03Z while idle); cause NOT DETERMINED; no watchdog, restart or alarm.",
+    "Kiwix path throws \"You cannot call a method on a null-valued expression.\" on every request (knowledge.state UNAVAILABLE).",
+    "Fast tier is not fast: the 90,552-chunk PowerShell library scan runs before every model call (p50 ~333 s per answer).",
+    "ARGOS scheduled assurance has failed on every run since at least 2026-09-11 at the health-observation step (pre-existing, outside this baseline)."
+  ],
+  "truthStateLabels": {
+    "MERGED": "VERIFIED (aee0ad5 on main)",
+    "OWNER_ACCEPTED": "VERIFIED for Phase 2 (Owner directive 2026-09-16); not an acceptance of any measured capability",
+    "BASELINE_RESULTS": "VERIFIED as recorded evidence of the system as found; not a quality target",
+    "FUTURE_ARCHITECTURE_BETTER": "NOT VERIFIED - requires comparative measurement against this baseline"
+  },
+  "revisionPolicy": "BASELINE-001 is immutable. Any correction (for example a gold v1.0.1 offline re-score) must be recorded as a separately identified revision (BASELINE-001-REV-n) with its own provenance, leaving every file listed here unchanged and recoverable from commit aee0ad5. tests/baseline-001-freeze.test.js fails if any frozen file changes.",
+  "frozenFiles": [
+    {
+      "path": "tests/benchmark/README.md",
+      "blob": "aaa7aee5aaf75809289b19f74554f159d2b3a301",
+      "bytes": 3719,
+      "sha256": "37b27f6780fc62cb311c978a6de080f8351e937310aa0cf4b81516872444ec3c",
+      "role": "HARNESS_DOCUMENTATION"
+    },
+    {
+      "path": "tests/benchmark/gold-dataset.test.js",
+      "blob": "3101e226e7789880bbf17b8ed6421798edae0b1c",
+      "bytes": 2546,
+      "sha256": "a51cd6b786b6a40fcbfe8171206fb29e59d3f272954b72077bc5883deae51c68",
+      "role": "FAST_DETERMINISTIC_CHECK"
+    },
+    {
+      "path": "tests/benchmark/lib/bridge-client.js",
+      "blob": "a1a0873edfb4c5eb3d6893a649f5beab5bc156e9",
+      "bytes": 4046,
+      "sha256": "ac6933bd33feb56fe0655cdd9577733d3decc3685fc8162dc625ae42dc3c5de1",
+      "role": "SCORING_OR_HARNESS_LIBRARY"
+    },
+    {
+      "path": "tests/benchmark/lib/coding.js",
+      "blob": "72abba91b70afa0d6b1bf8475728497d7ca74b1a",
+      "bytes": 2378,
+      "sha256": "00aa38de1fd95518a9205183606f777e2660594f174c5183297c7f3df1eff33c",
+      "role": "SCORING_OR_HARNESS_LIBRARY"
+    },
+    {
+      "path": "tests/benchmark/lib/gold.js",
+      "blob": "4ea8c5f29e7cd50682c1bb7bbaf82658c1263f27",
+      "bytes": 2991,
+      "sha256": "ec996be7fb9689d716c1b0ab3cf83ffd1db6635e35bd4cdfa35bf9619dd54043",
+      "role": "SCORING_OR_HARNESS_LIBRARY"
+    },
+    {
+      "path": "tests/benchmark/lib/host-profile.js",
+      "blob": "a3c6b736599704af4c7f97750382b8f7e2679452",
+      "bytes": 4628,
+      "sha256": "d79976d9093c0d4d58662bb831fef1748536de51512402f4f61ea2862bffa2fc",
+      "role": "SCORING_OR_HARNESS_LIBRARY"
+    },
+    {
+      "path": "tests/benchmark/lib/report.js",
+      "blob": "957c1a41bae4fca09f045db893ca2a0fec364af5",
+      "bytes": 4307,
+      "sha256": "62dae4eb8c18f5318689cae4db48b90bd43a7b347a37d83511ade3ee30792287",
+      "role": "SCORING_OR_HARNESS_LIBRARY"
+    },
+    {
+      "path": "tests/benchmark/lib/resources.js",
+      "blob": "b6362db7449b10a1bf459a26f7d2db34edd8f51b",
+      "bytes": 1695,
+      "sha256": "44083d8f5403efe2bc621a59eb6a32687e3ca6aaef75e4a3f7adadcc45e19d7f",
+      "role": "SCORING_OR_HARNESS_LIBRARY"
+    },
+    {
+      "path": "tests/benchmark/lib/scoring.js",
+      "blob": "c80f44a58c9d65fe753e458514b0777eaab644e8",
+      "bytes": 10953,
+      "sha256": "8f2648c5b89d567e4cd5c0eb351cba99b12775d598378471c92a780948e99d2a",
+      "role": "SCORING_OR_HARNESS_LIBRARY"
+    },
+    {
+      "path": "tests/benchmark/questions/coding.json",
+      "blob": "d734326f3bd6431f9fa89f73efac31a3f54be188",
+      "bytes": 4486,
+      "sha256": "f5cada49b6a44ce571886577345f3e826813c12c463cff6fdf1687fe7166aba5",
+      "role": "GOLD_DATASET"
+    },
+    {
+      "path": "tests/benchmark/questions/context-isolation.json",
+      "blob": "6f4d593a7ba1b0e2455bdde2e17b5c536950465b",
+      "bytes": 4252,
+      "sha256": "2de2e29434ce99558ca6140276177dc94a530cec40651dd623484dd64ac53cdf",
+      "role": "GOLD_DATASET"
+    },
+    {
+      "path": "tests/benchmark/questions/contradiction.json",
+      "blob": "d1e81d2eee533ce0a1fc36fed828ebd67d1c070d",
+      "bytes": 4877,
+      "sha256": "b92a63f2dd289d04106b9a183cf6396bd2ce31168b279823302f7d835a881fa9",
+      "role": "GOLD_DATASET"
+    },
+    {
+      "path": "tests/benchmark/questions/failure-handling.json",
+      "blob": "3eb6eb23530e4491f72f49832e076446bcaa1e45",
+      "bytes": 2608,
+      "sha256": "cca258449cc68d097076acc3242849a37de9d6cbf7ebb4093f0cf3e7adf42628",
+      "role": "GOLD_DATASET"
+    },
+    {
+      "path": "tests/benchmark/questions/hallucination.json",
+      "blob": "481a37a9fa13acfc4b46f05ce2ffc2a35d9e2913",
+      "bytes": 6165,
+      "sha256": "de735e28bf546ff74493ad860fb401833186ad59cbf74397a775f01adad83abf",
+      "role": "GOLD_DATASET"
+    },
+    {
+      "path": "tests/benchmark/questions/maritime-reasoning.json",
+      "blob": "873eb7c13498e413c15c5eb666675ce36dca2a02",
+      "bytes": 10317,
+      "sha256": "20e524116e5a08c7e3a5e192daf25aa37ebcf4c7f8c9f31f84cae5fbe2181942",
+      "role": "GOLD_DATASET"
+    },
+    {
+      "path": "tests/benchmark/questions/multi-agent.json",
+      "blob": "16c71a6edbdb4e8f42d9bbfa78811a1f074009a2",
+      "bytes": 1925,
+      "sha256": "33a462b195ae016d9e079cc483388ec11e6fcd67d4e81c23759484ae59ebe923",
+      "role": "GOLD_DATASET"
+    },
+    {
+      "path": "tests/benchmark/questions/provenance-citation.json",
+      "blob": "550addff98cc0a5f80345c118b3fd30d7b2a0a28",
+      "bytes": 1633,
+      "sha256": "b40df68e7daa283871ca6a9acaa574c9c8339d494a12e325d14412042d1cec99",
+      "role": "GOLD_DATASET"
+    },
+    {
+      "path": "tests/benchmark/questions/recovery.json",
+      "blob": "cbfbe1fb48b7601e6d1cbcd8f84ec6934684465f",
+      "bytes": 1141,
+      "sha256": "42d5779cabea31675fefc41c7bfc2176f4a11c0758f1e6c3db3c65f3ad9ea804",
+      "role": "GOLD_DATASET"
+    },
+    {
+      "path": "tests/benchmark/questions/reliability.json",
+      "blob": "8eceaae17be71d3bc325fd832b9ebb67de4a3802",
+      "bytes": 2019,
+      "sha256": "6aee7bd5c3e8cf80cb670af7d621f8132245420b21154dd0a3f4a9eaec8981fa",
+      "role": "GOLD_DATASET"
+    },
+    {
+      "path": "tests/benchmark/questions/repo-state.json",
+      "blob": "8a01fbc1fe805cf411fd0cd4d9ba6a2673970459",
+      "bytes": 3957,
+      "sha256": "3bb30969e19db62132c25c4e3d6af773bb46ba8ae72cdde3f7fc105648fcecfc",
+      "role": "GOLD_DATASET"
+    },
+    {
+      "path": "tests/benchmark/questions/stale-state.json",
+      "blob": "74faa0a4810caba5c2fdf12e52a6b007ad782cb7",
+      "bytes": 3121,
+      "sha256": "6ddc0d96f667a8b5feec8ec90aeabb451cee90337da6e0ee4713ab796e168445",
+      "role": "GOLD_DATASET"
+    },
+    {
+      "path": "tests/benchmark/results/BASELINE-001/profile.json",
+      "blob": "376c2275fcc0506ba0dd576b15c892ad57846bda",
+      "bytes": 3076,
+      "sha256": "d7414ed8a644fa4ee744386b2a487cef21ed711ea23b5dadd45506084a205443",
+      "role": "BASELINE_RESULT"
+    },
+    {
+      "path": "tests/benchmark/results/BASELINE-001/report.md",
+      "blob": "b7c5d43c7f4915acdbfb83eb2826480fee8c8e48",
+      "bytes": 46074,
+      "sha256": "8364f8df2b7cbdcce0e77bff08e550edca694748121226ae7f6b1efa2ee846c0",
+      "role": "BASELINE_RESULT"
+    },
+    {
+      "path": "tests/benchmark/results/BASELINE-001/results.json",
+      "blob": "2d45c883420118703b7434a896a4cdb2870ab7a7",
+      "bytes": 333638,
+      "sha256": "87205d3aed8a9282572d380e430c1e10c40f2a4c574a87188e79a77acb65f5db",
+      "role": "BASELINE_RESULT"
+    },
+    {
+      "path": "tests/benchmark/results/BASELINE-001/results.partial.jsonl",
+      "blob": "a59f993ac559aaab75baaf1a4fbb573f492ea806",
+      "bytes": 233776,
+      "sha256": "26bc7d26c7661e6fcdaf658b7a2bff31b29e63bce8ce6f7374318f490f76ff4d",
+      "role": "BASELINE_RESULT"
+    },
+    {
+      "path": "tests/benchmark/results/BASELINE-001R/profile.json",
+      "blob": "258eb52af04b8338b9967f6e19882376d50711fa",
+      "bytes": 3105,
+      "sha256": "6d235523c01642f1ebd98254a7e641f8970d8990196f43ec278b6322b4b21e32",
+      "role": "BASELINE_RESULT_CONTINUATION"
+    },
+    {
+      "path": "tests/benchmark/results/BASELINE-001R/report.md",
+      "blob": "8130e9749c085c74057431cf8811ccc06347e157",
+      "bytes": 3859,
+      "sha256": "58092e774b0ad4c942e1d695a961f67dba1a3904807e18240ec0d61693d462e3",
+      "role": "BASELINE_RESULT_CONTINUATION"
+    },
+    {
+      "path": "tests/benchmark/results/BASELINE-001R/results.json",
+      "blob": "c1b83fa75411dd99db4921d289c999c958d99dc3",
+      "bytes": 73267,
+      "sha256": "538765d939c34c8871849b431d83ea8eab69b424da7f8b601ba24515f78b5642",
+      "role": "BASELINE_RESULT_CONTINUATION"
+    },
+    {
+      "path": "tests/benchmark/results/BASELINE-001R/results.partial.jsonl",
+      "blob": "81b86b98582faa57547480253add90fb4493e90e",
+      "bytes": 47536,
+      "sha256": "a0fe07b2efec0f87a003d678090c0ab8d7af39cbf1793dba9377dc9428fd12f1",
+      "role": "BASELINE_RESULT_CONTINUATION"
+    },
+    {
+      "path": "tests/benchmark/scoring.test.js",
+      "blob": "4ab0c713697b1167daa222f1940f9f4bea67e6ce",
+      "bytes": 5808,
+      "sha256": "88bf5c974ecb9296a4bc4fceb0c7f378381ffcf2126a047573e91bde17dd2ee5",
+      "role": "FAST_DETERMINISTIC_CHECK"
+    },
+    {
+      "path": "tools/run-sinbad-benchmark.js",
+      "blob": "be74364e838c0a2f277a9b6d289dd21924f1eaac",
+      "bytes": 14404,
+      "sha256": "3f5487a33aec02f949c041f8149fd11e3524eac43cf14a15bb646df84a829665",
+      "role": "HARNESS_RUNNER"
+    }
+  ]
+}

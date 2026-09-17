@@ -70,7 +70,12 @@
         "Bridge defects observed, NOT fixed (frozen): Kiwix path throws 'You cannot call a method on a null-valued expression.'; two HTTP 400 replies after minutes of work (FH-06, HL-20); process termination without recovery"
       ]
     },
-    "phase_3_and_later": "NOT STARTED. Sentinel, Pilot and Co-Pilot are not implemented; no production AI behaviour changed."
+    "phase_3_discovery": {
+      "status": "READ-ONLY DISCOVERY REPORT DELIVERED 2026-09-17 (Owner MASTER TASK DIRECTIVE 2026-09-16, TASK C); NO IMPLEMENTATION AUTHORITY; no Sentinel/Gatekeeper/Pilot/Co-Pilot code exists",
+      "report": "docs/project2/PHASE_3_DISCOVERY.md",
+      "starting_state": "main aee0ad5 (Phase 2 OWNER ACCEPTED), ARGOS VERIFIED 105 files, worktree clean, legacy bridge not started, Academy/GASM/Owner Console/runtime untouched"
+    },
+    "phase_3_implementation_and_later": "NOT STARTED. Sentinel, Gatekeeper, Pilot and Co-Pilot are not implemented; no production AI behaviour changed; requires a separate Owner IMPLEMENTATION GO."
   },
   "zero_regression_classes": ["context isolation","stale-state detection","contradiction handling","provenance/citation integrity","hallucination resistance","Owner authority/security boundaries"],
   "policies": {
@@ -78,6 +83,18 @@
     "ci": "FAST DETERMINISTIC BENCHMARK CHECKS (npm run benchmark:fast) are cheap and model-free; the FULL LOCAL AI BENCHMARK RUN is not in PR CI. Proposal for a CI subset follows the measured runtime.",
     "academy": "Frozen. No production Academy DB writes, no Q001/Q002, UX or AAL2 changes. The benchmark only calls the local bridge /ai/chat and status endpoints."
   },
-  "owner_acceptance": "NOT RECORDED for any Project 2 artefact",
-  "last_verified_timestamp": "2026-09-16T11:10:00Z"
+  "owner_acceptance": {
+    "phase_2": "OWNER ACCEPTED - Owner MASTER TASK DIRECTIVE of 2026-09-16 (after the read-only audit and the merge of PR #250): 'PROJECT 2 PHASE 2: OWNER ACCEPTED ... represented by main @ aee0ad5'. Scope of the acceptance: the Phase 2 benchmark environment, gold datasets, test harness and BASELINE-001 become the official comparison reference for the current SINBAD architecture. It is NOT an acceptance of any measured capability and NOT an authorization for Phase 3 implementation.",
+    "phase_2_accepted_commit": "aee0ad545c6517df707c5f969269900222f6f849",
+    "phase_1": "accepted by the Owner with the authority-model correction (2026-09-15), recorded in phases.phase_1_discovery",
+    "phase_3_and_later": "NOT RECORDED (not started)"
+  },
+  "baseline_freeze": {
+    "baseline": "BASELINE-001 - CURRENT SINBAD AS-IS",
+    "status": "FROZEN 2026-09-17 (Owner MASTER TASK DIRECTIVE 2026-09-16, TASK B)",
+    "record": "docs/project2/BASELINE-001_FREEZE.json (31 frozen files with sha256, run identities, runtime identity, limitations, unresolved findings, truth-state labels, revision policy) and docs/project2/BASELINE-001_FREEZE.md",
+    "enforcement": "tests/baseline-001-freeze.test.js (part of npm test / CI verify) fails if any frozen file changes or the combined totals drift",
+    "revision_policy": "immutable; corrections only as separately identified revisions (BASELINE-001-REV-n) with their own provenance; original files recoverable from aee0ad5"
+  },
+  "last_verified_timestamp": "2026-09-17T06:30:00Z"
 }
