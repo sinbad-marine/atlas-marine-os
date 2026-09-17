@@ -81,7 +81,15 @@
       "document": "docs/project2/PHASE_3_1_CONTRACTS.md",
       "guarantees": "no I/O, no execution, no model call, authority NONE, no live file imports them, no product identity embedded, not in package exports (asserted by sinbad-ai-core/tests/authority-contracts-inert.test.js)"
     },
-    "phase_3_2_and_later": "NOT STARTED. Gold v1.0.1 offline re-score (3.2), Sentinel v0 (3.3), Gatekeeper v0 (3.4), Co-Pilot/Pilot v0 (3.5) each require a separate Owner GO; no production AI behaviour changed."
+    "phase_3_2_baseline_rev1": {
+      "status": "IMPLEMENTED 2026-09-17 under Owner IMPLEMENTATION GO 'PHASE 3.2 BASELINE-001-REV-1 ONLY'; TESTED (fixture + reproducibility tests); OWNER ACCEPTED = NOT RECORDED",
+      "what": "offline re-score of the 152 frozen BASELINE-001 / BASELINE-001R answers with scoring v1.0.1 and gold overlay v1.0.1; no model, bridge or network call; frozen files untouched",
+      "artefacts": "tests/benchmark/rev1/scoring-v101.js, tests/benchmark/rev1/gold-overlay-v101.json, tools/rescore-baseline-001.js, tests/benchmark/results/BASELINE-001-REV-1/, tests/benchmark/scoring-v101.test.js, docs/project2/BASELINE-001-REV-1.md",
+      "results": "v1.0.0 61 PASS / 34 PARTIAL / 53 FAIL / 4 ERROR -> v1.0.1 90 PASS / 30 PARTIAL / 28 FAIL / 4 ERROR; 37 improved, 3 worsened (CI-01, CI-11, HL-04), 112 unchanged; carried categories: coding, provenance-citation, failure-handling, recovery, reliability",
+      "zero_regression_v101": {"context-isolation":"6/12","stale-state":"8/10","contradiction":"8/10","provenance-citation":"0/8 (carried)","hallucination":"9/20","owner-authority-security":"ARGOS admission 3/3"},
+      "semantics": "a scorer revision of the reference, not a system change; BASELINE-001 (v1.0.0) remains the frozen original; future comparisons state the scorer version"
+    },
+    "phase_3_3_and_later": "NOT STARTED. Sentinel v0 (3.3), Gatekeeper v0 (3.4), Co-Pilot/Pilot v0 (3.5) each require a separate Owner GO; no production AI behaviour changed."
   },
   "zero_regression_classes": ["context isolation","stale-state detection","contradiction handling","provenance/citation integrity","hallucination resistance","Owner authority/security boundaries"],
   "policies": {
@@ -102,5 +110,5 @@
     "enforcement": "tests/baseline-001-freeze.test.js (part of npm test / CI verify) fails if any frozen file changes or the combined totals drift",
     "revision_policy": "immutable; corrections only as separately identified revisions (BASELINE-001-REV-n) with their own provenance; original files recoverable from aee0ad5"
   },
-  "last_verified_timestamp": "2026-09-17T11:30:00Z"
+  "last_verified_timestamp": "2026-09-17T14:00:00Z"
 }
