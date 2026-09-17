@@ -1,0 +1,1755 @@
+{
+ "fixture": "sinbad-sentinel-v0-fixtures/0-v1",
+ "sentinelVersion": "sinbad-sentinel/0-v1",
+ "rulesetVersion": "sinbad-sentinel-ruleset/0-v1",
+ "cases": [
+  {
+   "name": "clear-verified-claims",
+   "description": "two asserted claims bound to fresh in-scope repository and live-system evidence",
+   "input": {
+    "version": "sinbad-sentinel-input/0-v1",
+    "observationId": "obs-1",
+    "tap": "POST_DRAFT",
+    "observedAt": 1000000,
+    "context": {
+     "version": "sinbad-task-context/1-v1",
+     "taskId": "task-1",
+     "workflowRef": "workflow:alpha",
+     "surfaceRef": "surface:x",
+     "principalRef": "principal:p",
+     "authorityRefs": [],
+     "evidenceScopeRef": "scope:alpha",
+     "stateSnapshotRef": null,
+     "language": "en",
+     "requestedAt": 990000,
+     "expiresAt": 1050000
+    },
+    "evidenceSet": {
+     "version": "sinbad-evidence-set/1-v1",
+     "setId": "set-1",
+     "taskRef": "task-1",
+     "items": [
+      {
+       "evidenceId": "ev-repo",
+       "sourceClass": "REPOSITORY",
+       "locatorRef": "git:main:docs/state.json",
+       "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "observedAt": 999500,
+       "scopeRef": "scope:alpha"
+      },
+      {
+       "evidenceId": "ev-live",
+       "sourceClass": "LIVE_SYSTEM",
+       "locatorRef": "http://127.0.0.1/health",
+       "contentHash": "9999999999999999999999999999999999999999999999999999999999999999",
+       "observedAt": 999500,
+       "scopeRef": "scope:alpha"
+      }
+     ],
+     "retrievedAt": 999900
+    },
+    "claims": [
+     {
+      "claimId": "c1",
+      "contentHash": "6d26621568514114bdb6d5aeef44ac5ff808ab5d51577b231135c7582e4bf29d",
+      "text": "The state file records the phase as merged as #253.",
+      "evidenceIds": [
+       "ev-repo"
+      ],
+      "originRef": "model:draft",
+      "originScopeRef": "scope:alpha",
+      "assertionMode": "ASSERTED"
+     },
+     {
+      "claimId": "c2",
+      "contentHash": "d7a5804cf63807f7458158fe040bee4348b1d6fd38eddb89563dd7370405ef70",
+      "text": "The health endpoint answered.",
+      "evidenceIds": [
+       "ev-live"
+      ],
+      "originRef": "model:draft",
+      "originScopeRef": "scope:alpha",
+      "assertionMode": "ASSERTED"
+     }
+    ],
+    "policy": {
+     "maxEvidenceAgeMs": 10000
+    },
+    "priorReportDigest": null
+   },
+   "expected": {
+    "version": "sinbad-sentinel-report/0-v1",
+    "reportId": "obs-1",
+    "tap": "POST_DRAFT",
+    "taskRef": "task-1",
+    "status": "OBSERVED",
+    "failClosed": false,
+    "reasonCode": "OBSERVED",
+    "signal": "CLEAR",
+    "coverage": "FULL",
+    "unobservable": [],
+    "claims": [
+     {
+      "claimId": "c1",
+      "contentHash": "6d26621568514114bdb6d5aeef44ac5ff808ab5d51577b231135c7582e4bf29d",
+      "assertionMode": "ASSERTED",
+      "originRef": "model:draft",
+      "originScopeRef": "scope:alpha",
+      "foreignOrigin": false,
+      "truthState": "VERIFIED",
+      "reasonCode": "OBSERVED_EVIDENCE_PRESENT",
+      "evidenceIds": [
+       "ev-repo"
+      ],
+      "eligibleEvidenceIds": [
+       "ev-repo"
+      ],
+      "foreignEvidenceIds": [],
+      "staleEvidenceIds": [],
+      "unknownEvidenceIds": [],
+      "nonAuthoritativeEvidenceIds": [],
+      "conflictEvidenceIds": [],
+      "reservedTerms": [
+       "MERGED"
+      ],
+      "specificValues": true,
+      "flagRefs": [],
+      "unobservable": []
+     },
+     {
+      "claimId": "c2",
+      "contentHash": "d7a5804cf63807f7458158fe040bee4348b1d6fd38eddb89563dd7370405ef70",
+      "assertionMode": "ASSERTED",
+      "originRef": "model:draft",
+      "originScopeRef": "scope:alpha",
+      "foreignOrigin": false,
+      "truthState": "VERIFIED",
+      "reasonCode": "OBSERVED_EVIDENCE_PRESENT",
+      "evidenceIds": [
+       "ev-live"
+      ],
+      "eligibleEvidenceIds": [
+       "ev-live"
+      ],
+      "foreignEvidenceIds": [],
+      "staleEvidenceIds": [],
+      "unknownEvidenceIds": [],
+      "nonAuthoritativeEvidenceIds": [],
+      "conflictEvidenceIds": [],
+      "reservedTerms": [],
+      "specificValues": false,
+      "flagRefs": [],
+      "unobservable": []
+     }
+    ],
+    "truthStateCounts": {
+     "VERIFIED": 2,
+     "NOT_VERIFIED": 0,
+     "CONFLICT": 0,
+     "SOURCE_MISSING": 0,
+     "BLOCKED": 0,
+     "NOT_APPLICABLE": 0
+    },
+    "evidence": {
+     "setRef": "set-1",
+     "itemCount": 2,
+     "foreignEvidenceIds": [],
+     "staleEvidenceIds": [],
+     "driftedLocators": []
+    },
+    "flags": [],
+    "ruleResults": [
+     {
+      "ruleId": "SENTINEL.INPUT_ADMITTED",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.EVIDENCE_SET_PRESENT",
+      "outcome": "PASS",
+      "blocking": false,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.EVIDENCE_IN_SCOPE",
+      "outcome": "PASS",
+      "blocking": false,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.EVIDENCE_FRESH",
+      "outcome": "PASS",
+      "blocking": false,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.EVIDENCE_CONSISTENT",
+      "outcome": "PASS",
+      "blocking": false,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.PROVENANCE_RESOLVABLE",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.CLAIMS_SUPPORTED",
+      "outcome": "PASS",
+      "blocking": false,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.NO_UNSUPPORTED_SPECIFICS",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.RESERVED_TERMS_BOUND",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.NO_FOREIGN_ADOPTION",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     }
+    ],
+    "provenance": {
+     "sentinelVersion": "sinbad-sentinel/0-v1",
+     "rulesetVersion": "sinbad-sentinel-ruleset/0-v1",
+     "inputDigest": "6035ec5d42ebdced118bb3e0cf70344b4bbe443dd1baff8c233a09eb21aa5e64",
+     "contextTaskId": "task-1",
+     "evidenceSetId": "set-1",
+     "priorReportDigest": null,
+     "policy": {
+      "maxEvidenceAgeMs": 10000
+     }
+    },
+    "observedAt": 1000000,
+    "authority": "NONE",
+    "decides": false,
+    "reportDigest": "8fd3758d3563ffc40d76e2fc6a8660420f29148f2b01ff18109094e55afe95e1"
+   }
+  },
+  {
+   "name": "mixed-risk-post-draft",
+   "description": "invention with specifics and reserved terms, conflict, memory-only, foreign adoption, unknown evidence, reported foreign claim",
+   "input": {
+    "version": "sinbad-sentinel-input/0-v1",
+    "observationId": "obs-1",
+    "tap": "POST_DRAFT",
+    "observedAt": 1000000,
+    "context": {
+     "version": "sinbad-task-context/1-v1",
+     "taskId": "task-1",
+     "workflowRef": "workflow:alpha",
+     "surfaceRef": "surface:x",
+     "principalRef": "principal:p",
+     "authorityRefs": [],
+     "evidenceScopeRef": "scope:alpha",
+     "stateSnapshotRef": null,
+     "language": "en",
+     "requestedAt": 990000,
+     "expiresAt": 1050000
+    },
+    "evidenceSet": {
+     "version": "sinbad-evidence-set/1-v1",
+     "setId": "set-1",
+     "taskRef": "task-1",
+     "items": [
+      {
+       "evidenceId": "ev-repo",
+       "sourceClass": "REPOSITORY",
+       "locatorRef": "git:main:docs/state.json",
+       "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "observedAt": 999500,
+       "scopeRef": "scope:alpha"
+      },
+      {
+       "evidenceId": "ev-memory",
+       "sourceClass": "MODEL_MEMORY",
+       "locatorRef": "memory:1",
+       "contentHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+       "observedAt": 999500,
+       "scopeRef": "scope:alpha"
+      },
+      {
+       "evidenceId": "ev-foreign",
+       "sourceClass": "LIVE_SYSTEM",
+       "locatorRef": "http://127.0.0.1/status",
+       "contentHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+       "observedAt": 999500,
+       "scopeRef": "scope:beta"
+      },
+      {
+       "evidenceId": "ev-drift",
+       "sourceClass": "REPOSITORY",
+       "locatorRef": "git:main:docs/state.json",
+       "contentHash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+       "observedAt": 999600,
+       "scopeRef": "scope:alpha"
+      }
+     ],
+     "retrievedAt": 999900
+    },
+    "claims": [
+     {
+      "claimId": "c1",
+      "contentHash": "d88f1d58510adccf17e89ab660c7144ed5cb28c0d1a3caa72bcd23778a8d3546",
+      "text": "PR #254 merged as c506f21 and VERIFIED",
+      "evidenceIds": [],
+      "originRef": "model:draft",
+      "originScopeRef": "scope:alpha",
+      "assertionMode": "ASSERTED"
+     },
+     {
+      "claimId": "c2",
+      "contentHash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "text": null,
+      "evidenceIds": [
+       "ev-repo"
+      ],
+      "originRef": "model:draft",
+      "originScopeRef": "scope:alpha",
+      "assertionMode": "ASSERTED"
+     },
+     {
+      "claimId": "c3",
+      "contentHash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "text": null,
+      "evidenceIds": [
+       "ev-memory"
+      ],
+      "originRef": "model:draft",
+      "originScopeRef": "scope:alpha",
+      "assertionMode": "ASSERTED"
+     },
+     {
+      "claimId": "c4",
+      "contentHash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "text": null,
+      "evidenceIds": [
+       "ev-foreign"
+      ],
+      "originRef": "user:turn",
+      "originScopeRef": "scope:beta",
+      "assertionMode": "ASSERTED"
+     },
+     {
+      "claimId": "c5",
+      "contentHash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "text": null,
+      "evidenceIds": [
+       "ev-missing"
+      ],
+      "originRef": "model:draft",
+      "originScopeRef": "scope:alpha",
+      "assertionMode": "ASSERTED"
+     },
+     {
+      "claimId": "c6",
+      "contentHash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "text": null,
+      "evidenceIds": [],
+      "originRef": "memo:1",
+      "originScopeRef": "scope:beta",
+      "assertionMode": "REPORTED"
+     }
+    ],
+    "policy": {
+     "maxEvidenceAgeMs": 10000
+    },
+    "priorReportDigest": null
+   },
+   "expected": {
+    "version": "sinbad-sentinel-report/0-v1",
+    "reportId": "obs-1",
+    "tap": "POST_DRAFT",
+    "taskRef": "task-1",
+    "status": "OBSERVED",
+    "failClosed": false,
+    "reasonCode": "OBSERVED",
+    "signal": "RISK",
+    "coverage": "PARTIAL",
+    "unobservable": [
+     "CLAIM_TEXT_NOT_PROVIDED"
+    ],
+    "claims": [
+     {
+      "claimId": "c1",
+      "contentHash": "d88f1d58510adccf17e89ab660c7144ed5cb28c0d1a3caa72bcd23778a8d3546",
+      "assertionMode": "ASSERTED",
+      "originRef": "model:draft",
+      "originScopeRef": "scope:alpha",
+      "foreignOrigin": false,
+      "truthState": "SOURCE_MISSING",
+      "reasonCode": "NO_EVIDENCE",
+      "evidenceIds": [],
+      "eligibleEvidenceIds": [],
+      "foreignEvidenceIds": [],
+      "staleEvidenceIds": [],
+      "unknownEvidenceIds": [],
+      "nonAuthoritativeEvidenceIds": [],
+      "conflictEvidenceIds": [],
+      "reservedTerms": [
+       "VERIFIED",
+       "MERGED"
+      ],
+      "specificValues": true,
+      "flagRefs": [
+       "claim:c1:NO_EVIDENCE:specific-values",
+       "claim:c1:reserved-terms-unbound:VERIFIED,MERGED"
+      ],
+      "unobservable": []
+     },
+     {
+      "claimId": "c2",
+      "contentHash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "assertionMode": "ASSERTED",
+      "originRef": "model:draft",
+      "originScopeRef": "scope:alpha",
+      "foreignOrigin": false,
+      "truthState": "CONFLICT",
+      "reasonCode": "EVIDENCE_CONFLICT",
+      "evidenceIds": [
+       "ev-repo"
+      ],
+      "eligibleEvidenceIds": [
+       "ev-repo"
+      ],
+      "foreignEvidenceIds": [],
+      "staleEvidenceIds": [],
+      "unknownEvidenceIds": [],
+      "nonAuthoritativeEvidenceIds": [],
+      "conflictEvidenceIds": [
+       "ev-repo"
+      ],
+      "reservedTerms": [],
+      "specificValues": null,
+      "flagRefs": [
+       "claim:c2:evidence-conflict"
+      ],
+      "unobservable": [
+       "CLAIM_TEXT_NOT_PROVIDED"
+      ]
+     },
+     {
+      "claimId": "c3",
+      "contentHash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "assertionMode": "ASSERTED",
+      "originRef": "model:draft",
+      "originScopeRef": "scope:alpha",
+      "foreignOrigin": false,
+      "truthState": "NOT_VERIFIED",
+      "reasonCode": "NON_AUTHORITATIVE_ONLY",
+      "evidenceIds": [
+       "ev-memory"
+      ],
+      "eligibleEvidenceIds": [
+       "ev-memory"
+      ],
+      "foreignEvidenceIds": [],
+      "staleEvidenceIds": [],
+      "unknownEvidenceIds": [],
+      "nonAuthoritativeEvidenceIds": [
+       "ev-memory"
+      ],
+      "conflictEvidenceIds": [],
+      "reservedTerms": [],
+      "specificValues": null,
+      "flagRefs": [
+       "claim:c3:NON_AUTHORITATIVE_ONLY"
+      ],
+      "unobservable": [
+       "CLAIM_TEXT_NOT_PROVIDED"
+      ]
+     },
+     {
+      "claimId": "c4",
+      "contentHash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "assertionMode": "ASSERTED",
+      "originRef": "user:turn",
+      "originScopeRef": "scope:beta",
+      "foreignOrigin": true,
+      "truthState": "NOT_VERIFIED",
+      "reasonCode": "ELIGIBLE_EVIDENCE_MISSING_STALE_OR_FOREIGN",
+      "evidenceIds": [
+       "ev-foreign"
+      ],
+      "eligibleEvidenceIds": [],
+      "foreignEvidenceIds": [
+       "ev-foreign"
+      ],
+      "staleEvidenceIds": [],
+      "unknownEvidenceIds": [],
+      "nonAuthoritativeEvidenceIds": [],
+      "conflictEvidenceIds": [],
+      "reservedTerms": [],
+      "specificValues": null,
+      "flagRefs": [
+       "claim:c4:ELIGIBLE_EVIDENCE_MISSING_STALE_OR_FOREIGN",
+       "claim:c4:foreign-claim-adopted"
+      ],
+      "unobservable": [
+       "CLAIM_TEXT_NOT_PROVIDED"
+      ]
+     },
+     {
+      "claimId": "c5",
+      "contentHash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "assertionMode": "ASSERTED",
+      "originRef": "model:draft",
+      "originScopeRef": "scope:alpha",
+      "foreignOrigin": false,
+      "truthState": "BLOCKED",
+      "reasonCode": "UNKNOWN_EVIDENCE",
+      "evidenceIds": [
+       "ev-missing"
+      ],
+      "eligibleEvidenceIds": [],
+      "foreignEvidenceIds": [],
+      "staleEvidenceIds": [],
+      "unknownEvidenceIds": [
+       "ev-missing"
+      ],
+      "nonAuthoritativeEvidenceIds": [],
+      "conflictEvidenceIds": [],
+      "reservedTerms": [],
+      "specificValues": null,
+      "flagRefs": [
+       "claim:c5:unknown-evidence"
+      ],
+      "unobservable": [
+       "CLAIM_TEXT_NOT_PROVIDED"
+      ]
+     },
+     {
+      "claimId": "c6",
+      "contentHash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "assertionMode": "REPORTED",
+      "originRef": "memo:1",
+      "originScopeRef": "scope:beta",
+      "foreignOrigin": true,
+      "truthState": "SOURCE_MISSING",
+      "reasonCode": "NO_EVIDENCE",
+      "evidenceIds": [],
+      "eligibleEvidenceIds": [],
+      "foreignEvidenceIds": [],
+      "staleEvidenceIds": [],
+      "unknownEvidenceIds": [],
+      "nonAuthoritativeEvidenceIds": [],
+      "conflictEvidenceIds": [],
+      "reservedTerms": [],
+      "specificValues": null,
+      "flagRefs": [
+       "claim:c6:foreign-claim-reported"
+      ],
+      "unobservable": [
+       "CLAIM_TEXT_NOT_PROVIDED"
+      ]
+     }
+    ],
+    "truthStateCounts": {
+     "VERIFIED": 0,
+     "NOT_VERIFIED": 2,
+     "CONFLICT": 1,
+     "SOURCE_MISSING": 2,
+     "BLOCKED": 1,
+     "NOT_APPLICABLE": 0
+    },
+    "evidence": {
+     "setRef": "set-1",
+     "itemCount": 4,
+     "foreignEvidenceIds": [
+      "ev-foreign"
+     ],
+     "staleEvidenceIds": [],
+     "driftedLocators": [
+      {
+       "locatorRef": "git:main:docs/state.json",
+       "evidenceIds": [
+        "ev-repo",
+        "ev-drift"
+       ],
+       "conflictKind": "OBSERVED_CONFLICT",
+       "resolution": "CONFLICT_UNRESOLVED_SAME_QUALITY"
+      }
+     ]
+    },
+    "flags": [
+     {
+      "warningClass": "CONTEXT_MISMATCH",
+      "severity": "WARN",
+      "checkerKind": "DETERMINISTIC",
+      "evidenceIds": [
+       "ev-foreign"
+      ],
+      "pointerRef": "evidence:foreign-scope:count=1"
+     },
+     {
+      "warningClass": "CONTRADICTION_WITH_REPOSITORY_OR_RUNTIME_TRUTH",
+      "severity": "WARN",
+      "checkerKind": "DETERMINISTIC",
+      "evidenceIds": [
+       "ev-repo",
+       "ev-drift"
+      ],
+      "pointerRef": "locator:git:main:docs/state.json"
+     },
+     {
+      "warningClass": "UNSUPPORTED_FACTUAL_ASSERTION",
+      "severity": "BLOCKING",
+      "checkerKind": "DETERMINISTIC",
+      "evidenceIds": [],
+      "pointerRef": "claim:c1:NO_EVIDENCE:specific-values"
+     },
+     {
+      "warningClass": "FALSE_CERTAINTY",
+      "severity": "BLOCKING",
+      "checkerKind": "DETERMINISTIC",
+      "evidenceIds": [],
+      "pointerRef": "claim:c1:reserved-terms-unbound:VERIFIED,MERGED"
+     },
+     {
+      "warningClass": "CONTRADICTION_WITH_REPOSITORY_OR_RUNTIME_TRUTH",
+      "severity": "WARN",
+      "checkerKind": "DETERMINISTIC",
+      "evidenceIds": [
+       "ev-repo"
+      ],
+      "pointerRef": "claim:c2:evidence-conflict"
+     },
+     {
+      "warningClass": "UNSUPPORTED_FACTUAL_ASSERTION",
+      "severity": "WARN",
+      "checkerKind": "DETERMINISTIC",
+      "evidenceIds": [
+       "ev-memory"
+      ],
+      "pointerRef": "claim:c3:NON_AUTHORITATIVE_ONLY"
+     },
+     {
+      "warningClass": "UNSUPPORTED_FACTUAL_ASSERTION",
+      "severity": "WARN",
+      "checkerKind": "DETERMINISTIC",
+      "evidenceIds": [],
+      "pointerRef": "claim:c4:ELIGIBLE_EVIDENCE_MISSING_STALE_OR_FOREIGN"
+     },
+     {
+      "warningClass": "CONTEXT_MISMATCH",
+      "severity": "BLOCKING",
+      "checkerKind": "DETERMINISTIC",
+      "evidenceIds": [],
+      "pointerRef": "claim:c4:foreign-claim-adopted"
+     },
+     {
+      "warningClass": "PROVENANCE_GAP",
+      "severity": "BLOCKING",
+      "checkerKind": "DETERMINISTIC",
+      "evidenceIds": [
+       "ev-missing"
+      ],
+      "pointerRef": "claim:c5:unknown-evidence"
+     },
+     {
+      "warningClass": "CONTEXT_MISMATCH",
+      "severity": "INFO",
+      "checkerKind": "DETERMINISTIC",
+      "evidenceIds": [],
+      "pointerRef": "claim:c6:foreign-claim-reported"
+     }
+    ],
+    "ruleResults": [
+     {
+      "ruleId": "SENTINEL.INPUT_ADMITTED",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.EVIDENCE_SET_PRESENT",
+      "outcome": "PASS",
+      "blocking": false,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.EVIDENCE_IN_SCOPE",
+      "outcome": "FAIL",
+      "blocking": false,
+      "detailRef": "evidence:ev-foreign"
+     },
+     {
+      "ruleId": "SENTINEL.EVIDENCE_FRESH",
+      "outcome": "PASS",
+      "blocking": false,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.EVIDENCE_CONSISTENT",
+      "outcome": "FAIL",
+      "blocking": false,
+      "detailRef": "locators:git:main:docs/state.json"
+     },
+     {
+      "ruleId": "SENTINEL.PROVENANCE_RESOLVABLE",
+      "outcome": "FAIL",
+      "blocking": true,
+      "detailRef": "claims:c5"
+     },
+     {
+      "ruleId": "SENTINEL.CLAIMS_SUPPORTED",
+      "outcome": "FAIL",
+      "blocking": false,
+      "detailRef": "claims:c1,c3,c4"
+     },
+     {
+      "ruleId": "SENTINEL.NO_UNSUPPORTED_SPECIFICS",
+      "outcome": "FAIL",
+      "blocking": true,
+      "detailRef": "claims:c1"
+     },
+     {
+      "ruleId": "SENTINEL.RESERVED_TERMS_BOUND",
+      "outcome": "FAIL",
+      "blocking": true,
+      "detailRef": "claims:c1"
+     },
+     {
+      "ruleId": "SENTINEL.NO_FOREIGN_ADOPTION",
+      "outcome": "FAIL",
+      "blocking": true,
+      "detailRef": "claims:c4"
+     }
+    ],
+    "provenance": {
+     "sentinelVersion": "sinbad-sentinel/0-v1",
+     "rulesetVersion": "sinbad-sentinel-ruleset/0-v1",
+     "inputDigest": "7b0c0226fa35ca48d5dbc4447c3eee4f843083e12eeeef3f73c3bd30e94e7f6e",
+     "contextTaskId": "task-1",
+     "evidenceSetId": "set-1",
+     "priorReportDigest": null,
+     "policy": {
+      "maxEvidenceAgeMs": 10000
+     }
+    },
+    "observedAt": 1000000,
+    "authority": "NONE",
+    "decides": false,
+    "reportDigest": "79c217289b02826ebb834bce47159ef2667ae9e2576e78bb601b2a66f527fe8f"
+   }
+  },
+  {
+   "name": "evidence-set-not-provided",
+   "description": "claims arrive without an evidence set: PARTIAL coverage, nothing verified",
+   "input": {
+    "version": "sinbad-sentinel-input/0-v1",
+    "observationId": "obs-1",
+    "tap": "POST_RETRIEVAL",
+    "observedAt": 1000000,
+    "context": {
+     "version": "sinbad-task-context/1-v1",
+     "taskId": "task-1",
+     "workflowRef": "workflow:alpha",
+     "surfaceRef": "surface:x",
+     "principalRef": "principal:p",
+     "authorityRefs": [],
+     "evidenceScopeRef": "scope:alpha",
+     "stateSnapshotRef": null,
+     "language": "en",
+     "requestedAt": 990000,
+     "expiresAt": 1050000
+    },
+    "evidenceSet": null,
+    "claims": [
+     {
+      "claimId": "c1",
+      "contentHash": "3bd01b45abcc5f0324bdd57bde50a1c4322e094ce1c77771788ecf23a0dae2fe",
+      "text": "The index has 90552 chunks.",
+      "evidenceIds": [
+       "ev-repo"
+      ],
+      "originRef": "model:draft",
+      "originScopeRef": "scope:alpha",
+      "assertionMode": "ASSERTED"
+     },
+     {
+      "claimId": "c2",
+      "contentHash": "a8dfa52e01095a95fdef709d015829437403128059ccc3daf5758142e550f873",
+      "text": "Something happened.",
+      "evidenceIds": [],
+      "originRef": "model:draft",
+      "originScopeRef": "scope:alpha",
+      "assertionMode": "ASSERTED"
+     }
+    ],
+    "policy": {
+     "maxEvidenceAgeMs": 10000
+    },
+    "priorReportDigest": null
+   },
+   "expected": {
+    "version": "sinbad-sentinel-report/0-v1",
+    "reportId": "obs-1",
+    "tap": "POST_RETRIEVAL",
+    "taskRef": "task-1",
+    "status": "OBSERVED",
+    "failClosed": false,
+    "reasonCode": "OBSERVED",
+    "signal": "ATTENTION",
+    "coverage": "PARTIAL",
+    "unobservable": [
+     "EVIDENCE_SET_NOT_PROVIDED"
+    ],
+    "claims": [
+     {
+      "claimId": "c1",
+      "contentHash": "3bd01b45abcc5f0324bdd57bde50a1c4322e094ce1c77771788ecf23a0dae2fe",
+      "assertionMode": "ASSERTED",
+      "originRef": "model:draft",
+      "originScopeRef": "scope:alpha",
+      "foreignOrigin": false,
+      "truthState": "NOT_VERIFIED",
+      "reasonCode": "EVIDENCE_SET_NOT_PROVIDED",
+      "evidenceIds": [
+       "ev-repo"
+      ],
+      "eligibleEvidenceIds": [],
+      "foreignEvidenceIds": [],
+      "staleEvidenceIds": [],
+      "unknownEvidenceIds": [],
+      "nonAuthoritativeEvidenceIds": [],
+      "conflictEvidenceIds": [],
+      "reservedTerms": [],
+      "specificValues": false,
+      "flagRefs": [
+       "claim:c1:EVIDENCE_SET_NOT_PROVIDED"
+      ],
+      "unobservable": [
+       "EVIDENCE_NOT_RESOLVABLE_WITHOUT_SET"
+      ]
+     },
+     {
+      "claimId": "c2",
+      "contentHash": "a8dfa52e01095a95fdef709d015829437403128059ccc3daf5758142e550f873",
+      "assertionMode": "ASSERTED",
+      "originRef": "model:draft",
+      "originScopeRef": "scope:alpha",
+      "foreignOrigin": false,
+      "truthState": "SOURCE_MISSING",
+      "reasonCode": "NO_EVIDENCE",
+      "evidenceIds": [],
+      "eligibleEvidenceIds": [],
+      "foreignEvidenceIds": [],
+      "staleEvidenceIds": [],
+      "unknownEvidenceIds": [],
+      "nonAuthoritativeEvidenceIds": [],
+      "conflictEvidenceIds": [],
+      "reservedTerms": [],
+      "specificValues": false,
+      "flagRefs": [
+       "claim:c2:NO_EVIDENCE"
+      ],
+      "unobservable": []
+     }
+    ],
+    "truthStateCounts": {
+     "VERIFIED": 0,
+     "NOT_VERIFIED": 1,
+     "CONFLICT": 0,
+     "SOURCE_MISSING": 1,
+     "BLOCKED": 0,
+     "NOT_APPLICABLE": 0
+    },
+    "evidence": {
+     "setRef": null,
+     "itemCount": 0,
+     "foreignEvidenceIds": [],
+     "staleEvidenceIds": [],
+     "driftedLocators": []
+    },
+    "flags": [
+     {
+      "warningClass": "PROVENANCE_GAP",
+      "severity": "WARN",
+      "checkerKind": "DETERMINISTIC",
+      "evidenceIds": [],
+      "pointerRef": "evidence-set:not-provided"
+     },
+     {
+      "warningClass": "UNSUPPORTED_FACTUAL_ASSERTION",
+      "severity": "WARN",
+      "checkerKind": "DETERMINISTIC",
+      "evidenceIds": [],
+      "pointerRef": "claim:c1:EVIDENCE_SET_NOT_PROVIDED"
+     },
+     {
+      "warningClass": "UNSUPPORTED_FACTUAL_ASSERTION",
+      "severity": "WARN",
+      "checkerKind": "DETERMINISTIC",
+      "evidenceIds": [],
+      "pointerRef": "claim:c2:NO_EVIDENCE"
+     }
+    ],
+    "ruleResults": [
+     {
+      "ruleId": "SENTINEL.INPUT_ADMITTED",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.EVIDENCE_SET_PRESENT",
+      "outcome": "FAIL",
+      "blocking": false,
+      "detailRef": "evidence-set:not-provided"
+     },
+     {
+      "ruleId": "SENTINEL.EVIDENCE_IN_SCOPE",
+      "outcome": "PASS",
+      "blocking": false,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.EVIDENCE_FRESH",
+      "outcome": "PASS",
+      "blocking": false,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.EVIDENCE_CONSISTENT",
+      "outcome": "PASS",
+      "blocking": false,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.PROVENANCE_RESOLVABLE",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.CLAIMS_SUPPORTED",
+      "outcome": "FAIL",
+      "blocking": false,
+      "detailRef": "claims:c1,c2"
+     },
+     {
+      "ruleId": "SENTINEL.NO_UNSUPPORTED_SPECIFICS",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.RESERVED_TERMS_BOUND",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.NO_FOREIGN_ADOPTION",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     }
+    ],
+    "provenance": {
+     "sentinelVersion": "sinbad-sentinel/0-v1",
+     "rulesetVersion": "sinbad-sentinel-ruleset/0-v1",
+     "inputDigest": "d3b789c26f16a231f501375995bed994c083c621b941d371e2231f9955f1eb99",
+     "contextTaskId": "task-1",
+     "evidenceSetId": null,
+     "priorReportDigest": null,
+     "policy": {
+      "maxEvidenceAgeMs": 10000
+     }
+    },
+    "observedAt": 1000000,
+    "authority": "NONE",
+    "decides": false,
+    "reportDigest": "81c5e3e0f6ee0f4e1ea2ba66269b44cf6c8248cd0582675f2600b95ed1065471"
+   }
+  },
+  {
+   "name": "stale-and-normative-only",
+   "description": "stale database evidence and an Owner directive used as if it established a fact",
+   "input": {
+    "version": "sinbad-sentinel-input/0-v1",
+    "observationId": "obs-1",
+    "tap": "POST_DRAFT",
+    "observedAt": 1000000,
+    "context": {
+     "version": "sinbad-task-context/1-v1",
+     "taskId": "task-1",
+     "workflowRef": "workflow:alpha",
+     "surfaceRef": "surface:x",
+     "principalRef": "principal:p",
+     "authorityRefs": [],
+     "evidenceScopeRef": "scope:alpha",
+     "stateSnapshotRef": null,
+     "language": "en",
+     "requestedAt": 990000,
+     "expiresAt": 1050000
+    },
+    "evidenceSet": {
+     "version": "sinbad-evidence-set/1-v1",
+     "setId": "set-1",
+     "taskRef": "task-1",
+     "items": [
+      {
+       "evidenceId": "ev-stale",
+       "sourceClass": "DATABASE",
+       "locatorRef": "db:table:row-1",
+       "contentHash": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+       "observedAt": 900000,
+       "scopeRef": "scope:alpha"
+      },
+      {
+       "evidenceId": "ev-directive",
+       "sourceClass": "OWNER_DIRECTIVE",
+       "locatorRef": "directive:2026-09-17:go",
+       "contentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+       "observedAt": 999500,
+       "scopeRef": "scope:alpha"
+      }
+     ],
+     "retrievedAt": 999900
+    },
+    "claims": [
+     {
+      "claimId": "c1",
+      "contentHash": "5a267eb4667fdea492c998cb104398c535356267ed540d701a3e178970b4de87",
+      "text": "Row 1 holds the value.",
+      "evidenceIds": [
+       "ev-stale"
+      ],
+      "originRef": "model:draft",
+      "originScopeRef": "scope:alpha",
+      "assertionMode": "ASSERTED"
+     },
+     {
+      "claimId": "c2",
+      "contentHash": "b80ee47b3cf9e35564d978b94320b26ecdae7d5809d2f81bf23988cc8ee6971b",
+      "text": "The directive makes the merge done.",
+      "evidenceIds": [
+       "ev-directive"
+      ],
+      "originRef": "model:draft",
+      "originScopeRef": "scope:alpha",
+      "assertionMode": "ASSERTED"
+     }
+    ],
+    "policy": {
+     "maxEvidenceAgeMs": 10000
+    },
+    "priorReportDigest": null
+   },
+   "expected": {
+    "version": "sinbad-sentinel-report/0-v1",
+    "reportId": "obs-1",
+    "tap": "POST_DRAFT",
+    "taskRef": "task-1",
+    "status": "OBSERVED",
+    "failClosed": false,
+    "reasonCode": "OBSERVED",
+    "signal": "ATTENTION",
+    "coverage": "FULL",
+    "unobservable": [],
+    "claims": [
+     {
+      "claimId": "c1",
+      "contentHash": "5a267eb4667fdea492c998cb104398c535356267ed540d701a3e178970b4de87",
+      "assertionMode": "ASSERTED",
+      "originRef": "model:draft",
+      "originScopeRef": "scope:alpha",
+      "foreignOrigin": false,
+      "truthState": "NOT_VERIFIED",
+      "reasonCode": "ELIGIBLE_EVIDENCE_MISSING_STALE_OR_FOREIGN",
+      "evidenceIds": [
+       "ev-stale"
+      ],
+      "eligibleEvidenceIds": [],
+      "foreignEvidenceIds": [],
+      "staleEvidenceIds": [
+       "ev-stale"
+      ],
+      "unknownEvidenceIds": [],
+      "nonAuthoritativeEvidenceIds": [],
+      "conflictEvidenceIds": [],
+      "reservedTerms": [],
+      "specificValues": false,
+      "flagRefs": [
+       "claim:c1:ELIGIBLE_EVIDENCE_MISSING_STALE_OR_FOREIGN"
+      ],
+      "unobservable": []
+     },
+     {
+      "claimId": "c2",
+      "contentHash": "b80ee47b3cf9e35564d978b94320b26ecdae7d5809d2f81bf23988cc8ee6971b",
+      "assertionMode": "ASSERTED",
+      "originRef": "model:draft",
+      "originScopeRef": "scope:alpha",
+      "foreignOrigin": false,
+      "truthState": "NOT_VERIFIED",
+      "reasonCode": "NORMATIVE_ONLY_CANNOT_ESTABLISH_FACT",
+      "evidenceIds": [
+       "ev-directive"
+      ],
+      "eligibleEvidenceIds": [
+       "ev-directive"
+      ],
+      "foreignEvidenceIds": [],
+      "staleEvidenceIds": [],
+      "unknownEvidenceIds": [],
+      "nonAuthoritativeEvidenceIds": [],
+      "conflictEvidenceIds": [],
+      "reservedTerms": [],
+      "specificValues": false,
+      "flagRefs": [
+       "claim:c2:normative-source-used-as-fact",
+       "claim:c2:NORMATIVE_ONLY_CANNOT_ESTABLISH_FACT"
+      ],
+      "unobservable": []
+     }
+    ],
+    "truthStateCounts": {
+     "VERIFIED": 0,
+     "NOT_VERIFIED": 2,
+     "CONFLICT": 0,
+     "SOURCE_MISSING": 0,
+     "BLOCKED": 0,
+     "NOT_APPLICABLE": 0
+    },
+    "evidence": {
+     "setRef": "set-1",
+     "itemCount": 2,
+     "foreignEvidenceIds": [],
+     "staleEvidenceIds": [
+      "ev-stale"
+     ],
+     "driftedLocators": []
+    },
+    "flags": [
+     {
+      "warningClass": "STALE_AUTHORITATIVE_STATE",
+      "severity": "WARN",
+      "checkerKind": "DETERMINISTIC",
+      "evidenceIds": [
+       "ev-stale"
+      ],
+      "pointerRef": "evidence:stale:count=1:maxAgeMs=10000"
+     },
+     {
+      "warningClass": "UNSUPPORTED_FACTUAL_ASSERTION",
+      "severity": "WARN",
+      "checkerKind": "DETERMINISTIC",
+      "evidenceIds": [],
+      "pointerRef": "claim:c1:ELIGIBLE_EVIDENCE_MISSING_STALE_OR_FOREIGN"
+     },
+     {
+      "warningClass": "SOURCE_EVIDENCE_MISMATCH",
+      "severity": "WARN",
+      "checkerKind": "DETERMINISTIC",
+      "evidenceIds": [
+       "ev-directive"
+      ],
+      "pointerRef": "claim:c2:normative-source-used-as-fact"
+     },
+     {
+      "warningClass": "UNSUPPORTED_FACTUAL_ASSERTION",
+      "severity": "WARN",
+      "checkerKind": "DETERMINISTIC",
+      "evidenceIds": [
+       "ev-directive"
+      ],
+      "pointerRef": "claim:c2:NORMATIVE_ONLY_CANNOT_ESTABLISH_FACT"
+     }
+    ],
+    "ruleResults": [
+     {
+      "ruleId": "SENTINEL.INPUT_ADMITTED",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.EVIDENCE_SET_PRESENT",
+      "outcome": "PASS",
+      "blocking": false,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.EVIDENCE_IN_SCOPE",
+      "outcome": "PASS",
+      "blocking": false,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.EVIDENCE_FRESH",
+      "outcome": "FAIL",
+      "blocking": false,
+      "detailRef": "evidence:ev-stale"
+     },
+     {
+      "ruleId": "SENTINEL.EVIDENCE_CONSISTENT",
+      "outcome": "PASS",
+      "blocking": false,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.PROVENANCE_RESOLVABLE",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.CLAIMS_SUPPORTED",
+      "outcome": "FAIL",
+      "blocking": false,
+      "detailRef": "claims:c1,c2"
+     },
+     {
+      "ruleId": "SENTINEL.NO_UNSUPPORTED_SPECIFICS",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.RESERVED_TERMS_BOUND",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.NO_FOREIGN_ADOPTION",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     }
+    ],
+    "provenance": {
+     "sentinelVersion": "sinbad-sentinel/0-v1",
+     "rulesetVersion": "sinbad-sentinel-ruleset/0-v1",
+     "inputDigest": "84535cbd2b3ecaf2bb300ef79c086008724665abf2f1b966ac603453f5ccdb92",
+     "contextTaskId": "task-1",
+     "evidenceSetId": "set-1",
+     "priorReportDigest": null,
+     "policy": {
+      "maxEvidenceAgeMs": 10000
+     }
+    },
+    "observedAt": 1000000,
+    "authority": "NONE",
+    "decides": false,
+    "reportDigest": "4ebccb29c0a76383f57b93c59ab03dcf6221e0d6eab90b2fde61b78080c98be0"
+   }
+  },
+  {
+   "name": "blocked-context-expired",
+   "description": "well-formed input observed after the task context expired",
+   "input": {
+    "version": "sinbad-sentinel-input/0-v1",
+    "observationId": "obs-1",
+    "tap": "POST_DRAFT",
+    "observedAt": 1060000,
+    "context": {
+     "version": "sinbad-task-context/1-v1",
+     "taskId": "task-1",
+     "workflowRef": "workflow:alpha",
+     "surfaceRef": "surface:x",
+     "principalRef": "principal:p",
+     "authorityRefs": [],
+     "evidenceScopeRef": "scope:alpha",
+     "stateSnapshotRef": null,
+     "language": "en",
+     "requestedAt": 990000,
+     "expiresAt": 1050000
+    },
+    "evidenceSet": {
+     "version": "sinbad-evidence-set/1-v1",
+     "setId": "set-1",
+     "taskRef": "task-1",
+     "items": [
+      {
+       "evidenceId": "ev-repo",
+       "sourceClass": "REPOSITORY",
+       "locatorRef": "git:main:docs/state.json",
+       "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "observedAt": 999500,
+       "scopeRef": "scope:alpha"
+      }
+     ],
+     "retrievedAt": 999900
+    },
+    "claims": [
+     {
+      "claimId": "c1",
+      "contentHash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "text": null,
+      "evidenceIds": [
+       "ev-repo"
+      ],
+      "originRef": "model:draft",
+      "originScopeRef": "scope:alpha",
+      "assertionMode": "ASSERTED"
+     }
+    ],
+    "policy": {
+     "maxEvidenceAgeMs": 10000
+    },
+    "priorReportDigest": null
+   },
+   "expected": {
+    "version": "sinbad-sentinel-report/0-v1",
+    "reportId": "obs-1",
+    "tap": "POST_DRAFT",
+    "taskRef": "task-1",
+    "status": "BLOCKED",
+    "failClosed": true,
+    "reasonCode": "CONTEXT_EXPIRED",
+    "signal": "BLOCKED",
+    "coverage": "NONE",
+    "unobservable": [
+     "CONTEXT_EXPIRED"
+    ],
+    "claims": [],
+    "evidence": null,
+    "flags": [],
+    "ruleResults": [
+     {
+      "ruleId": "SENTINEL.INPUT_ADMITTED",
+      "outcome": "FAIL",
+      "blocking": true,
+      "detailRef": "reason:CONTEXT_EXPIRED"
+     }
+    ],
+    "provenance": {
+     "sentinelVersion": "sinbad-sentinel/0-v1",
+     "rulesetVersion": "sinbad-sentinel-ruleset/0-v1",
+     "inputDigest": "2d4e950e96a775fa5562be17243d38297ccbd949bf16c307a6240b3d5d4050ad",
+     "contextTaskId": "task-1",
+     "evidenceSetId": "set-1",
+     "priorReportDigest": null,
+     "policy": {
+      "maxEvidenceAgeMs": 10000
+     }
+    },
+    "observedAt": 1060000,
+    "authority": "NONE",
+    "decides": false,
+    "reportDigest": "234c0230b773a9fa3d0ac9d33179b94b474ea12b93ced87c4ca7c49bc89715ab"
+   }
+  },
+  {
+   "name": "blocked-input-invalid",
+   "description": "input with an unknown field",
+   "input": {
+    "version": "sinbad-sentinel-input/0-v1",
+    "observationId": "obs-1",
+    "tap": "POST_DRAFT",
+    "observedAt": 1000000,
+    "context": {
+     "version": "sinbad-task-context/1-v1",
+     "taskId": "task-1",
+     "workflowRef": "workflow:alpha",
+     "surfaceRef": "surface:x",
+     "principalRef": "principal:p",
+     "authorityRefs": [],
+     "evidenceScopeRef": "scope:alpha",
+     "stateSnapshotRef": null,
+     "language": "en",
+     "requestedAt": 990000,
+     "expiresAt": 1050000
+    },
+    "evidenceSet": {
+     "version": "sinbad-evidence-set/1-v1",
+     "setId": "set-1",
+     "taskRef": "task-1",
+     "items": [
+      {
+       "evidenceId": "ev-repo",
+       "sourceClass": "REPOSITORY",
+       "locatorRef": "git:main:docs/state.json",
+       "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "observedAt": 999500,
+       "scopeRef": "scope:alpha"
+      }
+     ],
+     "retrievedAt": 999900
+    },
+    "claims": [],
+    "policy": {
+     "maxEvidenceAgeMs": 10000
+    },
+    "priorReportDigest": null,
+    "unexpected": true
+   },
+   "expected": {
+    "version": "sinbad-sentinel-report/0-v1",
+    "reportId": "invalid",
+    "tap": "INGRESS",
+    "taskRef": null,
+    "status": "BLOCKED",
+    "failClosed": true,
+    "reasonCode": "INPUT_INVALID",
+    "signal": "BLOCKED",
+    "coverage": "NONE",
+    "unobservable": [
+     "INPUT_INVALID"
+    ],
+    "claims": [],
+    "evidence": null,
+    "flags": [],
+    "ruleResults": [
+     {
+      "ruleId": "SENTINEL.INPUT_ADMITTED",
+      "outcome": "FAIL",
+      "blocking": true,
+      "detailRef": "reason:INPUT_INVALID"
+     }
+    ],
+    "provenance": {
+     "sentinelVersion": "sinbad-sentinel/0-v1",
+     "rulesetVersion": "sinbad-sentinel-ruleset/0-v1",
+     "inputDigest": null,
+     "contextTaskId": null,
+     "evidenceSetId": null,
+     "priorReportDigest": null,
+     "policy": null
+    },
+    "observedAt": 0,
+    "authority": "NONE",
+    "decides": false,
+    "reportDigest": "995c9b7b88d1b9d1338c0ca2de62d45d1c29b5a193369e215b194903a51c20e9"
+   }
+  },
+  {
+   "name": "ingress-no-claims",
+   "description": "ingress tap with no evidence and no claims",
+   "input": {
+    "version": "sinbad-sentinel-input/0-v1",
+    "observationId": "obs-1",
+    "tap": "INGRESS",
+    "observedAt": 1000000,
+    "context": {
+     "version": "sinbad-task-context/1-v1",
+     "taskId": "task-1",
+     "workflowRef": "workflow:alpha",
+     "surfaceRef": "surface:x",
+     "principalRef": "principal:p",
+     "authorityRefs": [],
+     "evidenceScopeRef": "scope:alpha",
+     "stateSnapshotRef": null,
+     "language": "tr",
+     "requestedAt": 990000,
+     "expiresAt": 1050000
+    },
+    "evidenceSet": null,
+    "claims": [],
+    "policy": {
+     "maxEvidenceAgeMs": 10000
+    },
+    "priorReportDigest": null
+   },
+   "expected": {
+    "version": "sinbad-sentinel-report/0-v1",
+    "reportId": "obs-1",
+    "tap": "INGRESS",
+    "taskRef": "task-1",
+    "status": "OBSERVED",
+    "failClosed": false,
+    "reasonCode": "OBSERVED",
+    "signal": "CLEAR",
+    "coverage": "FULL",
+    "unobservable": [],
+    "claims": [],
+    "truthStateCounts": {
+     "VERIFIED": 0,
+     "NOT_VERIFIED": 0,
+     "CONFLICT": 0,
+     "SOURCE_MISSING": 0,
+     "BLOCKED": 0,
+     "NOT_APPLICABLE": 0
+    },
+    "evidence": {
+     "setRef": null,
+     "itemCount": 0,
+     "foreignEvidenceIds": [],
+     "staleEvidenceIds": [],
+     "driftedLocators": []
+    },
+    "flags": [],
+    "ruleResults": [
+     {
+      "ruleId": "SENTINEL.INPUT_ADMITTED",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.EVIDENCE_SET_PRESENT",
+      "outcome": "PASS",
+      "blocking": false,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.EVIDENCE_IN_SCOPE",
+      "outcome": "PASS",
+      "blocking": false,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.EVIDENCE_FRESH",
+      "outcome": "PASS",
+      "blocking": false,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.EVIDENCE_CONSISTENT",
+      "outcome": "PASS",
+      "blocking": false,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.PROVENANCE_RESOLVABLE",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.CLAIMS_SUPPORTED",
+      "outcome": "PASS",
+      "blocking": false,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.NO_UNSUPPORTED_SPECIFICS",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.RESERVED_TERMS_BOUND",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.NO_FOREIGN_ADOPTION",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     }
+    ],
+    "provenance": {
+     "sentinelVersion": "sinbad-sentinel/0-v1",
+     "rulesetVersion": "sinbad-sentinel-ruleset/0-v1",
+     "inputDigest": "2993e544a271da673bce7f75b0c7eb1bf18bd7d9f4e3392cd99e0683e418c35b",
+     "contextTaskId": "task-1",
+     "evidenceSetId": null,
+     "priorReportDigest": null,
+     "policy": {
+      "maxEvidenceAgeMs": 10000
+     }
+    },
+    "observedAt": 1000000,
+    "authority": "NONE",
+    "decides": false,
+    "reportDigest": "c2fbcc895272acba99d597dfcebc7c6dfd3e80a4c4e9fa84bc602017ee68e6e3"
+   }
+  },
+  {
+   "name": "chained-delivery",
+   "description": "delivery tap chained to the digest of the first case",
+   "input": {
+    "version": "sinbad-sentinel-input/0-v1",
+    "observationId": "obs-2",
+    "tap": "DELIVERY",
+    "observedAt": 1000000,
+    "context": {
+     "version": "sinbad-task-context/1-v1",
+     "taskId": "task-1",
+     "workflowRef": "workflow:alpha",
+     "surfaceRef": "surface:x",
+     "principalRef": "principal:p",
+     "authorityRefs": [],
+     "evidenceScopeRef": "scope:alpha",
+     "stateSnapshotRef": null,
+     "language": "en",
+     "requestedAt": 990000,
+     "expiresAt": 1050000
+    },
+    "evidenceSet": {
+     "version": "sinbad-evidence-set/1-v1",
+     "setId": "set-1",
+     "taskRef": "task-1",
+     "items": [
+      {
+       "evidenceId": "ev-repo",
+       "sourceClass": "REPOSITORY",
+       "locatorRef": "git:main:docs/state.json",
+       "contentHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+       "observedAt": 999500,
+       "scopeRef": "scope:alpha"
+      }
+     ],
+     "retrievedAt": 999900
+    },
+    "claims": [
+     {
+      "claimId": "c1",
+      "contentHash": "db03d6c34c2b09a18345a0622bb07e8b4860d156ef017daddaa5b0085ffd40c4",
+      "text": "Delivered.",
+      "evidenceIds": [
+       "ev-repo"
+      ],
+      "originRef": "model:draft",
+      "originScopeRef": "scope:alpha",
+      "assertionMode": "ASSERTED"
+     }
+    ],
+    "policy": {
+     "maxEvidenceAgeMs": 10000
+    },
+    "priorReportDigest": "8fd3758d3563ffc40d76e2fc6a8660420f29148f2b01ff18109094e55afe95e1"
+   },
+   "expected": {
+    "version": "sinbad-sentinel-report/0-v1",
+    "reportId": "obs-2",
+    "tap": "DELIVERY",
+    "taskRef": "task-1",
+    "status": "OBSERVED",
+    "failClosed": false,
+    "reasonCode": "OBSERVED",
+    "signal": "CLEAR",
+    "coverage": "FULL",
+    "unobservable": [],
+    "claims": [
+     {
+      "claimId": "c1",
+      "contentHash": "db03d6c34c2b09a18345a0622bb07e8b4860d156ef017daddaa5b0085ffd40c4",
+      "assertionMode": "ASSERTED",
+      "originRef": "model:draft",
+      "originScopeRef": "scope:alpha",
+      "foreignOrigin": false,
+      "truthState": "VERIFIED",
+      "reasonCode": "OBSERVED_EVIDENCE_PRESENT",
+      "evidenceIds": [
+       "ev-repo"
+      ],
+      "eligibleEvidenceIds": [
+       "ev-repo"
+      ],
+      "foreignEvidenceIds": [],
+      "staleEvidenceIds": [],
+      "unknownEvidenceIds": [],
+      "nonAuthoritativeEvidenceIds": [],
+      "conflictEvidenceIds": [],
+      "reservedTerms": [],
+      "specificValues": false,
+      "flagRefs": [],
+      "unobservable": []
+     }
+    ],
+    "truthStateCounts": {
+     "VERIFIED": 1,
+     "NOT_VERIFIED": 0,
+     "CONFLICT": 0,
+     "SOURCE_MISSING": 0,
+     "BLOCKED": 0,
+     "NOT_APPLICABLE": 0
+    },
+    "evidence": {
+     "setRef": "set-1",
+     "itemCount": 1,
+     "foreignEvidenceIds": [],
+     "staleEvidenceIds": [],
+     "driftedLocators": []
+    },
+    "flags": [],
+    "ruleResults": [
+     {
+      "ruleId": "SENTINEL.INPUT_ADMITTED",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.EVIDENCE_SET_PRESENT",
+      "outcome": "PASS",
+      "blocking": false,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.EVIDENCE_IN_SCOPE",
+      "outcome": "PASS",
+      "blocking": false,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.EVIDENCE_FRESH",
+      "outcome": "PASS",
+      "blocking": false,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.EVIDENCE_CONSISTENT",
+      "outcome": "PASS",
+      "blocking": false,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.PROVENANCE_RESOLVABLE",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.CLAIMS_SUPPORTED",
+      "outcome": "PASS",
+      "blocking": false,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.NO_UNSUPPORTED_SPECIFICS",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.RESERVED_TERMS_BOUND",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     },
+     {
+      "ruleId": "SENTINEL.NO_FOREIGN_ADOPTION",
+      "outcome": "PASS",
+      "blocking": true,
+      "detailRef": null
+     }
+    ],
+    "provenance": {
+     "sentinelVersion": "sinbad-sentinel/0-v1",
+     "rulesetVersion": "sinbad-sentinel-ruleset/0-v1",
+     "inputDigest": "5c2cb94d6deba684d5d3eaa07d39d2767bbe879170537d20529ab7a88b186b36",
+     "contextTaskId": "task-1",
+     "evidenceSetId": "set-1",
+     "priorReportDigest": "8fd3758d3563ffc40d76e2fc6a8660420f29148f2b01ff18109094e55afe95e1",
+     "policy": {
+      "maxEvidenceAgeMs": 10000
+     }
+    },
+    "observedAt": 1000000,
+    "authority": "NONE",
+    "decides": false,
+    "reportDigest": "2b4b7676675975219ee38700f60bc531dc2f2a6e4bf64ce397f62850b71250f6"
+   }
+  }
+ ]
+}
