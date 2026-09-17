@@ -62,4 +62,8 @@ Future comparisons must state which scorer they use; the recommended reference i
 
 ## What REV-1 does not change
 
-The system as found is unchanged: per-answer latency 5–6 minutes, 0 verifiable citations, bridge terminations, Kiwix defect, at least three confident inventions (HL-01, HL-06, HL-16) and six adoptions of foreign claims remain. Owner acceptance of REV-1 is NOT RECORDED.
+The system as found is unchanged: per-answer latency 5–6 minutes, 0 verifiable citations, bridge terminations, Kiwix defect, at least three confident inventions (HL-01, HL-06, HL-16) and six adoptions of foreign claims remain.
+
+## Owner acceptance
+
+BASELINE-001-REV-1 (scoring v1.0.1) = OWNER ACCEPTED on 2026-09-17 (Owner instruction "PROJECT 2 / ACCEPTANCE CLOSURE ONLY", after the PR #253 merge report), against main `5278cdd130a0f29b485e2dd40f05f94d4ab8d4e6` (PR #253). Scope: the scorer revision as the recommended comparison reference alongside the frozen v1.0.0 original; not an acceptance of any measured capability. Recorded in `docs/project2/PROJECT2_STATE.json` → `owner_acceptance.baseline_001_rev1`.

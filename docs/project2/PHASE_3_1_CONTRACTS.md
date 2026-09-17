@@ -22,6 +22,10 @@ They do not read repositories, databases or live systems; they do not call model
 
 `sinbad-ai-core/tests/authority-*.test.js` (29 tests): exact snapshotting (accessor, inherited, extra, symbol, coercion rejection), dimension rules, conflict classification, label derivation, reserved-term detection, isolation, evidence-map verification, verdict consistency and lack of authority, gate composition and attribution, inertness and product-identity absence.
 
+## Owner acceptance
+
+Phase 3.1 contract set = OWNER ACCEPTED on 2026-09-17 (Owner instruction "PROJECT 2 / ACCEPTANCE CLOSURE ONLY", after the PR #253 merge report), against main `bd0c167ab15b0399086ce92eea828788535ef4fb` (PR #252). Scope: the contracts as delivered and merged; not an authorization to wire, execute or integrate them (`MANIFEST.wiredInto` stays empty). Recorded in `docs/project2/PROJECT2_STATE.json` → `owner_acceptance.phase_3_1_contracts`.
+
 ## Relation to BASELINE-001
 
 These contracts encode the labels and checks that the frozen baseline showed missing in the current system (0/8 verifiable citations, ≥6 confident inventions, foreign claims accepted). They change no score; the baseline remains the untouched reference.
