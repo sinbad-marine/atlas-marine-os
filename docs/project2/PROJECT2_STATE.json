@@ -76,13 +76,13 @@
       "starting_state": "main aee0ad5 (Phase 2 OWNER ACCEPTED), ARGOS VERIFIED 105 files, worktree clean, legacy bridge not started, Academy/GASM/Owner Console/runtime untouched"
     },
     "phase_3_1_contracts": {
-      "status": "IMPLEMENTED (inert) 2026-09-17 under Owner IMPLEMENTATION GO 'PHASE 3.1 CONTRACTS ONLY'; TESTED (29 unit tests); NOT INTEGRATED (wiredInto = []); OWNER ACCEPTED = NOT RECORDED",
+      "status": "IMPLEMENTED (inert) 2026-09-17 under Owner IMPLEMENTATION GO 'PHASE 3.1 CONTRACTS ONLY'; TESTED (29 unit tests); MERGED as PR #252 (main bd0c167); NOT INTEGRATED (wiredInto = []); OWNER ACCEPTED 2026-09-17 against bd0c167 (see owner_acceptance.phase_3_1_contracts)",
       "modules": "sinbad-ai-core/authority/{authority-model,claim-labels,task-context,evidence-set,copilot-verdict,gate-decision,index,exact}.js",
       "document": "docs/project2/PHASE_3_1_CONTRACTS.md",
       "guarantees": "no I/O, no execution, no model call, authority NONE, no live file imports them, no product identity embedded, not in package exports (asserted by sinbad-ai-core/tests/authority-contracts-inert.test.js)"
     },
     "phase_3_2_baseline_rev1": {
-      "status": "IMPLEMENTED 2026-09-17 under Owner IMPLEMENTATION GO 'PHASE 3.2 BASELINE-001-REV-1 ONLY'; TESTED (fixture + reproducibility tests); OWNER ACCEPTED = NOT RECORDED",
+      "status": "IMPLEMENTED 2026-09-17 under Owner IMPLEMENTATION GO 'PHASE 3.2 BASELINE-001-REV-1 ONLY'; TESTED (fixture + reproducibility tests); MERGED as PR #253 (main 5278cdd); OWNER ACCEPTED 2026-09-17 against 5278cdd (see owner_acceptance.baseline_001_rev1)",
       "what": "offline re-score of the 152 frozen BASELINE-001 / BASELINE-001R answers with scoring v1.0.1 and gold overlay v1.0.1; no model, bridge or network call; frozen files untouched",
       "artefacts": "tests/benchmark/rev1/scoring-v101.js, tests/benchmark/rev1/gold-overlay-v101.json, tools/rescore-baseline-001.js, tests/benchmark/results/BASELINE-001-REV-1/, tests/benchmark/scoring-v101.test.js, docs/project2/BASELINE-001-REV-1.md",
       "results": "v1.0.0 61 PASS / 34 PARTIAL / 53 FAIL / 4 ERROR -> v1.0.1 90 PASS / 30 PARTIAL / 28 FAIL / 4 ERROR; 37 improved, 3 worsened (CI-01, CI-11, HL-04), 112 unchanged; carried categories: coding, provenance-citation, failure-handling, recovery, reliability",
@@ -101,7 +101,13 @@
     "phase_2": "OWNER ACCEPTED - Owner MASTER TASK DIRECTIVE of 2026-09-16 (after the read-only audit and the merge of PR #250): 'PROJECT 2 PHASE 2: OWNER ACCEPTED ... represented by main @ aee0ad5'. Scope of the acceptance: the Phase 2 benchmark environment, gold datasets, test harness and BASELINE-001 become the official comparison reference for the current SINBAD architecture. It is NOT an acceptance of any measured capability and NOT an authorization for Phase 3 implementation.",
     "phase_2_accepted_commit": "aee0ad545c6517df707c5f969269900222f6f849",
     "phase_1": "accepted by the Owner with the authority-model correction (2026-09-15), recorded in phases.phase_1_discovery",
-    "phase_3_and_later": "NOT RECORDED (not started)"
+    "phase_3_1_contracts": "OWNER ACCEPTED - Owner instruction 'PROJECT 2 / ACCEPTANCE CLOSURE ONLY' (2026-09-17, after the PR #253 merge report): the Phase 3.1 inert authority contract set (sinbad-ai-core/authority/*, 29 unit tests) as merged by PR #252. Scope: acceptance of the contract set as delivered; NOT an authorization to wire, execute or integrate it (wiredInto stays []).",
+    "phase_3_1_accepted_commit": "bd0c167ab15b0399086ce92eea828788535ef4fb",
+    "phase_3_1_accepted_pull_request": 252,
+    "baseline_001_rev1": "OWNER ACCEPTED - Owner instruction 'PROJECT 2 / ACCEPTANCE CLOSURE ONLY' (2026-09-17): BASELINE-001-REV-1 with scoring v1.0.1 (90 PASS / 30 PARTIAL / 28 FAIL / 4 ERROR; reproducible with tools/rescore-baseline-001.js --check) as merged by PR #253. Scope: acceptance of the scorer revision as the recommended comparison reference alongside the frozen v1.0.0 original; NOT an acceptance of any measured capability of the current system.",
+    "baseline_001_rev1_accepted_commit": "5278cdd130a0f29b485e2dd40f05f94d4ab8d4e6",
+    "baseline_001_rev1_accepted_pull_request": 253,
+    "phase_3_3_and_later": "NOT RECORDED (not started)"
   },
   "baseline_freeze": {
     "baseline": "BASELINE-001 - CURRENT SINBAD AS-IS",
@@ -110,5 +116,5 @@
     "enforcement": "tests/baseline-001-freeze.test.js (part of npm test / CI verify) fails if any frozen file changes or the combined totals drift",
     "revision_policy": "immutable; corrections only as separately identified revisions (BASELINE-001-REV-n) with their own provenance; original files recoverable from aee0ad5"
   },
-  "last_verified_timestamp": "2026-09-17T14:00:00Z"
+  "last_verified_timestamp": "2026-09-17T15:00:00Z"
 }
