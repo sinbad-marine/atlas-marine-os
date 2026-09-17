@@ -75,7 +75,13 @@
       "report": "docs/project2/PHASE_3_DISCOVERY.md",
       "starting_state": "main aee0ad5 (Phase 2 OWNER ACCEPTED), ARGOS VERIFIED 105 files, worktree clean, legacy bridge not started, Academy/GASM/Owner Console/runtime untouched"
     },
-    "phase_3_implementation_and_later": "NOT STARTED. Sentinel, Gatekeeper, Pilot and Co-Pilot are not implemented; no production AI behaviour changed; requires a separate Owner IMPLEMENTATION GO."
+    "phase_3_1_contracts": {
+      "status": "IMPLEMENTED (inert) 2026-09-17 under Owner IMPLEMENTATION GO 'PHASE 3.1 CONTRACTS ONLY'; TESTED (29 unit tests); NOT INTEGRATED (wiredInto = []); OWNER ACCEPTED = NOT RECORDED",
+      "modules": "sinbad-ai-core/authority/{authority-model,claim-labels,task-context,evidence-set,copilot-verdict,gate-decision,index,exact}.js",
+      "document": "docs/project2/PHASE_3_1_CONTRACTS.md",
+      "guarantees": "no I/O, no execution, no model call, authority NONE, no live file imports them, no product identity embedded, not in package exports (asserted by sinbad-ai-core/tests/authority-contracts-inert.test.js)"
+    },
+    "phase_3_2_and_later": "NOT STARTED. Gold v1.0.1 offline re-score (3.2), Sentinel v0 (3.3), Gatekeeper v0 (3.4), Co-Pilot/Pilot v0 (3.5) each require a separate Owner GO; no production AI behaviour changed."
   },
   "zero_regression_classes": ["context isolation","stale-state detection","contradiction handling","provenance/citation integrity","hallucination resistance","Owner authority/security boundaries"],
   "policies": {
@@ -96,5 +102,5 @@
     "enforcement": "tests/baseline-001-freeze.test.js (part of npm test / CI verify) fails if any frozen file changes or the combined totals drift",
     "revision_policy": "immutable; corrections only as separately identified revisions (BASELINE-001-REV-n) with their own provenance; original files recoverable from aee0ad5"
   },
-  "last_verified_timestamp": "2026-09-17T06:30:00Z"
+  "last_verified_timestamp": "2026-09-17T11:30:00Z"
 }
