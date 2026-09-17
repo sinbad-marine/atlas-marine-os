@@ -89,7 +89,15 @@
       "zero_regression_v101": {"context-isolation":"6/12","stale-state":"8/10","contradiction":"8/10","provenance-citation":"0/8 (carried)","hallucination":"9/20","owner-authority-security":"ARGOS admission 3/3"},
       "semantics": "a scorer revision of the reference, not a system change; BASELINE-001 (v1.0.0) remains the frozen original; future comparisons state the scorer version"
     },
-    "phase_3_3_and_later": "NOT STARTED. Sentinel v0 (3.3), Gatekeeper v0 (3.4), Co-Pilot/Pilot v0 (3.5) each require a separate Owner GO; no production AI behaviour changed."
+    "phase_3_3_sentinel_v0": {
+      "status": "IMPLEMENTED (inert, observe-only) 2026-09-17 under Owner GO 'PROJECT 2 / PHASE 3.3 - SENTINEL v0 ONLY' from main c506f21; TESTED (42 unit tests + 8 deterministic fixtures); NOT MERGED (draft PR, awaiting Owner MERGE GO); NOT INTEGRATED (wiredInto = [], not in package exports, no live file imports it); OWNER ACCEPTED = NOT RECORDED",
+      "modules": "sinbad-ai-core/sentinel/{sentinel-v0,index}.js (versions sinbad-sentinel/0-v1, input 0-v1, report 0-v1, ruleset 0-v1)",
+      "document": "docs/project2/PHASE_3_3_SENTINEL_V0.md",
+      "what": "pure deterministic observe(input) -> sealed SentinelReport over TaskContext + EvidenceSet + claims: per-claim truth state (VERIFIED / NOT_VERIFIED / CONFLICT / SOURCE_MISSING / BLOCKED) from eligible evidence, provenance (input digest, evidence ids, report digest, chaining), typed deterministic early-warning flags, ten rule signals, explicit coverage/unobservable reporting, fail-closed BLOCKED report on untrustworthy input",
+      "does_not": "no decision, no authority, no I/O, no clock, no model call, no state, no health probe, no claim segmentation, no content comparison, no wiring; Phase 3.1 contracts consumed unchanged; frozen baseline untouched",
+      "guarantees_asserted_by": "sinbad-ai-core/tests/sentinel-v0-inert.test.js"
+    },
+    "phase_3_4_and_later": "NOT STARTED. Gatekeeper v0 (3.4), Co-Pilot/Pilot v0 (3.5) and any wiring of Sentinel v0 each require a separate Owner GO; no production AI behaviour changed."
   },
   "zero_regression_classes": ["context isolation","stale-state detection","contradiction handling","provenance/citation integrity","hallucination resistance","Owner authority/security boundaries"],
   "policies": {
@@ -107,7 +115,8 @@
     "baseline_001_rev1": "OWNER ACCEPTED - Owner instruction 'PROJECT 2 / ACCEPTANCE CLOSURE ONLY' (2026-09-17): BASELINE-001-REV-1 with scoring v1.0.1 (90 PASS / 30 PARTIAL / 28 FAIL / 4 ERROR; reproducible with tools/rescore-baseline-001.js --check) as merged by PR #253. Scope: acceptance of the scorer revision as the recommended comparison reference alongside the frozen v1.0.0 original; NOT an acceptance of any measured capability of the current system.",
     "baseline_001_rev1_accepted_commit": "5278cdd130a0f29b485e2dd40f05f94d4ab8d4e6",
     "baseline_001_rev1_accepted_pull_request": 253,
-    "phase_3_3_and_later": "NOT RECORDED (not started)"
+    "phase_3_3_sentinel_v0": "NOT RECORDED (implemented on a draft branch; not merged; not accepted)",
+    "phase_3_4_and_later": "NOT RECORDED (not started)"
   },
   "baseline_freeze": {
     "baseline": "BASELINE-001 - CURRENT SINBAD AS-IS",
@@ -116,5 +125,5 @@
     "enforcement": "tests/baseline-001-freeze.test.js (part of npm test / CI verify) fails if any frozen file changes or the combined totals drift",
     "revision_policy": "immutable; corrections only as separately identified revisions (BASELINE-001-REV-n) with their own provenance; original files recoverable from aee0ad5"
   },
-  "last_verified_timestamp": "2026-09-17T15:00:00Z"
+  "last_verified_timestamp": "2026-09-17T18:30:00Z"
 }
