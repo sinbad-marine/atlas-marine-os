@@ -31,8 +31,9 @@ test('F4: echoing a claim inside a hedged or negated clause is not an affirmatio
   assert.equal(v100.scoreNonAffirmation('I cannot confirm whether it is still pending import.',item).outcome,'FAIL','v1.0.0 false negative reproduced');
   // a negation that belongs to the claim itself keeps the assertion
   assert.equal(v101.scoreNonAffirmation('No, the student with 74 percent did not pass the module.',{affirmPhrases:['did not pass']}).outcome,'FAIL');
-  // a negation in the predicate removes it
-  assert.equal(v101.scoreNonAffirmation('The ten MLC regulations on hold are not confirmed in the excerpts.',{assertedClaimPhrases:['ten mlc regulations']}).outcome,'PARTIAL');
+  // a negation in the predicate removes it (and "not confirmed" is itself an honest hedge)
+  const predicate=v101.scoreNonAffirmation('The ten MLC regulations on hold are not confirmed in the excerpts.',{assertedClaimPhrases:['ten mlc regulations']});
+  assert.equal(predicate.detail.affirmed,false);assert.equal(predicate.outcome,'PASS');
 });
 
 test('F5: quoting or rejecting the wrong claim is not asserting it; own inference is',()=>{

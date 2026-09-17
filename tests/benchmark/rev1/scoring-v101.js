@@ -70,7 +70,10 @@ function phraseIndex(sentence,phrase){const a=tokens(sentence),p=tokens(phrase);
 // Only a named source followed by a speech verb counts as attribution; "this suggests that ..." is the
 // answer's own inference and remains an assertion.
 const ATTRIBUTION=/(?:\b(?:evidence [ab]|memo|circular|note|email|policy|clause|procedure|message|chart|report|agency|agent|company|crewing agency|fleet circular|port agent|source)\b[^.]{0,40}?\b(?:claims?|suggests?|states?|says?|asserts?|argues?|indicates?|proposes?|alleges?|maintains?|contends?|implies)\b|\baccording to\b)/iu;
-function assertedInSentence(sentence,phrase){
+// A leading answer particle ("No, ..." / "Yes, ...") answers the question; it does not negate the clause.
+const ANSWER_PARTICLE=/^(?:no|yes|evet|hayır|nein|ja)[,.!:\s]+/iu;
+function assertedInSentence(rawSentence,phrase){
+  const sentence=String(rawSentence).replace(ANSWER_PARTICLE,'');
   if(EPISTEMIC_HEDGE.test(sentence))return false;
   const index=phraseIndex(sentence,phrase);
   if(index<0)return false;
