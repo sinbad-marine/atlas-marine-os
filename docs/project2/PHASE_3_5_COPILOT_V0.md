@@ -64,4 +64,4 @@ The Phase 3.1 contracts, Sentinel v0 and Gatekeeper v0 are consumed as-is; no fi
 
 ## Owner acceptance
 
-NOT RECORDED. Merge requires a separate Owner MERGE GO; the model pass, Pilot v0 and any wiring require their own GO.
+NOT RECORDED. Merged as PR #260 on 2026-09-18 (main `e36c3ef09e0e503faef1281e4d708657a0e3de9f`) under an Owner MERGE GO that explicitly withheld acceptance: MERGED is not an acceptance, and Co-Pilot v0 stays OWNER ACCEPTED = NOT RECORDED until the Owner states otherwise. The model pass, Pilot v0 and any Sentinel – Co-Pilot – Gatekeeper wiring or live integration are NOT STARTED and require their own Owner GO.
