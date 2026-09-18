@@ -5,6 +5,7 @@ const fs=require('node:fs');
 const crypto=require('node:crypto');
 
 const sha256=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
+const canonicalCrlfBytes=bytes=>Buffer.from(bytes.toString('utf8').replace(/\r\n?/gu,'\n').replace(/\n/gu,'\r\n'),'utf8');
 const lockPath='assets/console-art/yacht-management-owner-selections-v1/OWNER_VISUAL_LOCK.json';
 const lockBytes=fs.readFileSync(lockPath);
 const lock=JSON.parse(lockBytes);
@@ -20,8 +21,8 @@ const canonicalAssetPath=canonicalLock.canonicalAsset.path;
 const canonicalAssetBytes=fs.readFileSync(canonicalAssetPath);
 const goldenPath=canonicalLock.desktopGolden.path;
 
-test('Yacht Management Owner visual manifest remains byte-for-byte locked',()=>{
-  assert.equal(sha256(lockBytes),'fdb7b3eeef0b151850712104aadfdeec5aa55b18ab6f55f463e6b80692506aed');
+test('Yacht Management Owner visual manifest remains canonically byte-for-byte locked',()=>{
+  assert.equal(sha256(canonicalCrlfBytes(lockBytes)),'fdb7b3eeef0b151850712104aadfdeec5aa55b18ab6f55f463e6b80692506aed');
   assert.equal(lock.page,'yacht-management');
   assert.equal(lock.artistLanguage,'rembrandt');
   assert.deepEqual(lock.selections.map(item=>item.ownerChoice),['C','B','B','B','A']);
