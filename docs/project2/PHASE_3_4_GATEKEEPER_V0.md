@@ -67,4 +67,4 @@ The Phase 3.1 contracts (`task-context`, `evidence-set`, `copilot-verdict`, `gat
 
 ## Owner acceptance
 
-NOT RECORDED. Merge requires a separate Owner MERGE GO; Phase 3.5+ (Co-Pilot / Pilot v0) and any wiring of Sentinel or Gatekeeper require their own GO.
+Gatekeeper v0 = OWNER ACCEPTED on 2026-09-18 (explicit Owner statement after the PR #258 merge report), against main `0424552324709eaf6d9b04d083ee4d2a893b4ad8` (PR #257). Scope: Gatekeeper v0 as delivered and merged; not an authorization to wire, enforce, execute or integrate it (`MANIFEST.wiredInto` stays empty). Recorded in `docs/project2/PROJECT2_STATE.json` → `owner_acceptance.phase_3_4_gatekeeper_v0`. Any wiring of Sentinel or Gatekeeper requires its own GO.
