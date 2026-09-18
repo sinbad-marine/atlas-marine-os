@@ -121,6 +121,14 @@
       "does_not": "recommendation only: no execution, no approval, no authority grant, no draft writing or rewriting, no acting for the user, no model call, no I/O, no clock, no state; never runs Sentinel, Gatekeeper or Co-Pilot (reads their records only); no wiring, no live integration; record authenticity (signatures) not provided - a digest proves integrity, not origin; Phase 3.1 contracts, Sentinel v0, Gatekeeper v0 and Co-Pilot v0 consumed unchanged; frozen baseline untouched",
       "guarantees_asserted_by": "sinbad-ai-core/tests/pilot-v0-inert.test.js"
     },
+    "phase_3_7_offline_chain_v0": {
+      "status": "IMPLEMENTED (inert, deterministic paper-only composition) 2026-09-18 from main 229e6c6 under the Owner GO of 2026-09-18: the Owner statement '2. FAZ OWNER GO' named no scope; asked which phase, the Owner delegated the choice ('UZMAN OLAN SENSIN EN MANTIKLI OLANI SEC. BUNU ONAYIMLA YAP. GO'); scope chosen under that delegation: 'PROJECT 2 / PHASE 3.7 - OFFLINE CHAIN v0 ONLY' (lowest-risk of the four candidates offered; record authenticity, model pass and live wiring were not chosen); TESTED (20 unit tests incl. 14 deterministic chain fixtures: 6 benign / 8 adversarial, false proceeding 0, false stopping or escalating 0; plus the Co-Pilot v0 and Gatekeeper v0 corpora rehearsed through the chain); NOT MERGED (draft PR, merge needs a separate Owner MERGE GO); NOT INTEGRATED (wiredInto = [], not in package exports, no live file imports it); OWNER ACCEPTED = NOT RECORDED",
+      "modules": "sinbad-ai-core/chain/{chain-v0,index}.js (versions sinbad-offline-chain/0-v1, input 0-v1, transcript 0-v1)",
+      "document": "docs/project2/PHASE_3_7_OFFLINE_CHAIN_V0.md",
+      "what": "pure deterministic rehearse(input) -> sealed ChainTranscript: for each caller-supplied {evidenceSet, draft} pass runs Co-Pilot v0 -> Gatekeeper v0 (with that verdict; both observe through Sentinel v0) -> Pilot v0 in memory, follows the Pilot recommendation to the next supplied pass, ends on PROCEED / ESCALATE_OWNER / STOP or open as AWAITING_DRAFT; embeds the real sealed records; verifyTranscript checks every record, every link and that the outcome follows from the last step; fail-closed STOP on untrustworthy input",
+      "does_not": "offline rehearsal only: produces no draft (every draft is input), delivers, executes, approves and grants nothing, no model call, no I/O, no clock, no state, inputs never mutated; no wiring, no live integration; record authenticity not provided; all components share the Sentinel v0 observation engine, so the chain measures consistency between components, not correctness; Phase 3.1 contracts, Sentinel v0, Gatekeeper v0, Co-Pilot v0 and Pilot v0 consumed unchanged; frozen baseline untouched",
+      "guarantees_asserted_by": "sinbad-ai-core/tests/chain-v0-inert.test.js"
+    },
     "phase_3_remainder_and_later": "NOT STARTED. The Co-Pilot model pass (IMPLEMENTATION GO + model policy GO), a model-driven Pilot loop, record authenticity, and any wiring or live integration of Sentinel v0, Gatekeeper v0, Co-Pilot v0 or Pilot v0 each require a separate Owner GO; no production AI behaviour changed."
   },
   "zero_regression_classes": ["context isolation","stale-state detection","contradiction handling","provenance/citation integrity","hallucination resistance","Owner authority/security boundaries"],
@@ -153,6 +161,7 @@
     "phase_3_6_accepted_commit": "2326f3a859c9616a64572e30377fb891a07578a0",
     "phase_3_6_accepted_pull_request": 263,
     "phase_3_6_state_verified_on": "229e6c61e24f09bb1f141faaa104e3b3aac46153",
+    "phase_3_7_offline_chain_v0": "NOT RECORDED (draft PR, not merged; an Owner GO for a phase and a MERGE GO are not an acceptance)",
     "phase_3_remainder_and_later": "NOT RECORDED (not started)"
   },
   "baseline_freeze": {
@@ -162,5 +171,5 @@
     "enforcement": "tests/baseline-001-freeze.test.js (part of npm test / CI verify) fails if any frozen file changes or the combined totals drift",
     "revision_policy": "immutable; corrections only as separately identified revisions (BASELINE-001-REV-n) with their own provenance; original files recoverable from aee0ad5"
   },
-  "last_verified_timestamp": "2026-09-18T10:29:23Z"
+  "last_verified_timestamp": "2026-09-18T10:49:35Z"
 }
