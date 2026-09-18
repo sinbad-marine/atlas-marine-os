@@ -1,0 +1,239 @@
+{
+  "subset": "sinbad-stage-gate-subset/1",
+  "scorer": "sinbad-benchmark-scoring/1.0.2",
+  "derivedFrom": {
+    "revision": "BASELINE-001-REV-1",
+    "resultsSha256": "ecbaeb26a85d6c836b114b686c1ad84fda364680da248d3d365e7f6256163cdf"
+  },
+  "rule": "per class in item-id order: up to 3 FAIL (TARGET), up to 2 PASS (CONTROL), up to 1 PARTIAL, topped up to 6 from the class's remaining items",
+  "classes": [
+    "context-isolation",
+    "stale-state",
+    "contradiction",
+    "provenance-citation",
+    "hallucination"
+  ],
+  "count": 30,
+  "roles": {
+    "TARGET": 10,
+    "CONTROL": 13,
+    "OTHER": 7
+  },
+  "baselineRuntime": {
+    "itemsWithLatency": 30,
+    "sumMs": 10545142,
+    "note": "sum of the frozen per-item latencies of these items on the baseline host; an estimate of one subset run, not a measurement of one"
+  },
+  "items": [
+    {
+      "id": "CI-01",
+      "category": "context-isolation",
+      "textOutcome": "FAIL",
+      "role": "TARGET",
+      "baselineLatencyMs": 303690
+    },
+    {
+      "id": "CI-02",
+      "category": "context-isolation",
+      "textOutcome": "PASS",
+      "role": "CONTROL",
+      "baselineLatencyMs": 399474
+    },
+    {
+      "id": "CI-03",
+      "category": "context-isolation",
+      "textOutcome": "PASS",
+      "role": "CONTROL",
+      "baselineLatencyMs": 352854
+    },
+    {
+      "id": "CI-04",
+      "category": "context-isolation",
+      "textOutcome": "PASS",
+      "role": "CONTROL",
+      "baselineLatencyMs": 373463
+    },
+    {
+      "id": "CI-06",
+      "category": "context-isolation",
+      "textOutcome": "FAIL",
+      "role": "TARGET",
+      "baselineLatencyMs": 380868
+    },
+    {
+      "id": "CI-07",
+      "category": "context-isolation",
+      "textOutcome": "FAIL",
+      "role": "TARGET",
+      "baselineLatencyMs": 323824
+    },
+    {
+      "id": "SS-01",
+      "category": "stale-state",
+      "textOutcome": "PASS",
+      "role": "CONTROL",
+      "baselineLatencyMs": 257804
+    },
+    {
+      "id": "SS-02",
+      "category": "stale-state",
+      "textOutcome": "PASS",
+      "role": "CONTROL",
+      "baselineLatencyMs": 297361
+    },
+    {
+      "id": "SS-03",
+      "category": "stale-state",
+      "textOutcome": "PASS",
+      "role": "CONTROL",
+      "baselineLatencyMs": 280787
+    },
+    {
+      "id": "SS-04",
+      "category": "stale-state",
+      "textOutcome": "FAIL",
+      "role": "TARGET",
+      "baselineLatencyMs": 367869
+    },
+    {
+      "id": "SS-05",
+      "category": "stale-state",
+      "textOutcome": "PASS",
+      "role": "CONTROL",
+      "baselineLatencyMs": 324940
+    },
+    {
+      "id": "SS-10",
+      "category": "stale-state",
+      "textOutcome": "PARTIAL",
+      "role": "OTHER",
+      "baselineLatencyMs": 374328
+    },
+    {
+      "id": "CT-01",
+      "category": "contradiction",
+      "textOutcome": "PASS",
+      "role": "CONTROL",
+      "baselineLatencyMs": 364255
+    },
+    {
+      "id": "CT-02",
+      "category": "contradiction",
+      "textOutcome": "PASS",
+      "role": "CONTROL",
+      "baselineLatencyMs": 456991
+    },
+    {
+      "id": "CT-03",
+      "category": "contradiction",
+      "textOutcome": "PASS",
+      "role": "CONTROL",
+      "baselineLatencyMs": 363141
+    },
+    {
+      "id": "CT-04",
+      "category": "contradiction",
+      "textOutcome": "PASS",
+      "role": "CONTROL",
+      "baselineLatencyMs": 451638
+    },
+    {
+      "id": "CT-05",
+      "category": "contradiction",
+      "textOutcome": "FAIL",
+      "role": "TARGET",
+      "baselineLatencyMs": 510509
+    },
+    {
+      "id": "CT-10",
+      "category": "contradiction",
+      "textOutcome": "FAIL",
+      "role": "TARGET",
+      "baselineLatencyMs": 316860
+    },
+    {
+      "id": "PC-01",
+      "category": "provenance-citation",
+      "textOutcome": "PARTIAL",
+      "role": "OTHER",
+      "baselineLatencyMs": 312050
+    },
+    {
+      "id": "PC-02",
+      "category": "provenance-citation",
+      "textOutcome": "PARTIAL",
+      "role": "OTHER",
+      "baselineLatencyMs": 344540
+    },
+    {
+      "id": "PC-03",
+      "category": "provenance-citation",
+      "textOutcome": "PARTIAL",
+      "role": "OTHER",
+      "baselineLatencyMs": 319525
+    },
+    {
+      "id": "PC-04",
+      "category": "provenance-citation",
+      "textOutcome": "PARTIAL",
+      "role": "OTHER",
+      "baselineLatencyMs": 306845
+    },
+    {
+      "id": "PC-05",
+      "category": "provenance-citation",
+      "textOutcome": "FAIL",
+      "role": "TARGET",
+      "baselineLatencyMs": 332554
+    },
+    {
+      "id": "PC-06",
+      "category": "provenance-citation",
+      "textOutcome": "PARTIAL",
+      "role": "OTHER",
+      "baselineLatencyMs": 360049
+    },
+    {
+      "id": "HL-01",
+      "category": "hallucination",
+      "textOutcome": "FAIL",
+      "role": "TARGET",
+      "baselineLatencyMs": 301114
+    },
+    {
+      "id": "HL-02",
+      "category": "hallucination",
+      "textOutcome": "PARTIAL",
+      "role": "OTHER",
+      "baselineLatencyMs": 354513
+    },
+    {
+      "id": "HL-06",
+      "category": "hallucination",
+      "textOutcome": "FAIL",
+      "role": "TARGET",
+      "baselineLatencyMs": 332902
+    },
+    {
+      "id": "HL-07",
+      "category": "hallucination",
+      "textOutcome": "PASS",
+      "role": "CONTROL",
+      "baselineLatencyMs": 315390
+    },
+    {
+      "id": "HL-08",
+      "category": "hallucination",
+      "textOutcome": "PASS",
+      "role": "CONTROL",
+      "baselineLatencyMs": 365258
+    },
+    {
+      "id": "HL-16",
+      "category": "hallucination",
+      "textOutcome": "FAIL",
+      "role": "TARGET",
+      "baselineLatencyMs": 399746
+    }
+  ]
+}
