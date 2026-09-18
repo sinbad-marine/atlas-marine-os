@@ -518,7 +518,10 @@ test('hands-free Professor runs an explicit listen-send-answer-listen loop witho
       abort(){this.onend?.();}
       finish(text){this.onresult?.({resultIndex:0,results:Object.assign([{0:{transcript:text},isFinal:true}],{length:1})});this.onend?.();}
     }
+    class FakeUtterance{constructor(text){this.text=text;}}
     window.SpeechRecognition=FakeRecognition;
+    window.SpeechSynthesisUtterance=FakeUtterance;
+    Object.defineProperty(window,'speechSynthesis',{configurable:true,value:{speaking:false,getVoices:()=>[{lang:'tr-TR',name:'Test'}],cancel(){this.speaking=false;},speak(utterance){this.speaking=true;setTimeout(()=>{this.speaking=false;utterance.onend?.();},20);}}});
     localStorage.setItem('atlas_selected_workspace','workspace-test');
   });
   await page.route('**/vendor/supabase-2.112.3.js',route=>route.fulfill({contentType:'application/javascript',body:`window.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:{user:{id:'test-user'}}}}),onAuthStateChange:()=>({})},functions:{invoke:async(_name,request)=>({data:{answer:'Gelgit, Ay ve Güneş çekimiyle oluşur.',spokenSummary:'Gelgit, Ay ve Güneş çekimiyle oluşur.',visuals:[],coreGateVersion:request.body.coreEnvelope.gateVersion,coreDecision:request.body.coreEnvelope.analysis,permission:'DECISION_SUPPORT_ONLY',executionPerformed:false},error:null})}})};`}));
