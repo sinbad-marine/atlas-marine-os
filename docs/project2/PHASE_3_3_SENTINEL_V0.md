@@ -64,4 +64,4 @@ The Phase 3.1 contracts are consumed as-is: `task-context` (snapshot, expiry, is
 
 ## Owner acceptance
 
-NOT RECORDED. Merge requires a separate Owner MERGE GO; wiring (Phase 3.4+) requires its own GO.
+Sentinel v0 = OWNER ACCEPTED on 2026-09-18 (explicit Owner statement after the PR #258 merge report), against main `8f47edcd6114cd1b4b586383c141c8e814c4b7f3` (PR #255). Scope: Sentinel v0 as delivered and merged; not an authorization to wire, execute or integrate it (`MANIFEST.wiredInto` stays empty). Recorded in `docs/project2/PROJECT2_STATE.json` → `owner_acceptance.phase_3_3_sentinel_v0`. Any wiring requires its own GO.

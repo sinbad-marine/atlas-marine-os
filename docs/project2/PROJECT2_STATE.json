@@ -90,7 +90,7 @@
       "semantics": "a scorer revision of the reference, not a system change; BASELINE-001 (v1.0.0) remains the frozen original; future comparisons state the scorer version"
     },
     "phase_3_3_sentinel_v0": {
-      "status": "IMPLEMENTED (inert, observe-only) 2026-09-17 under Owner GO 'PROJECT 2 / PHASE 3.3 - SENTINEL v0 ONLY' from main c506f21; TESTED (42 unit tests + 8 deterministic fixtures); MERGED as PR #255 on 2026-09-17T20:39:06Z under Owner MERGE GO (main 8f47edcd6114cd1b4b586383c141c8e814c4b7f3; post-merge Release quality and Pages release green; ARGOS VERIFIED 105 files); NOT INTEGRATED (wiredInto = [], not in package exports, no live file imports it); OWNER ACCEPTED = NOT RECORDED",
+      "status": "IMPLEMENTED (inert, observe-only) 2026-09-17 under Owner GO 'PROJECT 2 / PHASE 3.3 - SENTINEL v0 ONLY' from main c506f21; TESTED (42 unit tests + 8 deterministic fixtures); MERGED as PR #255 on 2026-09-17T20:39:06Z under Owner MERGE GO (main 8f47edcd6114cd1b4b586383c141c8e814c4b7f3; post-merge Release quality and Pages release green; ARGOS VERIFIED 105 files); NOT INTEGRATED (wiredInto = [], not in package exports, no live file imports it); OWNER ACCEPTED 2026-09-18 against 8f47edc (see owner_acceptance.phase_3_3_sentinel_v0)",
       "modules": "sinbad-ai-core/sentinel/{sentinel-v0,index}.js (versions sinbad-sentinel/0-v1, input 0-v1, report 0-v1, ruleset 0-v1)",
       "document": "docs/project2/PHASE_3_3_SENTINEL_V0.md",
       "what": "pure deterministic observe(input) -> sealed SentinelReport over TaskContext + EvidenceSet + claims: per-claim truth state (VERIFIED / NOT_VERIFIED / CONFLICT / SOURCE_MISSING / BLOCKED) from eligible evidence, provenance (input digest, evidence ids, report digest, chaining), typed deterministic early-warning flags, ten rule signals, explicit coverage/unobservable reporting, fail-closed BLOCKED report on untrustworthy input",
@@ -98,7 +98,7 @@
       "guarantees_asserted_by": "sinbad-ai-core/tests/sentinel-v0-inert.test.js"
     },
     "phase_3_4_gatekeeper_v0": {
-      "status": "IMPLEMENTED (inert, deterministic post-gate, label-only) 2026-09-18 under Owner GO 'PROJECT 2 / PHASE 3.4 - GATEKEEPER v0 ONLY' (2026-09-17) from main b06345e; TESTED (43 unit tests incl. 20 deterministic fixtures: 8 benign / 12 adversarial, fixture false blocking 0, false allowing 0); MERGED as PR #257 on 2026-09-18T06:40:51Z under Owner MERGE GO (main 0424552324709eaf6d9b04d083ee4d2a893b4ad8; post-merge Release quality and Pages release green; ARGOS VERIFIED 105 files on the pre-merge head 00c47bd); NOT INTEGRATED (wiredInto = [], not in package exports, no live file imports it); OWNER ACCEPTED = NOT RECORDED",
+      "status": "IMPLEMENTED (inert, deterministic post-gate, label-only) 2026-09-18 under Owner GO 'PROJECT 2 / PHASE 3.4 - GATEKEEPER v0 ONLY' (2026-09-17) from main b06345e; TESTED (43 unit tests incl. 20 deterministic fixtures: 8 benign / 12 adversarial, fixture false blocking 0, false allowing 0); MERGED as PR #257 on 2026-09-18T06:40:51Z under Owner MERGE GO (main 0424552324709eaf6d9b04d083ee4d2a893b4ad8; post-merge Release quality and Pages release green; ARGOS VERIFIED 105 files on the pre-merge head 00c47bd); NOT INTEGRATED (wiredInto = [], not in package exports, no live file imports it); OWNER ACCEPTED 2026-09-18 against 0424552 (see owner_acceptance.phase_3_4_gatekeeper_v0)",
       "modules": "sinbad-ai-core/gatekeeper/{gatekeeper-v0,index}.js (versions sinbad-gatekeeper/0-v1, input 0-v1, decision 0-v1, ruleset 0-v1)",
       "document": "docs/project2/PHASE_3_4_GATEKEEPER_V0.md",
       "what": "pure deterministic decide(input) -> sealed GatekeeperDecision over TaskContext + EvidenceSet + draft (claims, citations, proposed actions) + optional CoPilotVerdict: runs Sentinel v0 as observation engine, applies sixteen gate rules (citation-vs-evidence, specificity, vocabulary, volatile claims, context integrity, action authority, verdict-draft match, provenance adequacy), composes ADMIT / LABEL / ESCALATE / BLOCK through the accepted GateDecision contract with rule-id or verdict-id attribution, per-claim labels, per-action paper status, fail-closed BLOCK on untrustworthy input",
@@ -131,9 +131,13 @@
     "baseline_001_rev1": "OWNER ACCEPTED - Owner instruction 'PROJECT 2 / ACCEPTANCE CLOSURE ONLY' (2026-09-17): BASELINE-001-REV-1 with scoring v1.0.1 (90 PASS / 30 PARTIAL / 28 FAIL / 4 ERROR; reproducible with tools/rescore-baseline-001.js --check) as merged by PR #253. Scope: acceptance of the scorer revision as the recommended comparison reference alongside the frozen v1.0.0 original; NOT an acceptance of any measured capability of the current system.",
     "baseline_001_rev1_accepted_commit": "5278cdd130a0f29b485e2dd40f05f94d4ab8d4e6",
     "baseline_001_rev1_accepted_pull_request": 253,
-    "phase_3_3_sentinel_v0": "NOT RECORDED (merged as PR #255, main 8f47edc; MERGED is not an acceptance)",
-    "phase_3_4_gatekeeper_v0": "NOT RECORDED (merged as PR #257, main 0424552; MERGED is not an acceptance)",
-    "phase_3_5_copilot_v0": "NOT RECORDED (draft PR, not merged)",
+    "phase_3_3_sentinel_v0": "OWNER ACCEPTED - explicit Owner statement of 2026-09-18 (after the PR #258 merge report, in answer to the acceptance request for Sentinel v0 @ 8f47edc and Gatekeeper v0 @ 0424552): '1. talep icin acik owner accepted diyorum'. Scope: Sentinel v0 (sinbad-ai-core/sentinel/*, 42 unit tests + 8 fixtures) as merged by PR #255; NOT an authorization to wire, execute or integrate it (wiredInto stays []).",
+    "phase_3_3_accepted_commit": "8f47edcd6114cd1b4b586383c141c8e814c4b7f3",
+    "phase_3_3_accepted_pull_request": 255,
+    "phase_3_4_gatekeeper_v0": "OWNER ACCEPTED - same explicit Owner statement of 2026-09-18. Scope: Gatekeeper v0 (sinbad-ai-core/gatekeeper/*, 43 unit tests incl. 20 fixtures) as merged by PR #257; NOT an authorization to wire, enforce, execute or integrate it (wiredInto stays []).",
+    "phase_3_4_accepted_commit": "0424552324709eaf6d9b04d083ee4d2a893b4ad8",
+    "phase_3_4_accepted_pull_request": 257,
+    "phase_3_5_copilot_v0": "NOT RECORDED - Owner statement of 2026-09-18 with the MERGE GO for PR #260: a merge authorization only; OWNER ACCEPTED is explicitly not given for Co-Pilot v0 and stays NOT RECORDED after the merge (MERGED is not an acceptance)",
     "phase_3_5_remainder_and_later": "NOT RECORDED (not started)"
   },
   "baseline_freeze": {
@@ -143,5 +147,5 @@
     "enforcement": "tests/baseline-001-freeze.test.js (part of npm test / CI verify) fails if any frozen file changes or the combined totals drift",
     "revision_policy": "immutable; corrections only as separately identified revisions (BASELINE-001-REV-n) with their own provenance; original files recoverable from aee0ad5"
   },
-  "last_verified_timestamp": "2026-09-18T07:15:42Z"
+  "last_verified_timestamp": "2026-09-18T07:37:03Z"
 }
