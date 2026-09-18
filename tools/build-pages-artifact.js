@@ -19,13 +19,26 @@ const STORE_RELEASE_FILES=Object.freeze(fs.readdirSync(storeSourceRoot,{recursiv
   .map(entry=>`store/${path.relative(storeSourceRoot,path.join(entry.parentPath,entry.name)).split(path.sep).join('/')}`)
   .sort());
 const RELEASE_FILES=Object.freeze([
-  'index.html','styles.css','app.js','founder-owner-mfa.js','founder-owner-ui.js','academy.html','academy.css','academy-window.js','academy-classroom-window.js','academy-gasm-catalog.js','exam-intelligence-local-required.html','owner-review-local-required.html','exam-review.html','exam-review.css','exam-review.js',
+  'index.html','styles.css','console-master-style.css','app.js','founder-owner-mfa.js','founder-owner-ui.js','academy.html','academy.css','academy-window.js','academy-classroom-window.js','academy-gasm-catalog.js','exam-intelligence-local-required.html','owner-review-local-required.html','exam-review.html','exam-review.css','exam-review.js',
   'academy-professor.html','academy-professor.css','academy-professor-guidance.css','academy-professor.js','sinbad-professor.js','academy-professor-v3.html','academy-professor-handsfree.css','academy-professor-handsfree.js','academy-professor-native.html','academy-professor-native.css','academy-professor-native.js','sinbad-speaker-identity.js','sinbad-tutor-orchestrator.js','sinbad-tutor-controller.js','pilot-data.js','route-data.js',
   'resource-data.js','store-data.js',
   'official-publications.js','sinbad-core.js','sinbad-passage-planner.js','sinbad-visuals.js','sinbad-training-data.js',
   'sinbad-academy.js','sinbad-exam-intelligence-config.js','sinbad-exam-intelligence.js','sinbad-owner-review.js','sinbad-navigation.js','sinbad-navigation-assistant.js',
   'sinbad-route-visualizer.js','sinbad-character-engine.js','sinbad-character-rig.js','sinbad-viseme-planner.js',
   'sinbad-performance-director.js','sw.js','manifest.webmanifest','icon-192.png',
+  'assets/console-art/home-turner-maritime-v1.png','assets/console-art/home-owner-canonical-exec-1c46e9f6-4e4e-4e80-baa9-7328e22b2f05.png',
+  'assets/console-art/home-turner-background-v13.png','assets/console-art/sinbad-brand-lockup-v13.png',
+  'assets/console-art/home-monet-concept-v1.png','assets/console-art/home-monet-background-v1.png',
+  'assets/console-art/home-da-vinci-concept-v1.png',
+  'assets/console-art/yacht-management-owner-selections-v1/OWNER_VISUAL_LOCK.json',
+  'assets/console-art/yacht-management-owner-selections-v1/selected/01-yacht-management-atmosphere-C.png',
+  'assets/console-art/yacht-management-owner-selections-v1/selected/02-fleet-and-yacht-management-B.png',
+  'assets/console-art/yacht-management-owner-selections-v1/selected/03-crew-B.png',
+  'assets/console-art/yacht-management-owner-selections-v1/selected/04-captain-logbook-B.png',
+  'assets/console-art/yacht-management-owner-selections-v1/selected/05-camera-media-archive-A.png',
+  'assets/console-art/yacht-management-owner-lock-v1/OWNER_CANONICAL_LOCK.json',
+  'assets/console-art/yacht-management-owner-lock-v1/yacht-management-owner-canonical-desktop-1280x720.png',
+  'config/ui-design-contract.json',
   'icon-512.png','vendor/ol-10.6.1.js','vendor/ol-10.6.1.css',
   'vendor/land-110m.json','supabase/functions/sinbad-answer/core-decision.js'
   ,'vendor/supabase-2.112.3.js','vendor/mammoth-1.12.1.min.js','vendor/tesseract-5.1.1.min.js'

@@ -8,7 +8,7 @@ test('routes end users to Captain Sinbad instead of duplicate library cards',()=
   assert.doesNotMatch(html,/class="module-card"[^>]*data-cloud-bucket="nautical-publications"/);
   assert.doesNotMatch(html,/class="module-card"[^>]*data-open="knowledge"/);
   assert.match(html,/data-open="sinbad"/);
-  assert.match(html,/grounded citations/);
+  assert.match(html,/Kaynak kontrollü AI çalışma alanı/);
 });
 
 test('preserves source administration, cloud ingestion and chart access',()=>{

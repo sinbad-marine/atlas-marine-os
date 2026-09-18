@@ -1,0 +1,84 @@
+{
+  "schema": "sinbad-owner-visual-lock/v1",
+  "page": "yacht-management",
+  "artistLanguage": "rembrandt",
+  "ownerDirective": "Selected visual may not be changed, regenerated, replaced, recolored, recropped, or reinterpreted without explicit Owner approval.",
+  "lockedOn": "2026-09-18",
+  "selections": [
+    {
+      "key": "yacht-management-atmosphere",
+      "ownerChoice": "C",
+      "locked": true,
+      "sourceBoard": "source-boards/01-yacht-management-atmosphere-ABC.png",
+      "sourceBoardSha256": "d6027dce81b73db62624d2a60259b046bad7138de75f95e9d43ee1a0a4a5e7ec",
+      "crop": {
+        "x": 1294.0,
+        "y": 0,
+        "width": 648.0,
+        "height": 809
+      },
+      "selectedAsset": "selected/01-yacht-management-atmosphere-C.png",
+      "selectedAssetSha256": "572df33283e136d5733c9d4ba48e5e315640fb4b00a42995b6645b5631c2e87b"
+    },
+    {
+      "key": "fleet-and-yacht-management",
+      "ownerChoice": "B",
+      "locked": true,
+      "sourceBoard": "source-boards/02-fleet-and-yacht-management-ABC.png",
+      "sourceBoardSha256": "55069c40407e2ed555c53b623a9611e48c9d8f3d247d7e1871545994da6d26e5",
+      "crop": {
+        "x": 591.0,
+        "y": 0,
+        "width": 591.0,
+        "height": 887
+      },
+      "selectedAsset": "selected/02-fleet-and-yacht-management-B.png",
+      "selectedAssetSha256": "bd8a9f5028eabdfa673cabb6724507543a8f10e6b290655aca0a6c57635b3036"
+    },
+    {
+      "key": "crew",
+      "ownerChoice": "B",
+      "locked": true,
+      "sourceBoard": "source-boards/03-crew-ABC.png",
+      "sourceBoardSha256": "fa548b3a1661c206a7e681b5c13c8ac47ad13eb1ffc55ccbf8c15b5abf69202c",
+      "crop": {
+        "x": 647.0,
+        "y": 0,
+        "width": 647.0,
+        "height": 809
+      },
+      "selectedAsset": "selected/03-crew-B.png",
+      "selectedAssetSha256": "8ce979ab270ee9de0fd46b10efafab501a77834450886f3f701a7b6ba12c76cc"
+    },
+    {
+      "key": "captain-logbook",
+      "ownerChoice": "B",
+      "locked": true,
+      "sourceBoard": "source-boards/04-captain-logbook-ABC.png",
+      "sourceBoardSha256": "dbdb1e61f8eb4bfffec9952580d2013018c6a2b07d784f0dc5f6146455241711",
+      "crop": {
+        "x": 591.0,
+        "y": 0,
+        "width": 591.0,
+        "height": 887
+      },
+      "selectedAsset": "selected/04-captain-logbook-B.png",
+      "selectedAssetSha256": "9cec68f3dfe49bccb4900b4e1bb96c12670e4a59ab135017263f78a698c63823"
+    },
+    {
+      "key": "camera-media-archive",
+      "ownerChoice": "A",
+      "locked": true,
+      "sourceBoard": "source-boards/05-camera-media-archive-ABC.png",
+      "sourceBoardSha256": "b3359e509ee5cc111bfa74d67b467a26dfe4ad6514c266a93cc99ee74d6bdc1f",
+      "crop": {
+        "x": 0.0,
+        "y": 0,
+        "width": 591.0,
+        "height": 887
+      },
+      "selectedAsset": "selected/05-camera-media-archive-A.png",
+      "selectedAssetSha256": "534361f178538933e4b7b381fb97d14d277fd3135ebc71202f638a50393fd420"
+    }
+  ]
+}

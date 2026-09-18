@@ -218,7 +218,7 @@ test('live Sinbad chat grounds body answers in the gesture actually shown',async
   await ask('Sinbad biraz yürü.');
   await expect(answer).toContainText('Kısa ve kontrollü bir yürüyüş yapıyorum.');
   await expect(avatar).toHaveAttribute('data-state','walking');
-  await expect(avatar).toHaveAttribute('data-gesture','walk');
+  await expect(avatar).toHaveAttribute('data-gesture',/^walk(?:-(?:left|right))?$/u);
   const walkingArmStart=await avatar.locator('.sinbad-rig-right-arm').evaluate(element=>getComputedStyle(element).transform);
   await expect(avatar).toHaveAttribute('data-gesture',/^walk-(?:left|right)$/u,{timeout:900});
   await expect(avatar).toHaveAttribute('data-walk-phase',/^(?:left|right)$/u);
@@ -509,6 +509,7 @@ test('Professor Phase 2 opens separately, embeds the frozen classroom and starts
 });
 
 test('hands-free Professor runs an explicit listen-send-answer-listen loop without audio recording',async({page})=>{
+  await page.route('http://127.0.0.1:31983/**',route=>route.abort());
   await page.addInitScript(()=>{
     class FakeRecognition{
       constructor(){window.__fakeRecognition=this;this.started=0;}
@@ -518,7 +519,9 @@ test('hands-free Professor runs an explicit listen-send-answer-listen loop witho
       finish(text){this.onresult?.({resultIndex:0,results:Object.assign([{0:{transcript:text},isFinal:true}],{length:1})});this.onend?.();}
     }
     window.SpeechRecognition=FakeRecognition;
+    localStorage.setItem('atlas_selected_workspace','workspace-test');
   });
+  await page.route('**/vendor/supabase-2.112.3.js',route=>route.fulfill({contentType:'application/javascript',body:`window.supabase={createClient:()=>({auth:{getSession:async()=>({data:{session:{user:{id:'test-user'}}}}),onAuthStateChange:()=>({})},functions:{invoke:async(_name,request)=>({data:{answer:'Gelgit, Ay ve Güneş çekimiyle oluşur.',spokenSummary:'Gelgit, Ay ve Güneş çekimiyle oluşur.',visuals:[],coreGateVersion:request.body.coreEnvelope.gateVersion,coreDecision:request.body.coreEnvelope.analysis,permission:'DECISION_SUPPORT_ONLY',executionPerformed:false},error:null})}})};`}));
   await page.goto('/academy-professor-native.html');
   await expect(page.getByText('Sinbad Professor',{exact:true})).toBeVisible();
   await expect(page.locator('#toggleHandsFree')).toHaveAttribute('aria-pressed','false');

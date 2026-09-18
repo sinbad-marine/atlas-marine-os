@@ -3,35 +3,49 @@
   "owner": "Sinbad Marine design protection",
   "goldenUpdatePolicy": "Golden screenshots may change only in an explicitly reviewed design pull request.",
   "protectedFileSha256": {
-    "index.html": "09d1434cab68056fef25d9f4becf212496603b524943eb111aa72040b794cf5f",
+    "index.html": "2427522fd7126f4502f874447ae736a6524c02152aecf41ad6ed69a363ef356d",
     "styles.css": "a7b45fc9c86ad19afa18c7e99507cb30f25d83f0dd964d6d0364cb25a57684a4",
     "academy.html": "5f66e3da0e5d8ad90095e01e1cc5fe75f96f86b87a6649b92e0c0115c1ad6d20",
-    "academy.css": "9d2c9e160eaa0ed785e3125cbc0f878511d49aeaac31fbff765b1fbb599937fe"
+    "academy.css": "9d2c9e160eaa0ed785e3125cbc0f878511d49aeaac31fbff765b1fbb599937fe",
+    "console-master-style.css": "780a94d1032c3f56d62249d9c9f9a9c328ca44fc1c4480a6a4ecf33cc80eb35c",
+    "app.js": "1f5a8ff57d44983a4d09ca045bc7e0b26aab6049ef81d7d6ca85617c73b996fc"
   },
   "dashboardWorkspaces": [
     "admin-settings",
     "camera-archive",
     "captains-logbook",
+    "charts",
     "cloud-control",
     "cloud-documents",
     "crew",
     "document-submissions",
+    "documents",
+    "documents-compliance",
     "enc-viewer",
     "fleet",
+    "knowledge",
     "location-intelligence",
+    "navigation-plot",
     "pilot",
+    "publications",
     "resources",
     "routes",
     "sinbad",
+    "sinbad-ai",
     "store",
-    "studio-console"
+    "studio-console",
+    "technical-systems",
+    "voyage-navigation",
+    "yacht-operations"
   ],
   "surfaces": {
     "dashboard": {
       "route": "/index.html",
       "required": [
         "header.topbar",
-        "section.module-grid",
+        "section.console-domain-grid",
+        "#consoleSidebar",
+        ".console-statusbar",
         "#openSinbadAcademyHomeCard[data-open-sinbad-academy]",
         "#sinbad",
         "#sinbadFloat"
@@ -39,7 +53,7 @@
       "forbidden": []
     },
     "captainSinbad": {
-      "route": "/index.html?module=sinbad",
+      "route": "/index.html?workspace=sinbad",
       "required": [
         "#sinbad .sinbad-profile",
         "#sinbad .sinbad-avatar.large",
@@ -84,6 +98,92 @@
         "#academyTeachingText"
       ],
       "forbidden": []
+    }
+  },
+  "approvedVisualBaselines": {
+    "pcHome": {
+      "status": "OWNER_APPROVED_LOCKED",
+      "approvedAt": "2026-09-18",
+      "asset": "assets/console-art/home-owner-canonical-exec-1c46e9f6-4e4e-4e80-baa9-7328e22b2f05.png",
+      "sha256": "6e25eaa32b9726fb1a03053c6837802b3b71e53553fe5c4bdd4c76f7d958a3ce",
+      "artDirection": "monet",
+      "layoutPolicy": "OWNER_CANONICAL_PIXEL_COMPOSITION",
+      "canonicalReference": {
+        "immutable": true,
+        "sourcePath": "C:\\Users\\ASUS\\.codex\\generated_images\\01a08af1-c6b3-7f53-8b25-fd29e0820609\\exec-1c46e9f6-4e4e-4e80-baa9-7328e22b2f05.png",
+        "filename": "exec-1c46e9f6-4e4e-4e80-baa9-7328e22b2f05.png",
+        "width": 1672,
+        "height": 941,
+        "sha256": "6e25eaa32b9726fb1a03053c6837802b3b71e53553fe5c4bdd4c76f7d958a3ce"
+      },
+      "brandLockup": [
+        "sailboat emblem",
+        "ornate Sinbad wordmark",
+        "letter-spaced MARINE",
+        "A SAFER SEA A SMARTER TOMORROW"
+      ],
+      "implementation": {
+        "status": "OWNER_EXACT_REFERENCE_IMPLEMENTED",
+        "cardArtPolicy": "CANONICAL_REFERENCE_BAKED_UNIQUE_SUBJECT_PER_CARD",
+        "cardSubjects": [
+          "motor yacht in a distinct marina",
+          "nautical chart and compass",
+          "academy cap and books",
+          "compliance ledger and documents",
+          "marine engine room",
+          "maritime intelligence network",
+          "marine provisions and equipment"
+        ]
+      }
+    },
+    "yachtManagement": {
+      "status": "OWNER_APPROVED_LOCKED",
+      "approvedAt": "2026-09-18",
+      "route": "/index.html?workspace=yacht-operations",
+      "asset": "assets/console-art/yacht-management-owner-lock-v1/yacht-management-owner-canonical-desktop-1280x720.png",
+      "sha256": "8ce10be34c72eb541a6312f2cc63dba468cf38c54aad87699ebf0ccd31401d6c",
+      "width": 1280,
+      "height": 720,
+      "artDirection": "rembrandt",
+      "layoutPolicy": "OWNER_CANONICAL_PIXEL_COMPOSITION",
+      "canonicalManifest": "assets/console-art/yacht-management-owner-lock-v1/OWNER_CANONICAL_LOCK.json",
+      "canonicalManifestSha256": "cb5a291a44a07a9eafc9a90918bca6eec473dc41a79f4d1730338b72f1ce7909",
+      "immutable": true
+    }
+  },
+  "interactionContracts": {
+    "pcHomeDomainCardOpen": {
+      "scale": 1.025,
+      "translateYpx": -2,
+      "durationMs": 160,
+      "fallbackMs": 200,
+      "easing": "cubic-bezier(.2,.75,.25,1)",
+      "reducedMotion": "open immediately without transform or delay",
+      "keyboard": [
+        "Enter",
+        "Space"
+      ],
+      "singleActivation": true
+    }
+  },
+  "ownerVisualLocks": {
+    "yachtManagement": {
+      "status": "OWNER_APPROVED_LOCKED",
+      "manifest": "assets/console-art/yacht-management-owner-selections-v1/OWNER_VISUAL_LOCK.json",
+      "manifestSha256": "fdb7b3eeef0b151850712104aadfdeec5aa55b18ab6f55f463e6b80692506aed",
+      "canonicalManifest": "assets/console-art/yacht-management-owner-lock-v1/OWNER_CANONICAL_LOCK.json",
+      "canonicalManifestSha256": "cb5a291a44a07a9eafc9a90918bca6eec473dc41a79f4d1730338b72f1ce7909",
+      "canonicalAsset": "assets/console-art/yacht-management-owner-lock-v1/yacht-management-owner-canonical-desktop-1280x720.png",
+      "canonicalAssetSha256": "8ce10be34c72eb541a6312f2cc63dba468cf38c54aad87699ebf0ccd31401d6c",
+      "artistLanguage": "rembrandt",
+      "ownerChoices": [
+        "C",
+        "B",
+        "B",
+        "B",
+        "A"
+      ],
+      "route": "/index.html?workspace=yacht-operations"
     }
   }
 }
