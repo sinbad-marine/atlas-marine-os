@@ -50,4 +50,4 @@ Fail-closed: input that is not exact, a policy either component rejects, no pass
 
 ## Owner acceptance
 
-NOT RECORDED. Merge requires a separate Owner MERGE GO. This phase is not a GO for record authenticity, a model pass, a model-driven Pilot loop, wiring or live integration.
+NOT RECORDED. Merged as PR #266 on 2026-09-18 (main `08b1256096a135bf56ad13311670a992c32daefa`) under an Owner MERGE GO; MERGED is not an acceptance, and Offline Chain v0 stays OWNER ACCEPTED = NOT RECORDED until the Owner states otherwise. This phase is not a GO for record authenticity, a model pass, a model-driven Pilot loop, wiring or live integration.
