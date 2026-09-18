@@ -122,7 +122,7 @@
       "guarantees_asserted_by": "sinbad-ai-core/tests/pilot-v0-inert.test.js"
     },
     "phase_3_7_offline_chain_v0": {
-      "status": "IMPLEMENTED (inert, deterministic paper-only composition) 2026-09-18 from main 229e6c6 under the Owner GO of 2026-09-18: the Owner statement '2. FAZ OWNER GO' named no scope; asked which phase, the Owner delegated the choice ('UZMAN OLAN SENSIN EN MANTIKLI OLANI SEC. BUNU ONAYIMLA YAP. GO'); scope chosen under that delegation: 'PROJECT 2 / PHASE 3.7 - OFFLINE CHAIN v0 ONLY' (lowest-risk of the four candidates offered; record authenticity, model pass and live wiring were not chosen); TESTED (20 unit tests incl. 14 deterministic chain fixtures: 6 benign / 8 adversarial, false proceeding 0, false stopping or escalating 0; plus the Co-Pilot v0 and Gatekeeper v0 corpora rehearsed through the chain); MERGED as PR #266 on 2026-09-18T10:56:59Z under Owner MERGE GO (main 08b1256096a135bf56ad13311670a992c32daefa; post-merge Release quality and Pages release green; ARGOS VERIFIED 105 files on the pre-merge commit 638e676); re-verified on main after the merge: 20/20 chain tests (196/196 across the five components), wiredInto = [] for all five, no package or root export, no existing component changed; NOT INTEGRATED; OWNER ACCEPTED = NOT RECORDED (a MERGE GO is not an acceptance)",
+      "status": "IMPLEMENTED (inert, deterministic paper-only composition) 2026-09-18 from main 229e6c6 under the Owner GO of 2026-09-18: the Owner statement '2. FAZ OWNER GO' named no scope; asked which phase, the Owner delegated the choice ('UZMAN OLAN SENSIN EN MANTIKLI OLANI SEC. BUNU ONAYIMLA YAP. GO'); scope chosen under that delegation: 'PROJECT 2 / PHASE 3.7 - OFFLINE CHAIN v0 ONLY' (lowest-risk of the four candidates offered; record authenticity, model pass and live wiring were not chosen); TESTED (20 unit tests incl. 14 deterministic chain fixtures: 6 benign / 8 adversarial, false proceeding 0, false stopping or escalating 0; plus the Co-Pilot v0 and Gatekeeper v0 corpora rehearsed through the chain); MERGED as PR #266 on 2026-09-18T10:56:59Z under Owner MERGE GO (main 08b1256096a135bf56ad13311670a992c32daefa; post-merge Release quality and Pages release green; ARGOS VERIFIED 105 files on the pre-merge commit 638e676); re-verified on main after the merge: 20/20 chain tests (196/196 across the five components), wiredInto = [] for all five, no package or root export, no existing component changed; NOT INTEGRATED; OWNER ACCEPTED 2026-09-18 against 08b1256 (see owner_acceptance.phase_3_7_offline_chain_v0; the MERGE GO for PR #266 was not an acceptance, a later explicit Owner statement gave it)",
       "modules": "sinbad-ai-core/chain/{chain-v0,index}.js (versions sinbad-offline-chain/0-v1, input 0-v1, transcript 0-v1)",
       "document": "docs/project2/PHASE_3_7_OFFLINE_CHAIN_V0.md",
       "what": "pure deterministic rehearse(input) -> sealed ChainTranscript: for each caller-supplied {evidenceSet, draft} pass runs Co-Pilot v0 -> Gatekeeper v0 (with that verdict; both observe through Sentinel v0) -> Pilot v0 in memory, follows the Pilot recommendation to the next supplied pass, ends on PROCEED / ESCALATE_OWNER / STOP or open as AWAITING_DRAFT; embeds the real sealed records; verifyTranscript checks every record, every link and that the outcome follows from the last step; fail-closed STOP on untrustworthy input",
@@ -169,7 +169,10 @@
     "phase_3_6_accepted_commit": "2326f3a859c9616a64572e30377fb891a07578a0",
     "phase_3_6_accepted_pull_request": 263,
     "phase_3_6_state_verified_on": "229e6c61e24f09bb1f141faaa104e3b3aac46153",
-    "phase_3_7_offline_chain_v0": "NOT RECORDED (merged as PR #266, main 08b1256; an Owner GO for a phase and a MERGE GO are not an acceptance)",
+    "phase_3_7_offline_chain_v0": "OWNER ACCEPTED - explicit Owner statement of 2026-09-18 (after the PR #266 merge report, which asked as its numbered request 2 for an explicit OWNER ACCEPTED statement for Offline Chain v0): '1. 2. 3. ICIN YUKARIDAKI TALEP VE ISTEKLERINI UYGUN BULUYOR VE ONAYLIYORUM. SIRAYI SEN BELIRLE'. Scope: only the Offline Chain v0 implementation merged by PR #266 (sinbad-ai-core/chain/*, 20 unit tests incl. 14 fixtures), i.e. its current inert, deterministic, offline-only rehearsal form; authoritative reference main 08b1256, Project 2 state verified on main dd42f96. NOT an authorization to wire, integrate, deliver, execute, approve or grant anything; no component gains live execution authority; wiredInto stays [].",
+    "phase_3_7_accepted_commit": "08b1256096a135bf56ad13311670a992c32daefa",
+    "phase_3_7_accepted_pull_request": 266,
+    "phase_3_7_state_verified_on": "dd42f96b5800e9c88e6c2b04db6b589bffc5b5d3",
     "phase_3_8_record_attestation_v0": "NOT RECORDED (draft PR, not merged; an Owner GO for a phase and a MERGE GO are not an acceptance)",
     "phase_3_remainder_and_later": "NOT RECORDED (not started)"
   },
@@ -180,5 +183,5 @@
     "enforcement": "tests/baseline-001-freeze.test.js (part of npm test / CI verify) fails if any frozen file changes or the combined totals drift",
     "revision_policy": "immutable; corrections only as separately identified revisions (BASELINE-001-REV-n) with their own provenance; original files recoverable from aee0ad5"
   },
-  "last_verified_timestamp": "2026-09-18T11:36:58Z"
+  "last_verified_timestamp": "2026-09-18T12:03:23Z"
 }
