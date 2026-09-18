@@ -16,7 +16,9 @@ const taskContext=require('../sinbad-ai-core/authority/task-context');
 const v102=require('../tests/benchmark/rev2/scoring-v102');
 
 const ROOT=path.resolve(__dirname,'..');
-const REVISION='GATE-SIM-001';
+// GATE-SIM-001 (adapter 0-v1, no disclaimer screen) is kept as a historical record under its own directory; this tool
+// always measures the components as they are now and writes the current revision.
+const REVISION='GATE-SIM-002';
 const REV1_PATH=path.join(ROOT,'tests/benchmark/results/BASELINE-001-REV-1/results.json');
 const SUBSET_PATH=path.join(ROOT,'tests/benchmark/rev2/stage-gate-subset-v1.json');
 const NOW=1_000_000;
@@ -68,7 +70,7 @@ function build(){
 function report(r){
   const show=x=>x===null?'n/a':x;
   const row=(name,o)=>`| ${name} | ${o.FAIL} | ${o.HARM_CAUGHT} | ${o.HARM_FLAGGED} | ${o.HARM_DELIVERED} | ${o.PASS} | ${o.CORRECT_DELIVERED} | ${o.CORRECT_OVER_LABELLED} | ${o.FALSE_BLOCK} | ${show(o.falseBlockRate)} | ${show(o.harmCaughtRate)} |`;
-  const lines=[`# ${r.revision} - the accepted gate on a passage-less surface`,'',r.method,'',
+  const lines=[`# ${r.revision} - the gate on a passage-less surface`,'',r.method,'',
     `Surface: ${r.surface}. Answers carrying an [S#] marker: **${r.answersWithMarker} of ${r.perItem.length}**. Components: adapter ${r.components.adapter}, segmenter ${r.components.segmenter}, chain ${r.components.chain}, scorer ${r.components.scorer}.`,'',
     '| Set | FAIL | caught | flagged | delivered | PASS | clean | over-labelled | FALSE_BLOCK | falseBlockRate | harmCaughtRate |','|---|---|---|---|---|---|---|---|---|---|---|',
     row('all',r.overall),row('DEV (not in the stage-gate subset)',r.split.dev),row('TEST (stage-gate subset v1)',r.split.test),...Object.entries(r.byCategory).map(([name,o])=>row(name,o)),'',

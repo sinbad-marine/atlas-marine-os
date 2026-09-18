@@ -55,6 +55,6 @@ test('proposed actions are passed through unchanged for the gate to judge; the a
 test('exports are frozen and contain no model, rewrite, wire or fetch capability',()=>{
   assert.equal(Object.isFrozen(d),true);
   assert.deepEqual(Object.keys(d),['VERSION','INPUT_VERSION','OUTPUT_VERSION','SEGMENTER_VERSION','INPUT_FIELDS','ANSWER_FIELDS','PASSAGE_FIELDS','SKIP_REASONS','ABBREVIATIONS','MAX_ANSWER_CHARS','segment','adapt','verifyAdaptation']);
-  assert.deepEqual([...d.SKIP_REASONS],['CODE_BLOCK','HEADING','LEAD_IN','QUESTION','NO_WORDS']);assert.equal(d.ABBREVIATIONS.includes('etc'),false);
+  assert.deepEqual([...d.SKIP_REASONS],['CODE_BLOCK','HEADING','LEAD_IN','QUESTION','NO_WORDS','DISCLAIMER']);assert.equal(d.SEGMENTER_VERSION,'sinbad-draft-segmenter/0-v2');assert.equal(d.ABBREVIATIONS.includes('etc'),false);
   assert.equal(context().taskId,'task-1');
 });

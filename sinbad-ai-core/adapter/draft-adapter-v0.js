@@ -18,19 +18,20 @@ const taskContext=require('../authority/task-context');
 const evidenceSet=require('../authority/evidence-set');
 const sentinel=require('../sentinel/sentinel-v0');
 const gatekeeper=require('../gatekeeper/gatekeeper-v0');
+const disclaimerScreen=require('./disclaimer-screen');
 const {sha256,canonical}=sentinel;
 
-const VERSION='sinbad-draft-adapter/0-v1';
+const VERSION='sinbad-draft-adapter/0-v2';
 const INPUT_VERSION='sinbad-draft-adapter-input/0-v1';
 const OUTPUT_VERSION='sinbad-adapted-draft/0-v1';
-const SEGMENTER_VERSION='sinbad-draft-segmenter/0-v1';
+const SEGMENTER_VERSION='sinbad-draft-segmenter/0-v2';
 const INPUT_FIELDS=Object.freeze(['version','adaptationId','at','context','answer','passages','retrievedAt','proposedActions']);
 const ANSWER_FIELDS=Object.freeze(['text','originRef']);
 const PASSAGE_FIELDS=Object.freeze(['marker','evidenceId','sourceClass','locatorRef','contentHash','observedAt','scopeRef']);
 const MARKER_NAME=/^S[1-9]\d{0,2}$/u;
 const MARKER=/\[(S[1-9]\d{0,2})\]/gu;
 const MAX_ANSWER_CHARS=200_000,MAX_ADAPTATION_ID=96,MAX_PASSAGES=256,MAX_MARKERS_PER_CLAIM=64;
-const SKIP_REASONS=Object.freeze(['CODE_BLOCK','HEADING','LEAD_IN','QUESTION','NO_WORDS']);
+const SKIP_REASONS=Object.freeze(['CODE_BLOCK','HEADING','LEAD_IN','QUESTION','NO_WORDS','DISCLAIMER']);
 // Abbreviations after which a full stop does not end a sentence. Kept short on purpose: a wrong
 // split only produces one more unsupported claim, a wrong merge lends one sentence's citation to another.
 const ABBREVIATIONS=Object.freeze(['e.g','i.e','vs','no','reg','art','fig','ch','para','mr','mrs','dr','approx','örn','bkz','md','sy']);
@@ -63,6 +64,10 @@ function sentences(text,from,to,claims,skipped){
         if(/\[S[1-9]\d{0,2}\]/u.test(piece)&&last&&last.end<=a&&!/\S/u.test(text.slice(last.end,a))&&last.line===from)last.end=b;else skipped.push({start:a,end:b,reason:'NO_WORDS'});
       }else if(/[?？]\s*(?:\[S[1-9]\d{0,2}\]\s*)*$/u.test(piece))skipped.push({start:a,end:b,reason:'QUESTION'});
       else if(/[:：]\s*$/u.test(bare)&&b===trimmedEnd(text,to))skipped.push({start:a,end:b,reason:'LEAD_IN'});
+      // Phase 4.5 (segmenter 0-v2): a statement of ignorance or a piece of guidance asserts nothing checkable.
+      // The screen is narrow on purpose (see disclaimer-screen.js); what it accepts is recorded, never dropped.
+      // A sentence that cites a passage is never a disclaimer: it claims support, so it stays a claim.
+      else if(bare===piece&&disclaimerScreen.isDisclaimer(piece))skipped.push({start:a,end:b,reason:'DISCLAIMER'});
       else claims.push({start:a,end:b,line:from});
     }
     start=end;
@@ -143,6 +148,7 @@ function adapt(input){
     if(passages.length&&!usedMarkers.length)warnings.push('PASSAGES_SUPPLIED_BUT_NO_MARKER_USED');
     if(cut.skipped.some(s=>s.reason==='QUESTION'&&sentinel.SPECIFIC_VALUE.test(text.slice(s.start,s.end))))warnings.push('SKIPPED_QUESTION_CONTAINS_SPECIFIC_VALUES');
     if(cut.skipped.some(s=>s.reason==='CODE_BLOCK'))warnings.push('CODE_BLOCK_NOT_SEGMENTED');
+    if(cut.skipped.some(s=>s.reason==='DISCLAIMER'))warnings.push('DISCLAIMERS_NOT_CHECKED');
     return done('ADAPTED','ADAPTED',{chainPass:{evidenceSet:set,draft},segments,skipped,warnings,
       stats:{answerChars:text.length,claimChars,skippedChars,claims:claims.length,claimsWithMarkers:segments.filter(s=>s.markers.length).length,claimsWithoutMarkers:segments.filter(s=>!s.markers.length).length,markersUsed:usedMarkers.length,unknownMarkers:unknown.length,passagesSupplied:passages.length,passagesUnused:passages.filter(p=>!usedMarkers.includes(p.marker)).length}});
   }catch{return done('BLOCKED','INTERNAL_INVARIANT_VIOLATED');}
