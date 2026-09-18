@@ -106,7 +106,7 @@
       "guarantees_asserted_by": "sinbad-ai-core/tests/gatekeeper-v0-inert.test.js"
     },
     "phase_3_5_copilot_v0": {
-      "status": "IMPLEMENTED (inert, deterministic checker layer, verdict-only) 2026-09-18 under Owner GO 'PROJECT 2 / PHASE 3.5 - CO-PILOT v0 ONLY' (Owner approval of the proposed scope, 2026-09-18) from main e2a7364; TESTED (43 unit tests incl. 20 deterministic fixtures: 8 benign / 12 adversarial, fixture false blocking 0, false allowing 0); MERGED as PR #260 on 2026-09-18T07:45:02Z under Owner MERGE GO (main e36c3ef09e0e503faef1281e4d708657a0e3de9f; post-merge Release quality and Pages release green; ARGOS VERIFIED 105 files on the pre-merge commit 284ff79); re-verified on main after the merge: 43/43 tests, wiredInto = [], no package export, no live-path import, no model call, no network or external I/O, no authority use, approval or protected-action execution; NOT INTEGRATED; OWNER ACCEPTED = NOT RECORDED (the Owner gave a MERGE GO and explicitly withheld acceptance)",
+      "status": "IMPLEMENTED (inert, deterministic checker layer, verdict-only) 2026-09-18 under Owner GO 'PROJECT 2 / PHASE 3.5 - CO-PILOT v0 ONLY' (Owner approval of the proposed scope, 2026-09-18) from main e2a7364; TESTED (43 unit tests incl. 20 deterministic fixtures: 8 benign / 12 adversarial, fixture false blocking 0, false allowing 0); MERGED as PR #260 on 2026-09-18T07:45:02Z under Owner MERGE GO (main e36c3ef09e0e503faef1281e4d708657a0e3de9f; post-merge Release quality and Pages release green; ARGOS VERIFIED 105 files on the pre-merge commit 284ff79); re-verified on main after the merge: 43/43 tests, wiredInto = [], no package export, no live-path import, no model call, no network or external I/O, no authority use, approval or protected-action execution; NOT INTEGRATED; OWNER ACCEPTED 2026-09-18 against e36c3ef (see owner_acceptance.phase_3_5_copilot_v0; the MERGE GO for PR #260 had withheld acceptance, a later explicit Owner statement gave it)",
       "modules": "sinbad-ai-core/copilot/{copilot-v0,index}.js (versions sinbad-copilot/0-v1, input 0-v1, review 0-v1, checkerset 0-v1)",
       "document": "docs/project2/PHASE_3_5_COPILOT_V0.md",
       "what": "pure deterministic review(input) -> sealed CoPilotReview carrying a CoPilotVerdict in the accepted Phase 3.1 contract shape: runs Sentinel v0 as observation engine, forwards its flags, adds seven named checkers (citations resolve / used / claims cited, action safety, task expansion, authority voice), recommendation ALLOW / LABEL / BLOCK, all warnings checkerKind DETERMINISTIC, fail-closed BLOCKED review on untrustworthy input; paper-only composition with Gatekeeper v0 covered by tests",
@@ -137,7 +137,10 @@
     "phase_3_4_gatekeeper_v0": "OWNER ACCEPTED - same explicit Owner statement of 2026-09-18. Scope: Gatekeeper v0 (sinbad-ai-core/gatekeeper/*, 43 unit tests incl. 20 fixtures) as merged by PR #257; NOT an authorization to wire, enforce, execute or integrate it (wiredInto stays []).",
     "phase_3_4_accepted_commit": "0424552324709eaf6d9b04d083ee4d2a893b4ad8",
     "phase_3_4_accepted_pull_request": 257,
-    "phase_3_5_copilot_v0": "NOT RECORDED - Owner statement of 2026-09-18 with the MERGE GO for PR #260: a merge authorization only; OWNER ACCEPTED is explicitly not given for Co-Pilot v0 and stays NOT RECORDED after the merge (MERGED is not an acceptance)",
+    "phase_3_5_copilot_v0": "OWNER ACCEPTED - explicit Owner statement of 2026-09-18 (after the PR #261 merge report): 'Project 2 - Phase 3.5 Co-Pilot v0 icin OWNER ACCEPTED diyorum.' Scope: only the Co-Pilot v0 implementation merged by PR #260 (sinbad-ai-core/copilot/*, 43 unit tests incl. 20 fixtures), i.e. its current inert, deterministic, verdict-only form; authoritative reference main e36c3ef, Project 2 state verified on main 7636cab. NOT a GO for wiring, live integration, the model pass, Pilot v0 or any later phase; Sentinel, Gatekeeper and Co-Pilot gain no live execution authority; wiredInto stays []. History: the MERGE GO for PR #260 had explicitly withheld acceptance; this later statement records it.",
+    "phase_3_5_accepted_commit": "e36c3ef09e0e503faef1281e4d708657a0e3de9f",
+    "phase_3_5_accepted_pull_request": 260,
+    "phase_3_5_state_verified_on": "7636cabc47f331338bf25a6fecd10298d43de4c6",
     "phase_3_5_remainder_and_later": "NOT RECORDED (not started)"
   },
   "baseline_freeze": {
@@ -147,5 +150,5 @@
     "enforcement": "tests/baseline-001-freeze.test.js (part of npm test / CI verify) fails if any frozen file changes or the combined totals drift",
     "revision_policy": "immutable; corrections only as separately identified revisions (BASELINE-001-REV-n) with their own provenance; original files recoverable from aee0ad5"
   },
-  "last_verified_timestamp": "2026-09-18T07:52:30Z"
+  "last_verified_timestamp": "2026-09-18T09:03:58Z"
 }
