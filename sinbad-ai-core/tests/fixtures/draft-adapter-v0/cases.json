@@ -1,7 +1,7 @@
 {
  "fixture": "sinbad-draft-adapter-v0-fixtures/0-v1",
- "adapterVersion": "sinbad-draft-adapter/0-v1",
- "segmenterVersion": "sinbad-draft-segmenter/0-v1",
+ "adapterVersion": "sinbad-draft-adapter/0-v2",
+ "segmenterVersion": "sinbad-draft-segmenter/0-v2",
  "note": "Sample answers written for the tests in the shape the cloud answer function produces; not recorded production answers.",
  "cases": [
   {
@@ -55,7 +55,7 @@
     "proposedActions": []
    },
    "expected": {
-    "adaptationDigest": "39d93e9bc9fd5e8da5585f1eb580804695d100a2c787b477af9001dd99757047",
+    "adaptationDigest": "8719d552bef0f8e5b82f253f50326c7a04079da9bda6ff86157cb6f71d465a5d",
     "claims": [
      "The ISM Code requires a safety management system [S1].",
      "The company must designate a person ashore [S2]."
@@ -119,7 +119,7 @@
     "proposedActions": []
    },
    "expected": {
-    "adaptationDigest": "1af3ba9264a33a2028a8b01f112f72dfe4b6ef33a0535de027d26cd70d922182",
+    "adaptationDigest": "83bb7505266fc0a6ab35fbc019caeeef4835b91876e486e70015832b2ff21a34",
     "claims": [
      "The ISM Code requires a safety management system [S1].",
      "This is general knowledge about shipping."
@@ -183,7 +183,7 @@
     "proposedActions": []
    },
    "expected": {
-    "adaptationDigest": "d699c918d7f59f8b2b0a022843cd586f14c153232bea93fd7df7bf2abed80321",
+    "adaptationDigest": "2b5f58550dcdf51fe3ad8e347afbc48f55d4ef31221c8ab979241489add7db12",
     "claims": [
      "A designated person links ship and shore. [S1]",
      "Masters hold overriding authority.[S2]"
@@ -247,7 +247,7 @@
     "proposedActions": []
    },
    "expected": {
-    "adaptationDigest": "110e351dd43688dd96905e7e764368609d1ddffbe4b72fa23eaeaea242d58484",
+    "adaptationDigest": "925cb6f6734bc7e17fcfa6eacdcb7ce2ebe4da8defbf663c6f1065ae274bf127",
     "claims": [
      "A policy must exist [S1].",
      "Drills are recorded [S2]."
@@ -315,7 +315,7 @@
     "proposedActions": []
    },
    "expected": {
-    "adaptationDigest": "800fcec46211396a1d1b930e580d30c7623f676c35f8e110983ccf3893af099c",
+    "adaptationDigest": "190591ca9ad9fa3325349720cb054f8e7f2d59f8d5d3105dcd8eb52ada435c8d",
     "claims": [
      "Per Reg. 5 the limit is 3.5 m, e.g. in ballast [S1].",
      "Dr. A. Smith agrees [S2]."
@@ -379,7 +379,7 @@
     "proposedActions": []
    },
    "expected": {
-    "adaptationDigest": "626875f73a3780f67fd2dcfda729cf21f40a35c57c2a66b34aea2fd76e40031c",
+    "adaptationDigest": "49b7a028e29c8e6eebd96294e67b7414e7e4eb31c3ebd6eb3752bf6f9397b2d4",
     "claims": [
      "ISM Kodu bir emniyet yönetim sistemi gerektirir [S1].",
      "Şirket karada bir kişi atamalıdır [S2]."
@@ -443,7 +443,7 @@
     "proposedActions": []
    },
    "expected": {
-    "adaptationDigest": "cc1273de8cf6361069b9b3db9632fc97bf9acec83bc6b848dd73c4129d50e29d",
+    "adaptationDigest": "421b508f237e76a47f96374948ec1dd2f0edf4cd280f5b14167276b6da5ae4a0",
     "claims": [
      "The system requires a policy.",
      "Drills are recorded."
@@ -507,7 +507,7 @@
     "proposedActions": []
    },
    "expected": {
-    "adaptationDigest": "7cce49a26f7fdbbf061c3356d90242cb18eb051a50e55e6fcae27639e2a60f59",
+    "adaptationDigest": "055c9f0d8096e0bd30f06a8d93f0b354ee1befbe87bc6f6832652d02f4c34fdf",
     "claims": [
      "Internal audits are annual [S1].",
      "The master may override [S9]."
@@ -571,7 +571,7 @@
     "proposedActions": []
    },
    "expected": {
-    "adaptationDigest": "960edfa2ca316ac628ad9503a8d41d46ec8e96253abcf00c236255ef198e5bbd",
+    "adaptationDigest": "df45f5c04582b991509e9afa7abe2ef9722698255b1d8c29e501c8b01dd9ca6b",
     "claims": [
      "PR #254 was merged as c506f21 and is VERIFIED."
     ],
@@ -633,7 +633,7 @@
     "proposedActions": []
    },
    "expected": {
-    "adaptationDigest": "81bac11e99b2eaa8cc64b8cf6d62571c7b722696d6ce911003ff10976edaae0e",
+    "adaptationDigest": "aa19b0bd9c75580cdb942f954f8124a76fd8a83630fec4580c93ab3b0bcda989",
     "claims": [
      "As the owner I accept this phase [S1]."
     ],
@@ -695,7 +695,7 @@
     "proposedActions": []
    },
    "expected": {
-    "adaptationDigest": "2dfeadc79d141ddf44f13bceb25445b6f3f5b8da4a0563b6de569f54c0114997",
+    "adaptationDigest": "3e9e1f34fd1f6828d006c76c5adccfb358e1ee5dce36670414fecbacc160c181",
     "claims": [
      "The bridge is currently listening on the loopback port [S1]."
     ],
@@ -764,7 +764,7 @@
     ]
    },
    "expected": {
-    "adaptationDigest": "d5bfd66b2668bc20282df77f89f3bd2517ca3e0137edd55aea1bd27b8f77af06",
+    "adaptationDigest": "e2c98a985702e337a50bf41d2dbd3ac01466378f56bca6ddad1cc3a62b418d8e",
     "claims": [
      "The record is updated [S1]."
     ],
@@ -826,7 +826,7 @@
     "proposedActions": []
    },
    "expected": {
-    "adaptationDigest": "59f39c93d7cfbc8f37a41c069059376826271ab0ff42253954127a5537aa1c36",
+    "adaptationDigest": "37a7dd43e11076c8dcbed1daf6cbb40195912c30e3c71a63e8c5c101b73bee29",
     "claims": [
      "PR #254 was merged as c506f21."
     ],
@@ -897,7 +897,7 @@
     ]
    },
    "expected": {
-    "adaptationDigest": "0429b3e553f3daf8c77b5f6100c22328052a22642a83a7d4fb1b0a2563d70322",
+    "adaptationDigest": "cb7d9af6f3f612db1fa0ee8f86f377c1e8c498536b5b87e9326fae053b6e2f1e",
     "claims": [],
     "markers": [],
     "skipped": [],

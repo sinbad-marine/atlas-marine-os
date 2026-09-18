@@ -22,7 +22,7 @@ test('Draft Adapter v0 is inert: no I/O, clock, randomness, network, model, stat
     assert.doesNotMatch(source,/\bglobalThis\b|\bglobal\./u,`${file} must not reach for global state`);
   }
   const source=fs.readFileSync(path.join(dir,'draft-adapter-v0.js'),'utf8');
-  assert.deepEqual([...source.matchAll(/require\('([^']+)'\)/gu)].map(x=>x[1]).sort(),['../authority/evidence-set','../authority/exact','../authority/task-context','../gatekeeper/gatekeeper-v0','../sentinel/sentinel-v0']);
+  assert.deepEqual([...source.matchAll(/require\('([^']+)'\)/gu)].map(x=>x[1]).sort(),['../authority/evidence-set','../authority/exact','../authority/task-context','../gatekeeper/gatekeeper-v0','../sentinel/sentinel-v0','./disclaimer-screen']);
   // It uses the gate's draft parser and Sentinel's hash, limits and pattern; it never runs either.
   assert.deepEqual([...new Set(source.match(/\bgatekeeper\.\w+/gu))],['gatekeeper.draft']);assert.deepEqual([...new Set(source.match(/\bsentinel\.\w+/gu))].sort(),['sentinel.MAX_CLAIMS','sentinel.SPECIFIC_VALUE']);
   assert.doesNotMatch(source,/\.observe\(|\.review\(|\.decide\(|\.rehearse\(|\.attest\(|\.check\(/u);
