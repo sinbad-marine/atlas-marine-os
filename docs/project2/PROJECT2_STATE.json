@@ -158,6 +158,11 @@
       "findings": "the zero-regression classes hold only 13 of the 28 wrong baseline answers while maritime-reasoning alone holds 12; with 10 targets one answer is 10 points of harmCaughtRate; provenance-citation has no PASS so it offers no control; benchmark:fast is not run by npm test or any workflow, so REV-1/REV-2 reproducibility is enforced locally only (package.json and workflows are ARGOS-protected, not changed)",
       "does_not": "sets no threshold (D6 stays the Owner's); runs no benchmark; modifies no frozen or accepted file (lib, questions, results BASELINE-001/001R/REV-1, rev1, harness, REV-1 rescore tool); does not verify that a gate record belongs to a real transcript; no gated column exists yet because the frozen baseline has no passages"
     },
+    "phase_4_3_shadow_design_proposal": {
+      "status": "DESIGN PROPOSAL DELIVERED (docs only) 2026-09-19 from main 8546cf4 under the Owner GO 'Phase 4.3 tasarim onerisini hazirla, GO' (2026-09-18); NO IMPLEMENTATION AUTHORITY; no code changed, no production endpoint called, nothing deployed; NOT MERGED (draft PR); every decision it lists is the Owner's and none is taken",
+      "document": "docs/project2/PHASE_4_3_SHADOW_DESIGN_PROPOSAL.md",
+      "main_points": "measured in memory on the 152 frozen bridge answers without passages: falseBlockRate 0.30, overLabelRate 0.567, harmCaughtRate 0.393, 0 answers carry an [S#] marker - the gate is unusable on a passage-less surface and no stage may enforce before false blocks are measured on a surface with passages; verified: supabase/functions/sinbad-answer already returns sources [{id S<n>, title, chunk, documentId, ...}] to owner/developer callers, writes nothing to the database, runs on Deno; recommended Phase 4.3a = client-side replay shadow with zero production change (Owner-run capture client -> Draft Adapter v0 -> Offline Chain v0 -> scoring v1.0.1 + v1.0.2, comparison inside one capture, captures kept outside the repository, aggregate report only); server-side capture (B) and the chain inside the function (C) not recommended now; open Owner decisions: build 4.3a, one-off cloud usage versus policies.cloud, who runs the capture, maritime-reasoning in the prompt set, what may enter the repository, D6 thresholds after the 4.3a report, rule precision as a separate phase"
+    },
     "phase_3_remainder_and_later": "NOT STARTED. The Co-Pilot model pass (IMPLEMENTATION GO + model policy GO), a model-driven Pilot loop, key custody and requiring attestations in any component, and any wiring or live integration of Sentinel v0, Gatekeeper v0, Co-Pilot v0 or Pilot v0 each require a separate Owner GO; no production AI behaviour changed."
   },
   "zero_regression_classes": ["context isolation","stale-state detection","contradiction handling","provenance/citation integrity","hallucination resistance","Owner authority/security boundaries"],
@@ -215,5 +220,5 @@
     "enforcement": "tests/baseline-001-freeze.test.js (part of npm test / CI verify) fails if any frozen file changes or the combined totals drift",
     "revision_policy": "immutable; corrections only as separately identified revisions (BASELINE-001-REV-n) with their own provenance; original files recoverable from aee0ad5"
   },
-  "last_verified_timestamp": "2026-09-18T20:40:17Z"
+  "last_verified_timestamp": "2026-09-18T21:09:32Z"
 }
