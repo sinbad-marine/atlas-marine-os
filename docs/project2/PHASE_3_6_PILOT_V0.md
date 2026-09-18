@@ -67,4 +67,4 @@ Two properties worth stating plainly:
 
 ## Owner acceptance
 
-NOT RECORDED. Merged as PR #263 on 2026-09-18 (main `2326f3a859c9616a64572e30377fb891a07578a0`) under an Owner MERGE GO; MERGED is not an acceptance, and Pilot v0 stays OWNER ACCEPTED = NOT RECORDED until the Owner states otherwise. This phase is not a GO for wiring, live integration or a model pass.
+Pilot v0 = OWNER ACCEPTED on 2026-09-18 (explicit Owner statement after the PR #264 merge report), against main `2326f3a859c9616a64572e30377fb891a07578a0` (PR #263), with the Project 2 state verified on main `229e6c61e24f09bb1f141faaa104e3b3aac46153`. The MERGE GO for PR #263 was not an acceptance; this later statement gave it. Scope: only the Pilot v0 implementation as merged - its current inert, deterministic, record-only, recommendation-only form; no component gains live execution authority and `MANIFEST.wiredInto` stays empty. Recorded in `docs/project2/PROJECT2_STATE.json` → `owner_acceptance.phase_3_6_pilot_v0`. This phase is not a GO for wiring, live integration or a model pass.

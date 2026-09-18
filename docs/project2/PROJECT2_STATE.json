@@ -114,7 +114,7 @@
       "guarantees_asserted_by": "sinbad-ai-core/tests/copilot-v0-inert.test.js"
     },
     "phase_3_6_pilot_v0": {
-      "status": "IMPLEMENTED (inert, deterministic control-state recommender, record-only) 2026-09-18 under Owner GO 'PROJECT 2 / PHASE 3.6 - PILOT v0 ONLY' (2026-09-18) from main 60eec00; TESTED (48 unit tests incl. 24 deterministic fixtures: 8 benign / 16 adversarial, fixture false proceeding 0, false stopping or escalating 0); MERGED as PR #263 on 2026-09-18T09:57:00Z under Owner MERGE GO (main 2326f3a859c9616a64572e30377fb891a07578a0; post-merge Release quality and Pages release green; ARGOS VERIFIED 105 files on the pre-merge commit e2eeed3); re-verified on main after the merge: 48/48 tests, wiredInto = [] for Pilot, Co-Pilot, Gatekeeper and Sentinel, no package or root export, no existing component changed; NOT INTEGRATED; OWNER ACCEPTED = NOT RECORDED (a MERGE GO is not an acceptance)",
+      "status": "IMPLEMENTED (inert, deterministic control-state recommender, record-only) 2026-09-18 under Owner GO 'PROJECT 2 / PHASE 3.6 - PILOT v0 ONLY' (2026-09-18) from main 60eec00; TESTED (48 unit tests incl. 24 deterministic fixtures: 8 benign / 16 adversarial, fixture false proceeding 0, false stopping or escalating 0); MERGED as PR #263 on 2026-09-18T09:57:00Z under Owner MERGE GO (main 2326f3a859c9616a64572e30377fb891a07578a0; post-merge Release quality and Pages release green; ARGOS VERIFIED 105 files on the pre-merge commit e2eeed3); re-verified on main after the merge: 48/48 tests, wiredInto = [] for Pilot, Co-Pilot, Gatekeeper and Sentinel, no package or root export, no existing component changed; NOT INTEGRATED; OWNER ACCEPTED 2026-09-18 against 2326f3a (see owner_acceptance.phase_3_6_pilot_v0; the MERGE GO for PR #263 was not an acceptance, a later explicit Owner statement gave it)",
       "modules": "sinbad-ai-core/pilot/{pilot-v0,index}.js (versions sinbad-pilot/0-v1, input 0-v1, decision 0-v1, ruleset 0-v1)",
       "document": "docs/project2/PHASE_3_6_PILOT_V0.md",
       "what": "pure deterministic decide(input) -> sealed PilotDecision recommending PROCEED / REQUEST_EVIDENCE / REVISE_DRAFT / ESCALATE_OWNER / STOP from a TaskContext, a draft reference and the sealed records of that draft (a GatekeeperDecision, optionally a CoPilotReview); records are copied as plain data, verified with the producing component's own verify function and checked for coherence (task, draft, time, verdict, outcome vs findings); nine ordered rules; every gate rule id and every verdict warning class mapped to one control class; labelled-delivery policy and iteration budget; fail-closed STOP on untrustworthy input",
@@ -157,7 +157,10 @@
     "phase_3_5_accepted_commit": "e36c3ef09e0e503faef1281e4d708657a0e3de9f",
     "phase_3_5_accepted_pull_request": 260,
     "phase_3_5_state_verified_on": "7636cabc47f331338bf25a6fecd10298d43de4c6",
-    "phase_3_6_pilot_v0": "NOT RECORDED (merged as PR #263, main 2326f3a; an Owner GO for a phase and a MERGE GO are not an acceptance)",
+    "phase_3_6_pilot_v0": "OWNER ACCEPTED - explicit Owner statement of 2026-09-18 (after the PR #264 merge report, in answer to the numbered request 1 for a Pilot v0 acceptance statement): '1. OWNER ACCEPTED'. Scope: only the Pilot v0 implementation merged by PR #263 (sinbad-ai-core/pilot/*, 48 unit tests incl. 24 fixtures), i.e. its current inert, deterministic, record-only, recommendation-only form; authoritative reference main 2326f3a, Project 2 state verified on main 229e6c6. NOT an authorization to wire, integrate, execute, approve or grant anything; no component gains live execution authority; wiredInto stays [].",
+    "phase_3_6_accepted_commit": "2326f3a859c9616a64572e30377fb891a07578a0",
+    "phase_3_6_accepted_pull_request": 263,
+    "phase_3_6_state_verified_on": "229e6c61e24f09bb1f141faaa104e3b3aac46153",
     "phase_3_7_offline_chain_v0": "NOT RECORDED (draft PR, not merged; an Owner GO for a phase and a MERGE GO are not an acceptance)",
     "phase_3_remainder_and_later": "NOT RECORDED (not started)"
   },
@@ -168,5 +171,5 @@
     "enforcement": "tests/baseline-001-freeze.test.js (part of npm test / CI verify) fails if any frozen file changes or the combined totals drift",
     "revision_policy": "immutable; corrections only as separately identified revisions (BASELINE-001-REV-n) with their own provenance; original files recoverable from aee0ad5"
   },
-  "last_verified_timestamp": "2026-09-18T10:37:58Z"
+  "last_verified_timestamp": "2026-09-18T10:49:35Z"
 }
