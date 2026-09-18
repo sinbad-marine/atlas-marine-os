@@ -130,7 +130,7 @@
       "guarantees_asserted_by": "sinbad-ai-core/tests/chain-v0-inert.test.js"
     },
     "phase_3_8_record_attestation_v0": {
-      "status": "IMPLEMENTED (inert, deterministic origin envelope) 2026-09-18 from main dd42f96 under the Owner GO of 2026-09-18: the PR #266 merge report asked as numbered request 3 for an Owner GO for the next phase with the record-authenticity envelope as recommended scope; Owner statement '1. 2. 3. ICIN YUKARIDAKI TALEP VE ISTEKLERINI UYGUN BULUYOR VE ONAYLIYORUM. SIRAYI SEN BELIRLE'; scope 'PROJECT 2 / PHASE 3.8 - RECORD ATTESTATION v0 ONLY'; TESTED (35 unit tests incl. 16 deterministic check fixtures: 6 genuine / 10 forged, false acceptance 0, false rejection 0); NOT MERGED (draft PR, merge needs a separate Owner MERGE GO); NOT INTEGRATED (wiredInto = [], not in package exports, no live file imports it, no component requires attestations); OWNER ACCEPTED = NOT RECORDED",
+      "status": "IMPLEMENTED (inert, deterministic origin envelope) 2026-09-18 from main dd42f96 under the Owner GO of 2026-09-18: the PR #266 merge report asked as numbered request 3 for an Owner GO for the next phase with the record-authenticity envelope as recommended scope; Owner statement '1. 2. 3. ICIN YUKARIDAKI TALEP VE ISTEKLERINI UYGUN BULUYOR VE ONAYLIYORUM. SIRAYI SEN BELIRLE'; scope 'PROJECT 2 / PHASE 3.8 - RECORD ATTESTATION v0 ONLY'; TESTED (35 unit tests incl. 16 deterministic check fixtures: 6 genuine / 10 forged, false acceptance 0, false rejection 0); MERGED as PR #269 on 2026-09-18T12:11:09Z under Owner MERGE GO (main 119529dc6a0be3b08b36f21a903b94487f1a0ccf; post-merge Release quality and Pages release green; ARGOS VERIFIED 105 files on the pre-merge commit f51122f); re-verified on main after the merge: 35/35 attestation tests (231/231 across the six inert components), wiredInto = [] for all six, no root export, package.json unchanged, no existing component changed; NOT INTEGRATED (no component requires attestations); OWNER ACCEPTED = NOT RECORDED (a MERGE GO is not an acceptance)",
       "modules": "sinbad-ai-core/attest/{attest-v0,index}.js (versions sinbad-attest/0-v1, envelope sinbad-attestation/0-v1, check 0-v1; algorithm ED25519)",
       "document": "docs/project2/PHASE_3_8_RECORD_ATTESTATION_V0.md",
       "what": "two pure functions: attest(input) signs a small envelope binding one intact sealed record (kind, version, self-digest, payload digest, task) to a key id and a time, refusing anything not intact; check(input) decides AUTHENTIC / REJECTED for an envelope plus the held record against a caller-supplied trust store in which every key is bound to the record kinds it may attest (signature first, then revocation, validity at issue, kind binding, age, expectation, record identity); covers Sentinel reports, Co-Pilot reviews, Gatekeeper decisions, Pilot decisions and chain transcripts; closes on paper the origin limit stated for Pilot v0 (demonstrated and then rejected on five attack paths)",
@@ -173,7 +173,7 @@
     "phase_3_7_accepted_commit": "08b1256096a135bf56ad13311670a992c32daefa",
     "phase_3_7_accepted_pull_request": 266,
     "phase_3_7_state_verified_on": "dd42f96b5800e9c88e6c2b04db6b589bffc5b5d3",
-    "phase_3_8_record_attestation_v0": "NOT RECORDED (draft PR, not merged; an Owner GO for a phase and a MERGE GO are not an acceptance)",
+    "phase_3_8_record_attestation_v0": "NOT RECORDED (merged as PR #269, main 119529d; an Owner GO for a phase and a MERGE GO are not an acceptance)",
     "phase_3_remainder_and_later": "NOT RECORDED (not started)"
   },
   "baseline_freeze": {
@@ -183,5 +183,5 @@
     "enforcement": "tests/baseline-001-freeze.test.js (part of npm test / CI verify) fails if any frozen file changes or the combined totals drift",
     "revision_policy": "immutable; corrections only as separately identified revisions (BASELINE-001-REV-n) with their own provenance; original files recoverable from aee0ad5"
   },
-  "last_verified_timestamp": "2026-09-18T12:03:23Z"
+  "last_verified_timestamp": "2026-09-18T12:18:54Z"
 }

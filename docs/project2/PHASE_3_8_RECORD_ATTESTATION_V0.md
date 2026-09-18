@@ -41,4 +41,4 @@ AUTHENTIC means: this exact record was attested, for this task, at that time, by
 
 ## Owner acceptance
 
-NOT RECORDED. Merge requires a separate Owner MERGE GO. This phase is not a GO for key custody decisions, for making any component require attestations, for a model pass, wiring or live integration.
+NOT RECORDED. Merged as PR #269 on 2026-09-18 (main `119529dc6a0be3b08b36f21a903b94487f1a0ccf`) under an Owner MERGE GO; MERGED is not an acceptance, and Record Attestation v0 stays OWNER ACCEPTED = NOT RECORDED until the Owner states otherwise. This phase is not a GO for key custody decisions, for making any component require attestations, for a model pass, wiring or live integration.
