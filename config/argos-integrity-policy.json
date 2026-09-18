@@ -219,7 +219,7 @@
     },
     {
       "path": "academy-classroom-window.js",
-      "sha256": "f3d324007fde2dbb1c8f10c21b760aa6c917ebe238a7fbbbafbe8be4eae889f8",
+      "sha256": "0d20fb890a0dd6ed6f303278f155370893ab4d27362c9905d32a37fce89a6901",
       "kind": "SOURCE"
     },
     {
@@ -239,7 +239,7 @@
     },
     {
       "path": "config/ui-design-contract.json",
-      "sha256": "fdda9e78faf89f7c33816aed6423f3615a6dd49b20263e4589dbec2522928c38",
+      "sha256": "049abd13ac6da46d151776337b337ea282af4e64561ae7aaff11db5070ee041b",
       "kind": "CONFIG"
     },
     {
@@ -254,7 +254,7 @@
     },
     {
       "path": "package.json",
-      "sha256": "684734cd38c27bbfa6d941d3f6f0c628b1342250a6d9ebb80727ff2605dcd913",
+      "sha256": "8e700bd699d18669eda50bc77decd9f8a6157c0f859533c1ba5ce29be792dbec",
       "kind": "CONFIG"
     },
     {
@@ -389,7 +389,7 @@
     },
     {
       "path": "tests/ui-design-contract.test.js",
-      "sha256": "587aa2fc950f3d08e82e4344d97416467fbb28f75b1b88c5f3fd5058388cfa3e",
+      "sha256": "3d0d5b4ae5779f3a9364395d1d368215b688322355c633ed49982390fe7e714a",
       "kind": "TEST"
     },
     {
@@ -419,7 +419,7 @@
     },
     {
       "path": "tools/build-pages-artifact.js",
-      "sha256": "63d5099c011e84aefb5428928d46564b6212a65b20439cd7a39966ff5dd569a6",
+      "sha256": "f859c9a0ccfb9e89bfb119ad2854f4c03a4db7f67072460dec381368a169dfbe",
       "kind": "SOURCE"
     },
     {
@@ -440,7 +440,7 @@
     {
       "path": "tests/sinbad-academy-window.test.js",
       "kind": "TEST",
-      "sha256": "13ed7877001bd9d89eb2331f1cecc464452051f411d7cf6cfd76533c1bcbab27"
+      "sha256": "930d1a40f8b877ad3c6cf5325b278c0ad9cf389dd59f4105ca676a77da8aa90e"
     },
     {
       "path": "founder-owner-mfa.js",

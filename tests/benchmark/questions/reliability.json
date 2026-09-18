@@ -1,0 +1,32 @@
+{
+  "category": "reliability",
+  "version": "1.0.0",
+  "method": "Sequential /ai/chat calls through the normal routing (no depth override). Records HTTP success, empty answers, client timeouts, the bridge's own recovery flags (finalAnswerRetryUsed, fastFinalPathUsed, fallbackUsed) and latency per call. PASS = HTTP 200 with a non-empty answer; FAIL otherwise. Prompts mix deterministic-core questions (greeting, arithmetic) with short maritime questions so both the instant and model tiers are exercised.",
+  "items": [
+    {"id":"RL-01","prompt":"Merhaba"},
+    {"id":"RL-02","prompt":"12 * 7 kaç eder?"},
+    {"id":"RL-03","prompt":"What is the purpose of the ISM Code in one sentence?"},
+    {"id":"RL-04","prompt":"Hello"},
+    {"id":"RL-05","prompt":"What are the three ISPS security levels?"},
+    {"id":"RL-06","prompt":"250 / 5 nedir?"},
+    {"id":"RL-07","prompt":"What is a Document of Compliance?"},
+    {"id":"RL-08","prompt":"Selam"},
+    {"id":"RL-09","prompt":"Name two duties of a ship security officer."},
+    {"id":"RL-10","prompt":"What is the MLC 2006 minimum age?"},
+    {"id":"RL-11","prompt":"3.5 + 4.25 equals?"},
+    {"id":"RL-12","prompt":"What is a Safety Management Certificate?"},
+    {"id":"RL-13","prompt":"Günaydın"},
+    {"id":"RL-14","prompt":"What does DPA stand for in the ISM Code?"},
+    {"id":"RL-15","prompt":"What is a Declaration of Security?"},
+    {"id":"RL-16","prompt":"100 - 37 kaç eder?"},
+    {"id":"RL-17","prompt":"What is a seafarers' employment agreement?"},
+    {"id":"RL-18","prompt":"Hallo"},
+    {"id":"RL-19","prompt":"Who approves a ship security plan?"},
+    {"id":"RL-20","prompt":"What is the maximum interval for ISM internal audits?"},
+    {"id":"RL-21","prompt":"9 x 9 nedir?"},
+    {"id":"RL-22","prompt":"What is repatriation under MLC 2006?"},
+    {"id":"RL-23","prompt":"What is a company security officer?"},
+    {"id":"RL-24","prompt":"Kendini bir cümleyle tanıt."},
+    {"id":"RL-25","prompt":"What is the ISM Code Element 8 about?"}
+  ]
+}

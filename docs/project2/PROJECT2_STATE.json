@@ -1,0 +1,213 @@
+{
+  "project": "Project 2 - SINBAD multi-model architecture",
+  "state_semantics": "Records with real labels. EXISTS = code/doc present; WORKING = observed running today; TESTED = automated tests on main; INTEGRATED = wired into a live surface or CI; OWNER ACCEPTED = explicit Owner statement; NOT SUPPORTED / NOT PRESENT = absent. A benchmark PASS is an observed fact about the current system (class B in the authority model); it grants no authority and is not an acceptance. Git history, results.json files and Owner decisions are authoritative over this file where they differ.",
+  "authority_model": "docs/project2/ARCHITECTURE_AUTHORITY_MODEL.md (Owner correction 2026-09-15: NORMATIVE/AUTHORITY truth and OBSERVED/FACTUAL truth are separate dimensions; Owner decides what is authorized, evidence decides what is true; model memory and inference are non-authoritative in both).",
+  "phases": {
+    "phase_1_discovery": {
+      "status": "DISCOVERY COMPLETE 2026-09-15; accepted by the Owner with the authority-model correction",
+      "report": "docs/project2/PHASE_1_DISCOVERY.md (verbatim copy of the delivered report; the linear precedence list in its section G is superseded by ARCHITECTURE_AUTHORITY_MODEL.md)",
+      "repo_at_discovery": "main 91d142a01db686e198ff7c207a3e0ec48993207c"
+    },
+    "phase_2_benchmark_baseline": {
+      "status": "BASELINE-001 COMPLETE AS-IS: first pass 2026-09-15T10:15:49Z-21:36:23Z (11 h 20 min; bridge ended during multi-agent) plus continuation BASELINE-001R 2026-09-16T08:22:55Z-10:34:21Z (bridge restarted unchanged under Owner GO). Combined 152 items: 61 PASS / 34 PARTIAL / 53 FAIL / 4 ERROR; NOT MEASURED: none. Harness implemented, fast checks green (13/13). OWNER ACCEPTED = NOT RECORDED",
+      "harness": "tests/benchmark/ (lib, questions, fast tests, results) + tools/run-sinbad-benchmark.js; npm scripts benchmark:fast and benchmark:full",
+      "frozen_runtime_facts": {
+        "repo": "main 91d142a (clean at launch)",
+        "bridge": "Sinbad Bridge 0.5.0 on 127.0.0.1:31983, ARGOS command gate ACTIVE (MONITOR_ONLY), Owner boundary configured",
+        "models": "Ollama 0.34.0; qwen3:14b bdbd181c33f2 (Q4_K_M, 14.8B) serves both tiers; qwen3:4b 359d7dd4bcda installed but not routed",
+        "library_index": "1,686 documents / 90,552 chunks, built 2026-08-21T08:15Z (25 days old at baseline), .sinbad-index.json 255 MB",
+        "kiwix": "UNAVAILABLE; the bridge reports the PowerShell error 'You cannot call a method on a null-valued expression.' in knowledge.reason (bridge defect, not fixed - frozen)",
+        "hardware": "Intel Core Ultra 9 285H 16C/16T, 31.4 GB RAM, Intel Arc 140T iGPU; model runs 100% CPU per ollama ps; classic performance-counter API broken on host (c0000bb8), CIM/GPU-engine counters used instead",
+        "project_state": "docs/academy/PROJECT_STATE.json last_verified_timestamp 2026-09-15T06:50:04Z"
+      },
+      "pre_run_observations": [
+        "Model-only answer path (no library scan): ~17 s for a short Turkish prompt (fast tier, qwen3:14b).",
+        "Library-RAG answer path: 139 s and 303 s for two short English ISM questions; the PowerShell scan of 90,552 chunks dominates latency.",
+        "Node fetch (undici) cuts answers longer than 300 s with 'fetch failed'; the harness uses node:http with a 900 s budget so true latency is captured.",
+        "The bridge's own Ollama client budget is 600 s per request."
+      ],
+      "baseline_001": {
+        "location": "tests/benchmark/results/BASELINE-001/ (results.json, report.md, profile.json, results.partial.jsonl for --resume)",
+        "document": "docs/project2/BENCHMARK_BASELINE.md sections D-J",
+        "per_category": {
+          "maritime-reasoning": "32: 7 PASS / 12 PARTIAL / 13 FAIL; ISM 5/16 PASS, ISPS 0/8, MLC 2/8; p50 320.9 s",
+          "coding": "10: 9 PASS / 1 PARTIAL; p50 327.4 s (deep tier)",
+          "repo-state": "12: 6 PASS / 6 FAIL; 0 fabricated values; the 6 FAILs are honest answers outside the marker list",
+          "context-isolation": "12: 1 PASS / 7 PARTIAL / 4 FAIL; 4 foreign claims accepted as fact",
+          "stale-state": "10: 2 PASS / 3 PARTIAL / 5 FAIL; 2 stale claims affirmed",
+          "contradiction": "10: 4 PASS / 6 FAIL; conflict named in 8/10",
+          "provenance-citation": "8: 0 PASS / 7 PARTIAL / 1 FAIL; no verifiable citation, 1 fabricated",
+          "hallucination": "20: 4 PASS / 1 PARTIAL / 14 FAIL / 1 ERROR; at least 6 confident inventions",
+          "failure-handling": "8: 3 PASS / 1 PARTIAL / 3 FAIL / 1 ERROR; ARGOS gate 3/3; denied requests close without draining the body (Node sees ECONNRESET); HTTP 400 on a current-claim question",
+          "multi-agent": "first pass 3 ERROR (bridge ended during MA-01); BASELINE-001R: 0 PASS / 2 PARTIAL / 1 FAIL - NOT SUPPORTED, answers computed or excerpted instead of delegating",
+          "recovery": "first pass 2 ERROR (bridge down); BASELINE-001R: 2 ERROR - after a 3 s client abort the bridge stayed busy ~10 min and reset the queued continue request (ECONNRESET at 643/646 s); NOT SUPPORTED, demonstrated",
+          "reliability": "first pass NOT MEASURED (bridge down); BASELINE-001R: 25/25 PASS; instant p50 3.6 s, fast 16-465 s, deep 457 s; no bridge recovery flags"
+        },
+        "baseline_001r": {
+          "run": "BASELINE-001R 2026-09-16T08:22:55Z-10:34:21Z (2 h 11 min), 30 items, tests/benchmark/results/BASELINE-001R/",
+          "identity_before_resume": "worktree 499f36c clean (origin/main 91d142a ancestor); bridge scripts identical to main and to the installed release 13cd522d... (sha256 7112cb7c...); active-release.json ACTIVATED instance d8389e80...; index 267,550,218 bytes 2026-08-21; models unchanged; no code/config/retrieval change",
+          "restart": "2026-09-16T08:18:44Z via the installed release's start-sinbad-bridge.cmd; /status 0.5.0 at 08:18:55Z; /argos/status ACTIVE MONITOR_ONLY, Owner boundary configured/enforced, instance d8389e80..., workspace 3bf379f2...; pid 2848 working set 1,173 MB after index load",
+          "incidents": "RC-01/RC-02 ECONNRESET after client abort (bridge survived); second bridge termination between 10:34:21Z and 11:03:19Z with no requests in flight, no event-log entry - cause NOT DETERMINED"
+        },
+        "combined_final": "152 items: 61 PASS / 34 PARTIAL / 53 FAIL / 4 ERROR (FH-06, HL-20 HTTP 400; RC-01, RC-02 reset after abort); NOT MEASURED: none; instant p50 3.6 s, fast p50 338.5 s / p95 451.6 s (116), deep p50 363.6 s (17)",
+        "latency": "fast tier p50 332.9 s / p95 438.9 s (100 calls); deep p50 350.8 s / p95 497.0 s (15); instant 3.5 s; admission probes 13-30 ms; model-only probe 16.7 s; the library scan of 90,552 chunks dominates",
+        "resources": "CPU load p50 6 % max 82 %; free RAM p50 4,465 MB min 497 MB; GPU 3D p50 1.8 % max 46.6 %; model 100 % CPU",
+        "bridge_termination": "cause NOT DETERMINED (no OS event-log entry; RAM low; possible manual console closure); no watchdog/restart exists; bridge still down at 22:17Z",
+        "scorer_precision_note": "gold v1.0.0 marker lists produced identifiable false negatives (honest answers scored FAIL): HL-03/09/11/15/17, RS-01/03/05/06/07/08, SS-03/08/09, CT-01/02/04/08, MR-ISM-12; listed in BENCHMARK_BASELINE.md G; a v1.0.1 offline re-score is proposed for Phase 3, not applied",
+        "zero_regression_class_baseline": {
+          "context-isolation": "1/12 PASS (8.3 %)",
+          "stale-state": "2/10 PASS (20 %)",
+          "contradiction": "4/10 PASS (40 %)",
+          "provenance-citation": "0/8 PASS (0 %)",
+          "hallucination": "4/20 PASS (20 %)",
+          "owner-authority-security": "ARGOS admission 3/3 PASS; Owner boundary not exercised by this benchmark"
+        }
+      },
+      "pending_after_baseline_001": [
+        "DONE 2026-09-16: BASELINE-001R (see baseline_001.baseline_001r)",
+        "Bridge availability: two unexplained process terminations (2026-09-15 ~21:32Z during MA-01; 2026-09-16 between 10:34Z and 11:03Z while idle); no watchdog/restart/alarm; bridge down again after BASELINE-001R - restart is the Owner's call",
+        "Gold v1.0.1 + offline re-score of the stored BASELINE-001 answers (no model re-run)",
+        "Bridge defects observed, NOT fixed (frozen): Kiwix path throws 'You cannot call a method on a null-valued expression.'; two HTTP 400 replies after minutes of work (FH-06, HL-20); process termination without recovery"
+      ]
+    },
+    "phase_3_discovery": {
+      "status": "READ-ONLY DISCOVERY REPORT DELIVERED 2026-09-17 (Owner MASTER TASK DIRECTIVE 2026-09-16, TASK C); NO IMPLEMENTATION AUTHORITY; no Sentinel/Gatekeeper/Pilot/Co-Pilot code exists",
+      "report": "docs/project2/PHASE_3_DISCOVERY.md",
+      "starting_state": "main aee0ad5 (Phase 2 OWNER ACCEPTED), ARGOS VERIFIED 105 files, worktree clean, legacy bridge not started, Academy/GASM/Owner Console/runtime untouched"
+    },
+    "phase_3_1_contracts": {
+      "status": "IMPLEMENTED (inert) 2026-09-17 under Owner IMPLEMENTATION GO 'PHASE 3.1 CONTRACTS ONLY'; TESTED (29 unit tests); MERGED as PR #252 (main bd0c167); NOT INTEGRATED (wiredInto = []); OWNER ACCEPTED 2026-09-17 against bd0c167 (see owner_acceptance.phase_3_1_contracts)",
+      "modules": "sinbad-ai-core/authority/{authority-model,claim-labels,task-context,evidence-set,copilot-verdict,gate-decision,index,exact}.js",
+      "document": "docs/project2/PHASE_3_1_CONTRACTS.md",
+      "guarantees": "no I/O, no execution, no model call, authority NONE, no live file imports them, no product identity embedded, not in package exports (asserted by sinbad-ai-core/tests/authority-contracts-inert.test.js)"
+    },
+    "phase_3_2_baseline_rev1": {
+      "status": "IMPLEMENTED 2026-09-17 under Owner IMPLEMENTATION GO 'PHASE 3.2 BASELINE-001-REV-1 ONLY'; TESTED (fixture + reproducibility tests); MERGED as PR #253 (main 5278cdd); OWNER ACCEPTED 2026-09-17 against 5278cdd (see owner_acceptance.baseline_001_rev1)",
+      "what": "offline re-score of the 152 frozen BASELINE-001 / BASELINE-001R answers with scoring v1.0.1 and gold overlay v1.0.1; no model, bridge or network call; frozen files untouched",
+      "artefacts": "tests/benchmark/rev1/scoring-v101.js, tests/benchmark/rev1/gold-overlay-v101.json, tools/rescore-baseline-001.js, tests/benchmark/results/BASELINE-001-REV-1/, tests/benchmark/scoring-v101.test.js, docs/project2/BASELINE-001-REV-1.md",
+      "results": "v1.0.0 61 PASS / 34 PARTIAL / 53 FAIL / 4 ERROR -> v1.0.1 90 PASS / 30 PARTIAL / 28 FAIL / 4 ERROR; 37 improved, 3 worsened (CI-01, CI-11, HL-04), 112 unchanged; carried categories: coding, provenance-citation, failure-handling, recovery, reliability",
+      "zero_regression_v101": {"context-isolation":"6/12","stale-state":"8/10","contradiction":"8/10","provenance-citation":"0/8 (carried)","hallucination":"9/20","owner-authority-security":"ARGOS admission 3/3"},
+      "semantics": "a scorer revision of the reference, not a system change; BASELINE-001 (v1.0.0) remains the frozen original; future comparisons state the scorer version"
+    },
+    "phase_3_3_sentinel_v0": {
+      "status": "IMPLEMENTED (inert, observe-only) 2026-09-17 under Owner GO 'PROJECT 2 / PHASE 3.3 - SENTINEL v0 ONLY' from main c506f21; TESTED (42 unit tests + 8 deterministic fixtures); MERGED as PR #255 on 2026-09-17T20:39:06Z under Owner MERGE GO (main 8f47edcd6114cd1b4b586383c141c8e814c4b7f3; post-merge Release quality and Pages release green; ARGOS VERIFIED 105 files); NOT INTEGRATED (wiredInto = [], not in package exports, no live file imports it); OWNER ACCEPTED 2026-09-18 against 8f47edc (see owner_acceptance.phase_3_3_sentinel_v0)",
+      "modules": "sinbad-ai-core/sentinel/{sentinel-v0,index}.js (versions sinbad-sentinel/0-v1, input 0-v1, report 0-v1, ruleset 0-v1)",
+      "document": "docs/project2/PHASE_3_3_SENTINEL_V0.md",
+      "what": "pure deterministic observe(input) -> sealed SentinelReport over TaskContext + EvidenceSet + claims: per-claim truth state (VERIFIED / NOT_VERIFIED / CONFLICT / SOURCE_MISSING / BLOCKED) from eligible evidence, provenance (input digest, evidence ids, report digest, chaining), typed deterministic early-warning flags, ten rule signals, explicit coverage/unobservable reporting, fail-closed BLOCKED report on untrustworthy input",
+      "does_not": "no decision, no authority, no I/O, no clock, no model call, no state, no health probe, no claim segmentation, no content comparison, no wiring; Phase 3.1 contracts consumed unchanged; frozen baseline untouched",
+      "guarantees_asserted_by": "sinbad-ai-core/tests/sentinel-v0-inert.test.js"
+    },
+    "phase_3_4_gatekeeper_v0": {
+      "status": "IMPLEMENTED (inert, deterministic post-gate, label-only) 2026-09-18 under Owner GO 'PROJECT 2 / PHASE 3.4 - GATEKEEPER v0 ONLY' (2026-09-17) from main b06345e; TESTED (43 unit tests incl. 20 deterministic fixtures: 8 benign / 12 adversarial, fixture false blocking 0, false allowing 0); MERGED as PR #257 on 2026-09-18T06:40:51Z under Owner MERGE GO (main 0424552324709eaf6d9b04d083ee4d2a893b4ad8; post-merge Release quality and Pages release green; ARGOS VERIFIED 105 files on the pre-merge head 00c47bd); NOT INTEGRATED (wiredInto = [], not in package exports, no live file imports it); OWNER ACCEPTED 2026-09-18 against 0424552 (see owner_acceptance.phase_3_4_gatekeeper_v0)",
+      "modules": "sinbad-ai-core/gatekeeper/{gatekeeper-v0,index}.js (versions sinbad-gatekeeper/0-v1, input 0-v1, decision 0-v1, ruleset 0-v1)",
+      "document": "docs/project2/PHASE_3_4_GATEKEEPER_V0.md",
+      "what": "pure deterministic decide(input) -> sealed GatekeeperDecision over TaskContext + EvidenceSet + draft (claims, citations, proposed actions) + optional CoPilotVerdict: runs Sentinel v0 as observation engine, applies sixteen gate rules (citation-vs-evidence, specificity, vocabulary, volatile claims, context integrity, action authority, verdict-draft match, provenance adequacy), composes ADMIT / LABEL / ESCALATE / BLOCK through the accepted GateDecision contract with rule-id or verdict-id attribution, per-claim labels, per-action paper status, fail-closed BLOCK on untrustworthy input",
+      "does_not": "no execution, no delivery, no enforcement, no authority, no I/O, no clock, no model call, no state, no pre-gate, no claim segmentation, no content comparison, no wiring; Phase 3.1 contracts and Sentinel v0 consumed unchanged; frozen baseline untouched",
+      "guarantees_asserted_by": "sinbad-ai-core/tests/gatekeeper-v0-inert.test.js"
+    },
+    "phase_3_5_copilot_v0": {
+      "status": "IMPLEMENTED (inert, deterministic checker layer, verdict-only) 2026-09-18 under Owner GO 'PROJECT 2 / PHASE 3.5 - CO-PILOT v0 ONLY' (Owner approval of the proposed scope, 2026-09-18) from main e2a7364; TESTED (43 unit tests incl. 20 deterministic fixtures: 8 benign / 12 adversarial, fixture false blocking 0, false allowing 0); MERGED as PR #260 on 2026-09-18T07:45:02Z under Owner MERGE GO (main e36c3ef09e0e503faef1281e4d708657a0e3de9f; post-merge Release quality and Pages release green; ARGOS VERIFIED 105 files on the pre-merge commit 284ff79); re-verified on main after the merge: 43/43 tests, wiredInto = [], no package export, no live-path import, no model call, no network or external I/O, no authority use, approval or protected-action execution; NOT INTEGRATED; OWNER ACCEPTED 2026-09-18 against e36c3ef (see owner_acceptance.phase_3_5_copilot_v0; the MERGE GO for PR #260 had withheld acceptance, a later explicit Owner statement gave it)",
+      "modules": "sinbad-ai-core/copilot/{copilot-v0,index}.js (versions sinbad-copilot/0-v1, input 0-v1, review 0-v1, checkerset 0-v1)",
+      "document": "docs/project2/PHASE_3_5_COPILOT_V0.md",
+      "what": "pure deterministic review(input) -> sealed CoPilotReview carrying a CoPilotVerdict in the accepted Phase 3.1 contract shape: runs Sentinel v0 as observation engine, forwards its flags, adds seven named checkers (citations resolve / used / claims cited, action safety, task expansion, authority voice), recommendation ALLOW / LABEL / BLOCK, all warnings checkerKind DETERMINISTIC, fail-closed BLOCKED review on untrustworthy input; paper-only composition with Gatekeeper v0 covered by tests",
+      "does_not": "no model pass (needs a model policy GO), no Pilot, no answer, no rewrite, no approval, no decision, no authority, no I/O, no clock, no state, no wiring; INSTRUCTION_CONFLICT and CORRELATED_FAILURE_RISK declared not covered; Phase 3.1 contracts, Sentinel v0 and Gatekeeper v0 consumed unchanged; frozen baseline untouched",
+      "guarantees_asserted_by": "sinbad-ai-core/tests/copilot-v0-inert.test.js"
+    },
+    "phase_3_6_pilot_v0": {
+      "status": "IMPLEMENTED (inert, deterministic control-state recommender, record-only) 2026-09-18 under Owner GO 'PROJECT 2 / PHASE 3.6 - PILOT v0 ONLY' (2026-09-18) from main 60eec00; TESTED (48 unit tests incl. 24 deterministic fixtures: 8 benign / 16 adversarial, fixture false proceeding 0, false stopping or escalating 0); MERGED as PR #263 on 2026-09-18T09:57:00Z under Owner MERGE GO (main 2326f3a859c9616a64572e30377fb891a07578a0; post-merge Release quality and Pages release green; ARGOS VERIFIED 105 files on the pre-merge commit e2eeed3); re-verified on main after the merge: 48/48 tests, wiredInto = [] for Pilot, Co-Pilot, Gatekeeper and Sentinel, no package or root export, no existing component changed; NOT INTEGRATED; OWNER ACCEPTED 2026-09-18 against 2326f3a (see owner_acceptance.phase_3_6_pilot_v0; the MERGE GO for PR #263 was not an acceptance, a later explicit Owner statement gave it)",
+      "modules": "sinbad-ai-core/pilot/{pilot-v0,index}.js (versions sinbad-pilot/0-v1, input 0-v1, decision 0-v1, ruleset 0-v1)",
+      "document": "docs/project2/PHASE_3_6_PILOT_V0.md",
+      "what": "pure deterministic decide(input) -> sealed PilotDecision recommending PROCEED / REQUEST_EVIDENCE / REVISE_DRAFT / ESCALATE_OWNER / STOP from a TaskContext, a draft reference and the sealed records of that draft (a GatekeeperDecision, optionally a CoPilotReview); records are copied as plain data, verified with the producing component's own verify function and checked for coherence (task, draft, time, verdict, outcome vs findings); nine ordered rules; every gate rule id and every verdict warning class mapped to one control class; labelled-delivery policy and iteration budget; fail-closed STOP on untrustworthy input",
+      "does_not": "recommendation only: no execution, no approval, no authority grant, no draft writing or rewriting, no acting for the user, no model call, no I/O, no clock, no state; never runs Sentinel, Gatekeeper or Co-Pilot (reads their records only); no wiring, no live integration; record authenticity (signatures) not provided - a digest proves integrity, not origin; Phase 3.1 contracts, Sentinel v0, Gatekeeper v0 and Co-Pilot v0 consumed unchanged; frozen baseline untouched",
+      "guarantees_asserted_by": "sinbad-ai-core/tests/pilot-v0-inert.test.js"
+    },
+    "phase_3_7_offline_chain_v0": {
+      "status": "IMPLEMENTED (inert, deterministic paper-only composition) 2026-09-18 from main 229e6c6 under the Owner GO of 2026-09-18: the Owner statement '2. FAZ OWNER GO' named no scope; asked which phase, the Owner delegated the choice ('UZMAN OLAN SENSIN EN MANTIKLI OLANI SEC. BUNU ONAYIMLA YAP. GO'); scope chosen under that delegation: 'PROJECT 2 / PHASE 3.7 - OFFLINE CHAIN v0 ONLY' (lowest-risk of the four candidates offered; record authenticity, model pass and live wiring were not chosen); TESTED (20 unit tests incl. 14 deterministic chain fixtures: 6 benign / 8 adversarial, false proceeding 0, false stopping or escalating 0; plus the Co-Pilot v0 and Gatekeeper v0 corpora rehearsed through the chain); MERGED as PR #266 on 2026-09-18T10:56:59Z under Owner MERGE GO (main 08b1256096a135bf56ad13311670a992c32daefa; post-merge Release quality and Pages release green; ARGOS VERIFIED 105 files on the pre-merge commit 638e676); re-verified on main after the merge: 20/20 chain tests (196/196 across the five components), wiredInto = [] for all five, no package or root export, no existing component changed; NOT INTEGRATED; OWNER ACCEPTED 2026-09-18 against 08b1256 (see owner_acceptance.phase_3_7_offline_chain_v0; the MERGE GO for PR #266 was not an acceptance, a later explicit Owner statement gave it)",
+      "modules": "sinbad-ai-core/chain/{chain-v0,index}.js (versions sinbad-offline-chain/0-v1, input 0-v1, transcript 0-v1)",
+      "document": "docs/project2/PHASE_3_7_OFFLINE_CHAIN_V0.md",
+      "what": "pure deterministic rehearse(input) -> sealed ChainTranscript: for each caller-supplied {evidenceSet, draft} pass runs Co-Pilot v0 -> Gatekeeper v0 (with that verdict; both observe through Sentinel v0) -> Pilot v0 in memory, follows the Pilot recommendation to the next supplied pass, ends on PROCEED / ESCALATE_OWNER / STOP or open as AWAITING_DRAFT; embeds the real sealed records; verifyTranscript checks every record, every link and that the outcome follows from the last step; fail-closed STOP on untrustworthy input",
+      "does_not": "offline rehearsal only: produces no draft (every draft is input), delivers, executes, approves and grants nothing, no model call, no I/O, no clock, no state, inputs never mutated; no wiring, no live integration; record authenticity not provided; all components share the Sentinel v0 observation engine, so the chain measures consistency between components, not correctness; Phase 3.1 contracts, Sentinel v0, Gatekeeper v0, Co-Pilot v0 and Pilot v0 consumed unchanged; frozen baseline untouched",
+      "guarantees_asserted_by": "sinbad-ai-core/tests/chain-v0-inert.test.js"
+    },
+    "phase_3_8_record_attestation_v0": {
+      "status": "IMPLEMENTED (inert, deterministic origin envelope) 2026-09-18 from main dd42f96 under the Owner GO of 2026-09-18: the PR #266 merge report asked as numbered request 3 for an Owner GO for the next phase with the record-authenticity envelope as recommended scope; Owner statement '1. 2. 3. ICIN YUKARIDAKI TALEP VE ISTEKLERINI UYGUN BULUYOR VE ONAYLIYORUM. SIRAYI SEN BELIRLE'; scope 'PROJECT 2 / PHASE 3.8 - RECORD ATTESTATION v0 ONLY'; TESTED (35 unit tests incl. 16 deterministic check fixtures: 6 genuine / 10 forged, false acceptance 0, false rejection 0); MERGED as PR #269 on 2026-09-18T12:11:09Z under Owner MERGE GO (main 119529dc6a0be3b08b36f21a903b94487f1a0ccf; post-merge Release quality and Pages release green; ARGOS VERIFIED 105 files on the pre-merge commit f51122f); re-verified on main after the merge: 35/35 attestation tests (231/231 across the six inert components), wiredInto = [] for all six, no root export, package.json unchanged, no existing component changed; NOT INTEGRATED (no component requires attestations); OWNER ACCEPTED 2026-09-18 against 119529d (see owner_acceptance.phase_3_8_record_attestation_v0; the MERGE GO for PR #269 was not an acceptance, a later explicit Owner statement gave it)",
+      "modules": "sinbad-ai-core/attest/{attest-v0,index}.js (versions sinbad-attest/0-v1, envelope sinbad-attestation/0-v1, check 0-v1; algorithm ED25519)",
+      "document": "docs/project2/PHASE_3_8_RECORD_ATTESTATION_V0.md",
+      "what": "two pure functions: attest(input) signs a small envelope binding one intact sealed record (kind, version, self-digest, payload digest, task) to a key id and a time, refusing anything not intact; check(input) decides AUTHENTIC / REJECTED for an envelope plus the held record against a caller-supplied trust store in which every key is bound to the record kinds it may attest (signature first, then revocation, validity at issue, kind binding, age, expectation, record identity); covers Sentinel reports, Co-Pilot reviews, Gatekeeper decisions, Pilot decisions and chain transcripts; closes on paper the origin limit stated for Pilot v0 (demonstrated and then rejected on five attack paths)",
+      "does_not": "origin only: AUTHENTIC approves, executes and grants nothing (an authentic BLOCK stays a BLOCK); generates and stores no keys, key custody and trust-store ownership out of scope; no I/O, no clock, no randomness, no model, no state; never runs the other components; no component requires attestations yet (Pilot v0 and Offline Chain v0 unchanged); no wiring, no live integration; no key material in the repository; all accepted components consumed unchanged; frozen baseline untouched",
+      "guarantees_asserted_by": "sinbad-ai-core/tests/attest-v0-inert.test.js"
+    },
+    "phase_4_readiness_report": {
+      "status": "READ-ONLY REPORT DELIVERED 2026-09-18 from main 79b7157 under the Owner GO of 2026-09-18 (the PR #269 merge report asked as numbered request 3 for a GO for a read-only Phase 4 readiness report instead of new code; Owner statement 'YUKARIDAKI 1. 2. VE 3. MADDELERI ONAYLIYORUM. GO'); NO IMPLEMENTATION AUTHORITY; no code changed; MERGED as PR #272 on 2026-09-18T17:48:20Z under Owner MERGE GO (main c22ce39eb69eb7b7e375586131e02764da377f7d; docs only); the decisions D1-D9 it lists are the Owner's and none is taken",
+      "report": "docs/project2/PHASE_4_READINESS_REPORT.md",
+      "main_findings": "live answers are free text and nothing produces claims or evidence identifiers, so the missing piece before any wiring is an inert draft adapter; candidate wiring points app.js, bridge/sinbad-bridge.ps1, package.json and workflows are ARGOS-protected; the running bridge is an installed release behind package/install/restart gates and is PowerShell while the components are Node; no signing-key infrastructure exists (only DPAPI CurrentUser for the ARGOS archive key); an older inert verification/orchestrator layer overlaps and is imported by no live file; the frozen baseline answers carry no evidence sets and the scorer ignores labels and blocks, so a gate's effect is not measurable today; recommended order 4.1 draft adapter -> 4.2 scorer revision and stage-gate subset -> 4.3 shadow on one surface -> 4.4 read transcripts -> 4.5 label -> 4.6 enforce, each a separate Owner GO"
+    },
+    "phase_4_1_draft_adapter_v0": {
+      "status": "IMPLEMENTED (inert, deterministic free text -> structured draft) 2026-09-18 from main c22ce39 under the Owner GO of 2026-09-18: asked for (1) a MERGE GO for PR #271/#272 and (2) decisions D1-D9 of the readiness report, the Owner stated '1. gO ARDINDAN 2. GO'; item 2 names no single decision and the report makes every step a separate GO, so it was taken in the narrowest reading - recommendations adopted in principle and a GO for the first step only, 'PROJECT 2 / PHASE 4.1 - DRAFT ADAPTER v0 ONLY'; TESTED (24 unit tests incl. 14 deterministic fixtures: 7 benign / 7 adversarial, false proceeding 0, false stopping 0); MERGED as PR #273 on 2026-09-18T18:19:22Z under Owner MERGE GO (main 003f855657769b31e237e740b75de09dcec6bd95; ARGOS VERIFIED 105 files on the pre-merge commit c197fe9); NOT INTEGRATED (wiredInto = [], not in package exports, no live file imports it); OWNER ACCEPTED = NOT RECORDED (a MERGE GO is not an acceptance)",
+      "modules": "sinbad-ai-core/adapter/{draft-adapter-v0,index}.js (versions sinbad-draft-adapter/0-v1, input 0-v1, output sinbad-adapted-draft/0-v1, segmenter 0-v1)",
+      "document": "docs/project2/PHASE_4_1_DRAFT_ADAPTER_V0.md",
+      "what": "pure deterministic adapt(input) -> sealed AdaptedDraft whose chainPass is one {evidenceSet, draft} pass of the Offline Chain: segments an answer text into sentence claims (exact slices, hashed as written, always ASSERTED), binds each claim to the [S#] markers written inside it (a marker after a full stop cites the sentence it follows), preserves a marker no passage carries as a citation to a non-existent evidence id, records what it skipped and why, self-checks its output with the consumers' own parsers; D4 finding recorded: the older verification/claim-planner builds claims out of evidence for a model-free composer and cannot segment a model answer",
+      "does_not": "interprets, rewords, merges, reorders or drops nothing; never marks a sentence as reported speech; no model call, no I/O, no clock, no state, input never mutated; runs no other component; sentence granularity only (a marker credits the whole sentence); a marker proves a citation exists, not that the passage supports the claim; no live surface hands out passages in the needed shape yet - obtaining them is wiring and NOT STARTED; the older verification/orchestrator layer untouched; all accepted components consumed unchanged; frozen baseline untouched",
+      "guarantees_asserted_by": "sinbad-ai-core/tests/draft-adapter-v0-inert.test.js"
+    },
+    "phase_4_2_scorer_v102": {
+      "status": "IMPLEMENTED (offline) 2026-09-18 from main 003f855 under the Owner GO of 2026-09-18 (the PR #273 report asked for a MERGE GO and for an explicit GO for the next step, recommending 4.2; Owner statement '1. VE 2. YE GO'); scope 'PROJECT 2 / PHASE 4.2 - SCORER v1.0.2 AND STAGE-GATE SUBSET ONLY'; TESTED (9 fast checks, npm run benchmark:fast 29/29; not part of npm test or CI, like the REV-1 checks); MERGED as PR #274 on 2026-09-18T18:54:47Z under Owner MERGE GO (main 3ca770eee10d88a76e86830388e627081a54da95; post-merge Release quality and Pages release green; ARGOS VERIFIED 105 files on the pre-merge commit ed50cf8); re-verified on main after the merge: benchmark:fast 29/29, REV-1 and REV-2 reproduce, freeze test 3/3, no frozen or accepted file changed; no benchmark run, no model or bridge call; OWNER ACCEPTED = NOT RECORDED (a MERGE GO is not an acceptance)",
+      "files": "tests/benchmark/rev2/scoring-v102.js, tests/benchmark/rev2/stage-gate-subset-v1.json, tools/rescore-baseline-001-v102.js, tests/benchmark/results/BASELINE-001-REV-2/{results.json,report.md}, tests/benchmark/scoring-v102.test.js",
+      "document": "docs/project2/PHASE_4_2_SCORER_V102.md",
+      "what": "scoring v1.0.2 keeps every v1.0.1 text outcome and adds the delivery dimension (DELIVERED_CLEAN / DELIVERED_LABELLED / WITHHELD) from a per-answer gate record, naming nine cells (HARM_DELIVERED, HARM_FLAGGED, HARM_CAUGHT, FALSE_BLOCK, CORRECT_OVER_LABELLED, ...) and five rates with text outcomes as denominators; evaluate() takes thresholds as input and ships no defaults; BASELINE-001-REV-2 = the 152 accepted REV-1 outcomes ungated: text totals 90/30/28/4 identical to REV-1, HARM_DELIVERED 28/28, nothing flagged, caught or blocked; stage-gate subset v1 = 30 fixed items (10 TARGET / 13 CONTROL / 7 OTHER) from the five zero-regression classes, estimated 2.93 h from frozen latencies",
+      "findings": "the zero-regression classes hold only 13 of the 28 wrong baseline answers while maritime-reasoning alone holds 12; with 10 targets one answer is 10 points of harmCaughtRate; provenance-citation has no PASS so it offers no control; benchmark:fast is not run by npm test or any workflow, so REV-1/REV-2 reproducibility is enforced locally only (package.json and workflows are ARGOS-protected, not changed)",
+      "does_not": "sets no threshold (D6 stays the Owner's); runs no benchmark; modifies no frozen or accepted file (lib, questions, results BASELINE-001/001R/REV-1, rev1, harness, REV-1 rescore tool); does not verify that a gate record belongs to a real transcript; no gated column exists yet because the frozen baseline has no passages"
+    },
+    "phase_3_remainder_and_later": "NOT STARTED. The Co-Pilot model pass (IMPLEMENTATION GO + model policy GO), a model-driven Pilot loop, key custody and requiring attestations in any component, and any wiring or live integration of Sentinel v0, Gatekeeper v0, Co-Pilot v0 or Pilot v0 each require a separate Owner GO; no production AI behaviour changed."
+  },
+  "zero_regression_classes": ["context isolation","stale-state detection","contradiction handling","provenance/citation integrity","hallucination resistance","Owner authority/security boundaries"],
+  "policies": {
+    "cloud": "No new recurring cloud-model usage in Phase 2; no Claude/Gemini/Grok/OpenAI judges; gold answers and deterministic verification only.",
+    "ci": "FAST DETERMINISTIC BENCHMARK CHECKS (npm run benchmark:fast) are cheap and model-free; the FULL LOCAL AI BENCHMARK RUN is not in PR CI. Proposal for a CI subset follows the measured runtime.",
+    "academy": "Frozen. No production Academy DB writes, no Q001/Q002, UX or AAL2 changes. The benchmark only calls the local bridge /ai/chat and status endpoints."
+  },
+  "owner_acceptance": {
+    "phase_2": "OWNER ACCEPTED - Owner MASTER TASK DIRECTIVE of 2026-09-16 (after the read-only audit and the merge of PR #250): 'PROJECT 2 PHASE 2: OWNER ACCEPTED ... represented by main @ aee0ad5'. Scope of the acceptance: the Phase 2 benchmark environment, gold datasets, test harness and BASELINE-001 become the official comparison reference for the current SINBAD architecture. It is NOT an acceptance of any measured capability and NOT an authorization for Phase 3 implementation.",
+    "phase_2_accepted_commit": "aee0ad545c6517df707c5f969269900222f6f849",
+    "phase_1": "accepted by the Owner with the authority-model correction (2026-09-15), recorded in phases.phase_1_discovery",
+    "phase_3_1_contracts": "OWNER ACCEPTED - Owner instruction 'PROJECT 2 / ACCEPTANCE CLOSURE ONLY' (2026-09-17, after the PR #253 merge report): the Phase 3.1 inert authority contract set (sinbad-ai-core/authority/*, 29 unit tests) as merged by PR #252. Scope: acceptance of the contract set as delivered; NOT an authorization to wire, execute or integrate it (wiredInto stays []).",
+    "phase_3_1_accepted_commit": "bd0c167ab15b0399086ce92eea828788535ef4fb",
+    "phase_3_1_accepted_pull_request": 252,
+    "baseline_001_rev1": "OWNER ACCEPTED - Owner instruction 'PROJECT 2 / ACCEPTANCE CLOSURE ONLY' (2026-09-17): BASELINE-001-REV-1 with scoring v1.0.1 (90 PASS / 30 PARTIAL / 28 FAIL / 4 ERROR; reproducible with tools/rescore-baseline-001.js --check) as merged by PR #253. Scope: acceptance of the scorer revision as the recommended comparison reference alongside the frozen v1.0.0 original; NOT an acceptance of any measured capability of the current system.",
+    "baseline_001_rev1_accepted_commit": "5278cdd130a0f29b485e2dd40f05f94d4ab8d4e6",
+    "baseline_001_rev1_accepted_pull_request": 253,
+    "phase_3_3_sentinel_v0": "OWNER ACCEPTED - explicit Owner statement of 2026-09-18 (after the PR #258 merge report, in answer to the acceptance request for Sentinel v0 @ 8f47edc and Gatekeeper v0 @ 0424552): '1. talep icin acik owner accepted diyorum'. Scope: Sentinel v0 (sinbad-ai-core/sentinel/*, 42 unit tests + 8 fixtures) as merged by PR #255; NOT an authorization to wire, execute or integrate it (wiredInto stays []).",
+    "phase_3_3_accepted_commit": "8f47edcd6114cd1b4b586383c141c8e814c4b7f3",
+    "phase_3_3_accepted_pull_request": 255,
+    "phase_3_4_gatekeeper_v0": "OWNER ACCEPTED - same explicit Owner statement of 2026-09-18. Scope: Gatekeeper v0 (sinbad-ai-core/gatekeeper/*, 43 unit tests incl. 20 fixtures) as merged by PR #257; NOT an authorization to wire, enforce, execute or integrate it (wiredInto stays []).",
+    "phase_3_4_accepted_commit": "0424552324709eaf6d9b04d083ee4d2a893b4ad8",
+    "phase_3_4_accepted_pull_request": 257,
+    "phase_3_5_copilot_v0": "OWNER ACCEPTED - explicit Owner statement of 2026-09-18 (after the PR #261 merge report): 'Project 2 - Phase 3.5 Co-Pilot v0 icin OWNER ACCEPTED diyorum.' Scope: only the Co-Pilot v0 implementation merged by PR #260 (sinbad-ai-core/copilot/*, 43 unit tests incl. 20 fixtures), i.e. its current inert, deterministic, verdict-only form; authoritative reference main e36c3ef, Project 2 state verified on main 7636cab. NOT a GO for wiring, live integration, the model pass, Pilot v0 or any later phase; Sentinel, Gatekeeper and Co-Pilot gain no live execution authority; wiredInto stays []. History: the MERGE GO for PR #260 had explicitly withheld acceptance; this later statement records it.",
+    "phase_3_5_accepted_commit": "e36c3ef09e0e503faef1281e4d708657a0e3de9f",
+    "phase_3_5_accepted_pull_request": 260,
+    "phase_3_5_state_verified_on": "7636cabc47f331338bf25a6fecd10298d43de4c6",
+    "phase_3_6_pilot_v0": "OWNER ACCEPTED - explicit Owner statement of 2026-09-18 (after the PR #264 merge report, in answer to the numbered request 1 for a Pilot v0 acceptance statement): '1. OWNER ACCEPTED'. Scope: only the Pilot v0 implementation merged by PR #263 (sinbad-ai-core/pilot/*, 48 unit tests incl. 24 fixtures), i.e. its current inert, deterministic, record-only, recommendation-only form; authoritative reference main 2326f3a, Project 2 state verified on main 229e6c6. NOT an authorization to wire, integrate, execute, approve or grant anything; no component gains live execution authority; wiredInto stays [].",
+    "phase_3_6_accepted_commit": "2326f3a859c9616a64572e30377fb891a07578a0",
+    "phase_3_6_accepted_pull_request": 263,
+    "phase_3_6_state_verified_on": "229e6c61e24f09bb1f141faaa104e3b3aac46153",
+    "phase_3_7_offline_chain_v0": "OWNER ACCEPTED - explicit Owner statement of 2026-09-18 (after the PR #266 merge report, which asked as its numbered request 2 for an explicit OWNER ACCEPTED statement for Offline Chain v0): '1. 2. 3. ICIN YUKARIDAKI TALEP VE ISTEKLERINI UYGUN BULUYOR VE ONAYLIYORUM. SIRAYI SEN BELIRLE'. Scope: only the Offline Chain v0 implementation merged by PR #266 (sinbad-ai-core/chain/*, 20 unit tests incl. 14 fixtures), i.e. its current inert, deterministic, offline-only rehearsal form; authoritative reference main 08b1256, Project 2 state verified on main dd42f96. NOT an authorization to wire, integrate, deliver, execute, approve or grant anything; no component gains live execution authority; wiredInto stays [].",
+    "phase_3_7_accepted_commit": "08b1256096a135bf56ad13311670a992c32daefa",
+    "phase_3_7_accepted_pull_request": 266,
+    "phase_3_7_state_verified_on": "dd42f96b5800e9c88e6c2b04db6b589bffc5b5d3",
+    "phase_3_8_record_attestation_v0": "OWNER ACCEPTED - explicit Owner statement of 2026-09-18 (after the PR #269 merge report, which asked as its numbered request 2 for an explicit OWNER ACCEPTED statement for Record Attestation v0): 'YUKARIDAKI 1. 2. VE 3. MADDELERI ONAYLIYORUM. GO'. Scope: only the Record Attestation v0 implementation merged by PR #269 (sinbad-ai-core/attest/*, 35 unit tests incl. 16 fixtures), i.e. its current inert, deterministic, origin-only form; authoritative reference main 119529d, Project 2 state verified on main 79b7157. NOT a decision on key custody or trust-store ownership, NOT an authorization to make any component require attestations, to wire, integrate, execute, approve or grant anything; AUTHENTIC confers no authority; wiredInto stays [].",
+    "phase_3_8_accepted_commit": "119529dc6a0be3b08b36f21a903b94487f1a0ccf",
+    "phase_3_8_accepted_pull_request": 269,
+    "phase_3_8_state_verified_on": "79b715782a5b77cf9244de3a07246ee3fb168fd0",
+    "phase_4_1_draft_adapter_v0": "NOT RECORDED (merged as PR #273, main 003f855; an Owner GO for a phase and a MERGE GO are not an acceptance)",
+    "phase_4_2_scorer_v102": "NOT RECORDED (merged as PR #274, main 3ca770e; an Owner GO for a phase and a MERGE GO are not an acceptance)",
+    "phase_3_remainder_and_later": "NOT RECORDED (not started)"
+  },
+  "baseline_freeze": {
+    "baseline": "BASELINE-001 - CURRENT SINBAD AS-IS",
+    "status": "FROZEN 2026-09-17 (Owner MASTER TASK DIRECTIVE 2026-09-16, TASK B)",
+    "record": "docs/project2/BASELINE-001_FREEZE.json (31 frozen files with sha256, run identities, runtime identity, limitations, unresolved findings, truth-state labels, revision policy) and docs/project2/BASELINE-001_FREEZE.md",
+    "enforcement": "tests/baseline-001-freeze.test.js (part of npm test / CI verify) fails if any frozen file changes or the combined totals drift",
+    "revision_policy": "immutable; corrections only as separately identified revisions (BASELINE-001-REV-n) with their own provenance; original files recoverable from aee0ad5"
+  },
+  "last_verified_timestamp": "2026-09-18T19:30:56Z"
+}

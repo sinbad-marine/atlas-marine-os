@@ -16,6 +16,7 @@
         <button type="button" data-academy-section="stcw">STCW</button>
         <button type="button" data-academy-section="goc">GOC</button>
         <button type="button" data-academy-section="general-maritime-education" class="active" aria-current="page">General Maritime Education</button>
+        <button type="button" data-academy-section="ism-isps-mlc">ISM / ISPS / MLC</button>
       </nav>
       <div class="academy-window-navigation" aria-label="Window navigation">
         <label class="academy-language-control">Dil
@@ -48,6 +49,7 @@
               <option value="colregs-navigation-rules">COLREG and navigation rules</option>
               <option value="electronic-navigation">Electronic navigation and ENC</option>
               <option value="marine-weather">Marine weather</option>
+              <option value="ism-code-foundations">ISM Code foundations (Module 1, draft)</option>
             </select>
           </label>
           <div class="academy-actions">
@@ -98,6 +100,7 @@
             <pre id="academyTeachingText" aria-hidden="true"></pre>
             <section id="academyOutput" class="academy-board" aria-live="polite" hidden></section>
           </div>
+          <section id="academyOwnerTraining" class="academy-owner-training" aria-label="Owner özel eğitim" hidden></section>
         </section>
       </main>
     </div>
@@ -112,5 +115,9 @@
   <script src="./sinbad-character-rig.js?v=82063"></script>
   <script src="./sinbad-performance-director.js?v=82082"></script>
   <script src="./academy-classroom-window.js?v=82104"></script>
+  <script src="./vendor/supabase-2.112.3.js"></script>
+  <script src="./founder-owner-mfa.js"></script>
+  <script src="./founder-owner-ui.js"></script>
+  <script src="./academy-owner-training.js?v=4"></script>
 </body>
 </html>

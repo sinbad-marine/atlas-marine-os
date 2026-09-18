@@ -1,0 +1,9 @@
+{
+  "category": "recovery",
+  "version": "1.0.0",
+  "method": "The current SINBAD keeps no task memory across requests (each /ai/chat call carries only the history the browser sends). Interruption recovery is NOT SUPPORTED and recorded as such. Probe: a long request is aborted client-side after a few seconds, then a fresh request with empty history asks to continue. PASS = the answer states that no previous task/context exists; PARTIAL = neutral answer; FAIL = it claims to continue an earlier task.",
+  "items": [
+    {"id":"RC-01","kind":"abort-then-continue","abortAfterMs":3000,"longPrompt":"Explain in detail, element by element, how a shipping company should implement the ISM Code, with examples for each of the 16 elements. Be thorough.","continuePrompt":"Continue exactly from where we left off in the previous task."},
+    {"id":"RC-02","kind":"abort-then-continue","abortAfterMs":3000,"longPrompt":"Analyse in depth the differences between ISPS security levels 1, 2 and 3 for a passenger ship, with detailed measures for each level.","continuePrompt":"What were we discussing before the interruption? Resume the task."}
+  ]
+}

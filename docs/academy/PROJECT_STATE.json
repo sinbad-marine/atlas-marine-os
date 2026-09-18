@@ -1,0 +1,479 @@
+{
+  "project": "SINBAD Academy ISM-ISPS-MLC Pilot",
+  "current_phase": "Phase 2 - Verified-source ingestion (pilot) + Owner-private training pilot (LIVE, 2 questions)",
+  "current_task": "Owner-private training pilot is live and verified end-to-end on production for two questions. PR #244 (merged 2026-09-14 as c6a835c) added the additive Owner-private training path (training_scope OWNER_ONLY, promotion RPC behind the academy-training edge function with AAL2 founder step-up, attempt RPC, classroom panel); PR #245 (merged 2026-09-14 as 7a4d06e, live on Pages) added the second pilot question package PILOT-002 (ISM-M1-EL4-Q002) and the four classroom-panel corrections from the Owner's live test report. On production the Owner personally imported PILOT-001 (package b513867b, 06:09Z) and PILOT-002 (package 9bf9d8d3, 20:47Z), promoted both questions to OWNER_ONLY training (19:48Z, 20:59Z; AAL2 enforcement VERIFIED on 2026-09-15 by read-only evidence review - see owner_private_training_pilot.aal2_evidence; no new TOTP prompt was shown because the session was already AAL2, which is the current implementation, not a per-operation TOTP requirement), answered both (19:51Z, 21:03Z), reloaded, and both attempts and both questions persisted. Human Review packages are untouched (both AVAILABLE, lock 0; canary OWNER_ACCEPTED lock 29); nothing is HUMAN_REVIEW_ACCEPTED; the two training rows are truthfully TECHNICALLY_VERIFIED. Owner correction of 2026-09-14 applies: Academy is private (OWNER + Owner-approved invited users), training access is separate from content governance, and the Owner's own training does not require a reviewer. HOLDs: Hat D question generation, invited-user training scopes, public access (NO), commercial (NO). Next Owner gates: Owner acceptance statement for the training pilot (NOT RECORDED), MLC batch review, any Hat D decision.",
+  "last_verified_checkpoint": "2026-09-14/15, Owner LIMITED GO \"SECOND PILOT QUESTION ONLY\" executed and reported: PR #245 merged (7a4d06e) with green post-merge Release quality (run 34892316176) and Controlled Pages release (run 34892315990); live academy.html sha256 equals main and config/ui-design-contract.json; production evidence read with read-only queries (see owner_private_training_pilot). Prior: 2026-09-14, Owner LIMITED IMPLEMENTATION GO executed: PR #244 merged (c6a835c), migration 20260914000100 applied to the rehearsal and production projects, academy-training edge function deployed (verify_jwt on, origin secret set). Prior: 2026-09-14, PR #243 merged (5946960) - previous PROJECT_STATE sync. Prior: 2026-09-13/14, Owner MERGE GO executed: 31 PRs merged sequentially to main with per-PR gates (snapshot identity, changed-file set, up-to-date with current main, green verify, squash merge, linear landing, green post-merge Release quality and Pages release). Prior: 2026-09-13, MLC Title 1-5 preparation complete (28/28 in draft PRs) after the Owner's 2026-09-12 GO on the resumption plan. Prior: 2026-09-12, Owner recovery/reconciliation pass (RECOVERY STATUS: PASS) followed by Owner Limited GO for PR #212 ARGOS reconciliation and this PROJECT_STATE synchronization. Prior checkpoints preserved rather than overwritten: 2026-09-06T13:45:45Z Chief AI GO/REVISE checkpoint; Phase 0 audit was delivered as a chat message in the Claude Code conversation on 2026-09-05, not committed to this repo as a file. No file named SINBAD_ACADEMY_ISM_ISPS_MLC_PHASE_0_AUDIT_2026-09-05.md exists in this repo - a similarly-named but unrelated file, docs/HUMAN_REVIEWER_PHASE_0_AUDIT_2026-09-03.md, does exist and should not be confused with it. No formal Phase 1/2 GO/REVISE/STOP decision has been recorded in-repo as an artifact; work has proceeded under the Owner's continuous, turn-by-turn direction in conversation instead.",
+  "state_semantics": "This file records project-wide development state with real state labels. As of 2026-09-13 the Academy series is MERGED / INTEGRATED on main. MERGED != OWNER ACCEPTED, MERGED != HUMAN REVIEW VERIFIED, MERGED != QUESTION GENERATION AUTHORIZED. Owner acceptance is recorded only when the Owner states it separately. Git history, the PILOT-*.json provenance records and actual Owner decisions are authoritative over this file wherever they differ. Since 2026-09-14: TRAINING ACCESS (training_scope NONE | OWNER_ONLY) is separate from CONTENT GOVERNANCE (verification_stage); TECHNICALLY_VERIFIED on a training row means \"copied verbatim from a Human Review package row whose technical_status is TECHNICALLY_VERIFIED\" and is NOT a Human Review pass. Owner training on a question != Human Review verification != Owner acceptance != question-generation authorization.",
+  "completed_work": [
+    "PR #212 (merged 2026-09-13, formerly branch codex/academy-ism-pilot-slice): academy_ism_* schema/RLS/tooling, additive migration, null-byte fix, plus the 2026-09-12 ARGOS integrity reconciliation commit fc2e1a069922175780cb030fab5375cabc0a7abe (three protected-file hash records updated under Owner Limited GO, PR #211 precedent), 6 commits - IMPLEMENTED / TESTED (1993 unit tests: 1976 pass, 0 fail, 17 skip; ARGOS verifier PASS, 105 protected files) / MERGED 2026-09-13 / INTEGRATED on main / NOT OWNER ACCEPTED",
+    "PR #213 (merged 2026-09-13, formerly branch codex/academy-ism-pilot-001-manifest): docs/academy/ism-master-source-manifest/PILOT-001.json - ISM Code 16/16 elements verified via GROK+GEMINI independent agreement plus primary-source cross-check, plus this PROJECT_STATE.json - IMPLEMENTED / SOURCE-VERIFIED / MERGED 2026-09-13 / INTEGRATED on main / NOT OWNER ACCEPTED",
+    "PR #213: PILOT-001-first-question-package.json - one pilot question (ISM Element 2) locally validated against the real checkIsmQuestionPayload()/validateManifest() code and against the real human_review_import_package() function via PGlite (packageComplete:true, status AVAILABLE) - not yet imported into any live Supabase project; that is the Owner's pending step below. Chief AI GO (2026-09-06) covers only this package's live review run.",
+    "PR #214 (merged 2026-09-13, formerly branch codex/academy-isps-pilot-001-manifest): docs/academy/isps-master-source-manifest/PILOT-001.json through PILOT-006.json - ISPS Code Part A Sections 1-19 (all sections, complete) verified via GROK candidate + Cowork's ClassNK primary-source cross-check, every source entry carrying verifiedBy: [GROK, PRIMARY_SOURCE_CROSSCHECK], plus Claude Code's independent supplementary re-verification on a majority of sections and several documented, unresolved variant notes (Sections 3, 4, 7, 10) retained rather than silently resolved, 7 commits - IMPLEMENTED / SOURCE-VERIFIED / MERGED 2026-09-13 / INTEGRATED on main / NOT OWNER ACCEPTED",
+    "PR #215-#223 (nine PRs, merged 2026-09-13, formerly branches codex/academy-mlc-pilot-001-manifest through -009-manifest, each one commit cut directly from origin/main 1f7d584, no shared ancestry between them): docs/academy/mlc-master-source-manifest/PILOT-001.json through PILOT-009.json - MLC 2006 Regulations 1.1 (#215), 1.2 (#216), 1.3 (#217), 2.3 (#218), 2.6 (#219), 2.7 (#220), 2.8 (#221), 4.4 (#222), 4.5 (#223), each with Regulation/Standard A/Guideline B text diffed across two 2006-original mirrors plus the ILO 2014+2016 consolidated text and an amendment-history check (verifiedBy PRIMARY_SOURCE_TRIPLE_MIRROR_DIFF + AMENDMENT_HISTORY_CROSSCHECK; PILOT-001 to -003 used the earlier two-mirror method) - IMPLEMENTED / SOURCE-VERIFIED / MERGED 2026-09-13 / INTEGRATED on main / NOT OWNER ACCEPTED. Retrospectively re-diffed against the ILO 2022 consolidated text on 2026-09-12 (docs/academy/MLC_RETRO_CHECK_2026-09-13.md): eight consistent, PILOT-008 corrected (see PR #222 below).",
+    "PR #222, second commit c8a50d4 (2026-09-13): PILOT-008.json (Regulation 4.4) corrected - the 2026-09-08 version missed the 2022 amendment to Guideline B4.4.2 (new paragraph 5, renumbering 6-9) and stated no 2022 change; regenerated from the ILO 2022 consolidated text with the four-stage diff method, wrong reading quoted inside amendmentHistory, correctionNote/correctedAt and pendingAmendments2025 (Guideline B4.4.6 paragraph 2) added - IMPLEMENTED / SOURCE-VERIFIED / MERGED 2026-09-13 / INTEGRATED on main / NOT OWNER ACCEPTED",
+    "PR #224-#242 (nineteen PRs, merged 2026-09-13, formerly branches codex/academy-mlc-pilot-010-manifest through -028-manifest, each one commit cut directly from origin/main 1f7d584, 2026-09-13): docs/academy/mlc-master-source-manifest/PILOT-010.json through PILOT-028.json - MLC 2006 Regulations 2.1 (#224), 2.2 (#225), 1.4 (#226), 2.4 (#227), 2.5 (#228), 4.1 (#229), 4.2 (#230), 4.3 (#231), 3.1 (#232), 3.2 (#233), 5.1.1 (#234), 5.1.2 (#235), 5.1.3 (#236), 5.1.4 (#237), 5.1.5 (#238), 5.1.6 (#239), 5.2.1 (#240), 5.2.2 (#241), 5.3 (#242), each built from the ILO consolidated text including the Amendments of 2014, 2016, 2018 and 2022 (published 2 October 2024) with verifiedBy PRIMARY_SOURCE_FOUR_STAGE_DIFF + AMENDMENT_TEXT_CROSSCHECK + AMENDMENT_HISTORY_CROSSCHECK, full provenance (URL, SHA-256, fetch time) inside each file, 2025 amendments recorded as pending only - IMPLEMENTED / SOURCE-VERIFIED / MERGED 2026-09-13 / INTEGRATED on main / NOT OWNER ACCEPTED",
+    "PR #213, commit 48e6198 (2026-09-13): docs/academy/MLC_BATCH_REVIEW_2026-09.md (the single consolidated review package required by the 2026-09-08 instruction, item 7), docs/academy/MLC_RETRO_CHECK_2026-09-13.md, docs/academy/mlc-master-source-manifest/SOURCES-2026-09-13.json (provenance of the eleven ILO/mirror documents) and docs/academy/mlc-master-source-manifest/verification/ (reference copies of the Python scripts, documentation only, not tooling) - IMPLEMENTED / MERGED 2026-09-13 / INTEGRATED on main / NOT OWNER ACCEPTED",
+    "2026-09-13 sequential merge of PR #212-#242 to main under the Owner's MERGE GO: 31 squash commits, linear history on top of 1f7d584 (0 multi-parent commits), every merge commit's changed-file set equal to the reviewed snapshot, ARGOS_INTEGRITY_VERIFIED (105 files) on the final main. Evidence per PR in merge_evidence. Two non-content interruptions handled without repair: (a) GitHub's update-branch reported BLOCKED instead of BEHIND under strict protection, so each branch was brought up to date with a plain local merge of main (no rebase, no content change) and, where GitHub failed to synchronize the PR head, a close/reopen of the PR; (b) PR #234's first verify run failed on a 30-second Playwright timeout in tests/browser/surface-smoke.spec.js:11 (unrelated to its one-file docs change), the Owner authorized a re-run of the identical commit, which passed. MERGED / INTEGRATED / NOT OWNER ACCEPTED",
+    "PR #243 (merged 2026-09-14 05:08Z as 5946960, branch codex/academy-project-state-sync): PROJECT_STATE.json synchronized to the merged main state after PR #212-#242 - MERGED / INTEGRATED on main",
+    "PR #244 (merged 2026-09-14 08:58Z as c6a835c, 11 files, branch codex/academy-owner-private-training): additive Owner-private training path - migration supabase/migrations/20260914000100_academy_owner_private_training.sql (training_scope, training_promoted_by/at, source_content_sha256, TECHNICALLY_VERIFIED stage value, Owner-only read policies, service_role academy_ism_owner_promote_training, authenticated academy_ism_submit_attempt), edge function supabase/functions/academy-training (AAL2 founder step-up identity.academy.training_promote), academy-owner-training.js + hidden panel in academy.html, docs/academy/OWNER_PRIVATE_TRAINING.md, PGlite/edge/UI tests; ARGOS records for the changed protected files updated under the Owner's ARGOS GO; the build-pages allowlist gained academy-owner-training.js - IMPLEMENTED / TESTED / MERGED / INTEGRATED / DEPLOYED to production (migration applied to rehearsal paiskgudruamfgzgbrij and production kcvyftrvteqmabvxfebu; function ACTIVE) / NOT OWNER ACCEPTED",
+    "PR #245 (merged 2026-09-14 20:20Z as 7a4d06e, 7 files, commits 5c24ff5 + c0d812b): docs/academy/ism-master-source-manifest/PILOT-002-second-question-package.json (one question ISM-M1-EL4-Q002 from the verified Element 4 entry IMO-ISM-A741-18-EL4; package ISM-M1-EL4-PILOT-Q2 / PILOT-002-2026-09-14; question contentSha256 c37071c91d19c3f68630c387e93b68fdaeeb711e4f2fb24f80a2707df6f78cd0, manifest contentSha256 2202205ed35fa0d09f68924488a9b8106bfefdfab81c8bfb63d44fadb21d9efc), classroom panel corrections from the Owner's live test (promotion form open by default, panel placed inside the chalkboard frame below its title, status line inside the panel, board title \"Owner özel eğitim modu\", multi-question walk with resume), config/ui-design-contract.json academy.html hash 729d9598025268edb54f5118fd97593857ed6d4ef5bec04499bde37fbda82d0e with its ARGOS record, tests/academy-owner-second-question-database.test.js; local regression 2011 tests / 2010 pass / 0 fail / 1 skip - IMPLEMENTED / TESTED / MERGED / INTEGRATED / LIVE on Pages / NOT OWNER ACCEPTED",
+    "2026-09-14 live Owner-private training run on production (Owner-operated, agent read-only): PILOT-001 imported 06:09Z (package b513867b-e4e2-4be1-9595-7a123f8bf792), ISM-M1-EL2-Q001 promoted 19:48:50Z to training row e3555f88-348f-487e-b06b-48a0f82395fb, answered 19:51:31Z (attempt ef3549cf, key A, correct, score 1); PILOT-002 imported 20:47:39Z (package 9bf9d8d3-db60-4369-90ef-2e1bfa7c9c83, audit PACKAGE_IMPORTED by OWNER), ISM-M1-EL4-Q002 promoted 20:59:53Z to training row 712624ff-97d9-48e0-8617-950e2de9b708, answered 21:03:14Z (attempt 2791b25a, key A, correct, score 1); after reload the classroom showed both questions (\"Soru 1 / 2\", \"Soru 2 / 2\", \"cevaplanan 2/2\") with one attempt listed under each - VERIFIED LIVE (see owner_private_training_pilot) / NOT a Human Review pass / NOT OWNER ACCEPTED",
+    "PR #248 (merged 2026-09-15T06:41:54Z as 11cb710, 4 files, 3 commits, branch codex/academy-classroom-module-persist, Owner Limited GO \"CLASSROOM REFRESH MODULE-SELECTION UI-STATE FIX\" 2026-09-15): academy-classroom-window.js remembers the chosen department and training module in localStorage (atlas_sinbad_academy_selection, this browser only), saved on every section switch and module change and restored at startup after validation against the ACADEMY_SECTIONS table (stale/foreign/unparseable values fall back to General Maritime Education); restore goes through the normal section switch so lesson phase, board and clock still start from welcome. tests/browser/academy-selection.spec.js (Playwright desktop + mobile, 8 passed) and structural assertions in tests/sinbad-academy-window.test.js. Two ARGOS records reconciled in two separate commits (academy-classroom-window.js 0d20fb89…, tests/sinbad-academy-window.test.js 930d1a40…), verifier ARGOS_INTEGRITY_VERIFIED on the committed bytes. Post-merge Release quality and Pages release green - IMPLEMENTED / TESTED / MERGED / INTEGRATED / LIVE on Pages / NOT OWNER ACCEPTED"
+  ],
+  "pending_work": [
+    "PR #212: the real @supabase/supabase-js network layer in tools/academy-ism-promote-accepted-package.js has never been exercised against a live Supabase project - needs manual verification before real use",
+    "Local Windows browser run (recorded on PR #212, still true after merge) (npm run test:web) on the reconciled commit: 82 passed, 2 failed; the two failures are the same hands-free Professor test (tests/browser/release-quality.spec.js:511) on desktop and mobile Chromium and reproduce identically on origin/main 1f7d584 in the same local environment. GitHub CI run 34715942840 on fc2e1a0 passed every step including 'Run desktop mobile and WCAG browser tests', so the failure is local-environment-specific, not a PR #212 regression and not present on CI - recorded here, not waived",
+    "SUPERSEDED 2026-09-14 by the Owner's private-Academy correction: PILOT-001 was imported by the Owner on production (package b513867b, 2026-09-14 06:09Z, AVAILABLE) and PILOT-002 on 20:47Z (package 9bf9d8d3, AVAILABLE); the reviewer stage and owner_finalize_package were deliberately NOT run for them because the Owner's own training does not require a reviewer. The Human Review reviewer path has still not been exercised live with a real human reviewer on a pilot package; if the Owner wants that proof it remains PENDING_OWNER_ACTION (the agent will not sign in as a reviewer or fabricate a decision).",
+    "MLC 2006 Amendments of 2025 (ILC 113, adopted 6 June 2025, expected entry into force 23 December 2027, NOT in force): nine manifests carry a pendingAmendments2025 note (Regulations 1.4, 2.4, 2.5, 3.1, 4.1, 4.3, 4.4, 5.1.5, 5.1.6). When the amendments enter into force those nine files need a new edition; nothing to do before then.",
+    "Owner batch review of the MLC series (PRs #215-#242) against docs/academy/MLC_BATCH_REVIEW_2026-09.md - PENDING_OWNER_ACTION.",
+    "Owner acceptance decision for the merged Academy content (ISM, ISPS, MLC manifests): NOT RECORDED. Merge on 2026-09-13 was repository integration only.",
+    "Next: Owner acceptance statement for the Owner-private training pilot (NOT RECORDED); Owner batch review of the MLC series against docs/academy/MLC_BATCH_REVIEW_2026-09.md; Hat D decision (HOLD); invited-user training scopes (HOLD).",
+    "Mastery/readiness for the training pilot: NOT CALCULATED (no engine exists; academy_ism_mastery and academy_ism_readiness untouched).",
+    "Invited-user training access (Owner-approved users): HOLD - not implemented; training_scope has only NONE and OWNER_ONLY.",
+    "RESOLVED 2026-09-15 (Owner Limited GO, read-only evidence review): AAL2 enforcement on the live import/promotion paths VERIFIED from auth.sessions / auth.mfa_challenges / auth.mfa_amr_claims / founder_step_up_authorizations / founder_security_audit and the edge function code on main - see owner_private_training_pilot.aal2_evidence. Not implemented and not claimed: per-operation TOTP re-entry, AAL2 freshness interval (separate Owner GO needed if desired).",
+    "RESOLVED 2026-09-15 by PR #248 (11cb710): the classroom keeps the selected department/module across a browser refresh (UI state only). Live verification by the Owner on Pages: NOT RECORDED."
+  ],
+  "resolved_decisions": [
+    "RESOLVED 2026-09-06 by Owner: title/packageSize remain an ISM-specific requirement, enforced only in tools/academy-ism-manifest-builder.js, and are deliberately NOT added to the shared config/human-review-contract.json's requiredManifestFields - widening that shared contract could affect GASM's existing import manifests (not independently verified either way), while keeping this ISM-only is zero-risk and keeps the two concerns separate. Documented inline as a code comment at the validation site, plus in PR #212's commit 8bbaabd.",
+    "Chief AI Checkpoint, 2026-09-06: explicit GO recorded for the completed pilot package (PILOT-001-first-question-package.json) and the PROJECT_STATE/audit changes in PR #213 - accepted for the Owner's own live Supabase -> Human Review -> Owner Finalization verification. Scope of the GO is explicitly bounded: it authorizes the Owner running the existing pilot package through that live loop, not any further question-generation volume (see GO_REVISE_HOLD_STOP for the exact constraint).",
+    "RESOLVED 2026-09-12 by Owner (Limited GO): PR #212's ARGOS integrity gate failure was a missing authorization record, not a defect - three protected files (academy-classroom-window.js, config/ui-design-contract.json, tests/ui-design-contract.test.js) were intentionally and legitimately changed by PR #212 (one new 'ism-isps-mlc' Academy section, its selector, and the section count 4 -> 5 in the contract test). Only their expected SHA-256 records in config/argos-integrity-policy.json were updated, in one commit (fc2e1a0), following the PR #211 precedent. HASH != TRUTH: semantic verification preceded the record update. No membership, schema, verifier, trust rule or enforcement change.",
+    "RESOLVED 2026-09-12 by Owner: this PROJECT_STATE.json is updated in place on the PR #213 branch (option A), not on a separate reconciliation branch and not after merging; every entry must carry its real state label and nothing may be marked DONE or INTEGRATED while unmerged.",
+    "RESOLVED 2026-09-13 by Owner (MERGE GO): PRs #212-#242 merged sequentially in the order #212 -> #213 -> #214 -> #215-#223 -> #224-#242, each gated on identity/content match with the reviewed snapshot, up-to-date verify, clean mergeability, linear landing and green post-merge main gates; STOP on any failure. Repository integration only - not Owner acceptance, not Human Review verification, not question-generation authorization.",
+    "RESOLVED 2026-09-14 by Owner (CORRECTION - PRIVATE ACADEMY TRAINING MODEL): the Academy is private (OWNER + Owner-approved invited users); no public access, no registration, no anonymous use, no commercial features; TRAINING ACCESS is separate from CONTENT GOVERNANCE; PILOT-001 is the Owner's own training material and the Owner's training does not require a reviewer. Human Review semantics unchanged; nothing may be marked HUMAN_REVIEW_ACCEPTED merely to make it trainable. The earlier Hat C plan (reviewer live action on PILOT-001) was superseded by this correction after Phases 1-2 (import) had passed.",
+    "RESOLVED 2026-09-14 by Owner (LIMITED IMPLEMENTATION GO - OWNER PRIVATE TRAINING PILOT ONLY): additive Owner-only training path (PR #244), production migration + edge function deployment, then the live Owner test; ARGOS GO given separately for the protected-file hash records changed by PR #244; MERGE GO for PR #244.",
+    "RESOLVED 2026-09-14 by Owner (live test report): four classroom-panel UX defects to be fixed in a PR with the live commit hash reported - done in PR #245 (7a4d06e).",
+    "RESOLVED 2026-09-14 by Owner (LIMITED GO - SECOND PILOT QUESTION ONLY): exactly one more verified question (ISM-M1-EL4-Q002) created and integrated; test flow Q001 -> Q002 -> persistence -> reload; STOP afterwards; no bulk generation. Executed and verified live (see owner_private_training_pilot)."
+  ],
+  "GO_REVISE_HOLD_STOP": "2026-09-14 Owner LIMITED GO (second pilot question only): executed; Q001 and Q002 are live Owner-only training on production and STOP applies - no third question, no bulk generation, no Hat D, no invited-user implementation without a new Owner GO. Hat C as originally planned (reviewer live action) is superseded by the Owner's private-Academy correction; the Human Review reviewer path remains unexercised live. Prior: GO (explicit Chief AI Checkpoint, 2026-09-06) for the completed pilot package - Owner will personally run it through the live Supabase -> Human Review -> Owner Finalization loop. Constraint: no question-generation volume expansion (no 2nd+ pilot question) until that live loop is completed and verified end-to-end once. 2026-09-13 Owner MERGE GO: repository integration of PR #212-#242 executed; Hat C remains HOLD pending Owner action and Hat D remains HOLD until Hat C passes end-to-end.",
+  "active_work_orders": [
+    "2026-09-08 09:23 Owner instruction: MLC 2006 full-scope Title 1-5 preparation - PREPARATION COMPLETE 2026-09-13 and MERGED 2026-09-13; awaiting the Owner's batch review/acceptance.",
+    "2026-09-12 Owner GO on the resumption plan - Hat A (PR batch) complete including merge (Hat A step 3, under the separate 2026-09-13 MERGE GO); Hat B complete; Hat C (Owner's live Human Review run) PENDING_OWNER_ACTION; Hat D HOLD.",
+    "2026-09-14 Owner correction + Limited Implementation GO + Limited GO (second question): Owner-private training pilot - COMPLETE and VERIFIED LIVE for Q001 + Q002 (PR #244, #245); awaiting the Owner's acceptance statement. Hat D HOLD; invited users HOLD."
+  ],
+  "known_defects": [
+    "FIXED in PR #212 commit 8bbaabd7908d8a685e7c6ffdef6c8c5a73706fa0 (2026-09-06): tools/academy-ism-promote-accepted-package.js's groupKey() previously joined its key fields with a literal U+0000 (null) byte, confirmed by finding a raw null byte at file offset 1669 in the committed file, which caused grep/git to treat the source file as binary. Delimiter changed to 0x1F (Unit Separator); exactly one byte differs from the prior version (verified by full-file diff), and the existing test suite passes unmodified (8/8, including the grouping test that exercises groupKey() directly). PR #212 merged to main on 2026-09-13 (3d79319); the fix is on main.",
+    "GEMINI has produced 7 independently-verified errors in amendment/resolution attribution and paragraph-history narrative across Elements 1, 2, 6, 8, 12, 13 and 14 of docs/academy/ism-master-source-manifest/PILOT-001.json (see each element's knownDiscrepancy field, or EL1's amendmentHistory field for the one recorded before that field existed). Its quoted regulatory text has been reliable in every element checked; its specific claims about which resolution or paragraph changed something have not. Recount this number directly from the file rather than trusting this note if it might be stale.",
+    "FIXED on PR #222 commit c8a50d4 (2026-09-13): docs/academy/mlc-master-source-manifest/PILOT-008.json (Regulation 4.4) as committed on 2026-09-08 missed the Amendments of 2022 to Guideline B4.4.2 (new paragraph 5, renumbering 6-9) and stated that no 2022 change existed; the 2026-09-08 check searched the amendment round by single Regulation number and missed the joint heading 'Regulations 3.1 and 4.4'. Found by the 2026-09-12 retrospective diff of all nine committed files against the ILO 2022 consolidated text; the other eight are consistent. The wrong reading is quoted inside the corrected file's amendmentHistory, not deleted.",
+    "OBSERVED 2026-09-12, not fixed, outside Academy scope: OWNER_GOVERNANCE.md is listed in config/argos-integrity-policy.json but has no 'text eol=lf' entry in .gitattributes, so on a Windows clone with core.autocrlf=true it checks out with CRLF and the local ARGOS verifier reports PROTECTED_FILE_DRIFT for it even though index and HEAD blob are identical (committed bytes are LF). CI on Linux is unaffected. Local verification on Windows must be run on exact repository bytes (e.g. a git archive export) until this is addressed under its own Owner decision.",
+    "OBSERVED 2026-09-12, not fixed, outside Academy scope: tests/browser/release-quality.spec.js:511 (hands-free Professor listen-send-answer-listen loop) fails on desktop and mobile Chromium with #handsfreeStatus stuck at 'Sorunuz alındı; Sinbad düşünüyor…' instead of reaching sleep mode, identically on origin/main 1f7d584 and on PR #212 fc2e1a0 in this environment. Cause not investigated (may be environment-dependent). Recorded so it is not attributed to any Academy PR.",
+    "OBSERVED 2026-09-13, not fixed, outside Academy scope: tests/browser/surface-smoke.spec.js:11 ('every dashboard card opens its canonical independent resizable window') ran 25 s locally and hit the 30 s Playwright test timeout once on GitHub CI (PR #234 first verify run, desktop and mobile Chromium, retry also timed out); it passed on the re-run of the identical commit and on every other run that day. Timing margin, not an Academy defect.",
+    "FIXED in PR #245 (7a4d06e, 2026-09-14): four classroom-panel UX defects from the Owner's live test of PR #244 - promotion form collapsed by default, panel text overlapping the chalkboard, status line invisible, board title stuck at \"Ders hazırlanıyor\". Verified live by the Owner on 2026-09-14 (Q002 run).",
+    "RESOLVED 2026-09-15 (not a defect): the 2026-09-15 observation that no new 6-digit AAL2 code was requested during the PILOT-002 import and the Q002 promotion was investigated under an Owner Limited GO (read-only). Result: AAL2 enforcement VERIFIED - the session was already AAL2 (TOTP verified 06:09:23Z), the issuer and both target edge functions checked AAL2 server-side on every request, and every gated operation consumed its own single-use step-up authorization; the client skips a new prompt at AAL2 by design. Per-operation TOTP re-entry and an AAL2 freshness interval are NOT implemented and NOT claimed; either needs a separate Owner GO. Original wording preserved in corrections_made_when_writing_this_file.",
+    "FIXED in PR #248 (11cb710, 2026-09-15): classroom refresh UI state - after a browser refresh the selected training module reset to General Maritime Education while Q001/Q002 data and attempts persisted correctly (UI-state issue, not a persistence failure). The department and module are now remembered per browser and restored at startup, validated against the section table. Covered by tests/browser/academy-selection.spec.js."
+  ],
+  "safety_governance_boundaries": [
+    "No direct push to main; codex/ branches + draft PRs only, per AGENTS.md",
+    "No curriculum, question, or readiness content generated from source material that has not cleared the Human Review acceptance flow (enforced at the RLS level in the academy_ism_* schema, not just by convention)",
+    "No ISM/ISPS/MLC regulatory content generated from model memory - only GROK+GEMINI output cross-checked against a directly-fetched or independently-searched primary source (ISM/ISPS), or direct multi-mirror primary-source diff with amendment-history check (MLC), with the verification method and any discrepancy documented inline, never silently resolved",
+    "GASM, the Human Reviewer system, ARGOS, Owner Console, and Core navigation/stability/voice systems are out of scope and have not been modified by this pilot; the 2026-09-12 ARGOS policy commit changed three hash records only, under explicit Owner authorization, and did not change ARGOS itself",
+    "sinbad-ai-core's Pedagogy Foundation ADRs (ADR-0036 through ADR-0040, confirmed present in this repo) describe a separate, pre-existing, deliberately inert deny-only foundation for future adaptive-learning/animation work - this pilot has not built on it, activated it, or relied on it for anything",
+    "Content stays INTERNAL PROFESSIONAL READINESS - NON-CERTIFYING; no official certificate, statutory authority or institutional approval is claimed"
+  ],
+  "ism_source_verification": "16/16 VERIFIED (PR #213, merged 2026-09-13, on main)",
+  "isps_source_verification": "1-19/19 VERIFIED (PR #214, 7 commits, merged 2026-09-13 as 269dc1e, on main) - docs/academy/isps-master-source-manifest/PILOT-001.json through PILOT-006.json. Every source entry carries verifiedBy: [GROK, PRIMARY_SOURCE_CROSSCHECK] (Cowork's ClassNK_ISPS_Code_Part_A.pdf cross-check). Claude Code additionally, independently re-verified roughly half the sections via separate web sources distinct from ClassNK; Section 14 and Section 19 were only partially independently checked (structure/key clauses, not full-text parity) due to this environment's repeated inability to fetch primary-source PDFs directly. Sections 3, 4, 7, and 10 carry documented, unresolved variantNote entries (retained, not silently resolved) - see each PILOT file for detail. Section 19's Grok candidate was specifically rejected as inaccurate and replaced with ClassNK-extracted text cross-checked against a blind third-party (ChatGPT) pass, per PR #214 commit 83dbc2f.",
+  "mlc_source_verification": {
+    "status": "28/28 Regulations (Titles 1-5) SOURCE-VERIFIED and MERGED to main 2026-09-13 (INTEGRATED, NOT Owner accepted); SOURCE HOLD cleared 2026-09-13; Title 5 reviewed",
+    "text_edition_2026_09_13": "ILO consolidated text including the Amendments of 2014, 2016, 2018 and 2022 (published 2 October 2024), the text in force at verification; authentic amendment texts of 2014 (GB.322/LILS/3), 2016 (ILC 105), 2018 (ILC 107), 2022 (ILC 110) and the 2025 ILC 113 text used as evidence. Provenance: docs/academy/mlc-master-source-manifest/SOURCES-2026-09-13.json.",
+    "retro_check_of_pilot_001_to_009": "Done 2026-09-12 against the ILO 2022 consolidated text: eight consistent, PILOT-008 (Regulation 4.4) had missed the 2022 amendment to Guideline B4.4.2 and was corrected on PR #222 (commit c8a50d4). Report: docs/academy/MLC_RETRO_CHECK_2026-09-13.md.",
+    "pending_2025_amendments": "Recorded (not blended) in PILOT-012 (1.4), -013 (2.4), -014 (2.5), -018 (3.1), -015 (4.1), -017 (4.3), -008 (4.4), -024 (5.1.5), -025 (5.1.6).",
+    "source_hold": [],
+    "source_hold_history": "2026-09-08: 1.4, 2.1, 2.2, 2.4, 2.5, 3.1, 3.2, 4.1, 4.2, 4.3 held because the 2006 mirrors and the 2014+2016 consolidated text did not carry the 2018/2022 amended text. 2026-09-12/13: released after the ILO 2022 consolidated text and the authentic amendment texts were acquired and their provenance recorded.",
+    "not_reviewed": "none",
+    "method": "PILOT-010 to -028 and the PILOT-008 correction: PRIMARY_SOURCE_FOUR_STAGE_DIFF + AMENDMENT_TEXT_CROSSCHECK + AMENDMENT_HISTORY_CROSSCHECK. PILOT-004 to -009: PRIMARY_SOURCE_TRIPLE_MIRROR_DIFF + AMENDMENT_HISTORY_CROSSCHECK; PILOT-001 to -003: two-mirror diff + amendment-history check. No GROK/GEMINI access in either session; recorded in each file's verificationMethodNote.",
+    "manifest_directory": "docs/academy/mlc-master-source-manifest/ on main: PILOT-001.json to PILOT-028.json, SOURCES-2026-09-13.json, verification/ (reference scripts)",
+    "verified_and_merged_2026_09_13": {
+      "1.1": "PR #215, PILOT-001.json",
+      "1.2": "PR #216, PILOT-002.json",
+      "1.3": "PR #217, PILOT-003.json (no Standard A1.3/Guideline B1.3 exists in the Code - structural finding, not an extraction gap)",
+      "2.3": "PR #218, PILOT-004.json",
+      "2.6": "PR #219, PILOT-005.json",
+      "2.7": "PR #220, PILOT-006.json",
+      "2.8": "PR #221, PILOT-007.json",
+      "4.4": "PR #222, PILOT-008.json",
+      "4.5": "PR #223, PILOT-009.json",
+      "1.4": "PR #226, PILOT-012.json",
+      "2.1": "PR #224, PILOT-010.json",
+      "2.2": "PR #225, PILOT-011.json",
+      "2.4": "PR #227, PILOT-013.json",
+      "2.5": "PR #228, PILOT-014.json",
+      "3.1": "PR #232, PILOT-018.json",
+      "3.2": "PR #233, PILOT-019.json",
+      "4.1": "PR #229, PILOT-015.json",
+      "4.2": "PR #230, PILOT-016.json",
+      "4.3": "PR #231, PILOT-017.json",
+      "5.1.1": "PR #234, PILOT-020.json",
+      "5.1.2": "PR #235, PILOT-021.json",
+      "5.1.3": "PR #236, PILOT-022.json",
+      "5.1.4": "PR #237, PILOT-023.json",
+      "5.1.5": "PR #238, PILOT-024.json",
+      "5.1.6": "PR #239, PILOT-025.json",
+      "5.2.1": "PR #240, PILOT-026.json",
+      "5.2.2": "PR #241, PILOT-027.json",
+      "5.3": "PR #242, PILOT-028.json"
+    }
+  },
+  "pr_212_argos_reconciliation": "DONE 2026-09-12 (Owner Limited GO): commit fc2e1a069922175780cb030fab5375cabc0a7abe on codex/academy-ism-pilot-slice, parent 8bbaabd, pushed to origin. Exactly three sha256 records changed in config/argos-integrity-policy.json: academy-classroom-window.js f3d32400.. -> d137d480.., config/ui-design-contract.json fdda9e78.. -> c6c52942.., tests/ui-design-contract.test.js 587aa2fc.. -> 3d0d5b4a... Local verification on the committed bytes: ARGOS_INTEGRITY_VERIFIED (105 protected files), contract/classroom/admission tests 35/35, full regression 1993 tests / 1976 pass / 0 fail / 17 skip. GitHub CI (Release quality, run 34715942840): SUCCESS on all 19 steps including ARGOS integrity gate, complete regression suite and browser tests. PR #212 merged 2026-09-13 as 3d79319 (first in the sequence); classification: IMPLEMENTED / TESTED / MERGED / INTEGRATED; OWNER ACCEPTED = NO.",
+  "pr_214_section_3_3_variant": "REVISED - both 'or' (authoritative, in fullText) and 'and' (rise.odessa.ua, likely transcription error) retained in the provenance record's variantNote field, not just described in the PR body. Independently confirmed present in the actual committed file, not assumed from conversation history.",
+  "live_supabase_human_review_integration_gate": "PARTIALLY EXERCISED 2026-09-14 (Owner-operated): human_review_import_package ran live twice on production (PILOT-001 -> b513867b 06:09Z, PILOT-002 -> 9bf9d8d3 20:47Z; both AVAILABLE, lock 0, package_complete). The reviewer stage and owner_finalize_package were NOT run on either pilot package (Owner correction: Owner training needs no reviewer); the only live OWNER_ACCEPTED package remains the 2026-09-03 canary. Not Phase 9.",
+  "large_scale_academy_content_generation": "HOLD (unchanged). The 2026-09-14 second pilot question was a one-question Limited GO, explicitly not bulk generation and not authorization for more.",
+  "phase_9_status": "NOT_REACHED - requires the full 22-module Academy scope, the assessment/mastery engine, DPA/CSO/Auditor simulators, and the Readiness Gate, none of which exist yet. Only Module 1 (ism-code-foundations) source verification and one locally-validated pilot question exist today.",
+  "project_status": "ACTIVE",
+  "source_verification_status": {
+    "module": "ism-code-foundations",
+    "source_document": "IMO ISM Code (resolution A.741(18) as amended)",
+    "elements_total": 16,
+    "elements_verified_and_committed": 16,
+    "elements_remaining": 0,
+    "manifest_file": "docs/academy/ism-master-source-manifest/PILOT-001.json",
+    "note": "This is a provenance/reference record only, not a database write - it does not create any academy_ism_source_manifest row, verification_stage, or question. See the manifest file's own top-level 'note' field."
+  },
+  "branch_topology": "Historical: all 31 Academy branches were cut directly from origin/main 1f7d584 with disjoint files. On 2026-09-13 they were merged sequentially (squash, linear history required by branch protection) in the order #212 -> #213 -> #214 -> #215-#223 -> #224-#242; each branch was first brought up to date with the then-current main by a plain merge commit. main after the sequence: 3713a2bf367d14f26f707e8c50980b0fdf0e3340.",
+  "relevant_PRs_commits": {
+    "PR_212": "sinbad-marine/atlas-marine-os#212 MERGED 2026-09-13 -> main 3d79319 (6 commits squashed)",
+    "PR_213": "sinbad-marine/atlas-marine-os#213 MERGED 2026-09-13 -> main c4261e1 (14 commits + update-branch merge, squashed)",
+    "PR_214": "sinbad-marine/atlas-marine-os#214 MERGED 2026-09-13 -> main 269dc1e (7 commits squashed)",
+    "PR_215_to_223": "sinbad-marine/atlas-marine-os#215-#223 MERGED 2026-09-13 -> main b57cae5, d5fa7f9, e8024aa, b8b2ffc, 2b86f26, 6147801, 7a80304, fb5f947, 489a555",
+    "PR_224_to_242": "sinbad-marine/atlas-marine-os#224-#242 MERGED 2026-09-13 -> main 97cb8a6 ... 3713a2b (see merge_evidence)",
+    "PR_243": "sinbad-marine/atlas-marine-os#243 MERGED 2026-09-14 -> main 5946960 (PROJECT_STATE sync)",
+    "PR_244": "sinbad-marine/atlas-marine-os#244 MERGED 2026-09-14 -> main c6a835c (Owner-private training path, 11 files)",
+    "PR_245": "sinbad-marine/atlas-marine-os#245 MERGED 2026-09-14 -> main 7a4d06e (PILOT-002 second question + classroom panel corrections, 7 files)",
+    "PR_248": "sinbad-marine/atlas-marine-os#248 MERGED 2026-09-15 -> main 11cb710 (classroom refresh selection persistence, 4 files)"
+  },
+  "corrections_made_when_writing_this_file": [
+    "The last_verified_checkpoint field originally supplied referenced a Phase 0 audit file that does not exist in this repo; corrected to state plainly that no such file exists and that the real audit was a conversational deliverable, not a committed artifact.",
+    "The known_defects entry about a Gemini error count originally read 'this is the eighth documented Gemini error'; recounting directly from PILOT-001.json's own fields today found 7 distinct instances, not 8 - corrected here and in PR #213's description.",
+    "An earlier version of this file stated PR #212 had '5 commits as of 2026-09-06', which was actually inaccurate at the time it was written (PR #212 had 4 commits then); it happened to become numerically correct only after a 5th commit (the null-byte fix) was separately added - noted so a future reader does not assume that earlier figure was verified when it was not.",
+    "This update kept the existing last_verified_checkpoint content instead of replacing it outright with only the new Chief AI GO/REVISE checkpoint text, since the prior content (the Phase 0 audit file correction) is still accurate and load-bearing; both are now present together.",
+    "isps_source_verification.section_4_6 is written here as Cowork's reported status, not a Claude Code confirmation - Claude Code has never received the actual Grok JSON output for ISPS Sections 4-6 and has not independently verified it, and no PILOT-002.json file exists yet (confirmed today via a fresh repo tree search, not assumed from conversation history).",
+    "2026-09-12 synchronization: the previous version (2026-09-07T13:28Z) predated all nine MLC PRs (#215-#223, 2026-09-08) and the PR #212 ARGOS reconciliation, and still described PR #212 as 5 commits; every PR number, commit count, commit hash and test count written today was read live from git and gh, not carried forward. The 'state_semantics' field was added because the Owner required that unmerged draft work never be mistaken for merged or accepted work.",
+    "2026-09-13/14 post-merge synchronization: every label changed from IN DRAFT PR / UNMERGED to MERGED / INTEGRATED was checked against gh pr view state=MERGED and the merge commit on main; OWNER ACCEPTED deliberately left at NO everywhere because no Owner acceptance statement exists.",
+    "2026-09-14/15 training-pilot synchronization: every uuid, hash, timestamp and count in owner_private_training_pilot was read from production with read-only queries and from gh/git on the day; the classroom evidence was read from the Owner's own live session. The Hat C plan entries were not deleted; they are marked superseded by the Owner's private-Academy correction so the history stays visible. Owner acceptance remains NOT RECORDED because no acceptance statement exists.",
+    "2026-09-15 REVISE of PR #246 (Owner): the first version of the training-pilot block described the promotions as done \"with AAL2\"; the Owner reported that no new 6-digit code was requested during the live flow, so every AAL2 wording that implied an observed prompt was changed to NOT VERIFIED and the two observed findings (AAL2 enforcement, classroom refresh UI state) were recorded as follow-up items. Core Q002 test accepted as PASS by the Owner; Owner acceptance of the pilot stays NOT RECORDED.",
+    "2026-09-15 AAL2 documentation sync (Owner GO): the AAL2 record was changed from NOT VERIFIED to VERIFIED on the basis of the read-only evidence review only (auth.sessions, auth.mfa_challenges, auth.mfa_amr_claims, founder_step_up_authorizations, founder_security_audit, edge function code on main). The earlier NOT VERIFIED wording is preserved in this history entry: \"no new 6-digit code was requested during the live import/promotion; whether an already-elevated session satisfied the gate or enforcement is missing has not been determined\". Resolution: the elevated session satisfied the gate and enforcement is present. No wording states that TOTP is required per operation; per-operation TOTP re-entry and an AAL2 freshness interval remain unimplemented and unclaimed. The classroom refresh UI-state follow-up is unchanged. Docs/state only: no authentication code, MFA behaviour, edge function, schema, migration, training behaviour, Human Review semantics, Hat D, invited-user, public or commercial status changed.",
+    "2026-09-15 sync after PR #248: the classroom refresh UI-state finding is marked FIXED with the merge commit 11cb710; the original observation text is preserved inside the FIXED entry. Owner acceptance of the training pilot remains NOT RECORDED; Hat D HOLD, invited users HOLD, public NO, commercial NO unchanged."
+  ],
+  "last_verified_timestamp": "2026-09-15T06:50:04Z",
+  "merge_evidence": {
+    "mainAfterSequence": "3713a2bf367d14f26f707e8c50980b0fdf0e3340",
+    "mainBeforeSequence": "1f7d584849b9cae34a21decbe00ce6c6aeaf51ed",
+    "mergeMethod": "squash (branch protection: linear history, required check verify, strict up-to-date)",
+    "perPR": {
+      "PR_212": {
+        "mergeCommit": "3d7931989a74a7f1a777980cea6bc710cd62ec04",
+        "mergedAtUtc": "2026-09-13T09:18:25.5176717Z",
+        "filesOnMain": 12,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34749287440",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34749287377"
+      },
+      "PR_213": {
+        "mergeCommit": "c4261e1774efe90304f5e4ec001901f19d1d44f2",
+        "mergedAtUtc": "2026-09-13T13:48:37.1670214Z",
+        "filesOnMain": 12,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34760866219",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34760866230"
+      },
+      "PR_214": {
+        "mergeCommit": "269dc1eb033fa9718e306cb7019f5bbf4960ed66",
+        "mergedAtUtc": "2026-09-13T14:02:31.961283Z",
+        "filesOnMain": 6,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34761503955",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34761503947"
+      },
+      "PR_215": {
+        "mergeCommit": "b57cae5dd130ebc718a7a110a62fe5b4badc899a",
+        "mergedAtUtc": "2026-09-13T14:17:04.5009618Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34762204469",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34762204486"
+      },
+      "PR_216": {
+        "mergeCommit": "d5fa7f9b060f6fafca96c2dc29450fb57e8092bb",
+        "mergedAtUtc": "2026-09-13T14:30:56.5945706Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34762876313",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34762876244"
+      },
+      "PR_217": {
+        "mergeCommit": "e8024aa0d788344ce1ff95fcb0fc8fa390f55bd4",
+        "mergedAtUtc": "2026-09-13T14:43:26.4961064Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34763474816",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34763474832"
+      },
+      "PR_218": {
+        "mergeCommit": "b8b2ffc986a6c3901df858a66197579af434af0b",
+        "mergedAtUtc": "2026-09-13T14:57:17.5516579Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34764139855",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34764139895"
+      },
+      "PR_219": {
+        "mergeCommit": "2b86f26f08ff2d5545b3e673d318506c4eb6ab54",
+        "mergedAtUtc": "2026-09-13T15:11:09.6333555Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34764826987",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34764826982"
+      },
+      "PR_220": {
+        "mergeCommit": "6147801fcde897ea08fb93cdccc72c142381a99d",
+        "mergedAtUtc": "2026-09-13T15:25:02.5889045Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34765523063",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34765523073"
+      },
+      "PR_221": {
+        "mergeCommit": "7a8030408d4778eab7de4006ad23f95722857d66",
+        "mergedAtUtc": "2026-09-13T15:39:37.4770372Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34766254985",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34766254979"
+      },
+      "PR_222": {
+        "mergeCommit": "fb5f947985db757bc6db3f09b10878d0a8cc3b10",
+        "mergedAtUtc": "2026-09-13T15:54:16.7432032Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34766974469",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34766974447"
+      },
+      "PR_223": {
+        "mergeCommit": "489a5551a557aaa00b0c28fb84b90a5c7a26c9ee",
+        "mergedAtUtc": "2026-09-13T16:08:54.313644Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34767694163",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34767694151"
+      },
+      "PR_224": {
+        "mergeCommit": "97cb8a604fabf8b5f75a971a937729252caf4986",
+        "mergedAtUtc": "2026-09-13T16:23:32.5711222Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34768425135",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34768425141"
+      },
+      "PR_225": {
+        "mergeCommit": "9762ced259e27219cf0c01c293664907d19f58a6",
+        "mergedAtUtc": "2026-09-13T16:38:10.1812677Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34769166354",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34769166386"
+      },
+      "PR_226": {
+        "mergeCommit": "2e114c9b420745484929fa07ba29b028bbe89d4b",
+        "mergedAtUtc": "2026-09-13T16:51:26.0531092Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34769822767",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34769822765"
+      },
+      "PR_227": {
+        "mergeCommit": "c829d46d0e4b067391daaf6cdad2047f8d53ee66",
+        "mergedAtUtc": "2026-09-13T17:05:22.2596863Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34770517858",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34770517892"
+      },
+      "PR_228": {
+        "mergeCommit": "5305845db78a41b77d117df59d03c3610f634c55",
+        "mergedAtUtc": "2026-09-13T17:19:19.3357767Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34771224493",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34771224518"
+      },
+      "PR_229": {
+        "mergeCommit": "2178fdd8cf82c20ebee5bd84c1fb1ee38e1e3fd3",
+        "mergedAtUtc": "2026-09-13T17:33:17.3409322Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34771930389",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34771930627"
+      },
+      "PR_230": {
+        "mergeCommit": "415f5fc9edcc65e747ae4dc8058011f8cc6eda31",
+        "mergedAtUtc": "2026-09-13T17:47:57.2749407Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34772664164",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34772664156"
+      },
+      "PR_231": {
+        "mergeCommit": "981f864d1b8e37b82f54c2bc81f6f74c2c72d3df",
+        "mergedAtUtc": "2026-09-13T18:03:14.3186711Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34773423140",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34773423217"
+      },
+      "PR_232": {
+        "mergeCommit": "a0a2886021d6b86eaf28cf7a8b0038ca095e8738",
+        "mergedAtUtc": "2026-09-13T18:17:11.9500776Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34774145549",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34774145574"
+      },
+      "PR_233": {
+        "mergeCommit": "00f849f81a0fcd6dd5ca1f548321af14345761f5",
+        "mergedAtUtc": "2026-09-13T18:32:01.4510188Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34774906980",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34774906981"
+      },
+      "PR_234": {
+        "mergeCommit": "9fdc2a7ee544ea517c59c8770b66cf3ee883111f",
+        "mergedAtUtc": "2026-09-13T20:55:12.5179497Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34782224930",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34782224929"
+      },
+      "PR_235": {
+        "mergeCommit": "56eade0ca8bf42e4e68c9f8943e2187f1b573ad6",
+        "mergedAtUtc": "2026-09-13T21:09:16.6102394Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34782940303",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34782940327"
+      },
+      "PR_236": {
+        "mergeCommit": "11f29502ee86ec68645c571164618dfcd6ae3eb1",
+        "mergedAtUtc": "2026-09-13T21:24:41.8432354Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34783729440",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34783729542"
+      },
+      "PR_237": {
+        "mergeCommit": "ff455d8dc10a996b2f696d5b42be53e35362a572",
+        "mergedAtUtc": "2026-09-13T21:39:27.6093233Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34784468796",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34784468790"
+      },
+      "PR_238": {
+        "mergeCommit": "9f5527a51b2d912d60913bd803fe69f8b91dca6f",
+        "mergedAtUtc": "2026-09-13T21:54:23.1086747Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34785177284",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34785177285"
+      },
+      "PR_239": {
+        "mergeCommit": "a5875d4e924139e21e3f4c2b3ef82045772a0975",
+        "mergedAtUtc": "2026-09-13T22:19:19.1595121Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34786431534",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34786431558"
+      },
+      "PR_240": {
+        "mergeCommit": "5da573d3798219a7799c9b35e9645082b6c48777",
+        "mergedAtUtc": "2026-09-13T22:33:55.0517473Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34787168675",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34787168660"
+      },
+      "PR_241": {
+        "mergeCommit": "90c68d40fb1cea6e89c2d60989e17898d8f18d11",
+        "mergedAtUtc": "2026-09-13T22:47:49.8317266Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34787830976",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34787830978"
+      },
+      "PR_242": {
+        "mergeCommit": "3713a2bf367d14f26f707e8c50980b0fdf0e3340",
+        "mergedAtUtc": "2026-09-13T23:01:47.6680275Z",
+        "filesOnMain": 1,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34788480485",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34788480481"
+      },
+      "PR_243": {
+        "mergeCommit": "5946960a720f315eb9d3320fbb185010950b3cb2",
+        "mergedAtUtc": "2026-09-14T05:08:18Z",
+        "filesOnMain": 1,
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34808519590"
+      },
+      "PR_244": {
+        "mergeCommit": "c6a835ca68fd7af901cb24c387adf0de59dc0169",
+        "mergedAtUtc": "2026-09-14T08:58:23Z",
+        "filesOnMain": 11,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34825442446",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34825442462"
+      },
+      "PR_245": {
+        "mergeCommit": "7a4d06e1ec0ffe568c2b68ce34cd29bd09f082de",
+        "mergedAtUtc": "2026-09-14T20:20:23Z",
+        "filesOnMain": 7,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34892316176",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34892315990"
+      },
+      "PR_248": {
+        "mergeCommit": "11cb710ad0ede7cd781073d5923edb97d1229160",
+        "mergedAtUtc": "2026-09-15T06:41:54Z",
+        "filesOnMain": 4,
+        "releaseQualityRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34938090353",
+        "pagesReleaseRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/34938090406"
+      }
+    },
+    "mainAfterTrainingPilot": "7a4d06e1ec0ffe568c2b68ce34cd29bd09f082de"
+  },
+  "owner_private_training_pilot": {
+    "status": "LIVE on production for two questions; core Owner-private training test ACCEPTED AS PASS by the Owner (2026-09-15); AAL2 enforcement VERIFIED 2026-09-15; classroom refresh UI-state follow-up FIXED by PR #248 (2026-09-15); OWNER ACCEPTANCE of the pilot = NOT RECORDED",
+    "live_code": "main 7a4d06e1ec0ffe568c2b68ce34cd29bd09f082de (PR #245) on https://sinbad-marine.github.io/atlas-marine-os/ - academy.html sha256 729d9598025268edb54f5118fd97593857ed6d4ef5bec04499bde37fbda82d0e (== config/ui-design-contract.json), academy-owner-training.js?v=4",
+    "production_project": "kcvyftrvteqmabvxfebu, workspace 3bf379f2-56c7-4687-84f8-e5537fcb7aad; migration 20260914000100 applied; edge function academy-training ACTIVE (verify_jwt on)",
+    "human_review_packages": {
+      "canary": "7f27b390-32f2-4489-bfb1-52eb33a13ebb OWNER_ACCEPTED lock 29 (unchanged)",
+      "PILOT-001": "b513867b-e4e2-4be1-9595-7a123f8bf792 ISM-M1-EL2-PILOT-Q1 / PILOT-001-2026-09-06 AVAILABLE lock 0, imported by the Owner 2026-09-14T06:09:26Z, content_sha256 c7c5aae2ba31228aab402b2686073ea26320dfcdd242362a6c608c482620645b",
+      "PILOT-002": "9bf9d8d3-db60-4369-90ef-2e1bfa7c9c83 ISM-M1-EL4-PILOT-Q2 / PILOT-002-2026-09-14 AVAILABLE lock 0, imported by the Owner 2026-09-14T20:47:39Z (human_review_audit id 37 PACKAGE_IMPORTED, actor_kind OWNER), content_sha256 2202205ed35fa0d09f68924488a9b8106bfefdfab81c8bfb63d44fadb21d9efc == repository manifest; package question ISM-M1-EL4-Q002 position 1 TECHNICALLY_VERIFIED content_sha256 c37071c91d19c3f68630c387e93b68fdaeeb711e4f2fb24f80a2707df6f78cd0 == repository manifest, evidence sourceId IMO-ISM-A741-18-EL4",
+      "note": "No review, transfer or finalize action exists in human_review_audit for either pilot package; Human Review state unchanged by training."
+    },
+    "academy_ism_questions": {
+      "count": 2,
+      "distinct_question_ids": 2,
+      "ISM-M1-EL2-Q001": "row e3555f88-348f-487e-b06b-48a0f82395fb, training_scope OWNER_ONLY, verification_stage TECHNICALLY_VERIFIED, source_content_sha256 f5c21fcee3566453ec22f788803c73e64dcbaa6151c97ec507fab79ccd0b4cb8, promoted by the Owner 2026-09-14T19:48:50Z, source manifest row 5f5c77ab-57b5-4402-b733-376377646b7e",
+      "ISM-M1-EL4-Q002": "row 712624ff-97d9-48e0-8617-950e2de9b708, training_scope OWNER_ONLY, verification_stage TECHNICALLY_VERIFIED, source_content_sha256 c37071c91d19c3f68630c387e93b68fdaeeb711e4f2fb24f80a2707df6f78cd0 (== package question hash), promoted by the Owner 2026-09-14T20:59:53Z, source manifest row 960ef5ec-9a09-467e-a5ae-c6ee6d067320",
+      "human_review_accepted_rows": 0
+    },
+    "academy_ism_attempts": {
+      "count": 2,
+      "distinct_users": 1,
+      "q001": "ef3549cf-dc88-4449-84c7-af61e2eec605 by the Owner 2026-09-14T19:51:31Z response {\"key\":\"A\"} is_correct true score 1",
+      "q002": "2791b25a-d0a3-495c-b1d2-22c74573546f by the Owner 2026-09-14T21:03:14Z response {\"key\":\"A\"} is_correct true score 1"
+    },
+    "isolation_check": "Read-only query as a foreign authenticated user (random sub, aal1): 0 questions, 0 attempts, 0 source manifest rows visible; direct select on human_review_packages denied. As anon: select on the academy tables denied.",
+    "reload_check": "Owner reloaded the live classroom; ISM / ISPS / MLC -> ISM Code foundations showed \"2 özel eğitim sorusu yüklendi (yalnız siz görebilirsiniz) · cevaplanan 2/2\", opened at \"Soru 2 / 2\" (Q002) with its one attempt listed, \"← Önceki soru\" showed \"Soru 1 / 2\" (Q001) with its one attempt listed.",
+    "classification": {
+      "q002_source_identity": "PASS - repository package hashes equal production package/question hashes; evidence sourceId IMO-ISM-A741-18-EL4",
+      "q002_promotion": "PASS - one OWNER_ONLY row, promoted by the Owner through the edge function with an AAL2 JWT and a consumed single-use step-up authorization (5ac4d542), no duplicate",
+      "attempt_persistence": "PASS - two attempt rows (Q001, Q002), both Owner, both persisted server-side",
+      "reload_persistence": "PASS - both questions and both attempts visible after reload",
+      "human_review_unchanged": "PASS - packages AVAILABLE lock 0, no review audit rows, no HUMAN_REVIEW_ACCEPTED rows",
+      "owner_only_access": "PASS - foreign user and anon see nothing",
+      "mastery_readiness": "NOT CALCULATED (out of scope)",
+      "owner_acceptance": "NOT RECORDED",
+      "aal2_enforcement": "VERIFIED (2026-09-15, read-only evidence review under Owner Limited GO) - AAL2 enforcement is present and was exercised on every gated operation of the live run: the authenticated Owner session (auth.sessions cf8e8223, aal = aal2, elevated by a TOTP challenge verified 2026-09-14T06:09:23Z on factor \"Sinbad Founder Authenticator\") carried an AAL2 JWT; the server-side step-up issuer (founder-owner-step-up) independently checked the JWT AAL level before issuing; the package-import (human-review) and academy-training promotion functions independently enforced AAL2 again before consuming; each gated operation received and consumed its own nonce-bound, command-bound, session-bound, 5-minute, single-use founder step-up authorization (PILOT-001 import c3e615a6 06:09Z; Q001 promotion 2dfb7af9 19:48Z plus six repeated-click grants 19:51-19:52Z, all consumed, one row; PILOT-002 import 9e4181ed 20:47Z; Q002 promotion 5ac4d542 20:59Z); no step_up_denied event and no rejected production step-up exists in the reviewed sequence. PROMPT SEMANTICS: AAL2 ENFORCEMENT VERIFIED does NOT mean a new TOTP prompt is required for every operation - the session had already been elevated to AAL2 at 06:09Z, so the client correctly skipped a new 6-digit prompt while that session remained AAL2 (founder-owner-ui.js verify() returns at aal2); this is consistent with the current implementation. STEP-UP SEMANTICS: session AAL2 state, the TOTP challenge/prompt, and the per-operation single-use step-up authorization are three separate controls; gated operations still used separate step-up authorizations even when no new TOTP prompt was shown. NOT IMPLEMENTED (no claim made): mandatory TOTP re-entry for every gated action; an Owner-defined AAL2 freshness / re-authentication interval - either would need a separate Owner GO and an implementation change.",
+      "classroom_refresh_ui_state": "FIXED in PR #248 (11cb710, 2026-09-15) - the selected department and module are remembered per browser and restored after refresh; data persistence had never been affected."
+    },
+    "flow_order_note": "Q001 had already been promoted and answered during the Owner's earlier live test of PR #244 (19:48Z/19:51Z, before PR #245 went live), so the Q002 run proceeded from Q002 import -> promotion -> answer -> reload; the classroom resumed at Q002 as designed.",
+    "observed_findings": [
+      "FINDING 1 (Owner, 2026-09-15) - RESOLVED 2026-09-15: no new 6-digit code was requested during the live PILOT-002 import (Owner Console) or the Q002 promotion (classroom). Read-only evidence review (Owner Limited GO) established that AAL2 enforcement is present and was exercised on every gated request and that the missing prompt is the expected client behaviour for a session already at AAL2 - see aal2_evidence. Per-operation TOTP re-entry / AAL2 freshness interval: NOT IMPLEMENTED, not claimed, separate Owner GO required if desired.",
+      "FINDING 2 (Owner, 2026-09-15) - FIXED 2026-09-15 by PR #248 (11cb710): classroom refresh UI state - the selected training module had reset to General Maritime Education after a browser refresh while the data persisted. Department/module selection is now remembered per browser (localStorage) and restored at startup after validation; lesson phase, board and clock still start from welcome. Browser tests: tests/browser/academy-selection.spec.js."
+    ],
+    "aal2_evidence": {
+      "reviewed": "2026-09-15, Owner LIMITED GO - AAL2 ENFORCEMENT EVIDENCE CHECK (READ-ONLY); code read from origin/main cf0f282; production records read with read-only Management API queries",
+      "result": "AAL2 ENFORCEMENT - VERIFIED",
+      "code_path": {
+        "client": "founder-owner-ui.js verify(): shows the 6-digit dialog only when the session is not yet aal2 (returns immediately at aal2); authorize() always requests a fresh step-up authorization per operation via founder-owner-mfa.js issueStepUp()",
+        "issuer": "supabase/functions/founder-owner-step-up/index.ts: verifies the request JWT, requires getAuthenticatorAssuranceLevel(jwt).currentLevel === \"aal2\" (403 MFA_AAL2_REQUIRED otherwise), binds the grant to the JWT session id, action, resource, command hash and nonce hash; issue_founder_step_up (service_role) writes the 5-minute grant and a step_up_issued audit row",
+        "targets": "supabase/functions/human-review/index.ts (import_package) and supabase/functions/academy-training/index.ts (promote_owner_training): requireOwnerStepUp() independently requires currentLevel === \"aal2\" on the JWT, then consume_founder_step_up (row-locked, expiry-checked, single-use, bound to the same session id / action / resource / command hash / nonce hash) and a step_up_consumed audit row; any mismatch -> 403"
+      },
+      "production_records": {
+        "mfa_factor": "8c6f2c96 totp \"Sinbad Founder Authenticator\", status verified, last_challenged_at 2026-09-14T06:09:23Z",
+        "totp_challenge": "auth.mfa_challenges f4138914 created 06:09:23.743Z, verified 06:09:23.865Z (the code the Owner entered during the PILOT-001 import)",
+        "session": "auth.sessions cf8e8223 created 2026-09-05T21:59Z (password), aal = aal2, factor 8c6f2c96, amr claims: password 2026-09-05, totp 2026-09-14T06:09:23Z; refreshed 2026-09-14T20:46:44Z with AAL2 retained",
+        "step_ups_2026_09_14": [
+          "c3e615a6 identity.human_review.package_import ISM-M1-EL2-PILOT-Q1 issued 06:09:25.67Z consumed 06:09:26.20Z",
+          "2dfb7af9 identity.academy.training_promote ISM-M1-EL2-Q001 issued 19:48:50.23Z consumed 19:48:50.78Z",
+          "9577cf59, e95c24db, af81182a, 94334ea8, 7e2b70cc, 5fa304a5 identity.academy.training_promote ISM-M1-EL2-Q001 issued 19:51:15Z-19:52:23Z, each consumed (repeated Aktar clicks; promotion RPC idempotent, still one Q001 row)",
+          "9e4181ed identity.human_review.package_import ISM-M1-EL4-PILOT-Q2 issued 20:47:39.30Z consumed 20:47:39.84Z",
+          "5ac4d542 identity.academy.training_promote ISM-M1-EL4-Q002 issued 20:59:53.45Z consumed 20:59:53.92Z"
+        ],
+        "all_bound_to_session": "cf8e8223 (every grant above carries auth_session_id cf8e8223 and principal = the Owner)",
+        "denied": "no step_up_denied event in founder_security_audit; no rejected production step-up in the reviewed sequence",
+        "new_totp_after_0609": "none on 2026-09-14"
+      },
+      "prompt_semantics": "AAL2 ENFORCEMENT VERIFIED does NOT mean NEW TOTP PROMPT REQUIRED FOR EVERY OPERATION. The live Owner session had already been elevated to AAL2 following the 06:09Z TOTP verification; the client therefore correctly skipped a new 6-digit prompt while that session remained AAL2. This behaviour is consistent with the current implementation.",
+      "step_up_semantics": "Session AAL2 state, the TOTP challenge/prompt, and the per-operation step-up authorization are separate controls. Gated operations still use separate single-use step-up authorizations even when a new TOTP prompt is not shown.",
+      "not_implemented": "Mandatory TOTP re-entry for every gated action: NOT IMPLEMENTED. Owner-defined AAL2 freshness / re-authentication interval: NOT IMPLEMENTED. Neither is claimed; either requires a separate Owner GO and an implementation change.",
+      "test_coverage_on_main": "tests/founder-owner-boundary.test.js (aal1, wrong nonce, changed command rejected before the RPC), tests/founder-owner-mfa.test.js (issuer requires aal2), tests/academy-training-edge.test.js (structural: getAuthenticatorAssuranceLevel + consume_founder_step_up present), tests/browser/owner-verification.spec.js (dialog at aal1, skipped at aal2). academy-training has no dedicated aal1 handler test of its own."
+    }
+  }
+}

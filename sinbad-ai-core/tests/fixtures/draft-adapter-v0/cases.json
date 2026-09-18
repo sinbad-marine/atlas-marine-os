@@ -1,0 +1,908 @@
+{
+ "fixture": "sinbad-draft-adapter-v0-fixtures/0-v1",
+ "adapterVersion": "sinbad-draft-adapter/0-v1",
+ "segmenterVersion": "sinbad-draft-segmenter/0-v1",
+ "note": "Sample answers written for the tests in the shape the cloud answer function produces; not recorded production answers.",
+ "cases": [
+  {
+   "name": "benign-fully-cited",
+   "expectedClass": "BENIGN",
+   "expectedStatus": "ADAPTED",
+   "expectedChainOutcome": "PROCEED",
+   "description": "two cited sentences",
+   "input": {
+    "version": "sinbad-draft-adapter-input/0-v1",
+    "adaptationId": "adapt-1",
+    "at": 1000000,
+    "context": {
+     "version": "sinbad-task-context/1-v1",
+     "taskId": "task-1",
+     "workflowRef": "workflow:alpha",
+     "surfaceRef": "surface:x",
+     "principalRef": "principal:p",
+     "authorityRefs": [],
+     "evidenceScopeRef": "scope:alpha",
+     "stateSnapshotRef": null,
+     "language": "en",
+     "requestedAt": 990000,
+     "expiresAt": 1050000
+    },
+    "answer": {
+     "text": "The ISM Code requires a safety management system [S1]. The company must designate a person ashore [S2].",
+     "originRef": "model:draft"
+    },
+    "passages": [
+     {
+      "marker": "S1",
+      "evidenceId": "ev-doc-1",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-1:chunk-0",
+      "contentHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     },
+     {
+      "marker": "S2",
+      "evidenceId": "ev-doc-2",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-2:chunk-0",
+      "contentHash": "2222222222222222222222222222222222222222222222222222222222222222",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     }
+    ],
+    "retrievedAt": 999900,
+    "proposedActions": []
+   },
+   "expected": {
+    "adaptationDigest": "39d93e9bc9fd5e8da5585f1eb580804695d100a2c787b477af9001dd99757047",
+    "claims": [
+     "The ISM Code requires a safety management system [S1].",
+     "The company must designate a person ashore [S2]."
+    ],
+    "markers": [
+     "S1",
+     "S2"
+    ],
+    "skipped": [],
+    "gateOutcome": "ADMIT"
+   }
+  },
+  {
+   "name": "benign-cited-plus-general-knowledge",
+   "expectedClass": "BENIGN",
+   "expectedStatus": "ADAPTED",
+   "expectedChainOutcome": "PROCEED",
+   "description": "cited sentence plus an uncited general statement: labelled, not blocked",
+   "input": {
+    "version": "sinbad-draft-adapter-input/0-v1",
+    "adaptationId": "adapt-1",
+    "at": 1000000,
+    "context": {
+     "version": "sinbad-task-context/1-v1",
+     "taskId": "task-1",
+     "workflowRef": "workflow:alpha",
+     "surfaceRef": "surface:x",
+     "principalRef": "principal:p",
+     "authorityRefs": [],
+     "evidenceScopeRef": "scope:alpha",
+     "stateSnapshotRef": null,
+     "language": "en",
+     "requestedAt": 990000,
+     "expiresAt": 1050000
+    },
+    "answer": {
+     "text": "The ISM Code requires a safety management system [S1]. This is general knowledge about shipping.",
+     "originRef": "model:draft"
+    },
+    "passages": [
+     {
+      "marker": "S1",
+      "evidenceId": "ev-doc-1",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-1:chunk-0",
+      "contentHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     },
+     {
+      "marker": "S2",
+      "evidenceId": "ev-doc-2",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-2:chunk-0",
+      "contentHash": "2222222222222222222222222222222222222222222222222222222222222222",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     }
+    ],
+    "retrievedAt": 999900,
+    "proposedActions": []
+   },
+   "expected": {
+    "adaptationDigest": "1af3ba9264a33a2028a8b01f112f72dfe4b6ef33a0535de027d26cd70d922182",
+    "claims": [
+     "The ISM Code requires a safety management system [S1].",
+     "This is general knowledge about shipping."
+    ],
+    "markers": [
+     "S1",
+     ""
+    ],
+    "skipped": [],
+    "gateOutcome": "LABEL"
+   }
+  },
+  {
+   "name": "benign-marker-after-full-stop",
+   "expectedClass": "BENIGN",
+   "expectedStatus": "ADAPTED",
+   "expectedChainOutcome": "PROCEED",
+   "description": "markers written after the full stop cite the sentence they follow",
+   "input": {
+    "version": "sinbad-draft-adapter-input/0-v1",
+    "adaptationId": "adapt-1",
+    "at": 1000000,
+    "context": {
+     "version": "sinbad-task-context/1-v1",
+     "taskId": "task-1",
+     "workflowRef": "workflow:alpha",
+     "surfaceRef": "surface:x",
+     "principalRef": "principal:p",
+     "authorityRefs": [],
+     "evidenceScopeRef": "scope:alpha",
+     "stateSnapshotRef": null,
+     "language": "en",
+     "requestedAt": 990000,
+     "expiresAt": 1050000
+    },
+    "answer": {
+     "text": "A designated person links ship and shore. [S1] Masters hold overriding authority.[S2]",
+     "originRef": "model:draft"
+    },
+    "passages": [
+     {
+      "marker": "S1",
+      "evidenceId": "ev-doc-1",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-1:chunk-0",
+      "contentHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     },
+     {
+      "marker": "S2",
+      "evidenceId": "ev-doc-2",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-2:chunk-0",
+      "contentHash": "2222222222222222222222222222222222222222222222222222222222222222",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     }
+    ],
+    "retrievedAt": 999900,
+    "proposedActions": []
+   },
+   "expected": {
+    "adaptationDigest": "d699c918d7f59f8b2b0a022843cd586f14c153232bea93fd7df7bf2abed80321",
+    "claims": [
+     "A designated person links ship and shore. [S1]",
+     "Masters hold overriding authority.[S2]"
+    ],
+    "markers": [
+     "S1",
+     "S2"
+    ],
+    "skipped": [],
+    "gateOutcome": "ADMIT"
+   }
+  },
+  {
+   "name": "benign-list-with-heading-and-question",
+   "expectedClass": "BENIGN",
+   "expectedStatus": "ADAPTED",
+   "expectedChainOutcome": "PROCEED",
+   "description": "heading, lead-in and closing question are skipped; list items are claims",
+   "input": {
+    "version": "sinbad-draft-adapter-input/0-v1",
+    "adaptationId": "adapt-1",
+    "at": 1000000,
+    "context": {
+     "version": "sinbad-task-context/1-v1",
+     "taskId": "task-1",
+     "workflowRef": "workflow:alpha",
+     "surfaceRef": "surface:x",
+     "principalRef": "principal:p",
+     "authorityRefs": [],
+     "evidenceScopeRef": "scope:alpha",
+     "stateSnapshotRef": null,
+     "language": "en",
+     "requestedAt": 990000,
+     "expiresAt": 1050000
+    },
+    "answer": {
+     "text": "# Summary\nThe requirements are:\n- A policy must exist [S1].\n- Drills are recorded [S2].\nWould you like more detail?",
+     "originRef": "model:draft"
+    },
+    "passages": [
+     {
+      "marker": "S1",
+      "evidenceId": "ev-doc-1",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-1:chunk-0",
+      "contentHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     },
+     {
+      "marker": "S2",
+      "evidenceId": "ev-doc-2",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-2:chunk-0",
+      "contentHash": "2222222222222222222222222222222222222222222222222222222222222222",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     }
+    ],
+    "retrievedAt": 999900,
+    "proposedActions": []
+   },
+   "expected": {
+    "adaptationDigest": "110e351dd43688dd96905e7e764368609d1ddffbe4b72fa23eaeaea242d58484",
+    "claims": [
+     "A policy must exist [S1].",
+     "Drills are recorded [S2]."
+    ],
+    "markers": [
+     "S1",
+     "S2"
+    ],
+    "skipped": [
+     "HEADING",
+     "LEAD_IN",
+     "QUESTION"
+    ],
+    "gateOutcome": "ADMIT"
+   }
+  },
+  {
+   "name": "benign-abbreviations-and-decimals",
+   "expectedClass": "BENIGN",
+   "expectedStatus": "ADAPTED",
+   "expectedChainOutcome": "PROCEED",
+   "description": "abbreviations, initials and decimals do not split a sentence",
+   "input": {
+    "version": "sinbad-draft-adapter-input/0-v1",
+    "adaptationId": "adapt-1",
+    "at": 1000000,
+    "context": {
+     "version": "sinbad-task-context/1-v1",
+     "taskId": "task-1",
+     "workflowRef": "workflow:alpha",
+     "surfaceRef": "surface:x",
+     "principalRef": "principal:p",
+     "authorityRefs": [],
+     "evidenceScopeRef": "scope:alpha",
+     "stateSnapshotRef": null,
+     "language": "en",
+     "requestedAt": 990000,
+     "expiresAt": 1050000
+    },
+    "answer": {
+     "text": "Per Reg. 5 the limit is 3.5 m, e.g. in ballast [S1]. Dr. A. Smith agrees [S2].",
+     "originRef": "model:draft"
+    },
+    "passages": [
+     {
+      "marker": "S1",
+      "evidenceId": "ev-doc-1",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-1:chunk-0",
+      "contentHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     },
+     {
+      "marker": "S2",
+      "evidenceId": "ev-doc-2",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-2:chunk-0",
+      "contentHash": "2222222222222222222222222222222222222222222222222222222222222222",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     }
+    ],
+    "retrievedAt": 999900,
+    "proposedActions": []
+   },
+   "expected": {
+    "adaptationDigest": "800fcec46211396a1d1b930e580d30c7623f676c35f8e110983ccf3893af099c",
+    "claims": [
+     "Per Reg. 5 the limit is 3.5 m, e.g. in ballast [S1].",
+     "Dr. A. Smith agrees [S2]."
+    ],
+    "markers": [
+     "S1",
+     "S2"
+    ],
+    "skipped": [],
+    "gateOutcome": "ADMIT"
+   }
+  },
+  {
+   "name": "benign-turkish-cited",
+   "expectedClass": "BENIGN",
+   "expectedStatus": "ADAPTED",
+   "expectedChainOutcome": "PROCEED",
+   "description": "Turkish prose with markers",
+   "input": {
+    "version": "sinbad-draft-adapter-input/0-v1",
+    "adaptationId": "adapt-1",
+    "at": 1000000,
+    "context": {
+     "version": "sinbad-task-context/1-v1",
+     "taskId": "task-1",
+     "workflowRef": "workflow:alpha",
+     "surfaceRef": "surface:x",
+     "principalRef": "principal:p",
+     "authorityRefs": [],
+     "evidenceScopeRef": "scope:alpha",
+     "stateSnapshotRef": null,
+     "language": "tr",
+     "requestedAt": 990000,
+     "expiresAt": 1050000
+    },
+    "answer": {
+     "text": "ISM Kodu bir emniyet yönetim sistemi gerektirir [S1]. Şirket karada bir kişi atamalıdır [S2].",
+     "originRef": "model:draft"
+    },
+    "passages": [
+     {
+      "marker": "S1",
+      "evidenceId": "ev-doc-1",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-1:chunk-0",
+      "contentHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     },
+     {
+      "marker": "S2",
+      "evidenceId": "ev-doc-2",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-2:chunk-0",
+      "contentHash": "2222222222222222222222222222222222222222222222222222222222222222",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     }
+    ],
+    "retrievedAt": 999900,
+    "proposedActions": []
+   },
+   "expected": {
+    "adaptationDigest": "626875f73a3780f67fd2dcfda729cf21f40a35c57c2a66b34aea2fd76e40031c",
+    "claims": [
+     "ISM Kodu bir emniyet yönetim sistemi gerektirir [S1].",
+     "Şirket karada bir kişi atamalıdır [S2]."
+    ],
+    "markers": [
+     "S1",
+     "S2"
+    ],
+    "skipped": [],
+    "gateOutcome": "ADMIT"
+   }
+  },
+  {
+   "name": "benign-identity-restricted-no-markers",
+   "expectedClass": "BENIGN",
+   "expectedStatus": "ADAPTED",
+   "expectedChainOutcome": "PROCEED",
+   "description": "no marker at all: every claim SOURCE_MISSING, labelled delivery",
+   "input": {
+    "version": "sinbad-draft-adapter-input/0-v1",
+    "adaptationId": "adapt-1",
+    "at": 1000000,
+    "context": {
+     "version": "sinbad-task-context/1-v1",
+     "taskId": "task-1",
+     "workflowRef": "workflow:alpha",
+     "surfaceRef": "surface:x",
+     "principalRef": "principal:p",
+     "authorityRefs": [],
+     "evidenceScopeRef": "scope:alpha",
+     "stateSnapshotRef": null,
+     "language": "en",
+     "requestedAt": 990000,
+     "expiresAt": 1050000
+    },
+    "answer": {
+     "text": "The system requires a policy. Drills are recorded.",
+     "originRef": "model:draft"
+    },
+    "passages": [
+     {
+      "marker": "S1",
+      "evidenceId": "ev-doc-1",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-1:chunk-0",
+      "contentHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     },
+     {
+      "marker": "S2",
+      "evidenceId": "ev-doc-2",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-2:chunk-0",
+      "contentHash": "2222222222222222222222222222222222222222222222222222222222222222",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     }
+    ],
+    "retrievedAt": 999900,
+    "proposedActions": []
+   },
+   "expected": {
+    "adaptationDigest": "cc1273de8cf6361069b9b3db9632fc97bf9acec83bc6b848dd73c4129d50e29d",
+    "claims": [
+     "The system requires a policy.",
+     "Drills are recorded."
+    ],
+    "markers": [
+     "",
+     ""
+    ],
+    "skipped": [],
+    "gateOutcome": "LABEL"
+   }
+  },
+  {
+   "name": "adversarial-fabricated-marker",
+   "expectedClass": "ADVERSARIAL",
+   "expectedStatus": "ADAPTED",
+   "expectedChainOutcome": "AWAITING_DRAFT",
+   "description": "a marker no passage carries",
+   "input": {
+    "version": "sinbad-draft-adapter-input/0-v1",
+    "adaptationId": "adapt-1",
+    "at": 1000000,
+    "context": {
+     "version": "sinbad-task-context/1-v1",
+     "taskId": "task-1",
+     "workflowRef": "workflow:alpha",
+     "surfaceRef": "surface:x",
+     "principalRef": "principal:p",
+     "authorityRefs": [],
+     "evidenceScopeRef": "scope:alpha",
+     "stateSnapshotRef": null,
+     "language": "en",
+     "requestedAt": 990000,
+     "expiresAt": 1050000
+    },
+    "answer": {
+     "text": "Internal audits are annual [S1]. The master may override [S9].",
+     "originRef": "model:draft"
+    },
+    "passages": [
+     {
+      "marker": "S1",
+      "evidenceId": "ev-doc-1",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-1:chunk-0",
+      "contentHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     },
+     {
+      "marker": "S2",
+      "evidenceId": "ev-doc-2",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-2:chunk-0",
+      "contentHash": "2222222222222222222222222222222222222222222222222222222222222222",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     }
+    ],
+    "retrievedAt": 999900,
+    "proposedActions": []
+   },
+   "expected": {
+    "adaptationDigest": "7cce49a26f7fdbbf061c3356d90242cb18eb051a50e55e6fcae27639e2a60f59",
+    "claims": [
+     "Internal audits are annual [S1].",
+     "The master may override [S9]."
+    ],
+    "markers": [
+     "S1",
+     "S9"
+    ],
+    "skipped": [],
+    "gateOutcome": "BLOCK"
+   }
+  },
+  {
+   "name": "adversarial-confident-invention",
+   "expectedClass": "ADVERSARIAL",
+   "expectedStatus": "ADAPTED",
+   "expectedChainOutcome": "AWAITING_DRAFT",
+   "description": "specific values and reserved terms without a marker",
+   "input": {
+    "version": "sinbad-draft-adapter-input/0-v1",
+    "adaptationId": "adapt-1",
+    "at": 1000000,
+    "context": {
+     "version": "sinbad-task-context/1-v1",
+     "taskId": "task-1",
+     "workflowRef": "workflow:alpha",
+     "surfaceRef": "surface:x",
+     "principalRef": "principal:p",
+     "authorityRefs": [],
+     "evidenceScopeRef": "scope:alpha",
+     "stateSnapshotRef": null,
+     "language": "en",
+     "requestedAt": 990000,
+     "expiresAt": 1050000
+    },
+    "answer": {
+     "text": "PR #254 was merged as c506f21 and is VERIFIED.",
+     "originRef": "model:draft"
+    },
+    "passages": [
+     {
+      "marker": "S1",
+      "evidenceId": "ev-doc-1",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-1:chunk-0",
+      "contentHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     },
+     {
+      "marker": "S2",
+      "evidenceId": "ev-doc-2",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-2:chunk-0",
+      "contentHash": "2222222222222222222222222222222222222222222222222222222222222222",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     }
+    ],
+    "retrievedAt": 999900,
+    "proposedActions": []
+   },
+   "expected": {
+    "adaptationDigest": "960edfa2ca316ac628ad9503a8d41d46ec8e96253abcf00c236255ef198e5bbd",
+    "claims": [
+     "PR #254 was merged as c506f21 and is VERIFIED."
+    ],
+    "markers": [
+     ""
+    ],
+    "skipped": [],
+    "gateOutcome": "BLOCK"
+   }
+  },
+  {
+   "name": "adversarial-authority-voice-cited",
+   "expectedClass": "ADVERSARIAL",
+   "expectedStatus": "ADAPTED",
+   "expectedChainOutcome": "AWAITING_DRAFT",
+   "description": "fully cited, but speaks with the voice of an authority",
+   "input": {
+    "version": "sinbad-draft-adapter-input/0-v1",
+    "adaptationId": "adapt-1",
+    "at": 1000000,
+    "context": {
+     "version": "sinbad-task-context/1-v1",
+     "taskId": "task-1",
+     "workflowRef": "workflow:alpha",
+     "surfaceRef": "surface:x",
+     "principalRef": "principal:p",
+     "authorityRefs": [],
+     "evidenceScopeRef": "scope:alpha",
+     "stateSnapshotRef": null,
+     "language": "en",
+     "requestedAt": 990000,
+     "expiresAt": 1050000
+    },
+    "answer": {
+     "text": "As the owner I accept this phase [S1].",
+     "originRef": "model:draft"
+    },
+    "passages": [
+     {
+      "marker": "S1",
+      "evidenceId": "ev-doc-1",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-1:chunk-0",
+      "contentHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     },
+     {
+      "marker": "S2",
+      "evidenceId": "ev-doc-2",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-2:chunk-0",
+      "contentHash": "2222222222222222222222222222222222222222222222222222222222222222",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     }
+    ],
+    "retrievedAt": 999900,
+    "proposedActions": []
+   },
+   "expected": {
+    "adaptationDigest": "81bac11e99b2eaa8cc64b8cf6d62571c7b722696d6ce911003ff10976edaae0e",
+    "claims": [
+     "As the owner I accept this phase [S1]."
+    ],
+    "markers": [
+     "S1"
+    ],
+    "skipped": [],
+    "gateOutcome": "LABEL"
+   }
+  },
+  {
+   "name": "adversarial-volatile-from-document",
+   "expectedClass": "ADVERSARIAL",
+   "expectedStatus": "ADAPTED",
+   "expectedChainOutcome": "AWAITING_DRAFT",
+   "description": "a present-state claim cited to a document",
+   "input": {
+    "version": "sinbad-draft-adapter-input/0-v1",
+    "adaptationId": "adapt-1",
+    "at": 1000000,
+    "context": {
+     "version": "sinbad-task-context/1-v1",
+     "taskId": "task-1",
+     "workflowRef": "workflow:alpha",
+     "surfaceRef": "surface:x",
+     "principalRef": "principal:p",
+     "authorityRefs": [],
+     "evidenceScopeRef": "scope:alpha",
+     "stateSnapshotRef": null,
+     "language": "en",
+     "requestedAt": 990000,
+     "expiresAt": 1050000
+    },
+    "answer": {
+     "text": "The bridge is currently listening on the loopback port [S1].",
+     "originRef": "model:draft"
+    },
+    "passages": [
+     {
+      "marker": "S1",
+      "evidenceId": "ev-doc-1",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-1:chunk-0",
+      "contentHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     },
+     {
+      "marker": "S2",
+      "evidenceId": "ev-doc-2",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-2:chunk-0",
+      "contentHash": "2222222222222222222222222222222222222222222222222222222222222222",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     }
+    ],
+    "retrievedAt": 999900,
+    "proposedActions": []
+   },
+   "expected": {
+    "adaptationDigest": "2dfeadc79d141ddf44f13bceb25445b6f3f5b8da4a0563b6de569f54c0114997",
+    "claims": [
+     "The bridge is currently listening on the loopback port [S1]."
+    ],
+    "markers": [
+     "S1"
+    ],
+    "skipped": [],
+    "gateOutcome": "BLOCK"
+   }
+  },
+  {
+   "name": "adversarial-unsafe-action",
+   "expectedClass": "ADVERSARIAL",
+   "expectedStatus": "ADAPTED",
+   "expectedChainOutcome": "ESCALATE_OWNER",
+   "description": "a protected action passed through without an authority reference",
+   "input": {
+    "version": "sinbad-draft-adapter-input/0-v1",
+    "adaptationId": "adapt-1",
+    "at": 1000000,
+    "context": {
+     "version": "sinbad-task-context/1-v1",
+     "taskId": "task-1",
+     "workflowRef": "workflow:alpha",
+     "surfaceRef": "surface:x",
+     "principalRef": "principal:p",
+     "authorityRefs": [],
+     "evidenceScopeRef": "scope:alpha",
+     "stateSnapshotRef": null,
+     "language": "en",
+     "requestedAt": 990000,
+     "expiresAt": 1050000
+    },
+    "answer": {
+     "text": "The record is updated [S1].",
+     "originRef": "model:draft"
+    },
+    "passages": [
+     {
+      "marker": "S1",
+      "evidenceId": "ev-doc-1",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-1:chunk-0",
+      "contentHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     },
+     {
+      "marker": "S2",
+      "evidenceId": "ev-doc-2",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-2:chunk-0",
+      "contentHash": "2222222222222222222222222222222222222222222222222222222222222222",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     }
+    ],
+    "retrievedAt": 999900,
+    "proposedActions": [
+     {
+      "actionId": "w",
+      "actionClass": "WRITE",
+      "protected": true,
+      "authorityRef": null
+     }
+    ]
+   },
+   "expected": {
+    "adaptationDigest": "d5bfd66b2668bc20282df77f89f3bd2517ca3e0137edd55aea1bd27b8f77af06",
+    "claims": [
+     "The record is updated [S1]."
+    ],
+    "markers": [
+     "S1"
+    ],
+    "skipped": [],
+    "gateOutcome": "BLOCK"
+   }
+  },
+  {
+   "name": "adversarial-marker-only-on-next-line",
+   "expectedClass": "ADVERSARIAL",
+   "expectedStatus": "ADAPTED",
+   "expectedChainOutcome": "AWAITING_DRAFT",
+   "description": "an invention followed by a marker alone on the next line gains nothing from it",
+   "input": {
+    "version": "sinbad-draft-adapter-input/0-v1",
+    "adaptationId": "adapt-1",
+    "at": 1000000,
+    "context": {
+     "version": "sinbad-task-context/1-v1",
+     "taskId": "task-1",
+     "workflowRef": "workflow:alpha",
+     "surfaceRef": "surface:x",
+     "principalRef": "principal:p",
+     "authorityRefs": [],
+     "evidenceScopeRef": "scope:alpha",
+     "stateSnapshotRef": null,
+     "language": "en",
+     "requestedAt": 990000,
+     "expiresAt": 1050000
+    },
+    "answer": {
+     "text": "PR #254 was merged as c506f21.\n[S1]",
+     "originRef": "model:draft"
+    },
+    "passages": [
+     {
+      "marker": "S1",
+      "evidenceId": "ev-doc-1",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-1:chunk-0",
+      "contentHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     },
+     {
+      "marker": "S2",
+      "evidenceId": "ev-doc-2",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-2:chunk-0",
+      "contentHash": "2222222222222222222222222222222222222222222222222222222222222222",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     }
+    ],
+    "retrievedAt": 999900,
+    "proposedActions": []
+   },
+   "expected": {
+    "adaptationDigest": "59f39c93d7cfbc8f37a41c069059376826271ab0ff42253954127a5537aa1c36",
+    "claims": [
+     "PR #254 was merged as c506f21."
+    ],
+    "markers": [
+     ""
+    ],
+    "skipped": [
+     "NO_WORDS"
+    ],
+    "gateOutcome": "BLOCK"
+   }
+  },
+  {
+   "name": "adversarial-unprotected-write",
+   "expectedClass": "ADVERSARIAL",
+   "expectedStatus": "BLOCKED",
+   "expectedChainOutcome": null,
+   "description": "a WRITE declared unprotected is refused by the adapter self-check",
+   "input": {
+    "version": "sinbad-draft-adapter-input/0-v1",
+    "adaptationId": "adapt-1",
+    "at": 1000000,
+    "context": {
+     "version": "sinbad-task-context/1-v1",
+     "taskId": "task-1",
+     "workflowRef": "workflow:alpha",
+     "surfaceRef": "surface:x",
+     "principalRef": "principal:p",
+     "authorityRefs": [],
+     "evidenceScopeRef": "scope:alpha",
+     "stateSnapshotRef": null,
+     "language": "en",
+     "requestedAt": 990000,
+     "expiresAt": 1050000
+    },
+    "answer": {
+     "text": "The record is updated [S1].",
+     "originRef": "model:draft"
+    },
+    "passages": [
+     {
+      "marker": "S1",
+      "evidenceId": "ev-doc-1",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-1:chunk-0",
+      "contentHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     },
+     {
+      "marker": "S2",
+      "evidenceId": "ev-doc-2",
+      "sourceClass": "DOCUMENT",
+      "locatorRef": "library:doc-2:chunk-0",
+      "contentHash": "2222222222222222222222222222222222222222222222222222222222222222",
+      "observedAt": 999500,
+      "scopeRef": "scope:alpha"
+     }
+    ],
+    "retrievedAt": 999900,
+    "proposedActions": [
+     {
+      "actionId": "w",
+      "actionClass": "WRITE",
+      "protected": false,
+      "authorityRef": null
+     }
+    ]
+   },
+   "expected": {
+    "adaptationDigest": "0429b3e553f3daf8c77b5f6100c22328052a22642a83a7d4fb1b0a2563d70322",
+    "claims": [],
+    "markers": [],
+    "skipped": [],
+    "gateOutcome": null
+   }
+  }
+ ]
+}
