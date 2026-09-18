@@ -22,6 +22,16 @@ test('builds an allowlisted hash-bound Pages artifact without private surfaces',
     assert.equal(bytes.length,entry.bytes,entry.path);
     assert.equal(hash(bytes),entry.sha256,entry.path);
   }
+  const yachtLockPath='assets/console-art/yacht-management-owner-lock-v1/OWNER_CANONICAL_LOCK.json';
+  const yachtLock=JSON.parse(await fsp.readFile(path.join(target,...yachtLockPath.split('/')),'utf8'));
+  const yachtCanonical=await fsp.readFile(path.join(target,...yachtLock.canonicalAsset.path.split('/')));
+  assert.equal(yachtLock.route,'/index.html?workspace=yacht-operations');
+  assert.equal(yachtCanonical.readUInt32BE(16),1280);
+  assert.equal(yachtCanonical.readUInt32BE(20),720);
+  assert.equal(hash(yachtCanonical),'8ce10be34c72eb541a6312f2cc63dba468cf38c54aad87699ebf0ccd31401d6c');
+  const releasedContract=JSON.parse(await fsp.readFile(path.join(target,'config','ui-design-contract.json'),'utf8'));
+  assert.equal(releasedContract.approvedVisualBaselines.yachtManagement.canonicalManifestSha256,hash(await fsp.readFile(path.join(target,...yachtLockPath.split('/')))));
+  for(const selected of yachtLock.selectionLock.selectedAssetSha256)assert.ok(result.files.some(entry=>entry.sha256===selected),selected);
   for(const required of ['sinbad-tutor-orchestrator.js','sinbad-tutor-controller.js'])assert.ok(result.files.some(entry=>entry.path===required),required);
   for(const required of ['store/index.html','store/app.js','store/catalog.js','store/styles.css','store/pro.css'])assert.ok(result.files.some(entry=>entry.path===required),required);
   for(const forbidden of ['bridge','sinbad-ai-core','tests','.git','.roundtable','supabase/.temp'])assert.equal(fs.existsSync(path.join(target,...forbidden.split('/'))),false,forbidden);

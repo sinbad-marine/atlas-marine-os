@@ -8,9 +8,23 @@
 <link rel="manifest" href="./manifest.webmanifest?v=8161">
 <link rel="apple-touch-icon" href="./icon-192.png?v=8155">
 <link rel="stylesheet" href="./styles.css?v=82029">
+<link rel="stylesheet" href="./console-master-style.css?v=13">
 <link rel="stylesheet" href="./vendor/ol-10.6.1.css">
 </head>
-<body class="auth-pending">
+<body class="auth-pending" data-console-art="monet">
+<svg class="console-icon-sprite" aria-hidden="true">
+  <symbol id="ci-home" viewBox="0 0 24 24"><path d="M3 11 12 3l9 8v10h-6v-7H9v7H3Z"/></symbol>
+  <symbol id="ci-yacht" viewBox="0 0 24 24"><path d="M3 16h18l-3 4H6Zm9-12v12M11 5 6 14h5m2-8 5 8h-5"/></symbol>
+  <symbol id="ci-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2.1 4.9-4.9 2.1 2.1-4.9Z"/></symbol>
+  <symbol id="ci-academy" viewBox="0 0 24 24"><path d="m3 9 9-5 9 5-9 5Zm4 2v6c3 2 7 2 10 0v-6m4-2v7"/></symbol>
+  <symbol id="ci-document" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6Zm8 0v5h4M9 12h6M9 16h6"/></symbol>
+  <symbol id="ci-technical" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3M4.9 4.9 7 7m10 10 2.1 2.1m0-14.2L17 7M7 17l-2.1 2.1"/></symbol>
+  <symbol id="ci-ai" viewBox="0 0 24 24"><path d="m12 2 1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8ZM19 16l.7 2.3L22 19l-2.3.7L19 22l-.7-2.3L16 19l2.3-.7Z"/></symbol>
+  <symbol id="ci-store" viewBox="0 0 24 24"><path d="M4 8h16l-1 13H5Zm3 0 1-5h8l1 5M9 12v2m6-2v2"/></symbol>
+  <symbol id="ci-message" viewBox="0 0 24 24"><path d="M4 5h16v12H9l-5 4Zm4 4h8m-8 4h5"/></symbol>
+  <symbol id="ci-star" viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-2.9-5.6 2.9 1.1-6.2L3 9.6l6.2-.9Z"/></symbol>
+  <symbol id="ci-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l-4 2"/></symbol>
+</svg>
 <section id="publicGateway" class="public-gateway" aria-live="polite">
   <div class="gateway-orbit"></div>
   <div class="gateway-card">
@@ -99,7 +113,7 @@
   </form>
 </dialog>
 <header class="topbar">
-<div class="brand"><div class="logo">⚓</div><div><h1>SINBAD MARINE</h1><small>Özgür Maceraperest Dostlar • Navigate Smarter. Command Better.</small></div></div>
+<div class="brand console-page-context"><div class="logo">⚓</div><div><h1>SINBAD MARINE</h1><small>Özgür Maceraperest Dostlar • Navigate Smarter. Command Better.</small></div></div>
   <div class="topbar-account-actions">
     <select id="appLanguage" class="app-language" aria-label="Application language"></select>
     <button class="account-password-button" id="openAccountPassword" type="button">Account &amp; Password</button>
@@ -107,23 +121,64 @@
   </div>
 </header>
 
+<aside class="console-sidebar" id="consoleSidebar" aria-label="SINBAD ana navigasyonu">
+  <a class="console-sidebar-brand" href="./index.html" aria-label="SINBAD ana sayfa"><span>⚓</span><strong>SINBAD</strong><small>MARINE</small></a>
+  <nav class="console-primary-nav" aria-label="Ana çalışma alanları">
+    <button class="active" type="button" data-console-home><svg class="console-icon"><use href="#ci-home"/></svg><span>Home</span></button>
+    <button type="button" data-open="yacht-operations"><svg class="console-icon"><use href="#ci-yacht"/></svg><span>Yat Yönetimi</span></button>
+    <button type="button" data-open="voyage-navigation"><svg class="console-icon"><use href="#ci-compass"/></svg><span>Seyir Planlama</span></button>
+    <button type="button" data-open-sinbad-academy><svg class="console-icon"><use href="#ci-academy"/></svg><span>SINBAD Akademi</span></button>
+    <button type="button" data-open="documents-compliance"><svg class="console-icon"><use href="#ci-document"/></svg><span>Belgeler ve Uyum</span></button>
+    <button type="button" data-open="technical-systems"><svg class="console-icon"><use href="#ci-technical"/></svg><span>Teknik Sistemler</span></button>
+    <button type="button" data-open="sinbad-ai"><svg class="console-icon"><use href="#ci-ai"/></svg><span>SINBAD AI</span></button>
+    <button type="button" data-open="store"><svg class="console-icon"><use href="#ci-store"/></svg><span>Marine Store</span></button>
+  </nav>
+  <nav class="console-secondary-nav" aria-label="Kişisel araçlar">
+    <button type="button" data-owner-console><svg class="console-icon"><use href="#ci-message"/></svg><span>Güvenli Diyalog</span><b id="consoleActionBadge">0</b></button>
+    <button type="button" data-console-favorites><svg class="console-icon"><use href="#ci-star"/></svg><span>Favorites</span></button>
+    <button type="button" data-console-recent><svg class="console-icon"><use href="#ci-clock"/></svg><span>Recent</span></button>
+    <button type="button" data-open="admin-settings"><svg class="console-icon"><use href="#ci-technical"/></svg><span>Settings</span></button>
+  </nav>
+  <p class="console-sidebar-motto">PRIVATE.<br>SECURE.<br>YOURS.</p>
+</aside>
+
+<nav class="home-canonical-hotspots" aria-label="SINBAD Home controls">
+  <a class="home-hotspot home-hotspot-home" href="./index.html" aria-label="Home"></a>
+  <button class="home-hotspot home-hotspot-recent" type="button" data-console-recent aria-label="Recent"></button>
+  <button class="home-hotspot home-hotspot-favorites" type="button" data-console-favorites aria-label="Favorites"></button>
+  <button class="home-hotspot home-hotspot-settings" type="button" data-open="admin-settings" aria-label="Settings"></button>
+  <button class="home-hotspot home-hotspot-refresh" id="homeCanonicalRefresh" type="button" aria-label="Refresh observed status"></button>
+  <button class="home-hotspot home-hotspot-menu" id="homeCanonicalMenu" type="button" aria-label="Quick actions"></button>
+  <button class="home-hotspot home-hotspot-ask" type="button" data-open="sinbad" aria-label="Ask SINBAD"></button>
+  <button class="home-hotspot home-hotspot-route" type="button" data-open="routes" aria-label="Plan Route"></button>
+  <button class="home-hotspot home-hotspot-upload" type="button" data-open="cloud-documents" aria-label="Upload Document"></button>
+</nav>
 
 <main>
+<section class="console-statusbar" aria-label="Gözlemlenen sistem durumu">
+  <span data-console-status="local"><i></i><b>LOCAL</b><small>NOT VERIFIED</small></span>
+  <span data-console-status="pc"><i></i><b>CONSOLE</b><small>UI READY</small></span>
+  <span data-console-status="cloud"><i></i><b>CLOUD</b><small>NOT VERIFIED</small></span>
+  <span data-console-status="sync"><i></i><b>SYNC</b><small>NOT VERIFIED</small></span>
+  <span data-console-status="agents"><i></i><b>AGENTS</b><small>NOT VERIFIED</small></span>
+  <span data-console-status="action"><i></i><b>ACTIONS</b><small>0</small></span>
+  <button class="console-status-refresh" id="consoleStatusRefresh" type="button">↻ Refresh <small id="consoleStatusChecked">Not checked</small></button>
+</section>
 <section class="hero">
-  <div>
-      <div class="eyebrow">ATLAS CLOUD • CLOUD-FIRST COMMAND PLATFORM</div>
-      <h2 data-i18n="heroTitle">One Bridge. Every Operation.</h2>
-      <p>Private cloud documents, nautical publications, charts, crew records and Captain Sinbad—available from every authorized device.</p>
+  <div class="home-brand-stage">
+      <img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="Sinbad Marine — A Safer Sea A Smarter Tomorrow" width="1536" height="1024">
+      <p class="home-brand-whisper">Same ocean. Brighter tomorrows.</p>
+      <p class="home-brand-pillars">PEOPLE<br>KNOWLEDGE<br>TECHNOLOGY<br>A CLEANER OCEAN</p>
     </div>
   <details class="action-menu hero-action-menu">
-    <summary><span aria-hidden="true">☰</span> Quick actions</summary>
+    <summary><span aria-hidden="true">☰</span> Hızlı işlemler</summary>
     <div class="action-menu-panel hero-actions">
-      <button class="btn primary" data-open="cloud-documents">Upload to Atlas Cloud</button>
-      <button class="btn" data-open="cloud-control">Cloud Setup &amp; Security</button>
-      <button class="btn" data-open="sinbad">Ask Captain Sinbad</button>
-      <button class="btn" data-open="location-intelligence">Use Location</button>
-      <button class="btn" data-open="camera-archive">Open Camera</button>
-      <button class="btn primary" data-open="captains-logbook">Captain's Logbook</button>
+      <button class="btn primary" data-open="cloud-documents">Atlas Cloud’a yükle</button>
+      <button class="btn" data-open="cloud-control">Cloud kurulumu ve güvenlik</button>
+      <button class="btn" data-open="sinbad">Kaptan Sinbad’a sor</button>
+      <button class="btn" data-open="location-intelligence">Konumu kullan</button>
+      <button class="btn" data-open="camera-archive">Kamerayı aç</button>
+      <button class="btn primary" data-open="captains-logbook">Kaptan günlüğü</button>
     </div>
   </details>
 </section>
@@ -133,17 +188,17 @@
   <div class="connection-main">
     <span class="live-dot" id="liveCloudDot"></span>
     <div>
-      <strong id="liveCloudTitle">Atlas Cloud is not connected</strong>
-      <small id="liveCloudSubtitle">Open Cloud Setup & Security to connect this device.</small>
+      <strong id="liveCloudTitle">Atlas Cloud bağlı değil</strong>
+      <small id="liveCloudSubtitle">Bu cihazı bağlamak için Cloud kurulumu ve güvenliği açın.</small>
     </div>
   </div>
-  <button class="btn compact" data-open="cloud-control">Configure</button>
+  <button class="btn compact" data-open="cloud-control">Yapılandır</button>
 </section>
 
 
 <details class="action-menu cloud-summary-menu">
-  <summary><span aria-hidden="true">☰</span> Atlas Cloud summary</summary>
-  <section class="summary-grid action-menu-panel" aria-label="Atlas Cloud summary">
+  <summary><span aria-hidden="true">☰</span> Atlas Cloud özeti</summary>
+  <section class="summary-grid action-menu-panel" aria-label="Atlas Cloud özeti">
     <article class="summary-card"><span>Cloud Files</span><b id="sumFiles">—</b></article>
     <article class="summary-card"><span>Publications</span><b id="sumPubs">—</b></article>
     <article class="summary-card"><span>Charts</span><b id="sumCharts">—</b></article>
@@ -152,28 +207,92 @@
 </details>
 
 
-<section class="module-grid">
-  <article class="module-card" data-open="resources"><div>🏝️</div><h3>Blue Voyage Resource Guide</h3><p>Islands, historical sites, entertainment spots, marinas, fuel docks and harbour master's offices.</p><a>Open →</a></article>
-  <article class="module-card featured-card" data-open="store"><div>🛍️</div><h3>Sinbad Marine Store</h3><p>Yacht chandlery — navigation, safety and deck equipment, curated and ready to order.</p><a>Open store →</a></article>
-  <article class="module-card featured-card" data-open="cloud-documents"><div>☁️</div><h3>Cloud Document Center</h3><p>Upload, open, download, share, rename and manage private files across devices.</p><a>Open cloud vault →</a></article>
-  <article class="module-card" data-cloud-bucket="nautical-charts"><div>🗺️</div><h3>Nautical Charts</h3><p>Private chart archive organized by country, region and chart number.</p><a>Open cloud charts →</a></article>
-  <article class="module-card" data-open="sinbad"><div>🧞‍♂️</div><h3>Captain Sinbad</h3><p>Ask questions across the owner-approved Atlas Cloud maritime corpus with grounded citations.</p><a>Open Sinbad →</a></article>
-  <article class="module-card featured-card" id="openSinbadAcademyHomeCard" data-open-sinbad-academy tabindex="0" role="button" aria-label="Sinbad Academy sınıfını ayrı pencerede aç"><div>🎓</div><h3>Sinbad Academy</h3><p>GOSS/GASM, STCW, GOC ve genel denizcilik eğitimlerini Professor Sinbad’ın bağımsız sınıfında açın.</p><a>Open Academy →</a></article>
-  <article class="module-card featured-card" data-open="studio-console"><div>🧰</div><h3>Sinbad Studio</h3><p>Offline web, software and animation workspace with approval-gated Docker verification.</p><a>Open capability console →</a></article>
-  <article class="module-card" data-open="cloud-control"><div>☁️</div><h3>Atlas Cloud Control Center</h3><p>Connect Supabase, manage workspaces, users, storage and AI status.</p><a>Open →</a></article>
-  <article class="module-card featured-card" data-open="admin-settings"><div>⚙️</div><h3>Settings &amp; Administration</h3><p>Account security, invitations, member access, developer roles and audit history.</p><a>Open settings →</a></article>
-  <article class="module-card" data-open="cloud-documents"><div>🗄️</div><h3>Cloud Document Center</h3><p>Upload and browse private documents, publications and charts.</p><a>Open →</a></article>
-  <article class="module-card" data-open="fleet"><div>🚢</div><h3>Fleet Manager</h3><p>Vessel particulars and machinery.</p><a>Open →</a></article>
-  <article class="module-card" data-open="pilot"><div>📍</div><h3>Pilot Library</h3><p>Marinas, anchorages and captain notes.</p><a>Open →</a></article>
-  <article class="module-card" data-open="routes"><div>🧭</div><h3>Route Library</h3><p>Approved passages and route workspaces.</p><a>Open →</a></article>
-  <article class="module-card" data-open="crew"><div>👥</div><h3>Crew Manager</h3><p>Crew records and expiry tracking.</p><a>Open →</a></article>
-  <article class="module-card featured-card" data-open="location-intelligence"><div>📍</div><h3>Location Intelligence</h3><p>Permission-based position service for nearby marine information.</p><a>Open location service →</a></article>
-  <article class="module-card featured-card" data-open="camera-archive"><div>📷</div><h3>Camera & Media Archive</h3><p>Capture private operational photos and videos for your workspace.</p><a>Open camera →</a></article>
-  <article class="module-card featured-card" data-open="captains-logbook"><div>🎙️</div><h3>Captain's Logbook</h3><p>Capture timestamped voice or typed draft journal entries while operations continue.</p><a>Open voice log →</a></article>
-  <article class="module-card featured-card" id="developerProjectCard" data-open="document-submissions" data-role-hidden="true"><div>💬</div><h3>Developer Project Center</h3><p>Owner ve Developer geliştirme talepleri, mesajlar, görsel/video/belge ekleri ve kontrollü onay kuyruğu.</p><span class="developer-message-badge" id="ownerDeveloperMessageCount">Yeni talep yok</span><a>Merkezi aç →</a></article>
-  <article class="module-card featured-card" data-open="enc-viewer"><div>⚓</div><h3>Sinbad ENC Viewer</h3><p>View the NOAA ENC archive as a seamless, zoomable S-52 chart.</p><a>Open visual ENC →</a></article>
+<section class="console-domain-grid" aria-label="SINBAD ana çalışma alanları">
+  <article class="console-domain-card wide card-yacht" data-open="yacht-operations" tabindex="0" role="button"><span>01 · OPERATIONS</span><div><svg class="console-icon"><use href="#ci-yacht"/></svg></div><h3>Yacht Management</h3><p>Fleet · Crew · Logbook · Media</p><a>Explore →</a></article>
+  <article class="console-domain-card wide card-voyage" data-open="voyage-navigation" tabindex="0" role="button"><span>02 · VOYAGE</span><div><svg class="console-icon"><use href="#ci-compass"/></svg></div><h3>Voyage Planning</h3><p>Routes · Charts · Weather · Pilotage</p><a>Explore →</a></article>
+  <article class="console-domain-card wide card-academy" id="openSinbadAcademyHomeCard" data-open-sinbad-academy tabindex="0" role="button" aria-label="Sinbad Academy sınıfını ayrı pencerede aç"><span>03 · KNOWLEDGE</span><div><svg class="console-icon"><use href="#ci-academy"/></svg></div><h3>SINBAD Academy</h3><p>Learn · Train · Certify · Grow</p><a>Explore →</a></article>
+  <article class="console-domain-card card-documents" data-open="documents-compliance" tabindex="0" role="button"><span>04 · ASSURANCE</span><div><svg class="console-icon"><use href="#ci-document"/></svg></div><h3>Documents &amp; Compliance</h3><p>ISM · ISPS · MLC · Audits</p><a>Explore →</a></article>
+  <article class="console-domain-card card-technical" data-open="technical-systems" tabindex="0" role="button"><span>05 · SYSTEMS</span><div><svg class="console-icon"><use href="#ci-technical"/></svg></div><h3>Technical Systems</h3><p>Support · Maintenance · Cloud · ARGOS</p><a>Explore →</a></article>
+  <article class="console-domain-card card-ai" data-open="sinbad-ai" tabindex="0" role="button"><span>06 · INTELLIGENCE</span><div><svg class="console-icon"><use href="#ci-ai"/></svg></div><h3>SINBAD AI</h3><p>Captain Sinbad · Agents · Intelligence</p><a>Explore →</a></article>
+  <article class="console-domain-card card-store" data-open="store" tabindex="0" role="button"><span>07 · SUPPLY</span><div><svg class="console-icon"><use href="#ci-store"/></svg></div><h3>Marine Store</h3><p>Equipment · Spares · Provisions</p><a>Explore →</a></article>
 </section>
 
+<section class="console-home-panels" aria-label="Kişisel erişim alanları">
+  <article id="consoleRecentPanel"><header><div><span>RECENT ACTIVITY</span><h3>Recent Activity</h3></div></header><div id="consoleRecentList" class="console-link-list"></div></article>
+  <article id="consoleFavoritesPanel" class="console-captain-dock"><header><div><span>CAPTAIN DOCK</span><h3>Captain Dock</h3></div><button class="btn compact" type="button" data-console-favorites>Favorites</button></header><div class="console-dock-actions"><button type="button" data-open="sinbad">Ask SINBAD</button><button type="button" data-open="routes">Plan Route</button><button type="button" data-open="cloud-documents">Upload Document</button></div><div id="consoleFavoritesList" class="console-link-list"></div></article>
+</section>
+
+<details class="console-all-tools">
+  <summary>Tüm mevcut araçlar <span>Mevcut işlevlerin tamamı korunur</span></summary>
+  <div class="console-tool-grid">
+    <button type="button" data-open="resources">Blue Voyage Kaynakları</button><button type="button" data-open="cloud-documents">Cloud Belge Merkezi</button><button type="button" data-cloud-bucket="nautical-charts">Cloud Haritalar</button><button type="button" data-open="sinbad">Kaptan Sinbad</button>
+    <button type="button" data-open="studio-console">Sinbad Studio</button><button type="button" data-open="cloud-control">Atlas Cloud Kontrolü</button><button type="button" data-open="admin-settings">Ayarlar ve Yönetim</button><button type="button" data-open="fleet">Filo Yöneticisi</button>
+    <button type="button" data-open="pilot">Pilot Kütüphanesi</button><button type="button" data-open="routes">Rota Kütüphanesi</button><button type="button" data-open="crew">Mürettebat</button><button type="button" data-open="location-intelligence">Konum İstihbaratı</button>
+    <button type="button" data-open="camera-archive">Kamera ve Medya</button><button type="button" data-open="captains-logbook">Kaptan Günlüğü</button><button type="button" id="developerProjectCard" data-open="document-submissions" data-role-hidden="true">Developer Project Center <span class="developer-message-badge" id="ownerDeveloperMessageCount">Yeni talep yok</span></button><button type="button" data-open="enc-viewer">SINBAD ENC Viewer</button>
+  </div>
+</details>
+
+<dialog id="consoleFavoritesDialog" class="console-favorites-dialog"><form method="dialog"><header><div><span>KİŞİSEL KISAYOLLAR</span><h2>Favorileri Yönet</h2></div><button value="cancel" aria-label="Kapat">×</button></header><div id="consoleFavoritesOptions"></div><button class="btn primary" value="done">Kaydet ve kapat</button></form></dialog>
+
+
+<section id="yacht-operations" class="workspace yacht-operations-page" data-master="rembrandt" data-owner-visual-lock="yacht-management-owner-selections-v1">
+  <header class="yacht-page-header">
+    <a class="yacht-page-brand" href="./index.html" aria-label="SINBAD ana sayfa"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE — A SAFER SEA A SMARTER TOMORROW"></a>
+    <div class="yacht-page-heading"><span>01 · OPERATIONS</span><h2>Yacht Management</h2><p>Fleet · Crew · Captain Logbook · Camera &amp; Media</p></div>
+    <nav class="yacht-page-nav" aria-label="Yat yönetimi araçları">
+      <button type="button" data-open="fleet">Fleet</button><button type="button" data-open="crew">Crew</button><button type="button" data-open="captains-logbook">Logbook</button><button type="button" data-open="camera-archive">Media</button>
+    </nav>
+  </header>
+  <div class="yacht-page-stage">
+    <article class="yacht-atmosphere-panel">
+      <img src="./assets/console-art/yacht-management-owner-selections-v1/selected/01-yacht-management-atmosphere-C.png" alt="Tersanede bakımdaki yat ve çalışan ekip">
+      <span class="yacht-art-label">01 · OPERATIONS</span>
+      <div class="yacht-atmosphere-copy"><h3>Yacht Management</h3><p>Yat, ekip, kayıt ve özel medya çalışma alanlarına tek yerden erişin.</p></div>
+    </article>
+    <div class="yacht-function-grid" aria-label="Yat yönetimi çalışma alanları">
+      <button class="yacht-function-card yacht-fleet-card" type="button" data-open="fleet">
+        <img src="./assets/console-art/yacht-management-owner-selections-v1/selected/02-fleet-and-yacht-management-B.png" alt="Limana giren üç motor yat">
+        <span><small>FLEET</small><b>Fleet &amp; Yacht Management</b><em>Tekne ayrıntıları ve makine kayıtları</em></span>
+      </button>
+      <button class="yacht-function-card yacht-crew-card" type="button" data-open="crew">
+        <img src="./assets/console-art/yacht-management-owner-selections-v1/selected/03-crew-B.png" alt="Güvertede çalışan yat mürettebatı">
+        <span><small>CREW</small><b>Crew</b><em>Kayıtlar ve süre sonu takibi</em></span>
+      </button>
+      <button class="yacht-function-card yacht-logbook-card" type="button" data-open="captains-logbook">
+        <img src="./assets/console-art/yacht-management-owner-selections-v1/selected/04-captain-logbook-B.png" alt="Kaptan günlüğü, harita ve seyir araçları">
+        <span><small>LOGBOOK</small><b>Captain Logbook</b><em>Sesli ve yazılı operasyon notları</em></span>
+      </button>
+      <button class="yacht-function-card yacht-media-card" type="button" data-open="camera-archive">
+        <img src="./assets/console-art/yacht-management-owner-selections-v1/selected/05-camera-media-archive-A.png" alt="Kamera ve özel yat medya arşivi">
+        <span><small>PRIVATE MEDIA</small><b>Camera &amp; Media Archive</b><em>Özel operasyon arşivi</em></span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<section id="voyage-navigation" class="workspace console-landing" data-master="van-gogh">
+  <div class="workspace-head"><div><div class="eyebrow">SEYİR PLANLAMA · VAN GOGH DIRECTION / HOLD</div><h2>Rotayı bilgiyle kurun</h2><p>Rotalar, haritalar, konum, kılavuzluk ve seyir kaynakları tek merkezde.</p></div><button class="btn close">Kapat</button></div>
+  <div class="console-landing-hero"><span>02 · NAVIGATION</span><h3>Hareket, rüzgâr ve yön enerjisi</h3><p>Bu alanın Van Gogh görsel katmanı Home Owner kabulünden sonra ayrı bir geçişte uygulanacaktır.</p></div>
+  <div class="console-landing-grid"><button data-open="routes"><b>Rota Kütüphanesi</b><small>Onaylı seyir çalışma alanları</small></button><button data-open="navigation-plot"><b>Seyir Plotu</b><small>Rota çizimi ve çalışma yüzeyi</small></button><button data-open="location-intelligence"><b>Konum İstihbaratı</b><small>İzinli ve kontrollü konum</small></button><button data-open="pilot"><b>Pilot Kütüphanesi</b><small>Marinalar ve kaptan notları</small></button><button data-open="resources"><b>Blue Voyage Kaynakları</b><small>Adalar, limanlar ve kıyı bilgisi</small></button><button data-open="enc-viewer"><b>ENC Viewer</b><small>Kesintisiz S-52 harita görünümü</small></button><button data-open="charts"><b>Yerel Haritalar</b><small>Mevcut harita arşivi</small></button></div>
+</section>
+
+<section id="documents-compliance" class="workspace console-landing" data-master="vermeer">
+  <div class="workspace-head"><div><div class="eyebrow">BELGELER VE UYUM · VERMEER DIRECTION / HOLD</div><h2>Kanıtı düzenli ve güvenli tutun</h2><p>Mevcut belge, yayın, harita ve gönderim araçları tek kontrollü girişten açılır.</p></div><button class="btn close">Kapat</button></div>
+  <div class="console-landing-hero"><span>04 · ASSURANCE</span><h3>Düzen, hassasiyet ve sakin ışık</h3><p>Vermeer görsel katmanı Home Owner kabulünden sonra uygulanacaktır. Bu alan var olmayan ISM, ISPS veya MLC durumlarını üretmez.</p></div>
+  <div class="console-landing-grid"><button data-open="cloud-documents"><b>Cloud Belge Merkezi</b><small>Yükle, aç, indir, paylaş ve yönet</small></button><button data-open="publications"><b>Yayınlar</b><small>Mevcut denizcilik yayınları</small></button><button data-open="charts"><b>Haritalar</b><small>Mevcut harita arşivi</small></button><button data-open="knowledge"><b>Bilgi Kütüphanesi</b><small>Onaylı içerik alanı</small></button><button data-open="documents"><b>Yerel Belgeler</b><small>Cihazdaki belge çalışma alanı</small></button><button data-open="document-submissions"><b>Kontrollü Gönderimler</b><small>Owner ve geliştirici onay kuyruğu</small></button></div>
+</section>
+
+<section id="technical-systems" class="workspace console-landing" data-master="picasso">
+  <div class="workspace-head"><div><div class="eyebrow">TEKNİK SİSTEMLER · PICASSO DIRECTION / HOLD</div><h2>Sistemleri gözlemleyin ve yönetin</h2><p>Cloud kontrolü, yönetim, Studio, ARGOS ve ayrı güvenlik sınırındaki Owner Console.</p></div><button class="btn close">Kapat</button></div>
+  <div class="console-landing-hero"><span>05 · SYSTEMS</span><h3>Disiplinli modüller ve teknik geometri</h3><p>Kontrollü Kübist görsel katman Home Owner kabulünden sonra uygulanacaktır; gerçek durumlar yalnız gözlemlenebildiğinde READY olur.</p></div>
+  <div class="console-landing-grid"><button data-owner-console><b>Owner Console</b><small>Ayrı güvenli Owner yüzeyini aç</small></button><button data-open="cloud-control"><b>Atlas Cloud Kontrolü</b><small>Bağlantı ve güvenlik</small></button><button data-open="admin-settings"><b>Ayarlar ve Yönetim</b><small>Hesap, erişim ve denetim</small></button><button data-open="studio-console"><b>Sinbad Studio</b><small>Onay kapılı üretim alanı</small></button><button data-open="sinbad" data-target-tab="argos"><b>ARGOS</b><small>Gözlemlenebilir sistem sekmesi</small></button></div>
+</section>
+
+<section id="sinbad-ai" class="workspace console-landing" data-master="dali">
+  <div class="workspace-head"><div><div class="eyebrow">SINBAD AI · SALVADOR DALÍ DIRECTION / HOLD</div><h2>İnsan, ajan ve kanıt aynı çerçevede</h2><p>Kaptan Sinbad erkek persona kimliğiyle; kaynak, sınır ve gözlemlenebilirlik ilkeleri korunarak çalışır.</p></div><button class="btn close">Kapat</button></div>
+  <div class="console-landing-hero"><span>06 · INTELLIGENCE</span><h3>Olasılık, kavram ve kontrollü hayal gücü</h3><p>Ölçülü Dalí görsel katmanı Home Owner kabulünden sonra uygulanacaktır; yanıt, kaynak ve sistem durumu birbirine karıştırılmaz.</p></div>
+  <div class="console-landing-grid"><button data-open="sinbad"><b>Kaptan Sinbad</b><small>Kaynak kontrollü AI çalışma alanı</small></button><button data-owner-console><b>Owner Ajan Diyaloğu</b><small>Ayrı güvenli konsolu aç</small></button><button data-open="sinbad" data-target-tab="argos"><b>ARGOS</b><small>Sistem gözlemi ve kontrollü eylem</small></button><button data-open-sinbad-academy><b>SINBAD Akademi</b><small>Kaptan Sinbad ile eğitim</small></button></div>
+</section>
 
 <section id="location-intelligence" class="workspace">
   <div class="workspace-head">
@@ -955,11 +1074,11 @@
     <img class="sinbad-avatar-img" src="./assets/captain-sinbad/captain-sinbad-idle-master.png" alt="">
     <span class="sinbad-status-light" aria-hidden="true"></span>
   </div>
-  <span>Ask Sinbad</span>
+  <span>Sinbad’a sor</span>
 </button>
 
 
-<footer>Sinbad Marine • Secure Marine Command Platform • One Bridge. Every Operation.</footer>
+<footer>Sinbad Marine • Güvenli Denizcilik Komuta Platformu</footer>
 
 
 <script src="./pilot-data.js?v=8161"></script>

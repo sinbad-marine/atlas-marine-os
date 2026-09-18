@@ -1,0 +1,57 @@
+{
+  "schema": "sinbad-owner-canonical-visual-lock/v1",
+  "page": "yacht-management",
+  "status": "OWNER_APPROVED_LOCKED",
+  "approvedAt": "2026-09-18",
+  "route": "/index.html?workspace=yacht-operations",
+  "artistLanguage": "rembrandt",
+  "immutable": true,
+  "canonicalAsset": {
+    "path": "assets/console-art/yacht-management-owner-lock-v1/yacht-management-owner-canonical-desktop-1280x720.png",
+    "width": 1280,
+    "height": 720,
+    "bytes": 627565,
+    "sha256": "8ce10be34c72eb541a6312f2cc63dba468cf38c54aad87699ebf0ccd31401d6c"
+  },
+  "desktopGolden": {
+    "path": "tests/browser/__screenshots__/yacht-management-owner-lock.spec.js/desktop-chromium/yacht-management-owner-canonical.png",
+    "width": 1280,
+    "height": 720,
+    "sha256": "8ce10be34c72eb541a6312f2cc63dba468cf38c54aad87699ebf0ccd31401d6c"
+  },
+  "selectionLock": {
+    "manifest": "assets/console-art/yacht-management-owner-selections-v1/OWNER_VISUAL_LOCK.json",
+    "manifestSha256": "fdb7b3eeef0b151850712104aadfdeec5aa55b18ab6f55f463e6b80692506aed",
+    "ownerChoices": [
+      "C",
+      "B",
+      "B",
+      "B",
+      "A"
+    ],
+    "selectedAssetSha256": [
+      "572df33283e136d5733c9d4ba48e5e315640fb4b00a42995b6645b5631c2e87b",
+      "bd8a9f5028eabdfa673cabb6724507543a8f10e6b290655aca0a6c57635b3036",
+      "8ce979ab270ee9de0fd46b10efafab501a77834450886f3f701a7b6ba12c76cc",
+      "9cec68f3dfe49bccb4900b4e1bb96c12670e4a59ab135017263f78a698c63823",
+      "534361f178538933e4b7b381fb97d14d277fd3135ebc71202f638a50393fd420"
+    ]
+  },
+  "layoutAssertions": {
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    },
+    "brandLockupFullyVisible": true,
+    "functionCards": {
+      "count": 4,
+      "top": 238,
+      "bottom": 598,
+      "width": 169,
+      "height": 360,
+      "imageHeight": 240,
+      "titleTop": 451
+    }
+  },
+  "ownerDirective": "This exact approved Yacht Management page is immutable. Do not alter its art, layout, crop, content, or route without explicit Owner approval."
+}

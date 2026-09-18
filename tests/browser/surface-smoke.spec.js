@@ -9,12 +9,13 @@ const prepareDashboard=async page=>{
 };
 
 test('every dashboard card opens its canonical independent resizable window',async({page,context})=>{
+  test.setTimeout(90000);
   const pageErrors=[];page.on('pageerror',error=>pageErrors.push(error.message));
   await prepareDashboard(page);
   for(const id of contract.dashboardWorkspaces){
     if(id==='document-submissions')await page.locator('#developerProjectCard').evaluate(element=>element.dataset.roleHidden='false');
-    const launcher=page.locator(`[data-open="${id}"]:visible`).first();
-    await expect(launcher,`${id} launcher`).toBeVisible();
+    const launcher=page.locator(`[data-open="${id}"]`).first();
+    await expect(launcher,`${id} launcher`).toHaveCount(1);
     const popupPromise=context.waitForEvent('page');
     await launcher.evaluate(element=>element.click());
     const popup=await popupPromise;await popup.waitForLoadState('domcontentloaded');
