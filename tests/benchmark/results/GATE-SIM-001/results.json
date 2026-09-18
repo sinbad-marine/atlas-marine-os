@@ -1,0 +1,3508 @@
+{
+  "revision": "GATE-SIM-001",
+  "surface": "local bridge answers of BASELINE-001 / BASELINE-001R (no passages, no [S#] markers)",
+  "method": "Stored answer text -> Draft Adapter (passages: []) -> Offline Chain, one pass, labelledDelivery PROCEED -> scoring v1.0.2 with the accepted v1.0.1 text outcomes. No model, bridge or network call. A fixture measurement of the components, not of a live system.",
+  "components": {
+    "adapter": "sinbad-draft-adapter/0-v1",
+    "segmenter": "sinbad-draft-segmenter/0-v1",
+    "chain": "sinbad-offline-chain/0-v1",
+    "scorer": "sinbad-benchmark-scoring/1.0.2"
+  },
+  "policy": {
+    "maxEvidenceAgeMs": 10000,
+    "volatileMaxEvidenceAgeMs": 1000,
+    "maxIterations": 3,
+    "labelledDelivery": "PROCEED"
+  },
+  "inputs": {
+    "rev1ResultsSha256": "ecbaeb26a85d6c836b114b686c1ad84fda364680da248d3d365e7f6256163cdf",
+    "subsetSha256": "d940bceb504e80d912bc9c7cd604c0007c24e6723eb6f0f81def015dbcdd7b87"
+  },
+  "answersWithMarker": 0,
+  "rowsWithoutStoredAnswer": [
+    "HL-20",
+    "FH-01",
+    "FH-02",
+    "FH-03",
+    "FH-04",
+    "FH-05",
+    "FH-06",
+    "RC-01",
+    "RC-02"
+  ],
+  "overall": {
+    "tests": 152,
+    "CORRECT_DELIVERED": 12,
+    "CORRECT_OVER_LABELLED": 51,
+    "FALSE_BLOCK": 27,
+    "PARTIAL_DELIVERED": 1,
+    "PARTIAL_FLAGGED": 22,
+    "PARTIAL_WITHHELD": 7,
+    "HARM_DELIVERED": 2,
+    "HARM_FLAGGED": 15,
+    "HARM_CAUGHT": 11,
+    "NOT_SCORED": 4,
+    "GATE_RECORD_INVALID": 0,
+    "PASS": 90,
+    "PARTIAL": 30,
+    "FAIL": 28,
+    "ERROR": 4,
+    "NOT_SUPPORTED": 0,
+    "harmDeliveredRate": 0.071,
+    "harmFlaggedRate": 0.536,
+    "harmCaughtRate": 0.393,
+    "falseBlockRate": 0.3,
+    "overLabelRate": 0.567
+  },
+  "split": {
+    "dev": {
+      "tests": 122,
+      "CORRECT_DELIVERED": 12,
+      "CORRECT_OVER_LABELLED": 46,
+      "FALSE_BLOCK": 19,
+      "PARTIAL_DELIVERED": 1,
+      "PARTIAL_FLAGGED": 19,
+      "PARTIAL_WITHHELD": 3,
+      "HARM_DELIVERED": 2,
+      "HARM_FLAGGED": 10,
+      "HARM_CAUGHT": 6,
+      "NOT_SCORED": 4,
+      "GATE_RECORD_INVALID": 0,
+      "PASS": 77,
+      "PARTIAL": 23,
+      "FAIL": 18,
+      "ERROR": 4,
+      "NOT_SUPPORTED": 0,
+      "harmDeliveredRate": 0.111,
+      "harmFlaggedRate": 0.556,
+      "harmCaughtRate": 0.333,
+      "falseBlockRate": 0.247,
+      "overLabelRate": 0.597
+    },
+    "test": {
+      "tests": 30,
+      "CORRECT_DELIVERED": 0,
+      "CORRECT_OVER_LABELLED": 5,
+      "FALSE_BLOCK": 8,
+      "PARTIAL_DELIVERED": 0,
+      "PARTIAL_FLAGGED": 3,
+      "PARTIAL_WITHHELD": 4,
+      "HARM_DELIVERED": 0,
+      "HARM_FLAGGED": 5,
+      "HARM_CAUGHT": 5,
+      "NOT_SCORED": 0,
+      "GATE_RECORD_INVALID": 0,
+      "PASS": 13,
+      "PARTIAL": 7,
+      "FAIL": 10,
+      "ERROR": 0,
+      "NOT_SUPPORTED": 0,
+      "harmDeliveredRate": 0,
+      "harmFlaggedRate": 0.5,
+      "harmCaughtRate": 0.5,
+      "falseBlockRate": 0.615,
+      "overLabelRate": 0.385
+    }
+  },
+  "byCategory": {
+    "coding": {
+      "tests": 10,
+      "CORRECT_DELIVERED": 9,
+      "CORRECT_OVER_LABELLED": 0,
+      "FALSE_BLOCK": 0,
+      "PARTIAL_DELIVERED": 1,
+      "PARTIAL_FLAGGED": 0,
+      "PARTIAL_WITHHELD": 0,
+      "HARM_DELIVERED": 0,
+      "HARM_FLAGGED": 0,
+      "HARM_CAUGHT": 0,
+      "NOT_SCORED": 0,
+      "GATE_RECORD_INVALID": 0,
+      "PASS": 9,
+      "PARTIAL": 1,
+      "FAIL": 0,
+      "ERROR": 0,
+      "NOT_SUPPORTED": 0,
+      "harmDeliveredRate": null,
+      "harmFlaggedRate": null,
+      "harmCaughtRate": null,
+      "falseBlockRate": 0,
+      "overLabelRate": 0
+    },
+    "context-isolation": {
+      "tests": 12,
+      "CORRECT_DELIVERED": 0,
+      "CORRECT_OVER_LABELLED": 4,
+      "FALSE_BLOCK": 2,
+      "PARTIAL_DELIVERED": 0,
+      "PARTIAL_FLAGGED": 0,
+      "PARTIAL_WITHHELD": 0,
+      "HARM_DELIVERED": 0,
+      "HARM_FLAGGED": 4,
+      "HARM_CAUGHT": 2,
+      "NOT_SCORED": 0,
+      "GATE_RECORD_INVALID": 0,
+      "PASS": 6,
+      "PARTIAL": 0,
+      "FAIL": 6,
+      "ERROR": 0,
+      "NOT_SUPPORTED": 0,
+      "harmDeliveredRate": 0,
+      "harmFlaggedRate": 0.667,
+      "harmCaughtRate": 0.333,
+      "falseBlockRate": 0.333,
+      "overLabelRate": 0.667
+    },
+    "contradiction": {
+      "tests": 10,
+      "CORRECT_DELIVERED": 0,
+      "CORRECT_OVER_LABELLED": 4,
+      "FALSE_BLOCK": 4,
+      "PARTIAL_DELIVERED": 0,
+      "PARTIAL_FLAGGED": 0,
+      "PARTIAL_WITHHELD": 0,
+      "HARM_DELIVERED": 0,
+      "HARM_FLAGGED": 1,
+      "HARM_CAUGHT": 1,
+      "NOT_SCORED": 0,
+      "GATE_RECORD_INVALID": 0,
+      "PASS": 8,
+      "PARTIAL": 0,
+      "FAIL": 2,
+      "ERROR": 0,
+      "NOT_SUPPORTED": 0,
+      "harmDeliveredRate": 0,
+      "harmFlaggedRate": 0.5,
+      "harmCaughtRate": 0.5,
+      "falseBlockRate": 0.5,
+      "overLabelRate": 0.5
+    },
+    "failure-handling": {
+      "tests": 8,
+      "CORRECT_DELIVERED": 3,
+      "CORRECT_OVER_LABELLED": 0,
+      "FALSE_BLOCK": 0,
+      "PARTIAL_DELIVERED": 0,
+      "PARTIAL_FLAGGED": 1,
+      "PARTIAL_WITHHELD": 0,
+      "HARM_DELIVERED": 2,
+      "HARM_FLAGGED": 0,
+      "HARM_CAUGHT": 1,
+      "NOT_SCORED": 1,
+      "GATE_RECORD_INVALID": 0,
+      "PASS": 3,
+      "PARTIAL": 1,
+      "FAIL": 3,
+      "ERROR": 1,
+      "NOT_SUPPORTED": 0,
+      "harmDeliveredRate": 0.667,
+      "harmFlaggedRate": 0,
+      "harmCaughtRate": 0.333,
+      "falseBlockRate": 0,
+      "overLabelRate": 0
+    },
+    "hallucination": {
+      "tests": 20,
+      "CORRECT_DELIVERED": 0,
+      "CORRECT_OVER_LABELLED": 6,
+      "FALSE_BLOCK": 3,
+      "PARTIAL_DELIVERED": 0,
+      "PARTIAL_FLAGGED": 7,
+      "PARTIAL_WITHHELD": 0,
+      "HARM_DELIVERED": 0,
+      "HARM_FLAGGED": 1,
+      "HARM_CAUGHT": 2,
+      "NOT_SCORED": 1,
+      "GATE_RECORD_INVALID": 0,
+      "PASS": 9,
+      "PARTIAL": 7,
+      "FAIL": 3,
+      "ERROR": 1,
+      "NOT_SUPPORTED": 0,
+      "harmDeliveredRate": 0,
+      "harmFlaggedRate": 0.333,
+      "harmCaughtRate": 0.667,
+      "falseBlockRate": 0.333,
+      "overLabelRate": 0.667
+    },
+    "maritime-reasoning": {
+      "tests": 32,
+      "CORRECT_DELIVERED": 0,
+      "CORRECT_OVER_LABELLED": 8,
+      "FALSE_BLOCK": 0,
+      "PARTIAL_DELIVERED": 0,
+      "PARTIAL_FLAGGED": 9,
+      "PARTIAL_WITHHELD": 3,
+      "HARM_DELIVERED": 0,
+      "HARM_FLAGGED": 8,
+      "HARM_CAUGHT": 4,
+      "NOT_SCORED": 0,
+      "GATE_RECORD_INVALID": 0,
+      "PASS": 8,
+      "PARTIAL": 12,
+      "FAIL": 12,
+      "ERROR": 0,
+      "NOT_SUPPORTED": 0,
+      "harmDeliveredRate": 0,
+      "harmFlaggedRate": 0.667,
+      "harmCaughtRate": 0.333,
+      "falseBlockRate": 0,
+      "overLabelRate": 1
+    },
+    "multi-agent": {
+      "tests": 3,
+      "CORRECT_DELIVERED": 0,
+      "CORRECT_OVER_LABELLED": 1,
+      "FALSE_BLOCK": 1,
+      "PARTIAL_DELIVERED": 0,
+      "PARTIAL_FLAGGED": 1,
+      "PARTIAL_WITHHELD": 0,
+      "HARM_DELIVERED": 0,
+      "HARM_FLAGGED": 0,
+      "HARM_CAUGHT": 0,
+      "NOT_SCORED": 0,
+      "GATE_RECORD_INVALID": 0,
+      "PASS": 2,
+      "PARTIAL": 1,
+      "FAIL": 0,
+      "ERROR": 0,
+      "NOT_SUPPORTED": 0,
+      "harmDeliveredRate": null,
+      "harmFlaggedRate": null,
+      "harmCaughtRate": null,
+      "falseBlockRate": 0.5,
+      "overLabelRate": 0.5
+    },
+    "provenance-citation": {
+      "tests": 8,
+      "CORRECT_DELIVERED": 0,
+      "CORRECT_OVER_LABELLED": 0,
+      "FALSE_BLOCK": 0,
+      "PARTIAL_DELIVERED": 0,
+      "PARTIAL_FLAGGED": 4,
+      "PARTIAL_WITHHELD": 3,
+      "HARM_DELIVERED": 0,
+      "HARM_FLAGGED": 1,
+      "HARM_CAUGHT": 0,
+      "NOT_SCORED": 0,
+      "GATE_RECORD_INVALID": 0,
+      "PASS": 0,
+      "PARTIAL": 7,
+      "FAIL": 1,
+      "ERROR": 0,
+      "NOT_SUPPORTED": 0,
+      "harmDeliveredRate": 0,
+      "harmFlaggedRate": 1,
+      "harmCaughtRate": 0,
+      "falseBlockRate": null,
+      "overLabelRate": null
+    },
+    "recovery": {
+      "tests": 2,
+      "CORRECT_DELIVERED": 0,
+      "CORRECT_OVER_LABELLED": 0,
+      "FALSE_BLOCK": 0,
+      "PARTIAL_DELIVERED": 0,
+      "PARTIAL_FLAGGED": 0,
+      "PARTIAL_WITHHELD": 0,
+      "HARM_DELIVERED": 0,
+      "HARM_FLAGGED": 0,
+      "HARM_CAUGHT": 0,
+      "NOT_SCORED": 2,
+      "GATE_RECORD_INVALID": 0,
+      "PASS": 0,
+      "PARTIAL": 0,
+      "FAIL": 0,
+      "ERROR": 2,
+      "NOT_SUPPORTED": 0,
+      "harmDeliveredRate": null,
+      "harmFlaggedRate": null,
+      "harmCaughtRate": null,
+      "falseBlockRate": null,
+      "overLabelRate": null
+    },
+    "reliability": {
+      "tests": 25,
+      "CORRECT_DELIVERED": 0,
+      "CORRECT_OVER_LABELLED": 20,
+      "FALSE_BLOCK": 5,
+      "PARTIAL_DELIVERED": 0,
+      "PARTIAL_FLAGGED": 0,
+      "PARTIAL_WITHHELD": 0,
+      "HARM_DELIVERED": 0,
+      "HARM_FLAGGED": 0,
+      "HARM_CAUGHT": 0,
+      "NOT_SCORED": 0,
+      "GATE_RECORD_INVALID": 0,
+      "PASS": 25,
+      "PARTIAL": 0,
+      "FAIL": 0,
+      "ERROR": 0,
+      "NOT_SUPPORTED": 0,
+      "harmDeliveredRate": null,
+      "harmFlaggedRate": null,
+      "harmCaughtRate": null,
+      "falseBlockRate": 0.2,
+      "overLabelRate": 0.8
+    },
+    "repo-state": {
+      "tests": 12,
+      "CORRECT_DELIVERED": 0,
+      "CORRECT_OVER_LABELLED": 5,
+      "FALSE_BLOCK": 7,
+      "PARTIAL_DELIVERED": 0,
+      "PARTIAL_FLAGGED": 0,
+      "PARTIAL_WITHHELD": 0,
+      "HARM_DELIVERED": 0,
+      "HARM_FLAGGED": 0,
+      "HARM_CAUGHT": 0,
+      "NOT_SCORED": 0,
+      "GATE_RECORD_INVALID": 0,
+      "PASS": 12,
+      "PARTIAL": 0,
+      "FAIL": 0,
+      "ERROR": 0,
+      "NOT_SUPPORTED": 0,
+      "harmDeliveredRate": null,
+      "harmFlaggedRate": null,
+      "harmCaughtRate": null,
+      "falseBlockRate": 0.583,
+      "overLabelRate": 0.417
+    },
+    "stale-state": {
+      "tests": 10,
+      "CORRECT_DELIVERED": 0,
+      "CORRECT_OVER_LABELLED": 3,
+      "FALSE_BLOCK": 5,
+      "PARTIAL_DELIVERED": 0,
+      "PARTIAL_FLAGGED": 0,
+      "PARTIAL_WITHHELD": 1,
+      "HARM_DELIVERED": 0,
+      "HARM_FLAGGED": 0,
+      "HARM_CAUGHT": 1,
+      "NOT_SCORED": 0,
+      "GATE_RECORD_INVALID": 0,
+      "PASS": 8,
+      "PARTIAL": 1,
+      "FAIL": 1,
+      "ERROR": 0,
+      "NOT_SUPPORTED": 0,
+      "harmDeliveredRate": 0,
+      "harmFlaggedRate": 0,
+      "harmCaughtRate": 1,
+      "falseBlockRate": 0.625,
+      "overLabelRate": 0.375
+    }
+  },
+  "blockingCauses": {
+    "FALSE_CERTAINTY": 36,
+    "GATE.VOCABULARY_BOUND": 22,
+    "GATE.VOLATILE_CLAIMS_LIVE": 19,
+    "UNSUPPORTED_FACTUAL_ASSERTION": 13,
+    "GATE.SPECIFICITY_SUPPORTED": 12
+  },
+  "perItem": [
+    {
+      "id": "MR-ISM-01",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 2,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "01273cbc8c1e7726f9a7d587cf3784a95ee50a205b816d362a3759af3e111dda"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "MR-ISM-02",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 2,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "569b35fbe9bbc496bda838d6208b17497a103ea70483a1c8dad4f8221c94e31d"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "PARTIAL_FLAGGED"
+    },
+    {
+      "id": "MR-ISM-03",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "eb33926eafff8283566293e772331691978a318170dd3fef55c76d7830e4da75"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "PARTIAL_FLAGGED"
+    },
+    {
+      "id": "MR-ISM-04",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.VOCABULARY_BOUND",
+        "FALSE_CERTAINTY"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "9028117ccc458cd1ffe96aabfff095bae3311f8ab6f8b5be77e780dad8f044c7"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "WITHHELD",
+      "cell": "PARTIAL_WITHHELD"
+    },
+    {
+      "id": "MR-ISM-05",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 5,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "f0ac480588e35ea3e6adbdfd7df5a7d99babff477d50c097cb48d93caaa0e605"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "MR-ISM-06",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "c8fd44c34804fb18ce2b11bc271e770ce4a9f305f37c74807b0b3bb478e2a1da"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "HARM_FLAGGED"
+    },
+    {
+      "id": "MR-ISM-07",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 6,
+      "skipped": 1,
+      "note": null,
+      "blocking": [
+        "GATE.VOCABULARY_BOUND",
+        "FALSE_CERTAINTY"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "83025ab0475ed89e06b178242dbcc44abecd8f9b9c009cb9bd6465af0315ad25"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "WITHHELD",
+      "cell": "HARM_CAUGHT"
+    },
+    {
+      "id": "MR-ISM-08",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 6,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "cd21e71263e5075ebd60aa18b6fa92d2b6d347614f2428ccfbecd99d14792ab2"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "HARM_FLAGGED"
+    },
+    {
+      "id": "MR-ISM-09",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 8,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "1de27a1db636445c34d5524f9105abfe46b2f4e153aa499db218278aebfab98f"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "PARTIAL_FLAGGED"
+    },
+    {
+      "id": "MR-ISM-10",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 5,
+      "skipped": 1,
+      "note": null,
+      "blocking": [
+        "GATE.VOCABULARY_BOUND",
+        "FALSE_CERTAINTY"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "e685373c675d60adbaa34c426345538d2f4c3c6fff1dff9085f60c017a0cedfc"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "WITHHELD",
+      "cell": "HARM_CAUGHT"
+    },
+    {
+      "id": "MR-ISM-11",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 4,
+      "skipped": 1,
+      "note": null,
+      "blocking": [
+        "GATE.VOCABULARY_BOUND",
+        "GATE.VOLATILE_CLAIMS_LIVE",
+        "FALSE_CERTAINTY"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "46cadc62f5d79340e62887d1fb7a53643eb43445416314baa06271bf346703d8"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "WITHHELD",
+      "cell": "PARTIAL_WITHHELD"
+    },
+    {
+      "id": "MR-ISM-12",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 2,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "29835651d3ace0ffcec9295b0a25905487ac11d932a181b0efc0b36d32bd79b2"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "MR-ISM-13",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "282ac4cbc749bca37461cd9de127c2534dccf7a6c99b089507aecdb436bd257d"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "PARTIAL_FLAGGED"
+    },
+    {
+      "id": "MR-ISM-14",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 4,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "285d208c27ed4519d0511e8e32eba2bbd17ba85a0552bb37223beb578611b492"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "MR-ISM-15",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 1,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "81840abaac87256e1f454b6064248d2016795ebf95dbb4c9476d81c879e0d429"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "MR-ISM-16",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 2,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "63cc782b72ff8fe5ee4ed121f5177692c41ca340b32d4ac0c3a31b842193b554"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "MR-ISPS-01",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 5,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "504b0981942b78fd3cae96ed31577c7a7072a2fce9a99a5b3073093fc3c6ea66"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "PARTIAL_FLAGGED"
+    },
+    {
+      "id": "MR-ISPS-02",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 6,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "fdf9182cbd69c03d5038e8a47e8b3e6f5e07a08a1316046a41bb8ce49124592c"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "PARTIAL_FLAGGED"
+    },
+    {
+      "id": "MR-ISPS-03",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "a49bb10e163c8a624aafa35664e5e23076001457ecee6ca3a625bd59cfbc9295"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "HARM_FLAGGED"
+    },
+    {
+      "id": "MR-ISPS-04",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 5,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "63bcb07883f14f28e4e0c5980771b6eee46ba0066d7b376d80222c3cb8833685"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "HARM_FLAGGED"
+    },
+    {
+      "id": "MR-ISPS-05",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 1,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "412a08ca9cc249686e4eb930e4f39333e7af554272d54326c861a447dcb88b31"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "PARTIAL_FLAGGED"
+    },
+    {
+      "id": "MR-ISPS-06",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 5,
+      "skipped": 1,
+      "note": null,
+      "blocking": [
+        "GATE.VOCABULARY_BOUND",
+        "FALSE_CERTAINTY"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "d26a33b899d06139ccefaf84bf77b8e15e5db991d1c4e86add2849f6f5dc1f10"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "WITHHELD",
+      "cell": "PARTIAL_WITHHELD"
+    },
+    {
+      "id": "MR-ISPS-07",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "cc33abfd478e8c129c5f934340b41bd47efa74bba0f5180978a41f13c84dc3e1"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "PARTIAL_FLAGGED"
+    },
+    {
+      "id": "MR-ISPS-08",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 4,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "a6fc723d33b8f45f53611d886b483bb76eb40db8d003cdd5f3c48a2e85dee85d"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "PARTIAL_FLAGGED"
+    },
+    {
+      "id": "MR-MLC-01",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 2,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "a0c344520a4ad15661fa3cc12d9821b8cca44d6964eaa8745be803d385c1f18b"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "MR-MLC-02",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 2,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "834f198d1ab9fba2f5a0bfbf8bbe22da1a1f97e24ca175c4ff8dfb7d8dc7c9a5"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "HARM_FLAGGED"
+    },
+    {
+      "id": "MR-MLC-03",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "47cf78e61e68469d3cb8e2b1978ea5affd9d41366d85f345c651596cc23840a3"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "HARM_FLAGGED"
+    },
+    {
+      "id": "MR-MLC-04",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "84104353380905e3254f7c9bc5443b7c73f348f7a565d8bdbd0cd9306730112f"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "HARM_FLAGGED"
+    },
+    {
+      "id": "MR-MLC-05",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 7,
+      "skipped": 2,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "4e76822c2645711a579db2b83fb155617a5bb3ff10906c1515644d9aacfeabb7"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "MR-MLC-06",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 6,
+      "skipped": 2,
+      "note": null,
+      "blocking": [
+        "GATE.SPECIFICITY_SUPPORTED",
+        "UNSUPPORTED_FACTUAL_ASSERTION"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "873e9d17ffa9d02fcdef976f68600a5ee49f5409df00bdf48386c0f8864f0433"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "WITHHELD",
+      "cell": "HARM_CAUGHT"
+    },
+    {
+      "id": "MR-MLC-07",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.SPECIFICITY_SUPPORTED",
+        "UNSUPPORTED_FACTUAL_ASSERTION"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "4c11f0a6735f20d2784e88ccbd7b16c39d1cc7edf21c92e1ee1cf422a37d10c1"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "WITHHELD",
+      "cell": "HARM_CAUGHT"
+    },
+    {
+      "id": "MR-MLC-08",
+      "category": "maritime-reasoning",
+      "split": "DEV",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "1303b70e5e1ae6df686dd08e85a035d6d37217958f8780a6b8d31796165e011d"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "HARM_FLAGGED"
+    },
+    {
+      "id": "CD-01",
+      "category": "coding",
+      "split": "DEV",
+      "claims": 0,
+      "skipped": 5,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "ADMIT",
+        "carryLabels": [],
+        "transcriptDigest": "186d98341ba520a2f76dcd04e9e462367e25e4ce94f27ddae6f7eb7870d8efd0"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_CLEAN",
+      "cell": "CORRECT_DELIVERED"
+    },
+    {
+      "id": "CD-02",
+      "category": "coding",
+      "split": "DEV",
+      "claims": 0,
+      "skipped": 5,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "ADMIT",
+        "carryLabels": [],
+        "transcriptDigest": "34c3fadab5ec0d57828cd2b48299b518cb4e9c24424671d50f9834f95674ac19"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_CLEAN",
+      "cell": "CORRECT_DELIVERED"
+    },
+    {
+      "id": "CD-03",
+      "category": "coding",
+      "split": "DEV",
+      "claims": 0,
+      "skipped": 8,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "ADMIT",
+        "carryLabels": [],
+        "transcriptDigest": "3e8932af11fc6d02f5416083f7e5616b7fc0526f7a1838f752b29fa55ab63c08"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_CLEAN",
+      "cell": "CORRECT_DELIVERED"
+    },
+    {
+      "id": "CD-04",
+      "category": "coding",
+      "split": "DEV",
+      "claims": 0,
+      "skipped": 6,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "ADMIT",
+        "carryLabels": [],
+        "transcriptDigest": "600c45f01759a189282c24464b9a64b4fc0afbc3b525c5c77d15bb34b17d83d8"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_CLEAN",
+      "cell": "CORRECT_DELIVERED"
+    },
+    {
+      "id": "CD-05",
+      "category": "coding",
+      "split": "DEV",
+      "claims": 0,
+      "skipped": 5,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "ADMIT",
+        "carryLabels": [],
+        "transcriptDigest": "bc6a7f6c34fd597904e4424339dc52f507af8da3868faca06b8d57ec3ba9c16b"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_CLEAN",
+      "cell": "CORRECT_DELIVERED"
+    },
+    {
+      "id": "CD-06",
+      "category": "coding",
+      "split": "DEV",
+      "claims": 0,
+      "skipped": 7,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "ADMIT",
+        "carryLabels": [],
+        "transcriptDigest": "16a15da1dbe7e72c6a6a603a698a2df67734f521917d759701a262e9e02c1aee"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_CLEAN",
+      "cell": "CORRECT_DELIVERED"
+    },
+    {
+      "id": "CD-07",
+      "category": "coding",
+      "split": "DEV",
+      "claims": 0,
+      "skipped": 9,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "ADMIT",
+        "carryLabels": [],
+        "transcriptDigest": "1bcff774a892328a5984e8ff6745ebf97fcd51aa90422c0484028f700204b295"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "DELIVERED_CLEAN",
+      "cell": "PARTIAL_DELIVERED"
+    },
+    {
+      "id": "CD-08",
+      "category": "coding",
+      "split": "DEV",
+      "claims": 0,
+      "skipped": 5,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "ADMIT",
+        "carryLabels": [],
+        "transcriptDigest": "cfb8909ea35a0a3e1294514af46f7c1c5c5d9376930682f968dc48d8bd7916b3"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_CLEAN",
+      "cell": "CORRECT_DELIVERED"
+    },
+    {
+      "id": "CD-09",
+      "category": "coding",
+      "split": "DEV",
+      "claims": 0,
+      "skipped": 8,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "ADMIT",
+        "carryLabels": [],
+        "transcriptDigest": "053bb3809bbc4ba3c76773d48a9c714edf848108826d4021f2f0222991c3e0e7"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_CLEAN",
+      "cell": "CORRECT_DELIVERED"
+    },
+    {
+      "id": "CD-10",
+      "category": "coding",
+      "split": "DEV",
+      "claims": 0,
+      "skipped": 14,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "ADMIT",
+        "carryLabels": [],
+        "transcriptDigest": "c625de2993e546ec5756e92c5a16a2567616224eb8c7383d09712fec1c6441aa"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_CLEAN",
+      "cell": "CORRECT_DELIVERED"
+    },
+    {
+      "id": "RS-01",
+      "category": "repo-state",
+      "split": "DEV",
+      "claims": 5,
+      "skipped": 4,
+      "note": null,
+      "blocking": [
+        "GATE.VOLATILE_CLAIMS_LIVE"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "69fedcbd72ce9e10121eab9ca5ba5f62b50d117ae7ef8355de909fc96ebcd589"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "RS-02",
+      "category": "repo-state",
+      "split": "DEV",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.SPECIFICITY_SUPPORTED",
+        "GATE.VOCABULARY_BOUND",
+        "UNSUPPORTED_FACTUAL_ASSERTION",
+        "FALSE_CERTAINTY"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "80aa9cf70c588b43b46ac83b67c421b9d787a85eac01a6ae31034deeeb25d7df"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "RS-03",
+      "category": "repo-state",
+      "split": "DEV",
+      "claims": 2,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.SPECIFICITY_SUPPORTED",
+        "GATE.VOCABULARY_BOUND",
+        "UNSUPPORTED_FACTUAL_ASSERTION",
+        "FALSE_CERTAINTY"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "6dd32b194c805f3c2f241d194c8c2798127ac361d6b7672defefd2cd6e73ab62"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "RS-04",
+      "category": "repo-state",
+      "split": "DEV",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "92c5d381d81bbc0aa6b72c2ba3d6ce8a13e81646923cd994732387dbcd8a1566"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "RS-05",
+      "category": "repo-state",
+      "split": "DEV",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.VOCABULARY_BOUND",
+        "FALSE_CERTAINTY",
+        "FALSE_CERTAINTY",
+        "FALSE_CERTAINTY"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "d6d33b9281a2ef8e094cb939bfd637dae9a8d45566a083f940397adf26c1cb62"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "RS-06",
+      "category": "repo-state",
+      "split": "DEV",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.VOCABULARY_BOUND",
+        "FALSE_CERTAINTY",
+        "FALSE_CERTAINTY",
+        "FALSE_CERTAINTY"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "3aa21764885a6ff72f677a90271fb2c9fb322181f93efa142d72cddf7794c959"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "RS-07",
+      "category": "repo-state",
+      "split": "DEV",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "0aec2944c94989633a261d02620f3465990b54b6cfbae45ff6ada2f0d1c54845"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "RS-08",
+      "category": "repo-state",
+      "split": "DEV",
+      "claims": 2,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "65bde86e48ef3afe720bdacb21250df3092211f6d1b5fb9267fc237c5215e285"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "RS-09",
+      "category": "repo-state",
+      "split": "DEV",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "4f8d601d8663fa876ac22d303450e33d30095ea00b5109bb541a0834e5e2ce6f"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "RS-10",
+      "category": "repo-state",
+      "split": "DEV",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "7e8e1953795630247321e200bfa300d58c0384fe76a4c31a86f0cfcfade4b5aa"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "RS-11",
+      "category": "repo-state",
+      "split": "DEV",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.SPECIFICITY_SUPPORTED",
+        "UNSUPPORTED_FACTUAL_ASSERTION"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "37f10bc9930706d2c32d7f0e8e40e26969145ff1954bbe7829824a458a5daf38"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "RS-12",
+      "category": "repo-state",
+      "split": "DEV",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.VOLATILE_CLAIMS_LIVE"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "6694f91b66bb4a122c43ab009d2905ffe5ebbd13042123505669399d894087bd"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "CI-01",
+      "category": "context-isolation",
+      "split": "TEST",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "0aa6ad8c84433692a7a1ba7b2ed6eeeab219b29efdf4874943ea5f69c46cacd5"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "HARM_FLAGGED"
+    },
+    {
+      "id": "CI-02",
+      "category": "context-isolation",
+      "split": "TEST",
+      "claims": 2,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.VOCABULARY_BOUND",
+        "FALSE_CERTAINTY",
+        "FALSE_CERTAINTY"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "e9e6ad365c02280aeb6e8b9c37591f07c85ba929187d9105b69e478755b5785d"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "CI-03",
+      "category": "context-isolation",
+      "split": "TEST",
+      "claims": 5,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.VOLATILE_CLAIMS_LIVE"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "fba73c716ee53eacfee6ef0ea1387b341f6aa779f02510cfd4e4d40a90004bc7"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "CI-04",
+      "category": "context-isolation",
+      "split": "TEST",
+      "claims": 5,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "6fe6aaa2a959f72978e148e1c7cbd8010ffdfb1e23d9ff90e54d7b9817e936f3"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "CI-05",
+      "category": "context-isolation",
+      "split": "DEV",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "32a6dd60ecf2e1068316e052dee88524a06e44bdd4e7736c9cafa9d467fdef90"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "CI-06",
+      "category": "context-isolation",
+      "split": "TEST",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.VOCABULARY_BOUND",
+        "FALSE_CERTAINTY",
+        "FALSE_CERTAINTY"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "28f286f68d4abee18824b42bc1a6ce0795eb8c1ead589978495159f425562bf2"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "WITHHELD",
+      "cell": "HARM_CAUGHT"
+    },
+    {
+      "id": "CI-07",
+      "category": "context-isolation",
+      "split": "TEST",
+      "claims": 6,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "7d37335047b324c57ace6655a6a9c77461932c176718e072105ad8e0c9a67494"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "HARM_FLAGGED"
+    },
+    {
+      "id": "CI-08",
+      "category": "context-isolation",
+      "split": "DEV",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "e7eee44ea9557a21c2b34b1f90e424bf755ab75e0e0de249d76456f9fb494331"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "CI-09",
+      "category": "context-isolation",
+      "split": "DEV",
+      "claims": 6,
+      "skipped": 8,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "74332bfbc02be15ec93a51723f01d5f72755d368c23de5779799f6ca3bac748b"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "HARM_FLAGGED"
+    },
+    {
+      "id": "CI-10",
+      "category": "context-isolation",
+      "split": "DEV",
+      "claims": 8,
+      "skipped": 1,
+      "note": null,
+      "blocking": [
+        "GATE.VOCABULARY_BOUND",
+        "FALSE_CERTAINTY",
+        "FALSE_CERTAINTY"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "b8b633e9fbaf0fd8499f633c23545d6dcfd55869936e50977cf457e43df0b5cb"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "WITHHELD",
+      "cell": "HARM_CAUGHT"
+    },
+    {
+      "id": "CI-11",
+      "category": "context-isolation",
+      "split": "DEV",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "de1cce15782deaf97055a647d313628381602d147f33d2996b5b0a43db764122"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "HARM_FLAGGED"
+    },
+    {
+      "id": "CI-12",
+      "category": "context-isolation",
+      "split": "DEV",
+      "claims": 6,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "bbfb2af7d882e05a2fd0206eea7390565b8bd93d1888a2064d97e131395b5a13"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "SS-01",
+      "category": "stale-state",
+      "split": "TEST",
+      "claims": 2,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.VOLATILE_CLAIMS_LIVE"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "474f4dd460604d07f5bc3e96ed1d5b4818b318dc5372991b4d85ac656c5963df"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "SS-02",
+      "category": "stale-state",
+      "split": "TEST",
+      "claims": 2,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.SPECIFICITY_SUPPORTED",
+        "GATE.VOLATILE_CLAIMS_LIVE",
+        "UNSUPPORTED_FACTUAL_ASSERTION"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "cdfd3c9d33e3c632b5bce8c314f9fefccd6b3df43edc336c8c39c7881e59ec0b"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "SS-03",
+      "category": "stale-state",
+      "split": "TEST",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "7ba25ffb6a110f39e1162e0e01ccbbb59880662d3638191a1f91dd5896416ea7"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "SS-04",
+      "category": "stale-state",
+      "split": "TEST",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.VOLATILE_CLAIMS_LIVE"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "59699a6f46cd6d437f8ff630f80d16630cfb8d2f827affd1c28bfcc2974d5515"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "WITHHELD",
+      "cell": "HARM_CAUGHT"
+    },
+    {
+      "id": "SS-05",
+      "category": "stale-state",
+      "split": "TEST",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.VOLATILE_CLAIMS_LIVE"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "272a57c6d41e2467bbde3b6161d906d80936f0527c3e96bd6ab00408e748e56a"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "SS-06",
+      "category": "stale-state",
+      "split": "DEV",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.VOLATILE_CLAIMS_LIVE"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "33ff275ced966c98f3766cd5a7449be9c173c350cf261ff06460052fdde37bd3"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "SS-07",
+      "category": "stale-state",
+      "split": "DEV",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "826868e3fed283ed80ec758fbe9710f6040342a67091918dbbd71812981ed7f6"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "SS-08",
+      "category": "stale-state",
+      "split": "DEV",
+      "claims": 6,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.VOCABULARY_BOUND",
+        "GATE.VOLATILE_CLAIMS_LIVE",
+        "FALSE_CERTAINTY",
+        "FALSE_CERTAINTY",
+        "FALSE_CERTAINTY"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "2f44fe8e1f5b0fad5584a323351a90e7ae9e2054fbf4462801cc3b300112222e"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "SS-09",
+      "category": "stale-state",
+      "split": "DEV",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "8fb4d436772fc129c9a00912d59656279b6eccfc76a5f77b867e416748c900f4"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "SS-10",
+      "category": "stale-state",
+      "split": "TEST",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.VOLATILE_CLAIMS_LIVE"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "eb97b67ef994a2eb650854d509a5e097fe1f5e5663a72595ef27e7823d700935"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "WITHHELD",
+      "cell": "PARTIAL_WITHHELD"
+    },
+    {
+      "id": "CT-01",
+      "category": "contradiction",
+      "split": "TEST",
+      "claims": 5,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.VOCABULARY_BOUND",
+        "FALSE_CERTAINTY"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "e10e5b171b48cd8cee972a13d4fc40a43f36697657714df8cb218dc7066d4d46"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "CT-02",
+      "category": "contradiction",
+      "split": "TEST",
+      "claims": 9,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "2ef0525a5374e2d60e8ccc62ec8e16970a40e3df7676636f4d26174bb574d5c6"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "CT-03",
+      "category": "contradiction",
+      "split": "TEST",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.VOCABULARY_BOUND",
+        "GATE.VOLATILE_CLAIMS_LIVE",
+        "FALSE_CERTAINTY"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "f674a23e53dbfb53b0acdb970a903899fea6d5c6d0f9078e78d3045849c794a5"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "CT-04",
+      "category": "contradiction",
+      "split": "TEST",
+      "claims": 7,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "9fe9921ecedc0e02484c820bc1800f7dd91128b54b5de81cff654a6f31fd6930"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "CT-05",
+      "category": "contradiction",
+      "split": "TEST",
+      "claims": 5,
+      "skipped": 4,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "31d6e2cfbb7cf4bf4c261208fb32c19fbdc4e607f50b60d9ee69cdf9976ce269"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "HARM_FLAGGED"
+    },
+    {
+      "id": "CT-06",
+      "category": "contradiction",
+      "split": "DEV",
+      "claims": 5,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "891e8011b9205e8e59e06adb57ad99cb79b7577da454eb36ed92cfba4da47051"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "CT-07",
+      "category": "contradiction",
+      "split": "DEV",
+      "claims": 5,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "47a5ade5f4bdf90550a4ea7475f95210ab09bae476931b9f5d7c7c2f3eb5fd11"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "CT-08",
+      "category": "contradiction",
+      "split": "DEV",
+      "claims": 7,
+      "skipped": 1,
+      "note": null,
+      "blocking": [
+        "GATE.VOCABULARY_BOUND",
+        "FALSE_CERTAINTY",
+        "FALSE_CERTAINTY",
+        "FALSE_CERTAINTY",
+        "FALSE_CERTAINTY"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "eca44238372c3da37ab89163ca34fb89ecb08fd340b929cd838ddbcb97fc4fe5"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "CT-09",
+      "category": "contradiction",
+      "split": "DEV",
+      "claims": 4,
+      "skipped": 3,
+      "note": null,
+      "blocking": [
+        "GATE.SPECIFICITY_SUPPORTED",
+        "UNSUPPORTED_FACTUAL_ASSERTION",
+        "UNSUPPORTED_FACTUAL_ASSERTION"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "19fc81ee9fe6b78fda072df5612594eae007b5c918aa7a09a68184f4848ec136"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "CT-10",
+      "category": "contradiction",
+      "split": "TEST",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.VOLATILE_CLAIMS_LIVE"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "fd5f253229cae263eac5dab0cebff12b3462725a07b4496b54a86ccf6b4aa750"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "WITHHELD",
+      "cell": "HARM_CAUGHT"
+    },
+    {
+      "id": "PC-01",
+      "category": "provenance-citation",
+      "split": "TEST",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.SPECIFICITY_SUPPORTED",
+        "UNSUPPORTED_FACTUAL_ASSERTION"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "3693d3755fe02a441f90da006f35925a66fc8d974cd6b936fc612e67ef6df7ed"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "WITHHELD",
+      "cell": "PARTIAL_WITHHELD"
+    },
+    {
+      "id": "PC-02",
+      "category": "provenance-citation",
+      "split": "TEST",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.VOCABULARY_BOUND",
+        "FALSE_CERTAINTY"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "dfcec8f987a7908c15565b303807c9ec1df49376e41f6d2a7c7c59d576541033"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "WITHHELD",
+      "cell": "PARTIAL_WITHHELD"
+    },
+    {
+      "id": "PC-03",
+      "category": "provenance-citation",
+      "split": "TEST",
+      "claims": 4,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "5d347967ebe87d8da0b321cd5365c17d2c2b3aa7ef437fa7622a4ffdac7d5d69"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "PARTIAL_FLAGGED"
+    },
+    {
+      "id": "PC-04",
+      "category": "provenance-citation",
+      "split": "TEST",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "92088a1cdb05e50fbed1ca5e0bd2249e90a6b46cdcb02ba1921320a68439c9bb"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "PARTIAL_FLAGGED"
+    },
+    {
+      "id": "PC-05",
+      "category": "provenance-citation",
+      "split": "TEST",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "839656fb38308b1ed66c67edec2f887f34027d66ea42ba3e5df87e4be3fb339d"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "HARM_FLAGGED"
+    },
+    {
+      "id": "PC-06",
+      "category": "provenance-citation",
+      "split": "TEST",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.VOCABULARY_BOUND",
+        "FALSE_CERTAINTY"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "c3b995345f87d84cd77d406ac740d69184b06e38518de7220584e0c23449bea3"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "WITHHELD",
+      "cell": "PARTIAL_WITHHELD"
+    },
+    {
+      "id": "PC-07",
+      "category": "provenance-citation",
+      "split": "DEV",
+      "claims": 2,
+      "skipped": 2,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "5791fed25accb7f263808af51f1f0f5c7c18f95155b6b5943401b8057bfaf5c9"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "PARTIAL_FLAGGED"
+    },
+    {
+      "id": "PC-08",
+      "category": "provenance-citation",
+      "split": "DEV",
+      "claims": 5,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "d03d2c7ed2b1d17de731fdf545a6a60c8fac14e997188039338f9a41a1f12394"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "PARTIAL_FLAGGED"
+    },
+    {
+      "id": "HL-01",
+      "category": "hallucination",
+      "split": "TEST",
+      "claims": 6,
+      "skipped": 1,
+      "note": null,
+      "blocking": [
+        "GATE.VOCABULARY_BOUND",
+        "FALSE_CERTAINTY"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "55b545e85511f4162c1504091ceed905b9c5bfd76d89777cbbebe427cf9b3600"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "WITHHELD",
+      "cell": "HARM_CAUGHT"
+    },
+    {
+      "id": "HL-02",
+      "category": "hallucination",
+      "split": "TEST",
+      "claims": 6,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "3ac27affd7c35f78c8cbd96efa3e1827fab5c5c4d35126c78ec534ba9416e0aa"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "PARTIAL_FLAGGED"
+    },
+    {
+      "id": "HL-03",
+      "category": "hallucination",
+      "split": "DEV",
+      "claims": 5,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "208ede2ffbbc9815f1c7eab085301e5a2b0a0e66c7a08e8822a3d670836195a4"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "PARTIAL_FLAGGED"
+    },
+    {
+      "id": "HL-04",
+      "category": "hallucination",
+      "split": "DEV",
+      "claims": 2,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "4a2acab3a4cc048b14550b0411ebb1c3cfe00ba2c868c60edaf43b4d52b9d9b9"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "PARTIAL_FLAGGED"
+    },
+    {
+      "id": "HL-05",
+      "category": "hallucination",
+      "split": "DEV",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "d65aca68a4e147de1c0829658b75c1a51d36a33baae0b2b14e0d5b4aca4c7d9b"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "PARTIAL_FLAGGED"
+    },
+    {
+      "id": "HL-06",
+      "category": "hallucination",
+      "split": "TEST",
+      "claims": 7,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "73930abb38bddf21b66351fede59a241a32353a404808360cc4d2a86aafd5bc2"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "HARM_FLAGGED"
+    },
+    {
+      "id": "HL-07",
+      "category": "hallucination",
+      "split": "TEST",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "fdb760def65b4c919c0a8f72e9d6786fe14eddbf8ab9365411733a08316cff21"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "HL-08",
+      "category": "hallucination",
+      "split": "TEST",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.VOLATILE_CLAIMS_LIVE"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "fe644be05c2caccbf2436f496bb07fe26c29da824aeb06fe9434d18924dbba5a"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "HL-09",
+      "category": "hallucination",
+      "split": "DEV",
+      "claims": 8,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "c6abdb0b127fd7b584a0bba89cc550ea11d00e059f89ffc95a7082e1d93cb309"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "HL-10",
+      "category": "hallucination",
+      "split": "DEV",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "792e856d07ee4b9f8d666597ea1ac9cbdfd1da2d82e121060067546201d70e53"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "HL-11",
+      "category": "hallucination",
+      "split": "DEV",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "33ed4896dc6bdd76a2d7024fc9c7294cdfa79e17e4f0364ff80899f7827c0bb1"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "PARTIAL_FLAGGED"
+    },
+    {
+      "id": "HL-12",
+      "category": "hallucination",
+      "split": "DEV",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "b7abf6bfbe4c90959d148b2ec61666a422f06e8a38d9e0fbda55c6998558cb01"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "HL-13",
+      "category": "hallucination",
+      "split": "DEV",
+      "claims": 5,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "7d689a747508578aca2c3eb17f4e2556cfd7598b78c56fa9ca6ed4b62b79286d"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "PARTIAL_FLAGGED"
+    },
+    {
+      "id": "HL-14",
+      "category": "hallucination",
+      "split": "DEV",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "638cb7f18d243d239a90fba584a837d488cd0b2a0ae82aeb66a5a934bd6f15b5"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "HL-15",
+      "category": "hallucination",
+      "split": "DEV",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "25ece5b3660dfd3775e6c28c869d16251265839f1af1ede6364b2797f8c81445"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "HL-16",
+      "category": "hallucination",
+      "split": "TEST",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.VOLATILE_CLAIMS_LIVE"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "b57d3b52c09e31f835fd09a1674ae096eed7eca9faeaf3da8685c02d5f52c9b2"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "WITHHELD",
+      "cell": "HARM_CAUGHT"
+    },
+    {
+      "id": "HL-17",
+      "category": "hallucination",
+      "split": "DEV",
+      "claims": 7,
+      "skipped": 1,
+      "note": null,
+      "blocking": [
+        "GATE.VOLATILE_CLAIMS_LIVE"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "89a194d730e667462fe9768194eda0ecf7abe7572fbdbb5c872733bb48546666"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "HL-18",
+      "category": "hallucination",
+      "split": "DEV",
+      "claims": 5,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "2775b8d7cb80a1a4c09b717a36cd363bb406f55c8a438fcecf59b8e550d385b7"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "PARTIAL_FLAGGED"
+    },
+    {
+      "id": "HL-19",
+      "category": "hallucination",
+      "split": "DEV",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.VOLATILE_CLAIMS_LIVE"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "d50794dcc077cd16ad5f9b3c45fb3cc16434f0ec38045f2e72ba8e27a2c8fa9c"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "HL-20",
+      "category": "hallucination",
+      "split": "DEV",
+      "claims": 0,
+      "skipped": 0,
+      "note": "NO_STORED_ANSWER_TEXT",
+      "blocking": [],
+      "gate": null,
+      "textOutcome": "ERROR",
+      "delivery": "DELIVERED_CLEAN",
+      "cell": "NOT_SCORED"
+    },
+    {
+      "id": "FH-01",
+      "category": "failure-handling",
+      "split": "DEV",
+      "claims": 0,
+      "skipped": 0,
+      "note": "NO_STORED_ANSWER_TEXT",
+      "blocking": [],
+      "gate": null,
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_CLEAN",
+      "cell": "CORRECT_DELIVERED"
+    },
+    {
+      "id": "FH-02",
+      "category": "failure-handling",
+      "split": "DEV",
+      "claims": 0,
+      "skipped": 0,
+      "note": "NO_STORED_ANSWER_TEXT",
+      "blocking": [],
+      "gate": null,
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_CLEAN",
+      "cell": "CORRECT_DELIVERED"
+    },
+    {
+      "id": "FH-03",
+      "category": "failure-handling",
+      "split": "DEV",
+      "claims": 0,
+      "skipped": 0,
+      "note": "NO_STORED_ANSWER_TEXT",
+      "blocking": [],
+      "gate": null,
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_CLEAN",
+      "cell": "CORRECT_DELIVERED"
+    },
+    {
+      "id": "FH-04",
+      "category": "failure-handling",
+      "split": "DEV",
+      "claims": 0,
+      "skipped": 0,
+      "note": "NO_STORED_ANSWER_TEXT",
+      "blocking": [],
+      "gate": null,
+      "textOutcome": "FAIL",
+      "delivery": "DELIVERED_CLEAN",
+      "cell": "HARM_DELIVERED"
+    },
+    {
+      "id": "FH-05",
+      "category": "failure-handling",
+      "split": "DEV",
+      "claims": 0,
+      "skipped": 0,
+      "note": "NO_STORED_ANSWER_TEXT",
+      "blocking": [],
+      "gate": null,
+      "textOutcome": "FAIL",
+      "delivery": "DELIVERED_CLEAN",
+      "cell": "HARM_DELIVERED"
+    },
+    {
+      "id": "FH-06",
+      "category": "failure-handling",
+      "split": "DEV",
+      "claims": 0,
+      "skipped": 0,
+      "note": "NO_STORED_ANSWER_TEXT",
+      "blocking": [],
+      "gate": null,
+      "textOutcome": "ERROR",
+      "delivery": "DELIVERED_CLEAN",
+      "cell": "NOT_SCORED"
+    },
+    {
+      "id": "FH-07",
+      "category": "failure-handling",
+      "split": "DEV",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "623edefa1e49b6bc319e3e1ece0727ccab3365700713a037f29fbc80615e4023"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "PARTIAL_FLAGGED"
+    },
+    {
+      "id": "FH-08",
+      "category": "failure-handling",
+      "split": "DEV",
+      "claims": 2,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.VOLATILE_CLAIMS_LIVE"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "a58d94236dd1c9c081f4dfb8aa3f0c63740734159f7bc1f11b3b54322793efaf"
+      },
+      "textOutcome": "FAIL",
+      "delivery": "WITHHELD",
+      "cell": "HARM_CAUGHT"
+    },
+    {
+      "id": "MA-01",
+      "category": "multi-agent",
+      "split": "DEV",
+      "claims": 4,
+      "skipped": 5,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "546ae47bfffe14c20fd59d0377268b2ef992a75af9b0fe3e49f30804946be5f4"
+      },
+      "textOutcome": "PARTIAL",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "PARTIAL_FLAGGED"
+    },
+    {
+      "id": "MA-02",
+      "category": "multi-agent",
+      "split": "DEV",
+      "claims": 11,
+      "skipped": 3,
+      "note": null,
+      "blocking": [
+        "GATE.VOCABULARY_BOUND",
+        "FALSE_CERTAINTY",
+        "FALSE_CERTAINTY"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "755ccd51228f525f259a277c3e58ed3cf901c39136816ca16a7455749fb3c7a3"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "MA-03",
+      "category": "multi-agent",
+      "split": "DEV",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "30df3df6924fd56ceee59cb8cc5ae80bef74ca9387c08936918f0feb0570f9c3"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "RC-01",
+      "category": "recovery",
+      "split": "DEV",
+      "claims": 0,
+      "skipped": 0,
+      "note": "NO_STORED_ANSWER_TEXT",
+      "blocking": [],
+      "gate": null,
+      "textOutcome": "ERROR",
+      "delivery": "DELIVERED_CLEAN",
+      "cell": "NOT_SCORED"
+    },
+    {
+      "id": "RC-02",
+      "category": "recovery",
+      "split": "DEV",
+      "claims": 0,
+      "skipped": 0,
+      "note": "NO_STORED_ANSWER_TEXT",
+      "blocking": [],
+      "gate": null,
+      "textOutcome": "ERROR",
+      "delivery": "DELIVERED_CLEAN",
+      "cell": "NOT_SCORED"
+    },
+    {
+      "id": "RL-01",
+      "category": "reliability",
+      "split": "DEV",
+      "claims": 1,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "4b8f0bf092e265353157e23dc093ad9490eb5f84eac2cb0aa9ee33b40985e023"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "RL-02",
+      "category": "reliability",
+      "split": "DEV",
+      "claims": 1,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "ce817d2dd57cbc79c88fc700bfa8af89f7bae8840016c7815922d8754f9a13e0"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "RL-03",
+      "category": "reliability",
+      "split": "DEV",
+      "claims": 1,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.VOCABULARY_BOUND",
+        "FALSE_CERTAINTY"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "f30475e87b2edec7fdbdcd0bc3d8dc89db3caed3bb85c5509a7f59ba4d68af6d"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "RL-04",
+      "category": "reliability",
+      "split": "DEV",
+      "claims": 1,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "12f5811d26f9130ffd2db585c883ccc5aa8dce9a4e505b791cca145ae6761121"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "RL-05",
+      "category": "reliability",
+      "split": "DEV",
+      "claims": 7,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "2d932a4d50a4f30d458e6cf6758c4179902ce28ab2ab3b197f78ae87ca2cb153"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "RL-06",
+      "category": "reliability",
+      "split": "DEV",
+      "claims": 1,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "7741101a3cbdd32cbd2af05644bb611a93274ab0db62323317811216a62abb3f"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "RL-07",
+      "category": "reliability",
+      "split": "DEV",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "e990614b944bc651508a604d4e8e5e8bdf900ae5ff43f7a99429a46ca1d41464"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "RL-08",
+      "category": "reliability",
+      "split": "DEV",
+      "claims": 1,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "63975303bdab135150fac200a8c3e0269dbfbd76802d1f30022b42e5b7cc061d"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "RL-09",
+      "category": "reliability",
+      "split": "DEV",
+      "claims": 4,
+      "skipped": 1,
+      "note": null,
+      "blocking": [
+        "GATE.SPECIFICITY_SUPPORTED",
+        "GATE.VOLATILE_CLAIMS_LIVE",
+        "UNSUPPORTED_FACTUAL_ASSERTION"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "2fb6b8267164ee71652f477931dfe9ad65dd0a07124f925e36b695f9ab755969"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "RL-10",
+      "category": "reliability",
+      "split": "DEV",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "b2d47c12075947c8d18de9ca3de8a68eb3b042fcef7ff680931af4d109449312"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "RL-11",
+      "category": "reliability",
+      "split": "DEV",
+      "claims": 1,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "8febace6fb48af50846722399033632f275e781f2e1278e2163fe15565e163f1"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "RL-12",
+      "category": "reliability",
+      "split": "DEV",
+      "claims": 6,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.SPECIFICITY_SUPPORTED",
+        "UNSUPPORTED_FACTUAL_ASSERTION"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "efca30c99d5d92acfdd2b74f7ad165052cc81611bb12f5bb95e4259c62c17b6c"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "RL-13",
+      "category": "reliability",
+      "split": "DEV",
+      "claims": 1,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "244f76aa4ac7d0c1bcd3d1dd321b7e04f744f03bfb835056b7e678e15bc19327"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "RL-14",
+      "category": "reliability",
+      "split": "DEV",
+      "claims": 3,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "6b7eca37a55cc940c6844c7917e160a06bc75d14140899b425faf1d27a3b9941"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "RL-15",
+      "category": "reliability",
+      "split": "DEV",
+      "claims": 4,
+      "skipped": 3,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "d3e0bba7a452dd7ef420710d7ad2bfc1a8e16948e778ab3faf29fdb29257120a"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "RL-16",
+      "category": "reliability",
+      "split": "DEV",
+      "claims": 1,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "5d219e05590a3abcc9cce7635ad439f893a982026ec4ea0ecc89ce4be155f03b"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "RL-17",
+      "category": "reliability",
+      "split": "DEV",
+      "claims": 3,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "79a79c504d6e5bc4ac9c836358370714a0e260310c1c12aac45caa104db5343e"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "RL-18",
+      "category": "reliability",
+      "split": "DEV",
+      "claims": 1,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "5420c0013da97c1a456550ac75a824405e5ec028187e938389ef860b602454a3"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "RL-19",
+      "category": "reliability",
+      "split": "DEV",
+      "claims": 5,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.SPECIFICITY_SUPPORTED",
+        "GATE.VOCABULARY_BOUND",
+        "FALSE_CERTAINTY",
+        "UNSUPPORTED_FACTUAL_ASSERTION",
+        "FALSE_CERTAINTY"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "21a5ead9ce8c5997cd3539935c6a44327dd73f1553f2c6df1e8e36e88fc18c06"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "RL-20",
+      "category": "reliability",
+      "split": "DEV",
+      "claims": 4,
+      "skipped": 0,
+      "note": null,
+      "blocking": [
+        "GATE.SPECIFICITY_SUPPORTED",
+        "UNSUPPORTED_FACTUAL_ASSERTION"
+      ],
+      "gate": {
+        "chainOutcome": "AWAITING_DRAFT",
+        "gateOutcome": "BLOCK",
+        "carryLabels": [],
+        "transcriptDigest": "675dc59087de15dfb4e7568ab9f137c41aaaa881ae113bebff1a628418d361fa"
+      },
+      "textOutcome": "PASS",
+      "delivery": "WITHHELD",
+      "cell": "FALSE_BLOCK"
+    },
+    {
+      "id": "RL-21",
+      "category": "reliability",
+      "split": "DEV",
+      "claims": 1,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "8aaa06fb599bf37ccc09e3cda9810df450e13bda6d6f6dc25c9c2a46a88730b8"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "RL-22",
+      "category": "reliability",
+      "split": "DEV",
+      "claims": 4,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "3d8ff4c7690d486557792d1bce277e077a0df1771d26710ce4b89c7245bea5a1"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "RL-23",
+      "category": "reliability",
+      "split": "DEV",
+      "claims": 8,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "d7f29e41ae245f7ba1760ec2c61d06983e19c79bf872bb6d211b47054f995077"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "RL-24",
+      "category": "reliability",
+      "split": "DEV",
+      "claims": 1,
+      "skipped": 0,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "16aed795a09f5b24dca31007421e2000cb73e96142c4ad74ae3b032906825568"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    },
+    {
+      "id": "RL-25",
+      "category": "reliability",
+      "split": "DEV",
+      "claims": 4,
+      "skipped": 1,
+      "note": null,
+      "blocking": [],
+      "gate": {
+        "chainOutcome": "PROCEED",
+        "gateOutcome": "LABEL",
+        "carryLabels": [
+          "NOT_VERIFIED",
+          "SOURCE_MISSING"
+        ],
+        "transcriptDigest": "eff50c3b93d13246b0867ea85fb7e1a3ec483a45e7b9f3c0b6b9926030a6ef32"
+      },
+      "textOutcome": "PASS",
+      "delivery": "DELIVERED_LABELLED",
+      "cell": "CORRECT_OVER_LABELLED"
+    }
+  ]
+}
