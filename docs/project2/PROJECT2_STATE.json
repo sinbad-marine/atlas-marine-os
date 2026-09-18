@@ -151,7 +151,7 @@
       "guarantees_asserted_by": "sinbad-ai-core/tests/draft-adapter-v0-inert.test.js"
     },
     "phase_4_2_scorer_v102": {
-      "status": "IMPLEMENTED (offline) 2026-09-18 from main 003f855 under the Owner GO of 2026-09-18 (the PR #273 report asked for a MERGE GO and for an explicit GO for the next step, recommending 4.2; Owner statement '1. VE 2. YE GO'); scope 'PROJECT 2 / PHASE 4.2 - SCORER v1.0.2 AND STAGE-GATE SUBSET ONLY'; TESTED (9 fast checks, npm run benchmark:fast 29/29; not part of npm test or CI, like the REV-1 checks); NOT MERGED (draft PR, merge needs a separate Owner MERGE GO); no benchmark run, no model or bridge call; OWNER ACCEPTED = NOT RECORDED",
+      "status": "IMPLEMENTED (offline) 2026-09-18 from main 003f855 under the Owner GO of 2026-09-18 (the PR #273 report asked for a MERGE GO and for an explicit GO for the next step, recommending 4.2; Owner statement '1. VE 2. YE GO'); scope 'PROJECT 2 / PHASE 4.2 - SCORER v1.0.2 AND STAGE-GATE SUBSET ONLY'; TESTED (9 fast checks, npm run benchmark:fast 29/29; not part of npm test or CI, like the REV-1 checks); MERGED as PR #274 on 2026-09-18T18:54:47Z under Owner MERGE GO (main 3ca770eee10d88a76e86830388e627081a54da95; post-merge Release quality and Pages release green; ARGOS VERIFIED 105 files on the pre-merge commit ed50cf8); re-verified on main after the merge: benchmark:fast 29/29, REV-1 and REV-2 reproduce, freeze test 3/3, no frozen or accepted file changed; no benchmark run, no model or bridge call; OWNER ACCEPTED = NOT RECORDED (a MERGE GO is not an acceptance)",
       "files": "tests/benchmark/rev2/scoring-v102.js, tests/benchmark/rev2/stage-gate-subset-v1.json, tools/rescore-baseline-001-v102.js, tests/benchmark/results/BASELINE-001-REV-2/{results.json,report.md}, tests/benchmark/scoring-v102.test.js",
       "document": "docs/project2/PHASE_4_2_SCORER_V102.md",
       "what": "scoring v1.0.2 keeps every v1.0.1 text outcome and adds the delivery dimension (DELIVERED_CLEAN / DELIVERED_LABELLED / WITHHELD) from a per-answer gate record, naming nine cells (HARM_DELIVERED, HARM_FLAGGED, HARM_CAUGHT, FALSE_BLOCK, CORRECT_OVER_LABELLED, ...) and five rates with text outcomes as denominators; evaluate() takes thresholds as input and ships no defaults; BASELINE-001-REV-2 = the 152 accepted REV-1 outcomes ungated: text totals 90/30/28/4 identical to REV-1, HARM_DELIVERED 28/28, nothing flagged, caught or blocked; stage-gate subset v1 = 30 fixed items (10 TARGET / 13 CONTROL / 7 OTHER) from the five zero-regression classes, estimated 2.93 h from frozen latencies",
@@ -199,7 +199,7 @@
     "phase_3_8_accepted_pull_request": 269,
     "phase_3_8_state_verified_on": "79b715782a5b77cf9244de3a07246ee3fb168fd0",
     "phase_4_1_draft_adapter_v0": "NOT RECORDED (merged as PR #273, main 003f855; an Owner GO for a phase and a MERGE GO are not an acceptance)",
-    "phase_4_2_scorer_v102": "NOT RECORDED (draft PR, not merged)",
+    "phase_4_2_scorer_v102": "NOT RECORDED (merged as PR #274, main 3ca770e; an Owner GO for a phase and a MERGE GO are not an acceptance)",
     "phase_3_remainder_and_later": "NOT RECORDED (not started)"
   },
   "baseline_freeze": {
@@ -209,5 +209,5 @@
     "enforcement": "tests/baseline-001-freeze.test.js (part of npm test / CI verify) fails if any frozen file changes or the combined totals drift",
     "revision_policy": "immutable; corrections only as separately identified revisions (BASELINE-001-REV-n) with their own provenance; original files recoverable from aee0ad5"
   },
-  "last_verified_timestamp": "2026-09-18T18:25:14Z"
+  "last_verified_timestamp": "2026-09-18T19:30:56Z"
 }

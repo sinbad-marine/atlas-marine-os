@@ -51,4 +51,4 @@ Fail-closed BLOCKED (no `chainPass`): input not exact, invalid context, answer m
 
 ## Owner acceptance
 
-NOT RECORDED. Merge requires a separate Owner MERGE GO. This phase is not a GO for the scorer revision, shadow mode, wiring, key custody, the model pass, or any change to the older verification layer.
+NOT RECORDED. Merged as PR #273 on 2026-09-18 (main `003f855657769b31e237e740b75de09dcec6bd95`) under an Owner MERGE GO; MERGED is not an acceptance, and Draft Adapter v0 stays OWNER ACCEPTED = NOT RECORDED until the Owner states otherwise. This phase is not a GO for the scorer revision, shadow mode, wiring, key custody, the model pass, or any change to the older verification layer.
