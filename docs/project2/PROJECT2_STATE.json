@@ -105,7 +105,15 @@
       "does_not": "no execution, no delivery, no enforcement, no authority, no I/O, no clock, no model call, no state, no pre-gate, no claim segmentation, no content comparison, no wiring; Phase 3.1 contracts and Sentinel v0 consumed unchanged; frozen baseline untouched",
       "guarantees_asserted_by": "sinbad-ai-core/tests/gatekeeper-v0-inert.test.js"
     },
-    "phase_3_5_and_later": "NOT STARTED. Co-Pilot/Pilot v0 (3.5) and any wiring of Sentinel v0 or Gatekeeper v0 each require a separate Owner GO; no production AI behaviour changed."
+    "phase_3_5_copilot_v0": {
+      "status": "IMPLEMENTED (inert, deterministic checker layer, verdict-only) 2026-09-18 under Owner GO 'PROJECT 2 / PHASE 3.5 - CO-PILOT v0 ONLY' (Owner approval of the proposed scope, 2026-09-18) from main e2a7364; TESTED (43 unit tests incl. 20 deterministic fixtures: 8 benign / 12 adversarial, fixture false blocking 0, false allowing 0); NOT MERGED (draft PR, merge needs a separate Owner MERGE GO); NOT INTEGRATED (wiredInto = [], not in package exports, no live file imports it); OWNER ACCEPTED = NOT RECORDED",
+      "modules": "sinbad-ai-core/copilot/{copilot-v0,index}.js (versions sinbad-copilot/0-v1, input 0-v1, review 0-v1, checkerset 0-v1)",
+      "document": "docs/project2/PHASE_3_5_COPILOT_V0.md",
+      "what": "pure deterministic review(input) -> sealed CoPilotReview carrying a CoPilotVerdict in the accepted Phase 3.1 contract shape: runs Sentinel v0 as observation engine, forwards its flags, adds seven named checkers (citations resolve / used / claims cited, action safety, task expansion, authority voice), recommendation ALLOW / LABEL / BLOCK, all warnings checkerKind DETERMINISTIC, fail-closed BLOCKED review on untrustworthy input; paper-only composition with Gatekeeper v0 covered by tests",
+      "does_not": "no model pass (needs a model policy GO), no Pilot, no answer, no rewrite, no approval, no decision, no authority, no I/O, no clock, no state, no wiring; INSTRUCTION_CONFLICT and CORRELATED_FAILURE_RISK declared not covered; Phase 3.1 contracts, Sentinel v0 and Gatekeeper v0 consumed unchanged; frozen baseline untouched",
+      "guarantees_asserted_by": "sinbad-ai-core/tests/copilot-v0-inert.test.js"
+    },
+    "phase_3_5_remainder_and_later": "NOT STARTED. The Co-Pilot model pass (IMPLEMENTATION GO + model policy GO), Pilot v0 and any wiring of Sentinel v0, Gatekeeper v0 or Co-Pilot v0 each require a separate Owner GO; no production AI behaviour changed."
   },
   "zero_regression_classes": ["context isolation","stale-state detection","contradiction handling","provenance/citation integrity","hallucination resistance","Owner authority/security boundaries"],
   "policies": {
@@ -129,7 +137,8 @@
     "phase_3_4_gatekeeper_v0": "OWNER ACCEPTED - same explicit Owner statement of 2026-09-18. Scope: Gatekeeper v0 (sinbad-ai-core/gatekeeper/*, 43 unit tests incl. 20 fixtures) as merged by PR #257; NOT an authorization to wire, enforce, execute or integrate it (wiredInto stays []).",
     "phase_3_4_accepted_commit": "0424552324709eaf6d9b04d083ee4d2a893b4ad8",
     "phase_3_4_accepted_pull_request": 257,
-    "phase_3_5_and_later": "NOT RECORDED (not started)"
+    "phase_3_5_copilot_v0": "NOT RECORDED - Owner statement of 2026-09-18 with the MERGE GO for PR #260: a merge authorization only; OWNER ACCEPTED is explicitly not given for Co-Pilot v0 and stays NOT RECORDED after the merge (MERGED is not an acceptance)",
+    "phase_3_5_remainder_and_later": "NOT RECORDED (not started)"
   },
   "baseline_freeze": {
     "baseline": "BASELINE-001 - CURRENT SINBAD AS-IS",
@@ -138,5 +147,5 @@
     "enforcement": "tests/baseline-001-freeze.test.js (part of npm test / CI verify) fails if any frozen file changes or the combined totals drift",
     "revision_policy": "immutable; corrections only as separately identified revisions (BASELINE-001-REV-n) with their own provenance; original files recoverable from aee0ad5"
   },
-  "last_verified_timestamp": "2026-09-18T07:07:39Z"
+  "last_verified_timestamp": "2026-09-18T07:37:03Z"
 }
