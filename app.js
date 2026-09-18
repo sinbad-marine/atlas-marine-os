@@ -56,6 +56,27 @@ const set=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
 const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 
 
+const CONSOLE_OWNER_URL='https://sinbad-owner-console.onrender.com/';
+const CONSOLE_DESTINATIONS=Object.freeze({
+  'yacht-operations':{label:'Yat Yönetimi',art:'rembrandt'},fleet:{label:'Filo Yöneticisi',art:'rembrandt'},crew:{label:'Mürettebat',art:'rembrandt'},'captains-logbook':{label:'Kaptan Günlüğü',art:'rembrandt'},'camera-archive':{label:'Kamera ve Medya',art:'monet'},
+  'voyage-navigation':{label:'Seyir Planlama',art:'van-gogh'},routes:{label:'Rota Kütüphanesi',art:'van-gogh'},'navigation-plot':{label:'Seyir Plotu',art:'van-gogh'},'location-intelligence':{label:'Konum İstihbaratı',art:'van-gogh'},pilot:{label:'Pilot Kütüphanesi',art:'van-gogh'},resources:{label:'Blue Voyage Kaynakları',art:'van-gogh'},'enc-viewer':{label:'ENC Viewer',art:'hokusai'},charts:{label:'Haritalar',art:'hokusai'},
+  'documents-compliance':{label:'Belgeler ve Uyum',art:'vermeer'},'cloud-documents':{label:'Cloud Belge Merkezi',art:'vermeer'},publications:{label:'Yayınlar',art:'vermeer'},knowledge:{label:'Bilgi Kütüphanesi',art:'vermeer'},documents:{label:'Yerel Belgeler',art:'vermeer'},'document-submissions':{label:'Kontrollü Gönderimler',art:'vermeer'},
+  'technical-systems':{label:'Teknik Sistemler',art:'picasso'},'cloud-control':{label:'Atlas Cloud Kontrolü',art:'picasso'},'admin-settings':{label:'Ayarlar ve Yönetim',art:'picasso'},'studio-console':{label:'Sinbad Studio',art:'picasso'},
+  'sinbad-ai':{label:'SINBAD AI',art:'dali'},sinbad:{label:'Kaptan Sinbad',art:'dali'},store:{label:'Marine Store',art:'renoir'}
+});
+const CONSOLE_FAVORITES_KEY='sinbad_console_favorites_v1',CONSOLE_RECENT_KEY='sinbad_console_recent_v1';
+const consoleJson=(key,fallback)=>{try{const value=JSON.parse(localStorage.getItem(key)||'null');return Array.isArray(value)?value:fallback}catch{return fallback}};
+function consoleParentFor(id){if(['fleet','crew','captains-logbook','camera-archive'].includes(id))return'yacht-operations';if(['routes','navigation-plot','location-intelligence','pilot','resources','enc-viewer','charts'].includes(id))return'voyage-navigation';if(['cloud-documents','publications','knowledge','documents','document-submissions'].includes(id))return'documents-compliance';if(['cloud-control','admin-settings','studio-console'].includes(id))return'technical-systems';if(id==='sinbad')return'sinbad-ai';return id}
+function applyConsoleArt(id='home'){const parent=consoleParentFor(id),art=id==='home'?'monet':parent==='yacht-operations'?'rembrandt':'';if(art)document.body.dataset.consoleArt=art;else delete document.body.dataset.consoleArt;document.querySelectorAll('.console-primary-nav button').forEach(button=>button.classList.toggle('active',id==='home'?button.hasAttribute('data-console-home'):button.dataset.open===parent));}
+function recordConsoleRecent(id){if(!CONSOLE_DESTINATIONS[id])return;const recent=consoleJson(CONSOLE_RECENT_KEY,[]).filter(item=>item!==id);recent.unshift(id);localStorage.setItem(CONSOLE_RECENT_KEY,JSON.stringify(recent.slice(0,6)));renderConsolePersonalization();}
+function renderConsoleLinks(target,ids,empty){if(!target)return;target.innerHTML=ids.length?ids.map(id=>`<button type="button" data-console-shortcut="${esc(id)}">${esc(CONSOLE_DESTINATIONS[id]?.label||id)}</button>`).join(''):`<small>${esc(empty)}</small>`;target.querySelectorAll('[data-console-shortcut]').forEach(button=>button.onclick=()=>openConsoleDestination(button.dataset.consoleShortcut));}
+function renderConsolePersonalization(){const defaults=['fleet','routes','cloud-documents','sinbad'],favorites=consoleJson(CONSOLE_FAVORITES_KEY,defaults).filter(id=>CONSOLE_DESTINATIONS[id]);renderConsoleLinks($('consoleFavoritesList'),favorites,'Favori eklenmedi.');renderConsoleLinks($('consoleRecentList'),consoleJson(CONSOLE_RECENT_KEY,[]).filter(id=>CONSOLE_DESTINATIONS[id]),'Henüz çalışma alanı açılmadı.');const options=$('consoleFavoritesOptions');if(options)options.innerHTML=Object.entries(CONSOLE_DESTINATIONS).filter(([id])=>['fleet','routes','cloud-documents','sinbad','captains-logbook','location-intelligence','studio-console','store'].includes(id)).map(([id,item])=>`<label><input type="checkbox" value="${esc(id)}" ${favorites.includes(id)?'checked':''}> ${esc(item.label)}</label>`).join('');}
+function saveConsoleFavorites(){const ids=[...document.querySelectorAll('#consoleFavoritesOptions input:checked')].map(input=>input.value);localStorage.setItem(CONSOLE_FAVORITES_KEY,JSON.stringify(ids));renderConsolePersonalization();}
+function openConsoleDestination(id,params={}){recordConsoleRecent(id);applyConsoleArt(id);if(workspaceWindowId)return openWorkspace(id);return openDashboardWorkspaceWindow(id,params);}
+function setConsoleStatus(name,state,value){const item=document.querySelector(`[data-console-status="${name}"]`);if(!item)return;item.dataset.state=state;item.querySelector('small').textContent=value;}
+async function refreshConsoleObservedStatus(){setConsoleStatus('pc','ready','UI READY');const checked=$('consoleStatusChecked');if(checked)checked.textContent=`Kontrol ${new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}`;const cloudText=$('liveCloudTitle')?.textContent||'',cloudOffline=/not connected|bağlı değil|offline|çevrimdışı/i.test(cloudText),cloudReady=!cloudOffline&&/connected|bağlı|ready|hazır/i.test(cloudText);setConsoleStatus('cloud',cloudReady?'ready':cloudOffline?'offline':'unknown',cloudReady?'READY':cloudOffline?'OFFLINE':'NOT VERIFIED');setConsoleStatus('sync','unknown','NOT VERIFIED');setConsoleStatus('agents','unknown','NOT VERIFIED');const actionText=$('ownerDeveloperMessageCount')?.textContent||'';const count=actionText.match(/\d+/)?.[0]||(/Yeni talep yok/i.test(actionText)?'0':'NOT VERIFIED');setConsoleStatus('action',count==='0'?'neutral':'unknown',count);if($('consoleActionBadge'))$('consoleActionBadge').textContent=count;try{const response=await fetch('http://127.0.0.1:31983/argos/status',{cache:'no-store',signal:AbortSignal.timeout(2500)});if(!response.ok)throw new Error('HTTP');const status=await response.json();const ready=status?.bridge?.online===true&&status?.ai?.online===true;setConsoleStatus('local',ready?'ready':'unknown',ready?'READY':'DEGRADED')}catch{setConsoleStatus('local','unknown','NOT VERIFIED')}}
+
+
 const workspaceWindowId=new URLSearchParams(location.search).get('workspace');
 const workspaceWindows=new Map();
 function workspaceWindowFeatures(){
@@ -72,6 +93,35 @@ function openDashboardWorkspaceWindow(id,params={}){
   if(child)workspaceWindows.set(id,child);else location.href=url.href;
   return child;
 }
+const CONSOLE_CARD_OPEN_MOTION_MS=160;
+const CONSOLE_CARD_OPEN_FALLBACK_MS=200;
+function consoleReducedMotion(){return globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches===true;}
+function consoleWorkspaceTarget(id,params={}){
+  const url=id==='store'?new URL('./store/index.html',location.href):new URL(location.href);
+  if(id!=='store'){url.search='';url.hash='';url.searchParams.set('workspace',id);Object.entries(params).forEach(([key,value])=>url.searchParams.set(key,value));}
+  return {url,name:id==='store'?'sinbadMarineStore':`sinbadWorkspace_${id.replace(/[^a-z0-9_-]/gi,'_')}`};
+}
+function prepareConsoleCardDestination(id,params={}){
+  if(workspaceWindowId)return()=>openConsoleDestination(id,params);
+  const existing=workspaceWindows.get(id);
+  if(existing&&!existing.closed)return()=>{recordConsoleRecent(id);applyConsoleArt(id);existing.focus();};
+  const {url,name}=consoleWorkspaceTarget(id,params);
+  const child=window.open('about:blank',name,workspaceWindowFeatures());
+  if(!child)return()=>openConsoleDestination(id,params);
+  workspaceWindows.set(id,child);
+  try{child.document.title='SINBAD çalışma alanı hazırlanıyor';child.blur();window.focus();}catch{}
+  return()=>{recordConsoleRecent(id);applyConsoleArt(id);try{child.location.replace(url.href);}catch{child.location.href=url.href;}child.focus();};
+}
+function runConsoleCardOpenMotion(card,commit){
+  if(card.dataset.opening==='true')return false;
+  if(consoleReducedMotion()){commit();return true;}
+  card.dataset.opening='true';card.setAttribute('aria-busy','true');card.classList.add('is-opening');card.closest('.console-domain-grid')?.classList.add('is-opening');
+  let finished=false,timer;
+  const finish=()=>{if(finished)return;finished=true;clearTimeout(timer);card.removeEventListener('transitionend',onTransitionEnd);card.classList.remove('is-opening');card.closest('.console-domain-grid')?.classList.remove('is-opening');card.removeAttribute('aria-busy');delete card.dataset.opening;commit();};
+  const onTransitionEnd=event=>{if(event.target===card&&event.propertyName==='transform')finish();};
+  card.addEventListener('transitionend',onTransitionEnd);timer=setTimeout(finish,CONSOLE_CARD_OPEN_FALLBACK_MS);
+  return true;
+}
 function initializeWorkspaceSurface(id){
   if(id==='enc-viewer')initEncViewer();
   if(id==='navigation-plot')initNavigationPlot();
@@ -81,6 +131,7 @@ function installWorkspaceWindowShell(){
   if(!workspaceWindowId)return;
   const workspace=$(workspaceWindowId);
   if(!workspace){location.replace('./index.html');return;}
+  applyConsoleArt(workspaceWindowId);
   document.body.classList.add('workspace-window-mode',`workspace-window-${workspaceWindowId}`);
   document.title=`${workspace.querySelector('h2')?.textContent?.trim()||'Workspace'} — Sinbad Marine`;
   const toolbar=document.createElement('nav');
@@ -125,16 +176,29 @@ function installWorkspaceWindowShell(){
   // the workspace-specific controls and data exactly as an in-page open does.
   setTimeout(()=>initializeWorkspaceSurface(workspaceWindowId),0);
 }
-document.querySelectorAll('[data-open]').forEach(x=>x.onclick=()=>workspaceWindowId?openWorkspace(x.dataset.open):openDashboardWorkspaceWindow(x.dataset.open));
+document.querySelectorAll('[data-open]').forEach(x=>x.onclick=()=>{const tab=x.dataset.targetTab,params=tab?{tab}:{};if(tab)try{sessionStorage.setItem('atlas_sinbad_workspace_tab',tab)}catch{};if(x.matches('.console-domain-card'))return runConsoleCardOpenMotion(x,prepareConsoleCardDestination(x.dataset.open,params));return openConsoleDestination(x.dataset.open,params)});
+document.querySelectorAll('.console-domain-card[role="button"]').forEach(card=>card.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();card.click()}}));
 document.querySelectorAll('.close').forEach(x=>x.onclick=closeWorkspaces);
 function openWorkspace(id){
   if(!workspaceWindowId)return openDashboardWorkspaceWindow(id);
   const url=new URL(location.href);url.searchParams.set('workspace',id);history.pushState({workspace:id},'',url);
   document.querySelectorAll('.workspace').forEach(x=>x.classList.toggle('active',x.id===id));
+  applyConsoleArt(id);recordConsoleRecent(id);
   $(id)?.scrollIntoView({behavior:'smooth'});renderAll();initializeWorkspaceSurface(id);
 }
-function closeWorkspaces(){if(workspaceWindowId){window.close();return;}document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));scrollTo({top:0,behavior:'smooth'})}
+function closeWorkspaces(){if(workspaceWindowId){window.close();return;}document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));applyConsoleArt('home');scrollTo({top:0,behavior:'smooth'})}
 installWorkspaceWindowShell();
+document.querySelectorAll('[data-console-home]').forEach(button=>button.onclick=()=>workspaceWindowId?location.assign('./index.html'):closeWorkspaces());
+document.querySelectorAll('[data-owner-console]').forEach(button=>button.onclick=()=>window.open(CONSOLE_OWNER_URL,'sinbadOwnerConsole','noopener,noreferrer'));
+document.querySelectorAll('[data-console-favorites]').forEach(button=>button.onclick=()=>{renderConsolePersonalization();$('consoleFavoritesDialog')?.showModal()});
+document.querySelectorAll('[data-console-recent]').forEach(button=>button.onclick=()=>{$('consoleRecentPanel')?.scrollIntoView({behavior:'smooth',block:'center'})});
+$('consoleFavoritesDialog')?.addEventListener('close',event=>{if(event.target.returnValue==='done')saveConsoleFavorites();else renderConsolePersonalization()});
+$('consoleStatusRefresh')?.addEventListener('click',refreshConsoleObservedStatus);
+$('homeCanonicalRefresh')?.addEventListener('click',refreshConsoleObservedStatus);
+$('homeCanonicalMenu')?.addEventListener('click',()=>{const menu=document.querySelector('.hero-action-menu');if(menu)menu.open=!menu.open});
+renderConsolePersonalization();refreshConsoleObservedStatus();
+const consoleStatusObserver=new MutationObserver(refreshConsoleObservedStatus);[$('liveCloudTitle'),$('ownerDeveloperMessageCount')].filter(Boolean).forEach(node=>consoleStatusObserver.observe(node,{subtree:true,childList:true,characterData:true}));
+window.addEventListener('focus',refreshConsoleObservedStatus);window.addEventListener('online',refreshConsoleObservedStatus);window.addEventListener('offline',refreshConsoleObservedStatus);
 
 let encMap=null,encBaseLayer=null,encChartLayer=null,encBathymetryLayer=null,encSeamarkLayer=null,encPlanningSource=null,encDrawInteraction=null,encPlanningMode='pan',openCpnPreviewTimer=null,openCpnFrameUrl='';
 let navigationPlotMap=null,navigationPlotSource=null,navigationPlotRoute=null;
@@ -1970,6 +2034,15 @@ function openSinbadAcademyWindow(){
   if(!sinbadAcademyNativeWindow){alert('Sinbad Academy penceresi engellendi. Bu site için açılır pencerelere izin verip yeniden deneyin.');return null;}
   sinbadAcademyNativeWindow.focus();return sinbadAcademyNativeWindow;
 }
+function prepareSinbadAcademyCardDestination(){
+  if(sinbadAcademyNativeWindow&&!sinbadAcademyNativeWindow.closed)return()=>sinbadAcademyNativeWindow.focus();
+  const width=Math.max(900,screen.availWidth||1200),height=Math.max(650,screen.availHeight||800);
+  sinbadAcademyReady=false;
+  sinbadAcademyNativeWindow=window.open('about:blank','sinbadAcademyClassroom',`popup=yes,left=0,top=0,width=${width},height=${height},resizable=yes,scrollbars=yes`);
+  if(!sinbadAcademyNativeWindow)return()=>openSinbadAcademyWindow();
+  try{sinbadAcademyNativeWindow.document.title='SINBAD Academy hazırlanıyor';sinbadAcademyNativeWindow.blur();window.focus();}catch{}
+  return()=>{try{sinbadAcademyNativeWindow.location.replace('./academy.html');}catch{sinbadAcademyNativeWindow.location.href='./academy.html';}sinbadAcademyNativeWindow.focus();};
+}
 function dispatchNextSinbadAcademyBoardPayload(){
   if(!sinbadAcademyReady||sinbadAcademyBoardInFlight||!sinbadAcademyBoardQueue.length||!sinbadAcademyNativeWindow||sinbadAcademyNativeWindow.closed)return false;
   const entry=sinbadAcademyBoardQueue.shift();sinbadAcademyBoardInFlight=entry;
@@ -2308,8 +2381,7 @@ $('bridgeGpxFile')?.addEventListener('change',event=>importBridgeGpxFile(event.t
 $('syncSinbadMemory')?.addEventListener('click',syncSinbadOfflineMemory);
 addBridgeWaypoint({name:'Departure'});addBridgeWaypoint({name:'Destination'});checkBridgeStatus();setInterval(checkBridgeStatus,30000);
 document.querySelectorAll('[data-open-sinbad-academy]').forEach(element=>{
-  element.addEventListener('click',openSinbadAcademyWindow);
-  if(element.matches('[role="button"]'))element.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();openSinbadAcademyWindow();}});
+  element.addEventListener('click',()=>element.matches('.console-domain-card')?runConsoleCardOpenMotion(element,prepareSinbadAcademyCardDestination()):openSinbadAcademyWindow());
 });
 $('openSinbadProfessorWorkspace')?.addEventListener('click',openSinbadProfessorHandsFreeWindow);
 renderOfficialSources();

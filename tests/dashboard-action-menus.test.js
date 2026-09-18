@@ -12,8 +12,8 @@ test('dashboard actions and cloud summary use expandable menus while Sinbad tool
   assert.match(html,/class="action-menu hero-action-menu"/);
   assert.match(html,/class="action-menu cloud-summary-menu"/);
   assert.doesNotMatch(html,/class="action-menu sinbad-tools-menu"/);
-  assert.match(html,/<summary><span aria-hidden="true">☰<\/span> Quick actions<\/summary>/);
-  assert.match(html,/<summary><span aria-hidden="true">☰<\/span> Atlas Cloud summary<\/summary>/);
+  assert.match(html,/<summary><span aria-hidden="true">☰<\/span> Hızlı işlemler<\/summary>/);
+  assert.match(html,/<summary><span aria-hidden="true">☰<\/span> Atlas Cloud özeti<\/summary>/);
   assert.doesNotMatch(html,/Sinbad tools/);
   assert.match(css,/\.action-menu>summary/);
 });

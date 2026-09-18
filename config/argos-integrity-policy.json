@@ -229,7 +229,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "c30f69a24780bbbc867b9b2ae992b53c1c015d94917a977d02e3708c692fe12f",
+      "sha256": "1f5a8ff57d44983a4d09ca045bc7e0b26aab6049ef81d7d6ca85617c73b996fc",
       "kind": "SOURCE"
     },
     {
@@ -239,7 +239,7 @@
     },
     {
       "path": "config/ui-design-contract.json",
-      "sha256": "049abd13ac6da46d151776337b337ea282af4e64561ae7aaff11db5070ee041b",
+      "sha256": "4dbc512850fc0a8175d36aad0fd81e3a5abebc24dc5e25a8c95e408572739edc",
       "kind": "CONFIG"
     },
     {
@@ -249,7 +249,7 @@
     },
     {
       "path": "index.html",
-      "sha256": "09d1434cab68056fef25d9f4becf212496603b524943eb111aa72040b794cf5f",
+      "sha256": "2427522fd7126f4502f874447ae736a6524c02152aecf41ad6ed69a363ef356d",
       "kind": "SOURCE"
     },
     {
@@ -389,7 +389,7 @@
     },
     {
       "path": "tests/ui-design-contract.test.js",
-      "sha256": "3d0d5b4ae5779f3a9364395d1d368215b688322355c633ed49982390fe7e714a",
+      "sha256": "ee87c5250a2b6e6f5f65fa2128f227761cb039e20ef97e266aff7460b4363216",
       "kind": "TEST"
     },
     {
@@ -419,7 +419,7 @@
     },
     {
       "path": "tools/build-pages-artifact.js",
-      "sha256": "f859c9a0ccfb9e89bfb119ad2854f4c03a4db7f67072460dec381368a169dfbe",
+      "sha256": "f39fd9a9cbd0ea50c14af09fe3e61bc76704b8d49576ed4974e9341938527ea3",
       "kind": "SOURCE"
     },
     {
@@ -440,7 +440,7 @@
     {
       "path": "tests/sinbad-academy-window.test.js",
       "kind": "TEST",
-      "sha256": "930d1a40f8b877ad3c6cf5325b278c0ad9cf389dd59f4105ca676a77da8aa90e"
+      "sha256": "0d21f1af0226ce7b8028b67d34929df65643dca9c333e32cb9fc7419641c9963"
     },
     {
       "path": "founder-owner-mfa.js",
@@ -470,7 +470,7 @@
     {
       "path": "tests/browser/surface-smoke.spec.js",
       "kind": "TEST",
-      "sha256": "57cc38dae1846da30ef402750123d143a0ca89a1f7c96d4689345f4dd9cc79ae"
+      "sha256": "592d11d9fe7925599dd1f0766f365410119af507f13d8f79741a3da17149a071"
     },
     {
       "path": "tools/argos-ci-retention.ps1",
