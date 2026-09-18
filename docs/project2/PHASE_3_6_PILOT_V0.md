@@ -67,4 +67,4 @@ Two properties worth stating plainly:
 
 ## Owner acceptance
 
-NOT RECORDED. Merge requires a separate Owner MERGE GO. This phase is not a GO for wiring, live integration or a model pass.
+NOT RECORDED. Merged as PR #263 on 2026-09-18 (main `2326f3a859c9616a64572e30377fb891a07578a0`) under an Owner MERGE GO; MERGED is not an acceptance, and Pilot v0 stays OWNER ACCEPTED = NOT RECORDED until the Owner states otherwise. This phase is not a GO for wiring, live integration or a model pass.
