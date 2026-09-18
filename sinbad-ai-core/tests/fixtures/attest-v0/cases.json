@@ -1,0 +1,6602 @@
+{
+ "fixture": "sinbad-attest-v0-fixtures/0-v1",
+ "attestVersion": "sinbad-attest/0-v1",
+ "note": "Check inputs only: envelopes, records and public trust-store keys. No seed or private key is stored; the test keys are derived from public labels in tests/helpers/attest-v0-builders.js.",
+ "cases": [
+  {
+   "name": "genuine-gate-decision",
+   "expectedClass": "GENUINE",
+   "expectedStatus": "AUTHENTIC",
+   "expectedReason": "AUTHENTIC",
+   "description": "a gate decision attested by the gate key",
+   "input": {
+    "version": "sinbad-attest-check-input/0-v1",
+    "checkId": "check-1",
+    "at": 1000000,
+    "envelope": {
+     "version": "sinbad-attestation/0-v1",
+     "attestationId": "att-1",
+     "algorithm": "ED25519",
+     "keyId": "key-gate",
+     "recordKind": "GATEKEEPER_DECISION",
+     "recordVersion": "sinbad-gatekeeper-decision/0-v1",
+     "recordDigest": "64cfdf48018bd3a9b7a9ca6d4f9665f8d43e458f9b2e0e9018ed075452ccef06",
+     "payloadDigest": "85f03a20f435d34af5a83d3713886a8560497f5c87aeb01c334373e7d0be1a4f",
+     "taskRef": "task-1",
+     "issuedAt": 999990,
+     "authority": "NONE",
+     "signature": "0d7ded3bed5d653611bc054810c4bc68502454f7c38c7bc4448624614d369704577798edd798902d2cc5dfcfad1fb28d0b42ff1f232e1c23a7684213f6980f04"
+    },
+    "record": {
+     "version": "sinbad-gatekeeper-decision/0-v1",
+     "decisionId": "chain-1.0.gate",
+     "taskRef": "task-1",
+     "stage": "POST",
+     "outcome": "ADMIT",
+     "failClosed": false,
+     "reasonCode": "ALL_CLEAR",
+     "labels": [
+      "VERIFIED"
+     ],
+     "deliveryLabel": "VERIFIED",
+     "decision": {
+      "version": "sinbad-gate-decision/1-v1",
+      "decisionId": "chain-1.0.gate",
+      "taskRef": "task-1",
+      "stage": "POST",
+      "outcome": "ADMIT",
+      "labels": [],
+      "ruleResults": [
+       {
+        "ruleId": "GATE.INPUT_ADMITTED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.OBSERVATION_AVAILABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CITATIONS_IN_EVIDENCE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CLAIM_EVIDENCE_RESOLVABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.SPECIFICITY_SUPPORTED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.VOCABULARY_BOUND",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.FOREIGN_CLAIMS_EXCLUDED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.VOLATILE_CLAIMS_LIVE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.ACTIONS_AUTHORIZED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.VERDICT_MATCHES_DRAFT",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CLAIMS_SUPPORTED",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.EVIDENCE_CONSISTENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.EVIDENCE_FRESH",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.EVIDENCE_IN_SCOPE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.PROVENANCE_ADEQUATE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CLAIM_TEXT_OBSERVABLE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       }
+      ],
+      "verdictRef": "chain-1.0.verdict",
+      "attribution": {
+       "deterministicRuleIds": [],
+       "modelVerdictId": null,
+       "reasonCode": "ALL_CLEAR"
+      },
+      "failClosed": false,
+      "decidedAt": 1000000,
+      "authority": "NONE"
+     },
+     "claimLabels": [
+      {
+       "claimId": "c1",
+       "assertionMode": "ASSERTED",
+       "label": "VERIFIED",
+       "reasonCode": "OBSERVED_EVIDENCE_PRESENT",
+       "evidenceIds": [
+        "ev-repo"
+       ],
+       "volatile": false
+      }
+     ],
+     "actions": [],
+     "ruleResults": [
+      {
+       "ruleId": "GATE.INPUT_ADMITTED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.OBSERVATION_AVAILABLE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CITATIONS_IN_EVIDENCE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CLAIM_EVIDENCE_RESOLVABLE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.SPECIFICITY_SUPPORTED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.VOCABULARY_BOUND",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.FOREIGN_CLAIMS_EXCLUDED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.VOLATILE_CLAIMS_LIVE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.ACTIONS_AUTHORIZED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.VERDICT_MATCHES_DRAFT",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CLAIMS_SUPPORTED",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.EVIDENCE_CONSISTENT",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.EVIDENCE_FRESH",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.EVIDENCE_IN_SCOPE",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.PROVENANCE_ADEQUATE",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CLAIM_TEXT_OBSERVABLE",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      }
+     ],
+     "observation": {
+      "version": "sinbad-sentinel-report/0-v1",
+      "reportId": "chain-1.0.gate",
+      "tap": "POST_GATE",
+      "taskRef": "task-1",
+      "status": "OBSERVED",
+      "failClosed": false,
+      "reasonCode": "OBSERVED",
+      "signal": "CLEAR",
+      "coverage": "FULL",
+      "unobservable": [],
+      "claims": [
+       {
+        "claimId": "c1",
+        "contentHash": "db8514684630548a4a65a8fc2b25e4977926a99af9183b0a3ae9fb381c8beb68",
+        "assertionMode": "ASSERTED",
+        "originRef": "model:draft",
+        "originScopeRef": "scope:alpha",
+        "foreignOrigin": false,
+        "truthState": "VERIFIED",
+        "reasonCode": "OBSERVED_EVIDENCE_PRESENT",
+        "evidenceIds": [
+         "ev-repo"
+        ],
+        "eligibleEvidenceIds": [
+         "ev-repo"
+        ],
+        "foreignEvidenceIds": [],
+        "staleEvidenceIds": [],
+        "unknownEvidenceIds": [],
+        "nonAuthoritativeEvidenceIds": [],
+        "conflictEvidenceIds": [],
+        "reservedTerms": [],
+        "specificValues": false,
+        "flagRefs": [],
+        "unobservable": []
+       }
+      ],
+      "truthStateCounts": {
+       "VERIFIED": 1,
+       "NOT_VERIFIED": 0,
+       "CONFLICT": 0,
+       "SOURCE_MISSING": 0,
+       "BLOCKED": 0,
+       "NOT_APPLICABLE": 0
+      },
+      "evidence": {
+       "setRef": "set-1",
+       "itemCount": 1,
+       "foreignEvidenceIds": [],
+       "staleEvidenceIds": [],
+       "driftedLocators": []
+      },
+      "flags": [],
+      "ruleResults": [
+       {
+        "ruleId": "SENTINEL.INPUT_ADMITTED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_SET_PRESENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_IN_SCOPE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_FRESH",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_CONSISTENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.PROVENANCE_RESOLVABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.CLAIMS_SUPPORTED",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.NO_UNSUPPORTED_SPECIFICS",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.RESERVED_TERMS_BOUND",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.NO_FOREIGN_ADOPTION",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       }
+      ],
+      "provenance": {
+       "sentinelVersion": "sinbad-sentinel/0-v1",
+       "rulesetVersion": "sinbad-sentinel-ruleset/0-v1",
+       "inputDigest": "30f0d6a3d6a3a9d6d0c884e870b624fafbea92e20de2cffc0aaadf940dbdd424",
+       "contextTaskId": "task-1",
+       "evidenceSetId": "set-1",
+       "priorReportDigest": null,
+       "policy": {
+        "maxEvidenceAgeMs": 10000
+       }
+      },
+      "observedAt": 1000000,
+      "authority": "NONE",
+      "decides": false,
+      "reportDigest": "47620785fc9ce89bb90e04288bddc5964d86391338c80fa1154a3fcb80aef500"
+     },
+     "provenance": {
+      "gatekeeperVersion": "sinbad-gatekeeper/0-v1",
+      "rulesetVersion": "sinbad-gatekeeper-ruleset/0-v1",
+      "sentinelVersion": "sinbad-sentinel/0-v1",
+      "inputDigest": "5398b07c7ce22824ab515a380b9713f66f708a235bc8ab960bdca53e6d7f9bcc",
+      "contextTaskId": "task-1",
+      "evidenceSetId": "set-1",
+      "draftId": "draft-1",
+      "draftHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "observationDigest": "47620785fc9ce89bb90e04288bddc5964d86391338c80fa1154a3fcb80aef500",
+      "verdictId": "chain-1.0.verdict",
+      "priorDecisionDigest": null,
+      "policy": {
+       "maxEvidenceAgeMs": 10000,
+       "volatileMaxEvidenceAgeMs": 1000
+      }
+     },
+     "observedAt": 1000000,
+     "authority": "NONE",
+     "executes": false,
+     "decisionDigest": "64cfdf48018bd3a9b7a9ca6d4f9665f8d43e458f9b2e0e9018ed075452ccef06"
+    },
+    "trustStore": [
+     {
+      "keyId": "key-gate",
+      "publicKeyHex": "91a11b5e2b749047e79ebadcb0e6f31c0f6a55fa188f6d7c69b884a473510fb6",
+      "kinds": [
+       "GATEKEEPER_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-copilot",
+      "publicKeyHex": "0f9002861445d1bd0e0e882f0c870204efaa92862de8fcf517b546369f0fd273",
+      "kinds": [
+       "COPILOT_REVIEW"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-pilot",
+      "publicKeyHex": "4b92de2fb0a5077cc7be3711df139fade4fa6ed217cbbf76dd8e11e7d2b3daab",
+      "kinds": [
+       "PILOT_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-chain",
+      "publicKeyHex": "a7309778fa38d4b3e8e6ba54ff56814e4a088259f566dc4cddda07acced86022",
+      "kinds": [
+       "CHAIN_TRANSCRIPT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-sentinel",
+      "publicKeyHex": "bfc2e0899b970786495f7960178cde7eae6863616083bbd4e8abee38a0971ea1",
+      "kinds": [
+       "SENTINEL_REPORT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     }
+    ],
+    "expected": {
+     "recordKind": null,
+     "taskRef": null
+    },
+    "policy": {
+     "maxAgeMs": 10000
+    }
+   },
+   "expected": {
+    "version": "sinbad-attest-check/0-v1",
+    "checkId": "check-1",
+    "status": "AUTHENTIC",
+    "authentic": true,
+    "reasonCode": "AUTHENTIC",
+    "attestationId": "att-1",
+    "recordKind": "GATEKEEPER_DECISION",
+    "recordDigest": "64cfdf48018bd3a9b7a9ca6d4f9665f8d43e458f9b2e0e9018ed075452ccef06",
+    "taskRef": "task-1",
+    "keyId": "key-gate",
+    "issuedAt": 999990,
+    "provenance": {
+     "attestVersion": "sinbad-attest/0-v1",
+     "algorithm": "ED25519",
+     "trustStoreDigest": "0c0909322f89f246eb664e766b550a784fdecf80e7bc3de86b3ac0ba4ae687ff",
+     "policy": {
+      "maxAgeMs": 10000
+     }
+    },
+    "at": 1000000,
+    "authority": "NONE",
+    "originOnly": true,
+    "grantsAuthority": false,
+    "approves": false,
+    "executes": false,
+    "checkDigest": "cb42afbc1bacf296bf7bb6699a03a8c8d2a11f146a053fac18636cac1044c90c"
+   }
+  },
+  {
+   "name": "genuine-copilot-review",
+   "expectedClass": "GENUINE",
+   "expectedStatus": "AUTHENTIC",
+   "expectedReason": "AUTHENTIC",
+   "description": "a review attested by the Co-Pilot key",
+   "input": {
+    "version": "sinbad-attest-check-input/0-v1",
+    "checkId": "check-1",
+    "at": 1000000,
+    "envelope": {
+     "version": "sinbad-attestation/0-v1",
+     "attestationId": "att-1",
+     "algorithm": "ED25519",
+     "keyId": "key-copilot",
+     "recordKind": "COPILOT_REVIEW",
+     "recordVersion": "sinbad-copilot-review/0-v1",
+     "recordDigest": "15983b0916c1b2ec90e1f32c25872f93c580946def97a771cf04ffdaedf0cea6",
+     "payloadDigest": "baceb6305233a2fb95d76d751963ba68e08c1e16ad81caa4e392f5ba60622ef9",
+     "taskRef": "task-1",
+     "issuedAt": 999990,
+     "authority": "NONE",
+     "signature": "58204425a60b16336f3f4b6924f2737fb871498fd48bb1750e57b83f06c40764280f9f703596085fcf72750bcb904813bcf0371ed8d764fbacc8a697a169530d"
+    },
+    "record": {
+     "version": "sinbad-copilot-review/0-v1",
+     "reviewId": "chain-1.0.review",
+     "taskRef": "task-1",
+     "status": "REVIEWED",
+     "failClosed": false,
+     "reasonCode": "REVIEWED",
+     "verdict": {
+      "version": "sinbad-copilot-verdict/1-v1",
+      "verdictId": "chain-1.0.verdict",
+      "taskRef": "task-1",
+      "draftHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "warnings": [],
+      "recommendation": "ALLOW",
+      "issuedAt": 1000000,
+      "authority": "NONE"
+     },
+     "checkers": [
+      {
+       "checkerId": "COPILOT.SENTINEL_FLAGS",
+       "outcome": "CLEAR",
+       "warningCount": 0
+      },
+      {
+       "checkerId": "COPILOT.CITATIONS_RESOLVE",
+       "outcome": "CLEAR",
+       "warningCount": 0
+      },
+      {
+       "checkerId": "COPILOT.CITATIONS_USED",
+       "outcome": "CLEAR",
+       "warningCount": 0
+      },
+      {
+       "checkerId": "COPILOT.CLAIMS_CITED",
+       "outcome": "CLEAR",
+       "warningCount": 0
+      },
+      {
+       "checkerId": "COPILOT.ACTIONS_SAFE",
+       "outcome": "CLEAR",
+       "warningCount": 0
+      },
+      {
+       "checkerId": "COPILOT.TASK_NOT_EXPANDED",
+       "outcome": "CLEAR",
+       "warningCount": 0
+      },
+      {
+       "checkerId": "COPILOT.NO_AUTHORITY_VOICE",
+       "outcome": "CLEAR",
+       "warningCount": 0
+      }
+     ],
+     "notCovered": [
+      "INSTRUCTION_CONFLICT",
+      "CORRELATED_FAILURE_RISK"
+     ],
+     "warningsTruncated": 0,
+     "observation": {
+      "version": "sinbad-sentinel-report/0-v1",
+      "reportId": "chain-1.0.review",
+      "tap": "POST_DRAFT",
+      "taskRef": "task-1",
+      "status": "OBSERVED",
+      "failClosed": false,
+      "reasonCode": "OBSERVED",
+      "signal": "CLEAR",
+      "coverage": "FULL",
+      "unobservable": [],
+      "claims": [
+       {
+        "claimId": "c1",
+        "contentHash": "db8514684630548a4a65a8fc2b25e4977926a99af9183b0a3ae9fb381c8beb68",
+        "assertionMode": "ASSERTED",
+        "originRef": "model:draft",
+        "originScopeRef": "scope:alpha",
+        "foreignOrigin": false,
+        "truthState": "VERIFIED",
+        "reasonCode": "OBSERVED_EVIDENCE_PRESENT",
+        "evidenceIds": [
+         "ev-repo"
+        ],
+        "eligibleEvidenceIds": [
+         "ev-repo"
+        ],
+        "foreignEvidenceIds": [],
+        "staleEvidenceIds": [],
+        "unknownEvidenceIds": [],
+        "nonAuthoritativeEvidenceIds": [],
+        "conflictEvidenceIds": [],
+        "reservedTerms": [],
+        "specificValues": false,
+        "flagRefs": [],
+        "unobservable": []
+       }
+      ],
+      "truthStateCounts": {
+       "VERIFIED": 1,
+       "NOT_VERIFIED": 0,
+       "CONFLICT": 0,
+       "SOURCE_MISSING": 0,
+       "BLOCKED": 0,
+       "NOT_APPLICABLE": 0
+      },
+      "evidence": {
+       "setRef": "set-1",
+       "itemCount": 1,
+       "foreignEvidenceIds": [],
+       "staleEvidenceIds": [],
+       "driftedLocators": []
+      },
+      "flags": [],
+      "ruleResults": [
+       {
+        "ruleId": "SENTINEL.INPUT_ADMITTED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_SET_PRESENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_IN_SCOPE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_FRESH",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_CONSISTENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.PROVENANCE_RESOLVABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.CLAIMS_SUPPORTED",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.NO_UNSUPPORTED_SPECIFICS",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.RESERVED_TERMS_BOUND",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.NO_FOREIGN_ADOPTION",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       }
+      ],
+      "provenance": {
+       "sentinelVersion": "sinbad-sentinel/0-v1",
+       "rulesetVersion": "sinbad-sentinel-ruleset/0-v1",
+       "inputDigest": "46b1e6a5af43f0877710cd2e35e049b4b887ff94236330b1971d9443085ae906",
+       "contextTaskId": "task-1",
+       "evidenceSetId": "set-1",
+       "priorReportDigest": null,
+       "policy": {
+        "maxEvidenceAgeMs": 10000
+       }
+      },
+      "observedAt": 1000000,
+      "authority": "NONE",
+      "decides": false,
+      "reportDigest": "a57c16eafb3afbd8bcf228d5ea374baff6780ea66f351cb7b5c091976cce52ea"
+     },
+     "provenance": {
+      "copilotVersion": "sinbad-copilot/0-v1",
+      "checkersetVersion": "sinbad-copilot-checkerset/0-v1",
+      "sentinelVersion": "sinbad-sentinel/0-v1",
+      "inputDigest": "00765c160ecb1b317d19dcdd9f6ba7012deb81f5d591f3ceff279378bb345b58",
+      "contextTaskId": "task-1",
+      "evidenceSetId": "set-1",
+      "draftId": "draft-1",
+      "draftHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "observationDigest": "a57c16eafb3afbd8bcf228d5ea374baff6780ea66f351cb7b5c091976cce52ea",
+      "priorReviewDigest": null,
+      "policy": {
+       "maxEvidenceAgeMs": 10000
+      }
+     },
+     "issuedAt": 1000000,
+     "authority": "NONE",
+     "rewrites": false,
+     "approves": false,
+     "callsModel": false,
+     "reviewDigest": "15983b0916c1b2ec90e1f32c25872f93c580946def97a771cf04ffdaedf0cea6"
+    },
+    "trustStore": [
+     {
+      "keyId": "key-gate",
+      "publicKeyHex": "91a11b5e2b749047e79ebadcb0e6f31c0f6a55fa188f6d7c69b884a473510fb6",
+      "kinds": [
+       "GATEKEEPER_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-copilot",
+      "publicKeyHex": "0f9002861445d1bd0e0e882f0c870204efaa92862de8fcf517b546369f0fd273",
+      "kinds": [
+       "COPILOT_REVIEW"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-pilot",
+      "publicKeyHex": "4b92de2fb0a5077cc7be3711df139fade4fa6ed217cbbf76dd8e11e7d2b3daab",
+      "kinds": [
+       "PILOT_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-chain",
+      "publicKeyHex": "a7309778fa38d4b3e8e6ba54ff56814e4a088259f566dc4cddda07acced86022",
+      "kinds": [
+       "CHAIN_TRANSCRIPT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-sentinel",
+      "publicKeyHex": "bfc2e0899b970786495f7960178cde7eae6863616083bbd4e8abee38a0971ea1",
+      "kinds": [
+       "SENTINEL_REPORT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     }
+    ],
+    "expected": {
+     "recordKind": null,
+     "taskRef": null
+    },
+    "policy": {
+     "maxAgeMs": 10000
+    }
+   },
+   "expected": {
+    "version": "sinbad-attest-check/0-v1",
+    "checkId": "check-1",
+    "status": "AUTHENTIC",
+    "authentic": true,
+    "reasonCode": "AUTHENTIC",
+    "attestationId": "att-1",
+    "recordKind": "COPILOT_REVIEW",
+    "recordDigest": "15983b0916c1b2ec90e1f32c25872f93c580946def97a771cf04ffdaedf0cea6",
+    "taskRef": "task-1",
+    "keyId": "key-copilot",
+    "issuedAt": 999990,
+    "provenance": {
+     "attestVersion": "sinbad-attest/0-v1",
+     "algorithm": "ED25519",
+     "trustStoreDigest": "0c0909322f89f246eb664e766b550a784fdecf80e7bc3de86b3ac0ba4ae687ff",
+     "policy": {
+      "maxAgeMs": 10000
+     }
+    },
+    "at": 1000000,
+    "authority": "NONE",
+    "originOnly": true,
+    "grantsAuthority": false,
+    "approves": false,
+    "executes": false,
+    "checkDigest": "b3317672a84ebe41d45039b2d48de315afbeded74e1587bca309aab7f6f86dc2"
+   }
+  },
+  {
+   "name": "genuine-pilot-decision-expected",
+   "expectedClass": "GENUINE",
+   "expectedStatus": "AUTHENTIC",
+   "expectedReason": "AUTHENTIC",
+   "description": "a Pilot decision, with the expected kind and task stated",
+   "input": {
+    "version": "sinbad-attest-check-input/0-v1",
+    "checkId": "check-1",
+    "at": 1000000,
+    "envelope": {
+     "version": "sinbad-attestation/0-v1",
+     "attestationId": "att-1",
+     "algorithm": "ED25519",
+     "keyId": "key-pilot",
+     "recordKind": "PILOT_DECISION",
+     "recordVersion": "sinbad-pilot-decision/0-v1",
+     "recordDigest": "4bfe85156e87a264d254beec0f10ecfc8561ff04cc05a11f48ee0dc9a25f8254",
+     "payloadDigest": "305de1fbe43a10f8ae2b55cb6558e29b60dbbc92cfc319e3daedb9aaccb0055b",
+     "taskRef": "task-1",
+     "issuedAt": 999990,
+     "authority": "NONE",
+     "signature": "2a2e6d0a4160113e9eb57f320567665d0dda849b9e6daa2372c06ec4ffab0599ad2776da71811b0d59582cc07dd3a54201ceca2a50f053b683647be5b8b2a80b"
+    },
+    "record": {
+     "version": "sinbad-pilot-decision/0-v1",
+     "pilotDecisionId": "chain-1.0.pilot",
+     "taskRef": "task-1",
+     "decision": "PROCEED",
+     "failClosed": false,
+     "reasonCode": "ALL_CLEAR",
+     "ruleId": "PILOT.GATE_ADMITS",
+     "findings": [],
+     "carryLabels": [
+      "VERIFIED"
+     ],
+     "gate": {
+      "decisionId": "chain-1.0.gate",
+      "decisionDigest": "64cfdf48018bd3a9b7a9ca6d4f9665f8d43e458f9b2e0e9018ed075452ccef06",
+      "outcome": "ADMIT",
+      "reasonCode": "ALL_CLEAR",
+      "failClosed": false,
+      "deliveryLabel": "VERIFIED",
+      "observationSignal": "CLEAR",
+      "observationCoverage": "FULL"
+     },
+     "review": {
+      "reviewId": "chain-1.0.review",
+      "reviewDigest": "15983b0916c1b2ec90e1f32c25872f93c580946def97a771cf04ffdaedf0cea6",
+      "status": "REVIEWED",
+      "reasonCode": "REVIEWED",
+      "recommendation": "ALLOW"
+     },
+     "iteration": {
+      "index": 0,
+      "maxIterations": 3,
+      "remaining": 2
+     },
+     "provenance": {
+      "pilotVersion": "sinbad-pilot/0-v1",
+      "rulesetVersion": "sinbad-pilot-ruleset/0-v1",
+      "inputDigest": "996a3d7bb9d4926e12c17126d02a97f9dda9709b2efd6fdd507406f5fb019a1e",
+      "contextTaskId": "task-1",
+      "draftId": "draft-1",
+      "draftHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "gateDecisionDigest": "64cfdf48018bd3a9b7a9ca6d4f9665f8d43e458f9b2e0e9018ed075452ccef06",
+      "reviewDigest": "15983b0916c1b2ec90e1f32c25872f93c580946def97a771cf04ffdaedf0cea6",
+      "verdictId": "chain-1.0.verdict",
+      "priorPilotDecisionDigest": null,
+      "policy": {
+       "maxIterations": 3,
+       "labelledDelivery": "PROCEED"
+      }
+     },
+     "decidedAt": 1000000,
+     "authority": "NONE",
+     "recommendationOnly": true,
+     "executes": false,
+     "approves": false,
+     "grantsAuthority": false,
+     "rewrites": false,
+     "callsModel": false,
+     "pilotDecisionDigest": "4bfe85156e87a264d254beec0f10ecfc8561ff04cc05a11f48ee0dc9a25f8254"
+    },
+    "trustStore": [
+     {
+      "keyId": "key-gate",
+      "publicKeyHex": "91a11b5e2b749047e79ebadcb0e6f31c0f6a55fa188f6d7c69b884a473510fb6",
+      "kinds": [
+       "GATEKEEPER_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-copilot",
+      "publicKeyHex": "0f9002861445d1bd0e0e882f0c870204efaa92862de8fcf517b546369f0fd273",
+      "kinds": [
+       "COPILOT_REVIEW"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-pilot",
+      "publicKeyHex": "4b92de2fb0a5077cc7be3711df139fade4fa6ed217cbbf76dd8e11e7d2b3daab",
+      "kinds": [
+       "PILOT_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-chain",
+      "publicKeyHex": "a7309778fa38d4b3e8e6ba54ff56814e4a088259f566dc4cddda07acced86022",
+      "kinds": [
+       "CHAIN_TRANSCRIPT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-sentinel",
+      "publicKeyHex": "bfc2e0899b970786495f7960178cde7eae6863616083bbd4e8abee38a0971ea1",
+      "kinds": [
+       "SENTINEL_REPORT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     }
+    ],
+    "expected": {
+     "recordKind": "PILOT_DECISION",
+     "taskRef": "task-1"
+    },
+    "policy": {
+     "maxAgeMs": 10000
+    }
+   },
+   "expected": {
+    "version": "sinbad-attest-check/0-v1",
+    "checkId": "check-1",
+    "status": "AUTHENTIC",
+    "authentic": true,
+    "reasonCode": "AUTHENTIC",
+    "attestationId": "att-1",
+    "recordKind": "PILOT_DECISION",
+    "recordDigest": "4bfe85156e87a264d254beec0f10ecfc8561ff04cc05a11f48ee0dc9a25f8254",
+    "taskRef": "task-1",
+    "keyId": "key-pilot",
+    "issuedAt": 999990,
+    "provenance": {
+     "attestVersion": "sinbad-attest/0-v1",
+     "algorithm": "ED25519",
+     "trustStoreDigest": "0c0909322f89f246eb664e766b550a784fdecf80e7bc3de86b3ac0ba4ae687ff",
+     "policy": {
+      "maxAgeMs": 10000
+     }
+    },
+    "at": 1000000,
+    "authority": "NONE",
+    "originOnly": true,
+    "grantsAuthority": false,
+    "approves": false,
+    "executes": false,
+    "checkDigest": "2131f103b522c4d7a24b60377b79d06cdc0c3917b1007ef3f4c1c5dfe26d1a0b"
+   }
+  },
+  {
+   "name": "genuine-chain-transcript",
+   "expectedClass": "GENUINE",
+   "expectedStatus": "AUTHENTIC",
+   "expectedReason": "AUTHENTIC",
+   "description": "a whole offline transcript",
+   "input": {
+    "version": "sinbad-attest-check-input/0-v1",
+    "checkId": "check-1",
+    "at": 1000000,
+    "envelope": {
+     "version": "sinbad-attestation/0-v1",
+     "attestationId": "att-1",
+     "algorithm": "ED25519",
+     "keyId": "key-chain",
+     "recordKind": "CHAIN_TRANSCRIPT",
+     "recordVersion": "sinbad-offline-chain-transcript/0-v1",
+     "recordDigest": "26e29902ad88b8de4de3b0dc18501cd781bd152c4a420d555309cf93f81c1bb0",
+     "payloadDigest": "d79e4b90227da905afd980c5e73b7662ee0cfca1a8fc6225be7c82d597e0f6d6",
+     "taskRef": "task-1",
+     "issuedAt": 999990,
+     "authority": "NONE",
+     "signature": "ae39c7a15a096886178629aafefb931ea7541cd00579515d25283b458b8f8ba0f8d5025ddf0e5f8f9fb29b977cb03577cb67ff705bb67899e6a0b75de000f903"
+    },
+    "record": {
+     "version": "sinbad-offline-chain-transcript/0-v1",
+     "chainId": "chain-1",
+     "taskRef": "task-1",
+     "outcome": "PROCEED",
+     "failClosed": false,
+     "reasonCode": "ALL_CLEAR",
+     "passesSupplied": 1,
+     "passesRun": 1,
+     "passesUnused": 0,
+     "steps": [
+      {
+       "index": 0,
+       "draftId": "draft-1",
+       "draftHash": "1111111111111111111111111111111111111111111111111111111111111111",
+       "review": {
+        "reviewDigest": "15983b0916c1b2ec90e1f32c25872f93c580946def97a771cf04ffdaedf0cea6",
+        "status": "REVIEWED",
+        "reasonCode": "REVIEWED",
+        "recommendation": "ALLOW",
+        "warningCount": 0
+       },
+       "gate": {
+        "decisionDigest": "64cfdf48018bd3a9b7a9ca6d4f9665f8d43e458f9b2e0e9018ed075452ccef06",
+        "outcome": "ADMIT",
+        "reasonCode": "ALL_CLEAR",
+        "deliveryLabel": "VERIFIED",
+        "labels": [
+         "VERIFIED"
+        ]
+       },
+       "pilot": {
+        "pilotDecisionDigest": "4bfe85156e87a264d254beec0f10ecfc8561ff04cc05a11f48ee0dc9a25f8254",
+        "decision": "PROCEED",
+        "ruleId": "PILOT.GATE_ADMITS",
+        "reasonCode": "ALL_CLEAR",
+        "carryLabels": [
+         "VERIFIED"
+        ],
+        "findings": []
+       },
+       "records": {
+        "review": {
+         "version": "sinbad-copilot-review/0-v1",
+         "reviewId": "chain-1.0.review",
+         "taskRef": "task-1",
+         "status": "REVIEWED",
+         "failClosed": false,
+         "reasonCode": "REVIEWED",
+         "verdict": {
+          "version": "sinbad-copilot-verdict/1-v1",
+          "verdictId": "chain-1.0.verdict",
+          "taskRef": "task-1",
+          "draftHash": "1111111111111111111111111111111111111111111111111111111111111111",
+          "warnings": [],
+          "recommendation": "ALLOW",
+          "issuedAt": 1000000,
+          "authority": "NONE"
+         },
+         "checkers": [
+          {
+           "checkerId": "COPILOT.SENTINEL_FLAGS",
+           "outcome": "CLEAR",
+           "warningCount": 0
+          },
+          {
+           "checkerId": "COPILOT.CITATIONS_RESOLVE",
+           "outcome": "CLEAR",
+           "warningCount": 0
+          },
+          {
+           "checkerId": "COPILOT.CITATIONS_USED",
+           "outcome": "CLEAR",
+           "warningCount": 0
+          },
+          {
+           "checkerId": "COPILOT.CLAIMS_CITED",
+           "outcome": "CLEAR",
+           "warningCount": 0
+          },
+          {
+           "checkerId": "COPILOT.ACTIONS_SAFE",
+           "outcome": "CLEAR",
+           "warningCount": 0
+          },
+          {
+           "checkerId": "COPILOT.TASK_NOT_EXPANDED",
+           "outcome": "CLEAR",
+           "warningCount": 0
+          },
+          {
+           "checkerId": "COPILOT.NO_AUTHORITY_VOICE",
+           "outcome": "CLEAR",
+           "warningCount": 0
+          }
+         ],
+         "notCovered": [
+          "INSTRUCTION_CONFLICT",
+          "CORRELATED_FAILURE_RISK"
+         ],
+         "warningsTruncated": 0,
+         "observation": {
+          "version": "sinbad-sentinel-report/0-v1",
+          "reportId": "chain-1.0.review",
+          "tap": "POST_DRAFT",
+          "taskRef": "task-1",
+          "status": "OBSERVED",
+          "failClosed": false,
+          "reasonCode": "OBSERVED",
+          "signal": "CLEAR",
+          "coverage": "FULL",
+          "unobservable": [],
+          "claims": [
+           {
+            "claimId": "c1",
+            "contentHash": "db8514684630548a4a65a8fc2b25e4977926a99af9183b0a3ae9fb381c8beb68",
+            "assertionMode": "ASSERTED",
+            "originRef": "model:draft",
+            "originScopeRef": "scope:alpha",
+            "foreignOrigin": false,
+            "truthState": "VERIFIED",
+            "reasonCode": "OBSERVED_EVIDENCE_PRESENT",
+            "evidenceIds": [
+             "ev-repo"
+            ],
+            "eligibleEvidenceIds": [
+             "ev-repo"
+            ],
+            "foreignEvidenceIds": [],
+            "staleEvidenceIds": [],
+            "unknownEvidenceIds": [],
+            "nonAuthoritativeEvidenceIds": [],
+            "conflictEvidenceIds": [],
+            "reservedTerms": [],
+            "specificValues": false,
+            "flagRefs": [],
+            "unobservable": []
+           }
+          ],
+          "truthStateCounts": {
+           "VERIFIED": 1,
+           "NOT_VERIFIED": 0,
+           "CONFLICT": 0,
+           "SOURCE_MISSING": 0,
+           "BLOCKED": 0,
+           "NOT_APPLICABLE": 0
+          },
+          "evidence": {
+           "setRef": "set-1",
+           "itemCount": 1,
+           "foreignEvidenceIds": [],
+           "staleEvidenceIds": [],
+           "driftedLocators": []
+          },
+          "flags": [],
+          "ruleResults": [
+           {
+            "ruleId": "SENTINEL.INPUT_ADMITTED",
+            "outcome": "PASS",
+            "blocking": true,
+            "detailRef": null
+           },
+           {
+            "ruleId": "SENTINEL.EVIDENCE_SET_PRESENT",
+            "outcome": "PASS",
+            "blocking": false,
+            "detailRef": null
+           },
+           {
+            "ruleId": "SENTINEL.EVIDENCE_IN_SCOPE",
+            "outcome": "PASS",
+            "blocking": false,
+            "detailRef": null
+           },
+           {
+            "ruleId": "SENTINEL.EVIDENCE_FRESH",
+            "outcome": "PASS",
+            "blocking": false,
+            "detailRef": null
+           },
+           {
+            "ruleId": "SENTINEL.EVIDENCE_CONSISTENT",
+            "outcome": "PASS",
+            "blocking": false,
+            "detailRef": null
+           },
+           {
+            "ruleId": "SENTINEL.PROVENANCE_RESOLVABLE",
+            "outcome": "PASS",
+            "blocking": true,
+            "detailRef": null
+           },
+           {
+            "ruleId": "SENTINEL.CLAIMS_SUPPORTED",
+            "outcome": "PASS",
+            "blocking": false,
+            "detailRef": null
+           },
+           {
+            "ruleId": "SENTINEL.NO_UNSUPPORTED_SPECIFICS",
+            "outcome": "PASS",
+            "blocking": true,
+            "detailRef": null
+           },
+           {
+            "ruleId": "SENTINEL.RESERVED_TERMS_BOUND",
+            "outcome": "PASS",
+            "blocking": true,
+            "detailRef": null
+           },
+           {
+            "ruleId": "SENTINEL.NO_FOREIGN_ADOPTION",
+            "outcome": "PASS",
+            "blocking": true,
+            "detailRef": null
+           }
+          ],
+          "provenance": {
+           "sentinelVersion": "sinbad-sentinel/0-v1",
+           "rulesetVersion": "sinbad-sentinel-ruleset/0-v1",
+           "inputDigest": "46b1e6a5af43f0877710cd2e35e049b4b887ff94236330b1971d9443085ae906",
+           "contextTaskId": "task-1",
+           "evidenceSetId": "set-1",
+           "priorReportDigest": null,
+           "policy": {
+            "maxEvidenceAgeMs": 10000
+           }
+          },
+          "observedAt": 1000000,
+          "authority": "NONE",
+          "decides": false,
+          "reportDigest": "a57c16eafb3afbd8bcf228d5ea374baff6780ea66f351cb7b5c091976cce52ea"
+         },
+         "provenance": {
+          "copilotVersion": "sinbad-copilot/0-v1",
+          "checkersetVersion": "sinbad-copilot-checkerset/0-v1",
+          "sentinelVersion": "sinbad-sentinel/0-v1",
+          "inputDigest": "00765c160ecb1b317d19dcdd9f6ba7012deb81f5d591f3ceff279378bb345b58",
+          "contextTaskId": "task-1",
+          "evidenceSetId": "set-1",
+          "draftId": "draft-1",
+          "draftHash": "1111111111111111111111111111111111111111111111111111111111111111",
+          "observationDigest": "a57c16eafb3afbd8bcf228d5ea374baff6780ea66f351cb7b5c091976cce52ea",
+          "priorReviewDigest": null,
+          "policy": {
+           "maxEvidenceAgeMs": 10000
+          }
+         },
+         "issuedAt": 1000000,
+         "authority": "NONE",
+         "rewrites": false,
+         "approves": false,
+         "callsModel": false,
+         "reviewDigest": "15983b0916c1b2ec90e1f32c25872f93c580946def97a771cf04ffdaedf0cea6"
+        },
+        "gateDecision": {
+         "version": "sinbad-gatekeeper-decision/0-v1",
+         "decisionId": "chain-1.0.gate",
+         "taskRef": "task-1",
+         "stage": "POST",
+         "outcome": "ADMIT",
+         "failClosed": false,
+         "reasonCode": "ALL_CLEAR",
+         "labels": [
+          "VERIFIED"
+         ],
+         "deliveryLabel": "VERIFIED",
+         "decision": {
+          "version": "sinbad-gate-decision/1-v1",
+          "decisionId": "chain-1.0.gate",
+          "taskRef": "task-1",
+          "stage": "POST",
+          "outcome": "ADMIT",
+          "labels": [],
+          "ruleResults": [
+           {
+            "ruleId": "GATE.INPUT_ADMITTED",
+            "outcome": "PASS",
+            "blocking": true,
+            "detailRef": null
+           },
+           {
+            "ruleId": "GATE.OBSERVATION_AVAILABLE",
+            "outcome": "PASS",
+            "blocking": true,
+            "detailRef": null
+           },
+           {
+            "ruleId": "GATE.CITATIONS_IN_EVIDENCE",
+            "outcome": "PASS",
+            "blocking": true,
+            "detailRef": null
+           },
+           {
+            "ruleId": "GATE.CLAIM_EVIDENCE_RESOLVABLE",
+            "outcome": "PASS",
+            "blocking": true,
+            "detailRef": null
+           },
+           {
+            "ruleId": "GATE.SPECIFICITY_SUPPORTED",
+            "outcome": "PASS",
+            "blocking": true,
+            "detailRef": null
+           },
+           {
+            "ruleId": "GATE.VOCABULARY_BOUND",
+            "outcome": "PASS",
+            "blocking": true,
+            "detailRef": null
+           },
+           {
+            "ruleId": "GATE.FOREIGN_CLAIMS_EXCLUDED",
+            "outcome": "PASS",
+            "blocking": true,
+            "detailRef": null
+           },
+           {
+            "ruleId": "GATE.VOLATILE_CLAIMS_LIVE",
+            "outcome": "PASS",
+            "blocking": true,
+            "detailRef": null
+           },
+           {
+            "ruleId": "GATE.ACTIONS_AUTHORIZED",
+            "outcome": "PASS",
+            "blocking": true,
+            "detailRef": null
+           },
+           {
+            "ruleId": "GATE.VERDICT_MATCHES_DRAFT",
+            "outcome": "PASS",
+            "blocking": true,
+            "detailRef": null
+           },
+           {
+            "ruleId": "GATE.CLAIMS_SUPPORTED",
+            "outcome": "PASS",
+            "blocking": false,
+            "detailRef": null
+           },
+           {
+            "ruleId": "GATE.EVIDENCE_CONSISTENT",
+            "outcome": "PASS",
+            "blocking": false,
+            "detailRef": null
+           },
+           {
+            "ruleId": "GATE.EVIDENCE_FRESH",
+            "outcome": "PASS",
+            "blocking": false,
+            "detailRef": null
+           },
+           {
+            "ruleId": "GATE.EVIDENCE_IN_SCOPE",
+            "outcome": "PASS",
+            "blocking": false,
+            "detailRef": null
+           },
+           {
+            "ruleId": "GATE.PROVENANCE_ADEQUATE",
+            "outcome": "PASS",
+            "blocking": false,
+            "detailRef": null
+           },
+           {
+            "ruleId": "GATE.CLAIM_TEXT_OBSERVABLE",
+            "outcome": "PASS",
+            "blocking": false,
+            "detailRef": null
+           }
+          ],
+          "verdictRef": "chain-1.0.verdict",
+          "attribution": {
+           "deterministicRuleIds": [],
+           "modelVerdictId": null,
+           "reasonCode": "ALL_CLEAR"
+          },
+          "failClosed": false,
+          "decidedAt": 1000000,
+          "authority": "NONE"
+         },
+         "claimLabels": [
+          {
+           "claimId": "c1",
+           "assertionMode": "ASSERTED",
+           "label": "VERIFIED",
+           "reasonCode": "OBSERVED_EVIDENCE_PRESENT",
+           "evidenceIds": [
+            "ev-repo"
+           ],
+           "volatile": false
+          }
+         ],
+         "actions": [],
+         "ruleResults": [
+          {
+           "ruleId": "GATE.INPUT_ADMITTED",
+           "outcome": "PASS",
+           "blocking": true,
+           "detailRef": null
+          },
+          {
+           "ruleId": "GATE.OBSERVATION_AVAILABLE",
+           "outcome": "PASS",
+           "blocking": true,
+           "detailRef": null
+          },
+          {
+           "ruleId": "GATE.CITATIONS_IN_EVIDENCE",
+           "outcome": "PASS",
+           "blocking": true,
+           "detailRef": null
+          },
+          {
+           "ruleId": "GATE.CLAIM_EVIDENCE_RESOLVABLE",
+           "outcome": "PASS",
+           "blocking": true,
+           "detailRef": null
+          },
+          {
+           "ruleId": "GATE.SPECIFICITY_SUPPORTED",
+           "outcome": "PASS",
+           "blocking": true,
+           "detailRef": null
+          },
+          {
+           "ruleId": "GATE.VOCABULARY_BOUND",
+           "outcome": "PASS",
+           "blocking": true,
+           "detailRef": null
+          },
+          {
+           "ruleId": "GATE.FOREIGN_CLAIMS_EXCLUDED",
+           "outcome": "PASS",
+           "blocking": true,
+           "detailRef": null
+          },
+          {
+           "ruleId": "GATE.VOLATILE_CLAIMS_LIVE",
+           "outcome": "PASS",
+           "blocking": true,
+           "detailRef": null
+          },
+          {
+           "ruleId": "GATE.ACTIONS_AUTHORIZED",
+           "outcome": "PASS",
+           "blocking": true,
+           "detailRef": null
+          },
+          {
+           "ruleId": "GATE.VERDICT_MATCHES_DRAFT",
+           "outcome": "PASS",
+           "blocking": true,
+           "detailRef": null
+          },
+          {
+           "ruleId": "GATE.CLAIMS_SUPPORTED",
+           "outcome": "PASS",
+           "blocking": false,
+           "detailRef": null
+          },
+          {
+           "ruleId": "GATE.EVIDENCE_CONSISTENT",
+           "outcome": "PASS",
+           "blocking": false,
+           "detailRef": null
+          },
+          {
+           "ruleId": "GATE.EVIDENCE_FRESH",
+           "outcome": "PASS",
+           "blocking": false,
+           "detailRef": null
+          },
+          {
+           "ruleId": "GATE.EVIDENCE_IN_SCOPE",
+           "outcome": "PASS",
+           "blocking": false,
+           "detailRef": null
+          },
+          {
+           "ruleId": "GATE.PROVENANCE_ADEQUATE",
+           "outcome": "PASS",
+           "blocking": false,
+           "detailRef": null
+          },
+          {
+           "ruleId": "GATE.CLAIM_TEXT_OBSERVABLE",
+           "outcome": "PASS",
+           "blocking": false,
+           "detailRef": null
+          }
+         ],
+         "observation": {
+          "version": "sinbad-sentinel-report/0-v1",
+          "reportId": "chain-1.0.gate",
+          "tap": "POST_GATE",
+          "taskRef": "task-1",
+          "status": "OBSERVED",
+          "failClosed": false,
+          "reasonCode": "OBSERVED",
+          "signal": "CLEAR",
+          "coverage": "FULL",
+          "unobservable": [],
+          "claims": [
+           {
+            "claimId": "c1",
+            "contentHash": "db8514684630548a4a65a8fc2b25e4977926a99af9183b0a3ae9fb381c8beb68",
+            "assertionMode": "ASSERTED",
+            "originRef": "model:draft",
+            "originScopeRef": "scope:alpha",
+            "foreignOrigin": false,
+            "truthState": "VERIFIED",
+            "reasonCode": "OBSERVED_EVIDENCE_PRESENT",
+            "evidenceIds": [
+             "ev-repo"
+            ],
+            "eligibleEvidenceIds": [
+             "ev-repo"
+            ],
+            "foreignEvidenceIds": [],
+            "staleEvidenceIds": [],
+            "unknownEvidenceIds": [],
+            "nonAuthoritativeEvidenceIds": [],
+            "conflictEvidenceIds": [],
+            "reservedTerms": [],
+            "specificValues": false,
+            "flagRefs": [],
+            "unobservable": []
+           }
+          ],
+          "truthStateCounts": {
+           "VERIFIED": 1,
+           "NOT_VERIFIED": 0,
+           "CONFLICT": 0,
+           "SOURCE_MISSING": 0,
+           "BLOCKED": 0,
+           "NOT_APPLICABLE": 0
+          },
+          "evidence": {
+           "setRef": "set-1",
+           "itemCount": 1,
+           "foreignEvidenceIds": [],
+           "staleEvidenceIds": [],
+           "driftedLocators": []
+          },
+          "flags": [],
+          "ruleResults": [
+           {
+            "ruleId": "SENTINEL.INPUT_ADMITTED",
+            "outcome": "PASS",
+            "blocking": true,
+            "detailRef": null
+           },
+           {
+            "ruleId": "SENTINEL.EVIDENCE_SET_PRESENT",
+            "outcome": "PASS",
+            "blocking": false,
+            "detailRef": null
+           },
+           {
+            "ruleId": "SENTINEL.EVIDENCE_IN_SCOPE",
+            "outcome": "PASS",
+            "blocking": false,
+            "detailRef": null
+           },
+           {
+            "ruleId": "SENTINEL.EVIDENCE_FRESH",
+            "outcome": "PASS",
+            "blocking": false,
+            "detailRef": null
+           },
+           {
+            "ruleId": "SENTINEL.EVIDENCE_CONSISTENT",
+            "outcome": "PASS",
+            "blocking": false,
+            "detailRef": null
+           },
+           {
+            "ruleId": "SENTINEL.PROVENANCE_RESOLVABLE",
+            "outcome": "PASS",
+            "blocking": true,
+            "detailRef": null
+           },
+           {
+            "ruleId": "SENTINEL.CLAIMS_SUPPORTED",
+            "outcome": "PASS",
+            "blocking": false,
+            "detailRef": null
+           },
+           {
+            "ruleId": "SENTINEL.NO_UNSUPPORTED_SPECIFICS",
+            "outcome": "PASS",
+            "blocking": true,
+            "detailRef": null
+           },
+           {
+            "ruleId": "SENTINEL.RESERVED_TERMS_BOUND",
+            "outcome": "PASS",
+            "blocking": true,
+            "detailRef": null
+           },
+           {
+            "ruleId": "SENTINEL.NO_FOREIGN_ADOPTION",
+            "outcome": "PASS",
+            "blocking": true,
+            "detailRef": null
+           }
+          ],
+          "provenance": {
+           "sentinelVersion": "sinbad-sentinel/0-v1",
+           "rulesetVersion": "sinbad-sentinel-ruleset/0-v1",
+           "inputDigest": "30f0d6a3d6a3a9d6d0c884e870b624fafbea92e20de2cffc0aaadf940dbdd424",
+           "contextTaskId": "task-1",
+           "evidenceSetId": "set-1",
+           "priorReportDigest": null,
+           "policy": {
+            "maxEvidenceAgeMs": 10000
+           }
+          },
+          "observedAt": 1000000,
+          "authority": "NONE",
+          "decides": false,
+          "reportDigest": "47620785fc9ce89bb90e04288bddc5964d86391338c80fa1154a3fcb80aef500"
+         },
+         "provenance": {
+          "gatekeeperVersion": "sinbad-gatekeeper/0-v1",
+          "rulesetVersion": "sinbad-gatekeeper-ruleset/0-v1",
+          "sentinelVersion": "sinbad-sentinel/0-v1",
+          "inputDigest": "5398b07c7ce22824ab515a380b9713f66f708a235bc8ab960bdca53e6d7f9bcc",
+          "contextTaskId": "task-1",
+          "evidenceSetId": "set-1",
+          "draftId": "draft-1",
+          "draftHash": "1111111111111111111111111111111111111111111111111111111111111111",
+          "observationDigest": "47620785fc9ce89bb90e04288bddc5964d86391338c80fa1154a3fcb80aef500",
+          "verdictId": "chain-1.0.verdict",
+          "priorDecisionDigest": null,
+          "policy": {
+           "maxEvidenceAgeMs": 10000,
+           "volatileMaxEvidenceAgeMs": 1000
+          }
+         },
+         "observedAt": 1000000,
+         "authority": "NONE",
+         "executes": false,
+         "decisionDigest": "64cfdf48018bd3a9b7a9ca6d4f9665f8d43e458f9b2e0e9018ed075452ccef06"
+        },
+        "pilotDecision": {
+         "version": "sinbad-pilot-decision/0-v1",
+         "pilotDecisionId": "chain-1.0.pilot",
+         "taskRef": "task-1",
+         "decision": "PROCEED",
+         "failClosed": false,
+         "reasonCode": "ALL_CLEAR",
+         "ruleId": "PILOT.GATE_ADMITS",
+         "findings": [],
+         "carryLabels": [
+          "VERIFIED"
+         ],
+         "gate": {
+          "decisionId": "chain-1.0.gate",
+          "decisionDigest": "64cfdf48018bd3a9b7a9ca6d4f9665f8d43e458f9b2e0e9018ed075452ccef06",
+          "outcome": "ADMIT",
+          "reasonCode": "ALL_CLEAR",
+          "failClosed": false,
+          "deliveryLabel": "VERIFIED",
+          "observationSignal": "CLEAR",
+          "observationCoverage": "FULL"
+         },
+         "review": {
+          "reviewId": "chain-1.0.review",
+          "reviewDigest": "15983b0916c1b2ec90e1f32c25872f93c580946def97a771cf04ffdaedf0cea6",
+          "status": "REVIEWED",
+          "reasonCode": "REVIEWED",
+          "recommendation": "ALLOW"
+         },
+         "iteration": {
+          "index": 0,
+          "maxIterations": 3,
+          "remaining": 2
+         },
+         "provenance": {
+          "pilotVersion": "sinbad-pilot/0-v1",
+          "rulesetVersion": "sinbad-pilot-ruleset/0-v1",
+          "inputDigest": "996a3d7bb9d4926e12c17126d02a97f9dda9709b2efd6fdd507406f5fb019a1e",
+          "contextTaskId": "task-1",
+          "draftId": "draft-1",
+          "draftHash": "1111111111111111111111111111111111111111111111111111111111111111",
+          "gateDecisionDigest": "64cfdf48018bd3a9b7a9ca6d4f9665f8d43e458f9b2e0e9018ed075452ccef06",
+          "reviewDigest": "15983b0916c1b2ec90e1f32c25872f93c580946def97a771cf04ffdaedf0cea6",
+          "verdictId": "chain-1.0.verdict",
+          "priorPilotDecisionDigest": null,
+          "policy": {
+           "maxIterations": 3,
+           "labelledDelivery": "PROCEED"
+          }
+         },
+         "decidedAt": 1000000,
+         "authority": "NONE",
+         "recommendationOnly": true,
+         "executes": false,
+         "approves": false,
+         "grantsAuthority": false,
+         "rewrites": false,
+         "callsModel": false,
+         "pilotDecisionDigest": "4bfe85156e87a264d254beec0f10ecfc8561ff04cc05a11f48ee0dc9a25f8254"
+        }
+       }
+      }
+     ],
+     "provenance": {
+      "chainVersion": "sinbad-offline-chain/0-v1",
+      "copilotVersion": "sinbad-copilot/0-v1",
+      "gatekeeperVersion": "sinbad-gatekeeper/0-v1",
+      "pilotVersion": "sinbad-pilot/0-v1",
+      "inputDigest": "1084dbd16b1ecd5387befa0b10e524036766a33334a624edcd69d83c966aa521",
+      "priorTranscriptDigest": null,
+      "policy": {
+       "maxEvidenceAgeMs": 10000,
+       "volatileMaxEvidenceAgeMs": 1000,
+       "maxIterations": 3,
+       "labelledDelivery": "PROCEED"
+      }
+     },
+     "at": 1000000,
+     "authority": "NONE",
+     "offlineOnly": true,
+     "producesDrafts": false,
+     "delivers": false,
+     "executes": false,
+     "approves": false,
+     "grantsAuthority": false,
+     "callsModel": false,
+     "transcriptDigest": "26e29902ad88b8de4de3b0dc18501cd781bd152c4a420d555309cf93f81c1bb0"
+    },
+    "trustStore": [
+     {
+      "keyId": "key-gate",
+      "publicKeyHex": "91a11b5e2b749047e79ebadcb0e6f31c0f6a55fa188f6d7c69b884a473510fb6",
+      "kinds": [
+       "GATEKEEPER_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-copilot",
+      "publicKeyHex": "0f9002861445d1bd0e0e882f0c870204efaa92862de8fcf517b546369f0fd273",
+      "kinds": [
+       "COPILOT_REVIEW"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-pilot",
+      "publicKeyHex": "4b92de2fb0a5077cc7be3711df139fade4fa6ed217cbbf76dd8e11e7d2b3daab",
+      "kinds": [
+       "PILOT_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-chain",
+      "publicKeyHex": "a7309778fa38d4b3e8e6ba54ff56814e4a088259f566dc4cddda07acced86022",
+      "kinds": [
+       "CHAIN_TRANSCRIPT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-sentinel",
+      "publicKeyHex": "bfc2e0899b970786495f7960178cde7eae6863616083bbd4e8abee38a0971ea1",
+      "kinds": [
+       "SENTINEL_REPORT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     }
+    ],
+    "expected": {
+     "recordKind": null,
+     "taskRef": null
+    },
+    "policy": {
+     "maxAgeMs": 10000
+    }
+   },
+   "expected": {
+    "version": "sinbad-attest-check/0-v1",
+    "checkId": "check-1",
+    "status": "AUTHENTIC",
+    "authentic": true,
+    "reasonCode": "AUTHENTIC",
+    "attestationId": "att-1",
+    "recordKind": "CHAIN_TRANSCRIPT",
+    "recordDigest": "26e29902ad88b8de4de3b0dc18501cd781bd152c4a420d555309cf93f81c1bb0",
+    "taskRef": "task-1",
+    "keyId": "key-chain",
+    "issuedAt": 999990,
+    "provenance": {
+     "attestVersion": "sinbad-attest/0-v1",
+     "algorithm": "ED25519",
+     "trustStoreDigest": "0c0909322f89f246eb664e766b550a784fdecf80e7bc3de86b3ac0ba4ae687ff",
+     "policy": {
+      "maxAgeMs": 10000
+     }
+    },
+    "at": 1000000,
+    "authority": "NONE",
+    "originOnly": true,
+    "grantsAuthority": false,
+    "approves": false,
+    "executes": false,
+    "checkDigest": "9046ac20f098caa098184080055d2cc6af2d2317fe0516511b9239f7703c5f77"
+   }
+  },
+  {
+   "name": "genuine-sentinel-report",
+   "expectedClass": "GENUINE",
+   "expectedStatus": "AUTHENTIC",
+   "expectedReason": "AUTHENTIC",
+   "description": "a Sentinel report",
+   "input": {
+    "version": "sinbad-attest-check-input/0-v1",
+    "checkId": "check-1",
+    "at": 1000000,
+    "envelope": {
+     "version": "sinbad-attestation/0-v1",
+     "attestationId": "att-1",
+     "algorithm": "ED25519",
+     "keyId": "key-sentinel",
+     "recordKind": "SENTINEL_REPORT",
+     "recordVersion": "sinbad-sentinel-report/0-v1",
+     "recordDigest": "47620785fc9ce89bb90e04288bddc5964d86391338c80fa1154a3fcb80aef500",
+     "payloadDigest": "697db49e5b599e00c5bad7428cae44fe12ec318ca75236027aee87ec376a7475",
+     "taskRef": "task-1",
+     "issuedAt": 999990,
+     "authority": "NONE",
+     "signature": "8c105e3b018ae7bd5b6b6f2077b8624d42f52ccdb8c6ec71a26f4d47cbc096c647bf17d504e9da1e664926e84e1ac7c738ad7dde2d5243e810213ee1e7d6de0f"
+    },
+    "record": {
+     "version": "sinbad-sentinel-report/0-v1",
+     "reportId": "chain-1.0.gate",
+     "tap": "POST_GATE",
+     "taskRef": "task-1",
+     "status": "OBSERVED",
+     "failClosed": false,
+     "reasonCode": "OBSERVED",
+     "signal": "CLEAR",
+     "coverage": "FULL",
+     "unobservable": [],
+     "claims": [
+      {
+       "claimId": "c1",
+       "contentHash": "db8514684630548a4a65a8fc2b25e4977926a99af9183b0a3ae9fb381c8beb68",
+       "assertionMode": "ASSERTED",
+       "originRef": "model:draft",
+       "originScopeRef": "scope:alpha",
+       "foreignOrigin": false,
+       "truthState": "VERIFIED",
+       "reasonCode": "OBSERVED_EVIDENCE_PRESENT",
+       "evidenceIds": [
+        "ev-repo"
+       ],
+       "eligibleEvidenceIds": [
+        "ev-repo"
+       ],
+       "foreignEvidenceIds": [],
+       "staleEvidenceIds": [],
+       "unknownEvidenceIds": [],
+       "nonAuthoritativeEvidenceIds": [],
+       "conflictEvidenceIds": [],
+       "reservedTerms": [],
+       "specificValues": false,
+       "flagRefs": [],
+       "unobservable": []
+      }
+     ],
+     "truthStateCounts": {
+      "VERIFIED": 1,
+      "NOT_VERIFIED": 0,
+      "CONFLICT": 0,
+      "SOURCE_MISSING": 0,
+      "BLOCKED": 0,
+      "NOT_APPLICABLE": 0
+     },
+     "evidence": {
+      "setRef": "set-1",
+      "itemCount": 1,
+      "foreignEvidenceIds": [],
+      "staleEvidenceIds": [],
+      "driftedLocators": []
+     },
+     "flags": [],
+     "ruleResults": [
+      {
+       "ruleId": "SENTINEL.INPUT_ADMITTED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "SENTINEL.EVIDENCE_SET_PRESENT",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "SENTINEL.EVIDENCE_IN_SCOPE",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "SENTINEL.EVIDENCE_FRESH",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "SENTINEL.EVIDENCE_CONSISTENT",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "SENTINEL.PROVENANCE_RESOLVABLE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "SENTINEL.CLAIMS_SUPPORTED",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "SENTINEL.NO_UNSUPPORTED_SPECIFICS",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "SENTINEL.RESERVED_TERMS_BOUND",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "SENTINEL.NO_FOREIGN_ADOPTION",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      }
+     ],
+     "provenance": {
+      "sentinelVersion": "sinbad-sentinel/0-v1",
+      "rulesetVersion": "sinbad-sentinel-ruleset/0-v1",
+      "inputDigest": "30f0d6a3d6a3a9d6d0c884e870b624fafbea92e20de2cffc0aaadf940dbdd424",
+      "contextTaskId": "task-1",
+      "evidenceSetId": "set-1",
+      "priorReportDigest": null,
+      "policy": {
+       "maxEvidenceAgeMs": 10000
+      }
+     },
+     "observedAt": 1000000,
+     "authority": "NONE",
+     "decides": false,
+     "reportDigest": "47620785fc9ce89bb90e04288bddc5964d86391338c80fa1154a3fcb80aef500"
+    },
+    "trustStore": [
+     {
+      "keyId": "key-gate",
+      "publicKeyHex": "91a11b5e2b749047e79ebadcb0e6f31c0f6a55fa188f6d7c69b884a473510fb6",
+      "kinds": [
+       "GATEKEEPER_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-copilot",
+      "publicKeyHex": "0f9002861445d1bd0e0e882f0c870204efaa92862de8fcf517b546369f0fd273",
+      "kinds": [
+       "COPILOT_REVIEW"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-pilot",
+      "publicKeyHex": "4b92de2fb0a5077cc7be3711df139fade4fa6ed217cbbf76dd8e11e7d2b3daab",
+      "kinds": [
+       "PILOT_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-chain",
+      "publicKeyHex": "a7309778fa38d4b3e8e6ba54ff56814e4a088259f566dc4cddda07acced86022",
+      "kinds": [
+       "CHAIN_TRANSCRIPT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-sentinel",
+      "publicKeyHex": "bfc2e0899b970786495f7960178cde7eae6863616083bbd4e8abee38a0971ea1",
+      "kinds": [
+       "SENTINEL_REPORT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     }
+    ],
+    "expected": {
+     "recordKind": null,
+     "taskRef": null
+    },
+    "policy": {
+     "maxAgeMs": 10000
+    }
+   },
+   "expected": {
+    "version": "sinbad-attest-check/0-v1",
+    "checkId": "check-1",
+    "status": "AUTHENTIC",
+    "authentic": true,
+    "reasonCode": "AUTHENTIC",
+    "attestationId": "att-1",
+    "recordKind": "SENTINEL_REPORT",
+    "recordDigest": "47620785fc9ce89bb90e04288bddc5964d86391338c80fa1154a3fcb80aef500",
+    "taskRef": "task-1",
+    "keyId": "key-sentinel",
+    "issuedAt": 999990,
+    "provenance": {
+     "attestVersion": "sinbad-attest/0-v1",
+     "algorithm": "ED25519",
+     "trustStoreDigest": "0c0909322f89f246eb664e766b550a784fdecf80e7bc3de86b3ac0ba4ae687ff",
+     "policy": {
+      "maxAgeMs": 10000
+     }
+    },
+    "at": 1000000,
+    "authority": "NONE",
+    "originOnly": true,
+    "grantsAuthority": false,
+    "approves": false,
+    "executes": false,
+    "checkDigest": "bf8c4078ea59f00001e382bc11f7083d94e537da140746e953643984a977f6e0"
+   }
+  },
+  {
+   "name": "genuine-block-stays-block",
+   "expectedClass": "GENUINE",
+   "expectedStatus": "AUTHENTIC",
+   "expectedReason": "AUTHENTIC",
+   "description": "a genuine BLOCK decision is authentic and still a BLOCK",
+   "input": {
+    "version": "sinbad-attest-check-input/0-v1",
+    "checkId": "check-1",
+    "at": 1000000,
+    "envelope": {
+     "version": "sinbad-attestation/0-v1",
+     "attestationId": "att-1",
+     "algorithm": "ED25519",
+     "keyId": "key-gate",
+     "recordKind": "GATEKEEPER_DECISION",
+     "recordVersion": "sinbad-gatekeeper-decision/0-v1",
+     "recordDigest": "c6a2cefe51fe39759fb3d6a2b8a61177ebeec631c929a5fe9b3706fa8d38c971",
+     "payloadDigest": "c613441f900a541e02b932577875d4390aae17e82c894572d971272445558975",
+     "taskRef": "task-1",
+     "issuedAt": 999990,
+     "authority": "NONE",
+     "signature": "0f8725dfaa7a310c30061183882ed01de4c22f71ea27871c6366480bc7869c5b67da00e7eb528d9ebca4a0fb6fd6e970d6f527fb2259cf0f79116e15f90b9606"
+    },
+    "record": {
+     "version": "sinbad-gatekeeper-decision/0-v1",
+     "decisionId": "chain-1.0.gate",
+     "taskRef": "task-1",
+     "stage": "POST",
+     "outcome": "BLOCK",
+     "failClosed": true,
+     "reasonCode": "DETERMINISTIC_RULE_FAILED",
+     "labels": [
+      "BLOCKED"
+     ],
+     "deliveryLabel": "BLOCKED",
+     "decision": {
+      "version": "sinbad-gate-decision/1-v1",
+      "decisionId": "chain-1.0.gate",
+      "taskRef": "task-1",
+      "stage": "POST",
+      "outcome": "BLOCK",
+      "labels": [
+       "BLOCKED"
+      ],
+      "ruleResults": [
+       {
+        "ruleId": "GATE.INPUT_ADMITTED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.OBSERVATION_AVAILABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CITATIONS_IN_EVIDENCE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CLAIM_EVIDENCE_RESOLVABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.SPECIFICITY_SUPPORTED",
+        "outcome": "FAIL",
+        "blocking": true,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "GATE.VOCABULARY_BOUND",
+        "outcome": "FAIL",
+        "blocking": true,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "GATE.FOREIGN_CLAIMS_EXCLUDED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.VOLATILE_CLAIMS_LIVE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.ACTIONS_AUTHORIZED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.VERDICT_MATCHES_DRAFT",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CLAIMS_SUPPORTED",
+        "outcome": "FAIL",
+        "blocking": false,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "GATE.EVIDENCE_CONSISTENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.EVIDENCE_FRESH",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.EVIDENCE_IN_SCOPE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.PROVENANCE_ADEQUATE",
+        "outcome": "FAIL",
+        "blocking": false,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "GATE.CLAIM_TEXT_OBSERVABLE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       }
+      ],
+      "verdictRef": "chain-1.0.verdict",
+      "attribution": {
+       "deterministicRuleIds": [
+        "GATE.SPECIFICITY_SUPPORTED",
+        "GATE.VOCABULARY_BOUND",
+        "GATE.CLAIMS_SUPPORTED",
+        "GATE.PROVENANCE_ADEQUATE"
+       ],
+       "modelVerdictId": null,
+       "reasonCode": "DETERMINISTIC_RULE_FAILED"
+      },
+      "failClosed": true,
+      "decidedAt": 1000000,
+      "authority": "NONE"
+     },
+     "claimLabels": [
+      {
+       "claimId": "c1",
+       "assertionMode": "ASSERTED",
+       "label": "SOURCE_MISSING",
+       "reasonCode": "NO_EVIDENCE",
+       "evidenceIds": [],
+       "volatile": false
+      }
+     ],
+     "actions": [],
+     "ruleResults": [
+      {
+       "ruleId": "GATE.INPUT_ADMITTED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.OBSERVATION_AVAILABLE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CITATIONS_IN_EVIDENCE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CLAIM_EVIDENCE_RESOLVABLE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.SPECIFICITY_SUPPORTED",
+       "outcome": "FAIL",
+       "blocking": true,
+       "detailRef": "claims:c1"
+      },
+      {
+       "ruleId": "GATE.VOCABULARY_BOUND",
+       "outcome": "FAIL",
+       "blocking": true,
+       "detailRef": "claims:c1"
+      },
+      {
+       "ruleId": "GATE.FOREIGN_CLAIMS_EXCLUDED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.VOLATILE_CLAIMS_LIVE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.ACTIONS_AUTHORIZED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.VERDICT_MATCHES_DRAFT",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CLAIMS_SUPPORTED",
+       "outcome": "FAIL",
+       "blocking": false,
+       "detailRef": "claims:c1"
+      },
+      {
+       "ruleId": "GATE.EVIDENCE_CONSISTENT",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.EVIDENCE_FRESH",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.EVIDENCE_IN_SCOPE",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.PROVENANCE_ADEQUATE",
+       "outcome": "FAIL",
+       "blocking": false,
+       "detailRef": "claims:c1"
+      },
+      {
+       "ruleId": "GATE.CLAIM_TEXT_OBSERVABLE",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      }
+     ],
+     "observation": {
+      "version": "sinbad-sentinel-report/0-v1",
+      "reportId": "chain-1.0.gate",
+      "tap": "POST_GATE",
+      "taskRef": "task-1",
+      "status": "OBSERVED",
+      "failClosed": false,
+      "reasonCode": "OBSERVED",
+      "signal": "RISK",
+      "coverage": "FULL",
+      "unobservable": [],
+      "claims": [
+       {
+        "claimId": "c1",
+        "contentHash": "27cb8fd2f7009214fd8782ea0f63b6c801a6f82cec5cca043ab3173dda57fdd1",
+        "assertionMode": "ASSERTED",
+        "originRef": "model:draft",
+        "originScopeRef": "scope:alpha",
+        "foreignOrigin": false,
+        "truthState": "SOURCE_MISSING",
+        "reasonCode": "NO_EVIDENCE",
+        "evidenceIds": [],
+        "eligibleEvidenceIds": [],
+        "foreignEvidenceIds": [],
+        "staleEvidenceIds": [],
+        "unknownEvidenceIds": [],
+        "nonAuthoritativeEvidenceIds": [],
+        "conflictEvidenceIds": [],
+        "reservedTerms": [
+         "VERIFIED",
+         "MERGED"
+        ],
+        "specificValues": true,
+        "flagRefs": [
+         "claim:c1:NO_EVIDENCE:specific-values",
+         "claim:c1:reserved-terms-unbound:VERIFIED,MERGED"
+        ],
+        "unobservable": []
+       }
+      ],
+      "truthStateCounts": {
+       "VERIFIED": 0,
+       "NOT_VERIFIED": 0,
+       "CONFLICT": 0,
+       "SOURCE_MISSING": 1,
+       "BLOCKED": 0,
+       "NOT_APPLICABLE": 0
+      },
+      "evidence": {
+       "setRef": "set-1",
+       "itemCount": 1,
+       "foreignEvidenceIds": [],
+       "staleEvidenceIds": [],
+       "driftedLocators": []
+      },
+      "flags": [
+       {
+        "warningClass": "UNSUPPORTED_FACTUAL_ASSERTION",
+        "severity": "BLOCKING",
+        "checkerKind": "DETERMINISTIC",
+        "evidenceIds": [],
+        "pointerRef": "claim:c1:NO_EVIDENCE:specific-values"
+       },
+       {
+        "warningClass": "FALSE_CERTAINTY",
+        "severity": "BLOCKING",
+        "checkerKind": "DETERMINISTIC",
+        "evidenceIds": [],
+        "pointerRef": "claim:c1:reserved-terms-unbound:VERIFIED,MERGED"
+       }
+      ],
+      "ruleResults": [
+       {
+        "ruleId": "SENTINEL.INPUT_ADMITTED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_SET_PRESENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_IN_SCOPE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_FRESH",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_CONSISTENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.PROVENANCE_RESOLVABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.CLAIMS_SUPPORTED",
+        "outcome": "FAIL",
+        "blocking": false,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "SENTINEL.NO_UNSUPPORTED_SPECIFICS",
+        "outcome": "FAIL",
+        "blocking": true,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "SENTINEL.RESERVED_TERMS_BOUND",
+        "outcome": "FAIL",
+        "blocking": true,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "SENTINEL.NO_FOREIGN_ADOPTION",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       }
+      ],
+      "provenance": {
+       "sentinelVersion": "sinbad-sentinel/0-v1",
+       "rulesetVersion": "sinbad-sentinel-ruleset/0-v1",
+       "inputDigest": "c7a802cfce52255316a6dde0ef03ad0eb416bf254d937597c084d1b7834a0519",
+       "contextTaskId": "task-1",
+       "evidenceSetId": "set-1",
+       "priorReportDigest": null,
+       "policy": {
+        "maxEvidenceAgeMs": 10000
+       }
+      },
+      "observedAt": 1000000,
+      "authority": "NONE",
+      "decides": false,
+      "reportDigest": "7be8383add8a3eafbdad7650344d0458b1b537f2a66336bc11d04110d344122f"
+     },
+     "provenance": {
+      "gatekeeperVersion": "sinbad-gatekeeper/0-v1",
+      "rulesetVersion": "sinbad-gatekeeper-ruleset/0-v1",
+      "sentinelVersion": "sinbad-sentinel/0-v1",
+      "inputDigest": "dac5adb734d35c4d905dc9ccb5bc7065ac3d2c6b1fdc0f7b250ceb0a66a113b5",
+      "contextTaskId": "task-1",
+      "evidenceSetId": "set-1",
+      "draftId": "draft-1",
+      "draftHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "observationDigest": "7be8383add8a3eafbdad7650344d0458b1b537f2a66336bc11d04110d344122f",
+      "verdictId": "chain-1.0.verdict",
+      "priorDecisionDigest": null,
+      "policy": {
+       "maxEvidenceAgeMs": 10000,
+       "volatileMaxEvidenceAgeMs": 1000
+      }
+     },
+     "observedAt": 1000000,
+     "authority": "NONE",
+     "executes": false,
+     "decisionDigest": "c6a2cefe51fe39759fb3d6a2b8a61177ebeec631c929a5fe9b3706fa8d38c971"
+    },
+    "trustStore": [
+     {
+      "keyId": "key-gate",
+      "publicKeyHex": "91a11b5e2b749047e79ebadcb0e6f31c0f6a55fa188f6d7c69b884a473510fb6",
+      "kinds": [
+       "GATEKEEPER_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-copilot",
+      "publicKeyHex": "0f9002861445d1bd0e0e882f0c870204efaa92862de8fcf517b546369f0fd273",
+      "kinds": [
+       "COPILOT_REVIEW"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-pilot",
+      "publicKeyHex": "4b92de2fb0a5077cc7be3711df139fade4fa6ed217cbbf76dd8e11e7d2b3daab",
+      "kinds": [
+       "PILOT_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-chain",
+      "publicKeyHex": "a7309778fa38d4b3e8e6ba54ff56814e4a088259f566dc4cddda07acced86022",
+      "kinds": [
+       "CHAIN_TRANSCRIPT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-sentinel",
+      "publicKeyHex": "bfc2e0899b970786495f7960178cde7eae6863616083bbd4e8abee38a0971ea1",
+      "kinds": [
+       "SENTINEL_REPORT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     }
+    ],
+    "expected": {
+     "recordKind": null,
+     "taskRef": null
+    },
+    "policy": {
+     "maxAgeMs": 10000
+    }
+   },
+   "expected": {
+    "version": "sinbad-attest-check/0-v1",
+    "checkId": "check-1",
+    "status": "AUTHENTIC",
+    "authentic": true,
+    "reasonCode": "AUTHENTIC",
+    "attestationId": "att-1",
+    "recordKind": "GATEKEEPER_DECISION",
+    "recordDigest": "c6a2cefe51fe39759fb3d6a2b8a61177ebeec631c929a5fe9b3706fa8d38c971",
+    "taskRef": "task-1",
+    "keyId": "key-gate",
+    "issuedAt": 999990,
+    "provenance": {
+     "attestVersion": "sinbad-attest/0-v1",
+     "algorithm": "ED25519",
+     "trustStoreDigest": "0c0909322f89f246eb664e766b550a784fdecf80e7bc3de86b3ac0ba4ae687ff",
+     "policy": {
+      "maxAgeMs": 10000
+     }
+    },
+    "at": 1000000,
+    "authority": "NONE",
+    "originOnly": true,
+    "grantsAuthority": false,
+    "approves": false,
+    "executes": false,
+    "checkDigest": "e4bc181762248f473333708df094b786f7be99b849d8730d68d628f3e7373a13"
+   }
+  },
+  {
+   "name": "forged-record-real-envelope",
+   "expectedClass": "FORGED",
+   "expectedStatus": "REJECTED",
+   "expectedReason": "RECORD_NOT_THE_ATTESTED_ONE",
+   "description": "a resealed ADMIT forgery presented with the real envelope of the BLOCK it replaced",
+   "input": {
+    "version": "sinbad-attest-check-input/0-v1",
+    "checkId": "check-1",
+    "at": 1000000,
+    "envelope": {
+     "version": "sinbad-attestation/0-v1",
+     "attestationId": "att-1",
+     "algorithm": "ED25519",
+     "keyId": "key-gate",
+     "recordKind": "GATEKEEPER_DECISION",
+     "recordVersion": "sinbad-gatekeeper-decision/0-v1",
+     "recordDigest": "c6a2cefe51fe39759fb3d6a2b8a61177ebeec631c929a5fe9b3706fa8d38c971",
+     "payloadDigest": "c613441f900a541e02b932577875d4390aae17e82c894572d971272445558975",
+     "taskRef": "task-1",
+     "issuedAt": 999990,
+     "authority": "NONE",
+     "signature": "0f8725dfaa7a310c30061183882ed01de4c22f71ea27871c6366480bc7869c5b67da00e7eb528d9ebca4a0fb6fd6e970d6f527fb2259cf0f79116e15f90b9606"
+    },
+    "record": {
+     "version": "sinbad-gatekeeper-decision/0-v1",
+     "decisionId": "chain-1.0.gate",
+     "taskRef": "task-1",
+     "stage": "POST",
+     "outcome": "ADMIT",
+     "failClosed": false,
+     "reasonCode": "ALL_CLEAR",
+     "labels": [],
+     "deliveryLabel": "VERIFIED",
+     "decision": {
+      "version": "sinbad-gate-decision/1-v1",
+      "decisionId": "chain-1.0.gate",
+      "taskRef": "task-1",
+      "stage": "POST",
+      "outcome": "ADMIT",
+      "labels": [],
+      "ruleResults": [
+       {
+        "ruleId": "GATE.INPUT_ADMITTED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.OBSERVATION_AVAILABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CITATIONS_IN_EVIDENCE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CLAIM_EVIDENCE_RESOLVABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.SPECIFICITY_SUPPORTED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.VOCABULARY_BOUND",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.FOREIGN_CLAIMS_EXCLUDED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.VOLATILE_CLAIMS_LIVE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.ACTIONS_AUTHORIZED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.VERDICT_MATCHES_DRAFT",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CLAIMS_SUPPORTED",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.EVIDENCE_CONSISTENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.EVIDENCE_FRESH",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.EVIDENCE_IN_SCOPE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.PROVENANCE_ADEQUATE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CLAIM_TEXT_OBSERVABLE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       }
+      ],
+      "verdictRef": "chain-1.0.verdict",
+      "attribution": {
+       "deterministicRuleIds": [],
+       "modelVerdictId": null,
+       "reasonCode": "ALL_CLEAR"
+      },
+      "failClosed": false,
+      "decidedAt": 1000000,
+      "authority": "NONE"
+     },
+     "claimLabels": [
+      {
+       "claimId": "c1",
+       "assertionMode": "ASSERTED",
+       "label": "SOURCE_MISSING",
+       "reasonCode": "NO_EVIDENCE",
+       "evidenceIds": [],
+       "volatile": false
+      }
+     ],
+     "actions": [],
+     "ruleResults": [
+      {
+       "ruleId": "GATE.INPUT_ADMITTED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.OBSERVATION_AVAILABLE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CITATIONS_IN_EVIDENCE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CLAIM_EVIDENCE_RESOLVABLE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.SPECIFICITY_SUPPORTED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.VOCABULARY_BOUND",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.FOREIGN_CLAIMS_EXCLUDED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.VOLATILE_CLAIMS_LIVE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.ACTIONS_AUTHORIZED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.VERDICT_MATCHES_DRAFT",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CLAIMS_SUPPORTED",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.EVIDENCE_CONSISTENT",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.EVIDENCE_FRESH",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.EVIDENCE_IN_SCOPE",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.PROVENANCE_ADEQUATE",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CLAIM_TEXT_OBSERVABLE",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      }
+     ],
+     "observation": {
+      "version": "sinbad-sentinel-report/0-v1",
+      "reportId": "chain-1.0.gate",
+      "tap": "POST_GATE",
+      "taskRef": "task-1",
+      "status": "OBSERVED",
+      "failClosed": false,
+      "reasonCode": "OBSERVED",
+      "signal": "RISK",
+      "coverage": "FULL",
+      "unobservable": [],
+      "claims": [
+       {
+        "claimId": "c1",
+        "contentHash": "27cb8fd2f7009214fd8782ea0f63b6c801a6f82cec5cca043ab3173dda57fdd1",
+        "assertionMode": "ASSERTED",
+        "originRef": "model:draft",
+        "originScopeRef": "scope:alpha",
+        "foreignOrigin": false,
+        "truthState": "SOURCE_MISSING",
+        "reasonCode": "NO_EVIDENCE",
+        "evidenceIds": [],
+        "eligibleEvidenceIds": [],
+        "foreignEvidenceIds": [],
+        "staleEvidenceIds": [],
+        "unknownEvidenceIds": [],
+        "nonAuthoritativeEvidenceIds": [],
+        "conflictEvidenceIds": [],
+        "reservedTerms": [
+         "VERIFIED",
+         "MERGED"
+        ],
+        "specificValues": true,
+        "flagRefs": [
+         "claim:c1:NO_EVIDENCE:specific-values",
+         "claim:c1:reserved-terms-unbound:VERIFIED,MERGED"
+        ],
+        "unobservable": []
+       }
+      ],
+      "truthStateCounts": {
+       "VERIFIED": 0,
+       "NOT_VERIFIED": 0,
+       "CONFLICT": 0,
+       "SOURCE_MISSING": 1,
+       "BLOCKED": 0,
+       "NOT_APPLICABLE": 0
+      },
+      "evidence": {
+       "setRef": "set-1",
+       "itemCount": 1,
+       "foreignEvidenceIds": [],
+       "staleEvidenceIds": [],
+       "driftedLocators": []
+      },
+      "flags": [
+       {
+        "warningClass": "UNSUPPORTED_FACTUAL_ASSERTION",
+        "severity": "BLOCKING",
+        "checkerKind": "DETERMINISTIC",
+        "evidenceIds": [],
+        "pointerRef": "claim:c1:NO_EVIDENCE:specific-values"
+       },
+       {
+        "warningClass": "FALSE_CERTAINTY",
+        "severity": "BLOCKING",
+        "checkerKind": "DETERMINISTIC",
+        "evidenceIds": [],
+        "pointerRef": "claim:c1:reserved-terms-unbound:VERIFIED,MERGED"
+       }
+      ],
+      "ruleResults": [
+       {
+        "ruleId": "SENTINEL.INPUT_ADMITTED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_SET_PRESENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_IN_SCOPE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_FRESH",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_CONSISTENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.PROVENANCE_RESOLVABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.CLAIMS_SUPPORTED",
+        "outcome": "FAIL",
+        "blocking": false,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "SENTINEL.NO_UNSUPPORTED_SPECIFICS",
+        "outcome": "FAIL",
+        "blocking": true,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "SENTINEL.RESERVED_TERMS_BOUND",
+        "outcome": "FAIL",
+        "blocking": true,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "SENTINEL.NO_FOREIGN_ADOPTION",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       }
+      ],
+      "provenance": {
+       "sentinelVersion": "sinbad-sentinel/0-v1",
+       "rulesetVersion": "sinbad-sentinel-ruleset/0-v1",
+       "inputDigest": "c7a802cfce52255316a6dde0ef03ad0eb416bf254d937597c084d1b7834a0519",
+       "contextTaskId": "task-1",
+       "evidenceSetId": "set-1",
+       "priorReportDigest": null,
+       "policy": {
+        "maxEvidenceAgeMs": 10000
+       }
+      },
+      "observedAt": 1000000,
+      "authority": "NONE",
+      "decides": false,
+      "reportDigest": "7be8383add8a3eafbdad7650344d0458b1b537f2a66336bc11d04110d344122f"
+     },
+     "provenance": {
+      "gatekeeperVersion": "sinbad-gatekeeper/0-v1",
+      "rulesetVersion": "sinbad-gatekeeper-ruleset/0-v1",
+      "sentinelVersion": "sinbad-sentinel/0-v1",
+      "inputDigest": "dac5adb734d35c4d905dc9ccb5bc7065ac3d2c6b1fdc0f7b250ceb0a66a113b5",
+      "contextTaskId": "task-1",
+      "evidenceSetId": "set-1",
+      "draftId": "draft-1",
+      "draftHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "observationDigest": "7be8383add8a3eafbdad7650344d0458b1b537f2a66336bc11d04110d344122f",
+      "verdictId": null,
+      "priorDecisionDigest": null,
+      "policy": {
+       "maxEvidenceAgeMs": 10000,
+       "volatileMaxEvidenceAgeMs": 1000
+      }
+     },
+     "observedAt": 1000000,
+     "authority": "NONE",
+     "executes": false,
+     "decisionDigest": "274916247802844aa533bd7a0ab1cacd16a363534e50b63da524974dfbeab466"
+    },
+    "trustStore": [
+     {
+      "keyId": "key-gate",
+      "publicKeyHex": "91a11b5e2b749047e79ebadcb0e6f31c0f6a55fa188f6d7c69b884a473510fb6",
+      "kinds": [
+       "GATEKEEPER_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-copilot",
+      "publicKeyHex": "0f9002861445d1bd0e0e882f0c870204efaa92862de8fcf517b546369f0fd273",
+      "kinds": [
+       "COPILOT_REVIEW"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-pilot",
+      "publicKeyHex": "4b92de2fb0a5077cc7be3711df139fade4fa6ed217cbbf76dd8e11e7d2b3daab",
+      "kinds": [
+       "PILOT_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-chain",
+      "publicKeyHex": "a7309778fa38d4b3e8e6ba54ff56814e4a088259f566dc4cddda07acced86022",
+      "kinds": [
+       "CHAIN_TRANSCRIPT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-sentinel",
+      "publicKeyHex": "bfc2e0899b970786495f7960178cde7eae6863616083bbd4e8abee38a0971ea1",
+      "kinds": [
+       "SENTINEL_REPORT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     }
+    ],
+    "expected": {
+     "recordKind": null,
+     "taskRef": null
+    },
+    "policy": {
+     "maxAgeMs": 10000
+    }
+   },
+   "expected": {
+    "version": "sinbad-attest-check/0-v1",
+    "checkId": "check-1",
+    "status": "REJECTED",
+    "authentic": false,
+    "reasonCode": "RECORD_NOT_THE_ATTESTED_ONE",
+    "attestationId": "att-1",
+    "recordKind": "GATEKEEPER_DECISION",
+    "recordDigest": "c6a2cefe51fe39759fb3d6a2b8a61177ebeec631c929a5fe9b3706fa8d38c971",
+    "taskRef": "task-1",
+    "keyId": "key-gate",
+    "issuedAt": 999990,
+    "provenance": {
+     "attestVersion": "sinbad-attest/0-v1",
+     "algorithm": "ED25519",
+     "trustStoreDigest": "0c0909322f89f246eb664e766b550a784fdecf80e7bc3de86b3ac0ba4ae687ff",
+     "policy": {
+      "maxAgeMs": 10000
+     }
+    },
+    "at": 1000000,
+    "authority": "NONE",
+    "originOnly": true,
+    "grantsAuthority": false,
+    "approves": false,
+    "executes": false,
+    "checkDigest": "e1858b8d748e80034e9acb54b33a9d02502724c477cae0168e24c2a66fecba0b"
+   }
+  },
+  {
+   "name": "forged-signed-by-untrusted-key",
+   "expectedClass": "FORGED",
+   "expectedStatus": "REJECTED",
+   "expectedReason": "SIGNATURE_INVALID",
+   "description": "the forgery signed by an untrusted key under the gate key id",
+   "input": {
+    "version": "sinbad-attest-check-input/0-v1",
+    "checkId": "check-1",
+    "at": 1000000,
+    "envelope": {
+     "version": "sinbad-attestation/0-v1",
+     "attestationId": "att-1",
+     "algorithm": "ED25519",
+     "keyId": "key-gate",
+     "recordKind": "GATEKEEPER_DECISION",
+     "recordVersion": "sinbad-gatekeeper-decision/0-v1",
+     "recordDigest": "274916247802844aa533bd7a0ab1cacd16a363534e50b63da524974dfbeab466",
+     "payloadDigest": "aeec096c2686c94883f792aff077e539a87df2c9b8f535040d25ad930f2e3ed9",
+     "taskRef": "task-1",
+     "issuedAt": 999990,
+     "authority": "NONE",
+     "signature": "d6431c9be5f7ea695f99b8cd36321647790f7db3000d13f792fcad7b27de27a260a1560ae43467d306835834bdd1da109b33e5214f22d60c6a52a457cbfaad09"
+    },
+    "record": {
+     "version": "sinbad-gatekeeper-decision/0-v1",
+     "decisionId": "chain-1.0.gate",
+     "taskRef": "task-1",
+     "stage": "POST",
+     "outcome": "ADMIT",
+     "failClosed": false,
+     "reasonCode": "ALL_CLEAR",
+     "labels": [],
+     "deliveryLabel": "VERIFIED",
+     "decision": {
+      "version": "sinbad-gate-decision/1-v1",
+      "decisionId": "chain-1.0.gate",
+      "taskRef": "task-1",
+      "stage": "POST",
+      "outcome": "ADMIT",
+      "labels": [],
+      "ruleResults": [
+       {
+        "ruleId": "GATE.INPUT_ADMITTED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.OBSERVATION_AVAILABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CITATIONS_IN_EVIDENCE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CLAIM_EVIDENCE_RESOLVABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.SPECIFICITY_SUPPORTED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.VOCABULARY_BOUND",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.FOREIGN_CLAIMS_EXCLUDED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.VOLATILE_CLAIMS_LIVE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.ACTIONS_AUTHORIZED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.VERDICT_MATCHES_DRAFT",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CLAIMS_SUPPORTED",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.EVIDENCE_CONSISTENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.EVIDENCE_FRESH",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.EVIDENCE_IN_SCOPE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.PROVENANCE_ADEQUATE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CLAIM_TEXT_OBSERVABLE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       }
+      ],
+      "verdictRef": "chain-1.0.verdict",
+      "attribution": {
+       "deterministicRuleIds": [],
+       "modelVerdictId": null,
+       "reasonCode": "ALL_CLEAR"
+      },
+      "failClosed": false,
+      "decidedAt": 1000000,
+      "authority": "NONE"
+     },
+     "claimLabels": [
+      {
+       "claimId": "c1",
+       "assertionMode": "ASSERTED",
+       "label": "SOURCE_MISSING",
+       "reasonCode": "NO_EVIDENCE",
+       "evidenceIds": [],
+       "volatile": false
+      }
+     ],
+     "actions": [],
+     "ruleResults": [
+      {
+       "ruleId": "GATE.INPUT_ADMITTED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.OBSERVATION_AVAILABLE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CITATIONS_IN_EVIDENCE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CLAIM_EVIDENCE_RESOLVABLE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.SPECIFICITY_SUPPORTED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.VOCABULARY_BOUND",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.FOREIGN_CLAIMS_EXCLUDED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.VOLATILE_CLAIMS_LIVE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.ACTIONS_AUTHORIZED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.VERDICT_MATCHES_DRAFT",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CLAIMS_SUPPORTED",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.EVIDENCE_CONSISTENT",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.EVIDENCE_FRESH",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.EVIDENCE_IN_SCOPE",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.PROVENANCE_ADEQUATE",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CLAIM_TEXT_OBSERVABLE",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      }
+     ],
+     "observation": {
+      "version": "sinbad-sentinel-report/0-v1",
+      "reportId": "chain-1.0.gate",
+      "tap": "POST_GATE",
+      "taskRef": "task-1",
+      "status": "OBSERVED",
+      "failClosed": false,
+      "reasonCode": "OBSERVED",
+      "signal": "RISK",
+      "coverage": "FULL",
+      "unobservable": [],
+      "claims": [
+       {
+        "claimId": "c1",
+        "contentHash": "27cb8fd2f7009214fd8782ea0f63b6c801a6f82cec5cca043ab3173dda57fdd1",
+        "assertionMode": "ASSERTED",
+        "originRef": "model:draft",
+        "originScopeRef": "scope:alpha",
+        "foreignOrigin": false,
+        "truthState": "SOURCE_MISSING",
+        "reasonCode": "NO_EVIDENCE",
+        "evidenceIds": [],
+        "eligibleEvidenceIds": [],
+        "foreignEvidenceIds": [],
+        "staleEvidenceIds": [],
+        "unknownEvidenceIds": [],
+        "nonAuthoritativeEvidenceIds": [],
+        "conflictEvidenceIds": [],
+        "reservedTerms": [
+         "VERIFIED",
+         "MERGED"
+        ],
+        "specificValues": true,
+        "flagRefs": [
+         "claim:c1:NO_EVIDENCE:specific-values",
+         "claim:c1:reserved-terms-unbound:VERIFIED,MERGED"
+        ],
+        "unobservable": []
+       }
+      ],
+      "truthStateCounts": {
+       "VERIFIED": 0,
+       "NOT_VERIFIED": 0,
+       "CONFLICT": 0,
+       "SOURCE_MISSING": 1,
+       "BLOCKED": 0,
+       "NOT_APPLICABLE": 0
+      },
+      "evidence": {
+       "setRef": "set-1",
+       "itemCount": 1,
+       "foreignEvidenceIds": [],
+       "staleEvidenceIds": [],
+       "driftedLocators": []
+      },
+      "flags": [
+       {
+        "warningClass": "UNSUPPORTED_FACTUAL_ASSERTION",
+        "severity": "BLOCKING",
+        "checkerKind": "DETERMINISTIC",
+        "evidenceIds": [],
+        "pointerRef": "claim:c1:NO_EVIDENCE:specific-values"
+       },
+       {
+        "warningClass": "FALSE_CERTAINTY",
+        "severity": "BLOCKING",
+        "checkerKind": "DETERMINISTIC",
+        "evidenceIds": [],
+        "pointerRef": "claim:c1:reserved-terms-unbound:VERIFIED,MERGED"
+       }
+      ],
+      "ruleResults": [
+       {
+        "ruleId": "SENTINEL.INPUT_ADMITTED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_SET_PRESENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_IN_SCOPE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_FRESH",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_CONSISTENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.PROVENANCE_RESOLVABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.CLAIMS_SUPPORTED",
+        "outcome": "FAIL",
+        "blocking": false,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "SENTINEL.NO_UNSUPPORTED_SPECIFICS",
+        "outcome": "FAIL",
+        "blocking": true,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "SENTINEL.RESERVED_TERMS_BOUND",
+        "outcome": "FAIL",
+        "blocking": true,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "SENTINEL.NO_FOREIGN_ADOPTION",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       }
+      ],
+      "provenance": {
+       "sentinelVersion": "sinbad-sentinel/0-v1",
+       "rulesetVersion": "sinbad-sentinel-ruleset/0-v1",
+       "inputDigest": "c7a802cfce52255316a6dde0ef03ad0eb416bf254d937597c084d1b7834a0519",
+       "contextTaskId": "task-1",
+       "evidenceSetId": "set-1",
+       "priorReportDigest": null,
+       "policy": {
+        "maxEvidenceAgeMs": 10000
+       }
+      },
+      "observedAt": 1000000,
+      "authority": "NONE",
+      "decides": false,
+      "reportDigest": "7be8383add8a3eafbdad7650344d0458b1b537f2a66336bc11d04110d344122f"
+     },
+     "provenance": {
+      "gatekeeperVersion": "sinbad-gatekeeper/0-v1",
+      "rulesetVersion": "sinbad-gatekeeper-ruleset/0-v1",
+      "sentinelVersion": "sinbad-sentinel/0-v1",
+      "inputDigest": "dac5adb734d35c4d905dc9ccb5bc7065ac3d2c6b1fdc0f7b250ceb0a66a113b5",
+      "contextTaskId": "task-1",
+      "evidenceSetId": "set-1",
+      "draftId": "draft-1",
+      "draftHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "observationDigest": "7be8383add8a3eafbdad7650344d0458b1b537f2a66336bc11d04110d344122f",
+      "verdictId": null,
+      "priorDecisionDigest": null,
+      "policy": {
+       "maxEvidenceAgeMs": 10000,
+       "volatileMaxEvidenceAgeMs": 1000
+      }
+     },
+     "observedAt": 1000000,
+     "authority": "NONE",
+     "executes": false,
+     "decisionDigest": "274916247802844aa533bd7a0ab1cacd16a363534e50b63da524974dfbeab466"
+    },
+    "trustStore": [
+     {
+      "keyId": "key-gate",
+      "publicKeyHex": "91a11b5e2b749047e79ebadcb0e6f31c0f6a55fa188f6d7c69b884a473510fb6",
+      "kinds": [
+       "GATEKEEPER_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-copilot",
+      "publicKeyHex": "0f9002861445d1bd0e0e882f0c870204efaa92862de8fcf517b546369f0fd273",
+      "kinds": [
+       "COPILOT_REVIEW"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-pilot",
+      "publicKeyHex": "4b92de2fb0a5077cc7be3711df139fade4fa6ed217cbbf76dd8e11e7d2b3daab",
+      "kinds": [
+       "PILOT_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-chain",
+      "publicKeyHex": "a7309778fa38d4b3e8e6ba54ff56814e4a088259f566dc4cddda07acced86022",
+      "kinds": [
+       "CHAIN_TRANSCRIPT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-sentinel",
+      "publicKeyHex": "bfc2e0899b970786495f7960178cde7eae6863616083bbd4e8abee38a0971ea1",
+      "kinds": [
+       "SENTINEL_REPORT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     }
+    ],
+    "expected": {
+     "recordKind": null,
+     "taskRef": null
+    },
+    "policy": {
+     "maxAgeMs": 10000
+    }
+   },
+   "expected": {
+    "version": "sinbad-attest-check/0-v1",
+    "checkId": "check-1",
+    "status": "REJECTED",
+    "authentic": false,
+    "reasonCode": "SIGNATURE_INVALID",
+    "attestationId": "att-1",
+    "recordKind": "GATEKEEPER_DECISION",
+    "recordDigest": "274916247802844aa533bd7a0ab1cacd16a363534e50b63da524974dfbeab466",
+    "taskRef": "task-1",
+    "keyId": "key-gate",
+    "issuedAt": 999990,
+    "provenance": {
+     "attestVersion": "sinbad-attest/0-v1",
+     "algorithm": "ED25519",
+     "trustStoreDigest": "0c0909322f89f246eb664e766b550a784fdecf80e7bc3de86b3ac0ba4ae687ff",
+     "policy": {
+      "maxAgeMs": 10000
+     }
+    },
+    "at": 1000000,
+    "authority": "NONE",
+    "originOnly": true,
+    "grantsAuthority": false,
+    "approves": false,
+    "executes": false,
+    "checkDigest": "d7caab52f9ee72bcfb9ef8bcb0302bec2376e1c44e35d8cc492aa2a59a7ffd2c"
+   }
+  },
+  {
+   "name": "forged-signed-by-other-role",
+   "expectedClass": "FORGED",
+   "expectedStatus": "REJECTED",
+   "expectedReason": "KEY_NOT_BOUND_TO_KIND",
+   "description": "the forgery signed by the genuine Pilot key, which may not attest gate decisions",
+   "input": {
+    "version": "sinbad-attest-check-input/0-v1",
+    "checkId": "check-1",
+    "at": 1000000,
+    "envelope": {
+     "version": "sinbad-attestation/0-v1",
+     "attestationId": "att-1",
+     "algorithm": "ED25519",
+     "keyId": "key-pilot",
+     "recordKind": "GATEKEEPER_DECISION",
+     "recordVersion": "sinbad-gatekeeper-decision/0-v1",
+     "recordDigest": "274916247802844aa533bd7a0ab1cacd16a363534e50b63da524974dfbeab466",
+     "payloadDigest": "aeec096c2686c94883f792aff077e539a87df2c9b8f535040d25ad930f2e3ed9",
+     "taskRef": "task-1",
+     "issuedAt": 999990,
+     "authority": "NONE",
+     "signature": "344fa47150377a583e2ccf4e98f416f1279cb36944dae05e0d2cbf3b3ae0ab5cf008fe801389f8fe460bdcf66f4de970fcada7126912557fed975fe888144b0e"
+    },
+    "record": {
+     "version": "sinbad-gatekeeper-decision/0-v1",
+     "decisionId": "chain-1.0.gate",
+     "taskRef": "task-1",
+     "stage": "POST",
+     "outcome": "ADMIT",
+     "failClosed": false,
+     "reasonCode": "ALL_CLEAR",
+     "labels": [],
+     "deliveryLabel": "VERIFIED",
+     "decision": {
+      "version": "sinbad-gate-decision/1-v1",
+      "decisionId": "chain-1.0.gate",
+      "taskRef": "task-1",
+      "stage": "POST",
+      "outcome": "ADMIT",
+      "labels": [],
+      "ruleResults": [
+       {
+        "ruleId": "GATE.INPUT_ADMITTED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.OBSERVATION_AVAILABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CITATIONS_IN_EVIDENCE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CLAIM_EVIDENCE_RESOLVABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.SPECIFICITY_SUPPORTED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.VOCABULARY_BOUND",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.FOREIGN_CLAIMS_EXCLUDED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.VOLATILE_CLAIMS_LIVE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.ACTIONS_AUTHORIZED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.VERDICT_MATCHES_DRAFT",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CLAIMS_SUPPORTED",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.EVIDENCE_CONSISTENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.EVIDENCE_FRESH",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.EVIDENCE_IN_SCOPE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.PROVENANCE_ADEQUATE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CLAIM_TEXT_OBSERVABLE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       }
+      ],
+      "verdictRef": "chain-1.0.verdict",
+      "attribution": {
+       "deterministicRuleIds": [],
+       "modelVerdictId": null,
+       "reasonCode": "ALL_CLEAR"
+      },
+      "failClosed": false,
+      "decidedAt": 1000000,
+      "authority": "NONE"
+     },
+     "claimLabels": [
+      {
+       "claimId": "c1",
+       "assertionMode": "ASSERTED",
+       "label": "SOURCE_MISSING",
+       "reasonCode": "NO_EVIDENCE",
+       "evidenceIds": [],
+       "volatile": false
+      }
+     ],
+     "actions": [],
+     "ruleResults": [
+      {
+       "ruleId": "GATE.INPUT_ADMITTED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.OBSERVATION_AVAILABLE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CITATIONS_IN_EVIDENCE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CLAIM_EVIDENCE_RESOLVABLE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.SPECIFICITY_SUPPORTED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.VOCABULARY_BOUND",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.FOREIGN_CLAIMS_EXCLUDED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.VOLATILE_CLAIMS_LIVE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.ACTIONS_AUTHORIZED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.VERDICT_MATCHES_DRAFT",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CLAIMS_SUPPORTED",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.EVIDENCE_CONSISTENT",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.EVIDENCE_FRESH",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.EVIDENCE_IN_SCOPE",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.PROVENANCE_ADEQUATE",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CLAIM_TEXT_OBSERVABLE",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      }
+     ],
+     "observation": {
+      "version": "sinbad-sentinel-report/0-v1",
+      "reportId": "chain-1.0.gate",
+      "tap": "POST_GATE",
+      "taskRef": "task-1",
+      "status": "OBSERVED",
+      "failClosed": false,
+      "reasonCode": "OBSERVED",
+      "signal": "RISK",
+      "coverage": "FULL",
+      "unobservable": [],
+      "claims": [
+       {
+        "claimId": "c1",
+        "contentHash": "27cb8fd2f7009214fd8782ea0f63b6c801a6f82cec5cca043ab3173dda57fdd1",
+        "assertionMode": "ASSERTED",
+        "originRef": "model:draft",
+        "originScopeRef": "scope:alpha",
+        "foreignOrigin": false,
+        "truthState": "SOURCE_MISSING",
+        "reasonCode": "NO_EVIDENCE",
+        "evidenceIds": [],
+        "eligibleEvidenceIds": [],
+        "foreignEvidenceIds": [],
+        "staleEvidenceIds": [],
+        "unknownEvidenceIds": [],
+        "nonAuthoritativeEvidenceIds": [],
+        "conflictEvidenceIds": [],
+        "reservedTerms": [
+         "VERIFIED",
+         "MERGED"
+        ],
+        "specificValues": true,
+        "flagRefs": [
+         "claim:c1:NO_EVIDENCE:specific-values",
+         "claim:c1:reserved-terms-unbound:VERIFIED,MERGED"
+        ],
+        "unobservable": []
+       }
+      ],
+      "truthStateCounts": {
+       "VERIFIED": 0,
+       "NOT_VERIFIED": 0,
+       "CONFLICT": 0,
+       "SOURCE_MISSING": 1,
+       "BLOCKED": 0,
+       "NOT_APPLICABLE": 0
+      },
+      "evidence": {
+       "setRef": "set-1",
+       "itemCount": 1,
+       "foreignEvidenceIds": [],
+       "staleEvidenceIds": [],
+       "driftedLocators": []
+      },
+      "flags": [
+       {
+        "warningClass": "UNSUPPORTED_FACTUAL_ASSERTION",
+        "severity": "BLOCKING",
+        "checkerKind": "DETERMINISTIC",
+        "evidenceIds": [],
+        "pointerRef": "claim:c1:NO_EVIDENCE:specific-values"
+       },
+       {
+        "warningClass": "FALSE_CERTAINTY",
+        "severity": "BLOCKING",
+        "checkerKind": "DETERMINISTIC",
+        "evidenceIds": [],
+        "pointerRef": "claim:c1:reserved-terms-unbound:VERIFIED,MERGED"
+       }
+      ],
+      "ruleResults": [
+       {
+        "ruleId": "SENTINEL.INPUT_ADMITTED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_SET_PRESENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_IN_SCOPE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_FRESH",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_CONSISTENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.PROVENANCE_RESOLVABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.CLAIMS_SUPPORTED",
+        "outcome": "FAIL",
+        "blocking": false,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "SENTINEL.NO_UNSUPPORTED_SPECIFICS",
+        "outcome": "FAIL",
+        "blocking": true,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "SENTINEL.RESERVED_TERMS_BOUND",
+        "outcome": "FAIL",
+        "blocking": true,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "SENTINEL.NO_FOREIGN_ADOPTION",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       }
+      ],
+      "provenance": {
+       "sentinelVersion": "sinbad-sentinel/0-v1",
+       "rulesetVersion": "sinbad-sentinel-ruleset/0-v1",
+       "inputDigest": "c7a802cfce52255316a6dde0ef03ad0eb416bf254d937597c084d1b7834a0519",
+       "contextTaskId": "task-1",
+       "evidenceSetId": "set-1",
+       "priorReportDigest": null,
+       "policy": {
+        "maxEvidenceAgeMs": 10000
+       }
+      },
+      "observedAt": 1000000,
+      "authority": "NONE",
+      "decides": false,
+      "reportDigest": "7be8383add8a3eafbdad7650344d0458b1b537f2a66336bc11d04110d344122f"
+     },
+     "provenance": {
+      "gatekeeperVersion": "sinbad-gatekeeper/0-v1",
+      "rulesetVersion": "sinbad-gatekeeper-ruleset/0-v1",
+      "sentinelVersion": "sinbad-sentinel/0-v1",
+      "inputDigest": "dac5adb734d35c4d905dc9ccb5bc7065ac3d2c6b1fdc0f7b250ceb0a66a113b5",
+      "contextTaskId": "task-1",
+      "evidenceSetId": "set-1",
+      "draftId": "draft-1",
+      "draftHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "observationDigest": "7be8383add8a3eafbdad7650344d0458b1b537f2a66336bc11d04110d344122f",
+      "verdictId": null,
+      "priorDecisionDigest": null,
+      "policy": {
+       "maxEvidenceAgeMs": 10000,
+       "volatileMaxEvidenceAgeMs": 1000
+      }
+     },
+     "observedAt": 1000000,
+     "authority": "NONE",
+     "executes": false,
+     "decisionDigest": "274916247802844aa533bd7a0ab1cacd16a363534e50b63da524974dfbeab466"
+    },
+    "trustStore": [
+     {
+      "keyId": "key-gate",
+      "publicKeyHex": "91a11b5e2b749047e79ebadcb0e6f31c0f6a55fa188f6d7c69b884a473510fb6",
+      "kinds": [
+       "GATEKEEPER_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-copilot",
+      "publicKeyHex": "0f9002861445d1bd0e0e882f0c870204efaa92862de8fcf517b546369f0fd273",
+      "kinds": [
+       "COPILOT_REVIEW"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-pilot",
+      "publicKeyHex": "4b92de2fb0a5077cc7be3711df139fade4fa6ed217cbbf76dd8e11e7d2b3daab",
+      "kinds": [
+       "PILOT_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-chain",
+      "publicKeyHex": "a7309778fa38d4b3e8e6ba54ff56814e4a088259f566dc4cddda07acced86022",
+      "kinds": [
+       "CHAIN_TRANSCRIPT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-sentinel",
+      "publicKeyHex": "bfc2e0899b970786495f7960178cde7eae6863616083bbd4e8abee38a0971ea1",
+      "kinds": [
+       "SENTINEL_REPORT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     }
+    ],
+    "expected": {
+     "recordKind": null,
+     "taskRef": null
+    },
+    "policy": {
+     "maxAgeMs": 10000
+    }
+   },
+   "expected": {
+    "version": "sinbad-attest-check/0-v1",
+    "checkId": "check-1",
+    "status": "REJECTED",
+    "authentic": false,
+    "reasonCode": "KEY_NOT_BOUND_TO_KIND",
+    "attestationId": "att-1",
+    "recordKind": "GATEKEEPER_DECISION",
+    "recordDigest": "274916247802844aa533bd7a0ab1cacd16a363534e50b63da524974dfbeab466",
+    "taskRef": "task-1",
+    "keyId": "key-pilot",
+    "issuedAt": 999990,
+    "provenance": {
+     "attestVersion": "sinbad-attest/0-v1",
+     "algorithm": "ED25519",
+     "trustStoreDigest": "0c0909322f89f246eb664e766b550a784fdecf80e7bc3de86b3ac0ba4ae687ff",
+     "policy": {
+      "maxAgeMs": 10000
+     }
+    },
+    "at": 1000000,
+    "authority": "NONE",
+    "originOnly": true,
+    "grantsAuthority": false,
+    "approves": false,
+    "executes": false,
+    "checkDigest": "c8875377b2c54723c940fc4bf9754a4479ad42414c23840280be8c26dde6bea3"
+   }
+  },
+  {
+   "name": "forged-unknown-key",
+   "expectedClass": "FORGED",
+   "expectedStatus": "REJECTED",
+   "expectedReason": "KEY_UNKNOWN",
+   "description": "the forgery signed under a key id the trust store does not contain",
+   "input": {
+    "version": "sinbad-attest-check-input/0-v1",
+    "checkId": "check-1",
+    "at": 1000000,
+    "envelope": {
+     "version": "sinbad-attestation/0-v1",
+     "attestationId": "att-1",
+     "algorithm": "ED25519",
+     "keyId": "key-stranger",
+     "recordKind": "GATEKEEPER_DECISION",
+     "recordVersion": "sinbad-gatekeeper-decision/0-v1",
+     "recordDigest": "274916247802844aa533bd7a0ab1cacd16a363534e50b63da524974dfbeab466",
+     "payloadDigest": "aeec096c2686c94883f792aff077e539a87df2c9b8f535040d25ad930f2e3ed9",
+     "taskRef": "task-1",
+     "issuedAt": 999990,
+     "authority": "NONE",
+     "signature": "9c7d5e1143ed27ea293bc10bff4d7282f0cb52721e637d56cdae52d3b69b87644c0409b70f1405d71a8f39a5107884223eea1b68a9d1b7e417ccfd4f48105909"
+    },
+    "record": {
+     "version": "sinbad-gatekeeper-decision/0-v1",
+     "decisionId": "chain-1.0.gate",
+     "taskRef": "task-1",
+     "stage": "POST",
+     "outcome": "ADMIT",
+     "failClosed": false,
+     "reasonCode": "ALL_CLEAR",
+     "labels": [],
+     "deliveryLabel": "VERIFIED",
+     "decision": {
+      "version": "sinbad-gate-decision/1-v1",
+      "decisionId": "chain-1.0.gate",
+      "taskRef": "task-1",
+      "stage": "POST",
+      "outcome": "ADMIT",
+      "labels": [],
+      "ruleResults": [
+       {
+        "ruleId": "GATE.INPUT_ADMITTED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.OBSERVATION_AVAILABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CITATIONS_IN_EVIDENCE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CLAIM_EVIDENCE_RESOLVABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.SPECIFICITY_SUPPORTED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.VOCABULARY_BOUND",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.FOREIGN_CLAIMS_EXCLUDED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.VOLATILE_CLAIMS_LIVE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.ACTIONS_AUTHORIZED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.VERDICT_MATCHES_DRAFT",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CLAIMS_SUPPORTED",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.EVIDENCE_CONSISTENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.EVIDENCE_FRESH",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.EVIDENCE_IN_SCOPE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.PROVENANCE_ADEQUATE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CLAIM_TEXT_OBSERVABLE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       }
+      ],
+      "verdictRef": "chain-1.0.verdict",
+      "attribution": {
+       "deterministicRuleIds": [],
+       "modelVerdictId": null,
+       "reasonCode": "ALL_CLEAR"
+      },
+      "failClosed": false,
+      "decidedAt": 1000000,
+      "authority": "NONE"
+     },
+     "claimLabels": [
+      {
+       "claimId": "c1",
+       "assertionMode": "ASSERTED",
+       "label": "SOURCE_MISSING",
+       "reasonCode": "NO_EVIDENCE",
+       "evidenceIds": [],
+       "volatile": false
+      }
+     ],
+     "actions": [],
+     "ruleResults": [
+      {
+       "ruleId": "GATE.INPUT_ADMITTED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.OBSERVATION_AVAILABLE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CITATIONS_IN_EVIDENCE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CLAIM_EVIDENCE_RESOLVABLE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.SPECIFICITY_SUPPORTED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.VOCABULARY_BOUND",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.FOREIGN_CLAIMS_EXCLUDED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.VOLATILE_CLAIMS_LIVE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.ACTIONS_AUTHORIZED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.VERDICT_MATCHES_DRAFT",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CLAIMS_SUPPORTED",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.EVIDENCE_CONSISTENT",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.EVIDENCE_FRESH",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.EVIDENCE_IN_SCOPE",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.PROVENANCE_ADEQUATE",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CLAIM_TEXT_OBSERVABLE",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      }
+     ],
+     "observation": {
+      "version": "sinbad-sentinel-report/0-v1",
+      "reportId": "chain-1.0.gate",
+      "tap": "POST_GATE",
+      "taskRef": "task-1",
+      "status": "OBSERVED",
+      "failClosed": false,
+      "reasonCode": "OBSERVED",
+      "signal": "RISK",
+      "coverage": "FULL",
+      "unobservable": [],
+      "claims": [
+       {
+        "claimId": "c1",
+        "contentHash": "27cb8fd2f7009214fd8782ea0f63b6c801a6f82cec5cca043ab3173dda57fdd1",
+        "assertionMode": "ASSERTED",
+        "originRef": "model:draft",
+        "originScopeRef": "scope:alpha",
+        "foreignOrigin": false,
+        "truthState": "SOURCE_MISSING",
+        "reasonCode": "NO_EVIDENCE",
+        "evidenceIds": [],
+        "eligibleEvidenceIds": [],
+        "foreignEvidenceIds": [],
+        "staleEvidenceIds": [],
+        "unknownEvidenceIds": [],
+        "nonAuthoritativeEvidenceIds": [],
+        "conflictEvidenceIds": [],
+        "reservedTerms": [
+         "VERIFIED",
+         "MERGED"
+        ],
+        "specificValues": true,
+        "flagRefs": [
+         "claim:c1:NO_EVIDENCE:specific-values",
+         "claim:c1:reserved-terms-unbound:VERIFIED,MERGED"
+        ],
+        "unobservable": []
+       }
+      ],
+      "truthStateCounts": {
+       "VERIFIED": 0,
+       "NOT_VERIFIED": 0,
+       "CONFLICT": 0,
+       "SOURCE_MISSING": 1,
+       "BLOCKED": 0,
+       "NOT_APPLICABLE": 0
+      },
+      "evidence": {
+       "setRef": "set-1",
+       "itemCount": 1,
+       "foreignEvidenceIds": [],
+       "staleEvidenceIds": [],
+       "driftedLocators": []
+      },
+      "flags": [
+       {
+        "warningClass": "UNSUPPORTED_FACTUAL_ASSERTION",
+        "severity": "BLOCKING",
+        "checkerKind": "DETERMINISTIC",
+        "evidenceIds": [],
+        "pointerRef": "claim:c1:NO_EVIDENCE:specific-values"
+       },
+       {
+        "warningClass": "FALSE_CERTAINTY",
+        "severity": "BLOCKING",
+        "checkerKind": "DETERMINISTIC",
+        "evidenceIds": [],
+        "pointerRef": "claim:c1:reserved-terms-unbound:VERIFIED,MERGED"
+       }
+      ],
+      "ruleResults": [
+       {
+        "ruleId": "SENTINEL.INPUT_ADMITTED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_SET_PRESENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_IN_SCOPE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_FRESH",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_CONSISTENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.PROVENANCE_RESOLVABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.CLAIMS_SUPPORTED",
+        "outcome": "FAIL",
+        "blocking": false,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "SENTINEL.NO_UNSUPPORTED_SPECIFICS",
+        "outcome": "FAIL",
+        "blocking": true,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "SENTINEL.RESERVED_TERMS_BOUND",
+        "outcome": "FAIL",
+        "blocking": true,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "SENTINEL.NO_FOREIGN_ADOPTION",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       }
+      ],
+      "provenance": {
+       "sentinelVersion": "sinbad-sentinel/0-v1",
+       "rulesetVersion": "sinbad-sentinel-ruleset/0-v1",
+       "inputDigest": "c7a802cfce52255316a6dde0ef03ad0eb416bf254d937597c084d1b7834a0519",
+       "contextTaskId": "task-1",
+       "evidenceSetId": "set-1",
+       "priorReportDigest": null,
+       "policy": {
+        "maxEvidenceAgeMs": 10000
+       }
+      },
+      "observedAt": 1000000,
+      "authority": "NONE",
+      "decides": false,
+      "reportDigest": "7be8383add8a3eafbdad7650344d0458b1b537f2a66336bc11d04110d344122f"
+     },
+     "provenance": {
+      "gatekeeperVersion": "sinbad-gatekeeper/0-v1",
+      "rulesetVersion": "sinbad-gatekeeper-ruleset/0-v1",
+      "sentinelVersion": "sinbad-sentinel/0-v1",
+      "inputDigest": "dac5adb734d35c4d905dc9ccb5bc7065ac3d2c6b1fdc0f7b250ceb0a66a113b5",
+      "contextTaskId": "task-1",
+      "evidenceSetId": "set-1",
+      "draftId": "draft-1",
+      "draftHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "observationDigest": "7be8383add8a3eafbdad7650344d0458b1b537f2a66336bc11d04110d344122f",
+      "verdictId": null,
+      "priorDecisionDigest": null,
+      "policy": {
+       "maxEvidenceAgeMs": 10000,
+       "volatileMaxEvidenceAgeMs": 1000
+      }
+     },
+     "observedAt": 1000000,
+     "authority": "NONE",
+     "executes": false,
+     "decisionDigest": "274916247802844aa533bd7a0ab1cacd16a363534e50b63da524974dfbeab466"
+    },
+    "trustStore": [
+     {
+      "keyId": "key-gate",
+      "publicKeyHex": "91a11b5e2b749047e79ebadcb0e6f31c0f6a55fa188f6d7c69b884a473510fb6",
+      "kinds": [
+       "GATEKEEPER_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-copilot",
+      "publicKeyHex": "0f9002861445d1bd0e0e882f0c870204efaa92862de8fcf517b546369f0fd273",
+      "kinds": [
+       "COPILOT_REVIEW"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-pilot",
+      "publicKeyHex": "4b92de2fb0a5077cc7be3711df139fade4fa6ed217cbbf76dd8e11e7d2b3daab",
+      "kinds": [
+       "PILOT_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-chain",
+      "publicKeyHex": "a7309778fa38d4b3e8e6ba54ff56814e4a088259f566dc4cddda07acced86022",
+      "kinds": [
+       "CHAIN_TRANSCRIPT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-sentinel",
+      "publicKeyHex": "bfc2e0899b970786495f7960178cde7eae6863616083bbd4e8abee38a0971ea1",
+      "kinds": [
+       "SENTINEL_REPORT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     }
+    ],
+    "expected": {
+     "recordKind": null,
+     "taskRef": null
+    },
+    "policy": {
+     "maxAgeMs": 10000
+    }
+   },
+   "expected": {
+    "version": "sinbad-attest-check/0-v1",
+    "checkId": "check-1",
+    "status": "REJECTED",
+    "authentic": false,
+    "reasonCode": "KEY_UNKNOWN",
+    "attestationId": "att-1",
+    "recordKind": "GATEKEEPER_DECISION",
+    "recordDigest": "274916247802844aa533bd7a0ab1cacd16a363534e50b63da524974dfbeab466",
+    "taskRef": "task-1",
+    "keyId": "key-stranger",
+    "issuedAt": 999990,
+    "provenance": {
+     "attestVersion": "sinbad-attest/0-v1",
+     "algorithm": "ED25519",
+     "trustStoreDigest": "0c0909322f89f246eb664e766b550a784fdecf80e7bc3de86b3ac0ba4ae687ff",
+     "policy": {
+      "maxAgeMs": 10000
+     }
+    },
+    "at": 1000000,
+    "authority": "NONE",
+    "originOnly": true,
+    "grantsAuthority": false,
+    "approves": false,
+    "executes": false,
+    "checkDigest": "51c68d73e769288a39a0a8974c0b3662e26bb46f67c135f0357cd45f2e15d445"
+   }
+  },
+  {
+   "name": "forged-envelope-task-edited",
+   "expectedClass": "FORGED",
+   "expectedStatus": "REJECTED",
+   "expectedReason": "SIGNATURE_INVALID",
+   "description": "a genuine envelope with its task reference edited",
+   "input": {
+    "version": "sinbad-attest-check-input/0-v1",
+    "checkId": "check-1",
+    "at": 1000000,
+    "envelope": {
+     "version": "sinbad-attestation/0-v1",
+     "attestationId": "att-1",
+     "algorithm": "ED25519",
+     "keyId": "key-pilot",
+     "recordKind": "PILOT_DECISION",
+     "recordVersion": "sinbad-pilot-decision/0-v1",
+     "recordDigest": "4bfe85156e87a264d254beec0f10ecfc8561ff04cc05a11f48ee0dc9a25f8254",
+     "payloadDigest": "305de1fbe43a10f8ae2b55cb6558e29b60dbbc92cfc319e3daedb9aaccb0055b",
+     "taskRef": "task-2",
+     "issuedAt": 999990,
+     "authority": "NONE",
+     "signature": "2a2e6d0a4160113e9eb57f320567665d0dda849b9e6daa2372c06ec4ffab0599ad2776da71811b0d59582cc07dd3a54201ceca2a50f053b683647be5b8b2a80b"
+    },
+    "record": {
+     "version": "sinbad-pilot-decision/0-v1",
+     "pilotDecisionId": "chain-1.0.pilot",
+     "taskRef": "task-1",
+     "decision": "PROCEED",
+     "failClosed": false,
+     "reasonCode": "ALL_CLEAR",
+     "ruleId": "PILOT.GATE_ADMITS",
+     "findings": [],
+     "carryLabels": [
+      "VERIFIED"
+     ],
+     "gate": {
+      "decisionId": "chain-1.0.gate",
+      "decisionDigest": "64cfdf48018bd3a9b7a9ca6d4f9665f8d43e458f9b2e0e9018ed075452ccef06",
+      "outcome": "ADMIT",
+      "reasonCode": "ALL_CLEAR",
+      "failClosed": false,
+      "deliveryLabel": "VERIFIED",
+      "observationSignal": "CLEAR",
+      "observationCoverage": "FULL"
+     },
+     "review": {
+      "reviewId": "chain-1.0.review",
+      "reviewDigest": "15983b0916c1b2ec90e1f32c25872f93c580946def97a771cf04ffdaedf0cea6",
+      "status": "REVIEWED",
+      "reasonCode": "REVIEWED",
+      "recommendation": "ALLOW"
+     },
+     "iteration": {
+      "index": 0,
+      "maxIterations": 3,
+      "remaining": 2
+     },
+     "provenance": {
+      "pilotVersion": "sinbad-pilot/0-v1",
+      "rulesetVersion": "sinbad-pilot-ruleset/0-v1",
+      "inputDigest": "996a3d7bb9d4926e12c17126d02a97f9dda9709b2efd6fdd507406f5fb019a1e",
+      "contextTaskId": "task-1",
+      "draftId": "draft-1",
+      "draftHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "gateDecisionDigest": "64cfdf48018bd3a9b7a9ca6d4f9665f8d43e458f9b2e0e9018ed075452ccef06",
+      "reviewDigest": "15983b0916c1b2ec90e1f32c25872f93c580946def97a771cf04ffdaedf0cea6",
+      "verdictId": "chain-1.0.verdict",
+      "priorPilotDecisionDigest": null,
+      "policy": {
+       "maxIterations": 3,
+       "labelledDelivery": "PROCEED"
+      }
+     },
+     "decidedAt": 1000000,
+     "authority": "NONE",
+     "recommendationOnly": true,
+     "executes": false,
+     "approves": false,
+     "grantsAuthority": false,
+     "rewrites": false,
+     "callsModel": false,
+     "pilotDecisionDigest": "4bfe85156e87a264d254beec0f10ecfc8561ff04cc05a11f48ee0dc9a25f8254"
+    },
+    "trustStore": [
+     {
+      "keyId": "key-gate",
+      "publicKeyHex": "91a11b5e2b749047e79ebadcb0e6f31c0f6a55fa188f6d7c69b884a473510fb6",
+      "kinds": [
+       "GATEKEEPER_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-copilot",
+      "publicKeyHex": "0f9002861445d1bd0e0e882f0c870204efaa92862de8fcf517b546369f0fd273",
+      "kinds": [
+       "COPILOT_REVIEW"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-pilot",
+      "publicKeyHex": "4b92de2fb0a5077cc7be3711df139fade4fa6ed217cbbf76dd8e11e7d2b3daab",
+      "kinds": [
+       "PILOT_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-chain",
+      "publicKeyHex": "a7309778fa38d4b3e8e6ba54ff56814e4a088259f566dc4cddda07acced86022",
+      "kinds": [
+       "CHAIN_TRANSCRIPT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-sentinel",
+      "publicKeyHex": "bfc2e0899b970786495f7960178cde7eae6863616083bbd4e8abee38a0971ea1",
+      "kinds": [
+       "SENTINEL_REPORT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     }
+    ],
+    "expected": {
+     "recordKind": null,
+     "taskRef": null
+    },
+    "policy": {
+     "maxAgeMs": 10000
+    }
+   },
+   "expected": {
+    "version": "sinbad-attest-check/0-v1",
+    "checkId": "check-1",
+    "status": "REJECTED",
+    "authentic": false,
+    "reasonCode": "SIGNATURE_INVALID",
+    "attestationId": "att-1",
+    "recordKind": "PILOT_DECISION",
+    "recordDigest": "4bfe85156e87a264d254beec0f10ecfc8561ff04cc05a11f48ee0dc9a25f8254",
+    "taskRef": "task-2",
+    "keyId": "key-pilot",
+    "issuedAt": 999990,
+    "provenance": {
+     "attestVersion": "sinbad-attest/0-v1",
+     "algorithm": "ED25519",
+     "trustStoreDigest": "0c0909322f89f246eb664e766b550a784fdecf80e7bc3de86b3ac0ba4ae687ff",
+     "policy": {
+      "maxAgeMs": 10000
+     }
+    },
+    "at": 1000000,
+    "authority": "NONE",
+    "originOnly": true,
+    "grantsAuthority": false,
+    "approves": false,
+    "executes": false,
+    "checkDigest": "598d61987233ba895c704b1b4d6565a78d87df776ebaa2c7cd7fbace6b976887"
+   }
+  },
+  {
+   "name": "forged-record-edited",
+   "expectedClass": "FORGED",
+   "expectedStatus": "REJECTED",
+   "expectedReason": "RECORD_NOT_INTACT",
+   "description": "a genuine envelope with an edited, unsealed record",
+   "input": {
+    "version": "sinbad-attest-check-input/0-v1",
+    "checkId": "check-1",
+    "at": 1000000,
+    "envelope": {
+     "version": "sinbad-attestation/0-v1",
+     "attestationId": "att-1",
+     "algorithm": "ED25519",
+     "keyId": "key-gate",
+     "recordKind": "GATEKEEPER_DECISION",
+     "recordVersion": "sinbad-gatekeeper-decision/0-v1",
+     "recordDigest": "c6a2cefe51fe39759fb3d6a2b8a61177ebeec631c929a5fe9b3706fa8d38c971",
+     "payloadDigest": "c613441f900a541e02b932577875d4390aae17e82c894572d971272445558975",
+     "taskRef": "task-1",
+     "issuedAt": 999990,
+     "authority": "NONE",
+     "signature": "0f8725dfaa7a310c30061183882ed01de4c22f71ea27871c6366480bc7869c5b67da00e7eb528d9ebca4a0fb6fd6e970d6f527fb2259cf0f79116e15f90b9606"
+    },
+    "record": {
+     "version": "sinbad-gatekeeper-decision/0-v1",
+     "decisionId": "chain-1.0.gate",
+     "taskRef": "task-1",
+     "stage": "POST",
+     "outcome": "ADMIT",
+     "failClosed": true,
+     "reasonCode": "DETERMINISTIC_RULE_FAILED",
+     "labels": [
+      "BLOCKED"
+     ],
+     "deliveryLabel": "BLOCKED",
+     "decision": {
+      "version": "sinbad-gate-decision/1-v1",
+      "decisionId": "chain-1.0.gate",
+      "taskRef": "task-1",
+      "stage": "POST",
+      "outcome": "BLOCK",
+      "labels": [
+       "BLOCKED"
+      ],
+      "ruleResults": [
+       {
+        "ruleId": "GATE.INPUT_ADMITTED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.OBSERVATION_AVAILABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CITATIONS_IN_EVIDENCE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CLAIM_EVIDENCE_RESOLVABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.SPECIFICITY_SUPPORTED",
+        "outcome": "FAIL",
+        "blocking": true,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "GATE.VOCABULARY_BOUND",
+        "outcome": "FAIL",
+        "blocking": true,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "GATE.FOREIGN_CLAIMS_EXCLUDED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.VOLATILE_CLAIMS_LIVE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.ACTIONS_AUTHORIZED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.VERDICT_MATCHES_DRAFT",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CLAIMS_SUPPORTED",
+        "outcome": "FAIL",
+        "blocking": false,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "GATE.EVIDENCE_CONSISTENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.EVIDENCE_FRESH",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.EVIDENCE_IN_SCOPE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.PROVENANCE_ADEQUATE",
+        "outcome": "FAIL",
+        "blocking": false,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "GATE.CLAIM_TEXT_OBSERVABLE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       }
+      ],
+      "verdictRef": "chain-1.0.verdict",
+      "attribution": {
+       "deterministicRuleIds": [
+        "GATE.SPECIFICITY_SUPPORTED",
+        "GATE.VOCABULARY_BOUND",
+        "GATE.CLAIMS_SUPPORTED",
+        "GATE.PROVENANCE_ADEQUATE"
+       ],
+       "modelVerdictId": null,
+       "reasonCode": "DETERMINISTIC_RULE_FAILED"
+      },
+      "failClosed": true,
+      "decidedAt": 1000000,
+      "authority": "NONE"
+     },
+     "claimLabels": [
+      {
+       "claimId": "c1",
+       "assertionMode": "ASSERTED",
+       "label": "SOURCE_MISSING",
+       "reasonCode": "NO_EVIDENCE",
+       "evidenceIds": [],
+       "volatile": false
+      }
+     ],
+     "actions": [],
+     "ruleResults": [
+      {
+       "ruleId": "GATE.INPUT_ADMITTED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.OBSERVATION_AVAILABLE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CITATIONS_IN_EVIDENCE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CLAIM_EVIDENCE_RESOLVABLE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.SPECIFICITY_SUPPORTED",
+       "outcome": "FAIL",
+       "blocking": true,
+       "detailRef": "claims:c1"
+      },
+      {
+       "ruleId": "GATE.VOCABULARY_BOUND",
+       "outcome": "FAIL",
+       "blocking": true,
+       "detailRef": "claims:c1"
+      },
+      {
+       "ruleId": "GATE.FOREIGN_CLAIMS_EXCLUDED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.VOLATILE_CLAIMS_LIVE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.ACTIONS_AUTHORIZED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.VERDICT_MATCHES_DRAFT",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CLAIMS_SUPPORTED",
+       "outcome": "FAIL",
+       "blocking": false,
+       "detailRef": "claims:c1"
+      },
+      {
+       "ruleId": "GATE.EVIDENCE_CONSISTENT",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.EVIDENCE_FRESH",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.EVIDENCE_IN_SCOPE",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.PROVENANCE_ADEQUATE",
+       "outcome": "FAIL",
+       "blocking": false,
+       "detailRef": "claims:c1"
+      },
+      {
+       "ruleId": "GATE.CLAIM_TEXT_OBSERVABLE",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      }
+     ],
+     "observation": {
+      "version": "sinbad-sentinel-report/0-v1",
+      "reportId": "chain-1.0.gate",
+      "tap": "POST_GATE",
+      "taskRef": "task-1",
+      "status": "OBSERVED",
+      "failClosed": false,
+      "reasonCode": "OBSERVED",
+      "signal": "RISK",
+      "coverage": "FULL",
+      "unobservable": [],
+      "claims": [
+       {
+        "claimId": "c1",
+        "contentHash": "27cb8fd2f7009214fd8782ea0f63b6c801a6f82cec5cca043ab3173dda57fdd1",
+        "assertionMode": "ASSERTED",
+        "originRef": "model:draft",
+        "originScopeRef": "scope:alpha",
+        "foreignOrigin": false,
+        "truthState": "SOURCE_MISSING",
+        "reasonCode": "NO_EVIDENCE",
+        "evidenceIds": [],
+        "eligibleEvidenceIds": [],
+        "foreignEvidenceIds": [],
+        "staleEvidenceIds": [],
+        "unknownEvidenceIds": [],
+        "nonAuthoritativeEvidenceIds": [],
+        "conflictEvidenceIds": [],
+        "reservedTerms": [
+         "VERIFIED",
+         "MERGED"
+        ],
+        "specificValues": true,
+        "flagRefs": [
+         "claim:c1:NO_EVIDENCE:specific-values",
+         "claim:c1:reserved-terms-unbound:VERIFIED,MERGED"
+        ],
+        "unobservable": []
+       }
+      ],
+      "truthStateCounts": {
+       "VERIFIED": 0,
+       "NOT_VERIFIED": 0,
+       "CONFLICT": 0,
+       "SOURCE_MISSING": 1,
+       "BLOCKED": 0,
+       "NOT_APPLICABLE": 0
+      },
+      "evidence": {
+       "setRef": "set-1",
+       "itemCount": 1,
+       "foreignEvidenceIds": [],
+       "staleEvidenceIds": [],
+       "driftedLocators": []
+      },
+      "flags": [
+       {
+        "warningClass": "UNSUPPORTED_FACTUAL_ASSERTION",
+        "severity": "BLOCKING",
+        "checkerKind": "DETERMINISTIC",
+        "evidenceIds": [],
+        "pointerRef": "claim:c1:NO_EVIDENCE:specific-values"
+       },
+       {
+        "warningClass": "FALSE_CERTAINTY",
+        "severity": "BLOCKING",
+        "checkerKind": "DETERMINISTIC",
+        "evidenceIds": [],
+        "pointerRef": "claim:c1:reserved-terms-unbound:VERIFIED,MERGED"
+       }
+      ],
+      "ruleResults": [
+       {
+        "ruleId": "SENTINEL.INPUT_ADMITTED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_SET_PRESENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_IN_SCOPE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_FRESH",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_CONSISTENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.PROVENANCE_RESOLVABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.CLAIMS_SUPPORTED",
+        "outcome": "FAIL",
+        "blocking": false,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "SENTINEL.NO_UNSUPPORTED_SPECIFICS",
+        "outcome": "FAIL",
+        "blocking": true,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "SENTINEL.RESERVED_TERMS_BOUND",
+        "outcome": "FAIL",
+        "blocking": true,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "SENTINEL.NO_FOREIGN_ADOPTION",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       }
+      ],
+      "provenance": {
+       "sentinelVersion": "sinbad-sentinel/0-v1",
+       "rulesetVersion": "sinbad-sentinel-ruleset/0-v1",
+       "inputDigest": "c7a802cfce52255316a6dde0ef03ad0eb416bf254d937597c084d1b7834a0519",
+       "contextTaskId": "task-1",
+       "evidenceSetId": "set-1",
+       "priorReportDigest": null,
+       "policy": {
+        "maxEvidenceAgeMs": 10000
+       }
+      },
+      "observedAt": 1000000,
+      "authority": "NONE",
+      "decides": false,
+      "reportDigest": "7be8383add8a3eafbdad7650344d0458b1b537f2a66336bc11d04110d344122f"
+     },
+     "provenance": {
+      "gatekeeperVersion": "sinbad-gatekeeper/0-v1",
+      "rulesetVersion": "sinbad-gatekeeper-ruleset/0-v1",
+      "sentinelVersion": "sinbad-sentinel/0-v1",
+      "inputDigest": "dac5adb734d35c4d905dc9ccb5bc7065ac3d2c6b1fdc0f7b250ceb0a66a113b5",
+      "contextTaskId": "task-1",
+      "evidenceSetId": "set-1",
+      "draftId": "draft-1",
+      "draftHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "observationDigest": "7be8383add8a3eafbdad7650344d0458b1b537f2a66336bc11d04110d344122f",
+      "verdictId": "chain-1.0.verdict",
+      "priorDecisionDigest": null,
+      "policy": {
+       "maxEvidenceAgeMs": 10000,
+       "volatileMaxEvidenceAgeMs": 1000
+      }
+     },
+     "observedAt": 1000000,
+     "authority": "NONE",
+     "executes": false,
+     "decisionDigest": "c6a2cefe51fe39759fb3d6a2b8a61177ebeec631c929a5fe9b3706fa8d38c971"
+    },
+    "trustStore": [
+     {
+      "keyId": "key-gate",
+      "publicKeyHex": "91a11b5e2b749047e79ebadcb0e6f31c0f6a55fa188f6d7c69b884a473510fb6",
+      "kinds": [
+       "GATEKEEPER_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-copilot",
+      "publicKeyHex": "0f9002861445d1bd0e0e882f0c870204efaa92862de8fcf517b546369f0fd273",
+      "kinds": [
+       "COPILOT_REVIEW"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-pilot",
+      "publicKeyHex": "4b92de2fb0a5077cc7be3711df139fade4fa6ed217cbbf76dd8e11e7d2b3daab",
+      "kinds": [
+       "PILOT_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-chain",
+      "publicKeyHex": "a7309778fa38d4b3e8e6ba54ff56814e4a088259f566dc4cddda07acced86022",
+      "kinds": [
+       "CHAIN_TRANSCRIPT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-sentinel",
+      "publicKeyHex": "bfc2e0899b970786495f7960178cde7eae6863616083bbd4e8abee38a0971ea1",
+      "kinds": [
+       "SENTINEL_REPORT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     }
+    ],
+    "expected": {
+     "recordKind": null,
+     "taskRef": null
+    },
+    "policy": {
+     "maxAgeMs": 10000
+    }
+   },
+   "expected": {
+    "version": "sinbad-attest-check/0-v1",
+    "checkId": "check-1",
+    "status": "REJECTED",
+    "authentic": false,
+    "reasonCode": "RECORD_NOT_INTACT",
+    "attestationId": "att-1",
+    "recordKind": "GATEKEEPER_DECISION",
+    "recordDigest": "c6a2cefe51fe39759fb3d6a2b8a61177ebeec631c929a5fe9b3706fa8d38c971",
+    "taskRef": "task-1",
+    "keyId": "key-gate",
+    "issuedAt": 999990,
+    "provenance": {
+     "attestVersion": "sinbad-attest/0-v1",
+     "algorithm": "ED25519",
+     "trustStoreDigest": "0c0909322f89f246eb664e766b550a784fdecf80e7bc3de86b3ac0ba4ae687ff",
+     "policy": {
+      "maxAgeMs": 10000
+     }
+    },
+    "at": 1000000,
+    "authority": "NONE",
+    "originOnly": true,
+    "grantsAuthority": false,
+    "approves": false,
+    "executes": false,
+    "checkDigest": "0999bcb45e1a96747ba261c804ad8c79a290c6efd8807db7684e221c2f77bfa3"
+   }
+  },
+  {
+   "name": "forged-envelope-of-another-record",
+   "expectedClass": "FORGED",
+   "expectedStatus": "REJECTED",
+   "expectedReason": "RECORD_NOT_THE_ATTESTED_ONE",
+   "description": "a genuine envelope of a clean decision presented with a different genuine decision",
+   "input": {
+    "version": "sinbad-attest-check-input/0-v1",
+    "checkId": "check-1",
+    "at": 1000000,
+    "envelope": {
+     "version": "sinbad-attestation/0-v1",
+     "attestationId": "att-1",
+     "algorithm": "ED25519",
+     "keyId": "key-gate",
+     "recordKind": "GATEKEEPER_DECISION",
+     "recordVersion": "sinbad-gatekeeper-decision/0-v1",
+     "recordDigest": "64cfdf48018bd3a9b7a9ca6d4f9665f8d43e458f9b2e0e9018ed075452ccef06",
+     "payloadDigest": "85f03a20f435d34af5a83d3713886a8560497f5c87aeb01c334373e7d0be1a4f",
+     "taskRef": "task-1",
+     "issuedAt": 999990,
+     "authority": "NONE",
+     "signature": "0d7ded3bed5d653611bc054810c4bc68502454f7c38c7bc4448624614d369704577798edd798902d2cc5dfcfad1fb28d0b42ff1f232e1c23a7684213f6980f04"
+    },
+    "record": {
+     "version": "sinbad-gatekeeper-decision/0-v1",
+     "decisionId": "chain-1.0.gate",
+     "taskRef": "task-1",
+     "stage": "POST",
+     "outcome": "BLOCK",
+     "failClosed": true,
+     "reasonCode": "DETERMINISTIC_RULE_FAILED",
+     "labels": [
+      "BLOCKED"
+     ],
+     "deliveryLabel": "BLOCKED",
+     "decision": {
+      "version": "sinbad-gate-decision/1-v1",
+      "decisionId": "chain-1.0.gate",
+      "taskRef": "task-1",
+      "stage": "POST",
+      "outcome": "BLOCK",
+      "labels": [
+       "BLOCKED"
+      ],
+      "ruleResults": [
+       {
+        "ruleId": "GATE.INPUT_ADMITTED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.OBSERVATION_AVAILABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CITATIONS_IN_EVIDENCE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CLAIM_EVIDENCE_RESOLVABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.SPECIFICITY_SUPPORTED",
+        "outcome": "FAIL",
+        "blocking": true,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "GATE.VOCABULARY_BOUND",
+        "outcome": "FAIL",
+        "blocking": true,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "GATE.FOREIGN_CLAIMS_EXCLUDED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.VOLATILE_CLAIMS_LIVE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.ACTIONS_AUTHORIZED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.VERDICT_MATCHES_DRAFT",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.CLAIMS_SUPPORTED",
+        "outcome": "FAIL",
+        "blocking": false,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "GATE.EVIDENCE_CONSISTENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.EVIDENCE_FRESH",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.EVIDENCE_IN_SCOPE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "GATE.PROVENANCE_ADEQUATE",
+        "outcome": "FAIL",
+        "blocking": false,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "GATE.CLAIM_TEXT_OBSERVABLE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       }
+      ],
+      "verdictRef": "chain-1.0.verdict",
+      "attribution": {
+       "deterministicRuleIds": [
+        "GATE.SPECIFICITY_SUPPORTED",
+        "GATE.VOCABULARY_BOUND",
+        "GATE.CLAIMS_SUPPORTED",
+        "GATE.PROVENANCE_ADEQUATE"
+       ],
+       "modelVerdictId": null,
+       "reasonCode": "DETERMINISTIC_RULE_FAILED"
+      },
+      "failClosed": true,
+      "decidedAt": 1000000,
+      "authority": "NONE"
+     },
+     "claimLabels": [
+      {
+       "claimId": "c1",
+       "assertionMode": "ASSERTED",
+       "label": "SOURCE_MISSING",
+       "reasonCode": "NO_EVIDENCE",
+       "evidenceIds": [],
+       "volatile": false
+      }
+     ],
+     "actions": [],
+     "ruleResults": [
+      {
+       "ruleId": "GATE.INPUT_ADMITTED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.OBSERVATION_AVAILABLE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CITATIONS_IN_EVIDENCE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CLAIM_EVIDENCE_RESOLVABLE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.SPECIFICITY_SUPPORTED",
+       "outcome": "FAIL",
+       "blocking": true,
+       "detailRef": "claims:c1"
+      },
+      {
+       "ruleId": "GATE.VOCABULARY_BOUND",
+       "outcome": "FAIL",
+       "blocking": true,
+       "detailRef": "claims:c1"
+      },
+      {
+       "ruleId": "GATE.FOREIGN_CLAIMS_EXCLUDED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.VOLATILE_CLAIMS_LIVE",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.ACTIONS_AUTHORIZED",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.VERDICT_MATCHES_DRAFT",
+       "outcome": "PASS",
+       "blocking": true,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.CLAIMS_SUPPORTED",
+       "outcome": "FAIL",
+       "blocking": false,
+       "detailRef": "claims:c1"
+      },
+      {
+       "ruleId": "GATE.EVIDENCE_CONSISTENT",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.EVIDENCE_FRESH",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.EVIDENCE_IN_SCOPE",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      },
+      {
+       "ruleId": "GATE.PROVENANCE_ADEQUATE",
+       "outcome": "FAIL",
+       "blocking": false,
+       "detailRef": "claims:c1"
+      },
+      {
+       "ruleId": "GATE.CLAIM_TEXT_OBSERVABLE",
+       "outcome": "PASS",
+       "blocking": false,
+       "detailRef": null
+      }
+     ],
+     "observation": {
+      "version": "sinbad-sentinel-report/0-v1",
+      "reportId": "chain-1.0.gate",
+      "tap": "POST_GATE",
+      "taskRef": "task-1",
+      "status": "OBSERVED",
+      "failClosed": false,
+      "reasonCode": "OBSERVED",
+      "signal": "RISK",
+      "coverage": "FULL",
+      "unobservable": [],
+      "claims": [
+       {
+        "claimId": "c1",
+        "contentHash": "27cb8fd2f7009214fd8782ea0f63b6c801a6f82cec5cca043ab3173dda57fdd1",
+        "assertionMode": "ASSERTED",
+        "originRef": "model:draft",
+        "originScopeRef": "scope:alpha",
+        "foreignOrigin": false,
+        "truthState": "SOURCE_MISSING",
+        "reasonCode": "NO_EVIDENCE",
+        "evidenceIds": [],
+        "eligibleEvidenceIds": [],
+        "foreignEvidenceIds": [],
+        "staleEvidenceIds": [],
+        "unknownEvidenceIds": [],
+        "nonAuthoritativeEvidenceIds": [],
+        "conflictEvidenceIds": [],
+        "reservedTerms": [
+         "VERIFIED",
+         "MERGED"
+        ],
+        "specificValues": true,
+        "flagRefs": [
+         "claim:c1:NO_EVIDENCE:specific-values",
+         "claim:c1:reserved-terms-unbound:VERIFIED,MERGED"
+        ],
+        "unobservable": []
+       }
+      ],
+      "truthStateCounts": {
+       "VERIFIED": 0,
+       "NOT_VERIFIED": 0,
+       "CONFLICT": 0,
+       "SOURCE_MISSING": 1,
+       "BLOCKED": 0,
+       "NOT_APPLICABLE": 0
+      },
+      "evidence": {
+       "setRef": "set-1",
+       "itemCount": 1,
+       "foreignEvidenceIds": [],
+       "staleEvidenceIds": [],
+       "driftedLocators": []
+      },
+      "flags": [
+       {
+        "warningClass": "UNSUPPORTED_FACTUAL_ASSERTION",
+        "severity": "BLOCKING",
+        "checkerKind": "DETERMINISTIC",
+        "evidenceIds": [],
+        "pointerRef": "claim:c1:NO_EVIDENCE:specific-values"
+       },
+       {
+        "warningClass": "FALSE_CERTAINTY",
+        "severity": "BLOCKING",
+        "checkerKind": "DETERMINISTIC",
+        "evidenceIds": [],
+        "pointerRef": "claim:c1:reserved-terms-unbound:VERIFIED,MERGED"
+       }
+      ],
+      "ruleResults": [
+       {
+        "ruleId": "SENTINEL.INPUT_ADMITTED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_SET_PRESENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_IN_SCOPE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_FRESH",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_CONSISTENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.PROVENANCE_RESOLVABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.CLAIMS_SUPPORTED",
+        "outcome": "FAIL",
+        "blocking": false,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "SENTINEL.NO_UNSUPPORTED_SPECIFICS",
+        "outcome": "FAIL",
+        "blocking": true,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "SENTINEL.RESERVED_TERMS_BOUND",
+        "outcome": "FAIL",
+        "blocking": true,
+        "detailRef": "claims:c1"
+       },
+       {
+        "ruleId": "SENTINEL.NO_FOREIGN_ADOPTION",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       }
+      ],
+      "provenance": {
+       "sentinelVersion": "sinbad-sentinel/0-v1",
+       "rulesetVersion": "sinbad-sentinel-ruleset/0-v1",
+       "inputDigest": "c7a802cfce52255316a6dde0ef03ad0eb416bf254d937597c084d1b7834a0519",
+       "contextTaskId": "task-1",
+       "evidenceSetId": "set-1",
+       "priorReportDigest": null,
+       "policy": {
+        "maxEvidenceAgeMs": 10000
+       }
+      },
+      "observedAt": 1000000,
+      "authority": "NONE",
+      "decides": false,
+      "reportDigest": "7be8383add8a3eafbdad7650344d0458b1b537f2a66336bc11d04110d344122f"
+     },
+     "provenance": {
+      "gatekeeperVersion": "sinbad-gatekeeper/0-v1",
+      "rulesetVersion": "sinbad-gatekeeper-ruleset/0-v1",
+      "sentinelVersion": "sinbad-sentinel/0-v1",
+      "inputDigest": "dac5adb734d35c4d905dc9ccb5bc7065ac3d2c6b1fdc0f7b250ceb0a66a113b5",
+      "contextTaskId": "task-1",
+      "evidenceSetId": "set-1",
+      "draftId": "draft-1",
+      "draftHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "observationDigest": "7be8383add8a3eafbdad7650344d0458b1b537f2a66336bc11d04110d344122f",
+      "verdictId": "chain-1.0.verdict",
+      "priorDecisionDigest": null,
+      "policy": {
+       "maxEvidenceAgeMs": 10000,
+       "volatileMaxEvidenceAgeMs": 1000
+      }
+     },
+     "observedAt": 1000000,
+     "authority": "NONE",
+     "executes": false,
+     "decisionDigest": "c6a2cefe51fe39759fb3d6a2b8a61177ebeec631c929a5fe9b3706fa8d38c971"
+    },
+    "trustStore": [
+     {
+      "keyId": "key-gate",
+      "publicKeyHex": "91a11b5e2b749047e79ebadcb0e6f31c0f6a55fa188f6d7c69b884a473510fb6",
+      "kinds": [
+       "GATEKEEPER_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-copilot",
+      "publicKeyHex": "0f9002861445d1bd0e0e882f0c870204efaa92862de8fcf517b546369f0fd273",
+      "kinds": [
+       "COPILOT_REVIEW"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-pilot",
+      "publicKeyHex": "4b92de2fb0a5077cc7be3711df139fade4fa6ed217cbbf76dd8e11e7d2b3daab",
+      "kinds": [
+       "PILOT_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-chain",
+      "publicKeyHex": "a7309778fa38d4b3e8e6ba54ff56814e4a088259f566dc4cddda07acced86022",
+      "kinds": [
+       "CHAIN_TRANSCRIPT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-sentinel",
+      "publicKeyHex": "bfc2e0899b970786495f7960178cde7eae6863616083bbd4e8abee38a0971ea1",
+      "kinds": [
+       "SENTINEL_REPORT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     }
+    ],
+    "expected": {
+     "recordKind": null,
+     "taskRef": null
+    },
+    "policy": {
+     "maxAgeMs": 10000
+    }
+   },
+   "expected": {
+    "version": "sinbad-attest-check/0-v1",
+    "checkId": "check-1",
+    "status": "REJECTED",
+    "authentic": false,
+    "reasonCode": "RECORD_NOT_THE_ATTESTED_ONE",
+    "attestationId": "att-1",
+    "recordKind": "GATEKEEPER_DECISION",
+    "recordDigest": "64cfdf48018bd3a9b7a9ca6d4f9665f8d43e458f9b2e0e9018ed075452ccef06",
+    "taskRef": "task-1",
+    "keyId": "key-gate",
+    "issuedAt": 999990,
+    "provenance": {
+     "attestVersion": "sinbad-attest/0-v1",
+     "algorithm": "ED25519",
+     "trustStoreDigest": "0c0909322f89f246eb664e766b550a784fdecf80e7bc3de86b3ac0ba4ae687ff",
+     "policy": {
+      "maxAgeMs": 10000
+     }
+    },
+    "at": 1000000,
+    "authority": "NONE",
+    "originOnly": true,
+    "grantsAuthority": false,
+    "approves": false,
+    "executes": false,
+    "checkDigest": "2c22d06e08a5e693fb69d93856b0a41c6802791f633c239126aec0fb100cdec3"
+   }
+  },
+  {
+   "name": "stale-revoked-key",
+   "expectedClass": "FORGED",
+   "expectedStatus": "REJECTED",
+   "expectedReason": "KEY_REVOKED",
+   "description": "a genuine attestation whose key has since been revoked",
+   "input": {
+    "version": "sinbad-attest-check-input/0-v1",
+    "checkId": "check-1",
+    "at": 1000000,
+    "envelope": {
+     "version": "sinbad-attestation/0-v1",
+     "attestationId": "att-1",
+     "algorithm": "ED25519",
+     "keyId": "key-copilot",
+     "recordKind": "COPILOT_REVIEW",
+     "recordVersion": "sinbad-copilot-review/0-v1",
+     "recordDigest": "15983b0916c1b2ec90e1f32c25872f93c580946def97a771cf04ffdaedf0cea6",
+     "payloadDigest": "baceb6305233a2fb95d76d751963ba68e08c1e16ad81caa4e392f5ba60622ef9",
+     "taskRef": "task-1",
+     "issuedAt": 999990,
+     "authority": "NONE",
+     "signature": "58204425a60b16336f3f4b6924f2737fb871498fd48bb1750e57b83f06c40764280f9f703596085fcf72750bcb904813bcf0371ed8d764fbacc8a697a169530d"
+    },
+    "record": {
+     "version": "sinbad-copilot-review/0-v1",
+     "reviewId": "chain-1.0.review",
+     "taskRef": "task-1",
+     "status": "REVIEWED",
+     "failClosed": false,
+     "reasonCode": "REVIEWED",
+     "verdict": {
+      "version": "sinbad-copilot-verdict/1-v1",
+      "verdictId": "chain-1.0.verdict",
+      "taskRef": "task-1",
+      "draftHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "warnings": [],
+      "recommendation": "ALLOW",
+      "issuedAt": 1000000,
+      "authority": "NONE"
+     },
+     "checkers": [
+      {
+       "checkerId": "COPILOT.SENTINEL_FLAGS",
+       "outcome": "CLEAR",
+       "warningCount": 0
+      },
+      {
+       "checkerId": "COPILOT.CITATIONS_RESOLVE",
+       "outcome": "CLEAR",
+       "warningCount": 0
+      },
+      {
+       "checkerId": "COPILOT.CITATIONS_USED",
+       "outcome": "CLEAR",
+       "warningCount": 0
+      },
+      {
+       "checkerId": "COPILOT.CLAIMS_CITED",
+       "outcome": "CLEAR",
+       "warningCount": 0
+      },
+      {
+       "checkerId": "COPILOT.ACTIONS_SAFE",
+       "outcome": "CLEAR",
+       "warningCount": 0
+      },
+      {
+       "checkerId": "COPILOT.TASK_NOT_EXPANDED",
+       "outcome": "CLEAR",
+       "warningCount": 0
+      },
+      {
+       "checkerId": "COPILOT.NO_AUTHORITY_VOICE",
+       "outcome": "CLEAR",
+       "warningCount": 0
+      }
+     ],
+     "notCovered": [
+      "INSTRUCTION_CONFLICT",
+      "CORRELATED_FAILURE_RISK"
+     ],
+     "warningsTruncated": 0,
+     "observation": {
+      "version": "sinbad-sentinel-report/0-v1",
+      "reportId": "chain-1.0.review",
+      "tap": "POST_DRAFT",
+      "taskRef": "task-1",
+      "status": "OBSERVED",
+      "failClosed": false,
+      "reasonCode": "OBSERVED",
+      "signal": "CLEAR",
+      "coverage": "FULL",
+      "unobservable": [],
+      "claims": [
+       {
+        "claimId": "c1",
+        "contentHash": "db8514684630548a4a65a8fc2b25e4977926a99af9183b0a3ae9fb381c8beb68",
+        "assertionMode": "ASSERTED",
+        "originRef": "model:draft",
+        "originScopeRef": "scope:alpha",
+        "foreignOrigin": false,
+        "truthState": "VERIFIED",
+        "reasonCode": "OBSERVED_EVIDENCE_PRESENT",
+        "evidenceIds": [
+         "ev-repo"
+        ],
+        "eligibleEvidenceIds": [
+         "ev-repo"
+        ],
+        "foreignEvidenceIds": [],
+        "staleEvidenceIds": [],
+        "unknownEvidenceIds": [],
+        "nonAuthoritativeEvidenceIds": [],
+        "conflictEvidenceIds": [],
+        "reservedTerms": [],
+        "specificValues": false,
+        "flagRefs": [],
+        "unobservable": []
+       }
+      ],
+      "truthStateCounts": {
+       "VERIFIED": 1,
+       "NOT_VERIFIED": 0,
+       "CONFLICT": 0,
+       "SOURCE_MISSING": 0,
+       "BLOCKED": 0,
+       "NOT_APPLICABLE": 0
+      },
+      "evidence": {
+       "setRef": "set-1",
+       "itemCount": 1,
+       "foreignEvidenceIds": [],
+       "staleEvidenceIds": [],
+       "driftedLocators": []
+      },
+      "flags": [],
+      "ruleResults": [
+       {
+        "ruleId": "SENTINEL.INPUT_ADMITTED",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_SET_PRESENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_IN_SCOPE",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_FRESH",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.EVIDENCE_CONSISTENT",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.PROVENANCE_RESOLVABLE",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.CLAIMS_SUPPORTED",
+        "outcome": "PASS",
+        "blocking": false,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.NO_UNSUPPORTED_SPECIFICS",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.RESERVED_TERMS_BOUND",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       },
+       {
+        "ruleId": "SENTINEL.NO_FOREIGN_ADOPTION",
+        "outcome": "PASS",
+        "blocking": true,
+        "detailRef": null
+       }
+      ],
+      "provenance": {
+       "sentinelVersion": "sinbad-sentinel/0-v1",
+       "rulesetVersion": "sinbad-sentinel-ruleset/0-v1",
+       "inputDigest": "46b1e6a5af43f0877710cd2e35e049b4b887ff94236330b1971d9443085ae906",
+       "contextTaskId": "task-1",
+       "evidenceSetId": "set-1",
+       "priorReportDigest": null,
+       "policy": {
+        "maxEvidenceAgeMs": 10000
+       }
+      },
+      "observedAt": 1000000,
+      "authority": "NONE",
+      "decides": false,
+      "reportDigest": "a57c16eafb3afbd8bcf228d5ea374baff6780ea66f351cb7b5c091976cce52ea"
+     },
+     "provenance": {
+      "copilotVersion": "sinbad-copilot/0-v1",
+      "checkersetVersion": "sinbad-copilot-checkerset/0-v1",
+      "sentinelVersion": "sinbad-sentinel/0-v1",
+      "inputDigest": "00765c160ecb1b317d19dcdd9f6ba7012deb81f5d591f3ceff279378bb345b58",
+      "contextTaskId": "task-1",
+      "evidenceSetId": "set-1",
+      "draftId": "draft-1",
+      "draftHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "observationDigest": "a57c16eafb3afbd8bcf228d5ea374baff6780ea66f351cb7b5c091976cce52ea",
+      "priorReviewDigest": null,
+      "policy": {
+       "maxEvidenceAgeMs": 10000
+      }
+     },
+     "issuedAt": 1000000,
+     "authority": "NONE",
+     "rewrites": false,
+     "approves": false,
+     "callsModel": false,
+     "reviewDigest": "15983b0916c1b2ec90e1f32c25872f93c580946def97a771cf04ffdaedf0cea6"
+    },
+    "trustStore": [
+     {
+      "keyId": "key-gate",
+      "publicKeyHex": "91a11b5e2b749047e79ebadcb0e6f31c0f6a55fa188f6d7c69b884a473510fb6",
+      "kinds": [
+       "GATEKEEPER_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-copilot",
+      "publicKeyHex": "0f9002861445d1bd0e0e882f0c870204efaa92862de8fcf517b546369f0fd273",
+      "kinds": [
+       "COPILOT_REVIEW"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": true
+     },
+     {
+      "keyId": "key-pilot",
+      "publicKeyHex": "4b92de2fb0a5077cc7be3711df139fade4fa6ed217cbbf76dd8e11e7d2b3daab",
+      "kinds": [
+       "PILOT_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-chain",
+      "publicKeyHex": "a7309778fa38d4b3e8e6ba54ff56814e4a088259f566dc4cddda07acced86022",
+      "kinds": [
+       "CHAIN_TRANSCRIPT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-sentinel",
+      "publicKeyHex": "bfc2e0899b970786495f7960178cde7eae6863616083bbd4e8abee38a0971ea1",
+      "kinds": [
+       "SENTINEL_REPORT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     }
+    ],
+    "expected": {
+     "recordKind": null,
+     "taskRef": null
+    },
+    "policy": {
+     "maxAgeMs": 10000
+    }
+   },
+   "expected": {
+    "version": "sinbad-attest-check/0-v1",
+    "checkId": "check-1",
+    "status": "REJECTED",
+    "authentic": false,
+    "reasonCode": "KEY_REVOKED",
+    "attestationId": "att-1",
+    "recordKind": "COPILOT_REVIEW",
+    "recordDigest": "15983b0916c1b2ec90e1f32c25872f93c580946def97a771cf04ffdaedf0cea6",
+    "taskRef": "task-1",
+    "keyId": "key-copilot",
+    "issuedAt": 999990,
+    "provenance": {
+     "attestVersion": "sinbad-attest/0-v1",
+     "algorithm": "ED25519",
+     "trustStoreDigest": "be5e8eb84e2db0f2fca96f15be75ea35168911ee401d3490d8b376b30e2b1750",
+     "policy": {
+      "maxAgeMs": 10000
+     }
+    },
+    "at": 1000000,
+    "authority": "NONE",
+    "originOnly": true,
+    "grantsAuthority": false,
+    "approves": false,
+    "executes": false,
+    "checkDigest": "fd96533e81d1e3430909cc98cb2b5d028b1fdfed0ff4bd85007cc51475772b80"
+   }
+  },
+  {
+   "name": "stale-too-old",
+   "expectedClass": "FORGED",
+   "expectedStatus": "REJECTED",
+   "expectedReason": "ATTESTATION_TOO_OLD",
+   "description": "a genuine attestation replayed after the policy age",
+   "input": {
+    "version": "sinbad-attest-check-input/0-v1",
+    "checkId": "check-1",
+    "at": 1020000,
+    "envelope": {
+     "version": "sinbad-attestation/0-v1",
+     "attestationId": "att-1",
+     "algorithm": "ED25519",
+     "keyId": "key-pilot",
+     "recordKind": "PILOT_DECISION",
+     "recordVersion": "sinbad-pilot-decision/0-v1",
+     "recordDigest": "4bfe85156e87a264d254beec0f10ecfc8561ff04cc05a11f48ee0dc9a25f8254",
+     "payloadDigest": "305de1fbe43a10f8ae2b55cb6558e29b60dbbc92cfc319e3daedb9aaccb0055b",
+     "taskRef": "task-1",
+     "issuedAt": 999990,
+     "authority": "NONE",
+     "signature": "2a2e6d0a4160113e9eb57f320567665d0dda849b9e6daa2372c06ec4ffab0599ad2776da71811b0d59582cc07dd3a54201ceca2a50f053b683647be5b8b2a80b"
+    },
+    "record": {
+     "version": "sinbad-pilot-decision/0-v1",
+     "pilotDecisionId": "chain-1.0.pilot",
+     "taskRef": "task-1",
+     "decision": "PROCEED",
+     "failClosed": false,
+     "reasonCode": "ALL_CLEAR",
+     "ruleId": "PILOT.GATE_ADMITS",
+     "findings": [],
+     "carryLabels": [
+      "VERIFIED"
+     ],
+     "gate": {
+      "decisionId": "chain-1.0.gate",
+      "decisionDigest": "64cfdf48018bd3a9b7a9ca6d4f9665f8d43e458f9b2e0e9018ed075452ccef06",
+      "outcome": "ADMIT",
+      "reasonCode": "ALL_CLEAR",
+      "failClosed": false,
+      "deliveryLabel": "VERIFIED",
+      "observationSignal": "CLEAR",
+      "observationCoverage": "FULL"
+     },
+     "review": {
+      "reviewId": "chain-1.0.review",
+      "reviewDigest": "15983b0916c1b2ec90e1f32c25872f93c580946def97a771cf04ffdaedf0cea6",
+      "status": "REVIEWED",
+      "reasonCode": "REVIEWED",
+      "recommendation": "ALLOW"
+     },
+     "iteration": {
+      "index": 0,
+      "maxIterations": 3,
+      "remaining": 2
+     },
+     "provenance": {
+      "pilotVersion": "sinbad-pilot/0-v1",
+      "rulesetVersion": "sinbad-pilot-ruleset/0-v1",
+      "inputDigest": "996a3d7bb9d4926e12c17126d02a97f9dda9709b2efd6fdd507406f5fb019a1e",
+      "contextTaskId": "task-1",
+      "draftId": "draft-1",
+      "draftHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "gateDecisionDigest": "64cfdf48018bd3a9b7a9ca6d4f9665f8d43e458f9b2e0e9018ed075452ccef06",
+      "reviewDigest": "15983b0916c1b2ec90e1f32c25872f93c580946def97a771cf04ffdaedf0cea6",
+      "verdictId": "chain-1.0.verdict",
+      "priorPilotDecisionDigest": null,
+      "policy": {
+       "maxIterations": 3,
+       "labelledDelivery": "PROCEED"
+      }
+     },
+     "decidedAt": 1000000,
+     "authority": "NONE",
+     "recommendationOnly": true,
+     "executes": false,
+     "approves": false,
+     "grantsAuthority": false,
+     "rewrites": false,
+     "callsModel": false,
+     "pilotDecisionDigest": "4bfe85156e87a264d254beec0f10ecfc8561ff04cc05a11f48ee0dc9a25f8254"
+    },
+    "trustStore": [
+     {
+      "keyId": "key-gate",
+      "publicKeyHex": "91a11b5e2b749047e79ebadcb0e6f31c0f6a55fa188f6d7c69b884a473510fb6",
+      "kinds": [
+       "GATEKEEPER_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-copilot",
+      "publicKeyHex": "0f9002861445d1bd0e0e882f0c870204efaa92862de8fcf517b546369f0fd273",
+      "kinds": [
+       "COPILOT_REVIEW"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-pilot",
+      "publicKeyHex": "4b92de2fb0a5077cc7be3711df139fade4fa6ed217cbbf76dd8e11e7d2b3daab",
+      "kinds": [
+       "PILOT_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-chain",
+      "publicKeyHex": "a7309778fa38d4b3e8e6ba54ff56814e4a088259f566dc4cddda07acced86022",
+      "kinds": [
+       "CHAIN_TRANSCRIPT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-sentinel",
+      "publicKeyHex": "bfc2e0899b970786495f7960178cde7eae6863616083bbd4e8abee38a0971ea1",
+      "kinds": [
+       "SENTINEL_REPORT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     }
+    ],
+    "expected": {
+     "recordKind": null,
+     "taskRef": null
+    },
+    "policy": {
+     "maxAgeMs": 10000
+    }
+   },
+   "expected": {
+    "version": "sinbad-attest-check/0-v1",
+    "checkId": "check-1",
+    "status": "REJECTED",
+    "authentic": false,
+    "reasonCode": "ATTESTATION_TOO_OLD",
+    "attestationId": "att-1",
+    "recordKind": "PILOT_DECISION",
+    "recordDigest": "4bfe85156e87a264d254beec0f10ecfc8561ff04cc05a11f48ee0dc9a25f8254",
+    "taskRef": "task-1",
+    "keyId": "key-pilot",
+    "issuedAt": 999990,
+    "provenance": {
+     "attestVersion": "sinbad-attest/0-v1",
+     "algorithm": "ED25519",
+     "trustStoreDigest": "0c0909322f89f246eb664e766b550a784fdecf80e7bc3de86b3ac0ba4ae687ff",
+     "policy": {
+      "maxAgeMs": 10000
+     }
+    },
+    "at": 1020000,
+    "authority": "NONE",
+    "originOnly": true,
+    "grantsAuthority": false,
+    "approves": false,
+    "executes": false,
+    "checkDigest": "bcbfe6055eac5823997a9923335995c332bf6c9b3268008b9ff2ceb0a60504fa"
+   }
+  },
+  {
+   "name": "replayed-for-another-task",
+   "expectedClass": "FORGED",
+   "expectedStatus": "REJECTED",
+   "expectedReason": "UNEXPECTED_TASK",
+   "description": "a genuine attestation replayed where another task was expected",
+   "input": {
+    "version": "sinbad-attest-check-input/0-v1",
+    "checkId": "check-1",
+    "at": 1000000,
+    "envelope": {
+     "version": "sinbad-attestation/0-v1",
+     "attestationId": "att-1",
+     "algorithm": "ED25519",
+     "keyId": "key-pilot",
+     "recordKind": "PILOT_DECISION",
+     "recordVersion": "sinbad-pilot-decision/0-v1",
+     "recordDigest": "4bfe85156e87a264d254beec0f10ecfc8561ff04cc05a11f48ee0dc9a25f8254",
+     "payloadDigest": "305de1fbe43a10f8ae2b55cb6558e29b60dbbc92cfc319e3daedb9aaccb0055b",
+     "taskRef": "task-1",
+     "issuedAt": 999990,
+     "authority": "NONE",
+     "signature": "2a2e6d0a4160113e9eb57f320567665d0dda849b9e6daa2372c06ec4ffab0599ad2776da71811b0d59582cc07dd3a54201ceca2a50f053b683647be5b8b2a80b"
+    },
+    "record": {
+     "version": "sinbad-pilot-decision/0-v1",
+     "pilotDecisionId": "chain-1.0.pilot",
+     "taskRef": "task-1",
+     "decision": "PROCEED",
+     "failClosed": false,
+     "reasonCode": "ALL_CLEAR",
+     "ruleId": "PILOT.GATE_ADMITS",
+     "findings": [],
+     "carryLabels": [
+      "VERIFIED"
+     ],
+     "gate": {
+      "decisionId": "chain-1.0.gate",
+      "decisionDigest": "64cfdf48018bd3a9b7a9ca6d4f9665f8d43e458f9b2e0e9018ed075452ccef06",
+      "outcome": "ADMIT",
+      "reasonCode": "ALL_CLEAR",
+      "failClosed": false,
+      "deliveryLabel": "VERIFIED",
+      "observationSignal": "CLEAR",
+      "observationCoverage": "FULL"
+     },
+     "review": {
+      "reviewId": "chain-1.0.review",
+      "reviewDigest": "15983b0916c1b2ec90e1f32c25872f93c580946def97a771cf04ffdaedf0cea6",
+      "status": "REVIEWED",
+      "reasonCode": "REVIEWED",
+      "recommendation": "ALLOW"
+     },
+     "iteration": {
+      "index": 0,
+      "maxIterations": 3,
+      "remaining": 2
+     },
+     "provenance": {
+      "pilotVersion": "sinbad-pilot/0-v1",
+      "rulesetVersion": "sinbad-pilot-ruleset/0-v1",
+      "inputDigest": "996a3d7bb9d4926e12c17126d02a97f9dda9709b2efd6fdd507406f5fb019a1e",
+      "contextTaskId": "task-1",
+      "draftId": "draft-1",
+      "draftHash": "1111111111111111111111111111111111111111111111111111111111111111",
+      "gateDecisionDigest": "64cfdf48018bd3a9b7a9ca6d4f9665f8d43e458f9b2e0e9018ed075452ccef06",
+      "reviewDigest": "15983b0916c1b2ec90e1f32c25872f93c580946def97a771cf04ffdaedf0cea6",
+      "verdictId": "chain-1.0.verdict",
+      "priorPilotDecisionDigest": null,
+      "policy": {
+       "maxIterations": 3,
+       "labelledDelivery": "PROCEED"
+      }
+     },
+     "decidedAt": 1000000,
+     "authority": "NONE",
+     "recommendationOnly": true,
+     "executes": false,
+     "approves": false,
+     "grantsAuthority": false,
+     "rewrites": false,
+     "callsModel": false,
+     "pilotDecisionDigest": "4bfe85156e87a264d254beec0f10ecfc8561ff04cc05a11f48ee0dc9a25f8254"
+    },
+    "trustStore": [
+     {
+      "keyId": "key-gate",
+      "publicKeyHex": "91a11b5e2b749047e79ebadcb0e6f31c0f6a55fa188f6d7c69b884a473510fb6",
+      "kinds": [
+       "GATEKEEPER_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-copilot",
+      "publicKeyHex": "0f9002861445d1bd0e0e882f0c870204efaa92862de8fcf517b546369f0fd273",
+      "kinds": [
+       "COPILOT_REVIEW"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-pilot",
+      "publicKeyHex": "4b92de2fb0a5077cc7be3711df139fade4fa6ed217cbbf76dd8e11e7d2b3daab",
+      "kinds": [
+       "PILOT_DECISION"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-chain",
+      "publicKeyHex": "a7309778fa38d4b3e8e6ba54ff56814e4a088259f566dc4cddda07acced86022",
+      "kinds": [
+       "CHAIN_TRANSCRIPT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     },
+     {
+      "keyId": "key-sentinel",
+      "publicKeyHex": "bfc2e0899b970786495f7960178cde7eae6863616083bbd4e8abee38a0971ea1",
+      "kinds": [
+       "SENTINEL_REPORT"
+      ],
+      "notBefore": 900000,
+      "notAfter": 1100000,
+      "revoked": false
+     }
+    ],
+    "expected": {
+     "recordKind": "PILOT_DECISION",
+     "taskRef": "task-2"
+    },
+    "policy": {
+     "maxAgeMs": 10000
+    }
+   },
+   "expected": {
+    "version": "sinbad-attest-check/0-v1",
+    "checkId": "check-1",
+    "status": "REJECTED",
+    "authentic": false,
+    "reasonCode": "UNEXPECTED_TASK",
+    "attestationId": "att-1",
+    "recordKind": "PILOT_DECISION",
+    "recordDigest": "4bfe85156e87a264d254beec0f10ecfc8561ff04cc05a11f48ee0dc9a25f8254",
+    "taskRef": "task-1",
+    "keyId": "key-pilot",
+    "issuedAt": 999990,
+    "provenance": {
+     "attestVersion": "sinbad-attest/0-v1",
+     "algorithm": "ED25519",
+     "trustStoreDigest": "0c0909322f89f246eb664e766b550a784fdecf80e7bc3de86b3ac0ba4ae687ff",
+     "policy": {
+      "maxAgeMs": 10000
+     }
+    },
+    "at": 1000000,
+    "authority": "NONE",
+    "originOnly": true,
+    "grantsAuthority": false,
+    "approves": false,
+    "executes": false,
+    "checkDigest": "3f8f8421c4bf4af96373fab45cd6018bedf07e7c09bb61f559b0ce958174aa3d"
+   }
+  }
+ ]
+}

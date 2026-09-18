@@ -129,7 +129,15 @@
       "does_not": "offline rehearsal only: produces no draft (every draft is input), delivers, executes, approves and grants nothing, no model call, no I/O, no clock, no state, inputs never mutated; no wiring, no live integration; record authenticity not provided; all components share the Sentinel v0 observation engine, so the chain measures consistency between components, not correctness; Phase 3.1 contracts, Sentinel v0, Gatekeeper v0, Co-Pilot v0 and Pilot v0 consumed unchanged; frozen baseline untouched",
       "guarantees_asserted_by": "sinbad-ai-core/tests/chain-v0-inert.test.js"
     },
-    "phase_3_remainder_and_later": "NOT STARTED. The Co-Pilot model pass (IMPLEMENTATION GO + model policy GO), a model-driven Pilot loop, record authenticity, and any wiring or live integration of Sentinel v0, Gatekeeper v0, Co-Pilot v0 or Pilot v0 each require a separate Owner GO; no production AI behaviour changed."
+    "phase_3_8_record_attestation_v0": {
+      "status": "IMPLEMENTED (inert, deterministic origin envelope) 2026-09-18 from main dd42f96 under the Owner GO of 2026-09-18: the PR #266 merge report asked as numbered request 3 for an Owner GO for the next phase with the record-authenticity envelope as recommended scope; Owner statement '1. 2. 3. ICIN YUKARIDAKI TALEP VE ISTEKLERINI UYGUN BULUYOR VE ONAYLIYORUM. SIRAYI SEN BELIRLE'; scope 'PROJECT 2 / PHASE 3.8 - RECORD ATTESTATION v0 ONLY'; TESTED (35 unit tests incl. 16 deterministic check fixtures: 6 genuine / 10 forged, false acceptance 0, false rejection 0); NOT MERGED (draft PR, merge needs a separate Owner MERGE GO); NOT INTEGRATED (wiredInto = [], not in package exports, no live file imports it, no component requires attestations); OWNER ACCEPTED = NOT RECORDED",
+      "modules": "sinbad-ai-core/attest/{attest-v0,index}.js (versions sinbad-attest/0-v1, envelope sinbad-attestation/0-v1, check 0-v1; algorithm ED25519)",
+      "document": "docs/project2/PHASE_3_8_RECORD_ATTESTATION_V0.md",
+      "what": "two pure functions: attest(input) signs a small envelope binding one intact sealed record (kind, version, self-digest, payload digest, task) to a key id and a time, refusing anything not intact; check(input) decides AUTHENTIC / REJECTED for an envelope plus the held record against a caller-supplied trust store in which every key is bound to the record kinds it may attest (signature first, then revocation, validity at issue, kind binding, age, expectation, record identity); covers Sentinel reports, Co-Pilot reviews, Gatekeeper decisions, Pilot decisions and chain transcripts; closes on paper the origin limit stated for Pilot v0 (demonstrated and then rejected on five attack paths)",
+      "does_not": "origin only: AUTHENTIC approves, executes and grants nothing (an authentic BLOCK stays a BLOCK); generates and stores no keys, key custody and trust-store ownership out of scope; no I/O, no clock, no randomness, no model, no state; never runs the other components; no component requires attestations yet (Pilot v0 and Offline Chain v0 unchanged); no wiring, no live integration; no key material in the repository; all accepted components consumed unchanged; frozen baseline untouched",
+      "guarantees_asserted_by": "sinbad-ai-core/tests/attest-v0-inert.test.js"
+    },
+    "phase_3_remainder_and_later": "NOT STARTED. The Co-Pilot model pass (IMPLEMENTATION GO + model policy GO), a model-driven Pilot loop, key custody and requiring attestations in any component, and any wiring or live integration of Sentinel v0, Gatekeeper v0, Co-Pilot v0 or Pilot v0 each require a separate Owner GO; no production AI behaviour changed."
   },
   "zero_regression_classes": ["context isolation","stale-state detection","contradiction handling","provenance/citation integrity","hallucination resistance","Owner authority/security boundaries"],
   "policies": {
@@ -162,6 +170,7 @@
     "phase_3_6_accepted_pull_request": 263,
     "phase_3_6_state_verified_on": "229e6c61e24f09bb1f141faaa104e3b3aac46153",
     "phase_3_7_offline_chain_v0": "NOT RECORDED (merged as PR #266, main 08b1256; an Owner GO for a phase and a MERGE GO are not an acceptance)",
+    "phase_3_8_record_attestation_v0": "NOT RECORDED (draft PR, not merged; an Owner GO for a phase and a MERGE GO are not an acceptance)",
     "phase_3_remainder_and_later": "NOT RECORDED (not started)"
   },
   "baseline_freeze": {
@@ -171,5 +180,5 @@
     "enforcement": "tests/baseline-001-freeze.test.js (part of npm test / CI verify) fails if any frozen file changes or the combined totals drift",
     "revision_policy": "immutable; corrections only as separately identified revisions (BASELINE-001-REV-n) with their own provenance; original files recoverable from aee0ad5"
   },
-  "last_verified_timestamp": "2026-09-18T11:05:06Z"
+  "last_verified_timestamp": "2026-09-18T11:36:58Z"
 }
