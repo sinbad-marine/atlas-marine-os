@@ -58,4 +58,4 @@ A full run costs about 13.5 h on the baseline host. `tests/benchmark/rev2/stage-
 
 ## Owner acceptance
 
-NOT RECORDED. Merge requires a separate Owner MERGE GO. This phase sets no threshold and is not a GO for shadow mode, wiring, a benchmark run, key custody or the model pass.
+NOT RECORDED. Merged as PR #274 on 2026-09-18 (main `3ca770eee10d88a76e86830388e627081a54da95`) under an Owner MERGE GO; MERGED is not an acceptance, and Phase 4.2 stays OWNER ACCEPTED = NOT RECORDED until the Owner states otherwise. This phase sets no threshold and is not a GO for shadow mode, wiring, a benchmark run, key custody or the model pass.
