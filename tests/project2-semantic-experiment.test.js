@@ -101,6 +101,37 @@ test('a vector without its source is refused: the loader checks every row agains
   fs.rmSync(OUT,{recursive:true,force:true});
 });
 
+test('DEV model selection is mechanical and was frozen beforehand: primary metric, tie-breaks and eligibility in the code equal the preregistration',()=>{
+  const p=JSON.parse(read('tests/benchmark/results/RETRIEVAL-004/DEV_SELECTION_PREREGISTRATION.json'));const S=evaluator.SELECTION;
+  assert.deepEqual(S.queryMode,p.selectionRule.step1_queryMode.order);assert.equal(`${S.hybrid.primary} - strict hits at 6 passages, the success metric Project 2 already uses`,p.selectionRule.step2_hybrid.primaryMetric);
+  assert.deepEqual(S.hybrid.tieBreaks,p.selectionRule.step2_hybrid.tieBreaks);assert.equal(S.maxRegressions,1);assert.match(p.selectionRule.step2_hybrid.eligibility,/regressions against lexical <= 1/u);
+  assert.match(S.label,/^DEV MODEL SELECTION - a candidate, not a verified gain$/u);assert.match(p.whatThisIs,/not a verified gain, not a product truth/u);assert.match(p.whatThisIs,/TEST-3, which this task does not run/u);
+  assert.match(p.universe,/No figure measured on the full library \(RETRIEVAL-001, -002, -003\) is compared/u);assert.match(p.configurationsTried.hybrids,/^18, declared/u);
+  // The rule, applied to made-up numbers: mode by strict hits; then strict hits, regressions, hits, MRR, simplicity; more than one regression is out.
+  const sys=(strictHit,hit,mrr)=>({strictHit,hit,mrr});const cmp=lost=>({lost:Array.from({length:lost},(_,i)=>`x${i}`)});const systems={'SEMANTIC RAW':sys(5,10,0.5),'SEMANTIC INSTRUCTED':sys(6,9,0.4)};const comparison={};
+  for(const h of evaluator.HYBRIDS){systems[`HYBRID ${h.id}`]=sys(7,12,0.6);comparison[`HYBRID ${h.id}`]=cmp(0);}
+  const set=(id,s,lost)=>{systems[`HYBRID ${id}`]=s;comparison[`HYBRID ${id}`]=cmp(lost);};
+  set('RRF k10 lex1:sem1 INSTRUCTED',sys(9,14,0.9),2);        // best numbers, two regressions -> not eligible
+  set('SLOTS keep2 INSTRUCTED',sys(8,11,0.5),1);               // most strict hits among the eligible -> selected although hits and MRR are lower
+  set('RRF k60 lex1:sem1 RAW',sys(9,15,0.95),0);               // other query mode -> not considered
+  const chosen=evaluator.select({systems,comparisonWithLexical:comparison});
+  assert.equal(chosen.queryMode,'INSTRUCTED');assert.equal(chosen.selectedHybrid,'HYBRID SLOTS keep2 INSTRUCTED');assert.deepEqual(chosen.excludedForRegressions,['HYBRID RRF k10 lex1:sem1 INSTRUCTED']);assert.deepEqual([chosen.hybridsConsidered,chosen.hybridsEligible],[9,8]);
+  // All else equal, the simplest rule wins: RRF k60 1:1.
+  set('SLOTS keep2 INSTRUCTED',sys(7,12,0.6),0);assert.equal(evaluator.select({systems,comparisonWithLexical:comparison}).selectedHybrid,'HYBRID RRF k60 lex1:sem1 INSTRUCTED');
+  // Fewer regressions beat more hits; nothing eligible is a valid outcome.
+  set('RRF k60 lex2:sem1 INSTRUCTED',sys(7,13,0.7),1);assert.equal(evaluator.select({systems,comparisonWithLexical:comparison}).selectedHybrid,'HYBRID RRF k60 lex1:sem1 INSTRUCTED');
+  for(const h of evaluator.HYBRIDS)comparison[`HYBRID ${h.id}`]=cmp(2);assert.equal(evaluator.select({systems,comparisonWithLexical:comparison}).selectedHybrid,null);
+  systems['SEMANTIC RAW']=sys(6,9,0.4);assert.equal(evaluator.select({systems,comparisonWithLexical:comparison}).queryMode,'RAW','a full tie goes to the simpler query');
+});
+
+test('one universe: lexical index and vector matrix must cover the same chunks, and the full-build flag is an interlock, not an authorisation',()=>{
+  const index=retriever.build(DOCS);const ok=evaluator.oneUniverse(index,new Float32Array(index.chunks.length*D));
+  assert.deepEqual([ok.lexicalIndexChunks,ok.vectorRows,ok.documents],[5,5,3]);assert.equal(ok.chunkSetSha256,sha256(index.chunks.map(c=>sha256(c.text)).join('\n')));assert.match(ok.statement,/all rank the same chunks/u);
+  assert.throws(()=>evaluator.oneUniverse(index,new Float32Array(4*D)),/NOT_ONE_UNIVERSE/u);assert.throws(()=>evaluator.oneUniverse(index,new Float32Array(5*D+1)),/NOT_ONE_UNIVERSE/u);
+  const ev=read('tools/evaluate-semantic-retrieval.js');assert.match(ev,/const index=retriever\.build\(corpus\.documents\);/u);assert.doesNotMatch(ev,/RETRIEVAL-00[123]\/|retriever\.build\(raw\.documents/u);assert.match(ev,/result\.devModelSelection=select\(result\);/u);
+  const b=read('tools/build-semantic-index.js');assert.match(b,/THE FLAG IS A TECHNICAL INTERLOCK, NOT AN AUTHORISATION/u);assert.match(b,/only when the Owner has separately and\s*\/\/ explicitly given a GO/u);
+});
+
 test('DEV only, local only, nothing wired: no tool of the experiment reads a blind or used-holdout set, the evaluator calls no model',()=>{
   assert.throws(()=>embedder.parseArgs(['--index-dir',OUT,'--split','TEST2']),/DEV_ONLY/u);assert.throws(()=>embedder.parseArgs(['--index-dir',OUT,'--split','TEST']),/DEV_ONLY/u);
   assert.throws(()=>embedder.parseArgs(['--index-dir',path.join(ROOT,'x')]),/OUTSIDE_THE_REPOSITORY/u);assert.throws(()=>embedder.parseArgs(['--index-dir',OUT,'--ollama','http://8.8.8.8:11434']),/OLLAMA_MUST_BE_LOOPBACK/u);

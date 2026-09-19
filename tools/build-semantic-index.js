@@ -46,7 +46,10 @@ function parseArgs(argv){
   if(!['127.0.0.1','localhost','[::1]'].includes(new URL(args.ollama).hostname))throw new Error('OLLAMA_MUST_BE_LOOPBACK');
   if(args.limit!==null&&(!Number.isInteger(args.limit)||args.limit<1))throw new Error('LIMIT_INVALID');
   // The full library costs days of CPU on the Owner's machine and is ON HOLD (Owner directive of 2026-09-19, Phase 4.10 part 2).
-  // A run without --limit and without --corpus is the full build: it is refused unless the Owner's GO is stated on the command line.
+  // A run without --limit and without --corpus is the full build: it is refused unless --full-build-owner-go is given.
+  // THE FLAG IS A TECHNICAL INTERLOCK, NOT AN AUTHORISATION. It exists so that the full build cannot start by accident or by a
+  // convenient default. It grants nothing by itself: the full build may be started only when the Owner has separately and
+  // explicitly given a GO for it, and whoever types the flag without that GO acts without authority.
   if(args.limit===null&&args.corpus===null&&!args.fullBuildOwnerGo)throw new Error('FULL_BUILD_IS_ON_HOLD');
   if(args.corpus!==null&&args.limit!==null)throw new Error('CORPUS_AND_LIMIT_EXCLUDE_EACH_OTHER');
   if(args.budgetSeconds!==null&&(!Number.isFinite(args.budgetSeconds)||args.budgetSeconds<30))throw new Error('BUDGET_INVALID');

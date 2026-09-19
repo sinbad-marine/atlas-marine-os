@@ -23,6 +23,26 @@ const sha256=data=>crypto.createHash('sha256').update(data).digest('hex');
 // Every hybrid configuration that is tried, declared up front (directive point 5: record every tested configuration).
 const HYBRIDS=[];for(const mode of semantic.QUERY_MODES){for(const k of [10,60])for(const weights of [[1,1],[2,1],[1,2]])HYBRIDS.push({id:`RRF k${k} lex${weights[0]}:sem${weights[1]} ${mode}`,method:'RRF',mode,k,weights});for(const keep of [2,3,4])HYBRIDS.push({id:`SLOTS keep${keep} ${mode}`,method:'SLOTS',mode,keep});}
 
+// DEV MODEL SELECTION - frozen before any DEV measurement was run (Owner interim decision of 2026-09-19; the same rule is
+// written in tests/benchmark/results/RETRIEVAL-004/DEV_SELECTION_PREREGISTRATION.json and a test compares the two).
+// Eighteen hybrids on 21 DEV probes is model selection on a small set: what it picks is a CANDIDATE, not a verified gain and
+// not a product truth. The only blind gate is TEST-3, which no tool here can run.
+// Step 1, query mode: the semantic-only system with more strict hits; tie -> more hits; tie -> higher MRR; tie -> RAW (simpler).
+// Step 2, hybrid: only hybrids of that query mode with at most MAX_REGRESSIONS lexical hits lost are eligible; among them
+// PRIMARY = strict hits; tie-breaks in this order: fewer regressions, more hits, higher MRR, then the simpler rule
+// (RRF before SLOTS, k 60 before k 10, weights 1:1 before 2:1 before 1:2, SLOTS keep 4 before 3 before 2).
+const SELECTION=Object.freeze({label:'DEV MODEL SELECTION - a candidate, not a verified gain',maxRegressions:1,
+  queryMode:['strictHit desc','hit desc','mrr desc','RAW before INSTRUCTED'],
+  hybrid:{eligibility:'same query mode as chosen in step 1 AND regressions against lexical <= 1',primary:'strictHit desc',tieBreaks:['regressions asc','hit desc','mrr desc','simplicity asc']}});
+const simplicity=h=>h.method==='RRF'?(h.k===60?0:10)+[[1,1],[2,1],[1,2]].findIndex(w=>w[0]===h.weights[0]&&w[1]===h.weights[1]):100+(4-h.keep);
+function select(result){
+  const sem=semantic.QUERY_MODES.map(mode=>({mode,s:result.systems[`SEMANTIC ${mode}`]})).sort((a,b)=>b.s.strictHit-a.s.strictHit||b.s.hit-a.s.hit||b.s.mrr-a.s.mrr||semantic.QUERY_MODES.indexOf(a.mode)-semantic.QUERY_MODES.indexOf(b.mode));
+  const queryMode=sem[0].mode;
+  const candidates=HYBRIDS.filter(h=>h.mode===queryMode).map(h=>{const id=`HYBRID ${h.id}`;return {id,h,s:result.systems[id],c:result.comparisonWithLexical[id]};});
+  const eligible=candidates.filter(x=>x.c.lost.length<=SELECTION.maxRegressions).sort((a,b)=>b.s.strictHit-a.s.strictHit||a.c.lost.length-b.c.lost.length||b.s.hit-a.s.hit||b.s.mrr-a.s.mrr||simplicity(a.h)-simplicity(b.h));
+  return {label:SELECTION.label,rule:SELECTION,queryMode,hybridsConsidered:candidates.length,hybridsEligible:eligible.length,excludedForRegressions:candidates.filter(x=>x.c.lost.length>SELECTION.maxRegressions).map(x=>x.id),selectedHybrid:eligible.length?eligible[0].id:null,
+    ranking:eligible.map(x=>({id:x.id,strictHit:x.s.strictHit,regressions:x.c.lost.length,hit:x.s.hit,mrr:x.s.mrr}))};
+}
 function parseArgs(argv){
   const args={runId:null,indexDir:null,corpus:null,library:process.env.SINBAD_LIBRARY_INDEX||DEFAULT_LIBRARY};
   for(let i=0;i<argv.length;i+=1){const a=argv[i],v=argv[i+1];if(a==='--run-id'){args.runId=v;i+=1;}else if(a==='--index-dir'){args.indexDir=v;i+=1;}else if(a==='--corpus'){args.corpus=v;i+=1;}else if(a==='--library'){args.library=v;i+=1;}}
@@ -41,6 +61,14 @@ function loadVectors(dir,index,scope){
     for(let r=0;r<count;r+=1)if(meta.contentHashes[r]!==sha256(index.chunks[first+r].text))throw new Error(`VECTOR_WITHOUT_ITS_SOURCE shard ${n} row ${r}`);
     matrix.set(new Float32Array(buf.buffer,buf.byteOffset,count*builder.DIMENSION),first*builder.DIMENSION);}
   return {matrix,manifest};
+}
+// One universe: the lexical index and the vector matrix cover exactly the same chunks, in the same order. loadVectors has
+// already tied every vector row to the hash of its chunk text; this states the fact in the result and refuses anything else.
+// A lexical figure measured on the full library (RETRIEVAL-001..003) is never compared with a bounded semantic figure.
+function oneUniverse(index,matrix){
+  const rows=matrix.length/builder.DIMENSION;if(!Number.isInteger(rows)||rows!==index.chunks.length)throw new Error('NOT_ONE_UNIVERSE: lexical index and vector matrix differ');
+  return {statement:'LEXICAL, SEMANTIC and HYBRID all rank the same chunks: the documents of the corpus manifest and nothing else',lexicalIndexChunks:index.chunks.length,vectorRows:rows,documents:new Set(index.chunks.map(c=>c.docIndex)).size,
+    chunkSetSha256:sha256(index.chunks.map(c=>sha256(c.text)).join('\n'))};
 }
 const summarize=rows=>{const n=rows.length;const rate=x=>n?Number((x/n).toFixed(3)):0;const strict=rows.filter(r=>r.strict);
   const out={probes:n,hit:rows.filter(r=>r.hit).length,hitRate:rate(rows.filter(r=>r.hit).length),strictProbes:strict.length,strictHit:strict.filter(r=>r.hit).length,mrr:Number((n?rows.reduce((s,r)=>s+(r.firstRank?1/r.firstRank:0),0)/n:0).toFixed(3)),notFoundWithinHorizon:rows.filter(r=>!r.firstRank).length,topK:{},language:{}};
@@ -77,14 +105,16 @@ function main(){
   const {matrix,manifest}=loadVectors(args.indexDir,index,`CORPUS ${corpus.name} ${corpus.sha256}`);
   const q=JSON.parse(fs.readFileSync(path.join(args.indexDir,'queries-dev.json'),'utf8'));if(q.split!=='DEV'||q.model!==builder.MODEL||q.modelDigest!==manifest.modelDigest||q.instruction!==semantic.QUERY_INSTRUCTION)throw new Error('QUERY_VECTORS_MISMATCH');
   const probes=JSON.parse(fs.readFileSync(PROBES,'utf8')).probes.filter(p=>p.split==='DEV');
-  const result={run:args.runId,probeSet:'probes-v1 DEV only',corpus:{name:corpus.name,sha256:corpus.sha256,documents:corpus.documents.length,chunks:index.chunks.length,librarySha256},
+  const universe=oneUniverse(index,matrix);
+  const result={run:args.runId,probeSet:'probes-v1 DEV only',universe,corpus:{name:corpus.name,sha256:corpus.sha256,documents:corpus.documents.length,chunks:index.chunks.length,librarySha256},
     model:{name:manifest.model,digest:manifest.modelDigest,dimension:manifest.dimension,inputRule:manifest.inputRule,queryInstruction:q.instruction,queriesEmbeddedCold:q.cold},
     method:'All systems search the same corpus. HIT = one of the 6 passages shown (at most 2 per document) matches the probe needle; firstRank = first matching chunk in the ranking (horizon 200); strict = needle matches at most 20 chunks of the corpus. Probes whose needle does not exist in the corpus are left out and listed. Titles, ranks and hashes only - no passage text, no vectors.',
     ...evaluate(index,matrix,q.queries,probes)};
+  result.devModelSelection=select(result);
   const outDir=path.join(ROOT,'tests/benchmark/results',args.runId);fs.mkdirSync(outDir,{recursive:true});fs.writeFileSync(path.join(outDir,'results.json'),`${JSON.stringify(result,null,1)}\n`);
   const line=(id,s)=>`${id.padEnd(38)} hit ${String(s.hit).padStart(2)}/${s.probes} strict ${String(s.strictHit).padStart(2)}/${s.strictProbes} MRR ${s.mrr.toFixed(3)} @1 ${s.topK['hit@1']} @3 ${s.topK['hit@3']} @10 ${s.topK['hit@10']}`;
   process.stdout.write(`${args.runId}: corpus ${corpus.name} (${index.chunks.length} chunks), ${result.probesUsed} DEV probes, unanswerable: ${result.probesUnanswerableInCorpus.join(' ')||'-'}\n`);
   for(const [id,s] of Object.entries(result.systems)){const c=result.comparisonWithLexical[id];process.stdout.write(`${line(id,s)}${c?` | +[${c.gained.join(' ')}] -[${c.lost.join(' ')}]`:''}\n`);}
 }
 if(require.main===module)main();
-module.exports={parseArgs,loadVectors,evaluate,summarize,HYBRIDS,PASSAGES,HORIZON};
+module.exports={parseArgs,loadVectors,evaluate,summarize,select,oneUniverse,SELECTION,HYBRIDS,PASSAGES,HORIZON};
