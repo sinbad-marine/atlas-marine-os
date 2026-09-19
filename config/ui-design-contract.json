@@ -3,12 +3,12 @@
   "owner": "Sinbad Marine design protection",
   "goldenUpdatePolicy": "Golden screenshots may change only in an explicitly reviewed design pull request.",
   "protectedFileSha256": {
-    "index.html": "2427522fd7126f4502f874447ae736a6524c02152aecf41ad6ed69a363ef356d",
+    "index.html": "f7efab2cab46ddd7b041a98434b759a5ad433c345228de994db219d2479a718e",
     "styles.css": "a7b45fc9c86ad19afa18c7e99507cb30f25d83f0dd964d6d0364cb25a57684a4",
     "academy.html": "729d9598025268edb54f5118fd97593857ed6d4ef5bec04499bde37fbda82d0e",
     "academy.css": "9d2c9e160eaa0ed785e3125cbc0f878511d49aeaac31fbff765b1fbb599937fe",
-    "console-master-style.css": "780a94d1032c3f56d62249d9c9f9a9c328ca44fc1c4480a6a4ecf33cc80eb35c",
-    "app.js": "1f5a8ff57d44983a4d09ca045bc7e0b26aab6049ef81d7d6ca85617c73b996fc"
+    "console-master-style.css": "40df10477e92e9072a5af3530d991b3376cbd2bbfb02f3f41481ab5988813a11",
+    "app.js": "5d2c66709a71de376169bb0c8c6b41f259b46acc2039a8a14d654f191ff1c95b"
   },
   "dashboardWorkspaces": [
     "admin-settings",
@@ -185,6 +185,35 @@
         "A"
       ],
       "route": "/index.html?workspace=yacht-operations"
+    },
+    "yachtManagementInnerLayers": {
+      "status": "OWNER_APPROVED_LOCKED",
+      "approvedAt": "2026-09-19",
+      "artistLanguage": "rembrandt",
+      "layoutPolicy": "OWNER_APPROVED_OPERATIONAL_COMPOSITION",
+      "immutable": true,
+      "layers": {
+        "fleet": {
+          "route": "/index.html?workspace=fleet",
+          "selection": "B",
+          "asset": "assets/console-art/yacht-management-owner-selections-v1/selected/02-fleet-and-yacht-management-B.png"
+        },
+        "crew": {
+          "route": "/index.html?workspace=crew",
+          "selection": "B",
+          "asset": "assets/console-art/yacht-management-owner-selections-v1/selected/03-crew-B.png"
+        },
+        "captainsLogbook": {
+          "route": "/index.html?workspace=captains-logbook",
+          "selection": "B",
+          "asset": "assets/console-art/yacht-management-owner-selections-v1/selected/04-captain-logbook-B.png"
+        },
+        "cameraArchive": {
+          "route": "/index.html?workspace=camera-archive",
+          "selection": "A",
+          "asset": "assets/console-art/yacht-management-owner-selections-v1/selected/05-camera-media-archive-A.png"
+        }
+      }
     }
   }
 }

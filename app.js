@@ -698,9 +698,31 @@ function storeSendOrder(channel){
 }
 
 $('saveVessel').onclick=()=>{const a=get('atlas_fleet');a.unshift({name:$('vName').value,type:$('vType').value,flag:$('vFlag').value,loa:$('vLoa').value,beam:$('vBeam').value,draft:$('vDraft').value,cruise:$('vCruise').value,fuel:$('vFuel').value,water:$('vWater').value,notes:$('vNotes').value});set('atlas_fleet',a);renderFleet()}
-function renderFleet(){const a=get('atlas_fleet');$('fleetList').innerHTML=a.map(v=>`<article class="record"><h3>${esc(v.name)}</h3><p>${esc(v.type)} • ${esc(v.flag)} • Draft ${esc(v.draft)} m</p></article>`).join('')||'<div class="empty">No vessel records.</div>'}
+function renderFleet(){
+ const a=get('atlas_fleet'),value=(input,suffix='')=>input?`${esc(input)}${suffix}`:'—';
+ $('fleetList').innerHTML=a.map((v,index)=>`<article class="detail-record-card fleet-record-card">
+  <header><div><h4>${value(v.name)}</h4><span>${value(v.type)} · ${value(v.flag)}</span></div><span>VESSEL ${String(index+1).padStart(2,'0')}</span></header>
+  <div class="detail-record-meta"><span>LOA<b>${value(v.loa,' m')}</b></span><span>Beam<b>${value(v.beam,' m')}</b></span><span>Draft<b>${value(v.draft,' m')}</b></span><span>Cruise<b>${value(v.cruise,' kn')}</b></span><span>Fuel<b>${value(v.fuel,' L')}</b></span><span>Fresh water<b>${value(v.water,' L')}</b></span></div>
+  <p class="detail-record-note">${value(v.notes)}</p>
+ </article>`).join('')||'<div class="empty">No vessel records.</div>'
+}
 $('saveCrew').onclick=()=>{const a=get('atlas_crew');a.unshift({name:$('crewName').value,rank:$('crewRank').value,nationality:$('crewNationality').value,passport:$('crewPassport').value,medical:$('crewMedical').value,stcw:$('crewStcw').value,visa:$('crewVisa').value,contract:$('crewContract').value,contact:$('crewContact').value,notes:$('crewNotes').value});set('atlas_crew',a);renderCrew()}
-function renderCrew(){const a=get('atlas_crew');$('crewList').innerHTML=a.map(c=>`<article class="record"><h3>${esc(c.name)}</h3><p>${esc(c.rank)} • ${esc(c.nationality)}</p></article>`).join('')||'<div class="empty">No crew records.</div>'}
+function crewExpiryDetail(input){
+ if(!input)return{value:'—',state:''};
+ const expiry=new Date(`${input}T23:59:59`),days=Math.ceil((expiry-Date.now())/86400000);
+ if(!Number.isFinite(days))return{value:esc(input),state:''};
+ if(days<0)return{value:`Expired ${Math.abs(days)}d`,state:'expired'};
+ if(days<=90)return{value:`${days}d`,state:'warning'};
+ return{value:new Intl.DateTimeFormat('tr-TR',{day:'2-digit',month:'2-digit',year:'numeric'}).format(expiry),state:''};
+}
+function renderCrew(){
+ const a=get('atlas_crew'),value=input=>input?esc(input):'—',labels=[['Passport','passport'],['Medical','medical'],['STCW','stcw'],['Visa','visa'],['Contract','contract']];
+ $('crewList').innerHTML=a.map((c,index)=>`<article class="detail-record-card crew-record-card">
+  <header><div><h4>${value(c.name)}</h4><span>${value(c.rank)} · ${value(c.nationality)}</span></div><span>CREW ${String(index+1).padStart(2,'0')}</span></header>
+  <div class="crew-expiry-grid">${labels.map(([label,key])=>{const detail=crewExpiryDetail(c[key]);return`<span class="crew-expiry ${detail.state}"><small>${label}</small><b>${detail.value}</b></span>`}).join('')}</div>
+  <div class="detail-record-meta"><span>Contact<b>${value(c.contact)}</b></span></div><p class="detail-record-note">${value(c.notes)}</p>
+ </article>`).join('')||'<div class="empty">No crew records.</div>'
+}
 
 
 async function renderSummary(){
@@ -2972,9 +2994,10 @@ function applyRoleAccess(){
     const workspace=$('document-submissions');
     if(workspace)workspace.innerHTML='<div class="workspace-access-denied"><h2>Bu alan yetkili kullanıcılara özeldir</h2><p>Developer Proje Merkezi yalnız aktif Owner ve Developer hesaplarına açıktır.</p><button class="btn primary" type="button" onclick="window.close()">Pencereyi kapat</button></div>';
   }
-  ['uploadCloudFiles','cloudFileInput','uploadCapturedMedia'].forEach(id=>{
+  ['uploadCloudFiles','cloudFileInput'].forEach(id=>{
     const el=$(id);if(el)el.disabled=!roleCanManageLibrary();
   });
+  if($('uploadCapturedMedia'))$('uploadCapturedMedia').disabled=!roleCanManageLibrary()||!pendingMedia.length;
   ['uploadDocs','docFiles','docFolder','docTags','knowledgeQuery','knowledgeSearchBtn'].forEach(id=>{
     const el=$(id);if(el)el.disabled=!roleCanAccessPrivateSources();
   });
@@ -3701,7 +3724,7 @@ function renderPendingMedia(){
       <button class="captured-media-remove" type="button" data-media-index="${index}" aria-label="Remove">×</button>
       <small>${cloudEsc(item.name)}<br>${Math.round(item.blob.size/1024)} KB</small>
     </article>`).join('');
-  $('uploadCapturedMedia').disabled=!pendingMedia.length;
+  $('uploadCapturedMedia').disabled=!pendingMedia.length||!roleCanManageLibrary();
   $('mediaUploadStatus').textContent=pendingMedia.length?`${pendingMedia.length} private media item(s) ready to upload.`:'No media selected.';
 }
 
