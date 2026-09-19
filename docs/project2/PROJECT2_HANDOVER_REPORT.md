@@ -44,7 +44,7 @@ Nothing above is wired into the app, the bridge, the cloud function or any produ
   node --max-old-space-size=4096 tools/sinbad-grounded-service.js --port 31990 --min-free-gb 3
   node tools/run-grounded-subset.js --run-id GROUNDED-002 --resume
   ```
-- **Retrieval quality.** Lexical BM25 over 90 539 chunks in several languages; live, an ISPS ship-security-plan question was refused although the library almost certainly holds the text. Safe, weak. To be sized by the completed run's maritime slice before it is engineered (candidates: title / regulation-number boosting, language-aware tokenising, a small re-ranker).
+- **Retrieval quality — now measured (Phase 4.8, PR #285, main `8b7916d`; added to this report after it was first written).** 36 hand-declared probes, 12 held out. The merged retriever finds the passage that answers for 29 of 36 probes but only **9 of 14 strict probes**; the live ISPS miss reproduces (the ISPS Code passage exists and is ranked 53rd). A lexical candidate (stop list, plural folding, title terms, phrase bonus, more passages per document), tuned on DEV only, did **not** move the held-out probes (9 of 12 before and after) and was **rejected — it is not in the repository**; the negative result is on record (`RETRIEVAL-002/NOTE.json`). The misses are vocabulary mismatch between how a user asks and how the source is worded. Candidates that can bridge it need a model: restating the question in source wording with the installed `qwen3:4b` (safe by construction: it only decides which passages are fetched), or a semantic re-ranker (needs an embedding model that is not installed — the Owner's decision). Each is adopted only if it moves the held-out probes. See `docs/project2/PHASE_4_8_RETRIEVAL_EVALUATION.md`.
 - **Reserved vocabulary.** Ordinary maritime words (*safe*, *approved*, *compliant*) are treated as status claims by the accepted Sentinel / Gatekeeper text screens. Fixing it changes accepted components and forces every fixture corpus to be regenerated once; it was deliberately not done without data from delivered grounded answers.
 - **Everything recorded as `phase_3_remainder_and_later`**: the Co-Pilot model pass, a model-driven Pilot loop, key custody for attestation, any wiring.
 
@@ -59,6 +59,8 @@ Nothing above is wired into the app, the bridge, the cloud function or any produ
 | 5 | The cloud path of the 4.3 proposal (4.3a) | Needs the Owner's session and paid calls; untouched. |
 | 6 | Key custody for Record Attestation | Test keys only. |
 | 7 | Changing the accepted Sentinel / Gatekeeper text screens (reserved vocabulary) | Version bump + one fixture regeneration; acceptance of the old versions stays pinned. |
+| 8 | Installing an embedding model on the Owner's machine for a semantic re-ranker (Phase 4.8) | Nothing was installed. The alternative that needs no installation (question restated by the installed `qwen3:4b`) is measured first. |
+| 9 | OWNER ACCEPTED for 4.8 | NOT RECORDED. |
 
 On HOLD by Owner directive and untouched: Academy, Hat D, the Offline Autonomous Developer core gap (no implementation, no repository document, no tool installed).
 

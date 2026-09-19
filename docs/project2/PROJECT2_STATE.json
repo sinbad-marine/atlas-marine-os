@@ -203,7 +203,7 @@
       "not_done": "the 36-item grounded measurement (INCOMPLETE, resumable from the Owner's terminal); retrieval quality; reserved vocabulary; everything under phase_3_remainder_and_later"
     },
     "phase_4_8_retrieval_evaluation": {
-      "status": "IMPLEMENTED 2026-09-19 from main 2a8f86c under the Owner delegation; TESTED (retrieval evaluation 5 tests under npm test); measurements taken without a model; NOT MERGED (draft PR); OWNER ACCEPTED = NOT RECORDED",
+      "status": "IMPLEMENTED 2026-09-19 from main 2a8f86c under the Owner delegation; TESTED (retrieval evaluation 5 tests under npm test); measurements taken without a model; MERGED as PR #285 on 2026-09-19T06:41:12Z under the Owner delegation (main 8b7916d4a4b71dd1e78f12713cceac01c07f15c0, CI verify green on c121264, squash pinned to that head); OWNER ACCEPTED = NOT RECORDED",
       "document": "docs/project2/PHASE_4_8_RETRIEVAL_EVALUATION.md",
       "files": "tests/benchmark/retrieval/probes-v1.json (36 hand-declared probes, 24 DEV / 12 TEST held out, 28 en / 8 tr), tools/evaluate-retrieval.js, tests/project2-retrieval-eval.test.js, sinbad-ai-core/pipeline/lexical-retriever.js (rank() exported, scoring and version 0-v1 unchanged), tests/benchmark/results/RETRIEVAL-001, tests/benchmark/results/RETRIEVAL-002 (+ NOTE.json)",
       "measured": "RETRIEVAL-001 (merged retriever 0-v1, 6 passages): hit 29 of 36, MRR 0.662, STRICT probes 9 of 14, TEST 9 of 12; the live miss of Phase 4.7 reproduced: the ISPS Code passage on the content of a ship security plan exists in the library and is ranked 53rd",
@@ -268,5 +268,5 @@
     "enforcement": "tests/baseline-001-freeze.test.js (part of npm test / CI verify) fails if any frozen file changes or the combined totals drift",
     "revision_policy": "immutable; corrections only as separately identified revisions (BASELINE-001-REV-n) with their own provenance; original files recoverable from aee0ad5"
   },
-  "last_verified_timestamp": "2026-09-19T06:30:48Z"
+  "last_verified_timestamp": "2026-09-19T06:42:36Z"
 }
