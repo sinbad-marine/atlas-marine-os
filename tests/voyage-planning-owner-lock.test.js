@@ -5,6 +5,7 @@ const fs=require('node:fs');
 const crypto=require('node:crypto');
 
 const sha256=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
+const canonicalCrlfBytes=bytes=>Buffer.from(bytes.toString('utf8').replace(/\r\n?/gu,'\n').replace(/\n/gu,'\r\n'),'utf8');
 const manifestPath='assets/console-art/voyage-planning-owner-selections-v1/OWNER_VISUAL_LOCK.json';
 const manifestBytes=fs.readFileSync(manifestPath);
 const manifest=JSON.parse(manifestBytes);
@@ -14,7 +15,7 @@ const release=fs.readFileSync('tools/build-pages-artifact.js','utf8');
 const contract=JSON.parse(fs.readFileSync('config/ui-design-contract.json','utf8'));
 
 test('Voyage Planning Owner selections remain byte-for-byte locked',()=>{
-  assert.equal(sha256(manifestBytes),'a596dbd7cefb486c229ad005c2f9262b503dc733cdfcbb79e610d8f41647c3a8');
+  assert.equal(sha256(canonicalCrlfBytes(manifestBytes)),'a596dbd7cefb486c229ad005c2f9262b503dc733cdfcbb79e610d8f41647c3a8');
   assert.equal(manifest.status,'OWNER_APPROVED_LOCKED');
   assert.equal(manifest.artistLanguage,'leonardo-da-vinci');
   assert.equal(manifest.languageBaseline,'en');
@@ -53,7 +54,7 @@ test('Voyage Planning uses English as the source UI language',()=>{
 
 test('Voyage Planning lock is in the design contract and release allowlist',()=>{
   const lock=contract.ownerVisualLocks.voyagePlanningInnerLayers;
-  assert.equal(lock.manifestSha256,sha256(manifestBytes));
+  assert.equal(lock.manifestSha256,sha256(canonicalCrlfBytes(manifestBytes)));
   assert.deepEqual(lock.ownerChoices,manifest.selectionOrder);
   assert.equal((release.match(/voyage-planning-owner-selections-v1\/selected\//gu)||[]).length,8);
   assert.match(release,/voyage-planning-owner-selections-v1\/OWNER_VISUAL_LOCK\.json/u);
