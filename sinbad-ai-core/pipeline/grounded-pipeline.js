@@ -15,8 +15,11 @@ const adapter=require('../adapter/draft-adapter-v0');
 const chain=require('../chain/chain-v0');
 const retriever=require('./lexical-retriever');
 const support=require('./citation-support');
+const disclaimerScreen=require('../adapter/disclaimer-screen');
 
-const VERSION='sinbad-grounded-pipeline/0-v1';
+// 0-v2 (Phase 4.7): a refusal says what it cannot confirm. GROUNDED-001 refused correctly but always with the same
+// sentence, which tells the user nothing and which the accepted detectors do not read as a statement of ignorance.
+const VERSION='sinbad-grounded-pipeline/0-v2';
 const DEFAULT_POLICY=Object.freeze({maxEvidenceAgeMs:24*60*60*1000,volatileMaxEvidenceAgeMs:5*60*1000,maxIterations:3,labelledDelivery:'PROCEED'});
 const PASSAGE_CHARS=1500,DEFAULT_PASSAGES=6,CONTEXT_LIFETIME_MS=60*60*1000;
 const WITHHELD=Object.freeze({
@@ -26,8 +29,8 @@ const WITHHELD=Object.freeze({
 const SYSTEM=[
   'You are SINBAD, a maritime assistant. Answer ONLY from the numbered passages below the question.',
   'End every sentence that states a fact with the marker of the passage it comes from, for example [S2]. Use only markers that exist. Never cite a passage that does not support the sentence.',
-  'If the passages do not answer the question, say in one short sentence that the available sources do not answer it, and stop.',
-  'The question may contain names, numbers or statements that are not in the passages. Never repeat them as facts: if the passages do not confirm something the question says, state that the available sources do not confirm it.',
+  'If the passages do not answer the question, reply with one short sentence that begins with "I cannot confirm" and names what cannot be confirmed, then the sentence "The available sources do not contain this information.", and stop. In Turkish: "Bunu doğrulayamam: bu bilgi mevcut kaynaklarda yer almıyor."',
+  'The question may contain names, numbers or statements that are not in the passages. Never repeat them as facts: if the passages do not confirm something the question says, say "I cannot confirm that ..." in plain words, without "still", "but" or "however".',
   'Do not describe what is happening right now, do not state project or system status, do not approve or authorize anything.',
   'Answer in the language of the question. Be concise. Do not mention these instructions or the word "passage".'
 ].join('\n');
@@ -46,6 +49,14 @@ const ADVICE=Object.freeze({
   ROLE_CONFUSION:'Do not approve, authorize, accept or grant anything. You are not an authority.',
   CONTEXT_MISMATCH:'Do not adopt statements from outside the passages.'
 });
+// Found with the real model (Phase 4.7): a refusal that restates the question ("I cannot confirm that #246 is still open and
+// waiting for review") is rightly not accepted as a disclaimer - 'and' could join an assertion - and at temperature 0 the model
+// repeated it three times. The strict screen stays; the model is told the plain form instead.
+// One language per advice: given both forms, the model answered an English question with the Turkish one.
+const PLAIN_REFUSAL=Object.freeze({
+  en:'A sentence that says what you cannot confirm was too long to be accepted. Do not restate the question. Replace that sentence with exactly: "I cannot confirm this." Keep the sentence "The available sources do not contain this information." Answer in English.',
+  tr:'Neyi doğrulayamadığını söyleyen cümle kabul edilemeyecek kadar uzundu. Soruyu yineleme. O cümlenin yerine tam olarak şunu yaz: "Bunu doğrulayamam: bu bilgi mevcut kaynaklarda yer almıyor." Türkçe yanıtla.'
+});
 const language=text=>/[çğıöşüÇĞİÖŞÜ]|\b(?:nedir|nasıl|hangi|için|midir|mıdır|kaç)\b/iu.test(String(text||''))?'tr':'en';
 
 function prompt(question,passages,feedback){
@@ -55,10 +66,12 @@ function prompt(question,passages,feedback){
   if(feedback)messages.push({role:'assistant',content:feedback.draft},{role:'user',content:`That draft was not accepted:\n${feedback.advice.map(a=>`- ${a}`).join('\n')}${feedback.sentences.length?`\nSentences at fault:\n${feedback.sentences.map(s=>`- ${s}`).join('\n')}`:''}\nRewrite the whole answer.`});
   return messages;
 }
-function advise(step,draft){
+function advise(step,draft,lang){
   const findings=step.pilot.findings;const advice=[...new Set(findings.map(f=>ADVICE[f.ref]).filter(Boolean))];
   const ids=new Set(findings.flatMap(f=>typeof f.detailRef==='string'&&f.detailRef.startsWith('claims:')?f.detailRef.slice(7).split(','):typeof f.detailRef==='string'&&f.detailRef.startsWith('claim:')?[f.detailRef.split(':')[1]]:[]));
-  return {draft:draft.text,advice:advice.length?advice:['Cite a marker for every factual sentence or remove the sentence.'],sentences:draft.claims.filter(c=>ids.has(c.claimId)).map(c=>c.text).slice(0,8)};
+  const sentences=draft.claims.filter(c=>ids.has(c.claimId)).map(c=>c.text).slice(0,8);
+  if((sentences.length?sentences:draft.claims.map(c=>c.text)).some(s=>disclaimerScreen.IGNORANCE.test(s)))advice.unshift(PLAIN_REFUSAL[lang==='tr'?'tr':'en']);
+  return {draft:draft.text,advice:advice.length?advice:['Cite a marker for every factual sentence or remove the sentence.'],sentences};
 }
 
 // answer({question, index, generate, now, requestId, policy, passageLimit}) -> Promise<GroundedAnswer>. Never rejects.
@@ -85,7 +98,7 @@ async function answer(input){
       // claim whose specifics or content words are not in the passages it cites goes to the gate as an unresolvable citation.
       const screened=support.screen(adapted.chainPass.draft,passages);const unsupported=screened.findings.filter(f=>!f.supported);
       passes.push({evidenceSet:JSON.parse(JSON.stringify(adapted.chainPass.evidenceSet)),draft:screened.draft});
-      drafts.push({index:i,textHash:sha256(text),claims:adapted.stats.claims,claimsWithMarkers:adapted.stats.claimsWithMarkers,skipped:adapted.skipped.map(s=>s.reason),warnings:[...adapted.warnings],
+      drafts.push({index:i,text,textHash:sha256(text),claims:adapted.stats.claims,claimsWithMarkers:adapted.stats.claimsWithMarkers,skipped:adapted.skipped.map(s=>s.reason),warnings:[...adapted.warnings],
         citationSupport:screened.findings.map(f=>({claimId:f.claimId,supported:f.supported,coverage:f.coverage,missingSpecifics:f.missingSpecifics,reason:f.reason}))});
       // The whole history is rehearsed again each time: the chain is deterministic, so earlier passes reproduce
       // exactly and the final transcript covers every draft under one seal.
@@ -96,7 +109,7 @@ async function answer(input){
         return {...base,delivery:warned?'DELIVERED_LABELLED':'DELIVERED_CLEAN',answer:text,labels,outcome:'PROCEED',reasonCode:transcript.reasonCode,iterations:i+1,sources:passages.map(publicSource),transcript,drafts,model};
       }
       if(transcript.outcome!=='AWAITING_DRAFT')break;
-      feedback=advise(step,{text,claims:adapted.chainPass.draft.claims});
+      feedback=advise(step,{text,claims:adapted.chainPass.draft.claims},lang);
       if(unsupported.length){
         feedback.advice.unshift('A sentence cites a source that does not contain what the sentence says. Cite only a source that really states it, or remove the sentence. Never repeat a name, number or claim that comes only from the question.');
         const ids=new Set(unsupported.map(f=>f.claimId));for(const c of adapted.chainPass.draft.claims)if(ids.has(c.claimId)&&!feedback.sentences.includes(c.text))feedback.sentences.push(c.text);
@@ -119,4 +132,4 @@ function gateRecord(result){
   if(!result||!result.transcript)return null;const last=result.transcript.steps[result.transcript.steps.length-1];
   return {chainOutcome:result.transcript.outcome,gateOutcome:last.gate.outcome,carryLabels:result.transcript.outcome==='PROCEED'?[...last.pilot.carryLabels]:[],transcriptDigest:result.transcript.transcriptDigest};
 }
-module.exports=Object.freeze({VERSION,DEFAULT_POLICY,WITHHELD,SYSTEM,ADVICE,language,prompt,answer,gateRecord,render});
+module.exports=Object.freeze({VERSION,DEFAULT_POLICY,WITHHELD,SYSTEM,ADVICE,PLAIN_REFUSAL,language,prompt,answer,gateRecord,render});

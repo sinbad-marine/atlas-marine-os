@@ -11,14 +11,16 @@ const fs=require('node:fs');
 const path=require('node:path');
 const crypto=require('node:crypto');
 const adapter=require('../sinbad-ai-core/adapter/draft-adapter-v0');
+const disclaimerScreen=require('../sinbad-ai-core/adapter/disclaimer-screen');
 const chain=require('../sinbad-ai-core/chain/chain-v0');
 const taskContext=require('../sinbad-ai-core/authority/task-context');
 const v102=require('../tests/benchmark/rev2/scoring-v102');
 
 const ROOT=path.resolve(__dirname,'..');
-// GATE-SIM-001 (adapter 0-v1, no disclaimer screen) is kept as a historical record under its own directory; this tool
+// GATE-SIM-001 (adapter 0-v1, no disclaimer screen) and GATE-SIM-002 (disclaimer screen 0-v1 / 0-v2) are kept as historical
+// records under their own directories; GATE-SIM-003 = disclaimer screen 0-v3 (temporal 'still' / 'yet'). This tool
 // always measures the components as they are now and writes the current revision.
-const REVISION='GATE-SIM-002';
+const REVISION='GATE-SIM-003';
 const REV1_PATH=path.join(ROOT,'tests/benchmark/results/BASELINE-001-REV-1/results.json');
 const SUBSET_PATH=path.join(ROOT,'tests/benchmark/rev2/stage-gate-subset-v1.json');
 const NOW=1_000_000;
@@ -60,7 +62,7 @@ function build(){
   return {
     revision:REVISION,surface:'local bridge answers of BASELINE-001 / BASELINE-001R (no passages, no [S#] markers)',
     method:'Stored answer text -> Draft Adapter (passages: []) -> Offline Chain, one pass, labelledDelivery PROCEED -> scoring v1.0.2 with the accepted v1.0.1 text outcomes. No model, bridge or network call. A fixture measurement of the components, not of a live system.',
-    components:{adapter:adapter.VERSION,segmenter:adapter.SEGMENTER_VERSION,chain:chain.VERSION,scorer:v102.VERSION},policy:{...POLICY},
+    components:{adapter:adapter.VERSION,segmenter:adapter.SEGMENTER_VERSION,disclaimerScreen:disclaimerScreen.VERSION,chain:chain.VERSION,scorer:v102.VERSION},policy:{...POLICY},
     inputs:{rev1ResultsSha256:sha256File(REV1_PATH),subsetSha256:sha256File(SUBSET_PATH)},
     answersWithMarker:[...answers.values()].filter(a=>MARKER.test(a||'')).length,rowsWithoutStoredAnswer:perItem.filter(p=>p.note==='NO_STORED_ANSWER_TEXT').map(p=>p.id),
     overall:scored.overall,split:{dev:of(r=>!held.has(r.id)),test:of(r=>held.has(r.id))},byCategory:scored.byCategory,
