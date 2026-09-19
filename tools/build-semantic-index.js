@@ -31,8 +31,12 @@ const START_FLOOR_GB=5,RUN_FLOOR_GB=2.5,YIELD_SECONDS=30;
 const sha256=data=>crypto.createHash('sha256').update(data).digest('hex');
 const inside=(child,parent)=>{const rel=path.relative(path.resolve(parent),path.resolve(child));return rel===''||(!rel.startsWith('..')&&!path.isAbsolute(rel));};
 
+// Half the cores of THIS host, at most 8 (more threads did not embed faster on the pilot host). A fixed default of 8 was
+// refused by the tool's own rule on a 4-core CI runner.
+const maxThreads=()=>Math.max(1,Math.floor(os.cpus().length/2));
+const defaultThreads=()=>Math.min(8,maxThreads());
 function parseArgs(argv){
-  const args={outDir:null,library:process.env.SINBAD_LIBRARY_INDEX||DEFAULT_LIBRARY,ollama:'http://127.0.0.1:11434',limit:null,budgetSeconds:null,threads:8,verifySample:0};
+  const args={outDir:null,library:process.env.SINBAD_LIBRARY_INDEX||DEFAULT_LIBRARY,ollama:'http://127.0.0.1:11434',limit:null,budgetSeconds:null,threads:defaultThreads(),verifySample:0};
   for(let i=0;i<argv.length;i+=1){const a=argv[i],v=argv[i+1];
     if(a==='--out-dir'){args.outDir=v;i+=1;}else if(a==='--library'){args.library=v;i+=1;}else if(a==='--ollama'){args.ollama=v;i+=1;}else if(a==='--limit'){args.limit=Number(v);i+=1;}
     else if(a==='--budget-seconds'){args.budgetSeconds=Number(v);i+=1;}else if(a==='--threads'){args.threads=Number(v);i+=1;}else if(a==='--verify-sample'){args.verifySample=Number(v);i+=1;}}
@@ -42,7 +46,7 @@ function parseArgs(argv){
   if(!['127.0.0.1','localhost','[::1]'].includes(new URL(args.ollama).hostname))throw new Error('OLLAMA_MUST_BE_LOOPBACK');
   if(args.limit!==null&&(!Number.isInteger(args.limit)||args.limit<1))throw new Error('LIMIT_INVALID');
   if(args.budgetSeconds!==null&&(!Number.isFinite(args.budgetSeconds)||args.budgetSeconds<30))throw new Error('BUDGET_INVALID');
-  if(!Number.isInteger(args.threads)||args.threads<1||args.threads>Math.max(1,Math.floor(os.cpus().length/2)))throw new Error('THREADS_MUST_LEAVE_HALF_THE_CORES_FREE');
+  if(!Number.isInteger(args.threads)||args.threads<1||args.threads>maxThreads())throw new Error('THREADS_MUST_LEAVE_HALF_THE_CORES_FREE');
   if(!Number.isInteger(args.verifySample)||args.verifySample<0||args.verifySample>64)throw new Error('VERIFY_SAMPLE_INVALID');
   return args;
 }
