@@ -148,6 +148,17 @@ test('corpus accounting: manifest chunks minus punctuation-only chunks equals th
   assert.equal(sha256(read('tests/benchmark/results/RETRIEVAL-004/DEV_SELECTION_PREREGISTRATION.json').replace(/\r\n/g,'\n')),'36a99c1242d8a49719b994a0b030e2403a9cc3d2b9f9c3129d2b46b3018e84ff','the preregistration file is byte-identical to the preregistration commit');
 });
 
+test('TEST-3 exists as a design only: blind, not authorised to run, disjoint from the used sets, and unreadable by every tool',()=>{
+  const t3=JSON.parse(read('tests/benchmark/retrieval/probes-test3-regulatory-core-v1.json'));
+  assert.match(t3.status,/^BLIND - NOT AUTHORISED TO RUN\./u);assert.match(t3.blind_rule,/COUNTING the chunks of the bounded corpus/u);assert.equal(t3.probes.length,36);assert.ok(t3.probes.every(p=>p.split==='TEST3'&&/^T3-\d{2}$/u.test(p.id)));
+  const used=[...JSON.parse(read('tests/benchmark/retrieval/probes-v1.json')).probes,...JSON.parse(read('tests/benchmark/retrieval/probes-test2-v1.json')).probes];
+  const needles=new Set(used.map(p=>p.needle)),questions=new Set(used.map(p=>p.question));for(const p of t3.probes){assert.equal(needles.has(p.needle),false,p.id);assert.equal(questions.has(p.question),false,p.id);assert.doesNotThrow(()=>new RegExp(p.needle,'iu'));}
+  // The general evaluator rejects the split name, and no tool of the experiment names the file; no result of a TEST-3 run exists.
+  assert.throws(()=>require('../tools/evaluate-retrieval').loadProbes(path.join(ROOT,'tests/benchmark/retrieval/probes-test3-regulatory-core-v1.json')),/PROBE_INVALID/u);
+  for(const file of fs.readdirSync(path.join(ROOT,'tools')).filter(f=>f.endsWith('.js')))assert.doesNotMatch(read(`tools/${file}`),/probes-test3|TEST3/u,file);
+  for(const dir of fs.readdirSync(path.join(ROOT,'tests/benchmark/results')))for(const f of fs.readdirSync(path.join(ROOT,'tests/benchmark/results',dir)))assert.doesNotMatch(f,/test3/iu,`${dir}/${f}`);
+});
+
 test('DEV only, local only, nothing wired: no tool of the experiment reads a blind or used-holdout set, the evaluator calls no model',()=>{
   assert.throws(()=>embedder.parseArgs(['--index-dir',OUT,'--split','TEST2']),/DEV_ONLY/u);assert.throws(()=>embedder.parseArgs(['--index-dir',OUT,'--split','TEST']),/DEV_ONLY/u);
   assert.throws(()=>embedder.parseArgs(['--index-dir',path.join(ROOT,'x')]),/OUTSIDE_THE_REPOSITORY/u);assert.throws(()=>embedder.parseArgs(['--index-dir',OUT,'--ollama','http://8.8.8.8:11434']),/OLLAMA_MUST_BE_LOOPBACK/u);
