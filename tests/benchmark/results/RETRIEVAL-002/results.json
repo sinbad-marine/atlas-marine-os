@@ -1,0 +1,764 @@
+{
+  "run": "RETRIEVAL-002",
+  "probes": "sinbad-retrieval-probes/1",
+  "library": {
+    "builtAt": "2026-08-21T08:15:16.8480308Z",
+    "documents": 1686,
+    "chunks": 90539,
+    "indexSha256": "79c57429d4b63fc5839e5f13060c84e43b154ac8c65b70e5d86071643f196fcd"
+  },
+  "method": "Each probe question is given to the retriever; HIT = one of the passages it would show to the model matches the probe needle. firstRank = position of the first matching chunk in the full ranking (no per-document cap), null beyond the horizon. Strict probes are those whose needle matches few chunks of the library, so a hit means the right passage and not merely the right topic. No model, no network. Titles and ranks only, no passage text.",
+  "retriever": "sinbad-lexical-retriever/0-v2",
+  "passages": 6,
+  "rankHorizon": 200,
+  "strictMaxChunks": 20,
+  "overall": {
+    "probes": 36,
+    "hit": 30,
+    "hitRate": 0.833,
+    "mrr": 0.656,
+    "notFoundWithinHorizon": 2
+  },
+  "split": {
+    "dev": {
+      "probes": 24,
+      "hit": 21,
+      "hitRate": 0.875,
+      "mrr": 0.742,
+      "notFoundWithinHorizon": 1
+    },
+    "test": {
+      "probes": 12,
+      "hit": 9,
+      "hitRate": 0.75,
+      "mrr": 0.485,
+      "notFoundWithinHorizon": 1
+    }
+  },
+  "language": {
+    "en": {
+      "probes": 28,
+      "hit": 24,
+      "hitRate": 0.857,
+      "mrr": 0.666,
+      "notFoundWithinHorizon": 1
+    },
+    "tr": {
+      "probes": 8,
+      "hit": 6,
+      "hitRate": 0.75,
+      "mrr": 0.622,
+      "notFoundWithinHorizon": 1
+    }
+  },
+  "strict": {
+    "all": {
+      "probes": 14,
+      "hit": 10,
+      "hitRate": 0.714,
+      "mrr": 0.571,
+      "notFoundWithinHorizon": 2
+    },
+    "dev": {
+      "probes": 9,
+      "hit": 8,
+      "hitRate": 0.889,
+      "mrr": 0.717,
+      "notFoundWithinHorizon": 1
+    },
+    "test": {
+      "probes": 5,
+      "hit": 2,
+      "hitRate": 0.4,
+      "mrr": 0.308,
+      "notFoundWithinHorizon": 1
+    }
+  },
+  "needleAbsent": [],
+  "rows": [
+    {
+      "id": "RP-01",
+      "split": "DEV",
+      "language": "en",
+      "topic": "ISM",
+      "needleChunks": 16,
+      "strict": true,
+      "hit": true,
+      "hitMarker": "S1",
+      "firstRank": 1,
+      "shownTitles": [
+        "RMI - Marine Notice 2-011-13 International Safety Management Code__ea4bc8e880",
+        "German Flag - ISM Code English__0d2383acf1",
+        "IMO MSC-MEPC.7 Circ.8 - Operational Implementation of ISM Code by Compan__2e1f8bb217",
+        "IMO MSC-MEPC.7 Circ.5 - Operational Implementation of ISM Code by Compan__9674a1225d",
+        "Malta - ISM Declaration of Company Form__dce5249198",
+        "Malta - ISM Declaration of Company Form__dce5249198"
+      ]
+    },
+    {
+      "id": "RP-02",
+      "split": "DEV",
+      "language": "en",
+      "topic": "ISM",
+      "needleChunks": 10,
+      "strict": true,
+      "hit": true,
+      "hitMarker": "S1",
+      "firstRank": 1,
+      "shownTitles": [
+        "UK MAIB - Clonlee Machinery Failure Critical Equipment and ISM Lessons__93face8fdf",
+        "UK_MCA_MSIS02_ISM_Code_Audit_Guidance_Rev10.24_HISTORICAL__b290d26f86",
+        "02 - MN046 ISM Kod DOC SMC ve Denetim Gereklilikleri__f61b82c0fb",
+        "IMO A.1188(33) - ISM Code Implementation Guidelines - 2023__0a9acd07d3",
+        "TARİHSEL - IMO A.1118 - ISM Implementation Guidelines - Superseded by A.__c6cf891f7d",
+        "UK_MCA_MSIS02_ISM_Code_Audit_Guidance_Rev10.24_HISTORICAL__b290d26f86"
+      ]
+    },
+    {
+      "id": "RP-03",
+      "split": "TEST",
+      "language": "en",
+      "topic": "ISM",
+      "needleChunks": 23,
+      "strict": false,
+      "hit": true,
+      "hitMarker": "S1",
+      "firstRank": 1,
+      "shownTitles": [
+        "German Flag - ISM Code English__0d2383acf1",
+        "Norveç NMA ISM Güvenlik Yönetim Sistemi Yönetmeliği No 1191__864676df72",
+        "UK_MCA_MSIS02_ISM_Code_Audit_Guidance_Rev10.24_HISTORICAL__b290d26f86",
+        "ClassNK_Revised_Guidelines_ISM_Implementation_by_Administrations__3b39d5bf69",
+        "TARİHSEL - IMO A.1118 - ISM Implementation Guidelines - Superseded by A.__c6cf891f7d",
+        "RMI_Control_of_Ships_in_an_Emergency__8b2b0d20b6"
+      ]
+    },
+    {
+      "id": "RP-04",
+      "split": "DEV",
+      "language": "en",
+      "topic": "ISM",
+      "needleChunks": 63,
+      "strict": false,
+      "hit": false,
+      "hitMarker": null,
+      "firstRank": 8,
+      "shownTitles": [
+        "Norveç NMA ISM Güvenlik Yönetim Sistemi Yönetmeliği No 1191__864676df72",
+        "ClassNK_Revised_ISM_Code_2015__d2b78294c3",
+        "Isle of Man - Merchant Shipping ISM Code Regulations SD421-98 Consolidat__567db5f43b",
+        "Norveç NMA ISM Güvenlik Yönetim Sistemi Yönetmeliği No 1191__864676df72",
+        "German Flag - ISM Code English__0d2383acf1",
+        "German Flag - ISM Code English__0d2383acf1"
+      ]
+    },
+    {
+      "id": "RP-05",
+      "split": "DEV",
+      "language": "en",
+      "topic": "ISM",
+      "needleChunks": 45,
+      "strict": false,
+      "hit": true,
+      "hitMarker": "S3",
+      "firstRank": 3,
+      "shownTitles": [
+        "ClassNK_Rules_Safety_Management_Systems_2026-06__7d83767fb2",
+        "ClassNK_Rules_Safety_Management_Systems_2026-06__7d83767fb2",
+        "ClassNK_Rules_Safety_Management_Systems_2026-06__7d83767fb2",
+        "ClassNK_Rules_Safety_Management_Systems_2026-06__7d83767fb2",
+        "IMO MSC-MEPC.7 Circ.8 - Operational Implementation of ISM Code by Compan__2e1f8bb217",
+        "IMO MSC-MEPC.7 Circ.5 - Operational Implementation of ISM Code by Compan__9674a1225d"
+      ]
+    },
+    {
+      "id": "RP-06",
+      "split": "TEST",
+      "language": "en",
+      "topic": "ISPS",
+      "needleChunks": 5,
+      "strict": true,
+      "hit": false,
+      "hitMarker": null,
+      "firstRank": 56,
+      "shownTitles": [
+        "IMO MSC Circ.1194 - Effective Implementation of SOLAS XI-2 and ISPS Code__279ea677c4",
+        "IMO MSC Circ.1193 - Administration and Ship Security Voluntary Self-Asse__3c96218120",
+        "UK DfT - Cyber Security Code of Practice for Ships - Updated 2023__69811bb570",
+        "IMO MSC.1 Circ 1342 - Shore Leave and Access to Ships__ea2cc0eaf7",
+        "IMO MSC Circ 1111 - SOLAS XI-2 and ISPS Implementation Guidance__c4e736806a",
+        "UK DfT - Cyber Security Code of Practice for Ships - Updated 2023__69811bb570"
+      ]
+    },
+    {
+      "id": "RP-07",
+      "split": "DEV",
+      "language": "en",
+      "topic": "ISPS",
+      "needleChunks": 1,
+      "strict": true,
+      "hit": false,
+      "hitMarker": null,
+      "firstRank": null,
+      "shownTitles": [
+        "IMO MSC Circ.1193 - Administration and Ship Security Voluntary Self-Asse__3c96218120",
+        "IMO MSC.1 Circ.1525 - Development of National Maritime Security Legislat__2c813d1849",
+        "IMO MSC Circ.1193 - Administration and Ship Security Voluntary Self-Asse__3c96218120",
+        "RMI_ISPS_Code_Requirements__5beb19e748",
+        "IMO MSC Circ.1192 - Port Facility Security Voluntary Self-Assessment Too__caf43ded85",
+        "IMO MSC Circ.1192 - Port Facility Security Voluntary Self-Assessment Too__caf43ded85"
+      ]
+    },
+    {
+      "id": "RP-08",
+      "split": "DEV",
+      "language": "en",
+      "topic": "ISPS",
+      "needleChunks": 2,
+      "strict": true,
+      "hit": true,
+      "hitMarker": "S1",
+      "firstRank": 1,
+      "shownTitles": [
+        "ClassNK_ISPS_Code_Part_A__a7b648e558",
+        "ClassNK_ISPS_Code_Part_A__a7b648e558",
+        "IMO MSC Circ.1192 - Port Facility Security Voluntary Self-Assessment Too__caf43ded85",
+        "RMI_ISPS_Code_Requirements__5beb19e748",
+        "IMO MSC Circ 1111 - SOLAS XI-2 and ISPS Implementation Guidance__c4e736806a",
+        "IMO MSC.1 Circ.1283 - Security of Non-SOLAS Vessels__a4994e436b"
+      ]
+    },
+    {
+      "id": "RP-09",
+      "split": "TEST",
+      "language": "en",
+      "topic": "ISPS",
+      "needleChunks": 3,
+      "strict": true,
+      "hit": true,
+      "hitMarker": "S2",
+      "firstRank": 2,
+      "shownTitles": [
+        "IMO MSC.1 Circ.1525 - Development of National Maritime Security Legislat__2c813d1849",
+        "IMO MSC.1 Circ.1525 - Development of National Maritime Security Legislat__2c813d1849",
+        "HK_2024_IMDG_ISPS_Dangerous_Goods_Security__439cfb1633",
+        "IMO MSC.1 Circ.1525 - Development of National Maritime Security Legislat__2c813d1849",
+        "ClassNK_Rules_Ship_Security_Management_Systems_2026-06__8dea2cc9b6",
+        "IMO MSC.1 Circ.1525 - Development of National Maritime Security Legislat__2c813d1849"
+      ]
+    },
+    {
+      "id": "RP-10",
+      "split": "DEV",
+      "language": "en",
+      "topic": "ISPS",
+      "needleChunks": 86,
+      "strict": false,
+      "hit": true,
+      "hitMarker": "S1",
+      "firstRank": 1,
+      "shownTitles": [
+        "IMO MSC Circ.1155 - Ship Security Alert System Testing and Message Prior__fe7c847432",
+        "IMO MSC Circ.1072 - Guidance on Provision of Ship Security Alert System__573fe0b83a",
+        "IMO MSC Circ.1072 - Guidance on Provision of Ship Security Alert System__573fe0b83a",
+        "Kıbrıs Sirküler 35-2024 Deniz Güvenliği ve ISPS Birleştirilmiş Talimatla__402793bb5d",
+        "IMO MSC Circ.1155 - Ship Security Alert System Testing and Message Prior__fe7c847432",
+        "IMO MSC.147(77) - Revised Performance Standards for Ship Security Alert __276b3c0e64"
+      ]
+    },
+    {
+      "id": "RP-11",
+      "split": "DEV",
+      "language": "en",
+      "topic": "MLC",
+      "needleChunks": 12,
+      "strict": true,
+      "hit": true,
+      "hitMarker": "S5",
+      "firstRank": 5,
+      "shownTitles": [
+        "ILO - Maritime Labour Convention 2006 - 2022 Amendments Consolidated__bc444a84c1",
+        "ILO - Maritime Labour Convention 2006 - 2022 Amendments Consolidated__bc444a84c1",
+        "UK Treaty Series - Maritime Labour Convention 2006__c978616f1d",
+        "ILO_Compendium_Maritime_Labour_Instruments_Fifth_Revised_Edition_2026__77baf71cf8",
+        "ClassNK_Rules_Maritime_Labour_Systems_2026-06__8310970ad1",
+        "UK Treaty Series - Maritime Labour Convention 2006__c978616f1d"
+      ]
+    },
+    {
+      "id": "RP-12",
+      "split": "TEST",
+      "language": "en",
+      "topic": "MLC",
+      "needleChunks": 27,
+      "strict": false,
+      "hit": true,
+      "hitMarker": "S5",
+      "firstRank": 5,
+      "shownTitles": [
+        "ANA KAYNAK - ILO MLC FAQ Sixth Edition 2026 - CC BY 4.0__dcf78206db",
+        "ANA KAYNAK - ILO MLC FAQ Sixth Edition 2026 - CC BY 4.0__dcf78206db",
+        "TARIHSEL - ILO MLC FAQ Fifth Edition 2019__c7813749c0",
+        "ILO MLC Flag State Inspection Guidelines - Revised__c562aaf9dd",
+        "RMI_MLC_Flag_State_Inspection_Guidelines__0524538551",
+        "ILO_Compendium_Maritime_Labour_Instruments_Fifth_Revised_Edition_2026__77baf71cf8"
+      ]
+    },
+    {
+      "id": "RP-13",
+      "split": "DEV",
+      "language": "en",
+      "topic": "MLC",
+      "needleChunks": 18,
+      "strict": true,
+      "hit": true,
+      "hitMarker": "S4",
+      "firstRank": 4,
+      "shownTitles": [
+        "RMI_Seafarer_Employment_Agreements_Guidance__eca4e73a1d",
+        "RMI_Seafarer_Employment_Agreements_Guidance__eca4e73a1d",
+        "RMI_Seafarer_Employment_Agreements_Guidance__eca4e73a1d",
+        "RMI_Seafarer_Employment_Agreements_Guidance__eca4e73a1d",
+        "UK MCA MSN 1848 Amendment 4 Annex 4 - DMLC Part I Example__91d9c84a04",
+        "ILO_IMO_Guidelines_Seafarer_Abandonment_Cases_2023__443be91204"
+      ]
+    },
+    {
+      "id": "RP-14",
+      "split": "DEV",
+      "language": "en",
+      "topic": "MLC",
+      "needleChunks": 39,
+      "strict": false,
+      "hit": true,
+      "hitMarker": "S2",
+      "firstRank": 2,
+      "shownTitles": [
+        "Bermuda Bayrağı Rehberi MG03 Mart 2025__29ccaab969",
+        "ILO-IMO - Guidelines on Abandonment of Seafarers__dcbf09011c",
+        "ILO_IMO_Guidelines_Seafarer_Abandonment_Cases_2023__443be91204",
+        "ILO-IMO - Guidelines on Abandonment of Seafarers__dcbf09011c",
+        "ILO_IMO_Guidelines_Seafarer_Abandonment_Cases_2023__443be91204",
+        "ANA KAYNAK - ILO MLC FAQ Sixth Edition 2026 - CC BY 4.0__dcf78206db"
+      ]
+    },
+    {
+      "id": "RP-15",
+      "split": "TEST",
+      "language": "en",
+      "topic": "MLC",
+      "needleChunks": 18,
+      "strict": true,
+      "hit": true,
+      "hitMarker": "S1",
+      "firstRank": 1,
+      "shownTitles": [
+        "ILO_IMO_Guidelines_Medical_Examinations_of_Seafarers_2011__4341f9dcd2",
+        "ILO_IMO_Guidelines_Medical_Examinations_of_Seafarers_2011__4341f9dcd2",
+        "ILO_IMO_Guidelines_Medical_Examinations_of_Seafarers_2011__4341f9dcd2",
+        "ILO_IMO_Guidelines_Medical_Examinations_of_Seafarers_2011__4341f9dcd2",
+        "İsveç DMLC Part I İngilizce Sürüm 13 - 2025__377f59d4d4",
+        "UK MCA MSN 1848 Amendment 4 Annex 4 - DMLC Part I Example__91d9c84a04"
+      ]
+    },
+    {
+      "id": "RP-16",
+      "split": "DEV",
+      "language": "en",
+      "topic": "SOLAS",
+      "needleChunks": 116,
+      "strict": false,
+      "hit": true,
+      "hitMarker": "S1",
+      "firstRank": 1,
+      "shownTitles": [
+        "HK_2026_Code_of_Safe_Working_Practices_Merchant_Seafarers__484fe0aaab",
+        "Code of Safe Working Practices for Merchant Seafarers 2024 - MCA__c2f75ea14b",
+        "COSWP 2026 - Code of Safe Working Practices - BILGI AMACLI__0522415581",
+        "IMO MSC.1-Circ.1578 - Guidelines on Safety During Abandon Ship Drills__f088889dab",
+        "UK_MCA_MSIS27_11_R10-22_Drills_Man_Overboard_and_Musters__2247800434",
+        "UK_MCA_MSIS27_11_R10-22_Drills_Man_Overboard_and_Musters__2247800434"
+      ]
+    },
+    {
+      "id": "RP-17",
+      "split": "DEV",
+      "language": "en",
+      "topic": "SOLAS",
+      "needleChunks": 174,
+      "strict": false,
+      "hit": true,
+      "hitMarker": "S1",
+      "firstRank": 1,
+      "shownTitles": [
+        "Fire-safety-on-ships__998c02424c",
+        "UK MCA MSN 1902 - SOLAS Chapter II-2 Fire Protection Requirements__eba89f3e9f",
+        "UK MCA MSN 1902 - SOLAS Chapter II-2 Fire Protection Requirements__eba89f3e9f",
+        "SOLAS II-2 Regulation 15 - Fire Training Manual and Drills__7ee8ab744d",
+        "IMO FAL 41-17 Annex 7 - Certificates and Documents Required On Board__f41c8b96bc",
+        "German Flag - IMO Procedures for Port State Control 2023__ce7ed60a31"
+      ]
+    },
+    {
+      "id": "RP-18",
+      "split": "TEST",
+      "language": "en",
+      "topic": "SOLAS",
+      "needleChunks": 282,
+      "strict": false,
+      "hit": true,
+      "hitMarker": "S1",
+      "firstRank": 1,
+      "shownTitles": [
+        "UK_MCA_MSIS27_11_R10-22_Drills_Man_Overboard_and_Musters__2247800434",
+        "IMO - Port State Control Procedures including ISM Guidelines__15ed8b2a19",
+        "German Flag - IMO Procedures for Port State Control 2023__ce7ed60a31",
+        "ClassNK_Mobile_Offshore_Drilling_Units_Part_P_2026-06__e816db459e",
+        "REG_Yacht_Code_2024_Part_B_Passenger_Yachts__a62d5ed357",
+        "German Flag - IMO Procedures for Port State Control 2023__ce7ed60a31"
+      ]
+    },
+    {
+      "id": "RP-19",
+      "split": "DEV",
+      "language": "en",
+      "topic": "COLREG",
+      "needleChunks": 7,
+      "strict": true,
+      "hit": true,
+      "hitMarker": "S1",
+      "firstRank": 1,
+      "shownTitles": [
+        "Navigation Rules and Regulations Handbook - USCG__6f44b2834e",
+        "USCG_Navigation_Rules_Handbook__b6504342bb",
+        "Navigation Rules and Regulations Handbook - USCG__6f44b2834e",
+        "Navigation Rules and Regulations Handbook - USCG__6f44b2834e",
+        "MCA Kopru Seyir Emniyeti ve Catma Riski 2025__98ef267269",
+        "Navigation Rules and Regulations Handbook - USCG__6f44b2834e"
+      ]
+    },
+    {
+      "id": "RP-20",
+      "split": "DEV",
+      "language": "en",
+      "topic": "COLREG",
+      "needleChunks": 15,
+      "strict": true,
+      "hit": true,
+      "hitMarker": "S1",
+      "firstRank": 1,
+      "shownTitles": [
+        "UK_MCA_MGN315_Keeping_a_Safe_Navigational_Watch_Merchant_Vessels__3d7defdb3b",
+        "USCG RULES OF THE ROAD GOSS iNGiLiZCE HAZIRLIK 8136 SORU CEVAP__63ebc165d1",
+        "USCG RULES OF THE ROAD GOSS iNGiLiZCE HAZIRLIK 8136 SORU CEVAP__63ebc165d1",
+        "UK_MCA_MGN315_Keeping_a_Safe_Navigational_Watch_Merchant_Vessels__3d7defdb3b",
+        "UK_MCA_MGN677_High_Speed_Craft_Regulations_2022_Guidance__f97845b31a",
+        "USCG RULES OF THE ROAD GOSS iNGiLiZCE HAZIRLIK 8136 SORU CEVAP__63ebc165d1"
+      ]
+    },
+    {
+      "id": "RP-21",
+      "split": "TEST",
+      "language": "en",
+      "topic": "COLREG",
+      "needleChunks": 151,
+      "strict": false,
+      "hit": true,
+      "hitMarker": "S1",
+      "firstRank": 1,
+      "shownTitles": [
+        "USCG RULES OF THE ROAD GOSS iNGiLiZCE HAZIRLIK 8136 SORU CEVAP__63ebc165d1",
+        "USCG RULES OF THE ROAD GOSS iNGiLiZCE HAZIRLIK 8136 SORU CEVAP__63ebc165d1",
+        "USCG RULES OF THE ROAD GOSS iNGiLiZCE HAZIRLIK 8136 SORU CEVAP__63ebc165d1",
+        "Navigation Rules and Regulations Handbook - USCG__6f44b2834e",
+        "USCG RULES OF THE ROAD GOSS iNGiLiZCE HAZIRLIK 8136 SORU CEVAP__63ebc165d1",
+        "USCG_Navigation_Rules_Handbook__b6504342bb"
+      ]
+    },
+    {
+      "id": "RP-22",
+      "split": "DEV",
+      "language": "en",
+      "topic": "COLREG",
+      "needleChunks": 143,
+      "strict": false,
+      "hit": true,
+      "hitMarker": "S4",
+      "firstRank": 4,
+      "shownTitles": [
+        "USCG RULES OF THE ROAD GOSS iNGiLiZCE HAZIRLIK 8136 SORU CEVAP__63ebc165d1",
+        "USCG RULES OF THE ROAD GOSS iNGiLiZCE HAZIRLIK 8136 SORU CEVAP__63ebc165d1",
+        "USCG RULES OF THE ROAD GOSS iNGiLiZCE HAZIRLIK 8136 SORU CEVAP__63ebc165d1",
+        "USCG RULES OF THE ROAD GOSS iNGiLiZCE HAZIRLIK 8136 SORU CEVAP__63ebc165d1",
+        "USCG-MAKİNA 6300 SORU CEVAP GOSS HAZIRLIK__1fce1cc791",
+        "ingilizce yeni sorular 2017__2c511995ce"
+      ]
+    },
+    {
+      "id": "RP-23",
+      "split": "DEV",
+      "language": "en",
+      "topic": "MARPOL",
+      "needleChunks": 207,
+      "strict": false,
+      "hit": true,
+      "hitMarker": "S1",
+      "firstRank": 1,
+      "shownTitles": [
+        "RMI_Oil_Record_Book_Guidelines__626e22b69b",
+        "RMI_Oil_Record_Book_Guidelines__626e22b69b",
+        "AMSA - Oil Record Book Part I - Machinery Space Operations__cd196e2c96",
+        "AMSA - Oil Record Book Part II - Cargo Ballast Operations__61c3b85e3f",
+        "AMSA - Oil Record Book Part II - Cargo Ballast Operations__61c3b85e3f",
+        "AMSA - Oil Record Book Part II - Cargo Ballast Operations__61c3b85e3f"
+      ]
+    },
+    {
+      "id": "RP-24",
+      "split": "TEST",
+      "language": "en",
+      "topic": "MARPOL",
+      "needleChunks": 148,
+      "strict": false,
+      "hit": true,
+      "hitMarker": "S4",
+      "firstRank": 4,
+      "shownTitles": [
+        "UK_MCA_MSIS3_Part6_Bilge_Pumping_Arrangements_Historical__f9a7f7812f",
+        "USCG-MAKİNA 6300 SORU CEVAP GOSS HAZIRLIK__1fce1cc791",
+        "05 - RMRS Gemilerden Kirliligin Onlenmesi Kurallari__02075ce2c2",
+        "IMO_MEPC.107(49)_15ppm_Bilge_Separator_and_Bilge_Alarm_Guidelines__9481f4971d",
+        "makina Goss Denizcilik İngilizcesi 489 soru__9e11bbe5ba",
+        "makina Goss Denizcilik İngilizcesi 489 soru__9e11bbe5ba"
+      ]
+    },
+    {
+      "id": "RP-25",
+      "split": "DEV",
+      "language": "en",
+      "topic": "MARPOL",
+      "needleChunks": 111,
+      "strict": false,
+      "hit": true,
+      "hitMarker": "S1",
+      "firstRank": 1,
+      "shownTitles": [
+        "AMSA - Garbage Record Book Part I and II - 2024__2f54572fde",
+        "AMSA - Garbage Record Book Part I and II - 2024__2f54572fde",
+        "AMSA - Garbage Record Book Part I and II - 2024__2f54572fde",
+        "AMSA - Garbage Record Book Part I and II - 2024__2f54572fde",
+        "IMO MEPC.312(74) - Guidelines for Electronic Record Books under MARPOL__82dafa9dc2",
+        "IMO MEPSEAS MARPOL Annex V Training Package__cbaba950b9"
+      ]
+    },
+    {
+      "id": "RP-26",
+      "split": "DEV",
+      "language": "en",
+      "topic": "MARPOL",
+      "needleChunks": 89,
+      "strict": false,
+      "hit": true,
+      "hitMarker": "S1",
+      "firstRank": 1,
+      "shownTitles": [
+        "IMO_MEPC.85(44)_SOPEP_SMPEP_Marine_Pollution_Emergency_Plans__5c9b27e396",
+        "Malta - Commercial Yacht Code CYC 2025__bfe3ad08ab",
+        "The_Ultimate_Guide_to_Personal_Safety_on_Ships (1)__bf35e840a0",
+        "01 - Bahamalar Ulusal Denizcilik Gereklilikleri 2025__9723ceaec7",
+        "Kıbrıs Sirküler 13-2026 ISM Revize Rehber ve Şirket Talimatları__5db46fbd4e",
+        "German Flag - IMO Procedures for Port State Control 2023__ce7ed60a31"
+      ]
+    },
+    {
+      "id": "RP-27",
+      "split": "TEST",
+      "language": "en",
+      "topic": "STCW",
+      "needleChunks": 3,
+      "strict": true,
+      "hit": false,
+      "hitMarker": null,
+      "firstRank": 41,
+      "shownTitles": [
+        "UK MCA MSN 1877 Amendment 2 - Hours of Work Rest and Record Forms__6806ab59fa",
+        "IMO_Guidelines_on_Fatigue_MSC1_Circ1598_2019__b23d5a63b4",
+        "UK_MCA_MGN315_Keeping_a_Safe_Navigational_Watch_Merchant_Vessels__3d7defdb3b",
+        "IMO - The STCW Convention - Official Overview__cf3933d5d1",
+        "Belçika BMI Kaptan Rehberi 2025__5fd3422946",
+        "UK MCA MSN 1877 Amendment 2 - Hours of Work Rest and Record Forms__6806ab59fa"
+      ]
+    },
+    {
+      "id": "RP-28",
+      "split": "DEV",
+      "language": "en",
+      "topic": "BWM",
+      "needleChunks": 40,
+      "strict": false,
+      "hit": true,
+      "hitMarker": "S1",
+      "firstRank": 1,
+      "shownTitles": [
+        "08 - IRS Ballast Water Management Uygulama Kitapcigi__501b1ec76d",
+        "ClassNK_Ballast_Water_Management_Installations_2026-06__2832771f69",
+        "08 - IRS Ballast Water Management Uygulama Kitapcigi__501b1ec76d",
+        "Ballast-Water-Record-Keeping-1__28fa7cb8b1",
+        "IMO MEPC.409(84) - 2026 Ballast Water Management Plan G4__5690562295",
+        "ClassNK_Ballast_Water_Management_Installations_2026-06__2832771f69"
+      ]
+    },
+    {
+      "id": "RP-29",
+      "split": "DEV",
+      "language": "tr",
+      "topic": "ISPS",
+      "needleChunks": 6,
+      "strict": true,
+      "hit": true,
+      "hitMarker": "S1",
+      "firstRank": 1,
+      "shownTitles": [
+        "Isps cikmis sorular__477329bb07",
+        "UAB_2025_Gemiadamlari_Egitim_ve_Sinav_Yonergesi_Ekleri__0409189961",
+        "hukuk yeni sorular 22.08.2017 AYKUT BERBEROGLU__c48fd6d1bc",
+        "Isps cikmis sorular__477329bb07",
+        "hukuk yeni sorular 22.08.2017 AYKUT BERBEROGLU__c48fd6d1bc",
+        "Sinbad Management Engine - Rakip Analizi ve Yazilim Gereksinimleri__b2f860b536"
+      ]
+    },
+    {
+      "id": "RP-30",
+      "split": "TEST",
+      "language": "tr",
+      "topic": "STCW",
+      "needleChunks": 33,
+      "strict": false,
+      "hit": true,
+      "hitMarker": "S3",
+      "firstRank": 3,
+      "shownTitles": [
+        "STCW PERSONEL GUVENLIGI VE SOSYAL SORUMLULUKLAR SORULAR__6ec5223dcc",
+        "GOSS 2015 Vardiya - 220 Soru ve Cevap__0648b2ad75",
+        "Güncel Hukuk Sorular__81011bf00a",
+        "Güncel Hukuk Sorular__81011bf00a",
+        "Güncel Hukuk Sorular__81011bf00a",
+        "Güncel Hukuk Sorular__81011bf00a"
+      ]
+    },
+    {
+      "id": "RP-31",
+      "split": "DEV",
+      "language": "tr",
+      "topic": "COLREG",
+      "needleChunks": 45,
+      "strict": false,
+      "hit": true,
+      "hitMarker": "S1",
+      "firstRank": 1,
+      "shownTitles": [
+        "GOSS 2015 Vardiya - 220 Soru ve Cevap__0648b2ad75",
+        "GOSS 2015 Vardiya - 220 Soru ve Cevap__0648b2ad75",
+        "2COLREG ve VARDIYA STANDARTLARI SINAVI V__34cc50c38a",
+        "BSH_GMDSS_Seyir_Funk_COLREG_Donanim_Yerlesim_ve_Kontrol_Rehberi__e9841f4a59",
+        "Japan_Institute_Navigation_COLREG_E_Learning_in_Maritime_Education__4d3ca82671",
+        "colreg__5405b54a46"
+      ]
+    },
+    {
+      "id": "RP-32",
+      "split": "DEV",
+      "language": "tr",
+      "topic": "COLREG",
+      "needleChunks": 36,
+      "strict": false,
+      "hit": true,
+      "hitMarker": "S1",
+      "firstRank": 1,
+      "shownTitles": [
+        "vardiya standartları 05.10.2026__b742f1ed5c",
+        "Yat-Kaptani eski sorular__e20edc9493",
+        "colreg__5405b54a46",
+        "colreg__5405b54a46",
+        "VARDİYA WORD__b2ef99441b",
+        "VARD-YA STAND__de0af13cd5"
+      ]
+    },
+    {
+      "id": "RP-33",
+      "split": "TEST",
+      "language": "tr",
+      "topic": "MARPOL",
+      "needleChunks": 83,
+      "strict": false,
+      "hit": true,
+      "hitMarker": "S2",
+      "firstRank": 2,
+      "shownTitles": [
+        "MEB Kitap_PERSONEL GÜVENLİĞİ VE SOSYAL SORUMLULUK 2011 (1)__7f9a714bac",
+        "2COLREG ve VARDIYA STANDARTLARI SINAVI V__34cc50c38a",
+        "MEB Kitap_PERSONEL GÜVENLİĞİ VE SOSYAL SORUMLULUK 2011 (1)__7f9a714bac",
+        "GOSS 2015 Deniz Hukuku - 300 Soru__157145638c",
+        "MEB Kitap_PERSONEL GÜVENLİĞİ VE SOSYAL SORUMLULUK 2011 (1)__7f9a714bac",
+        "MEB Kitap_PERSONEL GÜVENLİĞİ VE SOSYAL SORUMLULUK 2011 (1)__7f9a714bac"
+      ]
+    },
+    {
+      "id": "RP-34",
+      "split": "DEV",
+      "language": "tr",
+      "topic": "SOLAS",
+      "needleChunks": 60,
+      "strict": false,
+      "hit": true,
+      "hitMarker": "S1",
+      "firstRank": 1,
+      "shownTitles": [
+        "MEB Kitap_PERSONEL GÜVENLİĞİ VE SOSYAL SORUMLULUK 2011 (1)__7f9a714bac",
+        "GASM STCW Yenileme Sınava Hazırlık Soruları__e92fe71178",
+        "MEB Kitap_CAN KURTARMA ARAÇLARINI KULLANMADA YETERLİLİK 2011__910c26c71d",
+        "GASM STCW Yenileme Sınava Hazırlık Soruları__e92fe71178",
+        "STCW Yenileme Sınava Hazırlık Soruları-4 denizcilikfakultesi.com dan__654240c399",
+        "MEB Kitap_DENİZDE KİŞİSEL CAN KURTARMA TEKNİKLERİ 2011__6c897ff0ba"
+      ]
+    },
+    {
+      "id": "RP-35",
+      "split": "DEV",
+      "language": "tr",
+      "topic": "ISM",
+      "needleChunks": 47,
+      "strict": false,
+      "hit": false,
+      "hitMarker": null,
+      "firstRank": 7,
+      "shownTitles": [
+        "Güncel Hukuk Sorular__81011bf00a",
+        "Güncel Hukuk Sorular__81011bf00a",
+        "GOSS 2015 Deniz Hukuku - 300 Soru__157145638c",
+        "Güncel Hukuk Sorular__81011bf00a",
+        "02 - MN046 ISM Kod DOC SMC ve Denetim Gereklilikleri__f61b82c0fb",
+        "Cebelitarık SGN-024 ISM Kod Değişiklikleri__1af6c43d72"
+      ]
+    },
+    {
+      "id": "RP-36",
+      "split": "TEST",
+      "language": "tr",
+      "topic": "ISM",
+      "needleChunks": 16,
+      "strict": true,
+      "hit": false,
+      "hitMarker": null,
+      "firstRank": null,
+      "shownTitles": [
+        "Burak Kargın__cb536152fd",
+        "Güncel Hukuk Sorular__81011bf00a",
+        "Güncel Hukuk Sorular__81011bf00a",
+        "Güncel Hukuk Sorular__81011bf00a",
+        "GOSS 2015 Deniz Hukuku - 300 Soru__157145638c",
+        "STCW YENİLEME SORU VE CEVAPLARI__b0b10a0156"
+      ]
+    }
+  ]
+}

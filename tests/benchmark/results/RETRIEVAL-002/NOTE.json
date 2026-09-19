@@ -1,0 +1,7 @@
+{
+  "run": "RETRIEVAL-002",
+  "status": "REJECTED CANDIDATE - NOT MERGED",
+  "candidate": "sinbad-lexical-retriever/0-v2: wider stop list and English plural folding, document title terms counted for each chunk (weight 0.5), phrase bonus for adjacent query terms (weight 0.5, top 300), at most 4 passages per document instead of 2; weights tuned on the 24 DEV probes only",
+  "verdict": "DEV 20 -> 21 of 24, but the held-out TEST probes did not move (9 of 12, the same three misses), MRR went from 0.662 to 0.656 and the Turkish probes from 7 to 6 of 8. No evidence of a gain that generalises, so the ranking change was not shipped; the repository keeps retriever 0-v1. This file is kept so that the negative result is on record.",
+  "whatItSuggests": "The misses are vocabulary mismatch between how a user asks (\"what must the plan contain\") and how the source is worded (\"the plan shall address, at least\"); counting words differently does not bridge that. Candidates that do: restating the question in source wording with a small local model before the lexical search, or a semantic re-ranker. Both need a model and are measured with the same probes before anything is adopted."
+}
