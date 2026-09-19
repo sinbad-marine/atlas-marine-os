@@ -19,12 +19,13 @@ const claimLabels=require('../authority/claim-labels');
 const sentinel=require('../sentinel/sentinel-v0');
 const gatekeeper=require('../gatekeeper/gatekeeper-v0');
 
-const VERSION='sinbad-disclaimer-screen/0-v1';
+// 0-v2 (Phase 4.6): 'do/does not answer' and its Turkish forms join the ignorance markers - the phrase the grounded prompt asks for.
+const VERSION='sinbad-disclaimer-screen/0-v2';
 const MAX_LEAD_IN_WORDS=12;
 const EDGE='(?<![\\p{L}\\p{N}])';const END='(?![\\p{L}\\p{N}])';
 // Verbs of knowing, finding and telling: what one can fail to do about a fact without asserting it.
 const KNOW='(?:determine|confirm|verify|provide|find|locate|answer|tell|say|give|quote|access|know|identify|establish)';
-const IGNORANCE=new RegExp(`${EDGE}(?:(?:cannot|can't|can not|could not|couldn't|am unable to|are unable to|is unable to|unable to|am not able to|not able to) (?:\\w+ly )?${KNOW}|not possible to (?:\\w+ly )?${KNOW}|(?:do|does|did) not (?:\\w+ly )?(?:have access|relate|contain|mention|include|specify|state|indicate|provide|cover|address|say)|(?:is|are|was|were) not (?:\\w+ly )?(?:stated|mentioned|provided|available|specified|included|documented|known|given)|no (?:information|mention|record|reference|data|details?|indication) (?:is |are |was |were )?(?:available|provided|given|found|about|on|regarding)|(?:you|one) would need to (?:check|consult|access|verify|refer)|none of the (?:provided |given |available )?(?:excerpts|sources|documents|passages)|bilmiyorum|bilgim yok|erişimim yok|belirtilmemiş|belirtilmiyor|yer almıyor|yer almamaktadır|teyit edemem|doğrulayamam|söyleyemem|belirleyemem)${END}`,'iu');
+const IGNORANCE=new RegExp(`${EDGE}(?:(?:cannot|can't|can not|could not|couldn't|am unable to|are unable to|is unable to|unable to|am not able to|not able to) (?:\\w+ly )?${KNOW}|not possible to (?:\\w+ly )?${KNOW}|(?:do|does|did) not (?:\\w+ly )?(?:have access|relate|contain|mention|include|specify|state|indicate|provide|cover|address|say|answer)|(?:is|are|was|were) not (?:\\w+ly )?(?:stated|mentioned|provided|available|specified|included|documented|known|given)|no (?:information|mention|record|reference|data|details?|indication) (?:is |are |was |were )?(?:available|provided|given|found|about|on|regarding)|(?:you|one) would need to (?:check|consult|access|verify|refer)|none of the (?:provided |given |available )?(?:excerpts|sources|documents|passages)|bilmiyorum|bilgim yok|erişimim yok|belirtilmemiş|belirtilmiyor|yer almıyor|yer almamaktadır|teyit edemem|doğrulayamam|söyleyemem|belirleyemem|yanıtlamıyor|cevaplamıyor|yanıt vermiyor|cevap vermiyor|yanıt içermiyor)${END}`,'iu');
 const CONTRAST=new RegExp(`${EDGE}(?:but|however|yet|although|though|whereas|while|nevertheless|still|ancak|fakat|ama|oysa|lakin|yine de)${END}`,'iu');
 const CONNECTIVE=new RegExp(`${EDGE}(?:and|or|so|then|ve|veya|sonra)${END}`,'iu');
 const ADDITIVE=new RegExp(`${EDGE}(?:and|so|then|plus|also|ve|sonra|ayrıca)${END}`,'iu');
