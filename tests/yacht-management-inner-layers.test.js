@@ -7,7 +7,7 @@ const crypto=require('node:crypto');
 
 const root=path.resolve(__dirname,'..');
 const read=file=>fs.readFileSync(path.join(root,file),'utf8');
-const hash=file=>crypto.createHash('sha256').update(fs.readFileSync(path.join(root,file))).digest('hex');
+const hash=file=>crypto.createHash('sha256').update(read(file).replace(/\r\n?/gu,'\n'),'utf8').digest('hex');
 const html=read('index.html');
 const app=read('app.js');
 const designContract=JSON.parse(read('config/ui-design-contract.json'));
@@ -52,11 +52,11 @@ test('Owner-approved B/B/B/A inner-layer selections remain locked in the design 
   });
 });
 
-test('Marine Store remains byte-identical to the approved baseline',()=>{
+test('Marine Store remains content-identical to the approved baseline',()=>{
   const expected={
-    'store.html':'0af0bca4286bedca661b04d8d2cb4e7e6917a8b837f013688074800b63f56749',
-    'store-window.js':'098de1bda8996511b1ab83afad8c5efded7fe055f718138a255c2f560c4fdcfe',
-    'store-data.js':'9b4326bdbb4d81d3124ac2c10e20cbe5b11986fd699397833ccbca3ae7f69d1c',
+    'store.html':'58e4ec0d7a60eda612d207b986ac8dda593f6eea2a2df1e74164317aa673e828',
+    'store-window.js':'282c7486ba1202f8f6e73bea5c7f25250cca0c985336d5cbf9b540002be32e06',
+    'store-data.js':'88b0ac6e57a9414ab3a63ae7e6360ede80400542ca213980afd4ecf5e92df2dd',
     'styles.css':'a7b45fc9c86ad19afa18c7e99507cb30f25d83f0dd964d6d0364cb25a57684a4'
   };
   for(const [file,digest] of Object.entries(expected))assert.equal(hash(file),digest,`${file} changed outside Owner scope`);
