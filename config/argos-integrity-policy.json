@@ -219,7 +219,7 @@
     },
     {
       "path": "academy-classroom-window.js",
-      "sha256": "2661c4ac5d9c8b2cd3ee1a734aedb50df07052c546759f26ffb1f65e284951e5",
+      "sha256": "f4de8e2e1415d19f517e262992b61fd7af9ba8ea4e800cb7bf5ffabd4da11893",
       "kind": "SOURCE"
     },
     {
@@ -239,7 +239,7 @@
     },
     {
       "path": "config/ui-design-contract.json",
-      "sha256": "80ac72d7be80a4aa23f21f21efa32108ad28df51446aef17a5f431d1f133feb3",
+      "sha256": "f2ab98febaea1b23756ae100d667a76456c36b419b2f6ca97c9d6a66e5f2d84b",
       "kind": "CONFIG"
     },
     {
@@ -470,7 +470,7 @@
     {
       "path": "tests/browser/surface-smoke.spec.js",
       "kind": "TEST",
-      "sha256": "c87add70e73dea272630bf902be393ad05168f726b40cfdcda4244a20f926d14"
+      "sha256": "9a7f70db9326f5dcd64a4f5a51e5053f70dc8eb0ef61f514a1b7514a513d8082"
     },
     {
       "path": "tools/argos-ci-retention.ps1",
