@@ -32,10 +32,12 @@ function build(documents){
 }
 const slug=text=>String(text).normalize('NFKD').replace(/[^A-Za-z0-9]+/gu,'-').replace(/^-+|-+$/gu,'').slice(0,40)||'doc';
 
-// search(index, query, limit) -> [{marker, evidenceId, locatorRef, contentHash, title, chunkIndex, score, text}]
-function search(index,query,limit=6){
+// rank(index, query) -> [[chunkId, score]] for every chunk that shares a term with the query, best first. Deterministic
+// order: score, then document and chunk position. search() shows the top of this list; the retrieval evaluation (Phase 4.8)
+// reads it whole. Same scoring as before: adding this function changed no result.
+function rank(index,query){
   if(!index||index.version!==VERSION)throw new TypeError('RETRIEVER_INDEX_INVALID');
-  const terms=[...new Set(tokenize(query))].slice(0,MAX_QUERY_TERMS);const wanted=Math.max(1,Math.min(MAX_PASSAGES,Number.isInteger(limit)?limit:6));
+  const terms=[...new Set(tokenize(query))].slice(0,MAX_QUERY_TERMS);
   const scores=new Map();const N=index.chunks.length;
   for(const term of terms){
     const list=index.postings.get(term);if(!list)continue;
@@ -43,8 +45,11 @@ function search(index,query,limit=6){
     for(let i=0;i<list.length;i+=2){const id=list[i],tf=list[i+1],len=index.chunks[id].length;
       scores.set(id,(scores.get(id)||0)+idf*(tf*(K1+1))/(tf+K1*(1-B+B*len/index.averageLength)));}
   }
-  // Deterministic order: score, then document and chunk position.
-  const ranked=[...scores.entries()].sort((a,b)=>b[1]-a[1]||a[0]-b[0]);
+  return [...scores.entries()].sort((a,b)=>b[1]-a[1]||a[0]-b[0]);
+}
+// search(index, query, limit) -> [{marker, evidenceId, locatorRef, contentHash, title, chunkIndex, score, text}]
+function search(index,query,limit=6){
+  const ranked=rank(index,query);const wanted=Math.max(1,Math.min(MAX_PASSAGES,Number.isInteger(limit)?limit:6));
   const perDocument=new Map();const picked=[];
   for(const [id,score] of ranked){const c=index.chunks[id];const used=perDocument.get(c.docIndex)||0;if(used>=MAX_PER_DOCUMENT)continue;perDocument.set(c.docIndex,used+1);picked.push({c,score});if(picked.length===wanted)break;}
   return picked.map(({c,score},i)=>{
@@ -52,4 +57,4 @@ function search(index,query,limit=6){
     return Object.freeze({marker:`S${i+1}`,evidenceId:`lib.${slug(c.title)}.${contentHash.slice(0,12)}.c${c.chunkIndex}`,locatorRef:`library:${slug(c.title)}:chunk-${c.chunkIndex}`,contentHash,title:c.title,chunkIndex:c.chunkIndex,score:Number(score.toFixed(4)),text:c.text});
   });
 }
-module.exports=Object.freeze({VERSION,MAX_PASSAGES,MAX_PER_DOCUMENT,tokenize,build,search});
+module.exports=Object.freeze({VERSION,MAX_PASSAGES,MAX_PER_DOCUMENT,tokenize,build,rank,search});
