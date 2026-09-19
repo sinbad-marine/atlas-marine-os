@@ -212,7 +212,7 @@
       "limits": "36 probes, one probe = 2.8 points; several needles are topical, strict probes reported separately; TEST has been read once in aggregate; the library is private, so recorded runs are measurement records named by index build time and SHA-256, not rebuilt by CI"
     },
     "phase_4_9_query_expansion": {
-      "status": "MEASURED 2026-09-19 from main 662fb55 under the Owner directive REVISE of 2026-09-19; VERDICT ON THE BLIND SET: NOT ACCEPTED - query expansion does NOT enter the pipeline, nothing is wired; TESTED (query expansion 5, protocol 5, retrieval evaluation 5 under npm test); NOT MERGED (draft PR); OWNER ACCEPTED = NOT RECORDED",
+      "status": "MEASURED 2026-09-19 from main 662fb55 under the Owner directive REVISE of 2026-09-19; VERDICT ON THE BLIND SET: NOT ACCEPTED - query expansion does NOT enter the pipeline, nothing is wired; TESTED (query expansion 5, protocol 6, retrieval evaluation 5 under npm test); MERGED as PR #288 on 2026-09-19T08:21:30Z under the Owner delegation and the directive REVISE (main 0780f17054fb390d3e0ec7d46dd7687eaa02eb37, CI verify green on 962f1bf, squash pinned to that head; the branch codex/project2-phase-4-9-query-expansion is kept so that the preregistration commit ac74417 stays reachable); OWNER ACCEPTED = NOT RECORDED",
       "document": "docs/project2/PHASE_4_9_QUERY_EXPANSION.md",
       "protocol": "probes-v1 TEST split frozen as USED HOLDOUT / historical benchmark (not read in this phase, not selectable on its own); development on the 24 DEV probes only; new BLIND TEST-2 set of 36 probes (27 en, 9 tr, 25 strict) admitted by counting matching chunks only; both tools refuse it without --final and a preregistration; configuration and acceptance criteria committed and pushed as ac74417 (2026-09-19T10:59:03+03:00) before the blind set was read; TEST-2 is a USED HOLDOUT since the final run",
       "files": "sinbad-ai-core/pipeline/query-expansion.js (pure, NOT wired), tools/generate-query-expansions.js (the only tool that calls a model: loopback Ollama, memory floors, unloads only its own model), tools/evaluate-retrieval.js (baseline and candidate side by side, regressions by probe id, re-checks raw model output), tests/benchmark/retrieval/probes-test2-v1.json, tests/benchmark/results/RETRIEVAL-003 (PREREGISTRATION.json, VERDICT.json, DEV and final results, raw expansions)",
@@ -280,5 +280,5 @@
     "enforcement": "tests/baseline-001-freeze.test.js (part of npm test / CI verify) fails if any frozen file changes or the combined totals drift",
     "revision_policy": "immutable; corrections only as separately identified revisions (BASELINE-001-REV-n) with their own provenance; original files recoverable from aee0ad5"
   },
-  "last_verified_timestamp": "2026-09-19T08:09:19Z"
+  "last_verified_timestamp": "2026-09-19T08:22:22Z"
 }
