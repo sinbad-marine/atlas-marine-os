@@ -13,8 +13,11 @@ test('statements of ignorance that only mention risky terms are disclaimers',()=
     'The information provided in the excerpts does not relate to the current HEAD commit hash of the main branch.',
     'I cannot provide the commit hash of the main branch after the merge of PRs #212 to #242 on 2026-09-13, as this information is not available in the provided excerpts.',
     'None of the excerpts explicitly mention a SOURCE-VERIFIED status or a count of MLC 2006 regulations.',
-    'Bu bilgi belirtilmemiş.','Hangi commit ile birleştirildiğini söyleyemem.'
+    'Bu bilgi belirtilmemiş.','Hangi commit ile birleştirildiğini söyleyemem.',
+    'The available sources do not answer which commit merged pull request #248.','Mevcut kaynaklar bu soruyu yanıtlamıyor.'
   ])assert.equal(verdict(text),'SKIP:IGNORANCE_DISCLAIMER',text);
+  // Turkish is verb-final, so a risky term always precedes the marker: such a sentence stays a claim (the safe direction).
+  assert.deepEqual(screen.classify('Mevcut kaynaklar #248 numaralı PR sorusunu yanıtlamıyor.'),{disclaimer:false,reason:'RISKY_BEFORE_MARKER'});
 });
 
 test('guidance with the risky words in the purpose or condition clause is a disclaimer',()=>{
@@ -71,5 +74,5 @@ test('the screen is inert and reads the gate\'s own patterns instead of copying 
   assert.deepEqual([...source.matchAll(/require\('([^']+)'\)/gu)].map(m=>m[1]).sort(),['../authority/claim-labels','../gatekeeper/gatekeeper-v0','../sentinel/sentinel-v0']);
   assert.match(source,/claimLabels\.RESERVED_TERMS/u);assert.match(source,/sentinel\.SPECIFIC_VALUE/u);assert.match(source,/gatekeeper\.VOLATILE/u);
   assert.doesNotMatch(source,/\bfetch\(|process\.env|Date\.now\(|new Date\(|Math\.random\(|\.observe\(|\.decide\(|\.review\(/u);
-  assert.equal(Object.isFrozen(screen),true);assert.equal(screen.VERSION,'sinbad-disclaimer-screen/0-v1');
+  assert.equal(Object.isFrozen(screen),true);assert.equal(screen.VERSION,'sinbad-disclaimer-screen/0-v2');
 });
