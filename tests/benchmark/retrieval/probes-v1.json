@@ -1,5 +1,6 @@
 {
   "version": "sinbad-retrieval-probes/1",
+  "test_split_status": "USED HOLDOUT / historical benchmark (Owner directive of 2026-09-19). The 12 TEST probes were read in aggregate on 2026-09-19 (RETRIEVAL-001 and RETRIEVAL-002). From then on they are not used for tuning, for choosing between candidates or for any architecture decision; they may only be reported as a historical figure. Development uses the DEV probes; final judgement uses the blind set probes-test2-v1.json.",
   "note": "Hand-declared retrieval probes (Project 2 Phase 4.8). A probe is HIT when one of the passages shown to the model matches its needle. Every needle was checked to exist in the Owner's library index built 2026-08-21 before the probe was admitted; the questions are worded as a user would ask, not as the source is worded. DEV probes may be used to tune the retriever; TEST probes are held out and only judged.",
   "probes": [
     {"id": "RP-01", "split": "DEV", "language": "en", "topic": "ISM", "question": "Who is the designated person ashore under the ISM Code and what access must that person have?", "needle": "direct access to the highest level of management"},

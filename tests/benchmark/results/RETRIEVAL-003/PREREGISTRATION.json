@@ -1,0 +1,34 @@
+{
+  "document": "PREREGISTRATION of the one final judgement on BLIND TEST-2 (Owner directive of 2026-09-19)",
+  "written": "BEFORE any retrieval was run on the BLIND TEST-2 probes and BEFORE any expansion was generated for them. The commit that adds this file precedes the final run; nothing below may be changed after that run.",
+  "candidate": {
+    "what": "lexical retriever 0-v1 on the ORIGINAL question (unchanged) PLUS one source-style rewrite of the question, fused by SLOTS",
+    "retriever": "sinbad-lexical-retriever/0-v1",
+    "expansion": "sinbad-query-expansion/0-v1",
+    "promptSha256": "ec6f976f23c350eb3541ae9560e2f76c84845f1003c961d0dfa6ac809b675d18",
+    "model": "qwen3:14b (installed, local, loopback Ollama), think:false, temperature 0, seed 7, num_ctx 4096, num_predict 120",
+    "fusion": {"method": "SLOTS", "passages": 6, "keep": 4, "use": 1},
+    "validity": "an expansion is discarded WHOLE when it is not exactly the two required lines, is a question, is too short or long, or states a number, number word, period or a regulation / rule / chapter / section / annex reference that the question did not contain; the probe then gets exactly the original lexical result"
+  },
+  "deviationFromTheDirective": "The directive names qwen3:4b. Measured on 2026-09-19: the installed qwen3:4b is a thinking-only variant; it ignores /no_think and think:false, produced no answer within 700 and within 3000 tokens (240 s) at temperature 0, and 0 of 24 DEV expansions were usable. It cannot meet the directive's own conditions (short, deterministic, no thinking). The other installed local model, qwen3:14b, honours think:false and was measured on DEV instead. No model was installed, no embedding model, no cloud or paid call.",
+  "developmentEvidence": "DEV only (24 probes, results-dev-qwen3-14b-keep4-use1.json): baseline 20/24, strict 7/9, MRR 0.765 -> candidate 24/24, strict 9/9, MRR 0.785; gains 4, regressions 0; 19 of 24 expansions valid, the 5 discarded ones all contained a hallucinated number (for example 'not exceeding two years', 'eighteen years', '100 gross tonnage'). Tuned on DEV: the prompt (one revision), keep in {2,3,4,5,6}, use in {1,2}, passages in {6,8}. The USED HOLDOUT (TEST split of probes-v1) was not read for any of this.",
+  "finalRun": "BLIND TEST-2, 36 probes (25 strict by the admission count), baseline and candidate at the same budget of 6 passages, one run, no repetition with changed settings",
+  "acceptance": {
+    "rule": "ALL of the following must hold on BLIND TEST-2, otherwise the verdict is NOT ACCEPTED and query expansion does not enter the pipeline",
+    "criteria": [
+      "A. strict probes: candidate hits - baseline hits >= +3",
+      "B. all probes: gains - regressions >= +4",
+      "C. regressions <= 1 (baseline hits lost), reported by probe id",
+      "D. MRR: candidate > baseline",
+      "E. English hits: candidate >= baseline; Turkish hits: candidate >= baseline",
+      "F. at least 60 % of the expansions valid (otherwise the mechanism is too unreliable to carry a product path)"
+    ],
+    "inconclusive": "if the baseline already hits 23 or more of the 25 strict probes, criterion A cannot be met for lack of headroom; the verdict is then INCONCLUSIVE (CEILING), not ACCEPTED",
+    "statisticalNote": "36 probes are a small sample. With 4 gains and 0 regressions a one-sided sign test gives p = 0.0625; with 5 gains and 1 regression p = 0.109. The criteria are a practical threshold, not a significance claim; the exact counts are reported so that the Owner can judge."
+  },
+  "consequences": {
+    "ACCEPTED": "the engineer may propose wiring the expansion into the grounded pipeline as an injected, optional step in a separate pull request; it stays a measurement surface, not a product surface; GROUNDED-002 is not restarted or altered",
+    "NOT ACCEPTED or INCONCLUSIVE": "nothing is wired; the result is recorded; the embedding / semantic re-ranker option is brought to the Owner as a decision, as the directive says",
+    "either": "BLIND TEST-2 becomes a USED HOLDOUT after this run"
+  }
+}
