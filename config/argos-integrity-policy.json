@@ -219,7 +219,7 @@
     },
     {
       "path": "academy-classroom-window.js",
-      "sha256": "0d20fb890a0dd6ed6f303278f155370893ab4d27362c9905d32a37fce89a6901",
+      "sha256": "2661c4ac5d9c8b2cd3ee1a734aedb50df07052c546759f26ffb1f65e284951e5",
       "kind": "SOURCE"
     },
     {
@@ -239,7 +239,7 @@
     },
     {
       "path": "config/ui-design-contract.json",
-      "sha256": "2fb15b6d42ffd0b0fc1669b7513cdf8d2142ff42bb8323a8c71677a9a87d00f8",
+      "sha256": "80ac72d7be80a4aa23f21f21efa32108ad28df51446aef17a5f431d1f133feb3",
       "kind": "CONFIG"
     },
     {
@@ -389,7 +389,7 @@
     },
     {
       "path": "tests/ui-design-contract.test.js",
-      "sha256": "ee87c5250a2b6e6f5f65fa2128f227761cb039e20ef97e266aff7460b4363216",
+      "sha256": "8b9e69f6fa1f42f83de626f02651fc2c49fa31546c3b36682a2eeb656b061ae1",
       "kind": "TEST"
     },
     {
@@ -419,7 +419,7 @@
     },
     {
       "path": "tools/build-pages-artifact.js",
-      "sha256": "4ad294429c535b7f5f5d778eed161c91c53ba365589f4493f9d3cb663c534ffc",
+      "sha256": "6ab9f656434ba2550e8ed1b23a333a9c9a28dfc6d0557464bcc1038a90c897bc",
       "kind": "SOURCE"
     },
     {
@@ -440,7 +440,7 @@
     {
       "path": "tests/sinbad-academy-window.test.js",
       "kind": "TEST",
-      "sha256": "0d21f1af0226ce7b8028b67d34929df65643dca9c333e32cb9fc7419641c9963"
+      "sha256": "498f93e099d64862b498079d7b62199c7490575aed0f1b7a2cf75d26695652f6"
     },
     {
       "path": "founder-owner-mfa.js",
@@ -470,7 +470,7 @@
     {
       "path": "tests/browser/surface-smoke.spec.js",
       "kind": "TEST",
-      "sha256": "592d11d9fe7925599dd1f0766f365410119af507f13d8f79741a3da17149a071"
+      "sha256": "c87add70e73dea272630bf902be393ad05168f726b40cfdcda4244a20f926d14"
     },
     {
       "path": "tools/argos-ci-retention.ps1",
