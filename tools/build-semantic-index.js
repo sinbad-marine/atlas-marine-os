@@ -72,6 +72,9 @@ function shardComplete(dir,n,hashes){
 // Throughput is rows actually embedded over the time actually spent embedding them. (It was the number of finished shards
 // times the shard size over the whole run: a short final shard counted as a full one, and index loading and skipped shards
 // counted as embedding time.)
+// Waiting for somebody else's model is not embedding: the first corpus build reported 0.18 chunks/s because 75 minutes of
+// yielding were counted inside the shard timers; the net rate was 0.27.
+const embeddingSeconds=(elapsedSeconds,yieldedSecondsInside)=>Math.max(0,elapsedSeconds-yieldedSecondsInside);
 function throughput({rowsBuilt,tokens,embedSeconds}){
   if(!(rowsBuilt>0)||!(embedSeconds>0))return {chunksPerSecond:null,tokensPerSecond:null};
   return {chunksPerSecond:Number((rowsBuilt/embedSeconds).toFixed(3)),tokensPerSecond:Math.round(tokens/embedSeconds)};
@@ -113,7 +116,7 @@ async function main(){
     if(shardComplete(args.outDir,n,hashes)){skipped+=1;continue;}
     if(args.budgetSeconds!==null&&(Date.now()-began)/1000>args.budgetSeconds){stopped='TIME_BUDGET';break;}
     if(freeGb()<RUN_FLOOR_GB){stopped='HOST_MEMORY_LOW';break;}
-    const vectors=[];const t0=Date.now();
+    const vectors=[];const t0=Date.now();const yieldedBefore=yieldedSeconds;
     for(let r=0;r<rows;r+=REQUEST_ROWS){
       // Yield: while any OTHER model is resident in Ollama (the bridge answering, a grounded run), this job waits. A build
       // of several days must not slow the Owner's own use of the machine or distort somebody else's latency measurement.
@@ -133,7 +136,7 @@ async function main(){
     if(stopped)break;
     const buffer=toBuffer(vectors);atomicWrite(path.join(args.outDir,`${shardName(n)}.f32`),buffer);
     atomicWrite(path.join(args.outDir,`${shardName(n)}.json`),`${JSON.stringify({shard:n,firstChunkId:first,rows,vectorsSha256:sha256(buffer),contentHashes:hashes})}\n`);
-    built+=1;rowsBuilt+=rows;embedSeconds+=(Date.now()-t0)/1000;peakRssGb=Math.max(peakRssGb,process.memoryUsage().rss/2**30);
+    built+=1;rowsBuilt+=rows;embedSeconds+=embeddingSeconds((Date.now()-t0)/1000,yieldedSeconds-yieldedBefore);peakRssGb=Math.max(peakRssGb,process.memoryUsage().rss/2**30);
     process.stdout.write(`${shardName(n)} rows ${rows} in ${((Date.now()-t0)/1000).toFixed(0)} s | done ${Math.min(total,first+rows)}/${total} | free ${freeGb().toFixed(1)} GB\n`);
   }
   // Rebuild check: embed a few stored chunks again and compare. A prefix-cache hit changes the last digits, so the test is a cosine.
@@ -150,4 +153,4 @@ async function main(){
   process.exit(stopped==='TIME_BUDGET'?3:stopped?2:verify&&!verify.ok?4:0);
 }
 if(require.main===module)main().catch(e=>{process.stderr.write(`${e.message}\n`);process.exit(1);});
-module.exports={VERSION,MODEL,DIMENSION,SHARD_ROWS,INPUT_RULE,parseArgs,shardComplete,shardName,toBuffer,cosine,throughput,documentSha256,loadCorpus};
+module.exports={VERSION,MODEL,DIMENSION,SHARD_ROWS,INPUT_RULE,parseArgs,shardComplete,shardName,toBuffer,cosine,throughput,embeddingSeconds,documentSha256,loadCorpus};

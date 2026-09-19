@@ -29,7 +29,10 @@ test('throughput is rows actually embedded over the time spent embedding them (r
   assert.notEqual(builder.throughput({rowsBuilt:10,tokens:9000,embedSeconds:50}).chunksPerSecond,Number((builder.SHARD_ROWS/50).toFixed(3)));
   assert.deepEqual(builder.throughput({rowsBuilt:128+101,tokens:229000,embedSeconds:1000}),{chunksPerSecond:0.229,tokensPerSecond:229});
   for(const nothing of [{rowsBuilt:0,tokens:0,embedSeconds:0},{rowsBuilt:0,tokens:0,embedSeconds:17},{rowsBuilt:5,tokens:1,embedSeconds:0}])assert.deepEqual(builder.throughput(nothing),{chunksPerSecond:null,tokensPerSecond:null});
-  const source=read('tools/build-semantic-index.js');assert.doesNotMatch(source,/built\*SHARD_ROWS/u);assert.match(source,/rowsBuilt\+=rows;embedSeconds\+=\(Date\.now\(\)-t0\)\/1000;/u);
+  // Second regression (found on the real build): time spent yielding to another model is not embedding time.
+  assert.equal(builder.embeddingSeconds(720,330),390);assert.equal(builder.embeddingSeconds(100,0),100);assert.equal(builder.embeddingSeconds(10,40),0);
+  assert.deepEqual(builder.throughput({rowsBuilt:2402,tokens:1734996,embedSeconds:builder.embeddingSeconds(13322,4530)}),{chunksPerSecond:0.273,tokensPerSecond:197});
+  const source=read('tools/build-semantic-index.js');assert.doesNotMatch(source,/built\*SHARD_ROWS/u);assert.match(source,/embeddingSeconds\(\(Date\.now\(\)-t0\)\/1000,yieldedSeconds-yieldedBefore\)/u);assert.match(source,/rowsBuilt\+=rows;embedSeconds\+=embeddingSeconds\(/u);
 });
 
 const LIBRARY=[
@@ -157,6 +160,23 @@ test('TEST-3 exists as a design only: blind, not authorised to run, disjoint fro
   assert.throws(()=>require('../tools/evaluate-retrieval').loadProbes(path.join(ROOT,'tests/benchmark/retrieval/probes-test3-regulatory-core-v1.json')),/PROBE_INVALID/u);
   for(const file of fs.readdirSync(path.join(ROOT,'tools')).filter(f=>f.endsWith('.js')))assert.doesNotMatch(read(`tools/${file}`),/probes-test3|TEST3/u,file);
   for(const dir of fs.readdirSync(path.join(ROOT,'tests/benchmark/results')))for(const f of fs.readdirSync(path.join(ROOT,'tests/benchmark/results',dir)))assert.doesNotMatch(f,/test3/iu,`${dir}/${f}`);
+});
+
+test('the recorded DEV run: one universe, the selection the frozen rule makes, and no system above lexical on strict hits',()=>{
+  const r=JSON.parse(read('tests/benchmark/results/RETRIEVAL-004/results.json'));
+  assert.equal(r.probeSet,'probes-v1 DEV only');assert.deepEqual([r.universe.lexicalIndexChunks,r.universe.vectorRows,r.universe.documents],[3810,3810,157]);
+  assert.deepEqual([r.universe.accounting.manifestChunks,r.universe.accounting.notIndexableChunks,r.universe.accounting.universeChunks],[3813,3,3810]);assert.ok(r.universe.accounting.notIndexable.every(c=>c.letters===0&&c.digits===0));
+  assert.equal(r.corpus.sha256,'ceaf4006e4bfc791');assert.deepEqual([r.probesUsed,r.probesUnanswerableInCorpus,r.hybridsTried,Object.keys(r.systems).length],[21,['RP-20','RP-29','RP-34'],18,21]);
+  const s=id=>[r.systems[id].hit,r.systems[id].strictHit,r.systems[id].mrr];
+  assert.deepEqual(s('LEXICAL'),[17,12,0.617]);assert.deepEqual(s('SEMANTIC RAW'),[16,10,0.704]);assert.deepEqual(s('SEMANTIC INSTRUCTED'),[15,9,0.718]);
+  assert.ok(Object.values(r.systems).every(x=>x.strictHit<=r.systems.LEXICAL.strictHit),'no system beats lexical on strict hits');
+  // The tool's selection equals select() applied again here, and it is labelled as what it is.
+  assert.deepEqual(evaluator.select(r),r.devModelSelection);assert.equal(r.devModelSelection.queryMode,'RAW');assert.equal(r.devModelSelection.selectedHybrid,'HYBRID RRF k60 lex2:sem1 RAW');assert.match(r.devModelSelection.label,/not a verified gain/u);
+  const c=r.comparisonWithLexical[r.devModelSelection.selectedHybrid];assert.deepEqual([c.gained,c.lost,c.strictDelta],[['RP-05'],[],0]);
+  const cat={};for(const p of r.perProbe)cat[p.category]=(cat[p.category]||0)+1;assert.deepEqual(cat,{BOTH_FIND_IT:14,LEXICAL_ONLY:3,SEMANTIC_ONLY:2,NONE_FINDS_IT:2});
+  // Provenance survives: every hit names its source document, chunk position and chunk hash; no text, no vectors in the result.
+  for(const sys of Object.values(r.systems))for(const row of sys.rows)if(row.hit){assert.ok(row.hitProvenance.title&&Number.isInteger(row.hitProvenance.chunkIndex));assert.match(row.hitProvenance.contentHash,/^[0-9a-f]{16}$/u);}
+  assert.equal(/"text"|"embedding"|"vector"/u.test(JSON.stringify(r)),false);
 });
 
 test('DEV only, local only, nothing wired: no tool of the experiment reads a blind or used-holdout set, the evaluator calls no model',()=>{
