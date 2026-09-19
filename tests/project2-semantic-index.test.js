@@ -35,7 +35,10 @@ test('one authorised model, no cloud, and the chunk text is embedded exactly as 
   assert.equal([...source.matchAll(/atomicWrite\(/gu)].length,3);for(const m of source.matchAll(/atomicWrite\(([^,]+),/gu))assert.match(m[1],/^(?:manifestPath|path\.join\(args\.outDir)$/u,m[1]);
   // It yields to any other model resident in Ollama (the bridge answering, a grounded run) instead of competing with it.
   assert.match(source,/const others=\(ps\.models\|\|\[\]\)\.filter\(m=>m\.name!==MODEL\)/u);assert.match(source,/if\(!others\.length\)break;/u);
-  assert.match(source,/MANIFEST_MISMATCH/u);assert.equal([...source.matchAll(/keep_alive:0/gu)].length,1);assert.match(source,/\{model:MODEL,keep_alive:0\}/u);
+  assert.match(source,/MANIFEST_MISMATCH/u);// It only ever unloads its OWN model (at the end, and while it yields to somebody else's model).
+  assert.equal([...source.matchAll(/keep_alive:0/gu)].length,2);assert.equal([...source.matchAll(/\{model:MODEL,keep_alive:0\}/gu)].length,2);
+  // The memory floor is checked before every request, and a shard that was given up is never written.
+  assert.match(source,/if\(freeGb\(\)<RUN_FLOOR_GB\)\{stopped='HOST_MEMORY_LOW';break;\}\s*const input=/u);assert.match(source,/if\(stopped\)break;\s*const buffer=toBuffer\(vectors\);/u);
 });
 
 test('a shard counts as complete only with its json, the right size and the same chunk hashes in the same order',()=>{

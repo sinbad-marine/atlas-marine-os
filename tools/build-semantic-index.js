@@ -118,12 +118,19 @@ async function main(){
       // Yield: while any OTHER model is resident in Ollama (the bridge answering, a grounded run), this job waits. A build
       // of several days must not slow the Owner's own use of the machine or distort somebody else's latency measurement.
       for(;;){const ps=await request(args.ollama,'GET','/api/ps',null,30000).catch(()=>({models:[]}));const others=(ps.models||[]).filter(m=>m.name!==MODEL).map(m=>m.name);if(!others.length)break;
+        // While it waits it also gives back its own model's memory; Ollama loads it again on the next request.
+        if(yieldedSeconds%600===0)await request(args.ollama,'POST','/api/generate',{model:MODEL,keep_alive:0},60000).catch(()=>{});
         yieldedSeconds+=YIELD_SECONDS;process.stdout.write(`yielding to ${others.join(', ')}\n`);await new Promise(resolve=>setTimeout(resolve,YIELD_SECONDS*1000));}
+      // The memory floor is checked before EVERY request, not only between shards: on 2026-09-19 another process loaded a
+      // 14B model, free memory fell from 12 GB to under 1 GB within one shard, and the host's guard killed the job before
+      // the job could stop itself. A shard that is given up is not written; the finished ones stay.
+      if(freeGb()<RUN_FLOOR_GB){stopped='HOST_MEMORY_LOW';break;}
       const input=index.chunks.slice(first+r,first+Math.min(rows,r+REQUEST_ROWS)).map(c=>c.text);
       const j=await request(args.ollama,'POST','/api/embed',{model:MODEL,input,truncate:true,keep_alive:'10m',options:{num_ctx:NUM_CTX,num_thread:args.threads}},600000);
       if(!Array.isArray(j.embeddings)||j.embeddings.length!==input.length)throw new Error(`EMBED_FAILED ${JSON.stringify(j).slice(0,160)}`);
       vectors.push(...j.embeddings);tokens+=j.prompt_eval_count||0;
     }
+    if(stopped)break;
     const buffer=toBuffer(vectors);atomicWrite(path.join(args.outDir,`${shardName(n)}.f32`),buffer);
     atomicWrite(path.join(args.outDir,`${shardName(n)}.json`),`${JSON.stringify({shard:n,firstChunkId:first,rows,vectorsSha256:sha256(buffer),contentHashes:hashes})}\n`);
     built+=1;rowsBuilt+=rows;embedSeconds+=(Date.now()-t0)/1000;peakRssGb=Math.max(peakRssGb,process.memoryUsage().rss/2**30);
