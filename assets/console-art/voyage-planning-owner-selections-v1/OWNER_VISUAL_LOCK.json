@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "sinbad-owner-visual-lock/v1",
+  "status": "OWNER_APPROVED_LOCKED",
+  "approvedAt": "2026-09-19",
+  "artistLanguage": "leonardo-da-vinci",
+  "languageBaseline": "en",
+  "immutable": true,
+  "selectionOrder": [
+    "A",
+    "C",
+    "C",
+    "B",
+    "C",
+    "C",
+    "A",
+    "B"
+  ],
+  "layers": {
+    "voyagePlanning": {
+      "selection": "A",
+      "route": "/index.html?workspace=voyage-navigation",
+      "asset": "assets/console-art/voyage-planning-owner-selections-v1/selected/01-voyage-planning-A.jpg",
+      "sha256": "4ba33ed482000872b046d0ea5d6dad47cef48a32c09633c0fc1d72c5e1f4dd69"
+    },
+    "routeLibrary": {
+      "selection": "C",
+      "route": "/index.html?workspace=routes",
+      "asset": "assets/console-art/voyage-planning-owner-selections-v1/selected/02-route-library-C.jpg",
+      "sha256": "99765e27c41ca756b8a96b6d6a744dc8d9093370d8f71e22459009e317de3472"
+    },
+    "navigationPlot": {
+      "selection": "C",
+      "route": "/index.html?workspace=navigation-plot",
+      "asset": "assets/console-art/voyage-planning-owner-selections-v1/selected/03-navigation-plot-C.jpg",
+      "sha256": "fdb7f5124844938495f89862bb51caac98664f815ce48d52b8d98c4b181dc622"
+    },
+    "locationIntelligence": {
+      "selection": "B",
+      "route": "/index.html?workspace=location-intelligence",
+      "asset": "assets/console-art/voyage-planning-owner-selections-v1/selected/04-location-intelligence-B.jpg",
+      "sha256": "6a480928bcc66e89438a5ef9b6d55331e52835f9b2373b73431c90317a0902cc"
+    },
+    "nauticalPublications": {
+      "selection": "C",
+      "route": "/index.html?workspace=publications",
+      "asset": "assets/console-art/voyage-planning-owner-selections-v1/selected/05-nautical-publications-C.jpg",
+      "sha256": "6d39a0af7e07e7a01e00f304b5a97c7d4b66e5f13a29da1b237d3b0f846c8c99"
+    },
+    "blueVoyageResources": {
+      "selection": "C",
+      "route": "/index.html?workspace=resources",
+      "asset": "assets/console-art/voyage-planning-owner-selections-v1/selected/06-blue-voyage-resources-C.jpg",
+      "sha256": "59acf024b8c0169e1eefbe28d89c55de0cd8182d41d47f9c7eb6ac2d5b421247"
+    },
+    "encViewer": {
+      "selection": "A",
+      "route": "/index.html?workspace=enc-viewer",
+      "asset": "assets/console-art/voyage-planning-owner-selections-v1/selected/07-enc-viewer-A.jpg",
+      "sha256": "7fe204648ad67858e7d1f5cf2271ca369cf492d3557ce74df533a86325862c92"
+    },
+    "localCharts": {
+      "selection": "B",
+      "route": "/index.html?workspace=charts",
+      "asset": "assets/console-art/voyage-planning-owner-selections-v1/selected/08-local-charts-B.jpg",
+      "sha256": "ae8c167ffa10357527474cee9636dce333002f5aaba959ed4dcd1cfa56fd3811"
+    }
+  }
+}

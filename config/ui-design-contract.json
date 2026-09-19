@@ -3,12 +3,12 @@
   "owner": "Sinbad Marine design protection",
   "goldenUpdatePolicy": "Golden screenshots may change only in an explicitly reviewed design pull request.",
   "protectedFileSha256": {
-    "index.html": "f7efab2cab46ddd7b041a98434b759a5ad433c345228de994db219d2479a718e",
+    "index.html": "4b18c3a537540b89a9b4d37488038850061fa0b75b635d91d1c33e4e871b0bac",
     "styles.css": "a7b45fc9c86ad19afa18c7e99507cb30f25d83f0dd964d6d0364cb25a57684a4",
     "academy.html": "729d9598025268edb54f5118fd97593857ed6d4ef5bec04499bde37fbda82d0e",
     "academy.css": "9d2c9e160eaa0ed785e3125cbc0f878511d49aeaac31fbff765b1fbb599937fe",
-    "console-master-style.css": "40df10477e92e9072a5af3530d991b3376cbd2bbfb02f3f41481ab5988813a11",
-    "app.js": "5d2c66709a71de376169bb0c8c6b41f259b46acc2039a8a14d654f191ff1c95b"
+    "console-master-style.css": "641c46820b1284b1572bdb9545c6b543d427340a86c77b17184e4c17b694cd19",
+    "app.js": "a318f57c077f037b05804fea938aff0f5efa143c0af66ba5f3d8e3a40b08428a"
   },
   "dashboardWorkspaces": [
     "admin-settings",
@@ -150,6 +150,66 @@
       "canonicalManifest": "assets/console-art/yacht-management-owner-lock-v1/OWNER_CANONICAL_LOCK.json",
       "canonicalManifestSha256": "cb5a291a44a07a9eafc9a90918bca6eec473dc41a79f4d1730338b72f1ce7909",
       "immutable": true
+    },
+    "voyagePlanning": {
+      "status": "OWNER_APPROVED_LOCKED",
+      "approvedAt": "2026-09-19",
+      "route": "/index.html?workspace=voyage-navigation",
+      "asset": "assets/console-art/voyage-planning-owner-selections-v1/selected/01-voyage-planning-A.jpg",
+      "sha256": "4ba33ed482000872b046d0ea5d6dad47cef48a32c09633c0fc1d72c5e1f4dd69",
+      "artDirection": "leonardo-da-vinci",
+      "layoutPolicy": "OWNER_SELECTED_PAGE_AND_LAYER_COMPOSITION",
+      "immutable": true,
+      "implementation": {
+        "voyagePlanning": {
+          "route": "/index.html?workspace=voyage-navigation",
+          "selection": "A",
+          "asset": "assets/console-art/voyage-planning-owner-selections-v1/selected/01-voyage-planning-A.jpg",
+          "sha256": "4ba33ed482000872b046d0ea5d6dad47cef48a32c09633c0fc1d72c5e1f4dd69"
+        },
+        "routeLibrary": {
+          "route": "/index.html?workspace=routes",
+          "selection": "C",
+          "asset": "assets/console-art/voyage-planning-owner-selections-v1/selected/02-route-library-C.jpg",
+          "sha256": "99765e27c41ca756b8a96b6d6a744dc8d9093370d8f71e22459009e317de3472"
+        },
+        "navigationPlot": {
+          "route": "/index.html?workspace=navigation-plot",
+          "selection": "C",
+          "asset": "assets/console-art/voyage-planning-owner-selections-v1/selected/03-navigation-plot-C.jpg",
+          "sha256": "fdb7f5124844938495f89862bb51caac98664f815ce48d52b8d98c4b181dc622"
+        },
+        "locationIntelligence": {
+          "route": "/index.html?workspace=location-intelligence",
+          "selection": "B",
+          "asset": "assets/console-art/voyage-planning-owner-selections-v1/selected/04-location-intelligence-B.jpg",
+          "sha256": "6a480928bcc66e89438a5ef9b6d55331e52835f9b2373b73431c90317a0902cc"
+        },
+        "nauticalPublications": {
+          "route": "/index.html?workspace=publications",
+          "selection": "C",
+          "asset": "assets/console-art/voyage-planning-owner-selections-v1/selected/05-nautical-publications-C.jpg",
+          "sha256": "6d39a0af7e07e7a01e00f304b5a97c7d4b66e5f13a29da1b237d3b0f846c8c99"
+        },
+        "blueVoyageResources": {
+          "route": "/index.html?workspace=resources",
+          "selection": "C",
+          "asset": "assets/console-art/voyage-planning-owner-selections-v1/selected/06-blue-voyage-resources-C.jpg",
+          "sha256": "59acf024b8c0169e1eefbe28d89c55de0cd8182d41d47f9c7eb6ac2d5b421247"
+        },
+        "encViewer": {
+          "route": "/index.html?workspace=enc-viewer",
+          "selection": "A",
+          "asset": "assets/console-art/voyage-planning-owner-selections-v1/selected/07-enc-viewer-A.jpg",
+          "sha256": "7fe204648ad67858e7d1f5cf2271ca369cf492d3557ce74df533a86325862c92"
+        },
+        "localCharts": {
+          "route": "/index.html?workspace=charts",
+          "selection": "B",
+          "asset": "assets/console-art/voyage-planning-owner-selections-v1/selected/08-local-charts-B.jpg",
+          "sha256": "ae8c167ffa10357527474cee9636dce333002f5aaba959ed4dcd1cfa56fd3811"
+        }
+      }
     }
   },
   "interactionContracts": {
@@ -214,6 +274,34 @@
           "asset": "assets/console-art/yacht-management-owner-selections-v1/selected/05-camera-media-archive-A.png"
         }
       }
+    },
+    "voyagePlanningInnerLayers": {
+      "status": "OWNER_APPROVED_LOCKED",
+      "manifest": "assets/console-art/voyage-planning-owner-selections-v1/OWNER_VISUAL_LOCK.json",
+      "manifestSha256": "a596dbd7cefb486c229ad005c2f9262b503dc733cdfcbb79e610d8f41647c3a8",
+      "artistLanguage": "leonardo-da-vinci",
+      "languageBaseline": "en",
+      "ownerChoices": [
+        "A",
+        "C",
+        "C",
+        "B",
+        "C",
+        "C",
+        "A",
+        "B"
+      ],
+      "routes": [
+        "/index.html?workspace=voyage-navigation",
+        "/index.html?workspace=routes",
+        "/index.html?workspace=navigation-plot",
+        "/index.html?workspace=location-intelligence",
+        "/index.html?workspace=publications",
+        "/index.html?workspace=resources",
+        "/index.html?workspace=enc-viewer",
+        "/index.html?workspace=charts"
+      ],
+      "immutable": true
     }
   }
 }

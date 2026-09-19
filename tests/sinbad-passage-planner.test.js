@@ -11,7 +11,7 @@ test('calculates route legs, true courses, ETA and fuel margin',()=>{
   assert.ok(Math.abs(plan.totalDistanceNm-120.08)<.2);
   assert.ok(Math.abs(plan.fuelRequiredLitres-300.2)<1);
   assert.equal(plan.legs[0].eta,'2026-08-29T06:00:14.565Z');
-  assert.match(planner.checklist(plan),/KAPTAN ONAYI/);
+  assert.match(planner.checklist(plan),/MASTER APPROVAL/);
 });
 
 test('rejects unsafe or incomplete waypoint sets',()=>{
