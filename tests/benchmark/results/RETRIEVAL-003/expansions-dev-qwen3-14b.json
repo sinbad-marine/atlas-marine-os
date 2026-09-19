@@ -1,0 +1,274 @@
+{
+  "version": "sinbad-query-expansion/0-v1",
+  "model": "qwen3:14b",
+  "split": "DEV",
+  "options": {
+    "temperature": 0,
+    "seed": 7,
+    "num_ctx": 4096,
+    "num_predict": 120,
+    "think": false
+  },
+  "system": "/no_think\nYou write search queries for a library of maritime regulations and training material (IMO conventions and codes, ILO MLC, flag and class documents, exam question banks in English and Turkish).\nGiven a user question, write exactly two short search queries. A query is NOT a question: it is a fragment of the sentence in the official text that would contain the answer, in the words such a text uses (for example: shall, means, at least, not exceeding, is entitled to, shall be carried out).\nExample - question: \"Does having a pilot on board take away the captain's responsibility?\" - query: \"presence of a pilot does not relieve the master of his duties and obligations\".\nQ1: in the language of the question. Q2: the same fragment in the other language (English if the question is Turkish, Turkish if the question is English).\nRules: do not answer the question. No question marks. Do not write any number, date, limit or period. Do not write any regulation, rule, chapter, section, article or annex number. Each query has 4 to 16 words.\nOutput exactly two lines and nothing else:\nQ1: ...\nQ2: ...",
+  "expansions": {
+    "RP-01": {
+      "raw": "Q1: designated person ashore shall have access to all relevant safety and environmental protection matters  \nQ2: karaya ayak basan belirlenmiş kişi tüm ilgili güvenlik ve çevre koruma meselelerine erişim hakkı vardır",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "designated person ashore shall have access to all relevant safety and environmental protection matters",
+        "karaya ayak basan belirlenmiş kişi tüm ilgili güvenlik ve çevre koruma meselelerine erişim hakkı vardır"
+      ],
+      "ms": 30519
+    },
+    "RP-02": {
+      "raw": "Q1: internal safety audits shall be carried out at intervals not exceeding two years  \nQ2: iç güvenlik denetimleri iki yılda bir yapılmak zorundadır",
+      "error": null,
+      "valid": false,
+      "reason": "NUMBER_WORD_NOT_IN_QUESTION",
+      "queries": [],
+      "ms": 9680
+    },
+    "RP-04": {
+      "raw": "Q1: document of compliance shall be kept valid until the next renewal date  \nQ2: belge uygunluk belgesi, yeniden değerlendirme tarihine kadar geçerli tutulmalıdır",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "document of compliance shall be kept valid until the next renewal date",
+        "belge uygunluk belgesi, yeniden değerlendirme tarihine kadar geçerli tutulmalıdır"
+      ],
+      "ms": 9850
+    },
+    "RP-05": {
+      "raw": "Q1: company shall take immediate corrective action to eliminate the non-conformity  \nQ2: şirket hemen düzelici önlem almak zorundadır ve uyumsuzluğu ortadan kaldırmalıdır",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "company shall take immediate corrective action to eliminate the non-conformity",
+        "şirket hemen düzelici önlem almak zorundadır ve uyumsuzluğu ortadan kaldırmalıdır"
+      ],
+      "ms": 10986
+    },
+    "RP-07": {
+      "raw": "Q1: security level 1 means the normal security measures  \nQ2: güvenlik seviyesi 1 normal güvenlik tedbirlerini ifade eder",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "security level 1 means the normal security measures",
+        "güvenlik seviyesi 1 normal güvenlik tedbirlerini ifade eder"
+      ],
+      "ms": 8319
+    },
+    "RP-08": {
+      "raw": "Q1: declaration of security shall be completed prior to commencement of operations  \nQ2: güvenlik bildirimi, işlemlerin başlamasından önce tamamlanmalıdır",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "declaration of security shall be completed prior to commencement of operations",
+        "güvenlik bildirimi, işlemlerin başlamasından önce tamamlanmalıdır"
+      ],
+      "ms": 8532
+    },
+    "RP-10": {
+      "raw": "Q1: ship security alert system means a system that transmits a security alert to a designated authority  \nQ2: ship security alert system means bir sistemdir ki güvenlik uyarısı belirlenmiş yetkililere iletilir",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "ship security alert system means a system that transmits a security alert to a designated authority",
+        "ship security alert system means bir sistemdir ki güvenlik uyarısı belirlenmiş yetkililere iletilir"
+      ],
+      "ms": 11141
+    },
+    "RP-11": {
+      "raw": "Q1: minimum age for employment on board ships shall not be less than eighteen years  \nQ2: denizcilikte çalışabilmek için en düşük yaş sınırı on sekiz yaş olarak belirlenmiştir",
+      "error": null,
+      "valid": false,
+      "reason": "NUMBER_WORD_NOT_IN_QUESTION",
+      "queries": [],
+      "ms": 10726
+    },
+    "RP-13": {
+      "raw": "Q1: employment agreement shall contain the terms and conditions of employment  \nQ2: iş sözleşmesi, işin koşullarını ve şartlarını içermelidir",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "employment agreement shall contain the terms and conditions of employment",
+        "iş sözleşmesi, işin koşullarını ve şartlarını içermelidir"
+      ],
+      "ms": 8888
+    },
+    "RP-14": {
+      "raw": "Q1: seafarer is entitled to be repatriated at the expense of the shipowner  \nQ2: denizcilik personeli, gemi sahibi tarafından maliyet karşılanan şekilde memleketine gönderilebilir",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "seafarer is entitled to be repatriated at the expense of the shipowner",
+        "denizcilik personeli, gemi sahibi tarafından maliyet karşılanan şekilde memleketine gönderilebilir"
+      ],
+      "ms": 12613
+    },
+    "RP-16": {
+      "raw": "Q1: abandon ship drill shall be conducted at least once every month\nQ2: gemi personeli, terk edilecek gemi egzersizine en az ayda bir katılmak zorundadır",
+      "error": null,
+      "valid": false,
+      "reason": "NUMBER_WORD_NOT_IN_QUESTION",
+      "queries": [],
+      "ms": 11397
+    },
+    "RP-17": {
+      "raw": "Q1: fire drills shall be conducted at least once every month  \nQ2: yangın tatbikatları en az ayda bir kez yapılmalıdır",
+      "error": null,
+      "valid": false,
+      "reason": "NUMBER_WORD_NOT_IN_QUESTION",
+      "queries": [],
+      "ms": 8427
+    },
+    "RP-19": {
+      "raw": "Q1: every vessel shall maintain a proper look-out  \nQ2: her watchkeeping personnel shall maintain a proper look-out",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "every vessel shall maintain a proper look-out",
+        "her watchkeeping personnel shall maintain a proper look-out"
+      ],
+      "ms": 6824
+    },
+    "RP-20": {
+      "raw": "Q1: factors that determine safe speed include visibility weather and traffic density  \nQ2: güvenli hızın belirlenmesinde etkili olan faktörler görüş mesafesi hava durumu ve trafik yoğunluğu",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "factors that determine safe speed include visibility weather and traffic density",
+        "güvenli hızın belirlenmesinde etkili olan faktörler görüş mesafesi hava durumu ve trafik yoğunluğu"
+      ],
+      "ms": 11112
+    },
+    "RP-22": {
+      "raw": "Q1: vessel shall proceed at a safe speed and take appropriate action to avoid collision  \nQ2: sisli hava koşullarında gemi güvenli bir hızda ilerlemeli ve çarpışmayı önlemek için uygun önlemler almalıdır",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "vessel shall proceed at a safe speed and take appropriate action to avoid collision",
+        "sisli hava koşullarında gemi güvenli bir hızda ilerlemeli ve çarpışmayı önlemek için uygun önlemler almalıdır"
+      ],
+      "ms": 13031
+    },
+    "RP-23": {
+      "raw": "Q1: operations relating to the discharge of oil or oily mixtures shall be recorded in the oil record book  \nQ2: yağ ve yağlı karışımların boşaltılmasıyla ilgili işlemler yağ kaydı defterine kaydedilmelidir",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "operations relating to the discharge of oil or oily mixtures shall be recorded in the oil record book",
+        "yağ ve yağlı karışımların boşaltılmasıyla ilgili işlemler yağ kaydı defterine kaydedilmelidir"
+      ],
+      "ms": 13008
+    },
+    "RP-25": {
+      "raw": "Q1: ships of 100 gross tonnage and above shall keep a garbage record book  \nQ2: 100 ve üzeri brüt tonajlı gemiler bir atık kaydı defteri tutmak zorundadır",
+      "error": null,
+      "valid": false,
+      "reason": "NUMBER_NOT_IN_QUESTION",
+      "queries": [],
+      "ms": 12126
+    },
+    "RP-26": {
+      "raw": "Q1: shipboard oil pollution emergency plan means and applies to ships carrying  \nQ2: gemi içindeki yağ kirliliği acil planı ne demektir ve hangi gemilerin taşıması gerekir",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "shipboard oil pollution emergency plan means and applies to ships carrying",
+        "gemi içindeki yağ kirliliği acil planı ne demektir ve hangi gemilerin taşıması gerekir"
+      ],
+      "ms": 11168
+    },
+    "RP-28": {
+      "raw": "Q1: D-2 standard specifies maximum allowable number of viable organisms per cubic meter  \nQ2: D-2 standard belirtilen hacimde canlı organizma sayısının maksimum izin verilen miktarını belirler",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "D-2 standard specifies maximum allowable number of viable organisms per cubic meter",
+        "D-2 standard belirtilen hacimde canlı organizma sayısının maksimum izin verilen miktarını belirler"
+      ],
+      "ms": 11846
+    },
+    "RP-29": {
+      "raw": "Q1: gemi güvenlik planı tanımı ve onaylayan yetkili kişi  \nQ2: tanımlanması ve onaylayan yetkili kişi",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "gemi güvenlik planı tanımı ve onaylayan yetkili kişi",
+        "tanımlanması ve onaylayan yetkili kişi"
+      ],
+      "ms": 8659
+    },
+    "RP-31": {
+      "raw": "Q1: lookout shall be maintained by a qualified person at all times  \nQ2: gözcülük, her zaman yetkili bir kişi tarafından sürdürülmelidir",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "lookout shall be maintained by a qualified person at all times",
+        "gözcülük, her zaman yetkili bir kişi tarafından sürdürülmelidir"
+      ],
+      "ms": 9296
+    },
+    "RP-32": {
+      "raw": "Q1: factors to be taken into account in determining safe speed  \nQ2: emniyetli hız belirlenirken dikkate alınan etkenler",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "factors to be taken into account in determining safe speed",
+        "emniyetli hız belirlenirken dikkate alınan etkenler"
+      ],
+      "ms": 9091
+    },
+    "RP-34": {
+      "raw": "Q1: role cetvelinde personelin adı, unvanı ve görevi yer alır  \nQ2: role table contains the name, rank and duties of the personnel",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "role cetvelinde personelin adı, unvanı ve görevi yer alır",
+        "role table contains the name, rank and duties of the personnel"
+      ],
+      "ms": 9039
+    },
+    "RP-35": {
+      "raw": "Q1: procedures to be followed upon detection of non-conformity under ism code  \nQ2: uyumsuzluğun tespit edilmesi durumunda uygulanacak prosedürler ism kodu kapsamında",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "procedures to be followed upon detection of non-conformity under ism code",
+        "uyumsuzluğun tespit edilmesi durumunda uygulanacak prosedürler ism kodu kapsamında"
+      ],
+      "ms": 12743
+    }
+  },
+  "summary": {
+    "probes": 24,
+    "generated": 24,
+    "valid": 19,
+    "invalidReasons": {
+      "NUMBER_WORD_NOT_IN_QUESTION": 4,
+      "NUMBER_NOT_IN_QUESTION": 1
+    },
+    "stopped": null
+  }
+}

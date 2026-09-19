@@ -1,0 +1,216 @@
+{
+  "version": "sinbad-query-expansion/0-v1",
+  "model": "qwen3:4b",
+  "split": "DEV",
+  "options": {
+    "temperature": 0,
+    "seed": 7,
+    "num_ctx": 2048,
+    "num_predict": 120,
+    "think": false
+  },
+  "system": "/no_think\nYou write search queries for a library of maritime regulations and training material (IMO conventions and codes, ILO MLC, flag and class documents, exam question banks in English and Turkish).\nGiven a user question, write exactly two short search queries that use the words the official source text would use (for example: shall, means, at least, not exceeding, is entitled to).\nQ1: in the language of the question. Q2: the same query in the other language (English if the question is Turkish, Turkish if the question is English).\nRules: do not answer the question. Do not write any number, date, limit or period. Do not write any regulation, rule, chapter, section, article or annex number. Each query has 4 to 16 words.\nOutput exactly two lines and nothing else:\nQ1: ...\nQ2: ...",
+  "expansions": {
+    "RP-01": {
+      "raw": "We are given a user question in English: \"Who is the designated person ashore under the ISM Code and what access must that person have?\"\n\nWe are to write exactly two short search queries:\n\nQ1: in the language of the question (which is English)\nQ2: the same query in the other language (which would be Turkish, since the question is in English)\n\nBut note: the problem says \"the same query in the other language (English if the question is Turkish, Turkish if the question is English)\". Since the user question is in English, Q2 should be in Turkish",
+      "error": null,
+      "valid": false,
+      "reason": "FORMAT_INVALID",
+      "queries": [],
+      "ms": 13222
+    },
+    "RP-02": {
+      "raw": "We are given a user question in English: \"How often must internal safety audits be carried out on board under the ISM Code?\"\n\nWe are to write two search queries:\n\nQ1: in the language of the question (which is English)\nQ2: the same query in the other language (Turkish, because the question is in English)\n\nBut note: the problem says \"the same query in the other language (English if the question is Turkish, Turkish if the question is English)\". Since the question is in English, Q2 should be in Turkish.\n\nHowever, the problem also says:",
+      "error": null,
+      "valid": false,
+      "reason": "FORMAT_INVALID",
+      "queries": [],
+      "ms": 7757
+    },
+    "RP-04": {
+      "raw": "We are given a user question in English: \"How is a Document of Compliance kept valid between renewals?\"\n\nWe need to write two search queries:\n\nQ1: in the language of the question (which is English)\nQ2: the same query in the other language (Turkish, because the question is in English)\n\nBut note: the problem says \"the same query in the other language (English if the question is Turkish, Turkish if the question is English)\". Since the user question is in English, Q2 should be in Turkish.\n\nHowever, the problem also says: \"use the words",
+      "error": null,
+      "valid": false,
+      "reason": "FORMAT_INVALID",
+      "queries": [],
+      "ms": 7608
+    },
+    "RP-05": {
+      "raw": "We are given a user question in English: \"What should the company do when a non-conformity is found in the safety management system?\"\n\nWe are to write exactly two short search queries:\n\nQ1: in the language of the question (which is English)\nQ2: the same query in the other language (which would be Turkish, since the question is in English)\n\nBut note: the problem says \"the same query in the other language (English if the question is Turkish, Turkish if the question is English)\". Since the user question is in English, Q2 should be in Turkish.\n\n",
+      "error": null,
+      "valid": false,
+      "reason": "FORMAT_INVALID",
+      "queries": [],
+      "ms": 7315
+    },
+    "RP-07": {
+      "raw": "We are given a user question in English: \"What does security level 1 mean in the ISPS Code?\"\n\nWe need to write two search queries:\n\nQ1: in the language of the question (which is English)\nQ2: the same query in the other language (Turkish, because the question is in English)\n\nBut note: the problem says \"Q2: the same query in the other language (English if the question is Turkish, Turkish if the question is English)\". Since the user question is in English, Q2 should be in Turkish.\n\nHowever, the problem states: \"",
+      "error": null,
+      "valid": false,
+      "reason": "FORMAT_INVALID",
+      "queries": [],
+      "ms": 7517
+    },
+    "RP-08": {
+      "raw": "We are given a user question in English: \"When can a ship ask for a Declaration of Security to be completed?\"\n\nWe need to write two search queries:\n\nQ1: in the language of the question (which is English)\nQ2: the same query in the other language (Turkish, because the question is in English)\n\nBut note: the problem says \"the same query in the other language (English if the question is Turkish, Turkish if the question is English)\". Since the question is in English, Q2 should be in Turkish.\n\nHowever, the problem also says: \"use the",
+      "error": null,
+      "valid": false,
+      "reason": "FORMAT_INVALID",
+      "queries": [],
+      "ms": 7553
+    },
+    "RP-10": {
+      "raw": "We are given a user question in English: \"What is the ship security alert system and who receives its alert?\"\n\nWe need to write two search queries:\n\nQ1: in the language of the question (which is English)\nQ2: the same query in the other language (Turkish, because the question is in English)\n\nBut note: the problem says \"the same query in the other language (English if the question is Turkish, Turkish if the question is English)\". Since the user question is in English, Q2 should be in Turkish.\n\nHowever, the problem also says: \"use the",
+      "error": null,
+      "valid": false,
+      "reason": "FORMAT_INVALID",
+      "queries": [],
+      "ms": 7408
+    },
+    "RP-11": {
+      "raw": "We are given a user question in English: \"What is the minimum age to work on a ship under the Maritime Labour Convention?\"\n\nWe need to write two search queries:\n\nQ1: in the language of the question (which is English)\nQ2: the same query in the other language (Turkish, because the question is in English)\n\nBut note: the rules say \"Q2: the same query in the other language (English if the question is Turkish, Turkish if the question is English)\". Since the user's question is in English, Q2 should be in Turkish.\n\nHowever, the",
+      "error": null,
+      "valid": false,
+      "reason": "FORMAT_INVALID",
+      "queries": [],
+      "ms": 7208
+    },
+    "RP-13": {
+      "raw": "We are given a user question in English: \"What must a seafarer's employment agreement include?\"\n We are to write two search queries:\n   Q1: in the language of the question (which is English)\n   Q2: the same query in the other language (Turkish, because the question is in English)\n\n However, note the rules: \n   - Do not answer the question.\n   - Do not write any number, date, limit or period.\n   - Do not write any regulation, rule, chapter, section, article or annex number.\n   - Each query has ",
+      "error": null,
+      "valid": false,
+      "reason": "FORMAT_INVALID",
+      "queries": [],
+      "ms": 7199
+    },
+    "RP-14": {
+      "raw": "We are given a user question in English: \"When does a seafarer have the right to be sent home at the shipowner's cost?\"\n\nWe need to write two search queries:\n\nQ1: in the language of the question (which is English)\nQ2: the same query in the other language (Turkish, because the question is in English)\n\nBut note: the rules say \"the same query in the other language (English if the question is Turkish, Turkish if the question is English)\". Since the question is in English, Q2 should be in Turkish.\n\nHowever, the problem",
+      "error": null,
+      "valid": false,
+      "reason": "FORMAT_INVALID",
+      "queries": [],
+      "ms": 7440
+    },
+    "RP-16": {
+      "raw": "We are given a user question in English: \"How often must the crew take part in an abandon ship drill?\"\n\nWe are to write two search queries:\n\nQ1: in the language of the question (which is English)\nQ2: the same query in the other language (Turkish, because the question is in English)\n\nBut note: the problem says \"the same query in the other language (English if the question is Turkish, Turkish if the question is English)\". Since the user question is in English, Q2 should be in Turkish.\n\nHowever, the problem also says: \"use the",
+      "error": null,
+      "valid": false,
+      "reason": "FORMAT_INVALID",
+      "queries": [],
+      "ms": 7207
+    },
+    "RP-17": {
+      "raw": "We are given a user question in English: \"How often are fire drills required on a cargo ship?\"\n\nWe need to write two search queries:\n\nQ1: in the language of the question (which is English)\nQ2: the same query in the other language (Turkish, because the question is in English)\n\nBut note: the problem says \"the same query in the other language (English if the question is Turkish, Turkish if the question is English)\". Since the user question is in English, Q2 should be in Turkish.\n\nHowever, the problem also says: \"use the words the",
+      "error": null,
+      "valid": false,
+      "reason": "FORMAT_INVALID",
+      "queries": [],
+      "ms": 7317
+    },
+    "RP-19": {
+      "raw": "We are given a user question in English: \"What does the collision regulations rule on look-out require of every vessel?\"\n\nWe are to write two search queries:\n\nQ1: in the language of the question (which is English)\nQ2: the same query in the other language (which would be Turkish, since the question is in English)\n\nBut note: the problem says \"the same query in the other language (English if the question is Turkish, Turkish if the question is English)\". Since the user question is in English, Q2 should be in Turkish.\n\nHowever, the problem also says:",
+      "error": null,
+      "valid": false,
+      "reason": "FORMAT_INVALID",
+      "queries": [],
+      "ms": 7474
+    },
+    "RP-20": {
+      "raw": "We are given a user question in English: \"Which factors decide what a safe speed is for a vessel?\"\n\nWe are to write two search queries:\n\nQ1: in the language of the question (which is English)\nQ2: the same query in the other language (Turkish, because the question is in English)\n\nBut note: the problem says \"the same query in the other language (English if the question is Turkish, Turkish if the question is English)\". Since the user question is in English, Q2 should be in Turkish.\n\nHowever, the problem also says: \"use the words",
+      "error": null,
+      "valid": false,
+      "reason": "FORMAT_INVALID",
+      "queries": [],
+      "ms": 7591
+    },
+    "RP-22": {
+      "raw": "We are given a user question in English: \"How should a vessel behave when it cannot see other vessels because of fog?\"\n\nWe are to write two search queries:\n\nQ1: in the language of the question (which is English)\nQ2: the same query in the other language (Turkish, because the question is in English)\n\nBut note: the problem says \"the same query in the other language (English if the question is Turkish, Turkish if the question is English)\". Since the user question is in English, Q2 should be in Turkish.\n\nHowever, the problem also says: \"",
+      "error": null,
+      "valid": false,
+      "reason": "FORMAT_INVALID",
+      "queries": [],
+      "ms": 7429
+    },
+    "RP-23": {
+      "raw": "We are given a user question in English: \"Which operations have to be written into the oil record book?\"\n\nWe are to write two search queries:\n\nQ1: in the language of the question (which is English)\nQ2: the same query in the other language (Turkish, because the question is in English)\n\nBut note: the problem says \"the same query in the other language (English if the question is Turkish, Turkish if the question is English)\". Since the user question is in English, Q2 should be in Turkish.\n\nHowever, the problem also says: \"use the words",
+      "error": null,
+      "valid": false,
+      "reason": "FORMAT_INVALID",
+      "queries": [],
+      "ms": 7341
+    },
+    "RP-25": {
+      "raw": "We are given a user question in English: \"Which ships have to keep a garbage record book?\"\n\nWe are to write two search queries:\n\nQ1: in the language of the question (which is English)\nQ2: the same query in the other language (Turkish, because the question is in English)\n\nBut note: the problem says \"the same query in the other language (English if the question is Turkish, Turkish if the question is English)\". Since the user question is in English, Q2 should be in Turkish.\n\nHowever, the problem also says: \"use the words the official",
+      "error": null,
+      "valid": false,
+      "reason": "FORMAT_INVALID",
+      "queries": [],
+      "ms": 7256
+    },
+    "RP-26": {
+      "raw": "We are given a user question in English: \"What is a SOPEP and which ships must carry one?\"\n\nWe need to write two search queries:\n\nQ1: in the language of the question (which is English)\nQ2: the same query in the other language (Turkish, because the question is in English)\n\nBut note: the problem says \"the same query in the other language (English if the question is Turkish, Turkish if the question is English)\". Since the user question is in English, Q2 should be in Turkish.\n\nHowever, the problem also says: \"use the",
+      "error": null,
+      "valid": false,
+      "reason": "FORMAT_INVALID",
+      "queries": [],
+      "ms": 7300
+    },
+    "RP-28": {
+      "raw": "We are given a user question in English: \"What is the D-2 standard for ballast water?\"\n We need to write two search queries:\n   Q1: in the language of the question (which is English)\n   Q2: the same query in the other language (Turkish, because the question is in English)\n\n However, note the rules: \n   - Do not answer the question.\n   - Do not write any number, date, limit or period.\n   - Do not write any regulation, rule, chapter, section, article or annex number.\n   - Each query has",
+      "error": null,
+      "valid": false,
+      "reason": "FORMAT_INVALID",
+      "queries": [],
+      "ms": 7741
+    },
+    "RP-29": {
+      "raw": "Okay, let's tackle this query. The user is asking in Turkish: \"Gemi güvenlik planı nedir ve kim tarafından onaylanır?\" which translates to \"What is a ship security plan and who approves it?\"\n\nFirst, I need to write two search queries. The first query should be in the language of the question, which is Turkish. The second query should be in English since the question is in Turkish.\n\nFor Q1 (Turkish), I need to use the official terms from maritime regulations. The phrase \"gemi güvenlik planı\" is \"ship security plan\". The",
+      "error": null,
+      "valid": false,
+      "reason": "FORMAT_INVALID",
+      "queries": [],
+      "ms": 7870
+    },
+    "RP-31": {
+      "raw": "Okay, let's tackle this problem. The user is asking in Turkish: \"COLREG'e göre gözcülük nasıl yapılmalıdır?\" which translates to \"According to COLREGs, how should lookout be conducted?\" \n\nFirst, I need to write two search queries. The first query (Q1) should be in the language of the question, which is Turkish. The second query (Q2) should be in English.\n\nThe user specified that the queries should use the official source text words like \"shall\", \"means\", etc. So I need to make sure the queries are phr",
+      "error": null,
+      "valid": false,
+      "reason": "FORMAT_INVALID",
+      "queries": [],
+      "ms": 7791
+    },
+    "RP-32": {
+      "raw": "Okay, let's tackle this problem. The user is asking in Turkish: \"Emniyetli hız belirlenirken hangi etkenler dikkate alınır?\" which translates to \"Which factors are considered when determining a safe speed?\" \n\nFirst, I need to write two search queries. The first query should be in the language of the question, which is Turkish. The second query should be in English since the question is in Turkish.\n\nThe rules say to use the official source text words like \"shall\", \"means\", \"at least\", \"not exceeding\", \"is entitled",
+      "error": null,
+      "valid": false,
+      "reason": "FORMAT_INVALID",
+      "queries": [],
+      "ms": 7890
+    },
+    "RP-34": {
+      "raw": "We are given a user question in Turkish: \"Role cetvelinde hangi bilgiler bulunur?\"\n This translates to: \"What information is found in the role certificate?\"\n\n The task requires:\n   Q1: in the language of the question (Turkish)\n   Q2: the same query in the other language (English)\n\n Steps:\n 1. The user question is in Turkish, so:\n      Q1: should be the query in Turkish (as the question is in Turkish)\n      Q2: should be the same query in English.\n\n 2. We must write exactly two",
+      "error": null,
+      "valid": false,
+      "reason": "FORMAT_INVALID",
+      "queries": [],
+      "ms": 7788
+    },
+    "RP-35": {
+      "raw": "Okay, let's tackle this problem. The user is asking in Turkish about what happens when an unsuitability is detected under the ISM Code. I need to create two search queries: one in Turkish and one in English, following the rules.\n\nFirst, I'll translate the question to English to understand it better. The original Turkish question is: \"ISM Kod kapsamında uygunsuzluk tespit edildiğinde ne yapılır?\" Translating that, it's \"What is done when an unsuitability is detected under the ISM Code?\"\n\nNow, the user wants",
+      "error": null,
+      "valid": false,
+      "reason": "FORMAT_INVALID",
+      "queries": [],
+      "ms": 7917
+    }
+  },
+  "summary": {
+    "probes": 24,
+    "generated": 24,
+    "valid": 0,
+    "invalidReasons": {
+      "FORMAT_INVALID": 24
+    },
+    "stopped": null
+  }
+}

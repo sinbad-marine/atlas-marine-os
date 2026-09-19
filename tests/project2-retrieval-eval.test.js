@@ -65,7 +65,7 @@ test('the recorded runs say what they are: RETRIEVAL-001 is the merged retriever
 test('the tool reads the library and writes only its own result directory; no model, no network',()=>{
   const source=read('tools/evaluate-retrieval.js');
   assert.doesNotMatch(source,/node:http|node:https|node:net|\bfetch\(|child_process|ollama|api\.openai|supabase/u);
-  assert.deepEqual([...source.matchAll(/writeFileSync\(/gu)].length,1);assert.match(source,/writeFileSync\(path\.join\(outDir,'results\.json'\)/u);
+  assert.deepEqual([...source.matchAll(/writeFileSync\(/gu)].length,1);assert.match(source,/writeFileSync\(path\.join\(outDir,name\)/u);assert.match(source,/const name=args\.label\?`results-\$\{args\.label\}\.json`:'results\.json';/u);
   assert.throws(()=>tool.parseArgs([]),/RUN_ID_REQUIRED/u);assert.throws(()=>tool.parseArgs(['--run-id','GROUNDED-001']),/RUN_ID_REQUIRED/u);
   assert.throws(()=>tool.parseArgs(['--run-id','RETRIEVAL-009','--passages','99']),/PASSAGES_INVALID/u);assert.equal(tool.parseArgs(['--run-id','RETRIEVAL-009']).passages,6);
 });

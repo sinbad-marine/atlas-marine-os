@@ -1,0 +1,33 @@
+{
+  "run": "RETRIEVAL-003 final (results-final-test2.json)",
+  "preregistration": "PREREGISTRATION.json, committed and pushed as ac74417c936636b8527105538d6ab9d862fcadb0 (2026-09-19T10:59:03+03:00) before the blind set was read",
+  "verdict": "NOT ACCEPTED",
+  "consequence": "Query expansion does not enter the grounded pipeline. Nothing is wired. The module and the tools stay in the repository as measured, experimental code. BLIND TEST-2 is a USED HOLDOUT from this run on. The embedding / semantic re-ranker option goes to the Owner as a decision.",
+  "measured": {
+    "probes": 36,
+    "baseline": {"hit": 22, "strictHit": 12, "strictProbes": 25, "mrr": 0.447, "en": "15 of 27", "tr": "7 of 9"},
+    "candidate": {"hit": 24, "strictHit": 14, "strictProbes": 25, "mrr": 0.458, "en": "17 of 27", "tr": "7 of 9"},
+    "gains": ["T2-03", "T2-05", "T2-08"],
+    "regressions": ["T2-19"],
+    "baselineHitsKept": "21 of 22",
+    "ranks": {"improved": 4, "worsened": 6},
+    "expansions": {"valid": 26, "discarded": 10, "discardedBecause": {"NUMBER_WORD_NOT_IN_QUESTION": 8, "NUMBER_NOT_IN_QUESTION": 1, "DUPLICATE_QUERY": 1}}
+  },
+  "criteria": [
+    {"id": "A", "rule": "strict probes: candidate - baseline >= +3", "measured": "+2 (12 -> 14 of 25)", "met": false},
+    {"id": "B", "rule": "gains - regressions >= +4", "measured": "+2 (3 gains, 1 regression)", "met": false},
+    {"id": "C", "rule": "regressions <= 1", "measured": "1 (T2-19)", "met": true},
+    {"id": "D", "rule": "MRR candidate > baseline", "measured": "0.458 > 0.447", "met": true},
+    {"id": "E", "rule": "neither language lower", "measured": "EN 15 -> 17, TR 7 -> 7", "met": true},
+    {"id": "F", "rule": ">= 60 % of expansions valid", "measured": "72 % (26 of 36)", "met": true}
+  ],
+  "ceiling": "not applicable: the baseline hit 12 of 25 strict probes, far below the ceiling clause (23)",
+  "reading": [
+    "The gain is real but small and did not generalise at the size seen on DEV (DEV +4 / 0, TEST-2 +3 / -1). With 3 gains and 1 regression a one-sided sign test gives p = 0.31: no evidence.",
+    "All three gains came from the expansion slot, two of them for passages that were not within the first 200 of the lexical ranking at all - the mechanism does what it was built for, just not often enough.",
+    "The one regression is the predicted cost of SLOTS with keep 4: the passage that answers was 5th in the original result and lost its place to the expansion slot.",
+    "Of the 11 probes missed by both, 8 had a valid expansion and were still missed: the limit is not only the discarded expansions.",
+    "9 of the 10 discarded expansions stated a number the question did not contain - on 'how often / how long / how much' questions the model answers instead of rewriting. The check did its job; it also means the mechanism is weakest exactly where a precise passage matters most.",
+    "The more important number is the baseline on unseen strict probes: 12 of 25 (48 %). probes-v1 had suggested 9 of 14. Lexical retrieval over this library is weaker than Phase 4.8 showed."
+  ]
+}
