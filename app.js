@@ -27,7 +27,7 @@ async function ownerBridgeFetch(path,action,body,checkReplay=false){
   if(replay.status!==403||rejection.error!=='ARGOS_COMMAND_BLOCKED'||rejection.reason!=='ARGOS_COMMAND_REPLAYED')throw new Error('BRIDGE_CHECK_REPLAY_NOT_REJECTED');
   return {status:'BRIDGE_OWNER_ACCEPTANCE_PASSED',filename:saved.filename,authorizationId:proof.authorizationId,commandId:command.commandId,checkedAt:new Date().toISOString(),writeStatus:201,replayStatus:403};
 }
-const APP_LANGUAGES=[['tr-TR','Türkçe'],['en-US','English'],['ru-RU','Русский'],['fr-FR','Français'],['de-DE','Deutsch'],['ar-SA','العربية'],['es-ES','Español'],['it-IT','Italiano']];
+const APP_LANGUAGES=[['en-US','English'],['tr-TR','Türkçe'],['ru-RU','Русский'],['fr-FR','Français'],['de-DE','Deutsch'],['ar-SA','العربية'],['es-ES','Español'],['it-IT','Italiano']];
 const APP_I18N={
  'tr-TR':{gatewayTitle:'Sinbad Marine şu anda geliştiriliyor.',gatewayText:'Güvenli denizcilik zekâsı ve yat operasyon platformumuz kullanıma hazırlanıyor.',signIn:'Üye Girişi',createAccount:'Hesap Oluştur',checkCloud:'Bulut Bağlantısını Kontrol Et',heroTitle:'Tek Köprü. Tüm Operasyonlar.'},
  'en-US':{gatewayTitle:'Sinbad Marine is currently under development.',gatewayText:'Our secure marine intelligence and yacht operations platform is being prepared for launch.',signIn:'Member Sign In',createAccount:'Create Account',checkCloud:'Check Cloud Connection',heroTitle:'One Bridge. Every Operation.'},
@@ -38,7 +38,9 @@ const APP_I18N={
  'es-ES':{gatewayTitle:'Sinbad Marine está actualmente en desarrollo.',gatewayText:'Nuestra plataforma segura de inteligencia marítima y operaciones de yates se está preparando.',signIn:'Acceso de miembros',createAccount:'Crear cuenta',checkCloud:'Comprobar la nube',heroTitle:'Un puente. Todas las operaciones.'},
  'it-IT':{gatewayTitle:'Sinbad Marine è attualmente in fase di sviluppo.',gatewayText:'La nostra piattaforma sicura per intelligence marittima e gestione yacht è in preparazione.',signIn:'Accesso membri',createAccount:'Crea account',checkCloud:'Controlla il cloud',heroTitle:'Un ponte. Tutte le operazioni.'}
 };
-let appLanguage=localStorage.getItem('atlas_app_language')||'tr-TR';
+const APP_LANGUAGE_BASELINE_KEY='atlas_app_language_baseline_20260919';
+let appLanguage=localStorage.getItem('atlas_app_language')||'en-US';
+if(!localStorage.getItem(APP_LANGUAGE_BASELINE_KEY)){appLanguage='en-US';localStorage.setItem('atlas_app_language',appLanguage);localStorage.setItem(APP_LANGUAGE_BASELINE_KEY,'applied')}
 function applyAppLanguage(language){
   appLanguage=APP_I18N[language]?language:'en-US';localStorage.setItem('atlas_app_language',appLanguage);
   document.documentElement.lang=appLanguage.split('-')[0];document.documentElement.dir=appLanguage.startsWith('ar')?'rtl':'ltr';
@@ -58,16 +60,16 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&
 
 const CONSOLE_OWNER_URL='https://sinbad-owner-console.onrender.com/';
 const CONSOLE_DESTINATIONS=Object.freeze({
-  'yacht-operations':{label:'Yat Yönetimi',art:'rembrandt'},fleet:{label:'Filo Yöneticisi',art:'rembrandt'},crew:{label:'Mürettebat',art:'rembrandt'},'captains-logbook':{label:'Kaptan Günlüğü',art:'rembrandt'},'camera-archive':{label:'Kamera ve Medya',art:'monet'},
-  'voyage-navigation':{label:'Seyir Planlama',art:'van-gogh'},routes:{label:'Rota Kütüphanesi',art:'van-gogh'},'navigation-plot':{label:'Seyir Plotu',art:'van-gogh'},'location-intelligence':{label:'Konum İstihbaratı',art:'van-gogh'},pilot:{label:'Pilot Kütüphanesi',art:'van-gogh'},resources:{label:'Blue Voyage Kaynakları',art:'van-gogh'},'enc-viewer':{label:'ENC Viewer',art:'hokusai'},charts:{label:'Haritalar',art:'hokusai'},
-  'documents-compliance':{label:'Belgeler ve Uyum',art:'vermeer'},'cloud-documents':{label:'Cloud Belge Merkezi',art:'vermeer'},publications:{label:'Yayınlar',art:'vermeer'},knowledge:{label:'Bilgi Kütüphanesi',art:'vermeer'},documents:{label:'Yerel Belgeler',art:'vermeer'},'document-submissions':{label:'Kontrollü Gönderimler',art:'vermeer'},
-  'technical-systems':{label:'Teknik Sistemler',art:'picasso'},'cloud-control':{label:'Atlas Cloud Kontrolü',art:'picasso'},'admin-settings':{label:'Ayarlar ve Yönetim',art:'picasso'},'studio-console':{label:'Sinbad Studio',art:'picasso'},
+  'yacht-operations':{label:'Yacht Management',art:'rembrandt'},fleet:{label:'Fleet & Yacht Management',art:'rembrandt'},crew:{label:'Crew',art:'rembrandt'},'captains-logbook':{label:"Captain's Logbook",art:'rembrandt'},'camera-archive':{label:'Camera & Media Archive',art:'monet'},
+  'voyage-navigation':{label:'Voyage Planning',art:'da-vinci'},routes:{label:'Route Library',art:'da-vinci'},'navigation-plot':{label:'Navigation Plot',art:'da-vinci'},'location-intelligence':{label:'Location Intelligence',art:'da-vinci'},pilot:{label:'Coastal Pilotage Directory',art:'da-vinci'},resources:{label:'Blue Voyage Resources',art:'da-vinci'},'enc-viewer':{label:'ENC Viewer',art:'da-vinci'},charts:{label:'Local Charts',art:'da-vinci'},
+  'documents-compliance':{label:'Documents & Compliance',art:'vermeer'},'cloud-documents':{label:'Cloud Document Center',art:'vermeer'},publications:{label:'Nautical Publications',art:'da-vinci'},knowledge:{label:'Knowledge Library',art:'vermeer'},documents:{label:'Local Documents',art:'vermeer'},'document-submissions':{label:'Controlled Submissions',art:'vermeer'},
+  'technical-systems':{label:'Technical Systems',art:'picasso'},'cloud-control':{label:'Atlas Cloud Control',art:'picasso'},'admin-settings':{label:'Settings & Administration',art:'picasso'},'studio-console':{label:'Sinbad Studio',art:'picasso'},
   'sinbad-ai':{label:'SINBAD AI',art:'dali'},sinbad:{label:'Kaptan Sinbad',art:'dali'},store:{label:'Marine Store',art:'renoir'}
 });
 const CONSOLE_FAVORITES_KEY='sinbad_console_favorites_v1',CONSOLE_RECENT_KEY='sinbad_console_recent_v1';
 const consoleJson=(key,fallback)=>{try{const value=JSON.parse(localStorage.getItem(key)||'null');return Array.isArray(value)?value:fallback}catch{return fallback}};
-function consoleParentFor(id){if(['fleet','crew','captains-logbook','camera-archive'].includes(id))return'yacht-operations';if(['routes','navigation-plot','location-intelligence','pilot','resources','enc-viewer','charts'].includes(id))return'voyage-navigation';if(['cloud-documents','publications','knowledge','documents','document-submissions'].includes(id))return'documents-compliance';if(['cloud-control','admin-settings','studio-console'].includes(id))return'technical-systems';if(id==='sinbad')return'sinbad-ai';return id}
-function applyConsoleArt(id='home'){const parent=consoleParentFor(id),art=id==='home'?'monet':parent==='yacht-operations'?'rembrandt':'';if(art)document.body.dataset.consoleArt=art;else delete document.body.dataset.consoleArt;document.querySelectorAll('.console-primary-nav button').forEach(button=>button.classList.toggle('active',id==='home'?button.hasAttribute('data-console-home'):button.dataset.open===parent));}
+function consoleParentFor(id){if(['fleet','crew','captains-logbook','camera-archive'].includes(id))return'yacht-operations';if(['routes','navigation-plot','location-intelligence','pilot','publications','resources','enc-viewer','charts'].includes(id))return'voyage-navigation';if(['cloud-documents','knowledge','documents','document-submissions'].includes(id))return'documents-compliance';if(['cloud-control','admin-settings','studio-console'].includes(id))return'technical-systems';if(id==='sinbad')return'sinbad-ai';return id}
+function applyConsoleArt(id='home'){const parent=consoleParentFor(id),art=id==='home'?'monet':parent==='yacht-operations'?'rembrandt':parent==='voyage-navigation'?'da-vinci':'';if(art)document.body.dataset.consoleArt=art;else delete document.body.dataset.consoleArt;document.querySelectorAll('.console-primary-nav button').forEach(button=>button.classList.toggle('active',id==='home'?button.hasAttribute('data-console-home'):button.dataset.open===parent));}
 function recordConsoleRecent(id){if(!CONSOLE_DESTINATIONS[id])return;const recent=consoleJson(CONSOLE_RECENT_KEY,[]).filter(item=>item!==id);recent.unshift(id);localStorage.setItem(CONSOLE_RECENT_KEY,JSON.stringify(recent.slice(0,6)));renderConsolePersonalization();}
 function renderConsoleLinks(target,ids,empty){if(!target)return;target.innerHTML=ids.length?ids.map(id=>`<button type="button" data-console-shortcut="${esc(id)}">${esc(CONSOLE_DESTINATIONS[id]?.label||id)}</button>`).join(''):`<small>${esc(empty)}</small>`;target.querySelectorAll('[data-console-shortcut]').forEach(button=>button.onclick=()=>openConsoleDestination(button.dataset.consoleShortcut));}
 function renderConsolePersonalization(){const defaults=['fleet','routes','cloud-documents','sinbad'],favorites=consoleJson(CONSOLE_FAVORITES_KEY,defaults).filter(id=>CONSOLE_DESTINATIONS[id]);renderConsoleLinks($('consoleFavoritesList'),favorites,'Favori eklenmedi.');renderConsoleLinks($('consoleRecentList'),consoleJson(CONSOLE_RECENT_KEY,[]).filter(id=>CONSOLE_DESTINATIONS[id]),'Henüz çalışma alanı açılmadı.');const options=$('consoleFavoritesOptions');if(options)options.innerHTML=Object.entries(CONSOLE_DESTINATIONS).filter(([id])=>['fleet','routes','cloud-documents','sinbad','captains-logbook','location-intelligence','studio-console','store'].includes(id)).map(([id,item])=>`<label><input type="checkbox" value="${esc(id)}" ${favorites.includes(id)?'checked':''}> ${esc(item.label)}</label>`).join('');}
@@ -109,7 +111,7 @@ function prepareConsoleCardDestination(id,params={}){
   const child=window.open('about:blank',name,workspaceWindowFeatures());
   if(!child)return()=>openConsoleDestination(id,params);
   workspaceWindows.set(id,child);
-  try{child.document.title='SINBAD çalışma alanı hazırlanıyor';child.blur();window.focus();}catch{}
+  try{child.document.title='Preparing SINBAD workspace';child.blur();window.focus();}catch{}
   return()=>{recordConsoleRecent(id);applyConsoleArt(id);try{child.location.replace(url.href);}catch{child.location.href=url.href;}child.focus();};
 }
 function runConsoleCardOpenMotion(card,commit){
@@ -135,9 +137,9 @@ function installWorkspaceWindowShell(){
   document.body.classList.add('workspace-window-mode',`workspace-window-${workspaceWindowId}`);
   document.title=`${workspace.querySelector('h2')?.textContent?.trim()||'Workspace'} — Sinbad Marine`;
   const toolbar=document.createElement('nav');
-  toolbar.className='workspace-window-toolbar';toolbar.setAttribute('aria-label','Pencere gezinme araçları');
+  toolbar.className='workspace-window-toolbar';toolbar.setAttribute('aria-label','Workspace navigation');
   const windowControls=workspaceWindowId==='enc-viewer'?'<div class="workspace-window-controls" aria-label="Pencere görünüm kontrolleri"><button class="workspace-window-control" type="button" data-window-minimize title="Simge durumuna küçült" aria-label="Simge durumuna küçült">—</button><button class="workspace-window-control" type="button" data-window-scale title="Pencereyi ölçeklendir" aria-label="Pencereyi ölçeklendir">▣</button><button class="workspace-window-control" type="button" data-window-fullscreen title="Ekranı kapla" aria-label="Ekranı kapla">⛶</button></div>':'';
-  toolbar.innerHTML='<div class="workspace-window-brand"><strong>⚓ Sinbad Marine</strong><small>Bağımsız çalışma penceresi</small></div><div class="workspace-window-actions"><button class="btn" type="button" data-window-back>← Geri</button><button class="btn primary" type="button" data-window-home>⌂ Ana Sayfa</button>'+windowControls+'</div>';
+  toolbar.innerHTML='<div class="workspace-window-brand"><strong>⚓ Sinbad Marine</strong><small>Independent workspace</small></div><div class="workspace-window-actions"><button class="btn" type="button" data-window-back>← Back</button><button class="btn primary" type="button" data-window-home>⌂ Home</button>'+windowControls+'</div>';
   document.querySelector('main')?.prepend(toolbar);
   toolbar.querySelector('[data-window-back]').onclick=()=>history.length>1?history.back():window.close();
   toolbar.querySelector('[data-window-home]').onclick=()=>{if(window.opener&&!window.opener.closed){window.opener.focus();window.close();}else location.href='./index.html';};
@@ -207,18 +209,18 @@ function renderNavigationPlot(){
   if(!navigationPlotMap||!navigationPlotRoute)return;
   const route=navigationPlotRoute,start=ol.proj.fromLonLat([route.start.lon,route.start.lat]),end=ol.proj.fromLonLat([route.end.lon,route.end.lat]);
   const line=new ol.Feature({geometry:new ol.geom.LineString(route.points.map(point=>ol.proj.fromLonLat(point))),kind:'route'});
-  const startFeature=new ol.Feature({geometry:new ol.geom.Point(start),kind:'start',label:'Başlangıç'}),endFeature=new ol.Feature({geometry:new ol.geom.Point(end),kind:'end',label:'Varış'});
+  const startFeature=new ol.Feature({geometry:new ol.geom.Point(start),kind:'start',label:'Start'}),endFeature=new ol.Feature({geometry:new ol.geom.Point(end),kind:'end',label:'Arrival'});
   navigationPlotSource.clear();navigationPlotSource.addFeatures([line,startFeature,endFeature]);
   navigationPlotMap.getView().fit(line.getGeometry().getExtent(),{padding:[80,80,80,80],maxZoom:9,duration:650});
-  $('navigationPlotSummary').textContent=`SEYİR HESABI\n\nBaşlangıç\n${plotCoordinate(route.start.lat,'lat')}, ${plotCoordinate(route.start.lon,'lon')}\n\nVarış\n${plotCoordinate(route.end.lat,'lat')}, ${plotCoordinate(route.end.lon,'lon')}\n\nRota: ${route.course.toFixed(1)}°T\nSürat: ${route.speedKnots.toFixed(2)} kn\nSüre: ${route.hours.toFixed(2)} saat\nMesafe: ${route.distanceNm.toFixed(2)} NM\nYöntem: Sabit kerteriz hattı (rhumb line)\n\n⚠ Eğitim ve karar desteğidir. Resmî harita değildir.`;
+  $('navigationPlotSummary').textContent=`VOYAGE CALCULATION\n\nStart\n${plotCoordinate(route.start.lat,'lat')}, ${plotCoordinate(route.start.lon,'lon')}\n\nArrival\n${plotCoordinate(route.end.lat,'lat')}, ${plotCoordinate(route.end.lon,'lon')}\n\nCourse: ${route.course.toFixed(1)}°T\nSpeed: ${route.speedKnots.toFixed(2)} kn\nDuration: ${route.hours.toFixed(2)} hours\nDistance: ${route.distanceNm.toFixed(2)} NM\nMethod: Rhumb line\n\n⚠ Training and decision support only. Not an official chart.`;
 }
 function initNavigationPlot(){
-  if(!window.ol){$('navigationPlotSummary').textContent='Harita kütüphanesi yüklenemedi.';return;}
+  if(!window.ol){$('navigationPlotSummary').textContent='The map library could not be loaded.';return;}
   if(!navigationPlotMap){
     const status=$('navigationPlotStatus');
     const offlineLandSource=new ol.source.Vector({url:'./vendor/land-110m.json',format:new ol.format.TopoJSON(),overlaps:false});
-    offlineLandSource.on('featuresloadend',()=>{status.textContent='Offline dünya katmanı hazır · OSM ayrıntıları internet bağlantısı varsa gösterilir.';status.classList.add('ready')});
-    offlineLandSource.on('featuresloaderror',()=>{status.textContent='Offline dünya katmanı yüklenemedi.';status.classList.add('error')});
+    offlineLandSource.on('featuresloadend',()=>{status.textContent='Offline world layer ready · OSM details appear when an internet connection is available.';status.classList.add('ready')});
+    offlineLandSource.on('featuresloaderror',()=>{status.textContent='The offline world layer could not be loaded.';status.classList.add('error')});
     const offlineOcean=new ol.layer.Vector({source:offlineLandSource,style:new ol.style.Style({fill:new ol.style.Fill({color:'#173b46'}),stroke:new ol.style.Stroke({color:'#6e9ca4',width:.7})}),zIndex:0});
     const onlineOsm=new ol.layer.Tile({source:new ol.source.OSM(),opacity:.88,zIndex:1});
     navigationPlotSource=new ol.source.Vector();
@@ -245,7 +247,7 @@ async function openCalculatedRouteInOpenCpn(route,downloadOnFailure=false){
   }catch(error){
     if(downloadOnFailure){
       downloadCalculatedRouteGpx(route);
-      return {ok:true,message:'OpenCPN yerel köprüsüne ulaşılamadı. GPX rota dosyasını indirdim; dosyayı OpenCPN ile açabilirsiniz.'};
+      return {ok:true,message:'The local OpenCPN bridge could not be reached. I downloaded the GPX route file so you can open it in OpenCPN.'};
     }
     return null;
   }
@@ -317,11 +319,11 @@ function initEncViewer(){
 }
 
 const ENC_BASEMAPS={
-  navigation:{label:'Seyir / Açık',url:null},
-  topographic:{label:'Topografik',url:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}'},
-  'dark-gray':{label:'Koyu Gri',url:'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'},
-  ocean:{label:'Okyanus',url:'https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}'},
-  imagery:{label:'Uydu',url:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'}
+  navigation:{label:'Navigation / Light',url:null},
+  topographic:{label:'Topographic',url:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}'},
+  'dark-gray':{label:'Dark Gray',url:'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'},
+  ocean:{label:'Ocean',url:'https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}'},
+  imagery:{label:'Imagery',url:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'}
 };
 function createEncBasemapSource(id){
   const format=ENC_BASEMAPS[id]||ENC_BASEMAPS.navigation;
@@ -331,7 +333,7 @@ function setEncBasemap(id){
   const format=ENC_BASEMAPS[id];if(!format||!encBaseLayer)return;
   encBaseLayer.setSource(createEncBasemapSource(id));
   document.querySelectorAll('[data-enc-basemap]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.encBasemap===id)));
-  $('encPlanningStatus').textContent=`Harita formatı: ${format.label}. ENC, seamark ve rota katmanları korunuyor.`;
+  $('encPlanningStatus').textContent=`Basemap: ${format.label}. ENC, seamark and route layers remain active.`;
   $('encMapAppsMenu').open=false;
 }
 
@@ -340,38 +342,38 @@ function setEncPlanningMode(mode){
   if(encDrawInteraction){encMap.removeInteraction(encDrawInteraction);encDrawInteraction=null;}
   ['encPanTool','encMeasureTool','encDrawRouteTool'].forEach(id=>{const active=(id==='encPanTool'&&mode==='pan')||(id==='encMeasureTool'&&mode==='measure')||(id==='encDrawRouteTool'&&mode==='route');$(id).setAttribute('aria-pressed',String(active));$(id).classList.toggle('primary',active);document.querySelector(`[data-enc-fullscreen-action="${id}"]`)?.setAttribute('aria-pressed',String(active));document.querySelector(`[data-enc-fullscreen-action="${id}"]`)?.classList.toggle('primary',active)});
   const status=$('encPlanningStatus');
-  if(mode==='pan'){status.textContent='Gezinme açık: sürükleyin, tekerlekle yakınlaştırın.';return}
-  encDrawInteraction=new ol.interaction.Draw({source:encPlanningSource,type:'LineString'});encMap.addInteraction(encDrawInteraction);status.textContent=mode==='measure'?'Ölçü hattının noktalarını tıklayın; bitirmek için çift tıklayın.':'Rota waypointlerini tıklayın; bitirmek için çift tıklayın.';
-  encDrawInteraction.on('drawend',event=>{event.feature.set('kind',mode);const coordinates=event.feature.getGeometry().getCoordinates(),distanceNm=ol.sphere.getLength(event.feature.getGeometry())/1852,message=`${mode==='measure'?'Ölçülen mesafe':'Çizilen rota'}: ${distanceNm.toFixed(2)} NM · ${coordinates.length} nokta.`;status.textContent=message;if(mode==='route')setEncRouteTransferEnabled(true);setTimeout(()=>{setEncPlanningMode('pan');status.textContent=message},0)});
+  if(mode==='pan'){status.textContent='Pan mode: drag to move and use the wheel to zoom.';return}
+  encDrawInteraction=new ol.interaction.Draw({source:encPlanningSource,type:'LineString'});encMap.addInteraction(encDrawInteraction);status.textContent=mode==='measure'?'Click measurement points; double-click to finish.':'Click route waypoints; double-click to finish.';
+  encDrawInteraction.on('drawend',event=>{event.feature.set('kind',mode);const coordinates=event.feature.getGeometry().getCoordinates(),distanceNm=ol.sphere.getLength(event.feature.getGeometry())/1852,message=`${mode==='measure'?'Measured distance':'Drawn route'}: ${distanceNm.toFixed(2)} NM · ${coordinates.length} points.`;status.textContent=message;if(mode==='route')setEncRouteTransferEnabled(true);setTimeout(()=>{setEncPlanningMode('pan');status.textContent=message},0)});
 }
 function latestEncRouteFeature(){return [...(encPlanningSource?.getFeatures()||[])].reverse().find(feature=>feature.get('kind')==='route')||null}
 function undoEncMapPoint(){
-  if(encDrawInteraction){encDrawInteraction.removeLastPoint();$('encPlanningStatus').textContent='Son çizim noktası geri alındı.';return}
-  const feature=latestEncRouteFeature();if(!feature)return;const geometry=feature.getGeometry(),coordinates=geometry.getCoordinates();if(coordinates.length<=2){encPlanningSource.removeFeature(feature);setEncRouteTransferEnabled(Boolean(latestEncRouteFeature()));$('encPlanningStatus').textContent='Rota çizimi kaldırıldı.';return}geometry.setCoordinates(coordinates.slice(0,-1));$('encPlanningStatus').textContent='Rotanın son waypointi kaldırıldı.';
+  if(encDrawInteraction){encDrawInteraction.removeLastPoint();$('encPlanningStatus').textContent='The last drawing point was undone.';return}
+  const feature=latestEncRouteFeature();if(!feature)return;const geometry=feature.getGeometry(),coordinates=geometry.getCoordinates();if(coordinates.length<=2){encPlanningSource.removeFeature(feature);setEncRouteTransferEnabled(Boolean(latestEncRouteFeature()));$('encPlanningStatus').textContent='The route drawing was removed.';return}geometry.setCoordinates(coordinates.slice(0,-1));$('encPlanningStatus').textContent='The route’s last waypoint was removed.';
 }
 function setEncRouteTransferEnabled(enabled){$('encRouteToPassage').disabled=!enabled;const overlay=document.querySelector('[data-enc-fullscreen-action="encRouteToPassage"]');if(overlay)overlay.disabled=!enabled}
-function clearEncMapDrawing(){if(encDrawInteraction){encMap.removeInteraction(encDrawInteraction);encDrawInteraction=null}encPlanningSource?.clear();setEncRouteTransferEnabled(false);setEncPlanningMode('pan');$('encPlanningStatus').textContent='Harita çizimleri temizlendi.'}
+function clearEncMapDrawing(){if(encDrawInteraction){encMap.removeInteraction(encDrawInteraction);encDrawInteraction=null}encPlanningSource?.clear();setEncRouteTransferEnabled(false);setEncPlanningMode('pan');$('encPlanningStatus').textContent='Chart drawings were cleared.'}
 function routeFeatureToGpx(feature){
   const points=feature.getGeometry().getCoordinates().map((coordinate,index)=>{const [lon,lat]=ol.proj.toLonLat(coordinate);return{name:`WP${String(index+1).padStart(2,'0')}`,lat,lon}}),name=`Sinbad web route ${new Date().toLocaleString()}`;
   const gpx=`<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Sinbad Marine Web ENC" xmlns="http://www.topografix.com/GPX/1/1"><rte><name>${bridgeXml(name)}</name>${points.map(point=>`<rtept lat="${point.lat.toFixed(6)}" lon="${point.lon.toFixed(6)}"><name>${point.name}</name></rtept>`).join('')}</rte></gpx>`;
   return {name,filename:`sinbad-web-route-${Date.now()}.gpx`,gpx,points};
 }
-function sendEncMapRouteToPassage(){const feature=latestEncRouteFeature();if(!feature){$('encPlanningStatus').textContent='Önce harita üzerinde bir rota çizin.';return}encPassageRoute=routeFeatureToGpx(feature);renderEncPassagePlan();$('encPassageTitle').scrollIntoView({behavior:'smooth',block:'start'});$('encPlanningStatus').textContent='Çizilen rota Passage Plan’a aktarıldı.'}
+function sendEncMapRouteToPassage(){const feature=latestEncRouteFeature();if(!feature){$('encPlanningStatus').textContent='Draw a route on the chart first.';return}encPassageRoute=routeFeatureToGpx(feature);renderEncPassagePlan();$('encPassageTitle').scrollIntoView({behavior:'smooth',block:'start'});$('encPlanningStatus').textContent='The drawn route was transferred to Passage Plan.'}
 function initEncMapPlanningTools(){
   $('encPanTool').addEventListener('click',()=>setEncPlanningMode('pan'));$('encMeasureTool').addEventListener('click',()=>setEncPlanningMode('measure'));$('encDrawRouteTool').addEventListener('click',()=>setEncPlanningMode('route'));$('encUndoMapPoint').addEventListener('click',undoEncMapPoint);$('encClearMapDrawing').addEventListener('click',clearEncMapDrawing);$('encRouteToPassage').addEventListener('click',sendEncMapRouteToPassage);
   document.querySelectorAll('[data-enc-fullscreen-action]').forEach(button=>button.addEventListener('click',()=>$(button.dataset.encFullscreenAction)?.click()));
   document.querySelectorAll('[data-enc-basemap]').forEach(button=>button.addEventListener('click',()=>setEncBasemap(button.dataset.encBasemap)));
   const mapShell=$('encMap').closest('.enc-map-shell'),fullscreenButton=$('encFullscreenMap');
   fullscreenButton.addEventListener('click',async()=>{if(document.fullscreenElement===mapShell)await document.exitFullscreen();else await mapShell.requestFullscreen()});
-  document.addEventListener('fullscreenchange',()=>{const active=document.fullscreenElement===mapShell;mapShell.classList.toggle('fullscreen-active',active);fullscreenButton.textContent=active?'Tam ekrandan çık':'Haritayı tam ekran yap';setTimeout(()=>encMap?.updateSize(),100)});
+  document.addEventListener('fullscreenchange',()=>{const active=document.fullscreenElement===mapShell;mapShell.classList.toggle('fullscreen-active',active);fullscreenButton.textContent=active?'Exit fullscreen':'Open chart fullscreen';setTimeout(()=>encMap?.updateSize(),100)});
 }
 
 let encPassageRoute=null,encAdmiraltyCatalogEntries=[];
 function parseEncPassageGpx(gpx,filename='route.gpx'){
-  if(typeof gpx!=='string'||gpx.length>2097152)throw new Error('GPX dosyası boş veya 2 MB sınırını aşıyor.');
-  const xml=new DOMParser().parseFromString(gpx,'application/xml');if(xml.querySelector('parsererror'))throw new Error('Geçerli bir GPX belgesi okunamadı.');
+  if(typeof gpx!=='string'||gpx.length>2097152)throw new Error('The GPX file is empty or exceeds the 2 MB limit.');
+  const xml=new DOMParser().parseFromString(gpx,'application/xml');if(xml.querySelector('parsererror'))throw new Error('A valid GPX document could not be read.');
   const routePoints=[...xml.getElementsByTagNameNS('*','rtept')],trackPoints=[...xml.getElementsByTagNameNS('*','trkpt')],waypoints=[...xml.getElementsByTagNameNS('*','wpt')];
-  const nodes=routePoints.length?routePoints:trackPoints.length?trackPoints:waypoints;if(nodes.length<2)throw new Error('GPX rotası en az iki waypoint içermelidir.');
+  const nodes=routePoints.length?routePoints:trackPoints.length?trackPoints:waypoints;if(nodes.length<2)throw new Error('A GPX route must contain at least two waypoints.');
   const routeNode=xml.getElementsByTagNameNS('*','rte')[0]||xml.getElementsByTagNameNS('*','trk')[0],name=routeNode?.getElementsByTagNameNS('*','name')[0]?.textContent?.trim()||filename.replace(/\.gpx$/i,'');
   const points=nodes.map((node,index)=>({name:node.getElementsByTagNameNS('*','name')[0]?.textContent?.trim()||`WP${String(index+1).padStart(2,'0')}`,lat:Number(node.getAttribute('lat')),lon:Number(node.getAttribute('lon'))}));
   return {name,filename,gpx,points};
@@ -379,39 +381,39 @@ function parseEncPassageGpx(gpx,filename='route.gpx'){
 function encPassageInputs(){return {name:encPassageRoute.name,points:encPassageRoute.points,speedKn:$('encPassageSpeed').value,fuelRateLph:$('encPassageFuel').value,fuelMarginPct:$('encPassageMargin').value,departureTime:$('encPassageDeparture').value}}
 function renderEncPassageIntelligence(plan){
   const intel=SinbadPassagePlanner.intelligence(plan,encAdmiraltyCatalogEntries);encPassageRoute={...encPassageRoute,intelligence:intel};
-  const chartType=item=>item.kind==='paper-chart'?'SNC / Kâğıt':item.kind==='enc-chart'?'ENC / AVCS':'ADC doğrulaması';$('encChartRows').innerHTML=intel.charts.map(item=>`<tr><td>${esc(item.identifier)}</td><td>${esc(chartType(item))}</td><td>${esc(item.source)}</td><td>${esc(item.status)}</td></tr>`).join('');
+  const chartType=item=>item.kind==='paper-chart'?'SNC / Paper':item.kind==='enc-chart'?'ENC / AVCS':'ADC verification';$('encChartRows').innerHTML=intel.charts.map(item=>`<tr><td>${esc(item.identifier)}</td><td>${esc(chartType(item))}</td><td>${esc(item.source)}</td><td>${esc(item.status)}</td></tr>`).join('');
   $('encPublicationRows').innerHTML=intel.publications.map(item=>`<tr><td>${esc(item.id)}</td><td>${esc(item.title)}</td><td>${esc(item.reason)}</td></tr>`).join('');
   $('encReportingRows').innerHTML=intel.reports.map(item=>`<tr><td>${esc(item.point)}</td><td>${esc(item.type)}</td><td>${esc(item.detail)}</td></tr>`).join('');
   $('encCriticalRows').innerHTML=intel.critical.map(item=>`<tr><td>${esc(item.point)}</td><td>${esc(item.type)}</td><td>${esc(item.detail)}</td></tr>`).join('');
 }
 function renderEncPassagePlan(){
-  if(!encPassageRoute)throw new Error('Önce bir GPX rotası yükleyin.');
+  if(!encPassageRoute)throw new Error('Load a GPX route first.');
   const plan=SinbadPassagePlanner.calculate(encPassageInputs());encPassageRoute={...encPassageRoute,plan};
-  $('encPassageSummary').innerHTML=`<strong>${esc(plan.name)}</strong><span>${plan.points.length} WP</span><span>${plan.totalDistanceNm.toFixed(1)} NM</span><span>${plan.totalHours.toFixed(1)} saat</span><span>${Math.ceil(plan.fuelRequiredLitres)} L (marj dahil)</span>`;
+  $('encPassageSummary').innerHTML=`<strong>${esc(plan.name)}</strong><span>${plan.points.length} WP</span><span>${plan.totalDistanceNm.toFixed(1)} NM</span><span>${plan.totalHours.toFixed(1)} hours</span><span>${Math.ceil(plan.fuelRequiredLitres)} L (including margin)</span>`;
   $('encLegRows').innerHTML=plan.legs.map(item=>`<tr><td>${item.number}</td><td>${esc(item.from.name)}</td><td>${esc(item.to.name)}</td><td>${item.courseTrue.toFixed(0).padStart(3,'0')}°T</td><td>${item.distanceNm.toFixed(2)} NM</td><td>${item.hours.toFixed(2)} h</td><td>${item.eta?new Date(item.eta).toLocaleString():'TBC'}</td></tr>`).join('');
-  renderEncPassageIntelligence(plan);$('encMasterApproval').checked=false;$('encMasterApprovalStatus').textContent='Kaptan onayı bekleniyor';$('encPassageDraft').textContent=SinbadPassagePlanner.checklist(plan);$('encDownloadPassageGpx').disabled=false;$('encSendPassageToOpenCpn').disabled=true;$('encPassageStatus').textContent='Taslak hazır. ADC harita sonuçları, resmî yayınlar, rapor noktaları ve kritik limitler kaptan tarafından doğrulanmalıdır.';
+  renderEncPassageIntelligence(plan);$('encMasterApproval').checked=false;$('encMasterApprovalStatus').textContent='Awaiting Master approval';$('encPassageDraft').textContent=SinbadPassagePlanner.checklist(plan);$('encDownloadPassageGpx').disabled=false;$('encSendPassageToOpenCpn').disabled=true;$('encPassageStatus').textContent='Draft ready. The Master must verify ADC chart results, official publications, reporting points and critical limits.';
 }
 function loadEncPassageGpx(gpx,filename){encPassageRoute=parseEncPassageGpx(gpx,filename);renderEncPassagePlan()}
 async function refreshEncPassageRoutes(){
-  const status=$('encPassageStatus'),select=$('encRouteSelect');status.textContent='Yerel Routes klasörü taranıyor…';
-  try{const response=await fetch(`${SINBAD_BRIDGE_URL}/routes`,{cache:'no-store'});if(!response.ok)throw new Error();const data=await response.json();select.innerHTML='<option value="">Rota seçin…</option>'+data.routes.map(route=>`<option value="${esc(route.name)}">${esc(route.name)} · ${new Date(route.modified).toLocaleString()}</option>`).join('');$('encPassageBridgeStatus').textContent=`Bridge bağlı · ${data.routes.length} rota`;status.textContent=data.routes.length?'Bir rota seçip “Seçili rotayı al” düğmesine basın.':'Routes klasöründe GPX yok. OpenCPN’den GPX dışa aktarın veya bilgisayardan seçin.';}
-  catch(_){$('encPassageBridgeStatus').textContent='Bridge çevrimdışı';status.textContent='Sinbad Bridge’e ulaşılamadı. Bilgisayardan GPX seçebilirsiniz.';}
+  const status=$('encPassageStatus'),select=$('encRouteSelect');status.textContent='Scanning the local Routes folder…';
+  try{const response=await fetch(`${SINBAD_BRIDGE_URL}/routes`,{cache:'no-store'});if(!response.ok)throw new Error();const data=await response.json();select.innerHTML='<option value="">Select a route…</option>'+data.routes.map(route=>`<option value="${esc(route.name)}">${esc(route.name)} · ${new Date(route.modified).toLocaleString()}</option>`).join('');$('encPassageBridgeStatus').textContent=`Bridge connected · ${data.routes.length} routes`;status.textContent=data.routes.length?'Select a route and press “Load selected route”.':'No GPX files are present in the Routes folder. Export a GPX from OpenCPN or choose one from your computer.';}
+  catch(_){$('encPassageBridgeStatus').textContent='Bridge offline';status.textContent='Sinbad Bridge could not be reached. You can choose a GPX from your computer.';}
 }
 async function readEncPassageRoute(){
-  const filename=$('encRouteSelect').value;if(!filename){$('encPassageStatus').textContent='Önce listeden bir rota seçin.';return}
+  const filename=$('encRouteSelect').value;if(!filename){$('encPassageStatus').textContent='Select a route from the list first.';return}
   try{const response=await fetch(`${SINBAD_BRIDGE_URL}/routes/read`,{method:'POST',headers:{'Content-Type':'application/json',...argosBridgeHeaders('ROUTE_READ','/routes/read')},body:JSON.stringify({filename})});if(!response.ok)throw new Error(`Bridge ${response.status}`);const data=await response.json();loadEncPassageGpx(data.gpx,data.filename);}
-  catch(error){$('encPassageStatus').textContent=`Rota okunamadı: ${error.message}`;}
+  catch(error){$('encPassageStatus').textContent=`The route could not be read: ${error.message}`;}
 }
 function downloadEncPassageGpx(){if(!encPassageRoute)return;const link=document.createElement('a');link.href=URL.createObjectURL(new Blob([encPassageRoute.gpx],{type:'application/gpx+xml'}));link.download=encPassageRoute.filename||'sinbad-passage-route.gpx';link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1000)}
 async function sendEncPassageToOpenCpn(){
-  if(!encPassageRoute?.plan)return;if(!confirm(`“${encPassageRoute.plan.name}” rotasını yerel OpenCPN'e göndermeyi ve içe aktarmayı onaylıyor musunuz?`))return;
-  const button=$('encSendPassageToOpenCpn');button.disabled=true;$('encPassageStatus').textContent='Rota OpenCPN’e gönderiliyor…';
-  try{const response=await ownerBridgeFetch('/routes/open','PHYSICAL_HANDOFF',JSON.stringify({filename:encPassageRoute.filename,name:encPassageRoute.name,gpx:encPassageRoute.gpx}));if(!response.ok)throw new Error(`Bridge ${response.status}`);const result=await response.json();$('encPassageStatus').textContent=result.imported?'Rota OpenCPN’e aktarıldı ve etkinleştirildi.':'OpenCPN açıldı; GPX yerel Routes klasörüne kaydedildi. REST içe aktarımı yoksa Route & Mark Manager’dan içe aktarın.';setOpenCpnPreviewMode(true);}
-  catch(error){$('encPassageStatus').textContent=`OpenCPN aktarımı başarısız: ${error.message}`;}finally{button.disabled=false}
+  if(!encPassageRoute?.plan)return;if(!confirm(`Do you approve sending “${encPassageRoute.plan.name}” to local OpenCPN for import?`))return;
+  const button=$('encSendPassageToOpenCpn');button.disabled=true;$('encPassageStatus').textContent='Sending the route to OpenCPN…';
+  try{const response=await ownerBridgeFetch('/routes/open','PHYSICAL_HANDOFF',JSON.stringify({filename:encPassageRoute.filename,name:encPassageRoute.name,gpx:encPassageRoute.gpx}));if(!response.ok)throw new Error(`Bridge ${response.status}`);const result=await response.json();$('encPassageStatus').textContent=result.imported?'The route was imported into OpenCPN and activated.':'OpenCPN was opened and the GPX was saved to the local Routes folder. If REST import is unavailable, import it through Route & Mark Manager.';setOpenCpnPreviewMode(true);}
+  catch(error){$('encPassageStatus').textContent=`OpenCPN transfer failed: ${error.message}`;}finally{button.disabled=false}
 }
 function initEncPassagePlanner(){
   const root=$('encPassageTitle')?.closest('.enc-passage-planner');if(!root||root.dataset.ready)return;root.dataset.ready='true';
-  $('encRefreshRoutes').addEventListener('click',refreshEncPassageRoutes);$('encLoadRoute').addEventListener('click',readEncPassageRoute);$('encPickGpx').addEventListener('click',()=>$('encGpxFile').click());$('encGpxFile').addEventListener('change',async event=>{const file=event.target.files?.[0];if(!file)return;try{loadEncPassageGpx(await file.text(),file.name)}catch(error){$('encPassageStatus').textContent=error.message}});$('encCalculatePassage').addEventListener('click',()=>{try{renderEncPassagePlan()}catch(error){$('encPassageStatus').textContent=error.message}});$('encPickAdmiraltyCatalog').addEventListener('click',()=>$('encAdmiraltyCatalogFile').click());$('encAdmiraltyCatalogFile').addEventListener('change',async event=>{const file=event.target.files?.[0];if(!file)return;try{encAdmiraltyCatalogEntries=SinbadPassagePlanner.parseAdmiraltyCatalog(await file.text());$('encAdmiraltyCatalogStatus').textContent=encAdmiraltyCatalogEntries.length?`${encAdmiraltyCatalogEntries.length} harita/yayın kodu alındı; kaptan doğrulaması gerekli.`:'Katalog dosyasında tanınan ürün kodu bulunamadı.';if(encPassageRoute?.plan)renderEncPassagePlan()}catch(error){$('encAdmiraltyCatalogStatus').textContent=error.message}});$('encMasterApproval').addEventListener('change',event=>{const approved=event.target.checked&&Boolean(encPassageRoute?.plan);$('encSendPassageToOpenCpn').disabled=!approved;$('encMasterApprovalStatus').textContent=approved?'Kaptan tarafından kontrol edildi':'Kaptan onayı bekleniyor'});$('encDownloadPassageGpx').addEventListener('click',downloadEncPassageGpx);$('encSendPassageToOpenCpn').addEventListener('click',sendEncPassageToOpenCpn);refreshEncPassageRoutes();
+  $('encRefreshRoutes').addEventListener('click',refreshEncPassageRoutes);$('encLoadRoute').addEventListener('click',readEncPassageRoute);$('encPickGpx').addEventListener('click',()=>$('encGpxFile').click());$('encGpxFile').addEventListener('change',async event=>{const file=event.target.files?.[0];if(!file)return;try{loadEncPassageGpx(await file.text(),file.name)}catch(error){$('encPassageStatus').textContent=error.message}});$('encCalculatePassage').addEventListener('click',()=>{try{renderEncPassagePlan()}catch(error){$('encPassageStatus').textContent=error.message}});$('encPickAdmiraltyCatalog').addEventListener('click',()=>$('encAdmiraltyCatalogFile').click());$('encAdmiraltyCatalogFile').addEventListener('change',async event=>{const file=event.target.files?.[0];if(!file)return;try{encAdmiraltyCatalogEntries=SinbadPassagePlanner.parseAdmiraltyCatalog(await file.text());$('encAdmiraltyCatalogStatus').textContent=encAdmiraltyCatalogEntries.length?`${encAdmiraltyCatalogEntries.length} chart/publication codes imported; Master verification is required.`:'No recognized product codes were found in the catalogue file.';if(encPassageRoute?.plan)renderEncPassagePlan()}catch(error){$('encAdmiraltyCatalogStatus').textContent=error.message}});$('encMasterApproval').addEventListener('change',event=>{const approved=event.target.checked&&Boolean(encPassageRoute?.plan);$('encSendPassageToOpenCpn').disabled=!approved;$('encMasterApprovalStatus').textContent=approved?'Checked by the Master':'Awaiting Master approval'});$('encDownloadPassageGpx').addEventListener('click',downloadEncPassageGpx);$('encSendPassageToOpenCpn').addEventListener('click',sendEncPassageToOpenCpn);refreshEncPassageRoutes();
 }
 
 function releaseOpenCpnFrame(){
@@ -423,26 +425,26 @@ async function refreshOpenCpnPreview(){
   if(!shell||shell.hidden)return;
   try{
     const stateResponse=await fetch(`${SINBAD_BRIDGE_URL}/opencpn/status`,{cache:'no-store'});
-    if(!stateResponse.ok)throw new Error('OpenCPN durumu okunamadı.');
+    if(!stateResponse.ok)throw new Error('OpenCPN status could not be read.');
     const state=await stateResponse.json();
-    if(!state.running)throw new Error(state.installed?'OpenCPN kapalı. Önce OpenCPN uygulamasını açın.':'OpenCPN bu bilgisayarda bulunamadı.');
-    if(state.minimized)throw new Error('OpenCPN simge durumunda. Canlı görüntü için pencereyi geri yükleyin.');
+    if(!state.running)throw new Error(state.installed?'OpenCPN is closed. Open the OpenCPN application first.':'OpenCPN was not found on this computer.');
+    if(state.minimized)throw new Error('OpenCPN is minimized. Restore the window for the live view.');
     const frameResponse=await fetch(`${SINBAD_BRIDGE_URL}/opencpn/frame?ts=${Date.now()}`,{cache:'no-store'});
-    if(!frameResponse.ok)throw new Error('OpenCPN görüntüsü alınamadı. Pencereyi görünür durumda bırakın.');
+    if(!frameResponse.ok)throw new Error('The OpenCPN image could not be captured. Keep the window visible.');
     const nextUrl=URL.createObjectURL(await frameResponse.blob()),previousUrl=openCpnFrameUrl;
     openCpnFrameUrl=nextUrl;image.src=nextUrl;image.hidden=false;if(previousUrl)URL.revokeObjectURL(previousUrl);
-    status.textContent=`Yerel canlı görüntü · ${state.title||'OpenCPN'} · hiçbir harita dosyası buluta gönderilmiyor.`;
+    status.textContent=`Local live view · ${state.title||'OpenCPN'} · no chart files are sent to the cloud.`;
     status.className='enc-map-status ready';
-  }catch(error){releaseOpenCpnFrame();status.textContent=`${error.message} Sinbad Bridge açık olmalıdır.`;status.className='enc-map-status error';}
+  }catch(error){releaseOpenCpnFrame();status.textContent=`${error.message} Sinbad Bridge must be running.`;status.className='enc-map-status error';}
 }
 async function ensureOpenCpnRunning(){
   const response=await ownerBridgeFetch('/opencpn/start','PHYSICAL_HANDOFF','{}');
-  if(!response.ok)throw new Error('OpenCPN otomatik başlatılamadı. Sinbad Bridge açık olmalıdır.');
+  if(!response.ok)throw new Error('OpenCPN could not be started automatically. Sinbad Bridge must be running.');
   return response.json();
 }
 async function sendOpenCpnInput(payload){
   const response=await ownerBridgeFetch('/opencpn/input','PHYSICAL_HANDOFF',JSON.stringify(payload));
-  if(!response.ok)throw new Error('OpenCPN denetimi uygulanamadı.');
+  if(!response.ok)throw new Error('The OpenCPN control command could not be applied.');
   return response.json();
 }
 function initOpenCpnInputControls(){
@@ -451,14 +453,14 @@ function initOpenCpnInputControls(){
   let armed=false,start=null,startButton=0,clickTimer=null;
   const point=e=>{const rect=image.getBoundingClientRect();return{x:Math.max(0,Math.min(1,(e.clientX-rect.left)/rect.width)),y:Math.max(0,Math.min(1,(e.clientY-rect.top)/rect.height))}};
   const dispatch=async payload=>{try{await sendOpenCpnInput(payload);setTimeout(refreshOpenCpnPreview,90)}catch(error){status.textContent=error.message;status.className='enc-map-status error'}};
-  toggle.addEventListener('click',()=>{armed=!armed;toggle.setAttribute('aria-pressed',String(armed));toggle.textContent=`OpenCPN kontrolü: ${armed?'Açık':'Kapalı'}`;image.classList.toggle('interactive',armed)});
+  toggle.addEventListener('click',()=>{armed=!armed;toggle.setAttribute('aria-pressed',String(armed));toggle.textContent=`OpenCPN control: ${armed?'On':'Off'}`;image.classList.toggle('interactive',armed)});
   image.addEventListener('pointerdown',e=>{if(!armed)return;start=point(e);startButton=e.button;image.focus({preventScroll:true});image.setPointerCapture?.(e.pointerId);e.preventDefault()});
   image.addEventListener('pointerup',e=>{if(!armed||!start)return;const finish=point(e),distance=Math.hypot(finish.x-start.x,finish.y-start.y),origin=start,button=startButton;start=null;if(distance>.008&&button===0)dispatch({action:'drag',...origin,x2:finish.x,y2:finish.y});else if(button===2)dispatch({action:'rightClick',...finish});else if(button===1)dispatch({action:'middleClick',...finish});else{clearTimeout(clickTimer);clickTimer=setTimeout(()=>dispatch({action:'click',...finish}),220)}e.preventDefault()});
   image.addEventListener('pointercancel',()=>{start=null});
   image.addEventListener('contextmenu',e=>{if(armed)e.preventDefault()});
   image.addEventListener('dblclick',e=>{if(!armed)return;clearTimeout(clickTimer);dispatch({action:'doubleClick',...point(e)});e.preventDefault()});
   image.addEventListener('wheel',e=>{if(!armed)return;dispatch({action:'wheel',...point(e),steps:e.deltaY<0?1:-1});e.preventDefault()},{passive:false});
-  image.tabIndex=0;image.setAttribute('role','application');image.setAttribute('aria-label','Etkileşimli yerel OpenCPN görüntüsü');
+  image.tabIndex=0;image.setAttribute('role','application');image.setAttribute('aria-label','Interactive local OpenCPN view');
   image.addEventListener('keydown',e=>{
     if(!armed||e.altKey||e.metaKey)return;
     if(e.ctrlKey&&/^[a-z]$/i.test(e.key)){dispatch({action:'shortcut',key:e.key});e.preventDefault();return}
@@ -474,7 +476,7 @@ async function setOpenCpnPreviewMode(enabled){
   shell.hidden=!enabled;mapShell.hidden=enabled;$('encOpenCpnView').hidden=enabled;$('encWebChartView').hidden=!enabled;
   if(openCpnPreviewTimer){clearInterval(openCpnPreviewTimer);openCpnPreviewTimer=null;}
   if(enabled){
-    const status=$('encOpenCpnStatus');status.textContent='OpenCPN başlatılıyor ve yerel görüntü hazırlanıyor…';status.className='enc-map-status';
+    const status=$('encOpenCpnStatus');status.textContent='Starting OpenCPN and preparing the local live view…';status.className='enc-map-status';
     try{await ensureOpenCpnRunning();await refreshOpenCpnPreview()}catch(error){status.textContent=error.message;status.className='enc-map-status error'}
     openCpnPreviewTimer=setInterval(refreshOpenCpnPreview,1200);
   }
@@ -630,7 +632,7 @@ function renderPilot(){const q=$('pilotSearch').value.toLowerCase(),c=$('country
 function setupRoutes(){[...new Set(ROUTE_DATA.map(x=>x.type))].forEach(x=>$('routeType').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`));[...new Set(ROUTE_DATA.map(x=>x.status))].forEach(x=>$('routeStatus').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`))}
 function renderRoutes(){const q=$('routeSearch').value.toLowerCase(),t=$('routeType').value,s=$('routeStatus').value;const rows=ROUTE_DATA.filter(x=>(!t||x.type===t)&&(!s||x.status===s)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));$('routeGrid').innerHTML=rows.map(x=>`<article class="record"><h3>${esc(x.title)}</h3><div class="muted">${esc(x.type)} • ${esc(x.status)}</div><p>${x.stops.map(esc).join(' → ')}</p></article>`).join('')}
 function setupResources(){[...new Set(RESOURCE_DATA.map(x=>x.category))].sort().forEach(x=>$('resourceCategory').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`));[...new Set(RESOURCE_DATA.map(x=>x.region))].forEach(x=>$('resourceRegion').insertAdjacentHTML('beforeend',`<option>${esc(x)}</option>`))}
-function renderResources(){const q=$('resourceSearch').value.toLowerCase(),c=$('resourceCategory').value,r=$('resourceRegion').value;const rows=RESOURCE_DATA.filter(x=>(!c||x.category===c)&&(!r||x.region===r)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));$('resourceGrid').innerHTML=rows.map(x=>`<article class="record"><h3>${esc(x.name)}</h3><div class="muted">${esc(x.category)} • ${esc(x.region)}</div><p>${esc(x.description)}</p>${x.highlights&&x.highlights.length?`<div>${x.highlights.map(h=>`<span class="badge">${esc(h)}</span>`).join('')}</div>`:''}${x.services&&x.services.length?`<p class="muted">${esc(x.services.join(' • '))}</p>`:''}${x.captainNote&&x.captainNote!=='—'?`<p class="warning">${esc(x.captainNote)}</p>`:''}</article>`).join('')}
+function renderResources(){const q=$('resourceSearch').value.toLowerCase(),c=$('resourceCategory').value,r=$('resourceRegion').value;const rows=RESOURCE_DATA.filter(x=>(!c||x.category===c)&&(!r||x.region===r)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));$('resourceGrid').innerHTML=rows.map(x=>`<article class="record"><h3>${esc(x.name)}</h3><div class="muted">${esc(x.category)} • ${esc(x.region)}</div><p>${esc(x.description)}</p>${x.highlights&&x.highlights.length?`<div>${x.highlights.map(h=>`<span class="badge">${esc(h)}</span>`).join('')}</div>`:''}${x.services&&x.services.length?`<p class="muted">${esc(x.services.join(' • '))}</p>`:''}${x.captainNote&&x.captainNote!=='—'?`<p class="warning">${esc(x.captainNote)}</p>`:''}</article>`).join('')||'<div class="empty">No resources match the current filters.</div>'}
 
 
 // --- Sinbad Marine Store ---

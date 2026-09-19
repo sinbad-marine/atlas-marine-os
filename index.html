@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="tr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -113,7 +113,7 @@
   </form>
 </dialog>
 <header class="topbar">
-<div class="brand console-page-context"><div class="logo">⚓</div><div><h1>SINBAD MARINE</h1><small>Özgür Maceraperest Dostlar • Navigate Smarter. Command Better.</small></div></div>
+<a class="brand console-page-context" href="./index.html" aria-label="SINBAD Marine home"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE — A SAFER SEA A SMARTER TOMORROW"></a>
   <div class="topbar-account-actions">
     <select id="appLanguage" class="app-language" aria-label="Application language"></select>
     <button class="account-password-button" id="openAccountPassword" type="button">Account &amp; Password</button>
@@ -121,20 +121,20 @@
   </div>
 </header>
 
-<aside class="console-sidebar" id="consoleSidebar" aria-label="SINBAD ana navigasyonu">
-  <a class="console-sidebar-brand" href="./index.html" aria-label="SINBAD ana sayfa"><span>⚓</span><strong>SINBAD</strong><small>MARINE</small></a>
-  <nav class="console-primary-nav" aria-label="Ana çalışma alanları">
+<aside class="console-sidebar" id="consoleSidebar" aria-label="SINBAD primary navigation">
+  <a class="console-sidebar-brand" href="./index.html" aria-label="SINBAD home"><img class="console-sidebar-lockup" src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE — A SAFER SEA A SMARTER TOMORROW"><span aria-hidden="true">⚓</span><strong>SINBAD</strong><small>MARINE</small></a>
+  <nav class="console-primary-nav" aria-label="Primary workspaces">
     <button class="active" type="button" data-console-home><svg class="console-icon"><use href="#ci-home"/></svg><span>Home</span></button>
-    <button type="button" data-open="yacht-operations"><svg class="console-icon"><use href="#ci-yacht"/></svg><span>Yat Yönetimi</span></button>
-    <button type="button" data-open="voyage-navigation"><svg class="console-icon"><use href="#ci-compass"/></svg><span>Seyir Planlama</span></button>
-    <button type="button" data-open-sinbad-academy><svg class="console-icon"><use href="#ci-academy"/></svg><span>SINBAD Akademi</span></button>
-    <button type="button" data-open="documents-compliance"><svg class="console-icon"><use href="#ci-document"/></svg><span>Belgeler ve Uyum</span></button>
-    <button type="button" data-open="technical-systems"><svg class="console-icon"><use href="#ci-technical"/></svg><span>Teknik Sistemler</span></button>
+    <button type="button" data-open="yacht-operations"><svg class="console-icon"><use href="#ci-yacht"/></svg><span>Yacht Management</span></button>
+    <button type="button" data-open="voyage-navigation"><svg class="console-icon"><use href="#ci-compass"/></svg><span>Voyage Planning</span></button>
+    <button type="button" data-open-sinbad-academy><svg class="console-icon"><use href="#ci-academy"/></svg><span>SINBAD Academy</span></button>
+    <button type="button" data-open="documents-compliance"><svg class="console-icon"><use href="#ci-document"/></svg><span>Documents &amp; Compliance</span></button>
+    <button type="button" data-open="technical-systems"><svg class="console-icon"><use href="#ci-technical"/></svg><span>Technical Systems</span></button>
     <button type="button" data-open="sinbad-ai"><svg class="console-icon"><use href="#ci-ai"/></svg><span>SINBAD AI</span></button>
     <button type="button" data-open="store"><svg class="console-icon"><use href="#ci-store"/></svg><span>Marine Store</span></button>
   </nav>
-  <nav class="console-secondary-nav" aria-label="Kişisel araçlar">
-    <button type="button" data-owner-console><svg class="console-icon"><use href="#ci-message"/></svg><span>Güvenli Diyalog</span><b id="consoleActionBadge">0</b></button>
+  <nav class="console-secondary-nav" aria-label="Personal tools">
+    <button type="button" data-owner-console><svg class="console-icon"><use href="#ci-message"/></svg><span>Secure Dialogue</span><b id="consoleActionBadge">0</b></button>
     <button type="button" data-console-favorites><svg class="console-icon"><use href="#ci-star"/></svg><span>Favorites</span></button>
     <button type="button" data-console-recent><svg class="console-icon"><use href="#ci-clock"/></svg><span>Recent</span></button>
     <button type="button" data-open="admin-settings"><svg class="console-icon"><use href="#ci-technical"/></svg><span>Settings</span></button>
@@ -225,9 +225,9 @@
 <details class="console-all-tools">
   <summary>Tüm mevcut araçlar <span>Mevcut işlevlerin tamamı korunur</span></summary>
   <div class="console-tool-grid">
-    <button type="button" data-open="resources">Blue Voyage Kaynakları</button><button type="button" data-open="cloud-documents">Cloud Belge Merkezi</button><button type="button" data-cloud-bucket="nautical-charts">Cloud Haritalar</button><button type="button" data-open="sinbad">Kaptan Sinbad</button>
+    <button type="button" data-open="resources">Blue Voyage Resources</button><button type="button" data-open="cloud-documents">Cloud Belge Merkezi</button><button type="button" data-cloud-bucket="nautical-charts">Cloud Haritalar</button><button type="button" data-open="sinbad">Kaptan Sinbad</button>
     <button type="button" data-open="studio-console">Sinbad Studio</button><button type="button" data-open="cloud-control">Atlas Cloud Kontrolü</button><button type="button" data-open="admin-settings">Ayarlar ve Yönetim</button><button type="button" data-open="fleet">Filo Yöneticisi</button>
-    <button type="button" data-open="pilot">Pilot Kütüphanesi</button><button type="button" data-open="routes">Rota Kütüphanesi</button><button type="button" data-open="crew">Mürettebat</button><button type="button" data-open="location-intelligence">Konum İstihbaratı</button>
+    <button type="button" data-open="pilot">Coastal Pilotage Directory</button><button type="button" data-open="routes">Route Library</button><button type="button" data-open="crew">Mürettebat</button><button type="button" data-open="location-intelligence">Location Intelligence</button>
     <button type="button" data-open="camera-archive">Kamera ve Medya</button><button type="button" data-open="captains-logbook">Kaptan Günlüğü</button><button type="button" id="developerProjectCard" data-open="document-submissions" data-role-hidden="true">Developer Project Center <span class="developer-message-badge" id="ownerDeveloperMessageCount">Yeni talep yok</span></button><button type="button" data-open="enc-viewer">SINBAD ENC Viewer</button>
   </div>
 </details>
@@ -237,7 +237,7 @@
 
 <section id="yacht-operations" class="workspace yacht-operations-page" data-master="rembrandt" data-owner-visual-lock="yacht-management-owner-selections-v1">
   <header class="yacht-page-header">
-    <a class="yacht-page-brand" href="./index.html" aria-label="SINBAD ana sayfa"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE — A SAFER SEA A SMARTER TOMORROW"></a>
+    <a class="yacht-page-brand" href="./index.html" aria-label="SINBAD home"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE — A SAFER SEA A SMARTER TOMORROW"></a>
     <div class="yacht-page-heading"><span>01 · OPERATIONS</span><h2>Yacht Management</h2><p>Fleet · Crew · Captain Logbook · Camera &amp; Media</p></div>
     <nav class="yacht-page-nav" aria-label="Yat yönetimi araçları">
       <button type="button" data-open="fleet">Fleet</button><button type="button" data-open="crew">Crew</button><button type="button" data-open="captains-logbook">Logbook</button><button type="button" data-open="camera-archive">Media</button>
@@ -270,10 +270,28 @@
   </div>
 </section>
 
-<section id="voyage-navigation" class="workspace console-landing" data-master="van-gogh">
-  <div class="workspace-head"><div><div class="eyebrow">SEYİR PLANLAMA · VAN GOGH DIRECTION / HOLD</div><h2>Rotayı bilgiyle kurun</h2><p>Rotalar, haritalar, konum, kılavuzluk ve seyir kaynakları tek merkezde.</p></div><button class="btn close">Kapat</button></div>
-  <div class="console-landing-hero"><span>02 · NAVIGATION</span><h3>Hareket, rüzgâr ve yön enerjisi</h3><p>Bu alanın Van Gogh görsel katmanı Home Owner kabulünden sonra ayrı bir geçişte uygulanacaktır.</p></div>
-  <div class="console-landing-grid"><button data-open="routes"><b>Rota Kütüphanesi</b><small>Onaylı seyir çalışma alanları</small></button><button data-open="navigation-plot"><b>Seyir Plotu</b><small>Rota çizimi ve çalışma yüzeyi</small></button><button data-open="location-intelligence"><b>Konum İstihbaratı</b><small>İzinli ve kontrollü konum</small></button><button data-open="pilot"><b>Pilot Kütüphanesi</b><small>Marinalar ve kaptan notları</small></button><button data-open="resources"><b>Blue Voyage Kaynakları</b><small>Adalar, limanlar ve kıyı bilgisi</small></button><button data-open="enc-viewer"><b>ENC Viewer</b><small>Kesintisiz S-52 harita görünümü</small></button><button data-open="charts"><b>Yerel Haritalar</b><small>Mevcut harita arşivi</small></button></div>
+<section id="voyage-navigation" class="workspace voyage-planning-page" data-master="da-vinci" data-owner-selections="A-C-C-B-C-C-A-B">
+  <header class="voyage-page-header">
+    <a class="voyage-page-brand" href="./index.html" aria-label="SINBAD Marine home"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a>
+    <div><span>02 · VOYAGE</span><h2>Voyage Planning</h2><p>Routes, position intelligence, official publications and chart workspaces in one navigational system.</p></div>
+    <button class="voyage-close-button close" type="button">Close</button>
+  </header>
+  <div class="voyage-page-stage">
+    <article class="voyage-atmosphere-panel">
+      <img src="./assets/console-art/voyage-planning-owner-selections-v1/selected/01-voyage-planning-A.jpg" alt="Renaissance navigator planning a voyage over a detailed chart">
+      <span class="voyage-art-label">02 · VOYAGE</span>
+      <div class="voyage-atmosphere-copy"><h3>Voyage Planning</h3><p>Build each voyage from verified position, route, publication and chart information.</p></div>
+    </article>
+    <div class="voyage-function-grid" aria-label="Voyage Planning workspaces">
+      <button class="voyage-function-card" type="button" data-open="routes"><img src="./assets/console-art/voyage-planning-owner-selections-v1/selected/02-route-library-C.jpg" alt="Organized archive of route charts"><span><small>ROUTES</small><b>Route Library</b><em>Stored routes and reusable passage sequences</em></span></button>
+      <button class="voyage-function-card" type="button" data-open="navigation-plot"><img src="./assets/console-art/voyage-planning-owner-selections-v1/selected/03-navigation-plot-C.jpg" alt="Navigator plotting a coastal route"><span><small>PLOT</small><b>Navigation Plot</b><em>Interactive route line and calculated voyage view</em></span></button>
+      <button class="voyage-function-card" type="button" data-open="location-intelligence"><img src="./assets/console-art/voyage-planning-owner-selections-v1/selected/04-location-intelligence-B.jpg" alt="Astronomical position observation at sea"><span><small>POSITION</small><b>Location Intelligence</b><em>Permission-based position and nearby marine context</em></span></button>
+      <button class="voyage-function-card" type="button" data-open="publications"><img src="./assets/console-art/voyage-planning-owner-selections-v1/selected/05-nautical-publications-C.jpg" alt="Notices to Mariners and publication correction desk"><span><small>PUBLICATIONS</small><b>Nautical Publications</b><em>Sailing directions, notices and controlled updates</em></span></button>
+      <button class="voyage-function-card" type="button" data-open="resources"><img src="./assets/console-art/voyage-planning-owner-selections-v1/selected/06-blue-voyage-resources-C.jpg" alt="Aegean coastal voyage resource map"><span><small>COASTAL GUIDE</small><b>Blue Voyage Resources</b><em>Islands, marinas, ports and coastal services</em></span></button>
+      <button class="voyage-function-card" type="button" data-open="enc-viewer"><img src="./assets/console-art/voyage-planning-owner-selections-v1/selected/07-enc-viewer-A.jpg" alt="Electronic navigational chart concept with route and aids"><span><small>ELECTRONIC CHART</small><b>ENC Viewer</b><em>Chart layers, route tools and safety-depth support</em></span></button>
+      <button class="voyage-function-card" type="button" data-open="charts"><img src="./assets/console-art/voyage-planning-owner-selections-v1/selected/08-local-charts-B.jpg" alt="Organized local nautical chart cabinet"><span><small>CHART ARCHIVE</small><b>Local Charts</b><em>Chart number, region and edition-controlled files</em></span></button>
+    </div>
+  </div>
 </section>
 
 <section id="documents-compliance" class="workspace console-landing" data-master="vermeer">
@@ -294,34 +312,14 @@
   <div class="console-landing-grid"><button data-open="sinbad"><b>Kaptan Sinbad</b><small>Kaynak kontrollü AI çalışma alanı</small></button><button data-owner-console><b>Owner Ajan Diyaloğu</b><small>Ayrı güvenli konsolu aç</small></button><button data-open="sinbad" data-target-tab="argos"><b>ARGOS</b><small>Sistem gözlemi ve kontrollü eylem</small></button><button data-open-sinbad-academy><b>SINBAD Akademi</b><small>Kaptan Sinbad ile eğitim</small></button></div>
 </section>
 
-<section id="location-intelligence" class="workspace">
-  <div class="workspace-head">
-    <div><div class="eyebrow">PERMISSION-BASED POSITION SERVICE</div><h2>Location Intelligence</h2><p>Your position is read only after you grant permission. It is not published automatically.</p></div>
-    <button class="btn close">Close</button>
-  </div>
-  <div class="permission-banner" id="locationPermissionBanner">Location access has not been requested.</div>
-  <div class="location-grid">
-    <article class="status-card"><span>Latitude</span><strong id="locationLatitude">—</strong></article>
-    <article class="status-card"><span>Longitude</span><strong id="locationLongitude">—</strong></article>
-    <article class="status-card"><span>Accuracy</span><strong id="locationAccuracy">—</strong></article>
-    <article class="status-card"><span>Last update</span><strong id="locationTimestamp">—</strong></article>
-  </div>
-  <div class="actions">
-    <button class="btn primary" id="getCurrentLocation" type="button">Use My Current Location</button>
-    <button class="btn" id="startLocationWatch" type="button">Start Position Watch</button>
-    <button class="btn" id="stopLocationWatch" type="button" disabled>Stop Watch</button>
-    <button class="btn" id="copyCurrentCoordinates" type="button" disabled>Copy Coordinates</button>
-  </div>
-  <div class="nearby-panel">
-    <h3>Nearby Marine Information</h3>
-    <p id="nearbyMarineInfo">Grant location permission to prepare nearby marinas, anchorages, pilot notes, charts and publications. Verified sources will be connected in the next stage.</p>
-  </div>
+<section id="location-intelligence" class="workspace voyage-detail-page" data-master="da-vinci" data-owner-selection="B">
+  <header class="voyage-detail-header"><a class="voyage-detail-brand" href="./index.html" aria-label="SINBAD Marine home"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a><div><span>02 · VOYAGE / POSITION</span><h2>Location Intelligence</h2><p>Your position is read only after you grant permission and is never published automatically.</p></div><button class="voyage-back-button" type="button" data-open="voyage-navigation">Voyage Planning</button></header>
+  <div class="voyage-detail-body"><figure class="voyage-detail-art"><img src="./assets/console-art/voyage-planning-owner-selections-v1/selected/04-location-intelligence-B.jpg" alt="Astronomical position observation at sea"><figcaption><span>LOCATION INTELLIGENCE · B</span><strong>Position with permission and context</strong><small>Location access remains explicit and user-controlled.</small></figcaption></figure><div class="voyage-detail-workspace"><div class="permission-banner" id="locationPermissionBanner">Location access has not been requested.</div><div class="location-grid"><article class="status-card"><span>Latitude</span><strong id="locationLatitude">—</strong></article><article class="status-card"><span>Longitude</span><strong id="locationLongitude">—</strong></article><article class="status-card"><span>Accuracy</span><strong id="locationAccuracy">—</strong></article><article class="status-card"><span>Last update</span><strong id="locationTimestamp">—</strong></article></div><div class="actions"><button class="btn primary" id="getCurrentLocation" type="button">Use My Current Location</button><button class="btn" id="startLocationWatch" type="button">Start Position Watch</button><button class="btn" id="stopLocationWatch" type="button" disabled>Stop Watch</button><button class="btn" id="copyCurrentCoordinates" type="button" disabled>Copy Coordinates</button></div><div class="nearby-panel"><h3>Nearby Marine Information</h3><p id="nearbyMarineInfo">Grant location permission to prepare nearby marinas, anchorages, coastal references, charts and publications.</p></div></div></div>
 </section>
-
 
 <section id="camera-archive" class="workspace yacht-detail-page media-detail-page" data-master="rembrandt" data-owner-selection="A">
   <header class="yacht-detail-header">
-    <a class="yacht-detail-brand" href="./index.html" aria-label="SINBAD ana sayfa"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a>
+    <a class="yacht-detail-brand" href="./index.html" aria-label="SINBAD home"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a>
     <div><span>01 · OPERATIONS / PRIVATE MEDIA</span><h2>Camera &amp; Media Archive</h2><p>Yetkili çalışma alanı için görünür, kullanıcı kontrollü özel medya kaydı.</p></div>
     <button class="yacht-back-button" type="button" data-open="yacht-operations">Yacht Management</button>
   </header>
@@ -361,7 +359,7 @@
 
 <section id="captains-logbook" class="workspace yacht-detail-page logbook-detail-page" data-master="rembrandt" data-owner-selection="B">
   <header class="yacht-detail-header">
-    <a class="yacht-detail-brand" href="./index.html" aria-label="SINBAD ana sayfa"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a>
+    <a class="yacht-detail-brand" href="./index.html" aria-label="SINBAD home"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a>
     <div><span>01 · OPERATIONS / LOGBOOK</span><h2>Captain's Logbook</h2><p>Yerel saat, UTC ve isteğe bağlı konum ile sesli ya da yazılı operasyon taslakları.</p></div>
     <button class="yacht-back-button" type="button" data-open="yacht-operations">Yacht Management</button>
   </header>
@@ -485,89 +483,83 @@
 </section>
 
 
-<section id="publications" class="workspace">
-  <div class="workspace-head"><div><h2>Nautical Publications</h2><p>Dedicated view for maritime publications.</p></div><button class="btn close">Close</button></div>
-  <div class="actions"><button class="btn primary" onclick="openFolderUpload('Nautical Publications')">Upload Publication</button></div>
-  <div id="publicationList"></div>
+<section id="publications" class="workspace voyage-detail-page" data-master="da-vinci" data-owner-selection="C">
+  <header class="voyage-detail-header"><a class="voyage-detail-brand" href="./index.html" aria-label="SINBAD Marine home"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a><div><span>02 · VOYAGE / PUBLICATIONS</span><h2>Nautical Publications</h2><p>Sailing directions, Lists of Lights, Tide Tables, Radio Signals and Notices to Mariners.</p></div><button class="voyage-back-button" type="button" data-open="voyage-navigation">Voyage Planning</button></header>
+  <div class="voyage-detail-body"><figure class="voyage-detail-art"><img src="./assets/console-art/voyage-planning-owner-selections-v1/selected/05-nautical-publications-C.jpg" alt="Notices to Mariners and publication correction desk"><figcaption><span>NAUTICAL PUBLICATIONS · C</span><strong>Keep every publication controlled and current</strong><small>Verify edition and correction status against the official issuing authority.</small></figcaption></figure><div class="voyage-detail-workspace"><div class="voyage-section-heading"><span>CONTROLLED LIBRARY</span><h3>Publication archive</h3><p>Upload and manage the publications already held in the authorized local library.</p></div><div class="actions"><button class="btn primary" onclick="openFolderUpload('Nautical Publications')">Upload Publication</button></div><div id="publicationList"><div class="empty">No publications uploaded.</div></div></div></div>
 </section>
 
-
-<section id="charts" class="workspace">
-  <div class="workspace-head"><div><h2>Nautical Charts</h2><p>Dedicated chart archive. Add chart number, region and edition in tags.</p></div><button class="btn close">Close</button></div>
-  <div class="actions"><button class="btn primary" onclick="openFolderUpload('Nautical Charts')">Upload Chart</button></div>
-  <div id="chartList"></div>
+<section id="charts" class="workspace voyage-detail-page" data-master="da-vinci" data-owner-selection="B">
+  <header class="voyage-detail-header"><a class="voyage-detail-brand" href="./index.html" aria-label="SINBAD Marine home"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a><div><span>02 · VOYAGE / CHART ARCHIVE</span><h2>Local Charts</h2><p>A controlled local archive for chart number, region and edition-tagged files.</p></div><button class="voyage-back-button" type="button" data-open="voyage-navigation">Voyage Planning</button></header>
+  <div class="voyage-detail-body"><figure class="voyage-detail-art"><img src="./assets/console-art/voyage-planning-owner-selections-v1/selected/08-local-charts-B.jpg" alt="Organized local nautical chart cabinet"><figcaption><span>LOCAL CHARTS · B</span><strong>Retrieve the right chart and edition</strong><small>Local files remain reference material until their official status is verified.</small></figcaption></figure><div class="voyage-detail-workspace"><div class="voyage-section-heading"><span>LOCAL ARCHIVE</span><h3>Nautical chart files</h3><p>Use tags for chart number, region, edition and correction status.</p></div><div class="actions"><button class="btn primary" onclick="openFolderUpload('Nautical Charts')">Upload Chart</button></div><div id="chartList"><div class="empty">No charts uploaded.</div></div></div></div>
 </section>
 
-
-<section id="enc-viewer" class="workspace">
-  <div class="workspace-head">
-    <div><div class="eyebrow">GLOBAL MARINE CHART &amp; ENC WORKSPACE</div><h2>Sinbad Marine Chart</h2><p>Global bathymetry and seamarks with official NOAA ENC coverage where available.</p></div>
-    <button class="btn close">Close</button>
-  </div>
+<section id="enc-viewer" class="workspace voyage-detail-page voyage-enc-detail-page" data-master="da-vinci" data-owner-selection="A">
+  <header class="voyage-detail-header"><a class="voyage-detail-brand" href="./index.html" aria-label="SINBAD Marine home"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a><div><span>02 · VOYAGE / ELECTRONIC CHART</span><h2>ENC Viewer</h2><p>Electronic chart layers, route tools and safety-depth decision support.</p></div><button class="voyage-back-button" type="button" data-open="voyage-navigation">Voyage Planning</button></header>
+  <figure class="voyage-enc-art"><img src="./assets/console-art/voyage-planning-owner-selections-v1/selected/07-enc-viewer-A.jpg" alt="Electronic navigational chart concept with route and aids"><figcaption><span>ENC VIEWER · A</span><strong>Chart layers and route intelligence in one working surface</strong><small>Planning aid only. Verify aboard with approved, updated navigation equipment and official notices.</small></figcaption></figure>
   <div class="enc-safety"><strong>Planning aid only.</strong> Do not use this web display as the sole means of navigation. Verify aboard with an approved, updated ECDIS/ECS and official notices.</div>
   <div class="enc-chart-console" id="encChartConsole">
     <aside class="enc-chart-tools" aria-labelledby="encChartToolsTitle">
       <div class="enc-console-label" id="encChartToolsTitle">WPT / ROUTE</div>
-      <div class="enc-map-tools" role="toolbar" aria-label="Sinbad web haritası araçları">
-        <button class="btn primary" id="encPanTool" type="button" aria-pressed="true">✥ Gezin</button>
-        <button class="btn" id="encMeasureTool" type="button" aria-pressed="false">↔ Mesafe ölç</button>
-        <button class="btn" id="encDrawRouteTool" type="button" aria-pressed="false">⌁ Rota çiz</button>
-        <button class="btn" id="encUndoMapPoint" type="button">↶ Son noktayı geri al</button>
-        <button class="btn" id="encClearMapDrawing" type="button">⌫ Çizimi temizle</button>
-        <button class="btn" id="encRouteToPassage" type="button" disabled>⇥ Passage Plan’a aktar</button>
-        <button class="btn" id="encFullscreenMap" type="button">⛶ Haritayı tam ekran yap</button>
-        <span id="encPlanningStatus" role="status" aria-live="polite">Haritayı sürükleyebilir, tekerlekle yakınlaştırabilirsiniz.</span>
+      <div class="enc-map-tools" role="toolbar" aria-label="SINBAD web chart tools">
+        <button class="btn primary" id="encPanTool" type="button" aria-pressed="true">✥ Pan</button>
+        <button class="btn" id="encMeasureTool" type="button" aria-pressed="false">↔ Measure</button>
+        <button class="btn" id="encDrawRouteTool" type="button" aria-pressed="false">⌁ Draw route</button>
+        <button class="btn" id="encUndoMapPoint" type="button">↶ Undo last point</button>
+        <button class="btn" id="encClearMapDrawing" type="button">⌫ Clear drawing</button>
+        <button class="btn" id="encRouteToPassage" type="button" disabled>⇥ Send to Passage Plan</button>
+        <button class="btn" id="encFullscreenMap" type="button">⛶ Fullscreen chart</button>
+        <span id="encPlanningStatus" role="status" aria-live="polite">Drag to pan and use the wheel to zoom.</span>
       </div>
     </aside>
     <div class="enc-chart-canvas">
       <div class="enc-opencpn-shell" id="encOpenCpnShell" hidden>
         <div class="enc-opencpn-controls">
-          <button class="btn" id="encOpenCpnControlToggle" type="button" aria-pressed="false">OpenCPN kontrolü: Kapalı</button>
-          <span id="encOpenCpnControlHint">Kontrolü açınca fare, sağ tık, tekerlek ve OpenCPN klavye kısayollarını burada kullanabilirsiniz.</span>
+          <button class="btn" id="encOpenCpnControlToggle" type="button" aria-pressed="false">OpenCPN control: Off</button>
+          <span id="encOpenCpnControlHint">Enable control to use mouse, context menu, wheel and OpenCPN keyboard shortcuts here.</span>
         </div>
-        <img id="encOpenCpnFrame" alt="Bu bilgisayarda çalışan OpenCPN harita penceresinin yerel canlı görüntüsü" hidden>
-        <div class="enc-map-status" id="encOpenCpnStatus">OpenCPN yerel bağlantısı bekleniyor…</div>
+        <img id="encOpenCpnFrame" alt="Local live view of the OpenCPN chart window running on this computer" hidden>
+        <div class="enc-map-status" id="encOpenCpnStatus">Waiting for the local OpenCPN connection…</div>
       </div>
       <div class="enc-map-shell">
         <div id="encMap" role="application" aria-label="Interactive NOAA electronic navigational chart"></div>
         <div id="encMapStatus" class="enc-map-status">Loading official ENC layer…</div>
-        <div class="enc-fullscreen-tools" role="toolbar" aria-label="Tam ekran harita çalışma araçları">
-          <button class="btn primary" type="button" data-enc-fullscreen-action="encPanTool" aria-pressed="true">✥ Gezin</button>
-          <button class="btn" type="button" data-enc-fullscreen-action="encMeasureTool" aria-pressed="false">↔ Ölç</button>
-          <button class="btn" type="button" data-enc-fullscreen-action="encDrawRouteTool" aria-pressed="false">⌁ Rota</button>
-          <button class="btn" type="button" data-enc-fullscreen-action="encUndoMapPoint">↶ Geri al</button>
-          <button class="btn" type="button" data-enc-fullscreen-action="encClearMapDrawing">⌫ Temizle</button>
+        <div class="enc-fullscreen-tools" role="toolbar" aria-label="Fullscreen chart tools">
+          <button class="btn primary" type="button" data-enc-fullscreen-action="encPanTool" aria-pressed="true">✥ Pan</button>
+          <button class="btn" type="button" data-enc-fullscreen-action="encMeasureTool" aria-pressed="false">↔ Measure</button>
+          <button class="btn" type="button" data-enc-fullscreen-action="encDrawRouteTool" aria-pressed="false">⌁ Route</button>
+          <button class="btn" type="button" data-enc-fullscreen-action="encUndoMapPoint">↶ Undo</button>
+          <button class="btn" type="button" data-enc-fullscreen-action="encClearMapDrawing">⌫ Clear</button>
           <button class="btn" type="button" data-enc-fullscreen-action="encRouteToPassage" disabled>⇥ Passage Plan</button>
-          <button class="btn" type="button" data-enc-fullscreen-action="encFullscreenMap">⛶ Çıkış</button>
+          <button class="btn" type="button" data-enc-fullscreen-action="encFullscreenMap">⛶ Exit</button>
         </div>
       </div>
     </div>
     <aside class="enc-chart-settings" aria-labelledby="encChartSettingsTitle">
       <div class="enc-console-label" id="encChartSettingsTitle">CHART SETTINGS</div>
       <details class="enc-map-apps-menu" id="encMapAppsMenu">
-        <summary class="btn" aria-label="Harita uygulamaları menüsünü aç"><span aria-hidden="true">☰</span> Haritalar</summary>
+        <summary class="btn" aria-label="Open chart applications menu"><span aria-hidden="true">☰</span> Charts</summary>
         <div class="enc-map-apps-panel">
           <section aria-labelledby="encMapApplicationsTitle">
-            <h3 id="encMapApplicationsTitle">Harita uygulamaları</h3>
+            <h3 id="encMapApplicationsTitle">Chart applications</h3>
             <div class="enc-map-app-links">
-              <button class="btn" id="encOpenCpnView" type="button">OpenCPN Yerel Canlı Görüntü</button>
-              <button class="btn primary" id="encWebChartView" type="button" hidden>Web ENC Haritasına Dön</button>
+              <button class="btn" id="encOpenCpnView" type="button">OpenCPN Local Live View</button>
+              <button class="btn primary" id="encWebChartView" type="button" hidden>Return to Web ENC</button>
               <a class="btn" href="https://nauticalcharts.noaa.gov/enconline/enconline.html" target="_blank" rel="noopener">NOAA ENC Viewer</a>
             </div>
           </section>
           <section aria-labelledby="encBasemapTitle">
-            <h3 id="encBasemapTitle">Altlık haritası</h3>
-            <div class="enc-basemap-options" id="encBasemapGallery" role="group" aria-label="Altlık haritası galerisi">
-              <button type="button" class="enc-basemap-card navigation" data-enc-basemap="navigation" aria-pressed="true"><span>Seyir / Açık</span><small>OpenStreetMap</small></button>
-              <button type="button" class="enc-basemap-card topo" data-enc-basemap="topographic" aria-pressed="false"><span>Topografik</span><small>Esri World Topo</small></button>
-              <button type="button" class="enc-basemap-card dark" data-enc-basemap="dark-gray" aria-pressed="false"><span>Koyu Gri</span><small>Esri Dark Gray</small></button>
-              <button type="button" class="enc-basemap-card ocean" data-enc-basemap="ocean" aria-pressed="false"><span>Okyanus</span><small>Esri Ocean</small></button>
-              <button type="button" class="enc-basemap-card imagery" data-enc-basemap="imagery" aria-pressed="false"><span>Uydu</span><small>Esri World Imagery</small></button>
+            <h3 id="encBasemapTitle">Basemap</h3>
+            <div class="enc-basemap-options" id="encBasemapGallery" role="group" aria-label="Basemap gallery">
+              <button type="button" class="enc-basemap-card navigation" data-enc-basemap="navigation" aria-pressed="true"><span>Navigation / Light</span><small>OpenStreetMap</small></button>
+              <button type="button" class="enc-basemap-card topo" data-enc-basemap="topographic" aria-pressed="false"><span>Topographic</span><small>Esri World Topo</small></button>
+              <button type="button" class="enc-basemap-card dark" data-enc-basemap="dark-gray" aria-pressed="false"><span>Dark Gray</span><small>Esri Dark Gray</small></button>
+              <button type="button" class="enc-basemap-card ocean" data-enc-basemap="ocean" aria-pressed="false"><span>Ocean</span><small>Esri Ocean</small></button>
+              <button type="button" class="enc-basemap-card imagery" data-enc-basemap="imagery" aria-pressed="false"><span>Imagery</span><small>Esri World Imagery</small></button>
             </div>
           </section>
         </div>
       </details>
-      <div class="enc-toolbar" aria-label="Harita görünüm ve katman ayarları">
+      <div class="enc-toolbar" aria-label="Chart view and layer settings">
         <button class="btn primary" id="encMediterraneanView" type="button">Mediterranean</button>
         <button class="btn" id="encResetView" type="button">NOAA / USA</button>
         <button class="btn" id="encUseLocation" type="button">Go to My Position</button>
@@ -598,50 +590,50 @@
   <div class="enc-info-grid">
     <article><span>Sources</span><strong>NOAA • EMODnet • OpenSeaMap</strong></article>
     <article><span>Mode</span><strong>ECS planning &amp; decision support</strong></article>
-    <article><span>Archive</span><strong>61 cloud packages retained</strong></article>
+    <article><span>Archive</span><strong>Locally retained chart packages</strong></article>
   </div>
   <section class="enc-passage-planner" aria-labelledby="encPassageTitle">
-    <div class="enc-passage-heading"><div><span class="eyebrow">OPENCPN ROUTE INTELLIGENCE</span><h3 id="encPassageTitle">Rota → Passage Plan</h3><p>OpenCPN’den dışa aktarılan GPX rotasını okuyun, bacak hesabını hazırlayın ve onayınızla geri gönderin.</p></div><span class="badge" id="encPassageBridgeStatus">Bridge bekleniyor</span></div>
+    <div class="enc-passage-heading"><div><span class="eyebrow">OPENCPN ROUTE INTELLIGENCE</span><h3 id="encPassageTitle">Route → Passage Plan</h3><p>Read an OpenCPN GPX route, prepare leg calculations and return it only after your approval.</p></div><span class="badge" id="encPassageBridgeStatus">Waiting for bridge</span></div>
     <div class="enc-passage-actions">
-      <button class="btn" id="encRefreshRoutes" type="button">OpenCPN rota klasörünü tara</button>
-      <select id="encRouteSelect" aria-label="Yerel GPX rotası"><option value="">Rota seçin…</option></select>
-      <button class="btn primary" id="encLoadRoute" type="button">Seçili rotayı al</button>
-      <button class="btn" id="encPickGpx" type="button">Bilgisayardan GPX seç</button>
+      <button class="btn" id="encRefreshRoutes" type="button">Scan OpenCPN route folder</button>
+      <select id="encRouteSelect" aria-label="Local GPX route"><option value="">Select a route…</option></select>
+      <button class="btn primary" id="encLoadRoute" type="button">Load selected route</button>
+      <button class="btn" id="encPickGpx" type="button">Choose GPX from computer</button>
       <input id="encGpxFile" type="file" accept=".gpx,application/gpx+xml,application/xml,text/xml" hidden>
     </div>
     <div class="enc-passage-settings">
-      <label>Plan sürati (kn)<input id="encPassageSpeed" type="number" min="0.1" step="0.1" value="10"></label>
-      <label>Yakıt tüketimi (L/h)<input id="encPassageFuel" type="number" min="0" step="0.1" value="0"></label>
-      <label>Yakıt marjı (%)<input id="encPassageMargin" type="number" min="0" step="1" value="20"></label>
-      <label>Kalkış zamanı<input id="encPassageDeparture" type="datetime-local"></label>
-      <button class="btn primary" id="encCalculatePassage" type="button">Passage planı hesapla</button>
+      <label>Plan speed (kn)<input id="encPassageSpeed" type="number" min="0.1" step="0.1" value="10"></label>
+      <label>Fuel consumption (L/h)<input id="encPassageFuel" type="number" min="0" step="0.1" value="0"></label>
+      <label>Fuel margin (%)<input id="encPassageMargin" type="number" min="0" step="1" value="20"></label>
+      <label>Departure time<input id="encPassageDeparture" type="datetime-local"></label>
+      <button class="btn primary" id="encCalculatePassage" type="button">Calculate passage plan</button>
     </div>
-    <div id="encPassageSummary" class="enc-passage-summary" aria-live="polite">Henüz rota yüklenmedi.</div>
-    <div class="enc-leg-table-wrap"><table class="enc-leg-table"><thead><tr><th>Leg</th><th>Başlangıç</th><th>Varış</th><th>Rota</th><th>Mesafe</th><th>Süre</th><th>ETA</th></tr></thead><tbody id="encLegRows"><tr><td colspan="7">GPX rota bekleniyor.</td></tr></tbody></table></div>
-    <div class="enc-intelligence-grid" aria-label="Passage Plan rota istihbaratı">
+    <div id="encPassageSummary" class="enc-passage-summary" aria-live="polite">No route loaded.</div>
+    <div class="enc-leg-table-wrap"><table class="enc-leg-table"><thead><tr><th>Leg</th><th>From</th><th>To</th><th>Course</th><th>Distance</th><th>Duration</th><th>ETA</th></tr></thead><tbody id="encLegRows"><tr><td colspan="7">Waiting for a GPX route.</td></tr></tbody></table></div>
+    <div class="enc-intelligence-grid" aria-label="Passage Plan route intelligence">
       <section class="enc-intelligence-panel" aria-labelledby="encChartsPublicationsTitle">
         <div class="enc-intelligence-head"><div><span class="eyebrow">ROUTE CATALOGUE</span><h4 id="encChartsPublicationsTitle">Charts &amp; Publications</h4></div><a class="btn compact" href="https://www.admiralty.co.uk/publications/admiralty-digital-catalogue" target="_blank" rel="noopener">ADMIRALTY Catalogue</a></div>
-        <p>Sinbad yayın adaylarını rotadan çıkarır. Resmî harita/ENC numaraları ADC rota sonucu içe aktarılınca eklenir.</p>
-        <div class="enc-catalog-import"><button class="btn" id="encPickAdmiraltyCatalog" type="button">ADC sonucunu içe aktar</button><input id="encAdmiraltyCatalogFile" type="file" accept=".csv,.txt,text/csv,text/plain" hidden><span id="encAdmiraltyCatalogStatus" role="status">ADC sonucu bekleniyor.</span></div>
-        <div class="enc-leg-table-wrap"><table class="enc-intelligence-table"><thead><tr><th>Harita / ENC</th><th>Tür</th><th>Kaynak</th><th>Durum</th></tr></thead><tbody id="encChartRows"><tr><td colspan="4">Rota bekleniyor.</td></tr></tbody></table></div>
-        <div class="enc-leg-table-wrap"><table class="enc-intelligence-table"><thead><tr><th>Yayın</th><th>Başlık</th><th>Kullanım</th></tr></thead><tbody id="encPublicationRows"><tr><td colspan="3">Rota bekleniyor.</td></tr></tbody></table></div>
+        <p>Sinbad derives publication candidates from the route. Official chart and ENC numbers are added when an ADC route result is imported.</p>
+        <div class="enc-catalog-import"><button class="btn" id="encPickAdmiraltyCatalog" type="button">Import ADC result</button><input id="encAdmiraltyCatalogFile" type="file" accept=".csv,.txt,text/csv,text/plain" hidden><span id="encAdmiraltyCatalogStatus" role="status">Waiting for an ADC result.</span></div>
+        <div class="enc-leg-table-wrap"><table class="enc-intelligence-table"><thead><tr><th>Chart / ENC</th><th>Type</th><th>Source</th><th>Status</th></tr></thead><tbody id="encChartRows"><tr><td colspan="4">Waiting for a route.</td></tr></tbody></table></div>
+        <div class="enc-leg-table-wrap"><table class="enc-intelligence-table"><thead><tr><th>Publication</th><th>Title</th><th>Use</th></tr></thead><tbody id="encPublicationRows"><tr><td colspan="3">Waiting for a route.</td></tr></tbody></table></div>
       </section>
       <section class="enc-intelligence-panel" aria-labelledby="encReportingTitle">
         <div class="enc-intelligence-head"><div><span class="eyebrow">VTS / REPORTING</span><h4 id="encReportingTitle">Reporting Points</h4></div></div>
-        <p>Rapor mevkileri adaydır; yetkili istasyon, VHF kanalı, zaman ve mesaj formatı güncel ALRS/VTS kaynağıyla doğrulanmalıdır.</p>
-        <div class="enc-leg-table-wrap"><table class="enc-intelligence-table"><thead><tr><th>Mevki</th><th>Tür</th><th>Kontrol</th></tr></thead><tbody id="encReportingRows"><tr><td colspan="3">Rota bekleniyor.</td></tr></tbody></table></div>
+        <p>Reporting positions are candidates; verify the authorized station, VHF channel, timing and message format against current ALRS/VTS sources.</p>
+        <div class="enc-leg-table-wrap"><table class="enc-intelligence-table"><thead><tr><th>Position</th><th>Type</th><th>Check</th></tr></thead><tbody id="encReportingRows"><tr><td colspan="3">Waiting for a route.</td></tr></tbody></table></div>
       </section>
       <section class="enc-intelligence-panel" aria-labelledby="encCriticalTitle">
         <div class="enc-intelligence-head"><div><span class="eyebrow">MASTER REVIEW</span><h4 id="encCriticalTitle">Critical Points &amp; Approval</h4></div></div>
-        <p>Abort point, wheel-over, XTD, no-go area ve mevki kontrol aralıkları gemi özellikleriyle tamamlanmalıdır.</p>
-        <div class="enc-leg-table-wrap"><table class="enc-intelligence-table"><thead><tr><th>Nokta</th><th>Tür</th><th>Detay</th></tr></thead><tbody id="encCriticalRows"><tr><td colspan="3">Rota bekleniyor.</td></tr></tbody></table></div>
-        <label class="enc-master-approval"><input id="encMasterApproval" type="checkbox"> Harita/yayın güncelliğini, rapor noktalarını ve kritik limitleri kontrol ettim.</label>
-        <span class="badge" id="encMasterApprovalStatus">Kaptan onayı bekleniyor</span>
+        <p>Complete abort points, wheel-over positions, XTD, no-go areas and position-check intervals for the vessel and voyage.</p>
+        <div class="enc-leg-table-wrap"><table class="enc-intelligence-table"><thead><tr><th>Point</th><th>Type</th><th>Detail</th></tr></thead><tbody id="encCriticalRows"><tr><td colspan="3">Waiting for a route.</td></tr></tbody></table></div>
+        <label class="enc-master-approval"><input id="encMasterApproval" type="checkbox"> I have checked chart and publication currency, reporting points and critical limits.</label>
+        <span class="badge" id="encMasterApprovalStatus">Awaiting Master approval</span>
       </section>
     </div>
-    <pre id="encPassageDraft" class="enc-passage-draft">Passage plan taslağı burada oluşturulacak.</pre>
-    <div class="enc-passage-actions"><button class="btn" id="encDownloadPassageGpx" type="button" disabled>GPX indir</button><button class="btn primary" id="encSendPassageToOpenCpn" type="button" disabled>Onayla ve OpenCPN’e gönder</button></div>
-    <p class="enc-passage-note" id="encPassageStatus">OpenCPN’deki rota için Route &amp; Mark Manager üzerinden GPX dışa aktarabilirsiniz. Sinbad yalnız yerel Routes klasörünü veya seçtiğiniz dosyayı okur.</p>
+    <pre id="encPassageDraft" class="enc-passage-draft">The passage plan draft will be generated here.</pre>
+    <div class="enc-passage-actions"><button class="btn" id="encDownloadPassageGpx" type="button" disabled>Download GPX</button><button class="btn primary" id="encSendPassageToOpenCpn" type="button" disabled>Approve and send to OpenCPN</button></div>
+    <p class="enc-passage-note" id="encPassageStatus">Export a GPX from OpenCPN through Route &amp; Mark Manager. Sinbad reads only the local Routes folder or the file you select.</p>
   </section>
 </section>
 
@@ -787,19 +779,10 @@
   </div>
 </section>
 
-<section id="navigation-plot" class="workspace">
-  <div class="workspace-head">
-    <div><div class="eyebrow">SINBAD NAVIGATION ENGINE</div><h2>Seyir Çizim Sayfası</h2><p>Hesaplanan eğitim rotasının etkileşimli harita görünümü.</p></div>
-    <div class="action-row"><button type="button" class="btn" id="backToSinbad">Sinbad’a dön</button><button class="btn close">Kapat</button></div>
-  </div>
-  <div class="navigation-plot-grid">
-    <div class="enc-map-shell"><div id="navigationPlotMap" role="application" aria-label="Hesaplanan seyir rotası haritası"></div><div id="navigationPlotStatus" class="enc-map-status ready">Yerel offline dünya katmanı hazırlanıyor.</div></div>
-    <aside id="navigationPlotSummary" class="navigation-plot-summary">Henüz çizilecek bir seyir hesabı yok.</aside>
-  </div>
+<section id="navigation-plot" class="workspace voyage-detail-page" data-master="da-vinci" data-owner-selection="C">
+  <header class="voyage-detail-header"><a class="voyage-detail-brand" href="./index.html" aria-label="SINBAD Marine home"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a><div><span>02 · VOYAGE / PLOT</span><h2>Navigation Plot</h2><p>Interactive view of the calculated training route.</p></div><button class="voyage-back-button" type="button" data-open="voyage-navigation">Voyage Planning</button></header>
+  <div class="voyage-detail-body"><figure class="voyage-detail-art"><img src="./assets/console-art/voyage-planning-owner-selections-v1/selected/03-navigation-plot-C.jpg" alt="Navigator plotting a coastal route"><figcaption><span>NAVIGATION PLOT · C</span><strong>Turn calculations into a visible track</strong><small>The chart remains a planning and training aid.</small></figcaption></figure><div class="voyage-detail-workspace"><div class="voyage-section-heading"><span>SINBAD NAVIGATION ENGINE</span><h3>Calculated route</h3><p>Review the route line, waypoints and calculation summary together.</p></div><div class="action-row"><button type="button" class="btn" id="backToSinbad">Open SINBAD AI</button></div><div class="navigation-plot-grid"><div class="enc-map-shell"><div id="navigationPlotMap" role="application" aria-label="Calculated voyage route map"></div><div id="navigationPlotStatus" class="enc-map-status ready">Preparing the local offline world layer.</div></div><aside id="navigationPlotSummary" class="navigation-plot-summary">No calculated route is ready to plot.</aside></div></div></div>
 </section>
-
-
-
 
 <section id="cloud-control" class="workspace">
   <div class="workspace-head">
@@ -979,7 +962,7 @@
 
 <section id="fleet" class="workspace yacht-detail-page fleet-detail-page" data-master="rembrandt" data-owner-selection="B">
   <header class="yacht-detail-header">
-    <a class="yacht-detail-brand" href="./index.html" aria-label="SINBAD ana sayfa"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a>
+    <a class="yacht-detail-brand" href="./index.html" aria-label="SINBAD home"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a>
     <div><span>01 · OPERATIONS / FLEET</span><h2>Fleet &amp; Yacht Management</h2><p>Tekne ayrıntıları, kapasite bilgileri ve makine kayıtları için yerel filo sicili.</p></div>
     <button class="yacht-back-button" type="button" data-open="yacht-operations">Yacht Management</button>
   </header>
@@ -1003,23 +986,20 @@
 
 
 <section id="pilot" class="workspace">
-  <div class="workspace-head"><div><h2>Pilot Library</h2><p>Always verify official sources.</p></div><button class="btn close">Close</button></div>
+  <div class="workspace-head"><div><h2>Coastal Pilotage Directory</h2><p>Local operational references; always verify official sources.</p></div><button class="btn close">Close</button></div>
   <div class="filter-grid"><input id="pilotSearch" placeholder="Search"><select id="countryFilter"><option value="">All countries</option></select><select id="typeFilter"><option value="">All types</option></select></div>
   <div id="pilotGrid" class="content-grid"></div>
 </section>
 
 
-<section id="routes" class="workspace">
-  <div class="workspace-head"><div><h2>Route Library</h2><p>Approved route sequences.</p></div><button class="btn close">Close</button></div>
-  <div class="filter-grid"><input id="routeSearch" placeholder="Search"><select id="routeType"><option value="">All route types</option></select><select id="routeStatus"><option value="">All statuses</option></select></div>
-  <div id="routeGrid" class="content-grid"></div>
+<section id="routes" class="workspace voyage-detail-page" data-master="da-vinci" data-owner-selection="C">
+  <header class="voyage-detail-header"><a class="voyage-detail-brand" href="./index.html" aria-label="SINBAD Marine home"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a><div><span>02 · VOYAGE / ROUTES</span><h2>Route Library</h2><p>Search stored routes and reusable passage sequences.</p></div><button class="voyage-back-button" type="button" data-open="voyage-navigation">Voyage Planning</button></header>
+  <div class="voyage-detail-body"><figure class="voyage-detail-art"><img src="./assets/console-art/voyage-planning-owner-selections-v1/selected/02-route-library-C.jpg" alt="Organized archive of route charts"><figcaption><span>ROUTE LIBRARY · C</span><strong>Every stored voyage, ready to retrieve</strong><small>Filter by route type and operational status.</small></figcaption></figure><div class="voyage-detail-workspace"><div class="voyage-section-heading"><span>ROUTE RECORDS</span><h3>Find a route</h3><p>Stored route data and existing filters remain authoritative.</p></div><div class="filter-grid"><input id="routeSearch" placeholder="Search routes"><select id="routeType"><option value="">All route types</option></select><select id="routeStatus"><option value="">All statuses</option></select></div><div id="routeGrid" class="content-grid"></div></div></div>
 </section>
 
-
-<section id="resources" class="workspace">
-  <div class="workspace-head"><div><h2>Blue Voyage Resource Guide</h2><p>Islands, historical sites, entertainment spots, marinas, fuel stations and harbour master's offices along the Turkish Aegean &amp; Mediterranean coast. Always verify contact details, VHF channels and access rules before relying on them operationally.</p></div><button class="btn close">Close</button></div>
-  <div class="filter-grid"><input id="resourceSearch" placeholder="Search"><select id="resourceCategory"><option value="">All categories</option></select><select id="resourceRegion"><option value="">All regions</option></select></div>
-  <div id="resourceGrid" class="content-grid"></div>
+<section id="resources" class="workspace voyage-detail-page" data-master="da-vinci" data-owner-selection="C">
+  <header class="voyage-detail-header"><a class="voyage-detail-brand" href="./index.html" aria-label="SINBAD Marine home"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a><div><span>02 · VOYAGE / COASTAL GUIDE</span><h2>Blue Voyage Resources</h2><p>Coastal places, marinas and services along the Turkish Aegean and Mediterranean.</p></div><button class="voyage-back-button" type="button" data-open="voyage-navigation">Voyage Planning</button></header>
+  <div class="voyage-detail-body"><figure class="voyage-detail-art"><img src="./assets/console-art/voyage-planning-owner-selections-v1/selected/06-blue-voyage-resources-C.jpg" alt="Aegean coastal voyage resource map"><figcaption><span>BLUE VOYAGE RESOURCES · C</span><strong>Explore the coast with operational context</strong><small>Verify contact details, VHF channels and access rules before operational use.</small></figcaption></figure><div class="voyage-detail-workspace"><div class="voyage-section-heading"><span>AEGEAN &amp; MEDITERRANEAN</span><h3>Coastal resource guide</h3><p>Search islands, historical sites, marinas, fuel stations and harbour master offices.</p></div><div class="filter-grid"><input id="resourceSearch" placeholder="Search resources"><select id="resourceCategory"><option value="">All categories</option></select><select id="resourceRegion"><option value="">All regions</option></select></div><div id="resourceGrid" class="content-grid"><div class="empty">No resources match the current filters.</div></div><button class="btn" type="button" data-open="pilot">Open Coastal Pilotage Directory</button></div></div>
 </section>
 
 <section id="store" class="workspace">
@@ -1082,7 +1062,7 @@
 
 <section id="crew" class="workspace yacht-detail-page crew-detail-page" data-master="rembrandt" data-owner-selection="B">
   <header class="yacht-detail-header">
-    <a class="yacht-detail-brand" href="./index.html" aria-label="SINBAD ana sayfa"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a>
+    <a class="yacht-detail-brand" href="./index.html" aria-label="SINBAD home"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a>
     <div><span>01 · OPERATIONS / CREW</span><h2>Crew</h2><p>Mürettebat kimliği, iletişim bilgileri ve kritik belge süreleri için düzenli yerel sicil.</p></div>
     <button class="yacht-back-button" type="button" data-open="yacht-operations">Yacht Management</button>
   </header>

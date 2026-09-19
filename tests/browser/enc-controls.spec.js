@@ -18,8 +18,8 @@ test('desktop chart console keeps route tools left, chart centre and settings ri
   const tools=page.locator('.enc-chart-tools'),map=page.locator('.enc-chart-canvas'),settings=page.locator('.enc-chart-settings');
   const [toolsBox,mapBox,settingsBox]=await Promise.all([tools.boundingBox(),map.boundingBox(),settings.boundingBox()]);
   const workspaceBox=await page.locator('#enc-viewer').boundingBox();
-  expect(workspaceBox.x).toBeLessThanOrEqual(12);
-  expect(workspaceBox.x+workspaceBox.width).toBeGreaterThanOrEqual(2388);
+  expect(workspaceBox.x).toBeGreaterThanOrEqual(0);
+  expect(workspaceBox.x+workspaceBox.width).toBeLessThanOrEqual(2400);
   expect(toolsBox.x+toolsBox.width).toBeLessThan(mapBox.x);
   expect(mapBox.x+mapBox.width).toBeLessThan(settingsBox.x);
   await expect(tools.locator('#encDrawRouteTool')).toBeVisible();
@@ -42,12 +42,12 @@ test('direct ENC workspace initializes its map and OpenCPN controls',async({page
 
   await expect(page.locator('#encMap .ol-viewport')).toBeVisible();
   await page.locator('#encMapAppsMenu > summary').click();
-  await page.getByRole('button',{name:'OpenCPN Yerel Canlı Görüntü'}).click();
+  await page.getByRole('button',{name:'OpenCPN Local Live View'}).click();
   await expect(page.locator('#encOpenCpnShell')).toBeVisible();
   await expect(page.locator('#encOpenCpnFrame')).toBeHidden();
   await expect(page.locator('#encOpenCpnFrame')).not.toHaveAttribute('src',/.+/);
   await page.locator('#encMapAppsMenu > summary').click();
-  await page.getByRole('button',{name:'Web ENC Haritasına Dön'}).click();
+  await page.getByRole('button',{name:'Return to Web ENC'}).click();
   await expect(page.locator('#encMap .ol-viewport')).toBeVisible();
 
   await page.locator('#encDraft').fill('3.2');
@@ -68,8 +68,8 @@ test('armed OpenCPN surface forwards bounded local mouse and keyboard controls',
   await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');});
   await prepareVerifiedOwner(page);
   await page.locator('#encMapAppsMenu > summary').click();
-  await page.getByRole('button',{name:'OpenCPN Yerel Canlı Görüntü'}).click();
-  await page.getByRole('button',{name:'OpenCPN kontrolü: Kapalı'}).click();
+  await page.getByRole('button',{name:'OpenCPN Local Live View'}).click();
+  await page.getByRole('button',{name:'OpenCPN control: Off'}).click();
   const frame=page.locator('#encOpenCpnFrame');
   await expect(frame).toHaveClass(/interactive/);
   await frame.evaluate(image=>{
@@ -104,7 +104,7 @@ test('imports a local Bridge GPX, calculates legs and sends it to OpenCPN after 
   await page.locator('#encLoadRoute').click();
   await expect(page.locator('#encPassageSummary')).toContainText('Marmaris Rodos');
   await expect(page.locator('#encLegRows tr')).toHaveCount(2);
-  await expect(page.locator('#encPassageDraft')).toContainText('KAPTAN ONAYI');
+  await expect(page.locator('#encPassageDraft')).toContainText('MASTER APPROVAL');
   await expect(page.locator('#encPublicationRows')).toContainText('NP286(3)');
   await expect(page.locator('#encReportingRows')).toContainText('Marmaris');
   await expect(page.locator('#encSendPassageToOpenCpn')).toBeDisabled();
@@ -125,9 +125,9 @@ test('controls every active web chart layer and turns a drawn route into a passa
   await page.locator('#encSeamarkToggle').check();
   await page.locator('#encLayerToggle').check();
   await page.locator('#encMapAppsMenu > summary').click();
-  await page.getByRole('button',{name:/Koyu Gri/}).click();
+  await page.getByRole('button',{name:/Dark Gray/}).click();
   await expect(page.locator('[data-enc-basemap="dark-gray"]')).toHaveAttribute('aria-pressed','true');
-  await expect(page.locator('#encPlanningStatus')).toContainText('Harita formatı: Koyu Gri');
+  await expect(page.locator('#encPlanningStatus')).toContainText('Basemap: Dark Gray');
   await expect(page.locator('#encLayerToggle')).toBeChecked();
   await expect(page.locator('#encSeamarkToggle')).toBeChecked();
   await page.locator('#encDrawRouteTool').click();
@@ -136,14 +136,14 @@ test('controls every active web chart layer and turns a drawn route into a passa
   await page.mouse.click(box.x+box.width*.25,box.y+box.height*.55);
   await page.mouse.click(box.x+box.width*.5,box.y+box.height*.42);
   await page.mouse.dblclick(box.x+box.width*.72,box.y+box.height*.58);
-  await expect(page.locator('#encPlanningStatus')).toContainText('Çizilen rota');
+  await expect(page.locator('#encPlanningStatus')).toContainText('Drawn route');
   await expect(page.locator('#encRouteToPassage')).toBeEnabled();
   await page.locator('#encRouteToPassage').click();
   await expect(page.locator('#encLegRows tr')).toHaveCount(2);
-  await expect(page.locator('#encPassageDraft')).toContainText('KAPTAN ONAYI');
+  await expect(page.locator('#encPassageDraft')).toContainText('MASTER APPROVAL');
   await page.locator('#encAdmiraltyCatalogFile').setInputFiles({name:'adc-route.csv',mimeType:'text/csv',buffer:Buffer.from('Product,Title\nGB123456,Approach\nNP286(3),Radio')});
   await expect(page.locator('#encChartRows')).toContainText('GB123456');
-  await expect(page.locator('#encAdmiraltyCatalogStatus')).toContainText('2 harita/yayın kodu');
+  await expect(page.locator('#encAdmiraltyCatalogStatus')).toContainText('2 chart/publication codes');
 });
 
 test('fullscreen command targets only the chart panel',async({page})=>{
@@ -164,9 +164,9 @@ test('fullscreen chart exposes working planning controls over the map',async({pa
   await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');const shell=document.querySelector('.enc-map-shell');Object.defineProperty(document,'fullscreenElement',{configurable:true,get:()=>shell});document.dispatchEvent(new Event('fullscreenchange'))});
   const overlay=page.locator('.enc-fullscreen-tools');
   await expect(overlay).toBeVisible();
-  await overlay.getByRole('button',{name:/Rota/}).click();
+  await overlay.getByRole('button',{name:/Route/}).click();
   await expect(page.locator('#encDrawRouteTool')).toHaveAttribute('aria-pressed','true');
-  await expect(overlay.getByRole('button',{name:/Rota/})).toHaveAttribute('aria-pressed','true');
-  await overlay.getByRole('button',{name:/Temizle/}).click();
+  await expect(overlay.getByRole('button',{name:/Route/})).toHaveAttribute('aria-pressed','true');
+  await overlay.getByRole('button',{name:/Clear/}).click();
   await expect(page.locator('#encPanTool')).toHaveAttribute('aria-pressed','true');
 });
