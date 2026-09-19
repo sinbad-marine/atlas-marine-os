@@ -61,7 +61,8 @@ test('Academy departments open as approved art layers before the functional clas
     await page.locator(`.academy-landing-hotspots [data-academy-open="${section}"]`).click({force:true});
     await expect(page.locator(`[data-academy-art="${section}"].is-active`)).toBeVisible();
     await expect(page.locator('#academyTeachingStage')).toBeHidden();
-    await page.locator('[data-academy-action="open-lesson"]').click({force:true});
+    const command=section==='goss-gasm'?'family':'lesson';
+    await page.locator(`.academy-layer-hotspots [data-academy-scope="${section}"][data-academy-command="${command}"]`).first().click();
     await expect(page.locator('#academyTeachingStage')).toBeVisible();
     await expect(page.locator('#academyQuestionInput')).toBeVisible();
   }
