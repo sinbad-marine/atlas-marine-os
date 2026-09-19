@@ -319,50 +319,57 @@
 </section>
 
 
-<section id="camera-archive" class="workspace">
-  <div class="workspace-head">
-    <div><div class="eyebrow">PRIVATE MEDIA CAPTURE</div><h2>Camera & Media Archive</h2><p>Media remains private to the authorized workspace unless it is separately submitted and approved for sharing.</p></div>
-    <button class="btn close">Close</button>
-  </div>
-  <div class="permission-banner" id="cameraPermissionBanner">Camera access has not been requested.</div>
-  <div class="camera-layout">
-    <div class="camera-stage">
-      <video id="cameraPreview" playsinline muted autoplay></video>
-      <div class="camera-placeholder" id="cameraPlaceholder">Camera preview will appear here.</div>
-    </div>
-    <div>
-      <div class="actions camera-actions">
-        <button class="btn primary" id="startCamera" type="button">Open Camera</button>
-        <button class="btn" id="switchCamera" type="button" disabled>Switch Camera</button>
-        <button class="btn" id="capturePhoto" type="button" disabled>Take Photo</button>
-        <button class="btn" id="startVideoRecording" type="button" disabled>Record Video</button>
-        <button class="btn danger" id="stopVideoRecording" type="button" disabled>Stop Recording</button>
-        <button class="btn" id="closeCamera" type="button" disabled>Close Camera</button>
+<section id="camera-archive" class="workspace yacht-detail-page media-detail-page" data-master="rembrandt" data-owner-selection="A">
+  <header class="yacht-detail-header">
+    <a class="yacht-detail-brand" href="./index.html" aria-label="SINBAD ana sayfa"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a>
+    <div><span>01 · OPERATIONS / PRIVATE MEDIA</span><h2>Camera &amp; Media Archive</h2><p>Yetkili çalışma alanı için görünür, kullanıcı kontrollü özel medya kaydı.</p></div>
+    <button class="yacht-back-button" type="button" data-open="yacht-operations">Yacht Management</button>
+  </header>
+  <div class="yacht-detail-body">
+    <figure class="yacht-detail-art"><img src="./assets/console-art/yacht-management-owner-selections-v1/selected/05-camera-media-archive-A.png" alt="Kamera ve özel yat medya arşivi"><figcaption><span>PRIVATE MEDIA · A</span><strong>Operational evidence, under your control</strong><small>Medya siz açıkça seçmeden veya yüklemeden cihazdan ayrılmaz.</small></figcaption></figure>
+    <div class="yacht-detail-workspace media-workspace">
+      <div class="detail-section-heading"><span>CAPTURE DESK</span><h3>Görünür kayıt ve kontrollü arşiv</h3><p>Media remains private to the authorized workspace unless it is separately submitted and approved for sharing.</p></div>
+      <div class="permission-banner" id="cameraPermissionBanner">Camera access has not been requested.</div>
+      <div class="camera-layout media-capture-layout">
+        <div class="camera-stage">
+          <video id="cameraPreview" playsinline muted autoplay></video>
+          <div class="camera-placeholder" id="cameraPlaceholder"><strong>Camera preview</strong><span>Kamera yalnız siz açtığınızda etkinleşir.</span></div>
+        </div>
+        <div class="media-capture-controls">
+          <div class="actions camera-actions">
+            <button class="btn primary" id="startCamera" type="button">Open Camera</button>
+            <button class="btn" id="switchCamera" type="button" disabled>Switch Camera</button>
+            <button class="btn" id="capturePhoto" type="button" disabled>Take Photo</button>
+            <button class="btn" id="startVideoRecording" type="button" disabled>Record Video</button>
+            <button class="btn danger" id="stopVideoRecording" type="button" disabled>Stop Recording</button>
+            <button class="btn" id="closeCamera" type="button" disabled>Close Camera</button>
+          </div>
+          <label class="mobile-capture-label">Phone camera / gallery
+            <input id="mobileMediaCapture" type="file" accept="image/*,video/*" capture="environment" multiple>
+          </label>
+          <label class="detail-field">Archive note<input id="mediaArchiveNote" type="text" placeholder="Port, approach, defect or note"></label>
+          <button class="btn primary full" id="uploadCapturedMedia" type="button" disabled>Upload to Private Media Archive</button>
+          <div id="mediaUploadStatus" class="notice">No media selected.</div>
+        </div>
       </div>
-      <label class="mobile-capture-label">Or use the phone camera / gallery
-        <input id="mobileMediaCapture" type="file" accept="image/*,video/*" capture="environment" multiple>
-      </label>
-      <label>Archive note<input id="mediaArchiveNote" type="text" placeholder="Port, approach, defect, operation or captain note"></label>
-      <button class="btn primary full" id="uploadCapturedMedia" type="button" disabled>Upload to Private Media Archive</button>
-      <div id="mediaUploadStatus" class="notice">No media selected.</div>
+      <canvas id="photoCaptureCanvas" hidden></canvas>
+      <section class="media-review-panel"><div class="detail-section-heading compact"><span>REVIEW QUEUE</span><h3>Selected media</h3></div><div id="capturedMediaGallery" class="captured-media-grid"></div></section>
     </div>
   </div>
-  <canvas id="photoCaptureCanvas" hidden></canvas>
-  <div id="capturedMediaGallery" class="captured-media-grid"></div>
 </section>
 
 
-<section id="captains-logbook" class="workspace">
-  <div class="workspace-head">
-    <div>
-      <div class="eyebrow">VOICE-ASSISTED DRAFT JOURNAL</div>
-      <h2>Captain's Logbook</h2>
-      <p>Capture operational notes with local time, UTC and optional position. Drafts remain editable until reviewed.</p>
-    </div>
-    <button class="btn close">Close</button>
-  </div>
+<section id="captains-logbook" class="workspace yacht-detail-page logbook-detail-page" data-master="rembrandt" data-owner-selection="B">
+  <header class="yacht-detail-header">
+    <a class="yacht-detail-brand" href="./index.html" aria-label="SINBAD ana sayfa"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a>
+    <div><span>01 · OPERATIONS / LOGBOOK</span><h2>Captain's Logbook</h2><p>Yerel saat, UTC ve isteğe bağlı konum ile sesli ya da yazılı operasyon taslakları.</p></div>
+    <button class="yacht-back-button" type="button" data-open="yacht-operations">Yacht Management</button>
+  </header>
+  <div class="yacht-detail-body">
+    <figure class="yacht-detail-art"><img src="./assets/console-art/yacht-management-owner-selections-v1/selected/04-captain-logbook-B.png" alt="Kaptan günlüğü, harita ve seyir araçları"><figcaption><span>CAPTAIN LOGBOOK · B</span><strong>Every watch leaves a clear record</strong><small>Ses, zaman ve konum tek bir kontrollü taslak akışında.</small></figcaption></figure>
+    <div class="yacht-detail-workspace logbook-workspace">
   <div class="log-safety-note"><strong>Draft archive — not the statutory logbook.</strong> Review and transfer approved entries to the vessel's official logbook.</div>
-  <div class="voice-watch-panel">
+  <div class="voice-watch-panel log-command-bar">
     <div class="voice-watch-state">
       <span class="voice-pulse" id="voicePulse"></span>
       <div><strong id="voiceWatchTitle">Sinbad Voice Watch is off</strong><small id="voiceWatchHelp">Press Start Voice Watch, then say “Sinbad Log” followed by your entry.</small></div>
@@ -375,7 +382,8 @@
     <div class="voice-transcript" id="voiceTranscript" aria-live="polite">Waiting for your command.</div>
   </div>
   <div class="log-compose-grid">
-    <div>
+    <div class="log-compose-card">
+      <div class="detail-section-heading compact"><span>NEW ENTRY</span><h3>Yeni günlük taslağı</h3></div>
       <label>Draft log entry
         <textarea id="logDraftText" rows="5" placeholder="Example: Anchored off Kumkapı, Istanbul. Anchor position checked and holding."></textarea>
       </label>
@@ -397,12 +405,13 @@
       <div id="logComposeStatus" class="notice">No draft is being recorded.</div>
     </div>
     <div class="log-clock-card">
+      <small>BRIDGE DATA</small>
       <span>Local time</span><strong id="logLocalClock">—</strong>
       <span>UTC</span><strong id="logUtcClock">—</strong>
       <span>Position</span><strong id="logPositionPreview">Not attached</strong>
     </div>
   </div>
-  <div class="log-archive-head">
+  <section class="log-archive-panel"><div class="log-archive-head">
     <div><h3>Draft Log Archive</h3><p id="logArchiveSummary">0 entries</p></div>
     <div class="actions">
       <button class="btn" id="exportLogsJson" type="button">Export JSON</button>
@@ -410,10 +419,12 @@
       <button class="btn" id="clearReviewedLogs" type="button">Remove Transferred</button>
     </div>
   </div>
-  <div id="logDraftList" class="log-draft-list"></div>
+  <div id="logDraftList" class="log-draft-list"></div></section>
   <div class="emergency-record-panel">
     <div><div class="eyebrow">VISIBLE, USER-ACTIVATED CAPTURE</div><h3>Emergency Evidence Record</h3><p>Starts a visible audio/video recording with the rear camera where available. It does not contact emergency services or send anything automatically.</p></div>
     <button class="btn danger" id="startEmergencyRecord" type="button">Start Emergency Recording</button>
+  </div>
+    </div>
   </div>
 </section>
 
@@ -966,15 +977,28 @@
 </section>
 
 
-<section id="fleet" class="workspace">
-  <div class="workspace-head"><div><h2>Fleet Manager</h2><p>Vessel particulars stored locally.</p></div><button class="btn close">Close</button></div>
-  <div class="form-grid">
-    <label>Vessel name<input id="vName"></label><label>Type<input id="vType"></label><label>Flag<input id="vFlag"></label>
-    <label>LOA (m)<input id="vLoa" type="number" step="0.1"></label><label>Beam (m)<input id="vBeam" type="number" step="0.1"></label><label>Draft (m)<input id="vDraft" type="number" step="0.1"></label>
-    <label>Cruising speed (kn)<input id="vCruise" type="number" step="0.1"></label><label>Fuel capacity (L)<input id="vFuel" type="number"></label><label>Fresh water (L)<input id="vWater" type="number"></label>
-    <label class="wide">Machinery / Notes<textarea id="vNotes"></textarea></label>
+<section id="fleet" class="workspace yacht-detail-page fleet-detail-page" data-master="rembrandt" data-owner-selection="B">
+  <header class="yacht-detail-header">
+    <a class="yacht-detail-brand" href="./index.html" aria-label="SINBAD ana sayfa"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a>
+    <div><span>01 · OPERATIONS / FLEET</span><h2>Fleet &amp; Yacht Management</h2><p>Tekne ayrıntıları, kapasite bilgileri ve makine kayıtları için yerel filo sicili.</p></div>
+    <button class="yacht-back-button" type="button" data-open="yacht-operations">Yacht Management</button>
+  </header>
+  <div class="yacht-detail-body">
+    <figure class="yacht-detail-art"><img src="./assets/console-art/yacht-management-owner-selections-v1/selected/02-fleet-and-yacht-management-B.png" alt="Limana giren üç motor yat"><figcaption><span>FLEET MANAGEMENT · B</span><strong>Every vessel, clearly accounted for</strong><small>Filo verisi yalnızca bu cihazdaki yetkili çalışma alanında tutulur.</small></figcaption></figure>
+    <div class="yacht-detail-workspace fleet-workspace">
+      <section class="detail-form-panel">
+        <div class="detail-section-heading"><span>VESSEL PARTICULARS</span><h3>Yeni tekne kaydı</h3><p>Temel kimlik, boyut ve operasyon kapasitesini tek bir düzenli kayıtta tutun.</p></div>
+        <div class="detail-form-groups">
+          <fieldset><legend>Identity</legend><div class="detail-fields"><label>Vessel name<input id="vName" autocomplete="off"></label><label>Type<input id="vType" autocomplete="off"></label><label>Flag<input id="vFlag" autocomplete="off"></label></div></fieldset>
+          <fieldset><legend>Dimensions</legend><div class="detail-fields"><label>LOA (m)<input id="vLoa" type="number" step="0.1"></label><label>Beam (m)<input id="vBeam" type="number" step="0.1"></label><label>Draft (m)<input id="vDraft" type="number" step="0.1"></label></div></fieldset>
+          <fieldset><legend>Operations</legend><div class="detail-fields"><label>Cruising speed (kn)<input id="vCruise" type="number" step="0.1"></label><label>Fuel capacity (L)<input id="vFuel" type="number"></label><label>Fresh water (L)<input id="vWater" type="number"></label></div></fieldset>
+          <fieldset><legend>Machinery &amp; notes</legend><label class="detail-field-wide">Machinery / Notes<textarea id="vNotes" rows="4"></textarea></label></fieldset>
+        </div>
+        <button class="btn primary detail-primary-action" id="saveVessel">Save Vessel</button>
+      </section>
+      <section class="detail-registry-panel"><div class="detail-section-heading compact"><span>LOCAL REGISTRY</span><h3>Fleet records</h3><p>En yeni kayıt ilk sırada gösterilir.</p></div><div id="fleetList" class="detail-record-grid"></div></section>
+    </div>
   </div>
-  <button class="btn primary" id="saveVessel">Save Vessel</button><div id="fleetList"></div>
 </section>
 
 
@@ -1056,15 +1080,27 @@
   </div>
 </div>
 
-<section id="crew" class="workspace">
-  <div class="workspace-head"><div><h2>Crew Manager</h2><p>Personnel and expiry tracking.</p></div><button class="btn close">Close</button></div>
-  <div class="form-grid">
-    <label>Full name<input id="crewName"></label><label>Rank<input id="crewRank"></label><label>Nationality<input id="crewNationality"></label>
-    <label>Passport expiry<input id="crewPassport" type="date"></label><label>ENG1 / Medical<input id="crewMedical" type="date"></label><label>STCW<input id="crewStcw" type="date"></label>
-    <label>Visa expiry<input id="crewVisa" type="date"></label><label>Contract end<input id="crewContract" type="date"></label><label>Phone / Email<input id="crewContact"></label>
-    <label class="wide">Notes<textarea id="crewNotes"></textarea></label>
+<section id="crew" class="workspace yacht-detail-page crew-detail-page" data-master="rembrandt" data-owner-selection="B">
+  <header class="yacht-detail-header">
+    <a class="yacht-detail-brand" href="./index.html" aria-label="SINBAD ana sayfa"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a>
+    <div><span>01 · OPERATIONS / CREW</span><h2>Crew</h2><p>Mürettebat kimliği, iletişim bilgileri ve kritik belge süreleri için düzenli yerel sicil.</p></div>
+    <button class="yacht-back-button" type="button" data-open="yacht-operations">Yacht Management</button>
+  </header>
+  <div class="yacht-detail-body">
+    <figure class="yacht-detail-art"><img src="./assets/console-art/yacht-management-owner-selections-v1/selected/03-crew-B.png" alt="Güvertede çalışan yat mürettebatı"><figcaption><span>CREW OPERATIONS · B</span><strong>Readiness begins with the people aboard</strong><small>Belge süreleri ve iletişim kayıtları aynı operasyon görünümünde.</small></figcaption></figure>
+    <div class="yacht-detail-workspace crew-workspace">
+      <section class="detail-form-panel">
+        <div class="detail-section-heading"><span>PERSONNEL RECORD</span><h3>Yeni mürettebat kaydı</h3><p>Kimlik, görev, iletişim ve süre sonu bilgilerini eksiksiz kaydedin.</p></div>
+        <div class="detail-form-groups">
+          <fieldset><legend>Identity</legend><div class="detail-fields"><label>Full name<input id="crewName" autocomplete="off"></label><label>Rank<input id="crewRank" autocomplete="off"></label><label>Nationality<input id="crewNationality" autocomplete="off"></label></div></fieldset>
+          <fieldset><legend>Documents &amp; expiry</legend><div class="detail-fields"><label>Passport expiry<input id="crewPassport" type="date"></label><label>ENG1 / Medical<input id="crewMedical" type="date"></label><label>STCW<input id="crewStcw" type="date"></label><label>Visa expiry<input id="crewVisa" type="date"></label><label>Contract end<input id="crewContract" type="date"></label></div></fieldset>
+          <fieldset><legend>Contact &amp; notes</legend><div class="detail-fields"><label>Phone / Email<input id="crewContact" autocomplete="off"></label><label class="detail-field-wide">Notes<textarea id="crewNotes" rows="4"></textarea></label></div></fieldset>
+        </div>
+        <button class="btn primary detail-primary-action" id="saveCrew">Save Crew Member</button>
+      </section>
+      <section class="detail-registry-panel"><div class="detail-section-heading compact"><span>CREW REGISTRY</span><h3>Personnel readiness</h3><p>Yaklaşan süre sonları kayıt kartlarında görünür.</p></div><div id="crewList" class="detail-record-grid crew-record-grid"></div></section>
+    </div>
   </div>
-  <button class="btn primary" id="saveCrew">Save Crew Member</button><div id="crewList"></div>
 </section>
 </main>
 
