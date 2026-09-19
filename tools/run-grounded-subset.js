@@ -59,7 +59,7 @@ function scoreText(category,answer,item,titles){
 async function main(){
   const args=parseArgs(process.argv.slice(2));const outDir=path.join(ROOT,'tests/benchmark/results',args.runId);fs.mkdirSync(outDir,{recursive:true});
   const partialPath=path.join(outDir,'results.partial.jsonl');
-  const done=new Map();if(args.resume&&fs.existsSync(partialPath))for(const line of fs.readFileSync(partialPath,'utf8').split('\n').filter(Boolean)){const row=JSON.parse(line);done.set(row.id,row);}
+  const done=new Map();if(args.resume&&fs.existsSync(partialPath))for(const line of fs.readFileSync(partialPath,'utf8').split('\n').filter(Boolean)){const row=JSON.parse(line);if(!row.error)done.set(row.id,row);}
   if(!args.resume&&fs.existsSync(partialPath))fs.unlinkSync(partialPath);
   const sets=rescore.applyOverlay(gold.loadAll(),OVERLAY);const byId=new Map();for(const set of Object.values(sets))for(const item of set.items)byId.set(item.id,item);
   const status=await new Promise(resolve=>http.get(new URL('/status',args.baseUrl),res=>{let t='';res.on('data',d=>{t+=d;});res.on('end',()=>{try{resolve(JSON.parse(t));}catch{resolve(null);}});}).on('error',()=>resolve(null)));
@@ -72,8 +72,10 @@ async function main(){
     if(done.has(entry.id)){rows.push(done.get(entry.id));continue;}
     const item=byId.get(entry.id);const response=await post(args.baseUrl,{question:item.prompt,history:[],language:'en-US',includeTranscript:true});
     let row;
-    if(!response.ok||!response.data){row={...entry,error:response.error||`HTTP_${response.status}`,latencyMs:Math.round(response.ms),answer:null,textOutcome:'ERROR',gate:null};}
-    else{
+    // An item the service could not answer is not a result: nothing is recorded for it, the run stops without a results
+    // file, and --resume asks it again. (GROUNDED-001 lost its service to the host's memory guard and wrote 26 error rows.)
+    if(!response.ok||!response.data)throw new Error(`GROUNDED_SERVICE_LOST at ${entry.id}: ${response.error||`HTTP_${response.status}`} - restart the service and rerun with --resume`);
+    {
       const data=response.data;const transcriptOk=data.transcript?chain.verifyTranscript(data.transcript):false;
       // A gate record is trusted only when the transcript it summarises verifies and carries the same digest.
       const gate=transcriptOk&&data.gate.record&&data.gate.record.transcriptDigest===data.transcript.transcriptDigest?data.gate.record:null;

@@ -20,13 +20,17 @@ const sentinel=require('../sentinel/sentinel-v0');
 const gatekeeper=require('../gatekeeper/gatekeeper-v0');
 
 // 0-v2 (Phase 4.6): 'do/does not answer' and its Turkish forms join the ignorance markers - the phrase the grounded prompt asks for.
-const VERSION='sinbad-disclaimer-screen/0-v2';
+// 0-v3 (Phase 4.7): temporal 'still' / 'yet' are not contrast connectives (see CONTRAST).
+const VERSION='sinbad-disclaimer-screen/0-v3';
 const MAX_LEAD_IN_WORDS=12;
 const EDGE='(?<![\\p{L}\\p{N}])';const END='(?![\\p{L}\\p{N}])';
 // Verbs of knowing, finding and telling: what one can fail to do about a fact without asserting it.
 const KNOW='(?:determine|confirm|verify|provide|find|locate|answer|tell|say|give|quote|access|know|identify|establish)';
 const IGNORANCE=new RegExp(`${EDGE}(?:(?:cannot|can't|can not|could not|couldn't|am unable to|are unable to|is unable to|unable to|am not able to|not able to) (?:\\w+ly )?${KNOW}|not possible to (?:\\w+ly )?${KNOW}|(?:do|does|did) not (?:\\w+ly )?(?:have access|relate|contain|mention|include|specify|state|indicate|provide|cover|address|say|answer)|(?:is|are|was|were) not (?:\\w+ly )?(?:stated|mentioned|provided|available|specified|included|documented|known|given)|no (?:information|mention|record|reference|data|details?|indication) (?:is |are |was |were )?(?:available|provided|given|found|about|on|regarding)|(?:you|one) would need to (?:check|consult|access|verify|refer)|none of the (?:provided |given |available )?(?:excerpts|sources|documents|passages)|bilmiyorum|bilgim yok|erişimim yok|belirtilmemiş|belirtilmiyor|yer almıyor|yer almamaktadır|teyit edemem|doğrulayamam|söyleyemem|belirleyemem|yanıtlamıyor|cevaplamıyor|yanıt vermiyor|cevap vermiyor|yanıt içermiyor)${END}`,'iu');
-const CONTRAST=new RegExp(`${EDGE}(?:but|however|yet|although|though|whereas|while|nevertheless|still|ancak|fakat|ama|oysa|lakin|yine de)${END}`,'iu');
+// 'still' and 'yet' are contrast connectives except in their temporal use, recognised narrowly: 'still' right after an
+// auxiliary ("is still open"), 'yet' as "not yet" or as the last word. Found with the real model (Phase 4.7): the honest
+// refusal "I cannot confirm that main is still at commit 3713a2b" was blocked three times and the answer withheld.
+const CONTRAST=new RegExp(`${EDGE}(?:but|however|(?<!not )yet(?!\\s*[.!?]?\\s*$)|although|though|whereas|while|nevertheless|(?<!(?:is|are|was|were|be|been|has|have|had|remains?) )still|ancak|fakat|ama|oysa|lakin|yine de)${END}`,'iu');
 const CONNECTIVE=new RegExp(`${EDGE}(?:and|or|so|then|ve|veya|sonra)${END}`,'iu');
 const ADDITIVE=new RegExp(`${EDGE}(?:and|so|then|plus|also|ve|sonra|ayrıca)${END}`,'iu');
 const BOUNDARY=/[,;:()]|\s[-–—]\s/u;

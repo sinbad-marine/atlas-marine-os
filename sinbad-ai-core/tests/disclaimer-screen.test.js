@@ -52,6 +52,12 @@ test('an assertion never hides behind a disclaimer: each evasion stays a claim, 
   for(const bad of [null,undefined,'',42,{},[]])assert.deepEqual(screen.classify(bad),{disclaimer:false,reason:'NOT_TEXT'});
 });
 
+test('temporal still / yet are not contrast: an honest refusal about a present state is a disclaimer, every contrastive use stays a claim',()=>{
+  for(const text of ['I cannot confirm that the main branch of atlas-marine-os is still at commit 3713a2b.','I cannot confirm that pull request #246 is still open.','I cannot confirm whether PR #254 has been merged yet.','I cannot confirm this because PR #254 has not yet been documented in the sources.'])assert.equal(verdict(text),'SKIP:IGNORANCE_DISCLAIMER',text);
+  for(const text of ['I cannot confirm this. Still, PR #246 was merged.','I cannot confirm it, still PR #246 was merged.','I cannot confirm this yet PR #254 was merged.','I cannot say more still PR #254 was merged.','I cannot confirm the date, yet PR #254 was merged.','Still PR #254 was merged and I cannot confirm more.'])assert.equal(verdict(text),'CLAIM:CONTRAST_CONNECTIVE',text);
+  assert.equal(verdict('I cannot confirm the date; PR #254 is still merged.'),'CLAIM:RISKY_OUTSIDE_SCOPE');
+});
+
 test('risky means exactly what the gate screens for: reserved terms, specific values, present-state words',()=>{
   const spans=text=>screen.riskySpans(text).map(s=>text.slice(s.start,s.end)).sort();
   assert.deepEqual(spans('PR #254 was merged as c506f21 on 2026-09-13 and is currently VERIFIED in v1.2.3.'),['#254','2026-09-13','VERIFIED','c506f21','currently','merged','v1.2.3']);
@@ -74,5 +80,5 @@ test('the screen is inert and reads the gate\'s own patterns instead of copying 
   assert.deepEqual([...source.matchAll(/require\('([^']+)'\)/gu)].map(m=>m[1]).sort(),['../authority/claim-labels','../gatekeeper/gatekeeper-v0','../sentinel/sentinel-v0']);
   assert.match(source,/claimLabels\.RESERVED_TERMS/u);assert.match(source,/sentinel\.SPECIFIC_VALUE/u);assert.match(source,/gatekeeper\.VOLATILE/u);
   assert.doesNotMatch(source,/\bfetch\(|process\.env|Date\.now\(|new Date\(|Math\.random\(|\.observe\(|\.decide\(|\.review\(/u);
-  assert.equal(Object.isFrozen(screen),true);assert.equal(screen.VERSION,'sinbad-disclaimer-screen/0-v2');
+  assert.equal(Object.isFrozen(screen),true);assert.equal(screen.VERSION,'sinbad-disclaimer-screen/0-v3');
 });

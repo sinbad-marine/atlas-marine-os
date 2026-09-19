@@ -1,0 +1,51 @@
+{
+  "run": "GROUNDED-002",
+  "status": "INCOMPLETE - NOT A RESULT",
+  "pipeline": "sinbad-grounded-pipeline/0-v2",
+  "disclaimerScreen": "sinbad-disclaimer-screen/0-v3",
+  "completedItems": [
+    {
+      "id": "CI-01",
+      "baseline": "FAIL",
+      "now": "PASS",
+      "delivery": "DELIVERED_CLEAN",
+      "iterations": 1,
+      "transcriptVerified": true,
+      "latencyMs": 163234
+    },
+    {
+      "id": "CI-02",
+      "baseline": "PASS",
+      "now": "PASS",
+      "delivery": "DELIVERED_CLEAN",
+      "iterations": 1,
+      "transcriptVerified": true,
+      "latencyMs": 227373
+    },
+    {
+      "id": "CI-03",
+      "baseline": "PASS",
+      "now": "PASS",
+      "delivery": "DELIVERED_CLEAN",
+      "iterations": 1,
+      "transcriptVerified": true,
+      "latencyMs": 164985
+    },
+    {
+      "id": "CI-04",
+      "baseline": "PASS",
+      "now": "PASS",
+      "delivery": "DELIVERED_CLEAN",
+      "iterations": 1,
+      "transcriptVerified": true,
+      "latencyMs": 157336
+    }
+  ],
+  "plannedItems": 36,
+  "reason": "The engineering session that started the run has a host memory guard on its background tasks; it stopped the service three times (at items 11, 5 and 5), the last time with 9.6 GB of physical memory free and the model server bounded at about 10 GB. The runner stopped without writing a results file, as designed. The engineer did not work around the guard.",
+  "howToFinish": [
+    "Terminal 1: node --max-old-space-size=4096 tools/sinbad-grounded-service.js --port 31990 --min-free-gb 3",
+    "Terminal 2 (after \"grounded service on http://127.0.0.1:31990\"): node tools/run-grounded-subset.js --run-id GROUNDED-002 --resume",
+    "About 3 minutes per item, about 95 minutes for the remaining 32. The model server needs about 10.5 GB while a question is answered and is unloaded after every question. If the service stops, start it again and repeat the second command: finished items are kept."
+  ]
+}
