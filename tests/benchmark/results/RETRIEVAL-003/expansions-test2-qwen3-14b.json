@@ -1,0 +1,392 @@
+{
+  "version": "sinbad-query-expansion/0-v1",
+  "model": "qwen3:14b",
+  "split": "TEST2",
+  "options": {
+    "temperature": 0,
+    "seed": 7,
+    "num_ctx": 4096,
+    "num_predict": 120,
+    "think": false
+  },
+  "system": "/no_think\nYou write search queries for a library of maritime regulations and training material (IMO conventions and codes, ILO MLC, flag and class documents, exam question banks in English and Turkish).\nGiven a user question, write exactly two short search queries. A query is NOT a question: it is a fragment of the sentence in the official text that would contain the answer, in the words such a text uses (for example: shall, means, at least, not exceeding, is entitled to, shall be carried out).\nExample - question: \"Does having a pilot on board take away the captain's responsibility?\" - query: \"presence of a pilot does not relieve the master of his duties and obligations\".\nQ1: in the language of the question. Q2: the same fragment in the other language (English if the question is Turkish, Turkish if the question is English).\nRules: do not answer the question. No question marks. Do not write any number, date, limit or period. Do not write any regulation, rule, chapter, section, article or annex number. Each query has 4 to 16 words.\nOutput exactly two lines and nothing else:\nQ1: ...\nQ2: ...",
+  "expansions": {
+    "T2-01": {
+      "raw": "Q1: lifeboat shall be lowered into the water and manoeuvred by its crew at least once every month  \nQ2: canaya en az ayda bir suya indirilerek ve ekip tarafından manevra edilmesi gerekir",
+      "error": null,
+      "valid": false,
+      "reason": "NUMBER_WORD_NOT_IN_QUESTION",
+      "queries": [],
+      "ms": 41832
+    },
+    "T2-02": {
+      "raw": "Q1: emergency position-indicating radio beacon shall be tested at intervals not exceeding\nQ2: acil konum gösteren radyo beşinin testi en fazla belirli aralıklarla yapılmalıdır",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "emergency position-indicating radio beacon shall be tested at intervals not exceeding",
+        "acil konum gösteren radyo beşinin testi en fazla belirli aralıklarla yapılmalıdır"
+      ],
+      "ms": 13174
+    },
+    "T2-03": {
+      "raw": "Q1: master shall evaluate the safety management system and report deficiencies  \nQ2: kaptan, güvenlik yönetim sisteminin değerlendirilmesi ve eksikliklerin bildirilmesi yükümlülüğündedir",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "master shall evaluate the safety management system and report deficiencies",
+        "kaptan, güvenlik yönetim sisteminin değerlendirilmesi ve eksikliklerin bildirilmesi yükümlülüğündedir"
+      ],
+      "ms": 12828
+    },
+    "T2-04": {
+      "raw": "Q1: safety management certificate shall be valid for a period of five years  \nQ2: güvenlik yönetimi sertifikasının geçerlilik süresi beş yıldır",
+      "error": null,
+      "valid": false,
+      "reason": "NUMBER_WORD_NOT_IN_QUESTION",
+      "queries": [],
+      "ms": 10228
+    },
+    "T2-05": {
+      "raw": "Q1: ship security officer is a person designated by the shipowner\nQ2: gemi güvenliği memuru, gemi sahibi tarafından belirlenen kişidir",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "ship security officer is a person designated by the shipowner",
+        "gemi güvenliği memuru, gemi sahibi tarafından belirlenen kişidir"
+      ],
+      "ms": 10259
+    },
+    "T2-06": {
+      "raw": "Q1: security-related activities shall be recorded and kept on board  \nQ2: güvenlikle ilgili faaliyetler kaydedilmelidir ve gemide saklanmalıdır",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "security-related activities shall be recorded and kept on board",
+        "güvenlikle ilgili faaliyetler kaydedilmelidir ve gemide saklanmalıdır"
+      ],
+      "ms": 9911
+    },
+    "T2-07": {
+      "raw": "Q1: period of validity of the international ship security certificate  \nQ2: uluslararası gemi güvenliği sertifikasının geçerlilik süresi",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "period of validity of the international ship security certificate",
+        "uluslararası gemi güvenliği sertifikasının geçerlilik süresi"
+      ],
+      "ms": 8731
+    },
+    "T2-08": {
+      "raw": "Q1: highest security level means the level of security which requires the highest degree of protection  \nQ2: en yüksek güvenlik seviyesi, en yüksek koruma derecesini gerektiren güvenlik seviyesini ifade eder",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "highest security level means the level of security which requires the highest degree of protection",
+        "en yüksek güvenlik seviyesi, en yüksek koruma derecesini gerektiren güvenlik seviyesini ifade eder"
+      ],
+      "ms": 12694
+    },
+    "T2-09": {
+      "raw": "Q1: wages shall be paid at least once every month  \nQ2: denizcilere en az ayda bir ödeme yapılmalıdır",
+      "error": null,
+      "valid": false,
+      "reason": "NUMBER_WORD_NOT_IN_QUESTION",
+      "queries": [],
+      "ms": 8047
+    },
+    "T2-10": {
+      "raw": "Q1: not less than twenty-one days of annual leave with pay for each period of twelve months of service  \nQ2: en az on bir günlük ücretli yıllık izin her on ayda bir",
+      "error": null,
+      "valid": false,
+      "reason": "NUMBER_WORD_NOT_IN_QUESTION",
+      "queries": [],
+      "ms": 10112
+    },
+    "T2-11": {
+      "raw": "Q1: maximum number of hours of work shall not exceed twelve hours in any twenty four hour period  \nQ2: bir gün içinde denizcilere verilebilecek en fazla çalışma süresi on iki saati geçmemelidir",
+      "error": null,
+      "valid": false,
+      "reason": "NUMBER_WORD_NOT_IN_QUESTION",
+      "queries": [],
+      "ms": 12933
+    },
+    "T2-12": {
+      "raw": "Q1: vessel is considered to be overtaking when it approaches another vessel from a direction more than 22.5 degrees abaft the beam\nQ2: gemi, diğer gemiden 22.5 dereceden daha arka tarafta olan bir yönden yaklaşıyorsa geçiş yapmakta olduğu kabul edilir",
+      "error": null,
+      "valid": false,
+      "reason": "NUMBER_NOT_IN_QUESTION",
+      "queries": [],
+      "ms": 17443
+    },
+    "T2-13": {
+      "raw": "Q1: power-driven vessels shall keep to the starboard side and pass on the port side  \nQ2: iki motorlu gemi, birbirlerine karşılaştıklarında iskele tarafında geçiş yapmalı ve sağ tarafı korumalıdır",
+      "error": null,
+      "valid": false,
+      "reason": "NUMBER_WORD_NOT_IN_QUESTION",
+      "queries": [],
+      "ms": 13411
+    },
+    "T2-14": {
+      "raw": "Q1: the power-driven vessel which has the other on its starboard side shall give way  \nQ2: diğer gemi sağ bordasında olduğunda güçlü gemi manevra yapmak zorundadır",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "the power-driven vessel which has the other on its starboard side shall give way",
+        "diğer gemi sağ bordasında olduğunda güçlü gemi manevra yapmak zorundadır"
+      ],
+      "ms": 10997
+    },
+    "T2-15": {
+      "raw": "Q1: failure to take proper precautions is a neglect of duty under the collision regulations  \nQ2: normal seamanlike precautions shall not be neglected under the collision regulations",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "failure to take proper precautions is a neglect of duty under the collision regulations",
+        "normal seamanlike precautions shall not be neglected under the collision regulations"
+      ],
+      "ms": 8793
+    },
+    "T2-16": {
+      "raw": "Q1: global limit for sulphur content in marine fuel oil  \nQ2: dünya çapında deniz yakıtlarında kükürt içeriği sınırı",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "global limit for sulphur content in marine fuel oil",
+        "dünya çapında deniz yakıtlarında kükürt içeriği sınırı"
+      ],
+      "ms": 9156
+    },
+    "T2-17": {
+      "raw": "Q1: discharge of oily mixtures from machinery spaces into the sea is permitted under specific conditions  \nQ2: yağlı karışımların makine boşluklarından denize boşaltılması özel koşullar altında izin verilir",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "discharge of oily mixtures from machinery spaces into the sea is permitted under specific conditions",
+        "yağlı karışımların makine boşluklarından denize boşaltılması özel koşullar altında izin verilir"
+      ],
+      "ms": 12213
+    },
+    "T2-18": {
+      "raw": "Q1: steering gear shall be checked and tested prior to departure\nQ2: denizcilikte direksiyon cihazının kontrolü ve testi geminin kalkışından önce yapılmalıdır",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "steering gear shall be checked and tested prior to departure",
+        "denizcilikte direksiyon cihazının kontrolü ve testi geminin kalkışından önce yapılmalıdır"
+      ],
+      "ms": 10717
+    },
+    "T2-19": {
+      "raw": "Q1: company shall establish procedures for preparing ships for emergencies  \nQ2: şirket, acil durumlara hazırlık prosedürlerini kurmalıdır",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "company shall establish procedures for preparing ships for emergencies",
+        "şirket, acil durumlara hazırlık prosedürlerini kurmalıdır"
+      ],
+      "ms": 8299
+    },
+    "T2-20": {
+      "raw": "Q1: equipment whose failure could pose a serious threat to safety shall be subject to appropriate measures  \nQ2: cihazların ani arızalanması tehlikeli olabilecek ekipmanlar için uygun önlemler alınması gerekir",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "equipment whose failure could pose a serious threat to safety shall be subject to appropriate measures",
+        "cihazların ani arızalanması tehlikeli olabilecek ekipmanlar için uygun önlemler alınması gerekir"
+      ],
+      "ms": 12979
+    },
+    "T2-21": {
+      "raw": "Q1: manifest shall contain a list of hazardous cargo and their locations  \nQ2: tehlikeli yüklerin listedeki konumları ve yerleri belirtilmelidir",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "manifest shall contain a list of hazardous cargo and their locations",
+        "tehlikeli yüklerin listedeki konumları ve yerleri belirtilmelidir"
+      ],
+      "ms": 9453
+    },
+    "T2-22": {
+      "raw": "Q1: fire drills shall be conducted at least once every month  \nQ2: yangın tatbikatları en az ayda bir yapılmalıdır",
+      "error": null,
+      "valid": false,
+      "reason": "NUMBER_WORD_NOT_IN_QUESTION",
+      "queries": [],
+      "ms": 8014
+    },
+    "T2-23": {
+      "raw": "Q1: records to be kept on board relating to the management of ballast water  \nQ2: gemide balast suyu yönetimi ile ilgili tutulması gereken kayıtlar",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "records to be kept on board relating to the management of ballast water",
+        "gemide balast suyu yönetimi ile ilgili tutulması gereken kayıtlar"
+      ],
+      "ms": 10474
+    },
+    "T2-24": {
+      "raw": "Q1: duties and responsibilities of the ship security officer  \nQ2: gemi güvenlik zabitinin görevleri ve sorumlulukları",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "duties and responsibilities of the ship security officer",
+        "gemi güvenlik zabitinin görevleri ve sorumlulukları"
+      ],
+      "ms": 7435
+    },
+    "T2-25": {
+      "raw": "Q1: vessel at anchor in fog shall sound a bell rapidly  \nQ2: sis içinde demirli gemi hızlıca çan çalar",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "vessel at anchor in fog shall sound a bell rapidly",
+        "sis içinde demirli gemi hızlıca çan çalar"
+      ],
+      "ms": 7868
+    },
+    "T2-26": {
+      "raw": "Q1: safety and environmental policy shall achieve the highest standards of safety\nQ2: güvenlik ve çevre politikası en yüksek güvenlik standartlarını elde etmeli",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "safety and environmental policy shall achieve the highest standards of safety",
+        "güvenlik ve çevre politikası en yüksek güvenlik standartlarını elde etmeli"
+      ],
+      "ms": 8858
+    },
+    "T2-27": {
+      "raw": "Q1: interim document of compliance may be issued when the company is in the process of establishing its safety management system  \nQ2: geçici uygunluk belgesi, şirketin güvenlik yönetim sistemi kurulumu sürecinde olduğunda verilebilir",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "interim document of compliance may be issued when the company is in the process of establishing its safety management system",
+        "geçici uygunluk belgesi, şirketin güvenlik yönetim sistemi kurulumu sürecinde olduğunda verilebilir"
+      ],
+      "ms": 12692
+    },
+    "T2-28": {
+      "raw": "Q1: weekly hours of rest shall not be less than seventy hours  \nQ2: haftalık dinlenme süresi en az yedi yüz saat olmalıdır",
+      "error": null,
+      "valid": false,
+      "reason": "NUMBER_WORD_NOT_IN_QUESTION",
+      "queries": [],
+      "ms": 8801
+    },
+    "T2-29": {
+      "raw": "Q1: procedures for raising grievances shall be established by the employer  \nQ2: deneyimli personel, işten uzaklaştırılma durumunda hakları ve sorumlulukları",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "procedures for raising grievances shall be established by the employer",
+        "deneyimli personel, işten uzaklaştırılma durumunda hakları ve sorumlulukları"
+      ],
+      "ms": 9982
+    },
+    "T2-30": {
+      "raw": "Q1: frequency of drills for entering and rescuing from enclosed spaces  \nQ2: gizli alanlara girmek ve kurtarmak için tatbikatın sıklığı",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "frequency of drills for entering and rescuing from enclosed spaces",
+        "gizli alanlara girmek ve kurtarmak için tatbikatın sıklığı"
+      ],
+      "ms": 10000
+    },
+    "T2-31": {
+      "raw": "Q1: ballast operations shall be recorded in the ship's logbook  \nQ2: ballast operasyonları gemi günlüklerinde kaydedilmelidir",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "ballast operations shall be recorded in the ship's logbook",
+        "ballast operasyonları gemi günlüklerinde kaydedilmelidir"
+      ],
+      "ms": 8630
+    },
+    "T2-32": {
+      "raw": "Q1: vessel shall keep out of the way of the other vessel  \nQ2: gemi diğer gemiye engel olmak zorundadır",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "vessel shall keep out of the way of the other vessel",
+        "gemi diğer gemiye engel olmak zorundadır"
+      ],
+      "ms": 8604
+    },
+    "T2-33": {
+      "raw": "Q1: can salları servise gönderme sıklığına dair talimatlar\nQ2: how frequently shall can sallaries be sent for service",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "can salları servise gönderme sıklığına dair talimatlar",
+        "how frequently shall can sallaries be sent for service"
+      ],
+      "ms": 8874
+    },
+    "T2-34": {
+      "raw": "Q1: fribordun tanımı ve belirlenme usulü  \nQ2: fribordun tanımı ve belirlenme usulü",
+      "error": null,
+      "valid": false,
+      "reason": "DUPLICATE_QUERY",
+      "queries": [],
+      "ms": 8722
+    },
+    "T2-35": {
+      "raw": "Q1: precautions to be taken before entering enclosed spaces  \nQ2: kapalı mahale girmeden önce alınması gereken önlemler",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "precautions to be taken before entering enclosed spaces",
+        "kapalı mahale girmeden önce alınması gereken önlemler"
+      ],
+      "ms": 8361
+    },
+    "T2-36": {
+      "raw": "Q1: duties of the watch officer on the bridge shall include the following  \nQ2: köprüüstünde bulunan vardiya zabitinin sorumlulukları şunlardır",
+      "error": null,
+      "valid": true,
+      "reason": null,
+      "queries": [
+        "duties of the watch officer on the bridge shall include the following",
+        "köprüüstünde bulunan vardiya zabitinin sorumlulukları şunlardır"
+      ],
+      "ms": 9827
+    }
+  },
+  "summary": {
+    "probes": 36,
+    "generated": 36,
+    "valid": 26,
+    "invalidReasons": {
+      "NUMBER_WORD_NOT_IN_QUESTION": 8,
+      "NUMBER_NOT_IN_QUESTION": 1,
+      "DUPLICATE_QUERY": 1
+    },
+    "stopped": null
+  }
+}

@@ -1,6 +1,7 @@
 {
   "version": "sinbad-retrieval-probes/1",
   "set": "BLIND TEST-2",
+  "status": "USED HOLDOUT since 2026-09-19: read once by the preregistered final run RETRIEVAL-003 (tests/benchmark/results/RETRIEVAL-003/VERDICT.json, NOT ACCEPTED). It was blind until that run. From now on it may only be reported as a historical figure; a further candidate needs a new blind set.",
   "blind_rule": "Owner directive of 2026-09-19. These probes exist for ONE purpose: the final judgement of a retrieval candidate whose configuration and acceptance criteria were frozen in writing beforehand. Every needle was checked to exist in the Owner's library index (built 2026-08-21) by COUNTING matching chunks only - no retrieval was run on these questions and no document title was looked at when they were written. During development no tool may evaluate them: tools/evaluate-retrieval.js refuses this file without --final and a preregistration file. Once a final run has read them they become a USED HOLDOUT like the TEST split of probes-v1.",
   "probes": [
     {"id": "T2-01", "split": "TEST2", "language": "en", "topic": "SOLAS", "question": "How often does a lifeboat have to be lowered into the water and manoeuvred by its crew?", "needle": "launched[^.]{0,120}at least once every three months"},

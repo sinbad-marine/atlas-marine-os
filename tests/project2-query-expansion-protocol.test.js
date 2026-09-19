@@ -67,6 +67,23 @@ test('baseline and candidate are compared probe by probe: gains, regressions, ke
   assert.equal(evaluator.evaluate(index,PROBES,3).candidate,undefined);assert.equal(JSON.stringify(r).includes('twelve months'),false);
 });
 
+test('the verdict follows from the preregistered criteria and the recorded final run: NOT ACCEPTED, nothing wired, the blind set is used',()=>{
+  const p=JSON.parse(read('tests/benchmark/results/RETRIEVAL-003/PREREGISTRATION.json'));const v=JSON.parse(read('tests/benchmark/results/RETRIEVAL-003/VERDICT.json'));const r=JSON.parse(read('tests/benchmark/results/RETRIEVAL-003/results-final-test2.json'));
+  assert.deepEqual([r.probeSet,r.probeSplit,r.final,r.passages,r.candidate.fusion],['BLIND TEST-2','TEST2',true,p.candidate.fusion.passages,{method:'SLOTS',keep:p.candidate.fusion.keep,use:p.candidate.fusion.use}]);
+  assert.equal(r.preregistration,'tests/benchmark/results/RETRIEVAL-003/PREREGISTRATION.json');assert.equal(r.retriever,p.candidate.retriever);assert.equal(r.rows.length,36);assert.ok(r.rows.every(x=>x.split==='TEST2'));
+  const c=r.candidate,k=c.comparison;
+  // The criteria, recomputed here from the recorded run - not copied from the verdict file.
+  const met={A:c.strict.all.hit-r.strict.all.hit>=3,B:k.gains-k.regressions>=4,C:k.regressions<=1,D:c.overall.mrr>r.overall.mrr,E:c.language.en.hit>=r.language.en.hit&&c.language.tr.hit>=r.language.tr.hit,F:c.expansions.valid/36>=0.6};
+  assert.deepEqual(met,{A:false,B:false,C:true,D:true,E:true,F:true});assert.deepEqual(Object.fromEntries(v.criteria.map(x=>[x.id,x.met])),met);
+  assert.equal(r.strict.all.hit<23,true);assert.equal(v.verdict,'NOT ACCEPTED');assert.equal(Object.values(met).every(Boolean),false);
+  assert.deepEqual([r.overall.hit,c.overall.hit,r.strict.all.hit,c.strict.all.hit,r.strict.all.probes,k.gained,k.lost,k.baselineHitsKept],[22,24,12,14,25,['T2-03','T2-05','T2-08'],['T2-19'],21]);
+  assert.deepEqual([v.measured.baseline.hit,v.measured.candidate.hit,v.measured.baseline.strictHit,v.measured.candidate.strictHit,v.measured.gains,v.measured.regressions],[22,24,12,14,k.gained,k.lost]);
+  assert.match(JSON.parse(read('tests/benchmark/retrieval/probes-test2-v1.json')).status,/^USED HOLDOUT since 2026-09-19/u);
+  // NOT ACCEPTED means not wired: no file of the pipeline, the service or the runner knows the module.
+  for(const file of ['sinbad-ai-core/pipeline/grounded-pipeline.js','sinbad-ai-core/pipeline/index.js','tools/sinbad-grounded-service.js','tools/run-grounded-subset.js'])assert.equal(read(file).includes('query-expansion'),false,file);
+  for(const run of [r,JSON.parse(read('tests/benchmark/results/RETRIEVAL-003/results-dev-qwen3-14b-keep4-use1.json'))])assert.equal(JSON.stringify(run).includes('"text"'),false);
+});
+
 test('only one tool may call a model, and only a local one; it guards the host and never lowers its memory floor',()=>{
   const gen=read('tools/generate-query-expansions.js');const ev=read('tools/evaluate-retrieval.js');
   assert.doesNotMatch(ev,/node:http|node:https|node:net|\bfetch\(|child_process|api\.openai|supabase/u);
