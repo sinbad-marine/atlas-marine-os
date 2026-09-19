@@ -1,0 +1,1311 @@
+{
+ "version": "sinbad-retrieval-corpus/1",
+ "name": "regulatory-core-v1",
+ "purpose": "Bounded experimental corpus for Phase 4.10 part 2: lexical, semantic and hybrid retrieval are compared on the same documents. Not a product corpus.",
+ "librarySha256": "79c57429d4b63fc5839e5f13060c84e43b154ac8c65b70e5d86071643f196fcd",
+ "libraryBuiltAt": "2026-08-21T08:15:16.8480308Z",
+ "rules": {
+  "include": [
+   "the title names an issuing AUTHORITY (class society, flag administration / port state regime, ILO, IMO)",
+   "AND the title names a regulatory TOPIC (ISM, ISPS, MLC, SOLAS, STCW, COLREG, MARPOL, BWM or one of their subjects)"
+  ],
+  "exclude": [
+   "titles of exam, question-bank, course, summary or slide material",
+   "documents of more than 150 chunks (very large manuals and compendia), so that the embedding experiment stays within hours on the host",
+   "documents without an authority or without a regulatory topic in the title (general books, internal notes, unrelated operational material)",
+   "nothing is excluded or included because of a benchmark question, needle or answer"
+  ],
+  "wholeDocumentsOnly": true,
+  "textSource": "the library index; the manifest holds titles, counts and hashes, never text"
+ },
+ "maxDocumentChunks": 150,
+ "totals": {
+  "documents": 157,
+  "chunks": 3813,
+  "byAuthority": {
+   "IMO": {
+    "documents": 60,
+    "chunks": 919
+   },
+   "FLAG_STATE": {
+    "documents": 60,
+    "chunks": 1588
+   },
+   "ILO": {
+    "documents": 27,
+    "chunks": 1091
+   },
+   "CLASS": {
+    "documents": 10,
+    "chunks": 215
+   }
+  }
+ },
+ "library": {
+  "documents": 1686,
+  "chunks": 90552,
+  "excludedTeaching": 120,
+  "excludedNoAuthority": 780,
+  "excludedNoTopic": 514,
+  "excludedTooLarge": 5,
+  "duplicateTitle": 110
+ },
+ "documents": [
+  {
+   "title": "colreg__5405b54a46",
+   "authority": "IMO",
+   "topic": "colreg",
+   "chunks": 30,
+   "documentSha256": "1694868676fd366ba8bc10dcb41100d2967beced40de53d85d13c58af45a8192",
+   "inclusionReason": "authority IMO and topic 'colreg' in the title; 30 chunks <= 150"
+  },
+  {
+   "title": "IMO MARPOL Annex VI - Train the Trainer Manual__17785e8c13",
+   "authority": "IMO",
+   "topic": "marpol",
+   "chunks": 34,
+   "documentSha256": "f3857af60ff0feadefcf7739b5ea6e663cfd2b5ba8c29c5e27ab06e3400a554c",
+   "inclusionReason": "authority IMO and topic 'marpol' in the title; 34 chunks <= 150"
+  },
+  {
+   "title": "IMO MEPSEAS MARPOL Annex V Training Package__cbaba950b9",
+   "authority": "IMO",
+   "topic": "marpol",
+   "chunks": 69,
+   "documentSha256": "f6a160739789072dc4082783bcb3403400206d8dde6231a837d821503cc1ba4e",
+   "inclusionReason": "authority IMO and topic 'marpol' in the title; 69 chunks <= 150"
+  },
+  {
+   "title": "STCW CALISMA NOTLARI__fc0436c536",
+   "authority": "IMO",
+   "topic": "stcw",
+   "chunks": 4,
+   "documentSha256": "0dcd641b2cf3c2e0cb7b84c8aca0b2e46451c13a44d0638875f93eac2541e369",
+   "inclusionReason": "authority IMO and topic 'stcw' in the title; 4 chunks <= 150"
+  },
+  {
+   "title": "Stcw ve ileri yangın 27.11.17__bcecbd8fad",
+   "authority": "IMO",
+   "topic": "stcw",
+   "chunks": 4,
+   "documentSha256": "5605b9b99beec6109eb16e79a2983f1d1aea42a2a8eddcf0b1b288d96f8f1952",
+   "inclusionReason": "authority IMO and topic 'stcw' in the title; 4 chunks <= 150"
+  },
+  {
+   "title": "SOLAS II-2 Regulation 15 - Fire Training Manual and Drills__7ee8ab744d",
+   "authority": "IMO",
+   "topic": "solas",
+   "chunks": 3,
+   "documentSha256": "92fc938454ab4e83910ff1efae8fa3fb9c56f73e6c91fd2f88b859d2e44f7b64",
+   "inclusionReason": "authority IMO and topic 'solas' in the title; 3 chunks <= 150"
+  },
+  {
+   "title": "SOLAS II-2 Regulation 16 - Fire Safety Operational Booklet__b5926b6532",
+   "authority": "IMO",
+   "topic": "solas",
+   "chunks": 3,
+   "documentSha256": "5d654078eb11532eb288bcb78beaacc320e7554153ce885ea2aea9ddf3cf3811",
+   "inclusionReason": "authority IMO and topic 'solas' in the title; 3 chunks <= 150"
+  },
+  {
+   "title": "UK MCA MGN 396 - Compatibility of Life-Saving Equipment__f7c41494bd",
+   "authority": "FLAG_STATE",
+   "topic": "life-saving",
+   "chunks": 4,
+   "documentSha256": "4d6285f03496bb2c551d037c76fb538846553e312ac422e1fec1f423d2c80fd1",
+   "inclusionReason": "authority FLAG_STATE and topic 'life-saving' in the title; 4 chunks <= 150"
+  },
+  {
+   "title": "UK MCA MSN 1902 - SOLAS Chapter II-2 Fire Protection Requirements__eba89f3e9f",
+   "authority": "FLAG_STATE",
+   "topic": "solas",
+   "chunks": 121,
+   "documentSha256": "cb079f544db62d4233ce7962392a44dc35ed565e1ad913e44d34423f6b256f7a",
+   "inclusionReason": "authority FLAG_STATE and topic 'solas' in the title; 121 chunks <= 150"
+  },
+  {
+   "title": "MARPOL EEXI CII and SEEMP III__bedb8e30d1",
+   "authority": "IMO",
+   "topic": "marpol",
+   "chunks": 9,
+   "documentSha256": "41b61f6367814dddfb9fdbd69953d0810e04ead2456b67e901fe7ae98ae6c168",
+   "inclusionReason": "authority IMO and topic 'marpol' in the title; 9 chunks <= 150"
+  },
+  {
+   "title": "UK MCA - MGN 534 - SOLAS VI Packed Container Verified Gross Mass__aabd72e472",
+   "authority": "FLAG_STATE",
+   "topic": "solas",
+   "chunks": 13,
+   "documentSha256": "2e562cd575a0dca924182844c362b59aa6638d056a6fef81c5cf23c1f3dc3650",
+   "inclusionReason": "authority FLAG_STATE and topic 'solas' in the title; 13 chunks <= 150"
+  },
+  {
+   "title": "MLC Occupational Safety and Health Guidelines__19051d1666",
+   "authority": "ILO",
+   "topic": "mlc",
+   "chunks": 74,
+   "documentSha256": "1688a0ac865729165c54dbb3e8be06448abea934294b36810668ca5afb78befa",
+   "inclusionReason": "authority ILO and topic 'mlc' in the title; 74 chunks <= 150"
+  },
+  {
+   "title": "UK_MCA_MGN137_Lookout_Darkness_and_Restricted_Visibility__e1c82695a5",
+   "authority": "FLAG_STATE",
+   "topic": "lookout",
+   "chunks": 2,
+   "documentSha256": "1e180634a5e73fdd287c504162d1665c84c4eb1ca2765b4260fca7aa19aea328",
+   "inclusionReason": "authority FLAG_STATE and topic 'lookout' in the title; 2 chunks <= 150"
+  },
+  {
+   "title": "ANA KAYNAK - ILO MLC FAQ Sixth Edition 2026 - CC BY 4.0__dcf78206db",
+   "authority": "ILO",
+   "topic": "mlc",
+   "chunks": 140,
+   "documentSha256": "cbf0fda08d475c1b6e9fa2eed97581bcb4a21d94bcccedf0356a4eec7b782f89",
+   "inclusionReason": "authority ILO and topic 'mlc' in the title; 140 chunks <= 150"
+  },
+  {
+   "title": "BSH_GMDSS_Seyir_Funk_COLREG_Donanim_Yerlesim_ve_Kontrol_Rehberi__e9841f4a59",
+   "authority": "IMO",
+   "topic": "colreg",
+   "chunks": 21,
+   "documentSha256": "1b675a3f2aeac9589b7fd241d8ee9740a406614f39219fb11dca22d4bbabfbd9",
+   "inclusionReason": "authority IMO and topic 'colreg' in the title; 21 chunks <= 150"
+  },
+  {
+   "title": "Emden_Leer_2025_Nautik_ve_Deniz_Ulastirmasi_STCW_Mufredati_64s__71128bced9",
+   "authority": "IMO",
+   "topic": "stcw",
+   "chunks": 55,
+   "documentSha256": "f54e76e948d94e7f984355ccd1caa1fb7fd4b361c4b5d2262d8925da91c546ef",
+   "inclusionReason": "authority IMO and topic 'stcw' in the title; 55 chunks <= 150"
+  },
+  {
+   "title": "ILO - Maritime Labour Convention - Legal Primer__c5476283bb",
+   "authority": "ILO",
+   "topic": "maritime labour",
+   "chunks": 2,
+   "documentSha256": "9ee33a3901d3469590cd6680a06103cf5de971c51413176964a9df1b3f66edf2",
+   "inclusionReason": "authority ILO and topic 'maritime labour' in the title; 2 chunks <= 150"
+  },
+  {
+   "title": "ILO - Maritime Labour Convention 2006 - 2022 Amendments Consolidated__bc444a84c1",
+   "authority": "ILO",
+   "topic": "maritime labour",
+   "chunks": 128,
+   "documentSha256": "478c0c6604fc1901c6c2b3ef5112dfdcdeee39b1091ca8ba6de7c1cc9c9574f9",
+   "inclusionReason": "authority ILO and topic 'maritime labour' in the title; 128 chunks <= 150"
+  },
+  {
+   "title": "ILO MLC Flag State Inspection Guidelines - Revised__c562aaf9dd",
+   "authority": "ILO",
+   "topic": "mlc",
+   "chunks": 59,
+   "documentSha256": "875b06163e4a7faf158dabf86b3d888a72b674870066c04806caa5c828d5db85",
+   "inclusionReason": "authority ILO and topic 'mlc' in the title; 59 chunks <= 150"
+  },
+  {
+   "title": "ILO MLC Port State Control Inspection Guidelines__894b53b43c",
+   "authority": "FLAG_STATE",
+   "topic": "mlc",
+   "chunks": 61,
+   "documentSha256": "3268dbd0eac39ac5c68e64e3d3afbdf3d6ad6fe1729967926882be507ed68ff4",
+   "inclusionReason": "authority FLAG_STATE and topic 'mlc' in the title; 61 chunks <= 150"
+  },
+  {
+   "title": "ILO-IMO - Guidelines on Abandonment of Seafarers__dcbf09011c",
+   "authority": "ILO",
+   "topic": "seafarer",
+   "chunks": 19,
+   "documentSha256": "459f56a74ee2c4e6f4c26c1da9d9e7310b3643758cf225819880ef09bb5a58e1",
+   "inclusionReason": "authority ILO and topic 'seafarer' in the title; 19 chunks <= 150"
+  },
+  {
+   "title": "IMO - Port State Control Procedures including ISM Guidelines__15ed8b2a19",
+   "authority": "FLAG_STATE",
+   "topic": "port state control",
+   "chunks": 123,
+   "documentSha256": "f5e6e79cf534c8a7966698b168c9a83e8eb76d116b930e217c53977efbd9ea77",
+   "inclusionReason": "authority FLAG_STATE and topic 'port state control' in the title; 123 chunks <= 150"
+  },
+  {
+   "title": "IMO - The STCW Convention - Official Overview__cf3933d5d1",
+   "authority": "IMO",
+   "topic": "stcw",
+   "chunks": 20,
+   "documentSha256": "b8c00c341381c136495f42ea03075fefadf31bad8c98ba658c0807dec0bbb512",
+   "inclusionReason": "authority IMO and topic 'stcw' in the title; 20 chunks <= 150"
+  },
+  {
+   "title": "IMO A.1188(33) - ISM Code Implementation Guidelines - 2023__0a9acd07d3",
+   "authority": "IMO",
+   "topic": "ism",
+   "chunks": 19,
+   "documentSha256": "bffa7040782dc85f6faae1ce337cf2433d3e79d9142dc571be610261806c99d8",
+   "inclusionReason": "authority IMO and topic 'ism' in the title; 19 chunks <= 150"
+  },
+  {
+   "title": "IMO MSC Circ 1111 - SOLAS XI-2 and ISPS Implementation Guidance__c4e736806a",
+   "authority": "IMO",
+   "topic": "solas",
+   "chunks": 31,
+   "documentSha256": "af1f7d20e1830683e29cd063a605477228fa9d399495dd0ba8bf04f15952bffa",
+   "inclusionReason": "authority IMO and topic 'solas' in the title; 31 chunks <= 150"
+  },
+  {
+   "title": "IMO MSC Circ.1072 - Guidance on Provision of Ship Security Alert System__573fe0b83a",
+   "authority": "IMO",
+   "topic": "ship security",
+   "chunks": 3,
+   "documentSha256": "210131b96ce8ae5c06b881af50c09faa3e4b2e89aa4b1452f141ae7eec529a75",
+   "inclusionReason": "authority IMO and topic 'ship security' in the title; 3 chunks <= 150"
+  },
+  {
+   "title": "IMO MSC Circ.1132 - Implementation Guidance for SOLAS XI-2 and ISPS Code__6eace7c8ff",
+   "authority": "IMO",
+   "topic": "solas",
+   "chunks": 8,
+   "documentSha256": "deb6c2544628cc1bd8e98d7c05fe8a86afe3e05440131bac86ae7f75b03f0fb2",
+   "inclusionReason": "authority IMO and topic 'solas' in the title; 8 chunks <= 150"
+  },
+  {
+   "title": "IMO MSC Circ.1155 - Ship Security Alert System Testing and Message Prior__fe7c847432",
+   "authority": "IMO",
+   "topic": "ship security",
+   "chunks": 2,
+   "documentSha256": "e30b9b69f3cc7584d227aa4cff4c656f497369afd9c2ea76c6374f5b754b6fda",
+   "inclusionReason": "authority IMO and topic 'ship security' in the title; 2 chunks <= 150"
+  },
+  {
+   "title": "IMO MSC Circ.1188 - Port Facility Security Officer Training and Certific__3a247e16ee",
+   "authority": "IMO",
+   "topic": "security officer",
+   "chunks": 5,
+   "documentSha256": "ccbbc18f1e4b4f46b0d58696d76a3f0335c7510529248daeffda7d0a9b65a4dc",
+   "inclusionReason": "authority IMO and topic 'security officer' in the title; 5 chunks <= 150"
+  },
+  {
+   "title": "IMO MSC Circ.1190 - Identifying Ships in Ship Security Alerts__7352171ca7",
+   "authority": "IMO",
+   "topic": "ship security",
+   "chunks": 3,
+   "documentSha256": "c9fb7815000421b19a2a45d4013201f690d6fdabd4dc456e11383667cd5b463b",
+   "inclusionReason": "authority IMO and topic 'ship security' in the title; 3 chunks <= 150"
+  },
+  {
+   "title": "IMO MSC Circ.1193 - Administration and Ship Security Voluntary Self-Asse__3c96218120",
+   "authority": "IMO",
+   "topic": "ship security",
+   "chunks": 18,
+   "documentSha256": "42338dc6cc059759adb3f93279d29ff3f26f21b348aa9bc81b2c336c09cb68ae",
+   "inclusionReason": "authority IMO and topic 'ship security' in the title; 18 chunks <= 150"
+  },
+  {
+   "title": "IMO MSC Circ.1194 - Effective Implementation of SOLAS XI-2 and ISPS Code__279ea677c4",
+   "authority": "IMO",
+   "topic": "solas",
+   "chunks": 6,
+   "documentSha256": "1f5444d4179c232e18b2a347d8f49116c651126444981171b8037598852725b7",
+   "inclusionReason": "authority IMO and topic 'solas' in the title; 6 chunks <= 150"
+  },
+  {
+   "title": "IMO MSC Circ.1217 - Company and CSO Ship Security Self-Assessment Tool__1da1ac75bf",
+   "authority": "IMO",
+   "topic": "ship security",
+   "chunks": 16,
+   "documentSha256": "2e6df524c2f2a80accd78123d1735e3527a1717bde1e204f719a3b7c2b581eb6",
+   "inclusionReason": "authority IMO and topic 'ship security' in the title; 16 chunks <= 150"
+  },
+  {
+   "title": "IMO MSC-MEPC.7 Circ.5 - Operational Implementation of ISM Code by Compan__9674a1225d",
+   "authority": "IMO",
+   "topic": "ism",
+   "chunks": 5,
+   "documentSha256": "4fddb77d9e658e3bc57ac256ebc39ee72d22ad62b96de8e4d97d7134a5dbed44",
+   "inclusionReason": "authority IMO and topic 'ism' in the title; 5 chunks <= 150"
+  },
+  {
+   "title": "IMO MSC-MEPC.7 Circ.8 - Operational Implementation of ISM Code by Compan__2e1f8bb217",
+   "authority": "IMO",
+   "topic": "ism",
+   "chunks": 5,
+   "documentSha256": "9a7940f0ea12aa9000442d97d7027943d4aeca57ecad964072b1c39fbde67beb",
+   "inclusionReason": "authority IMO and topic 'ism' in the title; 5 chunks <= 150"
+  },
+  {
+   "title": "IMO MSC.1 Circ.1283 - Security of Non-SOLAS Vessels__a4994e436b",
+   "authority": "IMO",
+   "topic": "solas",
+   "chunks": 37,
+   "documentSha256": "18cf0d5fd0080f263920d3e3b9fead9419bcbf72f364b1e9b7ce0a3f930cea6f",
+   "inclusionReason": "authority IMO and topic 'solas' in the title; 37 chunks <= 150"
+  },
+  {
+   "title": "IMO MSC.147(77) - Revised Performance Standards for Ship Security Alert __276b3c0e64",
+   "authority": "IMO",
+   "topic": "ship security",
+   "chunks": 3,
+   "documentSha256": "30dea92aa465bb2cb801a06360c404cfd9ee4d58622c198042952100189604f6",
+   "inclusionReason": "authority IMO and topic 'ship security' in the title; 3 chunks <= 150"
+  },
+  {
+   "title": "IMO MSC.428(98) - Maritime Cyber Risk Management in Safety Management Sy__e55f91f1ac",
+   "authority": "IMO",
+   "topic": "safety management",
+   "chunks": 2,
+   "documentSha256": "a8952ce7dc7aed99ef97179de309923fc7a31c90322ae54d962319423535dc20",
+   "inclusionReason": "authority IMO and topic 'safety management' in the title; 2 chunks <= 150"
+  },
+  {
+   "title": "IMO STCW.7 Circ.22 - SSO and Designated Security Duties Certification Cl__3121bd364e",
+   "authority": "IMO",
+   "topic": "stcw",
+   "chunks": 2,
+   "documentSha256": "eb0feca6cc4d81537adea125a4b6ee7ec7b0310bd738188f1ee6f4f35ae07db3",
+   "inclusionReason": "authority IMO and topic 'stcw' in the title; 2 chunks <= 150"
+  },
+  {
+   "title": "TARIHSEL - ILO MLC FAQ Fifth Edition 2019__c7813749c0",
+   "authority": "ILO",
+   "topic": "mlc",
+   "chunks": 127,
+   "documentSha256": "45b7165ab175d8c7551b1962803858246d6115419376a823e47b0ceeb371efb2",
+   "inclusionReason": "authority ILO and topic 'mlc' in the title; 127 chunks <= 150"
+  },
+  {
+   "title": "TARİHSEL - IMO A.1118 - ISM Implementation Guidelines - Superseded by A.__c6cf891f7d",
+   "authority": "IMO",
+   "topic": "ism",
+   "chunks": 16,
+   "documentSha256": "743633aba49f1eab7c2d557f7c1699baaa0d54488a4e61aa09e7532055830d7b",
+   "inclusionReason": "authority IMO and topic 'ism' in the title; 16 chunks <= 150"
+  },
+  {
+   "title": "TARİHSEL - IMO STCW.7 Circ.21 - Security Certification Transitional Guid__33f835975a",
+   "authority": "IMO",
+   "topic": "stcw",
+   "chunks": 3,
+   "documentSha256": "ef27b3fd72bb8d4ebe2eaf0bfb3ea50dffdd1e720e5ba30ed0229cba2e3a966f",
+   "inclusionReason": "authority IMO and topic 'stcw' in the title; 3 chunks <= 150"
+  },
+  {
+   "title": "UK Treaty Series - Maritime Labour Convention 2006__c978616f1d",
+   "authority": "ILO",
+   "topic": "maritime labour",
+   "chunks": 117,
+   "documentSha256": "634e131fbb2955e7649855c6fe5daef7dd4180a44e7a9bf10a0eaeaa3c165bbe",
+   "inclusionReason": "authority ILO and topic 'maritime labour' in the title; 117 chunks <= 150"
+  },
+  {
+   "title": "Almanya_2025_PSC_ECDIS_GMDSS_ISPS_ISM_MLC_MARPOL_Rehberi__2a960af28b",
+   "authority": "ILO",
+   "topic": "isps",
+   "chunks": 3,
+   "documentSha256": "d66796d2a7712153cf34c02a52643ccff13ef2ba897239b98e8ded2e7b0919fc",
+   "inclusionReason": "authority ILO and topic 'isps' in the title; 3 chunks <= 150"
+  },
+  {
+   "title": "Almanya_ISM_Code_Almanca_Tam_Metin__9a4fd7bb1d",
+   "authority": "IMO",
+   "topic": "ism",
+   "chunks": 18,
+   "documentSha256": "ece0314eb05ce520ae5d7421140569f914c9e3798c8ca37b3807d31515873b5f",
+   "inclusionReason": "authority IMO and topic 'ism' in the title; 18 chunks <= 150"
+  },
+  {
+   "title": "Almanya_ISM_Denizcilik_Siber_Guvenlik_Rehberi__09f9044245",
+   "authority": "IMO",
+   "topic": "ism",
+   "chunks": 16,
+   "documentSha256": "485827cfee487b3f0a717720cc89de79ae8b094b9e92d98c9879d1804e14468a",
+   "inclusionReason": "authority IMO and topic 'ism' in the title; 16 chunks <= 150"
+  },
+  {
+   "title": "Almanya_MLC_Uygulama_Denetim_ve_Belgelendirme_Rehberi__733a34248f",
+   "authority": "ILO",
+   "topic": "mlc",
+   "chunks": 69,
+   "documentSha256": "1bc01f4e9ccf1b33c70c6a9242765ad594d4ee0d41aca8555947f0dcdc0c1d83",
+   "inclusionReason": "authority ILO and topic 'mlc' in the title; 69 chunks <= 150"
+  },
+  {
+   "title": "ILO - 2025 Amendments to MLC 2006 - Expected Entry into Force 23 Dec 202__fb6aad9e90",
+   "authority": "ILO",
+   "topic": "mlc",
+   "chunks": 6,
+   "documentSha256": "e0228f14ce03995cf8ddafa7e81edef6869e41b33b037c1c153d86a844779d65",
+   "inclusionReason": "authority ILO and topic 'mlc' in the title; 6 chunks <= 150"
+  },
+  {
+   "title": "IMO_MSC_560_108_STCW_Yorgunluk_Zorbalik_Taciz_ve_Travma_Egitimi_Degisikl__6795ff56f0",
+   "authority": "IMO",
+   "topic": "stcw",
+   "chunks": 5,
+   "documentSha256": "2b6189f6166f4b8c5084cf578631a66a72bc12d573664d776fad246f46ab029b",
+   "inclusionReason": "authority IMO and topic 'stcw' in the title; 5 chunks <= 150"
+  },
+  {
+   "title": "UK MCA MSN 1844 - MLC Crew Accommodation Standards__7118b6a5fd",
+   "authority": "FLAG_STATE",
+   "topic": "mlc",
+   "chunks": 17,
+   "documentSha256": "c69d5ed13bd99034075e0c4bc66d77aac19f8b70946ea55edc917245ad39b96b",
+   "inclusionReason": "authority FLAG_STATE and topic 'mlc' in the title; 17 chunks <= 150"
+  },
+  {
+   "title": "UK MCA MSN 1849 - On-board Complaints Procedure under MLC__32e339a32d",
+   "authority": "FLAG_STATE",
+   "topic": "mlc",
+   "chunks": 4,
+   "documentSha256": "3d7fad2b2725ef6be93cf8a7667404e58434aaf0cd3d65389b589c048c0e96c3",
+   "inclusionReason": "authority FLAG_STATE and topic 'mlc' in the title; 4 chunks <= 150"
+  },
+  {
+   "title": "UK MCA MSN 1877 Amendment 2 - Hours of Work Rest and Record Forms__6806ab59fa",
+   "authority": "FLAG_STATE",
+   "topic": "hours of work",
+   "chunks": 12,
+   "documentSha256": "6e3644d410e371c77a9ba6af483d78a39e45c8b5da69cf7172532a56297dfafa",
+   "inclusionReason": "authority FLAG_STATE and topic 'hours of work' in the title; 12 chunks <= 150"
+  },
+  {
+   "title": "Uluslararasi_Denizci_Refahi_ve_MLC_Uygulama_Rehberi__8d593521c2",
+   "authority": "ILO",
+   "topic": "mlc",
+   "chunks": 31,
+   "documentSha256": "4e2423bcded6e33601d31026c67bb827a6ee41403a2831126e2dcc0dfa2dc100",
+   "inclusionReason": "authority ILO and topic 'mlc' in the title; 31 chunks <= 150"
+  },
+  {
+   "title": "UK_MCA_MSIS27_11_R10-22_Drills_Man_Overboard_and_Musters__2247800434",
+   "authority": "FLAG_STATE",
+   "topic": "muster",
+   "chunks": 29,
+   "documentSha256": "86375c5a7729ee39c0a5321116951f1e6b3da33008a46ef76c188ae897f68c7e",
+   "inclusionReason": "authority FLAG_STATE and topic 'muster' in the title; 29 chunks <= 150"
+  },
+  {
+   "title": "AMSA - Düzenlenebilir Garbage Management Plan Örneği__0e5018f2aa",
+   "authority": "FLAG_STATE",
+   "topic": "garbage",
+   "chunks": 1,
+   "documentSha256": "51afcd8b504ff9bcbd92a1ed90ff8ff83964f55bcba2a7c42a1dee4f811d6a95",
+   "inclusionReason": "authority FLAG_STATE and topic 'garbage' in the title; 1 chunks <= 150"
+  },
+  {
+   "title": "AMSA - Garbage Record Book Part I and II - 2024__2f54572fde",
+   "authority": "FLAG_STATE",
+   "topic": "garbage",
+   "chunks": 14,
+   "documentSha256": "09e3fdd4d7b1a29d5b3a2d9bec4bfac67bac86c9907e627f87e640437cc93aad",
+   "inclusionReason": "authority FLAG_STATE and topic 'garbage' in the title; 14 chunks <= 150"
+  },
+  {
+   "title": "IMO BWM.2-Circ.80-Rev.1 - 2024 Ballast Water Record-Keeping and Reportin__99a0183846",
+   "authority": "IMO",
+   "topic": "bwm",
+   "chunks": 28,
+   "documentSha256": "eba6f4b9bf427a0f9dd04858279f91b2a69085307ae2403a0b58cafe936de265",
+   "inclusionReason": "authority IMO and topic 'bwm' in the title; 28 chunks <= 150"
+  },
+  {
+   "title": "IMO MEPC.220(63) - Garbage Management Plan Geliştirme Rehberi__687002d880",
+   "authority": "IMO",
+   "topic": "garbage",
+   "chunks": 5,
+   "documentSha256": "5fa21a8fd8518ac58168c21b95bebd5f9912c972a54b76b1a3d505e11446fed9",
+   "inclusionReason": "authority IMO and topic 'garbage' in the title; 5 chunks <= 150"
+  },
+  {
+   "title": "IMO MEPC.409(84) - 2026 Ballast Water Management Plan G4__5690562295",
+   "authority": "IMO",
+   "topic": "ballast water",
+   "chunks": 18,
+   "documentSha256": "c7b24492734ec0e3476463abd0054da2fa17218676f26bf582bc4a9cdefa3e48",
+   "inclusionReason": "authority IMO and topic 'ballast water' in the title; 18 chunks <= 150"
+  },
+  {
+   "title": "IMO_MARPOL_2022_Edition_May_2024_Official_Supplement__0ba1c9c8fa",
+   "authority": "IMO",
+   "topic": "marpol",
+   "chunks": 9,
+   "documentSha256": "19018aaafd7f2b50cd54645a94f4d36f032f8a388417476d5d82ee9459b19cd3",
+   "inclusionReason": "authority IMO and topic 'marpol' in the title; 9 chunks <= 150"
+  },
+  {
+   "title": "IMO_MEPC.295(71)_2017_MARPOL_Annex_V_Garbage_Guidelines__300c52c265",
+   "authority": "IMO",
+   "topic": "marpol",
+   "chunks": 34,
+   "documentSha256": "68a9394d5104593a0dcd01f3f8daad70beaa8de289ed6ec732ff61b056b6a704",
+   "inclusionReason": "authority IMO and topic 'marpol' in the title; 34 chunks <= 150"
+  },
+  {
+   "title": "Japan_Institute_Navigation_COLREG_E_Learning_in_Maritime_Education__4d3ca82671",
+   "authority": "IMO",
+   "topic": "colreg",
+   "chunks": 9,
+   "documentSha256": "ef55251f143350ce6154b6d37297ec873bc8489cb1c49d3035bfdb97d23374b7",
+   "inclusionReason": "authority IMO and topic 'colreg' in the title; 9 chunks <= 150"
+  },
+  {
+   "title": "IMO_MSC.1-Circ.1362_Rev.2_SOLAS_II-1_Birlestirilmis_Yorumlar__d94cbf7a9f",
+   "authority": "IMO",
+   "topic": "solas",
+   "chunks": 9,
+   "documentSha256": "a6492a71d20f6f627f3f755d31077c1609ab9be81d36690d3ef620a85e93d4b3",
+   "inclusionReason": "authority IMO and topic 'solas' in the title; 9 chunks <= 150"
+  },
+  {
+   "title": "IMO_MSC.1-Circ.1572_Rev.1_Su_Gecirmez_Kapilar_ve_SOLAS_II-1_Yorumlari__bef1e7bed7",
+   "authority": "IMO",
+   "topic": "solas",
+   "chunks": 40,
+   "documentSha256": "83e177164d1201735ddbca84dd310bb0840d0f654ba40e68655ae199eff1eedc",
+   "inclusionReason": "authority IMO and topic 'solas' in the title; 40 chunks <= 150"
+  },
+  {
+   "title": "IMO_MSC.429(98)_Rev.1_SOLAS_II-1_Bolmeleme_ve_Hasarli_Stabilite_Aciklama__dfd5d11747",
+   "authority": "IMO",
+   "topic": "solas",
+   "chunks": 41,
+   "documentSha256": "0def24de407302f12a071e78755c5d45b65159c341b1b424c864fb23b0a14fa5",
+   "inclusionReason": "authority IMO and topic 'solas' in the title; 41 chunks <= 150"
+  },
+  {
+   "title": "UK_MCA_MSIS42_Damage_Stability_SOLAS_2020_R05_23__94d6648750",
+   "authority": "FLAG_STATE",
+   "topic": "solas",
+   "chunks": 126,
+   "documentSha256": "a918c6eeb464b14154b19d2deaafb7b2da7726c68e92f765400ed1eaee98fdd1",
+   "inclusionReason": "authority FLAG_STATE and topic 'solas' in the title; 126 chunks <= 150"
+  },
+  {
+   "title": "IMO_MSC1_Circ803_Rev1_GMDSS_Non_SOLAS_Operator_Training_Materials_2022__99fb822515",
+   "authority": "IMO",
+   "topic": "solas",
+   "chunks": 9,
+   "documentSha256": "406cf94439cc22bbada22964930005c2dcbf72ea1aea9ea378437d8b731a183d",
+   "inclusionReason": "authority IMO and topic 'solas' in the title; 9 chunks <= 150"
+  },
+  {
+   "title": "01 - IRS DGS Offshore Gemiler Barclar MODU ISM ISPS MLC Gereklilikleri__eadbf72ce6",
+   "authority": "CLASS",
+   "topic": "ism",
+   "chunks": 8,
+   "documentSha256": "a5a8d1f5dc0c2b30d2078bd1ca424cf06eca6f88630ba849d8124ba24cee1539",
+   "inclusionReason": "authority CLASS and topic 'ism' in the title; 8 chunks <= 150"
+  },
+  {
+   "title": "01_France_Division_130_Ship_Certificates_Inspections_ISM_ISPS_MLC_2025_F__53f3f08bec",
+   "authority": "FLAG_STATE",
+   "topic": "ism",
+   "chunks": 134,
+   "documentSha256": "321767594aecfdb16564626ab6d144c25c216f11719fb73ee8750037f57557ca",
+   "inclusionReason": "authority FLAG_STATE and topic 'ism' in the title; 134 chunks <= 150"
+  },
+  {
+   "title": "01_Italy_RINA_Delegated_SOLAS_ISM_Statutory_Certification_Agreement_2022__32539ffc7d",
+   "authority": "CLASS",
+   "topic": "solas",
+   "chunks": 26,
+   "documentSha256": "101a0b4a0124e6a4eb960c131087ac66bf3f9961062c5b77aae5cbfc296104e7",
+   "inclusionReason": "authority CLASS and topic 'solas' in the title; 26 chunks <= 150"
+  },
+  {
+   "title": "02 - MN046 ISM Kod DOC SMC ve Denetim Gereklilikleri__f61b82c0fb",
+   "authority": "IMO",
+   "topic": "ism",
+   "chunks": 11,
+   "documentSha256": "c297928162fb23e6930e2fffdb74d3413b65f862d9d2d79486ecb0263bb1d9e9",
+   "inclusionReason": "authority IMO and topic 'ism' in the title; 11 chunks <= 150"
+  },
+  {
+   "title": "02_France_Division_160_ISM_Safety_Management_2024_FR__232631c433",
+   "authority": "FLAG_STATE",
+   "topic": "ism",
+   "chunks": 6,
+   "documentSha256": "8616296e3072156f9642e76ba867ced796674a2045dc852188debe289b2a0ffe",
+   "inclusionReason": "authority FLAG_STATE and topic 'ism' in the title; 6 chunks <= 150"
+  },
+  {
+   "title": "02_Italy_MLC_2006_Convention_Official_Ministry_Italian__b3c8647c9a",
+   "authority": "FLAG_STATE",
+   "topic": "mlc",
+   "chunks": 131,
+   "documentSha256": "fc7647108ffde8c10ab19fc5e0c714c936fc2043e932da7f96fbb6adbf905573",
+   "inclusionReason": "authority FLAG_STATE and topic 'mlc' in the title; 131 chunks <= 150"
+  },
+  {
+   "title": "02_Poland_Ship_Inspections_and_Audits_Regulation_2020_ISM_Certificates_P__37cab8da99",
+   "authority": "FLAG_STATE",
+   "topic": "ism",
+   "chunks": 61,
+   "documentSha256": "628251478ecd7dd8b9ae038caa0ce345f6460375ef9bb3ddf3a8266096ebdab2",
+   "inclusionReason": "authority FLAG_STATE and topic 'ism' in the title; 61 chunks <= 150"
+  },
+  {
+   "title": "02_Spain_International_Safety_Management_ISM_IGS_Code_ES__cf773a44c1",
+   "authority": "IMO",
+   "topic": "ism",
+   "chunks": 11,
+   "documentSha256": "6be88bec693de8a9febeb53a2cb0d885e94d85621e1da5e1f5e4d3fded22a650",
+   "inclusionReason": "authority IMO and topic 'ism' in the title; 11 chunks <= 150"
+  },
+  {
+   "title": "03 - MN030 MLC Bayrak Devleti Denetim ve Sertifikasyon Rehberi 2025__ca2bc7d597",
+   "authority": "ILO",
+   "topic": "mlc",
+   "chunks": 7,
+   "documentSha256": "cdf2d816ea81fa265e984f5b93ab9b59bda06138cfc1f3b3ed07d8cd0a8393a5",
+   "inclusionReason": "authority ILO and topic 'mlc' in the title; 7 chunks <= 150"
+  },
+  {
+   "title": "03_France_ISM_Company_Designation_and_Delegation_Amendment_2025_FR__92998d8e75",
+   "authority": "FLAG_STATE",
+   "topic": "ism",
+   "chunks": 2,
+   "documentSha256": "64133df2a29b933d38881b42aa67cea7a6fb0891bdcd16454659a5e13143bd77",
+   "inclusionReason": "authority FLAG_STATE and topic 'ism' in the title; 2 chunks <= 150"
+  },
+  {
+   "title": "03_Italy_MLC_Shipboard_Labour_Inspection_Guidelines_IT__456385369c",
+   "authority": "FLAG_STATE",
+   "topic": "mlc",
+   "chunks": 40,
+   "documentSha256": "6a562538009fa7e5b8ec931a1eea0adcee848b30e62a4ce9a4ddb0b2be50f532",
+   "inclusionReason": "authority FLAG_STATE and topic 'mlc' in the title; 40 chunks <= 150"
+  },
+  {
+   "title": "03_Spain_EU_ISM_Implementation_Regulation_336_2006_ES__d66a8cae09",
+   "authority": "IMO",
+   "topic": "ism",
+   "chunks": 32,
+   "documentSha256": "9986c19f7b5e6cfac7158a8f0af091e3cf2f6e908967a99dddbd27a22cee7506",
+   "inclusionReason": "authority IMO and topic 'ism' in the title; 32 chunks <= 150"
+  },
+  {
+   "title": "04 - MN031 Denizcilik Calisma Sozlesmesi MLC 2006 - 2026__445c13ec27",
+   "authority": "ILO",
+   "topic": "mlc",
+   "chunks": 15,
+   "documentSha256": "52cd44a9d5d7a6172661753f10991533508bf2b8968371c2bf59ef7deae1f15e",
+   "inclusionReason": "authority ILO and topic 'mlc' in the title; 15 chunks <= 150"
+  },
+  {
+   "title": "04_France_Ship_Cybersecurity_Assessment_and_Protection_ISM_Guide_FR__ba5938fc1b",
+   "authority": "FLAG_STATE",
+   "topic": "ism",
+   "chunks": 32,
+   "documentSha256": "d3db25c16aa0146815646cec16e4a4c9e6e48fe0fdaf8bf98de86de4533ecad6",
+   "inclusionReason": "authority FLAG_STATE and topic 'ism' in the title; 32 chunks <= 150"
+  },
+  {
+   "title": "04_Spain_ISPS_PBIP_Maritime_and_Port_Security_Consolidated_2025_ES__2c5a4839fe",
+   "authority": "IMO",
+   "topic": "isps",
+   "chunks": 31,
+   "documentSha256": "39be5d64a860c2ab85b2d89c6d5f60634f10bab757f10c57f172973dc0b0690c",
+   "inclusionReason": "authority IMO and topic 'isps' in the title; 31 chunks <= 150"
+  },
+  {
+   "title": "05 - MLC Uygulama Deniz Calisma Sertifikasi ve DMLC Modelleri__1a0fdb1131",
+   "authority": "ILO",
+   "topic": "mlc",
+   "chunks": 95,
+   "documentSha256": "fbb587ed9f5f72e2ce6a04c7941ed21591bd32637ce2f5d80730241c3c0072f0",
+   "inclusionReason": "authority ILO and topic 'mlc' in the title; 95 chunks <= 150"
+  },
+  {
+   "title": "05_France_Division_215_MLC_Crew_Accommodation_Welfare_2025_FR__23be100cca",
+   "authority": "FLAG_STATE",
+   "topic": "mlc",
+   "chunks": 43,
+   "documentSha256": "1d01e718cc924dbcd4723698a27c35aef6c3667ed7a573397ec3fb6f0adaeb4d",
+   "inclusionReason": "authority FLAG_STATE and topic 'mlc' in the title; 43 chunks <= 150"
+  },
+  {
+   "title": "05_Spain_MLC_Compliance_Inspection_and_Certification_Regulation_ES__c043dea5e3",
+   "authority": "ILO",
+   "topic": "mlc",
+   "chunks": 12,
+   "documentSha256": "54c796b3af0c2cbc8c3c3f08da3c312dcc28e92933a2c6483446bb81c4fb7f6c",
+   "inclusionReason": "authority ILO and topic 'mlc' in the title; 12 chunks <= 150"
+  },
+  {
+   "title": "06 - MN095 Siber Guvenlik ve ISM Risk Yonetimi__e27f72b70e",
+   "authority": "IMO",
+   "topic": "ism",
+   "chunks": 2,
+   "documentSha256": "c6fc946bfddfe21a29a2510f539ed3db523d6b57d37a67e1f21fcec25b445b49",
+   "inclusionReason": "authority IMO and topic 'ism' in the title; 2 chunks <= 150"
+  },
+  {
+   "title": "06_Italy_MLC_Inspection_Report_Checklist_Model__6783361961",
+   "authority": "FLAG_STATE",
+   "topic": "mlc",
+   "chunks": 3,
+   "documentSha256": "f4b5f24124db4dd321324fd9d4b7a62cbb4823024d9def3fc9505dbeeebe6b28",
+   "inclusionReason": "authority FLAG_STATE and topic 'mlc' in the title; 3 chunks <= 150"
+  },
+  {
+   "title": "07_Poland_Maritime_and_Port_Security_Act_Consolidated_2022_ISPS_PL__71f5c54573",
+   "authority": "FLAG_STATE",
+   "topic": "isps",
+   "chunks": 33,
+   "documentSha256": "855a993d751eea56c8dc10f51c0854087ff19e131117ccb2654b307c0e64077b",
+   "inclusionReason": "authority FLAG_STATE and topic 'isps' in the title; 33 chunks <= 150"
+  },
+  {
+   "title": "09 - RMRS MLC 2006 Uygunluk Rehberi__ff884e7cde",
+   "authority": "CLASS",
+   "topic": "mlc",
+   "chunks": 4,
+   "documentSha256": "0823eb3d45cfa88a4dc30b26db4d2ae7239c1376b4a233e07b8a736b2e8ccacb",
+   "inclusionReason": "authority CLASS and topic 'mlc' in the title; 4 chunks <= 150"
+  },
+  {
+   "title": "11 - RMRS ISM ISPS ve MLC Entegre Sertifikasyon ve Denetim Rehberi 2025__3b31b19bea",
+   "authority": "CLASS",
+   "topic": "ism",
+   "chunks": 94,
+   "documentSha256": "bb3c77902cef4c31217894cba67259d83a06195781e731a2eee2c697e59aaa0f",
+   "inclusionReason": "authority CLASS and topic 'ism' in the title; 94 chunks <= 150"
+  },
+  {
+   "title": "AMSA - Guidelines for a Safety Management System - Version 4 October 202__5c54bdcf9c",
+   "authority": "FLAG_STATE",
+   "topic": "safety management",
+   "chunks": 44,
+   "documentSha256": "a81994e2899a27c84126b5de3d1cd0e7fab64df487e2b73d6bbb2c11644067c2",
+   "inclusionReason": "authority FLAG_STATE and topic 'safety management' in the title; 44 chunks <= 150"
+  },
+  {
+   "title": "AMSA - Simplified Safety Management System Toolkit 2025__f1d357be2d",
+   "authority": "FLAG_STATE",
+   "topic": "safety management",
+   "chunks": 10,
+   "documentSha256": "84f2dd7293005371a0021ba9ad5a7956eb78e007ae3207f5296bf2afdbed4e14",
+   "inclusionReason": "authority FLAG_STATE and topic 'safety management' in the title; 10 chunks <= 150"
+  },
+  {
+   "title": "Belçika BMI ISM Bayrak Devleti Yorumları ve Prosedürleri Rev1 2025__f025daf986",
+   "authority": "FLAG_STATE",
+   "topic": "ism",
+   "chunks": 4,
+   "documentSha256": "bf76ad1cf1d01eeba5b009afcb2381af05bee83fd6112ba9ca28674a7923e4f9",
+   "inclusionReason": "authority FLAG_STATE and topic 'ism' in the title; 4 chunks <= 150"
+  },
+  {
+   "title": "Bermuda BGN 2024-03 MLC 2022 Değişiklikleri__0788f7375e",
+   "authority": "FLAG_STATE",
+   "topic": "mlc",
+   "chunks": 3,
+   "documentSha256": "af76a603271f3a58bd6795bf5857cf754767ff049c914093fd017d04378a4dde",
+   "inclusionReason": "authority FLAG_STATE and topic 'mlc' in the title; 3 chunks <= 150"
+  },
+  {
+   "title": "Cayman - CIGN 06-2022 Reduced Manning on Commercial Yachts in Port__3d7eaf480b",
+   "authority": "FLAG_STATE",
+   "topic": "manning",
+   "chunks": 3,
+   "documentSha256": "6ecd2f54e7c77ebf5902334d2c6c41add0e03ef8b396af1958911c536581d46f",
+   "inclusionReason": "authority FLAG_STATE and topic 'manning' in the title; 3 chunks <= 150"
+  },
+  {
+   "title": "Cebelitarık SGN-024 ISM Kod Değişiklikleri__1af6c43d72",
+   "authority": "FLAG_STATE",
+   "topic": "ism",
+   "chunks": 2,
+   "documentSha256": "12d0a1ed90011619ff58008a025dfce49abf4739dd2656c90ecb0505e2803775",
+   "inclusionReason": "authority FLAG_STATE and topic 'ism' in the title; 2 chunks <= 150"
+  },
+  {
+   "title": "ClassNK_Guidance_ISM_Code_Amendment_Implementation__0ae80c8e1f",
+   "authority": "CLASS",
+   "topic": "ism",
+   "chunks": 1,
+   "documentSha256": "a58cdbaa0625b169b12a055092062ce259f140cc7f3807ddce5d120aea917f52",
+   "inclusionReason": "authority CLASS and topic 'ism' in the title; 1 chunks <= 150"
+  },
+  {
+   "title": "ClassNK_Handbook_for_ISM_Audits_20th_Edition_2026-07__7d39110c10",
+   "authority": "CLASS",
+   "topic": "ism",
+   "chunks": 28,
+   "documentSha256": "8c0215082f5c23c633ccef1820a9b7cc75bfa5cb1c720dd7fba73f004cfce644",
+   "inclusionReason": "authority CLASS and topic 'ism' in the title; 28 chunks <= 150"
+  },
+  {
+   "title": "ClassNK_ISM_ISPS_Pamphlet__702c13e4a9",
+   "authority": "CLASS",
+   "topic": "ism",
+   "chunks": 2,
+   "documentSha256": "63d3f1ec958838be8f615d61f36905db4dadd387cb80073bc11748d701ef7919",
+   "inclusionReason": "authority CLASS and topic 'ism' in the title; 2 chunks <= 150"
+  },
+  {
+   "title": "ClassNK_ISPS_Code_Part_A__a7b648e558",
+   "authority": "CLASS",
+   "topic": "isps",
+   "chunks": 26,
+   "documentSha256": "2d6222c4490d988f538fd17bd5013898e32fc7c1f934c4d68c1e6b9fe1654bdd",
+   "inclusionReason": "authority CLASS and topic 'isps' in the title; 26 chunks <= 150"
+  },
+  {
+   "title": "ClassNK_Revised_Guidelines_ISM_Implementation_by_Administrations__3b39d5bf69",
+   "authority": "CLASS",
+   "topic": "ism",
+   "chunks": 16,
+   "documentSha256": "e166e01c81450685a31ec1909b8fc5f4c53f15fa556f93934b077021e0810ba6",
+   "inclusionReason": "authority CLASS and topic 'ism' in the title; 16 chunks <= 150"
+  },
+  {
+   "title": "ClassNK_Revised_ISM_Code_2015__d2b78294c3",
+   "authority": "CLASS",
+   "topic": "ism",
+   "chunks": 10,
+   "documentSha256": "0446cb9733f09883cf4f61a2b01867428bd140e718a08df2d5f31b5efbb4a8fd",
+   "inclusionReason": "authority CLASS and topic 'ism' in the title; 10 chunks <= 150"
+  },
+  {
+   "title": "Cook Islands - Circular 144 ISM ISPS MLC Documents in English__afc425fa2c",
+   "authority": "ILO",
+   "topic": "ism",
+   "chunks": 1,
+   "documentSha256": "0802cf3ac8b2f2360220f2d35555d487656754ea7399622d060d774ea39e3be0",
+   "inclusionReason": "authority ILO and topic 'ism' in the title; 1 chunks <= 150"
+  },
+  {
+   "title": "Danimarka DMA Genelge 016 ISM-ISPS Korsanlık ve Silahlı Soygun Prosedürl__d30f0f35aa",
+   "authority": "FLAG_STATE",
+   "topic": "ism",
+   "chunks": 2,
+   "documentSha256": "7c8977c6d6019d712e02e9061e7f23389b61d6d493f9bb9ea223af1353b13850",
+   "inclusionReason": "authority FLAG_STATE and topic 'ism' in the title; 2 chunks <= 150"
+  },
+  {
+   "title": "Danimarka DMA MLC Ticari Gemiler Denetim ve Sertifikasyon Emri No 361__78c7cbbe68",
+   "authority": "FLAG_STATE",
+   "topic": "mlc",
+   "chunks": 8,
+   "documentSha256": "df201d9084c173aa041199d3133a1284568d9ecd73db6ff2db7c0506d274becf",
+   "inclusionReason": "authority FLAG_STATE and topic 'mlc' in the title; 8 chunks <= 150"
+  },
+  {
+   "title": "Danimarka DMA RSO 007 ISPS SSP ve SSAS Rehberi Rev 03__8c01c02474",
+   "authority": "FLAG_STATE",
+   "topic": "isps",
+   "chunks": 4,
+   "documentSha256": "025e6dac183e256247ad54ad03d95991212ad2b79d5a9f1208b090326ef84b36",
+   "inclusionReason": "authority FLAG_STATE and topic 'isps' in the title; 4 chunks <= 150"
+  },
+  {
+   "title": "Finlandiya Traficom 2026 ISPS RSO Geçici Doğrulama ve Sertifikasyon Rehb__4b8a187d90",
+   "authority": "FLAG_STATE",
+   "topic": "isps",
+   "chunks": 8,
+   "documentSha256": "53886fbe81563af3b92267c8a7186c3eca6bf37afb553d6494cb2e701baaf687",
+   "inclusionReason": "authority FLAG_STATE and topic 'isps' in the title; 8 chunks <= 150"
+  },
+  {
+   "title": "Finlandiya Traficom 2026 ISPS Tatbikat ve Dokümantasyon Rehberi__517499da4d",
+   "authority": "FLAG_STATE",
+   "topic": "isps",
+   "chunks": 3,
+   "documentSha256": "181dd7dfbf578ac4cf48f52836a989cf533d25d99e0107cfd6320ffe79b9887a",
+   "inclusionReason": "authority FLAG_STATE and topic 'isps' in the title; 3 chunks <= 150"
+  },
+  {
+   "title": "Finlandiya Traficom 2026 RO Yetki Matrisi ISM ISPS MLC ve Manuel Onaylar__dc336baef2",
+   "authority": "FLAG_STATE",
+   "topic": "ism",
+   "chunks": 6,
+   "documentSha256": "0ab6bb71b239429b5c6050cad460ec71b449b02c5e23b511f6580b67db5e26c5",
+   "inclusionReason": "authority FLAG_STATE and topic 'ism' in the title; 6 chunks <= 150"
+  },
+  {
+   "title": "German Flag - IMO Procedures for Port State Control 2023__ce7ed60a31",
+   "authority": "FLAG_STATE",
+   "topic": "port state control",
+   "chunks": 147,
+   "documentSha256": "dfb4b232e1af57aa5ef64f64f310a564b0c7002b7c521be4718b9874ef76548e",
+   "inclusionReason": "authority FLAG_STATE and topic 'port state control' in the title; 147 chunks <= 150"
+  },
+  {
+   "title": "German Flag - ISM Code English__0d2383acf1",
+   "authority": "FLAG_STATE",
+   "topic": "ism",
+   "chunks": 16,
+   "documentSha256": "d4f478af9cec74ae65a1324a0a263e861020fc95dcdc576ddf42afb9a3d66196",
+   "inclusionReason": "authority FLAG_STATE and topic 'ism' in the title; 16 chunks <= 150"
+  },
+  {
+   "title": "HK_ISPS_Implementation_Registered_Ships_and_Ports__b7540095d6",
+   "authority": "FLAG_STATE",
+   "topic": "isps",
+   "chunks": 3,
+   "documentSha256": "7dec04ebeffef0bdef68c35a57fde54034a666884f974aa03d3aae5f6f11d85b",
+   "inclusionReason": "authority FLAG_STATE and topic 'isps' in the title; 3 chunks <= 150"
+  },
+  {
+   "title": "Hollanda ILT MLC Eşdeğerlik ve Muafiyet Başvuru Formu - Ticari Yolcu Öze__e45b1871be",
+   "authority": "ILO",
+   "topic": "mlc",
+   "chunks": 17,
+   "documentSha256": "afd73004c48943174bb895d25969bbe9d7e3bc3a630d99def4e6c087491080b4",
+   "inclusionReason": "authority ILO and topic 'mlc' in the title; 17 chunks <= 150"
+  },
+  {
+   "title": "Hollanda ILT MLC Sertifikasyon ve DMLC Prosedürü 2015__35c06077c6",
+   "authority": "ILO",
+   "topic": "mlc",
+   "chunks": 5,
+   "documentSha256": "aba8cf727a9e0d2bd989885e6bdccd4a10bed8dc525d2f3ecde858f1a865dc85",
+   "inclusionReason": "authority ILO and topic 'mlc' in the title; 5 chunks <= 150"
+  },
+  {
+   "title": "Isle of Man - Merchant Shipping ISM Code Regulations SD421-98 Consolidat__567db5f43b",
+   "authority": "FLAG_STATE",
+   "topic": "ism",
+   "chunks": 7,
+   "documentSha256": "0f1021f419e598834f1e9c44ca5a8b2ec8e60ee4d83e2e244f1f5d68302d0cb2",
+   "inclusionReason": "authority FLAG_STATE and topic 'ism' in the title; 7 chunks <= 150"
+  },
+  {
+   "title": "Japonya MLIT - SOLAS Palamar Ekipmani Emniyet Uygulama Talimati__31389d0bf8",
+   "authority": "IMO",
+   "topic": "solas",
+   "chunks": 2,
+   "documentSha256": "64607d6a00d0a01b16f17a0845a29afce170b59093685e24cb9b1b7e4ca90466",
+   "inclusionReason": "authority IMO and topic 'solas' in the title; 2 chunks <= 150"
+  },
+  {
+   "title": "Kıbrıs Sirküler 13-2026 ISM Revize Rehber ve Şirket Talimatları__5db46fbd4e",
+   "authority": "IMO",
+   "topic": "ism",
+   "chunks": 10,
+   "documentSha256": "f114b029a965113b109beb21f7e5c1e8ce75468f0ee3831658c501fdb21bd9e0",
+   "inclusionReason": "authority IMO and topic 'ism' in the title; 10 chunks <= 150"
+  },
+  {
+   "title": "Kıbrıs Sirküler 15-2026 MARPOL ve BWM Elektronik Kayıt Defterleri__363a2ee2b3",
+   "authority": "IMO",
+   "topic": "marpol",
+   "chunks": 2,
+   "documentSha256": "5b43184f4eee77b59c0a8e0e9dbde2d9fbf59161522f2a3c68ec768e057ad885",
+   "inclusionReason": "authority IMO and topic 'marpol' in the title; 2 chunks <= 150"
+  },
+  {
+   "title": "Kıbrıs Sirküler 31-2024 MLC 2022 Değişiklikleri__9e49fda2cd",
+   "authority": "ILO",
+   "topic": "mlc",
+   "chunks": 2,
+   "documentSha256": "b4386358e4ab73cf5da3555c7008685937b9d314da3d9eb5a660d45809781707",
+   "inclusionReason": "authority ILO and topic 'mlc' in the title; 2 chunks <= 150"
+  },
+  {
+   "title": "Kıbrıs Sirküler 35-2024 Deniz Güvenliği ve ISPS Birleştirilmiş Talimatla__402793bb5d",
+   "authority": "IMO",
+   "topic": "isps",
+   "chunks": 11,
+   "documentSha256": "6fbdd513a0f4cbddd59986cf4b560dc91d934788916825b461496d3049de9c6d",
+   "inclusionReason": "authority IMO and topic 'isps' in the title; 11 chunks <= 150"
+  },
+  {
+   "title": "Malta - ISM Declaration of Company Form__dce5249198",
+   "authority": "FLAG_STATE",
+   "topic": "ism",
+   "chunks": 1,
+   "documentSha256": "a2cee75eebdf201b1dab501bddf0717e9535e83856584175f84e9727fd32dbf5",
+   "inclusionReason": "authority FLAG_STATE and topic 'ism' in the title; 1 chunks <= 150"
+  },
+  {
+   "title": "Norveç NMA ISM Güvenlik Yönetim Sistemi Yönetmeliği No 1191__864676df72",
+   "authority": "FLAG_STATE",
+   "topic": "ism",
+   "chunks": 41,
+   "documentSha256": "858e4548b19fb3625c42dadca9449e070721eca985bd70086512e39328c52708",
+   "inclusionReason": "authority FLAG_STATE and topic 'ism' in the title; 41 chunks <= 150"
+  },
+  {
+   "title": "Norveç NMA ISPS SSA-SSP Onay ve RSO Denetim Gereklilikleri IC 6-2017__17a8538b47",
+   "authority": "FLAG_STATE",
+   "topic": "isps",
+   "chunks": 9,
+   "documentSha256": "719062533909e0f1b6e7dc794f52cb4bba82062252d02677bd4080078f30faee",
+   "inclusionReason": "authority FLAG_STATE and topic 'isps' in the title; 9 chunks <= 150"
+  },
+  {
+   "title": "Norveç NMA MLC Denetim ve Sertifikasyon Rehberi__41a72b314f",
+   "authority": "FLAG_STATE",
+   "topic": "mlc",
+   "chunks": 26,
+   "documentSha256": "1d4846ff414e45c5e4bd6e28ff0ad457b39b69513fa346c78dfb09d660ec1d54",
+   "inclusionReason": "authority FLAG_STATE and topic 'mlc' in the title; 26 chunks <= 150"
+  },
+  {
+   "title": "Panama MMC-388 ISM Kodunun İdarelerce Uygulanmasına İlişkin Revize Rehbe__b5322b1fb0",
+   "authority": "FLAG_STATE",
+   "topic": "ism",
+   "chunks": 11,
+   "documentSha256": "8420dc2784b5a34adc00b4cd19ea69c8e69088d8fda66780e0a9165843240ea1",
+   "inclusionReason": "authority FLAG_STATE and topic 'ism' in the title; 11 chunks <= 150"
+  },
+  {
+   "title": "RMI_ISM_Code_Compliance_Reference_List__8107461b61",
+   "authority": "FLAG_STATE",
+   "topic": "ism",
+   "chunks": 6,
+   "documentSha256": "129904e81613565d52a2cce61e9326a3d5920bf90acae55d9efdc1cda61018a4",
+   "inclusionReason": "authority FLAG_STATE and topic 'ism' in the title; 6 chunks <= 150"
+  },
+  {
+   "title": "RMI_ISPS_Code_Requirements__5beb19e748",
+   "authority": "FLAG_STATE",
+   "topic": "isps",
+   "chunks": 12,
+   "documentSha256": "adf585d3df65a600fa447203adee08465e68629948f33f6871088b29a711625a",
+   "inclusionReason": "authority FLAG_STATE and topic 'isps' in the title; 12 chunks <= 150"
+  },
+  {
+   "title": "RMI_MARPOL_Annex_II_Offshore_Support_Vessels__6c2fd722d2",
+   "authority": "FLAG_STATE",
+   "topic": "marpol",
+   "chunks": 3,
+   "documentSha256": "5e36c328e65ab3ed02117b54979ee45a9eb49d92433b540768926653a685ed90",
+   "inclusionReason": "authority FLAG_STATE and topic 'marpol' in the title; 3 chunks <= 150"
+  },
+  {
+   "title": "RMI_MLC_Accommodation_Food_Catering_Water__9a4c9f201a",
+   "authority": "FLAG_STATE",
+   "topic": "mlc",
+   "chunks": 2,
+   "documentSha256": "3b2d6cfa0a5f3c0d33913abd125e174c2033ad245a3dae400f97802107cd7ff9",
+   "inclusionReason": "authority FLAG_STATE and topic 'mlc' in the title; 2 chunks <= 150"
+  },
+  {
+   "title": "RMI_MLC_Flag_State_Inspection_Guidelines__0524538551",
+   "authority": "FLAG_STATE",
+   "topic": "mlc",
+   "chunks": 53,
+   "documentSha256": "e08e25a2f4636c3585946e9c53354cd4f2e49d7a29ae860b0fe5826452104f72",
+   "inclusionReason": "authority FLAG_STATE and topic 'mlc' in the title; 53 chunks <= 150"
+  },
+  {
+   "title": "RMI_MLC_Inspection_and_Certification_Program__e1eab47c0e",
+   "authority": "FLAG_STATE",
+   "topic": "mlc",
+   "chunks": 16,
+   "documentSha256": "56537ea098dde5052a58c2472941a457898d7978cb99c7e5099b69c907f69e12",
+   "inclusionReason": "authority FLAG_STATE and topic 'mlc' in the title; 16 chunks <= 150"
+  },
+  {
+   "title": "RMI_Seafarer_Employment_Agreements_Guidance__eca4e73a1d",
+   "authority": "FLAG_STATE",
+   "topic": "seafarer",
+   "chunks": 11,
+   "documentSha256": "ac5b56cb2702c94eb249fa16990c2b3f483f88ad9d56989b6e4bc9798a93d8f1",
+   "inclusionReason": "authority FLAG_STATE and topic 'seafarer' in the title; 11 chunks <= 150"
+  },
+  {
+   "title": "RMI_Yachts_Under_500GT_MLC_Applicability__6c893c59bf",
+   "authority": "FLAG_STATE",
+   "topic": "mlc",
+   "chunks": 1,
+   "documentSha256": "646af3662a2b9280564e8dd7d78a576f9702f3a96440ce863c69c184472bbd24",
+   "inclusionReason": "authority FLAG_STATE and topic 'mlc' in the title; 1 chunks <= 150"
+  },
+  {
+   "title": "SG_2023_Registry_Bulletin_Safe_Manning_MLC__11a3dc25b0",
+   "authority": "ILO",
+   "topic": "manning",
+   "chunks": 14,
+   "documentSha256": "c0915d776926da531ebd5926286484d3fab3f9784d950c5395e6d36d8c7c7580",
+   "inclusionReason": "authority ILO and topic 'manning' in the title; 14 chunks <= 150"
+  },
+  {
+   "title": "SG_2024_Registry_Bulletin_MARPOL_CII_Green_Ships__de299b82d6",
+   "authority": "IMO",
+   "topic": "marpol",
+   "chunks": 11,
+   "documentSha256": "4700b46c36a8d24d1583d121c259bcf836c095aa98c747dca076b43a943c1eab",
+   "inclusionReason": "authority IMO and topic 'marpol' in the title; 11 chunks <= 150"
+  },
+  {
+   "title": "SG_2024_STCW_Manning_Ballast_Water_Amendments__342a13132e",
+   "authority": "IMO",
+   "topic": "stcw",
+   "chunks": 2,
+   "documentSha256": "d9f6c9187e7f8e263e8b88fa6f5609db04f1b1eb4a942365d1ec478dcbc31e2b",
+   "inclusionReason": "authority IMO and topic 'stcw' in the title; 2 chunks <= 150"
+  },
+  {
+   "title": "SG_2026_Lifting_Appliances_ISM_PMS_MLC__33a7aa9dff",
+   "authority": "ILO",
+   "topic": "ism",
+   "chunks": 4,
+   "documentSha256": "eda5594333d6912f3c64103cf2794768587aa96649a911252ddd5b9fca8ca06e",
+   "inclusionReason": "authority ILO and topic 'ism' in the title; 4 chunks <= 150"
+  },
+  {
+   "title": "UK MAIB - Clonlee Machinery Failure Critical Equipment and ISM Lessons__93face8fdf",
+   "authority": "IMO",
+   "topic": "ism",
+   "chunks": 52,
+   "documentSha256": "54a300de02d9db46c1397e54ccae8d68eb857ec498cecc03f4243f1aa777fbbc",
+   "inclusionReason": "authority IMO and topic 'ism' in the title; 52 chunks <= 150"
+  },
+  {
+   "title": "UK MCA - MGN 708 Annex A - Types of ISM Code Verifications 2026__e6c1d5a941",
+   "authority": "FLAG_STATE",
+   "topic": "ism",
+   "chunks": 2,
+   "documentSha256": "1927a6758051294d5aa01a212b00fa4bb5a5d46fd77735d8415d5c22bdebf081",
+   "inclusionReason": "authority FLAG_STATE and topic 'ism' in the title; 2 chunks <= 150"
+  },
+  {
+   "title": "UK_MCA_MSIS02_ISM_Code_Audit_Guidance_Rev10.24_HISTORICAL__b290d26f86",
+   "authority": "FLAG_STATE",
+   "topic": "ism",
+   "chunks": 50,
+   "documentSha256": "20d761ab1279ce52881fd59384ae3dc06aa8a388afc70cba25481cc232e815ca",
+   "inclusionReason": "authority FLAG_STATE and topic 'ism' in the title; 50 chunks <= 150"
+  },
+  {
+   "title": "UK_Merchant_Shipping_ISM_Code_Regulations_2026_Explanatory_Memorandum__b0fdb5457a",
+   "authority": "IMO",
+   "topic": "ism",
+   "chunks": 11,
+   "documentSha256": "f58871e5734d4b1f78e92b09ac8250e249b24a8a1513f3d644f11141161a772d",
+   "inclusionReason": "authority IMO and topic 'ism' in the title; 11 chunks <= 150"
+  },
+  {
+   "title": "UK_Merchant_Shipping_ISM_Code_Regulations_2026__f33d6b555d",
+   "authority": "IMO",
+   "topic": "ism",
+   "chunks": 33,
+   "documentSha256": "e65ba6fa517e2decd518cddcfc37f79a054d3ea058f3e8ced8ab936f9f94b0c1",
+   "inclusionReason": "authority IMO and topic 'ism' in the title; 33 chunks <= 150"
+  },
+  {
+   "title": "İsveç 2025 İdare ve RO Yetki Matrisi ISM ISPS MLC__26818528f9",
+   "authority": "ILO",
+   "topic": "ism",
+   "chunks": 5,
+   "documentSha256": "5139b4a76130d0fd0a4e5f1b3215bff0cb5ae6e4d795a9bf6955e0d78b1d1e0e",
+   "inclusionReason": "authority ILO and topic 'ism' in the title; 5 chunks <= 150"
+  },
+  {
+   "title": "İsveç ISPS Geçici Sertifikasyon RSO Doğrulama Kontrol Formu 2025__0dc47723aa",
+   "authority": "IMO",
+   "topic": "isps",
+   "chunks": 2,
+   "documentSha256": "b9b2f67a03dcac1fe7de2ff758dfb0d59334109e72d5b421fa97a5dc3b7407d0",
+   "inclusionReason": "authority IMO and topic 'isps' in the title; 2 chunks <= 150"
+  },
+  {
+   "title": "Japonya MLIT 2026 - Gemide Calisma Refahi ve MLC Rehberi Ingilizce__f050728d30",
+   "authority": "ILO",
+   "topic": "mlc",
+   "chunks": 43,
+   "documentSha256": "78a093b31e7eadb1287e9fd4ebbb32f399c21beac247015064d1a1d4b4ff786c",
+   "inclusionReason": "authority ILO and topic 'mlc' in the title; 43 chunks <= 150"
+  },
+  {
+   "title": "ILO_IMO_Guidelines_Seafarer_Abandonment_Cases_2023__443be91204",
+   "authority": "ILO",
+   "topic": "seafarer",
+   "chunks": 19,
+   "documentSha256": "08f3e61f539caf9972a8b668a6d0bec91dba007ecd10a6286d42a30331e8ac79",
+   "inclusionReason": "authority ILO and topic 'seafarer' in the title; 19 chunks <= 150"
+  },
+  {
+   "title": "ILO_MLC_Social_Security_for_Seafarers_Handbook_2012__4dc783a30a",
+   "authority": "ILO",
+   "topic": "mlc",
+   "chunks": 50,
+   "documentSha256": "2d05bf4a38ce5757d52cacbdb30a75c52db00edc5031ad363df83b2e25b5e30f",
+   "inclusionReason": "authority ILO and topic 'mlc' in the title; 50 chunks <= 150"
+  },
+  {
+   "title": "IMO_ILO_Fair_Treatment_of_Detained_Seafarers_LEG7_112_2025__b0ab56fc0c",
+   "authority": "ILO",
+   "topic": "seafarer",
+   "chunks": 27,
+   "documentSha256": "c5fce1c9844ee287c2a3844d6054e9b6de11bd1376aef0136de5c21bc3df0b1f",
+   "inclusionReason": "authority ILO and topic 'seafarer' in the title; 27 chunks <= 150"
+  },
+  {
+   "title": "UK_MCA_MGN_484_Amendment_6_MLC_Accident_Statistics_and_Risk_Assessment_2__644186b27c",
+   "authority": "FLAG_STATE",
+   "topic": "mlc",
+   "chunks": 3,
+   "documentSha256": "729a09de5843b5253f5ef6f39629dc3773c5497c5efa73f814de080f35b589a2",
+   "inclusionReason": "authority FLAG_STATE and topic 'mlc' in the title; 3 chunks <= 150"
+  },
+  {
+   "title": "Bahamas MN010 - MARPOL Electronic Record Books 2025__eda2091050",
+   "authority": "FLAG_STATE",
+   "topic": "marpol",
+   "chunks": 7,
+   "documentSha256": "b4ad5097bfb8c0f23deef235a25640e63edcb712401565c6ab483da2d6fa402e",
+   "inclusionReason": "authority FLAG_STATE and topic 'marpol' in the title; 7 chunks <= 150"
+  },
+  {
+   "title": "IMO MEPC.312(74) - Guidelines for Electronic Record Books under MARPOL__82dafa9dc2",
+   "authority": "IMO",
+   "topic": "marpol",
+   "chunks": 12,
+   "documentSha256": "34b520f770386dca9ceb3c291f69f1e87b0d80f9644e4d78187208380d6ff66e",
+   "inclusionReason": "authority IMO and topic 'marpol' in the title; 12 chunks <= 150"
+  },
+  {
+   "title": "SYA - Yacht Safety Management ISM ISPS and Crew Services__48f21b231a",
+   "authority": "IMO",
+   "topic": "safety management",
+   "chunks": 3,
+   "documentSha256": "c46416662160f59b379e078873185e8c0db9f172df0b5a2fe80de34fad9c61f2",
+   "inclusionReason": "authority IMO and topic 'safety management' in the title; 3 chunks <= 150"
+  },
+  {
+   "title": "VMS Yachts - ISM ISPS Management Manuals Surveys and Emergency Support__1ea9a70c8e",
+   "authority": "IMO",
+   "topic": "ism",
+   "chunks": 4,
+   "documentSha256": "6dea5710c574d2c3074db4318f8885267a892a1be421e7d98b9b0aa52dfe2ed4",
+   "inclusionReason": "authority IMO and topic 'ism' in the title; 4 chunks <= 150"
+  },
+  {
+   "title": "Liberia - Marine Notice ISM-001 National ISM Requirements Rev 07-24__6420f817ec",
+   "authority": "FLAG_STATE",
+   "topic": "ism",
+   "chunks": 26,
+   "documentSha256": "ae2c7f98c8b7d40eb8b8178644a18536a2c3162cc5936c8dbcebf01c01ca75ad",
+   "inclusionReason": "authority FLAG_STATE and topic 'ism' in the title; 26 chunks <= 150"
+  },
+  {
+   "title": "Malta - Technical Notice IRO.5 Authorisation for ISM Certification__85881b1f15",
+   "authority": "FLAG_STATE",
+   "topic": "ism",
+   "chunks": 1,
+   "documentSha256": "b83b867b20fd10d425e91e2a5ca4dfb429a92ba25870b9ee938679194dccf735",
+   "inclusionReason": "authority FLAG_STATE and topic 'ism' in the title; 1 chunks <= 150"
+  },
+  {
+   "title": "Malta - Technical Notice SLS.26 ISM Joint Declaration Guidance__1bb4773761",
+   "authority": "FLAG_STATE",
+   "topic": "ism",
+   "chunks": 2,
+   "documentSha256": "05532884053c4c7ab377908d5fe933b3a7e68c6563e8b90f6463e2366bf3db69",
+   "inclusionReason": "authority FLAG_STATE and topic 'ism' in the title; 2 chunks <= 150"
+  },
+  {
+   "title": "RMI - Marine Notice 2-011-13 International Safety Management Code__ea4bc8e880",
+   "authority": "FLAG_STATE",
+   "topic": "safety management",
+   "chunks": 23,
+   "documentSha256": "1f3f4371c4d41b14d829de8a71344d6845f0ba40ba307feaf112cc5c8313a5fc",
+   "inclusionReason": "authority FLAG_STATE and topic 'safety management' in the title; 23 chunks <= 150"
+  }
+ ]
+}

@@ -19,9 +19,9 @@ test('vectors never land in the repository or in the library; the model endpoint
   assert.throws(()=>builder.parseArgs(['--out-dir',OUT,'--ollama','http://10.0.0.5:11434']),/OLLAMA_MUST_BE_LOOPBACK/u);assert.throws(()=>builder.parseArgs(['--out-dir',OUT,'--ollama','https://api.example.com']),/OLLAMA_MUST_BE_LOOPBACK/u);
   // On any host: the default is accepted by the tool's own rule, never exceeds half the cores or 8, and one more than half is refused.
   const half=Math.max(1,Math.floor(os.cpus().length/2));
-  assert.throws(()=>builder.parseArgs(['--out-dir',OUT,'--threads',String(half+1)]),/THREADS_MUST_LEAVE_HALF_THE_CORES_FREE/u);assert.throws(()=>builder.parseArgs(['--out-dir',OUT,'--threads','0']),/THREADS_MUST_LEAVE_HALF_THE_CORES_FREE/u);
+  assert.throws(()=>builder.parseArgs(['--out-dir',OUT,'--limit','8','--threads',String(half+1)]),/THREADS_MUST_LEAVE_HALF_THE_CORES_FREE/u);assert.throws(()=>builder.parseArgs(['--out-dir',OUT,'--limit','8','--threads','0']),/THREADS_MUST_LEAVE_HALF_THE_CORES_FREE/u);
   assert.throws(()=>builder.parseArgs(['--out-dir',OUT,'--limit','0']),/LIMIT_INVALID/u);
-  const ok=builder.parseArgs(['--out-dir',OUT,'--limit','256']);assert.equal(ok.limit,256);assert.equal(ok.threads,Math.min(8,half));assert.equal(builder.parseArgs(['--out-dir',OUT,'--threads','1']).threads,1);
+  const ok=builder.parseArgs(['--out-dir',OUT,'--limit','256']);assert.equal(ok.limit,256);assert.equal(ok.threads,Math.min(8,half));assert.equal(builder.parseArgs(['--out-dir',OUT,'--limit','8','--threads','1']).threads,1);
 });
 
 test('one authorised model, no cloud, and the chunk text is embedded exactly as it is',()=>{
