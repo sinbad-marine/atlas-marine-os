@@ -5,11 +5,12 @@ test('Academy GOSS/GASM launches the separate fail-closed Exam Intelligence surf
   await context.route('http://127.0.0.1:4192/**',route=>route.fulfill({status:200,contentType:'text/html; charset=utf-8',body:'<!doctype html><title>SINBAD Exam Intelligence</title><p>LOCAL SYNTHETIC</p>'}));
   await page.goto('/academy.html');
   await expect(page.locator('#openExamIntelligence')).toBeHidden();
-  await page.locator('[data-academy-section="goss-gasm"]').click();
-  await expect(page.locator('#openExamIntelligence')).toBeVisible();
-  await expect(page.locator('#academyExamConnection')).toContainText('sentetik/yerel');
+  await page.locator('.academy-landing-hotspots [data-academy-open="goss-gasm"]').click({force:true});
+  await expect(page.locator('[data-academy-art="goss-gasm"].is-active')).toBeVisible();
+  await expect(page.locator('#academyTeachingStage')).toBeHidden();
+  await expect(page.locator('#academyExamConnection')).toContainText('synthetic/local');
   const popupPromise=page.waitForEvent('popup');
-  await page.locator('#openExamIntelligence').click();
+  await page.locator('[data-academy-action="exam"]').click({force:true});
   const exam=await popupPromise;
   await expect.poll(()=>exam.url()).toBe('http://127.0.0.1:4192/');
   await exam.close();

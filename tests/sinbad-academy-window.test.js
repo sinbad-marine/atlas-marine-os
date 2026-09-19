@@ -63,7 +63,7 @@ test('standalone Academy retains course and quiz handlers',()=>{
 test('native Academy owns a persistent full-body Sinbad classroom stage',()=>{
   assert.match(academyHtml,/id="academyTeachingStage"/);assert.match(academyHtml,/captain-sinbad-board-teaching\.png/);
   assert.match(academyHtml,/sinbad-character-engine\.js\?v=82030/);
-  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82082/);assert.match(academyHtml,/academy-classroom-window\.js\?v=82104/);assert.match(academyHtml,/academy\.css\?v=82097/);
+  assert.match(academyHtml,/sinbad-performance-director\.js\?v=82082/);assert.match(academyHtml,/academy-classroom-window\.js\?v=82122/);assert.match(academyHtml,/academy\.css\?v=82122/);
   assert.doesNotMatch(academyHtml,/id="academyTeachingStage"[^>]*hidden/);
   assert.ok(academyHtml.indexOf('id="academyModule"')<academyHtml.indexOf('</aside>'),'training controls belong to the left classroom column');
   assert.match(academyHtml,/id="academyTrackTitle" hidden/);
@@ -157,7 +157,7 @@ test('Professor Sinbad classroom provides bounded text, one-shot voice and hands
   assert.match(academyApp,/academyRecognition\.continuous=academyHandsFreeEnabled/);
   assert.match(academyApp,/function setAcademyHandsFree\(enabled\)/);
   assert.match(academyApp,/scheduleAcademyHandsFreeListening\(650\)/);
-  assert.match(academyApp,/Eller serbest: Açık/);
+  assert.match(academyApp,/Hands-free: On/);
 });
 
 test('Professor Sinbad drives real bounded mouth frames from speech events',()=>{
@@ -240,7 +240,7 @@ test('Academy exposes and uses the owner-local AI and library while driving the 
   assert.match(academyApp,/async function refreshAcademyRuntimeStatus\(\)/);
   assert.match(academyApp,/fetch\(`\$\{SINBAD_BRIDGE_URL\}\/status`/);
   assert.match(academyApp,/library\.documents/);assert.match(academyApp,/library\.chunks/);
-  assert.match(academyApp,/updateAcademyRuntimePill\('academyAiConnection',`Yerel AI bağlı · \$\{model\}`\)/);
+  assert.match(academyApp,/updateAcademyRuntimePill\('academyAiConnection',`Local AI connected · \$\{model\}`\)/);
   assert.match(academyApp,/if\(useOwnerLibrary\)refreshAcademyRuntimeStatus\(\)/);
 });
 
@@ -312,4 +312,23 @@ test('real transparent writing frames follow measured board progress and settle 
   assert.match(academyApp,/ACADEMY_CHARACTER_ASSETS\.writing\[frameKey\]/);
   assert.match(academyApp,/setTimeout\(writeNext,\/\\s\/\.test\(text\[index\]\|\|''\)\?55:/);
   assert.match(academyApp,/else renderAcademyCharacterCue\(\{state:'board-teaching',gesture:'explain',gaze:'audience'\},text\)/);
+});
+
+test('Owner-approved Academy art and qualification structure remain locked',()=>{
+  const lock=JSON.parse(fs.readFileSync('assets/console-art/academy-owner-selections-v1/OWNER_VISUAL_LOCK.json','utf8'));
+  assert.deepEqual(lock.selectionOrder,['C','C','A','B','A','B','A','C']);
+  assert.equal(lock.artistLanguage,'paul-gauguin');
+  assert.equal(lock.languageBaseline,'en');
+  assert.equal(lock.immutable,true);
+  assert.match(academyHtml,/class="academy-landing"/);
+  assert.match(academyHtml,/data-gasm-family="deck"/);
+  assert.match(academyHtml,/data-gasm-family="engine"/);
+  assert.match(academyHtml,/data-gasm-family="electro-technical"/);
+  assert.match(academyHtml,/data-academy-open="goc"[^>]*><strong>GOC \/ ROC Radio<\/strong>/u);
+  const electroTechnicalCard=academyHtml.match(/<button type="button" data-gasm-family="electro-technical">[\s\S]*?<\/button>/u)?.[0]||'';
+  assert.doesNotMatch(electroTechnicalCard,/GOC \/ ROC/u);
+  for(const entry of Object.values(lock.layers)){
+    assert.equal(fs.existsSync(entry.asset),true,entry.asset);
+    assert.match(academyHtml,new RegExp(entry.asset.split('/').pop().replaceAll('.','\\.')));
+  }
 });

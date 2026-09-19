@@ -1,47 +1,89 @@
 <!doctype html>
-<html lang="tr">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#0b1d2b">
   <title>Sinbad Academy — Classroom</title>
-  <link rel="stylesheet" href="./academy.css?v=82097">
+  <link rel="stylesheet" href="./academy.css?v=82122">
 </head>
 <body>
-  <div class="academy-shell">
+  <div class="academy-shell" data-academy-active="general-maritime-education" data-academy-view="landing">
     <header class="academy-command-bar">
-      <div class="academy-brand"><span aria-hidden="true">⚓</span><div><strong>Sinbad Academy</strong><small>Independent classroom window</small></div></div>
+      <a class="academy-brand" href="./index.html" aria-label="Return to Sinbad Marine"><span class="academy-brand-mark" aria-hidden="true">⛵</span><span><strong>SINBAD</strong><small>MARINE ACADEMY</small></span></a>
       <nav class="academy-section-nav" aria-label="Academy departments">
         <button type="button" data-academy-section="goss-gasm" id="gasmMenuButton" aria-expanded="false" aria-controls="gasmQualificationMenu">☰ GOSS / GASM</button>
         <button type="button" data-academy-section="stcw">STCW</button>
-        <button type="button" data-academy-section="goc">GOC</button>
-        <button type="button" data-academy-section="general-maritime-education" class="active" aria-current="page">General Maritime Education</button>
+        <button type="button" data-academy-section="goc">GOC / ROC</button>
+        <button type="button" data-academy-section="general-maritime-education" class="active" aria-current="page">General Maritime</button>
         <button type="button" data-academy-section="ism-isps-mlc">ISM / ISPS / MLC</button>
       </nav>
       <div class="academy-window-navigation" aria-label="Window navigation">
-        <label class="academy-language-control">Dil
-          <select id="academyLanguage" aria-label="Sinbad konuşma dili">
-            <option value="tr-TR" selected>Türkçe</option>
-            <option value="en-US">English</option>
+        <label class="academy-language-control">Language
+          <select id="academyLanguage" aria-label="Professor Sinbad language">
+            <option value="en-US" selected>English</option>
+            <option value="tr-TR">Türkçe</option>
             <option value="de-DE">Deutsch</option>
           </select>
         </label>
-        <button type="button" id="academyBackButton" title="Önceki sayfa">← Geri</button>
-        <button type="button" id="academyHomeButton" title="Ana kumanda paneline dön">⌂ Ana Sayfa</button>
+        <button type="button" id="academyBackButton" title="Previous page">← Back</button>
+        <button type="button" id="academyHomeButton" title="Return to the main console">⌂ Home</button>
       </div>
     </header>
-    <div class="academy-layout">
+    <section class="academy-landing" aria-labelledby="academyLandingTitle">
+      <img class="academy-landing-art" src="./assets/console-art/academy-owner-selections-v1/selected/01-sinbad-academy-C.png" alt="Sinbad Academy in the approved Paul Gauguin maritime art language">
+      <h1 id="academyLandingTitle" class="visually-hidden">SINBAD Academy</h1>
+      <nav class="academy-landing-hotspots" aria-label="Academy learning areas">
+        <button type="button" data-academy-open="goss-gasm" aria-label="Open GOSS and GASM qualifications"></button>
+        <button type="button" data-academy-open="stcw" aria-label="Open STCW training"></button>
+        <button type="button" data-academy-open="goc" aria-label="Open GOC and ROC radio training"></button>
+        <button type="button" data-academy-open="general-maritime-education" aria-label="Open general maritime education"></button>
+        <button type="button" data-academy-open="ism-isps-mlc" aria-label="Open ISM ISPS and MLC training"></button>
+        <button type="button" data-academy-open="professor-sinbad" aria-label="Open Professor Sinbad classroom"></button>
+      </nav>
+    </section>
+    <nav class="academy-program-grid" aria-label="Academy learning areas">
+      <button type="button" class="academy-program-card" data-academy-open="goss-gasm"><img src="./assets/console-art/academy-owner-selections-v1/selected/02-goss-gasm-qualifications-C.png" alt="GOSS and GASM qualification programmes"><span><small>01 · QUALIFICATIONS</small><strong>GOSS / GASM</strong><em>Deck · Engine · Electro-Technical · GOC / ROC</em></span></button>
+      <button type="button" class="academy-program-card" data-academy-open="stcw"><img src="./assets/console-art/academy-owner-selections-v1/selected/03-stcw-training-A.png" alt="STCW practical training"><span><small>02 · SAFETY</small><strong>STCW Training</strong><em>Competence · drills · certification</em></span></button>
+      <button type="button" class="academy-program-card" data-academy-open="goc"><img src="./assets/console-art/academy-owner-selections-v1/selected/04-goc-roc-radio-B.png" alt="GOC and ROC radio training"><span><small>03 · RADIO</small><strong>GOC / ROC</strong><em>Independent radio training within GOSS / GASM</em></span></button>
+      <button type="button" class="academy-program-card" data-academy-open="general-maritime-education"><img src="./assets/console-art/academy-owner-selections-v1/selected/05-general-maritime-education-A.png" alt="General maritime education"><span><small>04 · KNOWLEDGE</small><strong>General Maritime</strong><em>Navigation · charts · tides · seamanship</em></span></button>
+      <button type="button" class="academy-program-card" data-academy-open="ism-isps-mlc"><img src="./assets/console-art/academy-owner-selections-v1/selected/06-ism-isps-mlc-B.png" alt="ISM ISPS and MLC compliance training"><span><small>05 · COMPLIANCE</small><strong>ISM / ISPS / MLC</strong><em>Safety · security · labour standards</em></span></button>
+      <button type="button" class="academy-program-card" data-academy-open="professor-sinbad"><img src="./assets/console-art/academy-owner-selections-v1/selected/07-professor-sinbad-classroom-A.png" alt="Professor Sinbad classroom"><span><small>06 · CLASSROOM</small><strong>Professor Sinbad</strong><em>Ask · listen · study · practise</em></span></button>
+    </nav>
+    <div class="academy-layout" id="academyWorkspace">
       <aside class="academy-sidebar">
-        <section id="gasmQualificationMenu" class="gasm-qualification-menu" aria-label="GOSS GASM yeterlilik ve ders menüsü" hidden>
-          <div class="gasm-menu-heading"><strong>Yeterlilik sınavını seç</strong><small>Kademe → zorunlu ders → konu testi</small></div>
+        <section class="academy-layer-art" aria-label="Selected Academy layer">
+          <img data-academy-art="goss-gasm" src="./assets/console-art/academy-owner-selections-v1/selected/02-goss-gasm-qualifications-C.png" alt="GOSS and GASM qualifications">
+          <img data-academy-art="stcw" src="./assets/console-art/academy-owner-selections-v1/selected/03-stcw-training-A.png" alt="STCW training">
+          <img data-academy-art="goc" src="./assets/console-art/academy-owner-selections-v1/selected/04-goc-roc-radio-B.png" alt="GOC and ROC radio training">
+          <img data-academy-art="general-maritime-education" src="./assets/console-art/academy-owner-selections-v1/selected/05-general-maritime-education-A.png" alt="General maritime education">
+          <img data-academy-art="ism-isps-mlc" src="./assets/console-art/academy-owner-selections-v1/selected/06-ism-isps-mlc-B.png" alt="ISM ISPS and MLC training">
+          <div class="academy-layer-hotspots" aria-label="Selected Academy actions">
+            <button type="button" data-academy-action="open-lesson" aria-label="Open the selected lesson"></button>
+            <button type="button" data-academy-action="practice" aria-label="Open a practice question"></button>
+            <button type="button" data-academy-action="professor" aria-label="Ask Professor Sinbad"></button>
+            <button type="button" data-academy-action="exam" aria-label="Open the GOSS and GASM student examination"></button>
+            <button type="button" data-academy-action="back-academy" aria-label="Return to the Academy home"></button>
+            <button type="button" data-academy-action="home" aria-label="Return to the Sinbad Marine home"></button>
+          </div>
+          <strong id="academyLayerTitle" class="visually-hidden">General Maritime Education</strong>
+        </section>
+        <section class="academy-family-grid" id="gossFamilyGrid" aria-label="GOSS and GASM qualification families" hidden>
+          <button type="button" data-gasm-family="deck"><strong>Deck</strong><span>Navigation qualifications</span></button>
+          <button type="button" data-gasm-family="engine"><strong>Engine</strong><span>Marine engineering qualifications</span></button>
+          <button type="button" data-gasm-family="electro-technical"><strong>Electro-Technical</strong><span>Electrical and electronic qualifications</span></button>
+          <button type="button" data-academy-open="goc"><strong>GOC / ROC Radio</strong><span>Independent radio qualification family</span></button>
+        </section>
+        <section id="gasmQualificationMenu" class="gasm-qualification-menu" aria-label="GOSS and GASM qualifications, mandatory subjects and topic tests" hidden>
+          <div class="gasm-menu-heading"><strong>Select a qualification exam</strong><small>Level → mandatory subject → topic test</small></div>
           <div id="gasmQualificationList"></div>
         </section>
         <section class="academy-controls" aria-label="Academy lesson controls">
           <label>Training module
             <select id="academyModule" aria-label="Training module">
-              <option value="gasm-seyir-sinav">GASM seyir sınav soruları (643 soru yüklü)</option>
+              <option value="gasm-seyir-sinav">GOSS / GASM navigation examination bank (643 questions)</option>
               <option value="stcw-foundation">STCW foundation</option>
-              <option value="goc-foundation">GOC radio communication foundation</option>
+              <option value="goc-foundation">GOC / ROC radio communication foundation</option>
               <option value="general-maritime-education" selected>General maritime education</option>
               <option value="chart-reading">Chart reading and hydrography</option>
               <option value="tides-water-levels">Tides and water levels</option>
@@ -55,24 +97,28 @@
           <div class="academy-actions">
             <button type="button" class="btn primary" id="startAcademyLesson">Open lesson</button>
             <button type="button" class="btn" id="startAcademyQuiz">Practice question</button>
-            <button type="button" class="btn primary exam-intelligence-launch" id="openExamIntelligence" aria-label="GOSS GASM öğrenci sınav ekranını aç">Öğrenci sınav ekranını aç</button>
-            <button type="button" class="btn owner-review-launch" id="openOwnerQuestionReview">Owner · Soruları Doğrula</button>
+            <button type="button" class="btn primary exam-intelligence-launch" id="openExamIntelligence" aria-label="Open the GOSS GASM student examination">Open student examination</button>
+            <button type="button" class="btn owner-review-launch" id="openOwnerQuestionReview">Owner · Verify questions</button>
           </div>
         </section>
-        <section class="academy-conversation" aria-labelledby="academyConversationTitle">
-          <div class="academy-conversation-head"><div><span class="eyebrow">CLASSROOM DIALOGUE</span><h2 id="academyConversationTitle">Ask Professor Sinbad</h2></div><span id="academyVoiceStatus" class="academy-status-pill">Text ready</span></div>
+        <section class="academy-exam-preview" id="student-exam" hidden>
+          <img src="./assets/console-art/academy-owner-selections-v1/selected/08-goss-gasm-student-exam-C.png" alt="GOSS and GASM student examination console">
+          <div><small>CONTROLLED EXAMINATION</small><strong>GOSS / GASM Student Exam</strong><span>Question bank answers remain protected by the Owner verification boundary.</span></div>
+        </section>
+        <section class="academy-conversation" id="professor-sinbad" aria-labelledby="academyConversationTitle">
+          <div class="academy-conversation-head"><div><span class="eyebrow">PROFESSOR SINBAD</span><h2 id="academyConversationTitle">Classroom dialogue</h2></div><span id="academyVoiceStatus" class="academy-status-pill">English ready</span></div>
           <div class="academy-runtime-status" aria-live="polite">
-            <span id="academyAiConnection" class="academy-runtime-pill pending">Yerel AI kontrol ediliyor…</span>
-            <span id="academyLibraryConnection" class="academy-runtime-pill pending">Kütüphane kontrol ediliyor…</span>
-            <span id="academyExamConnection" class="academy-runtime-pill pending">Sınav motoru yapılandırılıyor…</span>
+            <span id="academyAiConnection" class="academy-runtime-pill pending">Checking local AI…</span>
+            <span id="academyLibraryConnection" class="academy-runtime-pill pending">Checking the library…</span>
+            <span id="academyExamConnection" class="academy-runtime-pill pending">Preparing the exam engine…</span>
           </div>
-          <div id="academyConversation" class="academy-messages" aria-live="polite"><p class="academy-message sinbad">Konuşabilir veya yazabilirsiniz. Denizcilik eğitim yanıtları doğrulanmış çevrimdışı kaynaklara; genel sohbet ise cihazınızdaki yerel Sinbad AI'a dayanır.</p></div>
+          <div id="academyConversation" class="academy-messages" aria-live="polite"><p class="academy-message sinbad">Speak or type your question. Maritime teaching uses verified offline sources; general dialogue uses the local Sinbad AI on this device.</p></div>
           <div class="academy-question-composer">
-            <textarea id="academyQuestionInput" maxlength="1200" rows="3" placeholder="Professor Sinbad'a bu ders hakkında sorunuzu yazın…" aria-label="Question for Professor Sinbad"></textarea>
+            <textarea id="academyQuestionInput" maxlength="1200" rows="3" placeholder="Ask Professor Sinbad about this lesson…" aria-label="Question for Professor Sinbad"></textarea>
             <div class="academy-question-actions">
               <button type="button" class="btn" id="startAcademyListening">🎙️ Speak</button>
               <button type="button" class="btn" id="stopAcademyListening" disabled>Stop</button>
-              <button type="button" class="btn" id="toggleAcademyHandsFree" aria-pressed="false">🎧 Eller serbest: Kapalı</button>
+              <button type="button" class="btn" id="toggleAcademyHandsFree" aria-pressed="false">🎧 Hands-free: Off</button>
               <button type="button" class="btn primary" id="askAcademyQuestion">Ask Sinbad</button>
             </div>
           </div>
@@ -82,8 +128,8 @@
       <main class="academy-main">
         <span id="academyTrackLabel" hidden>SINBAD MARINE ACADEMY</span><h1 id="academyTrackTitle" hidden>Maritime Classroom</h1>
         <section id="academyTeachingStage" class="academy-teaching-stage" data-phase="welcome" aria-labelledby="academyTeachingTitle">
-          <div class="academy-lesson-clock" role="timer" aria-label="Ders süresi">
-            <span class="academy-lesson-clock-label">DERS SÜRESİ</span>
+          <div class="academy-lesson-clock" role="timer" aria-label="Lesson time">
+            <span class="academy-lesson-clock-label">LESSON TIME</span>
             <time id="academyLessonElapsed" datetime="PT0S">00:00</time>
           </div>
           <div class="academy-sinbad" data-state="board-teaching" data-rig-active="false" aria-hidden="true">
@@ -100,7 +146,7 @@
             <pre id="academyTeachingText" aria-hidden="true"></pre>
             <section id="academyOutput" class="academy-board" aria-live="polite" hidden></section>
           </div>
-          <section id="academyOwnerTraining" class="academy-owner-training" aria-label="Owner özel eğitim" hidden></section>
+          <section id="academyOwnerTraining" class="academy-owner-training" aria-label="Owner private training" hidden></section>
         </section>
       </main>
     </div>
@@ -114,7 +160,7 @@
   <script src="./sinbad-character-engine.js?v=82030"></script>
   <script src="./sinbad-character-rig.js?v=82063"></script>
   <script src="./sinbad-performance-director.js?v=82082"></script>
-  <script src="./academy-classroom-window.js?v=82104"></script>
+  <script src="./academy-classroom-window.js?v=82122"></script>
   <script src="./vendor/supabase-2.112.3.js"></script>
   <script src="./founder-owner-mfa.js"></script>
   <script src="./founder-owner-ui.js"></script>

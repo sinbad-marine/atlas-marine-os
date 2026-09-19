@@ -44,10 +44,11 @@ visualTest('approved Captain Sinbad workspace layout',async({page,isMobile})=>{
   await expect(page.locator('#sinbad')).toHaveScreenshot('captain-sinbad-workspace.png');
 });
 
-visualTest('approved Academy classroom layout',async({page})=>{
+visualTest('approved Academy landing and General Maritime art layer',async({page})=>{
   await page.goto('/academy.html');
-  await page.evaluate(()=>{const clock=document.querySelector('#academyLessonElapsed');if(clock){clock.textContent='00:00';clock.setAttribute('datetime','PT0S');}const stage=document.querySelector('#academyTeachingStage');if(stage)stage.dataset.phase='welcome';});
   await stabilize(page);
-  await expect(page.locator('.academy-command-bar')).toHaveScreenshot('academy-command-bar.png');
-  await expect(page.locator('#academyTeachingStage')).toHaveScreenshot('academy-classroom-stage.png');
+  await expect(page.locator('.academy-landing')).toHaveScreenshot('academy-owner-landing.png');
+  await page.locator('.academy-landing-hotspots [data-academy-open="general-maritime-education"]').click({force:true});
+  await stabilize(page);
+  await expect(page.locator('[data-academy-art="general-maritime-education"].is-active')).toHaveScreenshot('academy-general-maritime-layer.png');
 });
