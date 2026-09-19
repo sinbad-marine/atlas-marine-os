@@ -132,6 +132,22 @@ test('one universe: lexical index and vector matrix must cover the same chunks, 
   const b=read('tools/build-semantic-index.js');assert.match(b,/THE FLAG IS A TECHNICAL INTERLOCK, NOT AN AUTHORISATION/u);assert.match(b,/only when the Owner has separately and\s*\/\/ explicitly given a GO/u);
 });
 
+test('corpus accounting: manifest chunks minus punctuation-only chunks equals the lexical universe, or the tool stops (3 813 -> 3 810 explained)',()=>{
+  const docs=[{title:'A',chunks:['The master has overriding authority.','.......... ---- ____ ((()))','Internal audits at intervals.']},{title:'B',chunks:['Seafarers are entitled to repatriation.']}];
+  const index=retriever.build(docs);assert.equal(index.chunks.length,3);const manifest={totals:{chunks:4},documents:[{title:'A',chunks:3},{title:'B',chunks:1}]};
+  const a=evaluator.corpusAccounting(manifest,docs,index);assert.deepEqual([a.manifestDocuments,a.manifestChunks,a.notIndexableChunks,a.universeChunks],[2,4,1,3]);
+  assert.deepEqual(a.notIndexable,[{title:'A',chunkIndex:1,chars:27,letters:0,digits:0,contentHash:sha256(docs[0].chunks[1]).slice(0,16)}]);
+  // A textual chunk that is missing from the universe, a wrong total, or a document without any chunk is scope drift.
+  assert.throws(()=>evaluator.corpusAccounting(manifest,docs,retriever.build([docs[0]])),/SCOPE_DRIFT/u);
+  assert.throws(()=>evaluator.corpusAccounting({totals:{chunks:5},documents:manifest.documents},docs,index),/SCOPE_DRIFT/u);
+  assert.throws(()=>evaluator.corpusAccounting({totals:{chunks:4},documents:[...manifest.documents,{title:'C',chunks:0}]},docs,index),/SCOPE_DRIFT/u);
+  // The frozen parts were not touched by this addition: same 18 hybrids, same selection constants as the preregistration commit.
+  // Hashes taken from the preregistration commit 8201b1375a14f61f83554818ccee50ff8e857938 (pushed before any DEV measurement).
+  const now=read('tools/evaluate-semantic-retrieval.js').replace(/\r\n/g,'\n');
+  assert.equal(sha256(now.slice(now.indexOf('const HYBRIDS=[]'),now.indexOf('function parseArgs'))),'480f7a798c205ac7ca5acd6f1ea0f9f35e97fe33ade4f37532a21d4a7300a9c0','HYBRIDS, SELECTION and select() are byte-identical to the preregistration commit');
+  assert.equal(sha256(read('tests/benchmark/results/RETRIEVAL-004/DEV_SELECTION_PREREGISTRATION.json').replace(/\r\n/g,'\n')),'36a99c1242d8a49719b994a0b030e2403a9cc3d2b9f9c3129d2b46b3018e84ff','the preregistration file is byte-identical to the preregistration commit');
+});
+
 test('DEV only, local only, nothing wired: no tool of the experiment reads a blind or used-holdout set, the evaluator calls no model',()=>{
   assert.throws(()=>embedder.parseArgs(['--index-dir',OUT,'--split','TEST2']),/DEV_ONLY/u);assert.throws(()=>embedder.parseArgs(['--index-dir',OUT,'--split','TEST']),/DEV_ONLY/u);
   assert.throws(()=>embedder.parseArgs(['--index-dir',path.join(ROOT,'x')]),/OUTSIDE_THE_REPOSITORY/u);assert.throws(()=>embedder.parseArgs(['--index-dir',OUT,'--ollama','http://8.8.8.8:11434']),/OLLAMA_MUST_BE_LOOPBACK/u);

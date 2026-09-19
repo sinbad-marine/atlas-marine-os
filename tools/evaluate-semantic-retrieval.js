@@ -70,6 +70,17 @@ function oneUniverse(index,matrix){
   return {statement:'LEXICAL, SEMANTIC and HYBRID all rank the same chunks: the documents of the corpus manifest and nothing else',lexicalIndexChunks:index.chunks.length,vectorRows:rows,documents:new Set(index.chunks.map(c=>c.docIndex)).size,
     chunkSetSha256:sha256(index.chunks.map(c=>sha256(c.text)).join('\n'))};
 }
+// Corpus accounting (Owner integrity check of 2026-09-19). The manifest counts every non-empty chunk of its documents; the
+// lexical retriever has never indexed a chunk without a single indexable term (letters or digits), and the semantic builder
+// embeds exactly the chunks of that index. So: manifest chunks - not-indexable chunks = lexical universe = vector rows, or the
+// tool stops. In regulatory-core-v1 the difference is 3 chunks of one document that hold punctuation only (0 letters, 0 digits).
+function corpusAccounting(manifestCorpus,documents,index){
+  const notIndexable=[];documents.forEach(d=>(d.chunks||[]).forEach((c,chunkIndex)=>{if(typeof c==='string'&&c.trim()&&retriever.tokenize(c).length===0)notIndexable.push({title:d.title,chunkIndex,chars:c.length,letters:(c.match(/\p{L}/gu)||[]).length,digits:(c.match(/\p{N}/gu)||[]).length,contentHash:sha256(c).slice(0,16)});}));
+  const manifestChunks=manifestCorpus.totals.chunks;
+  if(manifestChunks!==manifestCorpus.documents.reduce((s,d)=>s+d.chunks,0)||manifestChunks-notIndexable.length!==index.chunks.length||new Set(index.chunks.map(c=>c.docIndex)).size!==manifestCorpus.documents.length)
+    throw new Error(`SCOPE_DRIFT: manifest ${manifestChunks} chunks, ${notIndexable.length} not indexable, lexical universe ${index.chunks.length}`);
+  return {manifestDocuments:manifestCorpus.documents.length,manifestChunks,notIndexableChunks:notIndexable.length,universeChunks:index.chunks.length,rule:'a chunk without any indexable term is in no universe: not in the lexical index, not embedded, not searchable by any system',notIndexable};
+}
 const summarize=rows=>{const n=rows.length;const rate=x=>n?Number((x/n).toFixed(3)):0;const strict=rows.filter(r=>r.strict);
   const out={probes:n,hit:rows.filter(r=>r.hit).length,hitRate:rate(rows.filter(r=>r.hit).length),strictProbes:strict.length,strictHit:strict.filter(r=>r.hit).length,mrr:Number((n?rows.reduce((s,r)=>s+(r.firstRank?1/r.firstRank:0),0)/n:0).toFixed(3)),notFoundWithinHorizon:rows.filter(r=>!r.firstRank).length,topK:{},language:{}};
   for(const k of TOP_K)out.topK[`hit@${k}`]=rows.filter(r=>r.hitAt[k]).length;
@@ -105,7 +116,7 @@ function main(){
   const {matrix,manifest}=loadVectors(args.indexDir,index,`CORPUS ${corpus.name} ${corpus.sha256}`);
   const q=JSON.parse(fs.readFileSync(path.join(args.indexDir,'queries-dev.json'),'utf8'));if(q.split!=='DEV'||q.model!==builder.MODEL||q.modelDigest!==manifest.modelDigest||q.instruction!==semantic.QUERY_INSTRUCTION)throw new Error('QUERY_VECTORS_MISMATCH');
   const probes=JSON.parse(fs.readFileSync(PROBES,'utf8')).probes.filter(p=>p.split==='DEV');
-  const universe=oneUniverse(index,matrix);
+  const universe={...oneUniverse(index,matrix),accounting:corpusAccounting(JSON.parse(fs.readFileSync(path.resolve(ROOT,args.corpus),'utf8')),corpus.documents,index)};
   const result={run:args.runId,probeSet:'probes-v1 DEV only',universe,corpus:{name:corpus.name,sha256:corpus.sha256,documents:corpus.documents.length,chunks:index.chunks.length,librarySha256},
     model:{name:manifest.model,digest:manifest.modelDigest,dimension:manifest.dimension,inputRule:manifest.inputRule,queryInstruction:q.instruction,queriesEmbeddedCold:q.cold},
     method:'All systems search the same corpus. HIT = one of the 6 passages shown (at most 2 per document) matches the probe needle; firstRank = first matching chunk in the ranking (horizon 200); strict = needle matches at most 20 chunks of the corpus. Probes whose needle does not exist in the corpus are left out and listed. Titles, ranks and hashes only - no passage text, no vectors.',
@@ -117,4 +128,4 @@ function main(){
   for(const [id,s] of Object.entries(result.systems)){const c=result.comparisonWithLexical[id];process.stdout.write(`${line(id,s)}${c?` | +[${c.gained.join(' ')}] -[${c.lost.join(' ')}]`:''}\n`);}
 }
 if(require.main===module)main();
-module.exports={parseArgs,loadVectors,evaluate,summarize,select,oneUniverse,SELECTION,HYBRIDS,PASSAGES,HORIZON};
+module.exports={parseArgs,loadVectors,evaluate,summarize,select,oneUniverse,corpusAccounting,SELECTION,HYBRIDS,PASSAGES,HORIZON};
