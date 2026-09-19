@@ -187,7 +187,7 @@
       "measured": "direct Ollama call: prompt evaluation about 30-45 tok/s, generation about 4-5 tok/s, grounded answer about 50-60 s per draft versus 5-6 minutes through the bridge; library index 1686 documents / 90539 chunks loads in about 32 s"
     },
     "phase_4_7_grounded_subset": {
-      "status": "MEASUREMENT INCOMPLETE - NO GROUNDED RESULT EXISTS. The engineering session's host memory guard stopped the background run three times (items 11, 5, 5); two real causes of memory growth were found and removed; after the third stop (9.6 GB free, model server bounded) the engineer did not retry and did not work around the guard. Code and findings: TESTED; NOT MERGED (draft PR); OWNER ACCEPTED = NOT RECORDED",
+      "status": "MEASUREMENT INCOMPLETE - NO GROUNDED RESULT EXISTS. The engineering session's host memory guard stopped the background run three times (items 11, 5, 5); two real causes of memory growth were found and removed; after the third stop (9.6 GB free, model server bounded) the engineer did not retry and did not work around the guard. Code and findings: TESTED; MERGED as PR #283 on 2026-09-19T01:57:05Z under the Owner delegation (main 38b4a4585eee261d3fb67310bd1d8016788887d4, CI verify green on 3c6be11, squash pinned to that head); OWNER ACCEPTED = NOT RECORDED",
       "document": "docs/project2/PHASE_4_7_GROUNDED_SUBSET.md",
       "records": "tests/benchmark/results/GROUNDED-001 (10 real rows, pipeline 0-v1, ABORTED.json - not a result), tests/benchmark/results/GROUNDED-002 (4 real rows under the final code, INCOMPLETE.json - not a result, resumable), tests/benchmark/results/GATE-SIM-003 (complete, reproducible, CI-enforced)",
       "how_to_finish": "from the Owner's own terminal: node --max-old-space-size=4096 tools/sinbad-grounded-service.js --port 31990 --min-free-gb 3 ; then node tools/run-grounded-subset.js --run-id GROUNDED-002 --resume (about 95 minutes, local, free; results.json is written only when all 36 items were really answered)",
@@ -195,6 +195,12 @@
       "findings": "(1) pipeline 0-v1 refused correctly but with a sentence that says nothing (PARTIAL under the accepted detectors, which were not touched) -> pipeline 0-v2 refusal names what it cannot confirm; (2) temporal 'still' read as a contrast connective blocked an honest refusal three times -> disclaimer screen 0-v3, narrow (still after an auxiliary; yet as 'not yet' or final), six contrastive evasions stay claims, GATE-SIM-003 identical to 002 item by item (FALSE_BLOCK 20/90, TEST 5/13, caught 10), GATE-SIM-002 now pinned by hash; (3) a refusal restating the question with 'and' stays a claim (screen kept strict) and was repeated three times at temperature 0 -> the pipeline feedback gives the plain form, in the language of the question",
       "host": "service footprint about 1.4 GB; model server 15.4 GB with memory mapping (CPU repack 6.0 GB + mapped file) -> use_mmap:false 9.95 GB; prompt cache about 380 MB per prompt (9.95 -> 12.8 GB in four questions) -> model unloaded after every question, proven bounded (10.33 GB while answering, 0 after); service refuses calls below --min-free-gb; runner stops on a lost service instead of recording error rows",
       "open": "the measurement; retrieval quality (live: ISPS ship security plan question refused although the library almost certainly holds the text); reserved vocabulary (no Sentinel / Gatekeeper change made); latency about 2.5-3.5 minutes per question"
+    },
+    "project2_handover_report": {
+      "status": "DELIVERED (docs only) 2026-09-19 from main 38b4a45 under the Owner delegation; accepts nothing on the Owner's behalf; OWNER ACCEPTED = NOT RECORDED",
+      "document": "docs/project2/PROJECT2_HANDOVER_REPORT.md",
+      "owner_only_decisions": "acceptance of 4.3-4.7 and of Draft Adapter 0-v2 / disclaimer screen 0-v3; D6 thresholds; whether the maritime slice gates; any wiring of the grounded pipeline; the cloud path 4.3a; key custody; changing the accepted Sentinel / Gatekeeper text screens (reserved vocabulary)",
+      "not_done": "the 36-item grounded measurement (INCOMPLETE, resumable from the Owner's terminal); retrieval quality; reserved vocabulary; everything under phase_3_remainder_and_later"
     },
     "phase_3_remainder_and_later": "NOT STARTED. The Co-Pilot model pass (IMPLEMENTATION GO + model policy GO), a model-driven Pilot loop, key custody and requiring attestations in any component, and any wiring or live integration of Sentinel v0, Gatekeeper v0, Co-Pilot v0 or Pilot v0 each require a separate Owner GO; no production AI behaviour changed."
   },
@@ -253,5 +259,5 @@
     "enforcement": "tests/baseline-001-freeze.test.js (part of npm test / CI verify) fails if any frozen file changes or the combined totals drift",
     "revision_policy": "immutable; corrections only as separately identified revisions (BASELINE-001-REV-n) with their own provenance; original files recoverable from aee0ad5"
   },
-  "last_verified_timestamp": "2026-09-19T01:45:54Z"
+  "last_verified_timestamp": "2026-09-19T01:58:35Z"
 }
