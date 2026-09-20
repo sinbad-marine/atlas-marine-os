@@ -54,12 +54,15 @@ test('Captain Sinbad exposes only working Chat and Academy tabs',async({page,con
   await popup.close();
 });
 
-test('Academy departments switch in the same functional classroom',async({page})=>{
-  await page.goto('/academy.html');
+test('Academy departments open as approved art layers before the functional classroom',async({page})=>{
   for(const section of ['goss-gasm','stcw','goc','general-maritime-education']){
-    const tab=page.locator(`[data-academy-section="${section}"]`);
-    await tab.click();
-    await expect(tab).toHaveClass(/\bactive\b/u);
+    await page.goto('/academy.html');
+    await expect(page.locator('.academy-landing')).toBeVisible();
+    await page.locator(`.academy-landing-hotspots [data-academy-open="${section}"]`).click({force:true});
+    await expect(page.locator(`[data-academy-art="${section}"].is-active`)).toBeVisible();
+    await expect(page.locator('#academyTeachingStage')).toBeHidden();
+    const command=section==='goss-gasm'?'family':'lesson';
+    await page.locator(`.academy-layer-hotspots [data-academy-scope="${section}"][data-academy-command="${command}"]`).first().click();
     await expect(page.locator('#academyTeachingStage')).toBeVisible();
     await expect(page.locator('#academyQuestionInput')).toBeVisible();
   }

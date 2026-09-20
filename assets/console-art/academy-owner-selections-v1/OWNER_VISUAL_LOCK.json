@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "sinbad-owner-visual-lock/v1",
+  "status": "OWNER_APPROVED_LOCKED",
+  "approvedAt": "2026-09-19",
+  "artistLanguage": "paul-gauguin",
+  "languageBaseline": "en",
+  "immutable": true,
+  "ownerDirective": "Use the selected Academy compositions exactly. Do not regenerate, replace, recolor, recrop or reinterpret a selected visual without explicit Owner approval.",
+  "selectionOrder": [
+    "C",
+    "C",
+    "A",
+    "B",
+    "A",
+    "B",
+    "A",
+    "C"
+  ],
+  "structuralRules": [
+    "GOC/ROC remains inside the GOSS/GASM examination system.",
+    "GOC/ROC is an independent radio-training family card and must never be nested under Electro-Technical.",
+    "Each Academy layer uses its own unique approved visual.",
+    "The UI copy baseline is English; language switching remains available."
+  ],
+  "layers": {
+    "sinbadAcademy": {
+      "selection": "C",
+      "route": "/academy.html",
+      "asset": "assets/console-art/academy-owner-selections-v1/selected/01-sinbad-academy-C.png",
+      "sha256": "0a819e59bc731b07d5bfa26c8e892f6c0d6abd1d1a72bd4e2659a9bb9003ea77"
+    },
+    "gossGasmQualifications": {
+      "selection": "C",
+      "route": "/academy.html?section=goss-gasm",
+      "asset": "assets/console-art/academy-owner-selections-v1/selected/02-goss-gasm-qualifications-C.png",
+      "sha256": "d2784208e21d67871c224c43eb33480731d8b81233c7d6d46624c6d6713ae90f"
+    },
+    "stcwTraining": {
+      "selection": "A",
+      "route": "/academy.html?section=stcw",
+      "asset": "assets/console-art/academy-owner-selections-v1/selected/03-stcw-training-A.png",
+      "sha256": "71c7d65b7268fb228fce7a48c2e3c3e7ef3b7f1bd74e1337156e3eb567179b05"
+    },
+    "gocRocRadio": {
+      "selection": "B",
+      "route": "/academy.html?section=goc",
+      "asset": "assets/console-art/academy-owner-selections-v1/selected/04-goc-roc-radio-B.png",
+      "sha256": "1d56d0eac513e6ebcca35ddd7537ad66c25eab8db910cb7f059ae06fa955e832"
+    },
+    "generalMaritimeEducation": {
+      "selection": "A",
+      "route": "/academy.html?section=general-maritime-education",
+      "asset": "assets/console-art/academy-owner-selections-v1/selected/05-general-maritime-education-A.png",
+      "sha256": "acca19a549c027dbdd230d542bd8d0964e58cdf0845c3405d70af0d2b7537017"
+    },
+    "ismIspsMlc": {
+      "selection": "B",
+      "route": "/academy.html?section=ism-isps-mlc",
+      "asset": "assets/console-art/academy-owner-selections-v1/selected/06-ism-isps-mlc-B.png",
+      "sha256": "b2916f9140693a53813dbc87d2edec021d9a9add3751164b42e281ab8a05e51d"
+    },
+    "professorSinbadClassroom": {
+      "selection": "A",
+      "route": "/academy.html#professor-sinbad",
+      "asset": "assets/console-art/academy-owner-selections-v1/selected/07-professor-sinbad-classroom-A.png",
+      "sha256": "ff32d9e84f49f5ac47f9f6704c50210a7061b55ffbb4f8b05a108d541706354e"
+    },
+    "gossGasmStudentExam": {
+      "selection": "C",
+      "route": "/academy.html?section=goss-gasm#student-exam",
+      "asset": "assets/console-art/academy-owner-selections-v1/selected/08-goss-gasm-student-exam-C.png",
+      "sha256": "c4ea83237e110821974e665940cea37047aac8e16f53ab6d74c732fc2cbd8334"
+    }
+  }
+}

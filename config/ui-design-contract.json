@@ -5,8 +5,9 @@
   "protectedFileSha256": {
     "index.html": "4b18c3a537540b89a9b4d37488038850061fa0b75b635d91d1c33e4e871b0bac",
     "styles.css": "a7b45fc9c86ad19afa18c7e99507cb30f25d83f0dd964d6d0364cb25a57684a4",
-    "academy.html": "729d9598025268edb54f5118fd97593857ed6d4ef5bec04499bde37fbda82d0e",
-    "academy.css": "9d2c9e160eaa0ed785e3125cbc0f878511d49aeaac31fbff765b1fbb599937fe",
+    "academy.html": "950b06d3a56a323d30b5e39874ecd2469f95f9f8775e9a609f25a6f13d4f08ea",
+    "academy.css": "22e47b356c594eaf8baad4d1b28b108f2e0574825aa74a6178d0a1bdc36b4fd7",
+    "academy-classroom-window.js": "f4de8e2e1415d19f517e262992b61fd7af9ba8ea4e800cb7bf5ffabd4da11893",
     "console-master-style.css": "641c46820b1284b1572bdb9545c6b543d427340a86c77b17184e4c17b694cd19",
     "app.js": "a318f57c077f037b05804fea938aff0f5efa143c0af66ba5f3d8e3a40b08428a"
   },
@@ -210,6 +211,27 @@
           "sha256": "ae8c167ffa10357527474cee9636dce333002f5aaba959ed4dcd1cfa56fd3811"
         }
       }
+    },
+    "sinbadAcademy": {
+      "status": "OWNER_APPROVED_LOCKED",
+      "approvedAt": "2026-09-19",
+      "route": "/academy.html",
+      "asset": "assets/console-art/academy-owner-selections-v1/selected/01-sinbad-academy-C.png",
+      "sha256": "0a819e59bc731b07d5bfa26c8e892f6c0d6abd1d1a72bd4e2659a9bb9003ea77",
+      "artDirection": "paul-gauguin",
+      "layoutPolicy": "OWNER_SELECTED_PAGE_AND_LAYER_COMPOSITION",
+      "languageBaseline": "en",
+      "immutable": true,
+      "selectionOrder": [
+        "C",
+        "C",
+        "A",
+        "B",
+        "A",
+        "B",
+        "A",
+        "C"
+      ]
     }
   },
   "interactionContracts": {
@@ -301,6 +323,35 @@
         "/index.html?workspace=enc-viewer",
         "/index.html?workspace=charts"
       ],
+      "immutable": true
+    },
+    "sinbadAcademyInnerLayers": {
+      "status": "OWNER_APPROVED_LOCKED",
+      "manifest": "assets/console-art/academy-owner-selections-v1/OWNER_VISUAL_LOCK.json",
+      "manifestSha256": "d40598c0585da6c0dd3261540674acb620fce5ee9c7ecf715785b4d4fd1a8c47",
+      "artistLanguage": "paul-gauguin",
+      "languageBaseline": "en",
+      "ownerChoices": [
+        "C",
+        "C",
+        "A",
+        "B",
+        "A",
+        "B",
+        "A",
+        "C"
+      ],
+      "routes": [
+        "/academy.html",
+        "/academy.html?section=goss-gasm",
+        "/academy.html?section=stcw",
+        "/academy.html?section=goc",
+        "/academy.html?section=general-maritime-education",
+        "/academy.html?section=ism-isps-mlc",
+        "/academy.html#professor-sinbad",
+        "/academy.html?section=goss-gasm#student-exam"
+      ],
+      "structuralRule": "GOC/ROC is an independent sibling qualification family inside GOSS/GASM, never a child of Electro-Technical.",
       "immutable": true
     }
   }

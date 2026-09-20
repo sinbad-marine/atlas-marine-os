@@ -7,8 +7,8 @@ const byId=id=>document.getElementById(id);
 const ACADEMY_SECTIONS=Object.freeze({
   'goss-gasm':Object.freeze({title:'GOSS / GASM Classroom',label:'GOSS / GASM',modules:Object.freeze(['gasm-seyir-sinav'])}),
   stcw:Object.freeze({title:'STCW Classroom',label:'STCW',modules:Object.freeze(['stcw-foundation','colregs-navigation-rules','electronic-navigation','marine-weather'])}),
-  goc:Object.freeze({title:'GOC Classroom',label:'GOC',modules:Object.freeze(['goc-foundation'])}),
-  'general-maritime-education':Object.freeze({title:'General Maritime Education',label:'GENERAL MARITIME EDUCATION',modules:Object.freeze(['general-maritime-education','chart-reading','tides-water-levels','currents-set-drift'])}),
+  goc:Object.freeze({title:'GOC / ROC Radio Classroom',label:'GOC / ROC RADIO',modules:Object.freeze(['goc-foundation'])}),
+  'general-maritime-education':Object.freeze({title:'General Maritime Education',label:'GENERAL MARITIME EDUCATION',modules:Object.freeze(['general-maritime-education','chart-reading','tides-water-levels','currents-set-drift','colregs-navigation-rules','electronic-navigation','marine-weather'])}),
   'ism-isps-mlc':Object.freeze({title:'ISM / ISPS / MLC Classroom',label:'ISM / ISPS / MLC',modules:Object.freeze(['ism-code-foundations'])})
 });
 const GEOMETRY_KEY='atlas_sinbad_academy_native_window';
@@ -52,7 +52,7 @@ let academyVoiceBusy=false;
 let academyHandsFreeRestartTimer=null;
 let academyLipSyncTimer=null;
 let academyIdleBlinkTimer=null;
-const academyLanguage=()=>['tr-TR','en-US','de-DE'].includes(byId('academyLanguage')?.value)?byId('academyLanguage').value:'tr-TR';
+const academyLanguage=()=>['tr-TR','en-US','de-DE'].includes(byId('academyLanguage')?.value)?byId('academyLanguage').value:'en-US';
 
 function setAcademyClassroomPhase(phase){
   const stage=byId('academyTeachingStage');if(!stage)return;
@@ -288,7 +288,7 @@ function renderGasmQualificationMenu(){
   const root=byId('gasmQualificationList');if(!root)return;root.replaceChildren();
   for(const branch of ['DECK','ENGINE','ELECTRO_TECHNICAL']){
     const qualifications=gasmCatalog.qualifications.filter(item=>item.branch===branch);if(!qualifications.length)continue;
-    const group=document.createElement('details');group.className='gasm-branch';group.open=branch==='DECK';
+    const group=document.createElement('details');group.className='gasm-branch';group.dataset.gasmBranch=branch;group.open=branch==='DECK';
     const summary=document.createElement('summary');summary.textContent=gasmBranchLabel(branch);group.append(summary);
     qualifications.forEach(qualification=>{
       const detail=document.createElement('details');detail.className='gasm-qualification';detail.dataset.qualificationCode=qualification.code;
@@ -355,14 +355,74 @@ function renderQuiz(){
 }
 function selectAcademySection(sectionId){
   const section=ACADEMY_SECTIONS[sectionId]||ACADEMY_SECTIONS['general-maritime-education'];
+  const resolvedSectionId=Object.prototype.hasOwnProperty.call(ACADEMY_SECTIONS,sectionId)?sectionId:'general-maritime-education';
+  const shell=document.querySelector('.academy-shell');if(shell){shell.dataset.academyActive=resolvedSectionId;shell.dataset.academyView='layer';}
   document.querySelectorAll('[data-academy-section]').forEach(button=>{const active=button.dataset.academySection===sectionId;button.classList.toggle('active',active);if(active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');});
   byId('academyTrackTitle').textContent=section.title;byId('academyTrackLabel').textContent=section.label;
+  const layerTitle=byId('academyLayerTitle');if(layerTitle)layerTitle.textContent=section.title;
+  document.querySelectorAll('[data-academy-art]').forEach(image=>image.classList.toggle('is-active',image.dataset.academyArt===resolvedSectionId));
   const select=byId('academyModule');select.replaceChildren();
   byId('openExamIntelligence').hidden=sectionId!=='goss-gasm';byId('openOwnerQuestionReview').hidden=sectionId!=='goss-gasm';
+  const familyGrid=byId('gossFamilyGrid'),examPreview=byId('student-exam');if(familyGrid)familyGrid.hidden=sectionId!=='goss-gasm';if(examPreview)examPreview.hidden=sectionId!=='goss-gasm';
   const gasmMenu=byId('gasmQualificationMenu'),gasmButton=byId('gasmMenuButton');if(gasmMenu)gasmMenu.hidden=sectionId!=='goss-gasm';if(gasmButton)gasmButton.setAttribute('aria-expanded',String(sectionId==='goss-gasm'));
   academyModuleOptions.filter(option=>section.modules.includes(option.value)).forEach(option=>{const node=document.createElement('option');node.value=option.value;node.textContent=option.label;select.append(node);});
   stopBoardTeaching();resetAcademyLessonClock();setAcademyClassroomPhase('welcome');const output=byId('academyOutput');output.replaceChildren();output.hidden=true;byId('academyTeachingTitle').textContent="Professor Sinbad's board";byId('academyTeachingText').replaceChildren();byId('academyTeachingText').setAttribute('aria-hidden','true');
   saveAcademySelection();
+}
+function showStandaloneAcademyLayer(layerId){
+  const shell=document.querySelector('.academy-shell');if(!shell)return;
+  shell.dataset.academyActive=layerId;shell.dataset.academyView='layer';
+  document.querySelectorAll('[data-academy-art]').forEach(image=>image.classList.toggle('is-active',image.dataset.academyArt===layerId));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function setAcademyModule(moduleId){
+  if(!moduleId)return;
+  const select=byId('academyModule'),option=[...select.options].find(item=>item.value===moduleId);if(!option)return;
+  select.value=moduleId;saveAcademySelection();
+}
+function focusAcademyDestination(target){
+  if(!target)return;
+  if(!target.hasAttribute('tabindex'))target.setAttribute('tabindex','-1');
+  requestAnimationFrame(()=>target.focus({preventScroll:true}));
+}
+function openAcademyLayerTool(button){
+  const command=button.dataset.academyCommand,targetSection=button.dataset.academyTargetSection;
+  if(command==='home'){returnToAcademyHome();return;}
+  if(command==='back-academy'){const shell=document.querySelector('.academy-shell'),active=shell?.dataset.academyActive;if(shell)shell.dataset.academyView='landing';window.scrollTo({top:0,behavior:'smooth'});focusAcademyDestination(document.querySelector(`.academy-program-card[data-academy-open="${active}"]`)||byId('academyLandingTitle'));return;}
+  if(command==='section'&&targetSection){selectAcademySection(targetSection);window.scrollTo({top:0,behavior:'smooth'});focusAcademyDestination(document.querySelector(`[data-academy-scope="${targetSection}"][data-academy-command]`)||byId('academyLayerTitle'));return;}
+  const requestedSection=button.dataset.academyToolsSection||button.dataset.academyScope;
+  const sectionId=Object.prototype.hasOwnProperty.call(ACADEMY_SECTIONS,requestedSection)?requestedSection:'general-maritime-education';
+  selectAcademySection(sectionId);setAcademyModule(button.dataset.academyModule);
+  const shell=document.querySelector('.academy-shell');if(shell)shell.dataset.academyView='tools';
+  if(command==='family'){
+    const family=button.dataset.academyFamily,menu=byId('gasmQualificationMenu');
+    const branch={deck:'DECK',engine:'ENGINE','electro-technical':'ELECTRO_TECHNICAL'}[family];
+    document.querySelectorAll('[data-gasm-family]').forEach(node=>node.classList.toggle('active',node.dataset.gasmFamily===family));
+    document.querySelectorAll('.gasm-branch').forEach(node=>{node.open=node.dataset.gasmBranch===branch;});
+    if(menu)menu.hidden=false;
+    const destination=document.querySelector(`.gasm-branch[data-gasm-branch="${branch}"] > summary`);
+    requestAnimationFrame(()=>{menu?.scrollIntoView({behavior:'smooth',block:'start'});focusAcademyDestination(destination||menu);});
+    return;
+  }
+  if(command==='lesson'){renderLesson();focusAcademyDestination(byId('academyTeachingTitle'));}
+  else if(command==='practice'){renderQuiz();focusAcademyDestination(byId('academyOutput'));}
+  else if(command==='professor')requestAnimationFrame(()=>{byId('professor-sinbad')?.scrollIntoView({behavior:'smooth',block:'start'});byId('academyQuestionInput')?.focus({preventScroll:true});});
+  else if(command==='exam')openExamIntelligence();
+}
+function handleAcademyLayerPointerActivation(event){
+  if(event.detail===0)return;
+  const container=event.currentTarget,shell=document.querySelector('.academy-shell'),active=shell?.dataset.academyActive,rect=container.getBoundingClientRect();
+  if(!active||!rect.width||!rect.height)return;
+  const x=((event.clientX-rect.left)/rect.width)*100,y=((event.clientY-rect.top)/rect.height)*100;
+  const candidates=[...container.querySelectorAll(`[data-academy-scope="${active}"][data-academy-command]`)].filter(button=>{
+    const style=button.style,x0=parseFloat(style.getPropertyValue('--hotspot-x')),y0=parseFloat(style.getPropertyValue('--hotspot-y')),width=parseFloat(style.getPropertyValue('--hotspot-w')),height=parseFloat(style.getPropertyValue('--hotspot-h'));
+    return x>=x0&&x<=x0+width&&y>=y0&&y<=y0+height;
+  }).sort((left,right)=>{
+    const area=button=>parseFloat(button.style.getPropertyValue('--hotspot-w'))*parseFloat(button.style.getPropertyValue('--hotspot-h'));
+    return area(left)-area(right);
+  });
+  if(!candidates.length)return;
+  event.preventDefault();event.stopPropagation();openAcademyLayerTool(candidates[0]);
 }
 function handleAcademySectionClick(button){
   const sectionId=button.dataset.academySection,menu=byId('gasmQualificationMenu');
@@ -377,10 +437,12 @@ function saveAcademySelection(){
 }
 function restoreAcademySelection(){
   let saved=null;try{saved=JSON.parse(localStorage.getItem(SELECTION_KEY)||'null');}catch{saved=null;}
-  const sectionId=saved&&typeof saved.section==='string'&&Object.prototype.hasOwnProperty.call(ACADEMY_SECTIONS,saved.section)?saved.section:'general-maritime-education';
+  let requestedSection='';try{requestedSection=new URL(location.href).searchParams.get('section')||'';}catch{}
+  const sectionId=Object.prototype.hasOwnProperty.call(ACADEMY_SECTIONS,requestedSection)?requestedSection:saved&&typeof saved.section==='string'&&Object.prototype.hasOwnProperty.call(ACADEMY_SECTIONS,saved.section)?saved.section:'general-maritime-education';
   selectAcademySection(sectionId);
   const select=byId('academyModule'),module=saved&&typeof saved.module==='string'?saved.module:'';
   if(module&&ACADEMY_SECTIONS[sectionId].modules.includes(module)&&[...select.options].some(option=>option.value===module)&&select.value!==module){select.value=module;select.dispatchEvent(new Event('change',{bubbles:true}));}
+  const shell=document.querySelector('.academy-shell');if(shell)shell.dataset.academyView=requestedSection?'layer':'landing';
   saveAcademySelection();
 }
 function appendAcademyMessage(role,text){
@@ -409,12 +471,12 @@ function updateAcademyRuntimePill(id,text,state='online'){
 }
 function refreshAcademyExamStatus(){
   const status=academyExamIntegration?.publicStatus?.(),button=byId('openExamIntelligence');
-  if(!status){updateAcademyRuntimePill('academyExamConnection','Sınav motoru yapılandırılmadı','offline');button.disabled=true;return;}
-  updateAcademyRuntimePill('academyExamConnection',status.releaseAuthorized?'Sınav motoru · kontrollü yayın':'Sınav motoru · sentetik/yerel',status.releaseAuthorized?'online':'pending');button.disabled=false;
+  if(!status){updateAcademyRuntimePill('academyExamConnection','Exam engine not configured','offline');button.disabled=true;return;}
+  updateAcademyRuntimePill('academyExamConnection',status.releaseAuthorized?'Exam engine · controlled release':'Exam engine · synthetic/local',status.releaseAuthorized?'online':'pending');button.disabled=false;
 }
 function openExamIntelligence(){
   try{academyExamIntegration.launch();}
-  catch(error){console.warn('Exam Intelligence launch unavailable',error);updateAcademyRuntimePill('academyExamConnection','Sınav motoru açılamadı','offline');}
+  catch(error){console.warn('Exam Intelligence launch unavailable',error);updateAcademyRuntimePill('academyExamConnection','Exam engine unavailable','offline');}
 }
 function openOwnerQuestionReview(){
   try{academyOwnerReviewIntegration?.launch();}
@@ -427,14 +489,14 @@ async function refreshAcademyRuntimeStatus(){
     try{
       const response=await fetch(`${SINBAD_BRIDGE_URL}/status`,{cache:'no-store',signal:controller.signal});if(!response.ok)throw new Error(`Bridge status ${response.status}`);
       const status=await response.json(),ai=status?.ai||{},library=status?.library||{};
-      updateAcademyRuntimePill('academyAiConnection',ai.online?`Yerel AI bağlı · ${ai.model||'Sinbad'}`:'Yerel AI modeli çevrimdışı',ai.online?'online':'offline');
+      updateAcademyRuntimePill('academyAiConnection',ai.online?`Local AI connected · ${ai.model||'Sinbad'}`:'Local AI model offline',ai.online?'online':'offline');
       const documents=Number(library.documents)||0,chunks=Number(library.chunks)||0;
-      updateAcademyRuntimePill('academyLibraryConnection',documents>0?`Kütüphane bağlı · ${documents.toLocaleString('tr-TR')} belge · ${chunks.toLocaleString('tr-TR')} parça`:'Kütüphane boş',documents>0?'online':'offline');
+      updateAcademyRuntimePill('academyLibraryConnection',documents>0?`Library connected · ${documents.toLocaleString('en-US')} documents · ${chunks.toLocaleString('en-US')} passages`:'Library empty',documents>0?'online':'offline');
       return status;
     }catch(error){lastError=error;if(attempt===0)await new Promise(resolve=>setTimeout(resolve,350));}
     finally{clearTimeout(timeout);}
   }
-  console.warn('Academy runtime status unavailable',lastError);updateAcademyRuntimePill('academyAiConnection','Yerel AI bağlantısı yok','offline');updateAcademyRuntimePill('academyLibraryConnection','Kütüphane bağlantısı yok','offline');return null;
+  console.warn('Academy runtime status unavailable',lastError);updateAcademyRuntimePill('academyAiConnection','Local AI unavailable','offline');updateAcademyRuntimePill('academyLibraryConnection','Library unavailable','offline');return null;
 }
 async function academyLocalAiAnswer(question,academyEvidence='',useOwnerLibrary=false){
   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),120000);
@@ -442,9 +504,9 @@ async function academyLocalAiAnswer(question,academyEvidence='',useOwnerLibrary=
     byId('academyVoiceStatus').textContent='Sinbad düşünüyor…';
     const groundedPrompt=academyEvidence?`Öğrencinin sorusu: ${String(question).slice(0,1200)}\n\nDoğrulanmış çevrimdışı Academy bağlamı (yalnız bu bağlama dayan, eksikse açıkça söyle):\n${String(academyEvidence).slice(0,3500)}`:String(question).slice(0,1200);
     const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/chat`,{method:'POST',headers:{'Content-Type':'application/json',...argosBridgeHeaders('AI_INFERENCE','/ai/chat')},body:JSON.stringify({question:groundedPrompt,libraryQuery:String(question).slice(0,1200),language:academyLanguage(),history:useOwnerLibrary?[]:academyDialogueHistory(),useLibrary:useOwnerLibrary,context:{surface:'sinbad-academy',module:byId('academyModule').value,grounded:Boolean(academyEvidence),ownerLibrary:useOwnerLibrary}}),signal:controller.signal});
-    if(!response.ok){byId('academyVoiceStatus').textContent='Yerel AI yanıt hatası';updateAcademyRuntimePill('academyAiConnection','Yerel AI açık · son istek başarısız','offline');refreshAcademyRuntimeStatus();return null;}const data=await response.json();const answer=typeof data?.answer==='string'?data.answer.trim().slice(0,6000):'';
-    if(!answer)return null;const model=String(data.model||'Sinbad').slice(0,32);byId('academyVoiceStatus').textContent=`Local AI · ${model}`;updateAcademyRuntimePill('academyAiConnection',`Yerel AI bağlı · ${model}`);if(useOwnerLibrary)refreshAcademyRuntimeStatus();return answer;
-  }catch(error){console.warn('Academy local AI unavailable',error);byId('academyVoiceStatus').textContent=error?.name==='AbortError'?'Yerel AI zaman aşımı':'Yerel AI bağlantı hatası';updateAcademyRuntimePill('academyAiConnection','Yerel AI açık · son istek tamamlanamadı','offline');refreshAcademyRuntimeStatus();return null;}finally{clearTimeout(timeout);}
+    if(!response.ok){byId('academyVoiceStatus').textContent='Local AI response error';updateAcademyRuntimePill('academyAiConnection','Local AI online · last request failed','offline');refreshAcademyRuntimeStatus();return null;}const data=await response.json();const answer=typeof data?.answer==='string'?data.answer.trim().slice(0,6000):'';
+    if(!answer)return null;const model=String(data.model||'Sinbad').slice(0,32);byId('academyVoiceStatus').textContent=`Local AI · ${model}`;updateAcademyRuntimePill('academyAiConnection',`Local AI connected · ${model}`);if(useOwnerLibrary)refreshAcademyRuntimeStatus();return answer;
+  }catch(error){console.warn('Academy local AI unavailable',error);byId('academyVoiceStatus').textContent=error?.name==='AbortError'?'Local AI timed out':'Local AI connection error';updateAcademyRuntimePill('academyAiConnection','Local AI online · last request incomplete','offline');refreshAcademyRuntimeStatus();return null;}finally{clearTimeout(timeout);}
 }
 function answerAcademySocialTurn(question){
   const normalized=String(question||'').toLocaleLowerCase('tr-TR').normalize('NFC').replace(/[^a-zçğıöşü\s]/gu,' ').replace(/\s+/g,' ').trim();
@@ -486,7 +548,7 @@ async function answerAcademyQuestion(){
   appendAcademyMessage('sinbad',answer);presentAcademyAnswerOnBoard(question,answer);speakAcademyAnswer(answer,{onComplete:completeAcademyVoiceTurn});
 }
 function updateAcademyHandsFreeButton(){
-  const button=byId('toggleAcademyHandsFree');button.setAttribute('aria-pressed',String(academyHandsFreeEnabled));button.textContent=academyHandsFreeEnabled?'🎧 Eller serbest: Açık':'🎧 Eller serbest: Kapalı';
+  const button=byId('toggleAcademyHandsFree');button.setAttribute('aria-pressed',String(academyHandsFreeEnabled));button.textContent=academyHandsFreeEnabled?'🎧 Hands-free: On':'🎧 Hands-free: Off';
 }
 function scheduleAcademyHandsFreeListening(delay=500){
   clearTimeout(academyHandsFreeRestartTimer);if(!academyHandsFreeEnabled||academyVoiceBusy)return;
@@ -496,15 +558,15 @@ function completeAcademyVoiceTurn(){academyVoiceBusy=false;scheduleAcademyHandsF
 function startAcademyListening(){
   const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;if(!Recognition){byId('academyVoiceStatus').textContent='Voice input unsupported';return;}
   if(academyRecognition)return;academyRecognition=new Recognition();academyRecognition.lang=academyLanguage();academyRecognition.interimResults=false;academyRecognition.maxAlternatives=1;academyRecognition.continuous=academyHandsFreeEnabled;
-  academyRecognition.onstart=()=>{byId('academyVoiceStatus').textContent=academyHandsFreeEnabled?'Eller serbest · Dinliyorum…':'Dinliyorum…';byId('startAcademyListening').disabled=true;byId('stopAcademyListening').disabled=false;renderAcademyCharacterCue({state:'listening',gesture:'listen-lean',gaze:'audience'},'');};
+  academyRecognition.onstart=()=>{byId('academyVoiceStatus').textContent=academyHandsFreeEnabled?'Hands-free · Listening…':'Listening…';byId('startAcademyListening').disabled=true;byId('stopAcademyListening').disabled=false;renderAcademyCharacterCue({state:'listening',gesture:'listen-lean',gaze:'audience'},'');};
   academyRecognition.onresult=event=>{const result=[...event.results].reverse().find(item=>item.isFinal!==false)||event.results[event.results.length-1];const transcript=String(result?.[0]?.transcript||'').trim();if(!transcript)return;byId('academyQuestionInput').value=transcript;if(academyHandsFreeEnabled)academyRecognition?.stop();answerAcademyQuestion();};
-  academyRecognition.onerror=event=>{if(event.error!=='aborted')byId('academyVoiceStatus').textContent='Ses girişi kullanılamıyor';};
-  academyRecognition.onend=()=>{academyRecognition=null;byId('startAcademyListening').disabled=false;byId('stopAcademyListening').disabled=true;if(!academyVoiceBusy)byId('academyVoiceStatus').textContent=academyHandsFreeEnabled?'Eller serbest · Yeniden dinleniyor…':'Text ready';scheduleAcademyHandsFreeListening();};academyRecognition.start();
+  academyRecognition.onerror=event=>{if(event.error!=='aborted')byId('academyVoiceStatus').textContent='Voice input unavailable';};
+  academyRecognition.onend=()=>{academyRecognition=null;byId('startAcademyListening').disabled=false;byId('stopAcademyListening').disabled=true;if(!academyVoiceBusy)byId('academyVoiceStatus').textContent=academyHandsFreeEnabled?'Hands-free · Listening again…':'Text ready';scheduleAcademyHandsFreeListening();};academyRecognition.start();
 }
 function setAcademyHandsFree(enabled){
   academyHandsFreeEnabled=Boolean(enabled);updateAcademyHandsFreeButton();clearTimeout(academyHandsFreeRestartTimer);
   if(!academyHandsFreeEnabled){academyRecognition?.abort();window.speechSynthesis?.cancel?.();stopAcademyLipSync();academyVoiceBusy=false;byId('academyVoiceStatus').textContent='Text ready';return;}
-  byId('academyVoiceStatus').textContent='Eller serbest başlatılıyor…';startAcademyListening();
+  byId('academyVoiceStatus').textContent='Starting hands-free…';startAcademyListening();
 }
 function returnToAcademyHome(){
   saveWindowGeometry();
@@ -515,6 +577,7 @@ function returnToAcademyHome(){
   window.location.assign(marineHome);
 }
 function goBackFromAcademy(){
+  const shell=document.querySelector('.academy-shell');if(shell&&shell.dataset.academyView!=='landing'){shell.dataset.academyView='landing';window.scrollTo({top:0,behavior:'smooth'});return;}
   try{const referrer=document.referrer?new URL(document.referrer):null;if(referrer?.origin===location.origin&&history.length>1){history.back();return;}}catch{}returnToAcademyHome();
 }
 document.title='Sinbad Academy — Professor Sinbad Classroom';
@@ -528,6 +591,15 @@ refreshAcademyExamStatus();
 const academyRuntimeStatusTimer=setInterval(refreshAcademyRuntimeStatus,15000);
 window.addEventListener('focus',refreshAcademyRuntimeStatus);window.addEventListener('online',refreshAcademyRuntimeStatus);document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAcademyIdleBlink();else{refreshAcademyRuntimeStatus();scheduleAcademyIdleBlink();}});
 document.querySelectorAll('[data-academy-section]').forEach(button=>button.addEventListener('click',()=>handleAcademySectionClick(button)));
+document.querySelectorAll('[data-academy-open]').forEach(button=>button.addEventListener('click',()=>{
+  const target=button.dataset.academyOpen;
+  if(target==='professor-sinbad'){showStandaloneAcademyLayer(target);return;}
+  if(!Object.prototype.hasOwnProperty.call(ACADEMY_SECTIONS,target))return;
+  selectAcademySection(target);byId('academyWorkspace')?.scrollIntoView({behavior:'smooth',block:'start'});
+}));
+document.querySelectorAll('[data-academy-command]').forEach(button=>button.addEventListener('click',()=>openAcademyLayerTool(button)));
+document.querySelector('.academy-layer-hotspots')?.addEventListener('click',handleAcademyLayerPointerActivation,true);
+document.querySelectorAll('[data-gasm-family]').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('[data-gasm-family]').forEach(node=>node.classList.toggle('active',node===button));const menu=byId('gasmQualificationMenu');if(menu){menu.hidden=false;menu.scrollIntoView({behavior:'smooth',block:'nearest'});}}));
 byId('academyModule').addEventListener('change',saveAcademySelection);
 byId('startAcademyLesson').addEventListener('click',renderLesson);
 byId('startAcademyQuiz').addEventListener('click',renderQuiz);
@@ -538,7 +610,7 @@ byId('academyQuestionInput').addEventListener('keydown',event=>{if(event.key==='
 byId('startAcademyListening').addEventListener('click',startAcademyListening);
 byId('stopAcademyListening').addEventListener('click',()=>{if(academyHandsFreeEnabled)setAcademyHandsFree(false);else academyRecognition?.stop();});
 byId('toggleAcademyHandsFree').addEventListener('click',()=>setAcademyHandsFree(!academyHandsFreeEnabled));
-byId('academyLanguage').value=['tr-TR','en-US','de-DE'].includes(localStorage.getItem(LANGUAGE_KEY))?localStorage.getItem(LANGUAGE_KEY):'tr-TR';
+byId('academyLanguage').value=['tr-TR','en-US','de-DE'].includes(localStorage.getItem(LANGUAGE_KEY))?localStorage.getItem(LANGUAGE_KEY):'en-US';
 byId('academyLanguage').addEventListener('change',()=>{localStorage.setItem(LANGUAGE_KEY,academyLanguage());academyRecognition?.abort();academyRecognition=null;byId('academyVoiceStatus').textContent=academyLanguage()==='tr-TR'?'Türkçe hazır':academyLanguage()==='de-DE'?'Deutsch bereit':'English ready';});
 byId('academyBackButton').addEventListener('click',goBackFromAcademy);
 byId('academyHomeButton').addEventListener('click',returnToAcademyHome);
@@ -547,6 +619,7 @@ window.addEventListener('beforeunload',()=>{clearInterval(academyRuntimeStatusTi
 window.addEventListener('message',event=>{
   if(event.origin!==location.origin||event.source!==window.opener)return;
   const message=event.data;if(!message||message.version!==1)return;
+  if(['SINBAD_ACADEMY_WRITE_BOARD','SINBAD_ACADEMY_DRAW_SHAPE','SINBAD_ACADEMY_CLEAR_BOARD'].includes(message.type)){const shell=document.querySelector('.academy-shell');if(shell)shell.dataset.academyView='tools';}
   let appliedAction=null;
   if(message.type==='SINBAD_ACADEMY_WRITE_BOARD'&&typeof message.text==='string'&&message.text.trim()&&message.text.length<=200&&writeCustomTextAtBoard(message.text))appliedAction=Object.freeze({kind:'text',value:message.text.trim()});
   if(message.type==='SINBAD_ACADEMY_DRAW_SHAPE'&&['circle','triangle','rectangle','hexagon','arrow','axes'].includes(message.shape)&&['small','standard','large'].includes(message.size||'standard')&&drawAllowedShapeAtBoard(message.shape,message.size||'standard'))appliedAction=Object.freeze({kind:'shape',value:message.shape,size:message.size||'standard'});
