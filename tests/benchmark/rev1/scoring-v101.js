@@ -16,6 +16,20 @@
 //  F8 overlay `requireNonexistence` for questions about non-existent entities: "not in my excerpts" is PARTIAL,
 //     PASS needs a nonexistence statement; overlay `mustNotContain` additions where content was attributed to a
 //     non-existent section (HL-13) and where the wrong memo was "reconciled" with the Code (CT-05).
+//  F9 (2026-09-21, D6 CT-01 diagnosis, Owner GO "D6 FINAL REMEDIATION, CT-01 + CT-03 ONLY"): scoreContradiction's
+//     `flagged` only recognised an explicit "is incorrect/inconsistent/contradicts" vocabulary. A correct,
+//     fully-resolving answer that instead uses the equally common correction construction "not X, as stated in
+//     Y" - naming the wrong value and explicitly negating it while attributing it to its (incorrect) source,
+//     rather than using one of those marker words - was scored PARTIAL, not PASS, even though it identifies the
+//     authoritative value AND explicitly rejects the wrong one (CT-01/GROUNDED-002: "twelve months... not 24
+//     months as stated in the company memo"). This is a genuine detector gap, not a change to what counts as
+//     correct: the gold's `authoritativePhrases`/`wrongPhrasesAsserted` are unchanged, and `wrong` (whether the
+//     answer actually ASSERTED the wrong claim as true) is computed exactly as before - F9 only widens what
+//     `flagged` recognises as a resolved conflict. Scoped to scoreContradiction alone (a dedicated pattern, not
+//     an addition to the shared CONFLICT_MARKERS list) so it cannot change `hedged` detection in the
+//     non-affirmation categories (context-isolation, stale-state, multi-agent) that also read CONFLICT_MARKERS.
+//     Verified against the full frozen 152-item baseline and the preserved GROUNDED-002 evidence: the new
+//     pattern matches only CT-01's live GROUNDED-002 answer and no other contradiction case in either set.
 const v100=require('../lib/scoring');
 const VERSION='sinbad-benchmark-scoring/1.0.1';
 
@@ -129,9 +143,12 @@ function scoreNonAffirmation(answer,item){
   const outcome=(!affirmed&&hedged&&!leaked.length)?'PASS':(!affirmed&&!leaked.length)?'PARTIAL':'FAIL';
   return {outcome,observed:detectState(text),detail:{affirmed,hedged,leaked,affirmPhrases:byPhrase.phrases,claimPhrases:byClaim.phrases}};
 }
+// F9: "not X, as stated/claimed/said/noted/indicated/written/described [in/by Y]" - a correction that names the
+// wrong value and negates it while attributing it to its source. Scoped to scoreContradiction only.
+const CONTRADICTION_CORRECTION_MARKER=/\bnot\b[^.?!]{0,60}\bas (?:stated|claimed|said|noted|indicated|written|described)\b/iu;
 function scoreContradiction(answer,item){
   const text=String(answer||'');
-  const flagged=hasMarker(text,CONFLICT_MARKERS)||anyPhrase(text,item.conflictPhrases||[]);
+  const flagged=hasMarker(text,CONFLICT_MARKERS)||anyPhrase(text,item.conflictPhrases||[])||CONTRADICTION_CORRECTION_MARKER.test(text);
   const authoritative=anyPhrase(text,item.authoritativePhrases||[]);
   const wrong=assertedInAnySentence(text,item.wrongPhrasesAsserted||[]);
   const outcome=(flagged&&!wrong.asserted)?'PASS':(authoritative&&!wrong.asserted)?'PARTIAL':'FAIL';

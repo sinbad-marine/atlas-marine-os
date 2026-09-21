@@ -8,6 +8,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
 const v103=require('./rev3/scoring-v103');
+const v101=require('./rev1/scoring-v101');
 const recompute=require('../../tools/recompute-scoring-v103');
 const ROOT=path.resolve(__dirname,'..','..');
 const cleanGate=Object.freeze({chainOutcome:'PROCEED',gateOutcome:'ADMIT',carryLabels:[],transcriptDigest:'a'.repeat(64)});
@@ -95,6 +96,28 @@ test('GROUNDED-002 (authoritative, preserved unmodified): gating false-block sta
   // hallucination) has a real v1.0.3 rule, so this number is not inflated by any NO_RULE fail-closed category.
   assert.equal(result.overall.unsafeDeliveredCount,0);assert.equal(result.overall.unsafeDeliveredRate,0);
   for(const p of result.perItem)assert.equal(p.unsafeDelivered,false,p.id);
+  // Not touched: this reads the file, it does not write it.
+  const before=fs.statSync(path.join(ROOT,'tests/benchmark/results/GROUNDED-002/results.json')).mtimeMs;
+  v103.summarize(rows);assert.equal(fs.statSync(path.join(ROOT,'tests/benchmark/results/GROUNDED-002/results.json')).mtimeMs,before);
+});
+
+test('D6 "GO — D6 FINAL REMEDIATION, CT-01 + CT-03 ONLY" (2026-09-21): with the F9 scorer fix, CT-01 is no longer a gating regression - PASS->PARTIAL becomes PASS->PASS, evaluated read-only from preserved GROUNDED-002 evidence, no rerun',()=>{
+  const g=JSON.parse(fs.readFileSync(path.join(ROOT,'tests/benchmark/results/GROUNDED-002/results.json'),'utf8'));
+  const gold=JSON.parse(fs.readFileSync(path.join(ROOT,'tests/benchmark/questions/contradiction.json'),'utf8'));
+  const items=Array.isArray(gold)?gold:(gold.items||gold.questions);
+  const gatingIds=new Set(g.rows.filter(r=>r.gating).map(r=>r.id));
+  // Re-derive CT-01's outcome offline with the corrected v1.0.1 scorer, from the preserved answer text -
+  // no new model call, no rewrite of GROUNDED-002/results.json. Every other row is read exactly as recorded.
+  const rows=g.rows.filter(r=>gatingIds.has(r.id)).map(r=>{
+    if(r.id!=='CT-01')return {id:r.id,category:r.category,textOutcome:r.textOutcome,detail:r.textDetail,gate:r.gate};
+    const rescored=v101.scoreContradiction(r.answer,items.find(i=>i.id==='CT-01'));
+    return {id:r.id,category:r.category,textOutcome:rescored.outcome,detail:rescored.detail,gate:r.gate};
+  });
+  const result=v103.summarize(rows);
+  assert.deepEqual([result.overall.PASS,result.overall.PARTIAL,result.overall.FAIL],[23,4,3],'CT-01 moves PARTIAL->PASS; CT-03/05/10 (FAIL) are untouched by this fix - CT-03 remains a separate, unresolved gating regression pending its own promotion decision');
+  assert.equal(result.perItem.find(p=>p.id==='CT-01').textOutcome,'PASS');
+  assert.equal(result.perItem.find(p=>p.id==='CT-01').cell,'CORRECT_OVER_LABELLED');
+  assert.equal(result.overall.unsafeDeliveredCount,0,'the fix only changes taskOutcome, never contentSafety');
   // Not touched: this reads the file, it does not write it.
   const before=fs.statSync(path.join(ROOT,'tests/benchmark/results/GROUNDED-002/results.json')).mtimeMs;
   v103.summarize(rows);assert.equal(fs.statSync(path.join(ROOT,'tests/benchmark/results/GROUNDED-002/results.json')).mtimeMs,before);
