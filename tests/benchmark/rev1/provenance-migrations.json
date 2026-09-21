@@ -1,0 +1,16 @@
+{
+  "version": "sinbad-benchmark-rev1-provenance/1-v1",
+  "purpose": "Records every authorized, fingerprint-only regeneration of tests/benchmark/results/BASELINE-001-REV-1/results.json (a change to scoring-v101.js's own file bytes, with zero change to any per-item v1.0.1 outcome). tests/benchmark/rev2/stage-gate-subset-v1.json - the frozen 30-item stage-gate set - is never touched by these migrations; its derivedFrom.resultsSha256 is a historical pin to the exact REV-1 snapshot it was originally selected from, not a live pointer expected to track every later scorer refresh. This file exists so that divergence between the frozen subset's historical pin and REV-1's current self-hash is an explicit, documented, tested fact - not an unexplained mismatch.",
+  "migrations": [
+    {
+      "date": "2026-09-21",
+      "ownerGo": "GO — D6 FINAL REMEDIATION, CT-01 + CT-03 ONLY; GO — refresh REV-1/REV-2/GATE-SIM-003 fingerprints only, keep CT-03 as plan; GO — D6 GREEN-BUILD CLOSURE ONLY",
+      "reason": "F9 fix to scoreContradiction (tests/benchmark/rev1/scoring-v101.js), diagnosed for CT-01 (GROUNDED-002, PASS->PARTIAL): a correct, fully-resolving answer used the construction 'not X, as stated in Y' rather than an 'is incorrect/inconsistent' marker word, so `flagged` never fired. Scoped to scoreContradiction only; does not touch the shared CONFLICT_MARKERS list read by other categories.",
+      "scorerFileChanged": "tests/benchmark/rev1/scoring-v101.js",
+      "priorResultsSha256": "ecbaeb26a85d6c836b114b686c1ad84fda364680da248d3d365e7f6256163cdf",
+      "newResultsSha256": "08275325e921bd76bdc5917738275d172b9c86eeb1af4aa8432650b4102cdf0c",
+      "itemOutcomeDrift": "none - verified by direct comparison: every one of the 152 v1.0.1 per-item outcomes (PASS/PARTIAL/FAIL/ERROR) in BASELINE-001-REV-1 is byte-identical before and after this migration. The new correction-construction pattern matches zero items in the frozen 152-item baseline; it only ever fires on CT-01's separate, later GROUNDED-002 live-run answer (a different piece of text, read and rescored offline, never written into any frozen baseline file). Only REV-1's own embedded scorerV101Sha256 fingerprint - and therefore REV-1's own file hash - changed.",
+      "frozenSubsetImpact": "tests/benchmark/rev2/stage-gate-subset-v1.json is not modified by this migration. Its derivedFrom.resultsSha256 correctly continues to record the PRIOR (priorResultsSha256 above) REV-1 snapshot as the historical origin of the frozen 30-item selection - this is intended, not drift, and is explicitly tested (tests/benchmark/scoring-v102.test.js)."
+    }
+  ]
+}
