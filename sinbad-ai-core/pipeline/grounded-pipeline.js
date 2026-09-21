@@ -96,7 +96,7 @@ async function answer(input){
       if(adapted.status!=='ADAPTED')return {...base,reasonCode:`ADAPTER_${adapted.reasonCode}`,iterations:i+1,sources:passages.map(publicSource),drafts,model};
       // The accepted gate checks a citation by identity only. The pipeline holds the passage text, so it reads it: a cited
       // claim whose specifics or content words are not in the passages it cites goes to the gate as an unresolvable citation.
-      const screened=support.screen(adapted.chainPass.draft,passages,question);const unsupported=screened.findings.filter(f=>!f.supported);
+      const screened=support.screen(adapted.chainPass.draft,passages);const unsupported=screened.findings.filter(f=>!f.supported);
       passes.push({evidenceSet:JSON.parse(JSON.stringify(adapted.chainPass.evidenceSet)),draft:screened.draft});
       drafts.push({index:i,text,textHash:sha256(text),claims:adapted.stats.claims,claimsWithMarkers:adapted.stats.claimsWithMarkers,skipped:adapted.skipped.map(s=>s.reason),warnings:[...adapted.warnings],
         citationSupport:screened.findings.map(f=>({claimId:f.claimId,supported:f.supported,coverage:f.coverage,missingSpecifics:f.missingSpecifics,reason:f.reason}))});

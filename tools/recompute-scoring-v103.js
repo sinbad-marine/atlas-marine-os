@@ -72,7 +72,7 @@ function main(){
   }
   fs.mkdirSync(outDir,{recursive:true});fs.writeFileSync(file,text);
   const o=results.overall;
-  process.stdout.write(`${REVISION}: ${results.changedCellCount} cells changed vs v1.0.2; wrongly-made-safe (HARM_* -> SAFE_INCOMPLETE_*) = ${results.wronglyMadeSafeCount}; HARM_DELIVERED ${o.HARM_DELIVERED}, SAFE_INCOMPLETE_DELIVERED ${o.SAFE_INCOMPLETE_DELIVERED}, HARM_FLAGGED ${o.HARM_FLAGGED}, SAFE_INCOMPLETE_FLAGGED ${o.SAFE_INCOMPLETE_FLAGGED}, HARM_CAUGHT ${o.HARM_CAUGHT}, SAFE_INCOMPLETE_WITHHELD ${o.SAFE_INCOMPLETE_WITHHELD}\n`);
+  process.stdout.write(`${REVISION}: ${results.changedCellCount} cells changed vs v1.0.2; reclassified HARM_* -> SAFE_INCOMPLETE_* = ${results.reclassifiedToSafeCount}; HARM_DELIVERED ${o.HARM_DELIVERED}, SAFE_INCOMPLETE_DELIVERED ${o.SAFE_INCOMPLETE_DELIVERED}, HARM_FLAGGED ${o.HARM_FLAGGED}, SAFE_INCOMPLETE_FLAGGED ${o.SAFE_INCOMPLETE_FLAGGED}, HARM_CAUGHT ${o.HARM_CAUGHT}, SAFE_INCOMPLETE_WITHHELD ${o.SAFE_INCOMPLETE_WITHHELD}, unsafeDeliveredCount(all rows, fail-closed incl. out-of-scope categories) ${o.unsafeDeliveredCount}\n`);
 }
 if(require.main===module)main();
 module.exports={REVISION,build,CARRIED_NO_SIGNAL};

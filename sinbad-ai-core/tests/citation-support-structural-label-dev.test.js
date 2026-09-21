@@ -8,15 +8,23 @@
 // B", and never merely because the claim does. A global exemption on the head word alone ("evidence") would
 // let a claim swap the letter suffix ("Evidence B") or invent an unrelated word in the same shape ("Company
 // A", "Captain A", "Vessel B" - genuine named entities a claim can fabricate exactly like "Captain John
-// Smith" did in the original Phase 4.6 case) and inherit an exemption it never earned. This file is DEV-only:
-// it re-applies the existing, already-recorded GROUNDED-002 drafts and passages (Owner-preserved evidence,
-// read only) and hand-written adversarial sentences. It does not read, run or touch probes-test2-v1.json,
-// probes-test3-regulatory-core-v1.json or any other blind set.
+// Smith" did in the original Phase 4.6 case) and inherit an exemption it never earned.
+//
+// THIS IS A DEV-ONLY EXPERIMENT (Owner revision: "Do not leave the experimental structural-label exemption
+// wired into the live citation-support.js path used by grounded-pipeline.js... keep the new question-bound
+// implementation in a separate DEV-only module/test path"). It tests
+// `../dev/citation-support-structural-label-dev.js` - outside pipeline/ entirely, so it is not even in the
+// same directory the accepted purity scan enumerates - NOT the accepted, unmodified
+// `../pipeline/citation-support.js` that grounded-pipeline.js actually calls. It re-applies the existing,
+// already-recorded GROUNDED-002 drafts and passages (Owner-preserved evidence, read only) and hand-written
+// adversarial sentences. It does not read, run or touch probes-test2-v1.json, probes-test3-regulatory-
+// core-v1.json or any other blind set.
 const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
-const support=require('../pipeline/citation-support.js');
+const support=require('../dev/citation-support-structural-label-dev.js');
+const live=require('../pipeline/citation-support.js');
 const ROOT=path.resolve(__dirname,'..','..');
 const CT03_QUESTION="Evidence A (ISM Code Element 4): the designated person ashore must have 'direct access to the highest level of management'. Evidence B (organisation chart note): 'The DPA reports only to the technical superintendent and has no access to top management.' Is the organisation compliant with Evidence A?";
 
@@ -142,9 +150,27 @@ test('structuralLabelPairs and profile: the exact rule, in isolation - full pair
   assert.deepEqual(support.profile('The claim under Company B was refused [S1].',new Set(['company a'])).specifics,['company'],'a different letter suffix than the anchored pair earns no exemption');
 });
 
-test('citation-support.js stays pure and inert: version bumped to 0-v4, still no I/O, still frozen',()=>{
-  const source=fs.readFileSync(path.join(__dirname,'..','pipeline','citation-support.js'),'utf8');
-  assert.equal(support.VERSION,'sinbad-citation-support/0-v4');
+test('the DEV module stays pure and inert: no I/O, frozen, clearly versioned as an experiment',()=>{
+  const source=fs.readFileSync(path.join(__dirname,'..','dev','citation-support-structural-label-dev.js'),'utf8');
+  assert.equal(support.VERSION,'sinbad-citation-support-dev/structural-label-pair/0-v1');
   assert.doesNotMatch(source,/require\(/u);assert.doesNotMatch(source,/\bfetch\(|process\.env|Date\.now\(|new Date\(|Math\.random\(/u);
   assert.equal(Object.isFrozen(support),true);
+});
+
+test('the LIVE citation-support.js used by grounded-pipeline.js is untouched: still 0-v1, no structural-label mechanism, byte-identical to the accepted Phase 4.6 baseline',()=>{
+  assert.equal(live.VERSION,'sinbad-citation-support/0-v1');
+  assert.equal('structuralLabelPairs' in live,false,'the live module has no structural-label exemption at all');
+  assert.equal(live.profile.length,1,'live profile(claimText) takes no question-derived argument');
+  assert.equal(live.assess.length,2,'live assess(claimText, passageTexts) takes no questionText argument');
+  assert.equal(live.screen.length,2,'live screen(draft, passages) takes no questionText argument');
+  const accepted=require('node:child_process').execSync('git show 72e240f:sinbad-ai-core/pipeline/citation-support.js',{cwd:ROOT,encoding:'utf8'});
+  const current=fs.readFileSync(path.join(__dirname,'..','pipeline','citation-support.js'),'utf8').replace(/\r\n/g,'\n');
+  assert.equal(current,accepted.replace(/\r\n/g,'\n'),'byte-identical (modulo line endings) to the accepted Phase 4.6 commit');
+});
+
+test('grounded-pipeline.js calls the live screen() with no third argument: the DEV exemption is not reachable from the pipeline',()=>{
+  const source=fs.readFileSync(path.join(__dirname,'..','pipeline','grounded-pipeline.js'),'utf8');
+  assert.match(source,/require\(['"]\.\/citation-support['"]\)/u,'imports the live module, not the dev one');
+  assert.doesNotMatch(source,/pipeline\/dev\//u,'never imports anything under pipeline/dev');
+  assert.match(source,/support\.screen\(adapted\.chainPass\.draft,passages\);/u,'screen() is called with exactly two arguments');
 });
