@@ -30,6 +30,17 @@ test('the subset runner talks to a loopback service only, needs an explicit run 
   assert.doesNotMatch(source,/(?:writeFileSync|appendFileSync)\([^)]*(?:BASELINE-001|REV-1|REV-2|GATE-SIM|rev1|rev2|questions)/u);
 });
 
+test('--only ID (2026-09-21, "CT-03 live measurement only" GO) narrows to exactly one plan item without changing the fixed plan itself',()=>{
+  assert.equal(runner.parseArgs(['--run-id','GROUNDED-CT03','--only','CT-03']).only,'CT-03');
+  assert.throws(()=>runner.parseArgs(['--run-id','GROUNDED-CT03','--only','NOT-A-REAL-ID']),/ONLY_ID_NOT_IN_PLAN:NOT-A-REAL-ID/u);
+  assert.equal(runner.parseArgs(['--run-id','GROUNDED-CT03']).only,null);
+  // plan() itself - the frozen 30-item subset plus the 6-item maritime slice - is unaffected by --only; the
+  // flag only narrows which items main() actually POSTs to the service, applied after plan() is read.
+  assert.equal(runner.plan().length,36);
+  const source=read('tools/run-grounded-subset.js');
+  assert.match(source,/if\(args\.only\)items=items\.filter\(e=>e\.id===args\.only\);/u);
+});
+
 test('the host is the Owner\'s working machine: the model is loaded without memory mapping, no call starts when memory is low, and a lost service is not a result',()=>{
   assert.equal(service.parseArgs([]).minFreeGb,1.5);assert.equal(service.parseArgs(['--min-free-gb','3']).minFreeGb,3);
   for(const bad of ['0','x','-1'])assert.throws(()=>service.parseArgs(['--min-free-gb',bad]),/MIN_FREE_GB_INVALID/u,bad);

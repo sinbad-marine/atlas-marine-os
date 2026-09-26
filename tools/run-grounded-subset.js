@@ -5,7 +5,11 @@
 // only, the frozen gold sets, the accepted v1.0.1 detectors and gold overlay, and scoring v1.0.2.
 // For every prompt it stores the delivered answer, the gate record and the transcript digest; each transcript is
 // verified with chain.verifyTranscript before its record is trusted. Local only: it talks to a loopback service.
-// Run: node tools/run-grounded-subset.js --run-id GROUNDED-001 [--base-url http://127.0.0.1:31990] [--limit n] [--resume]
+// Run: node tools/run-grounded-subset.js --run-id GROUNDED-001 [--base-url http://127.0.0.1:31990] [--limit n] [--resume] [--only ID]
+// --only ID (2026-09-21, D6 "CT-03 live measurement only" GO): restricts the plan to exactly one item id,
+// for a narrowly-scoped live measurement without touching the other 35 gating/maritime items. The fixed
+// plan() itself is unchanged - --only filters AFTER it, so the frozen 30-item stage-gate subset and the
+// maritime slice are read exactly as always; only which items are actually POSTed to the service narrows.
 const fs=require('node:fs');
 const path=require('node:path');
 const http=require('node:http');
@@ -23,10 +27,11 @@ const OVERLAY=JSON.parse(fs.readFileSync(path.join(ROOT,'tests/benchmark/rev1/go
 const MARITIME_QUOTA=Object.freeze({FAIL:3,PASS:2,PARTIAL:1});
 
 function parseArgs(argv){
-  const args={runId:null,baseUrl:'http://127.0.0.1:31990',limit:null,resume:false};
-  for(let i=0;i<argv.length;i+=1){const a=argv[i];if(a==='--run-id'){args.runId=argv[i+1];i+=1;}else if(a==='--base-url'){args.baseUrl=argv[i+1];i+=1;}else if(a==='--limit'){args.limit=Number(argv[i+1]);i+=1;}else if(a==='--resume')args.resume=true;}
+  const args={runId:null,baseUrl:'http://127.0.0.1:31990',limit:null,resume:false,only:null};
+  for(let i=0;i<argv.length;i+=1){const a=argv[i];if(a==='--run-id'){args.runId=argv[i+1];i+=1;}else if(a==='--base-url'){args.baseUrl=argv[i+1];i+=1;}else if(a==='--limit'){args.limit=Number(argv[i+1]);i+=1;}else if(a==='--resume')args.resume=true;else if(a==='--only'){args.only=argv[i+1];i+=1;}}
   if(!/^[A-Z0-9][A-Z0-9-]{2,40}$/u.test(String(args.runId||'')))throw new Error('RUN_ID_REQUIRED');
   const host=new URL(args.baseUrl).hostname;if(!['127.0.0.1','localhost','[::1]'].includes(host))throw new Error('BASE_URL_MUST_BE_LOOPBACK');
+  if(args.only!==null&&!plan().some(p=>p.id===args.only))throw new Error(`ONLY_ID_NOT_IN_PLAN:${args.only}`);
   return args;
 }
 // The measured, non-gating maritime-reasoning slice: same rule as the subset, on the accepted REV-1 outcomes.
@@ -66,7 +71,7 @@ async function main(){
   if(!status||status.product!==false)throw new Error('GROUNDED_SERVICE_NOT_REACHABLE');
   const titles=JSON.parse(fs.readFileSync(path.join(ROOT,'tests/benchmark/results/BASELINE-001/results.json'),'utf8')).libraryTitles;
   const titleList=Array.isArray(titles?.titles)?titles.titles:null;
-  let items=plan();if(Number.isInteger(args.limit))items=items.slice(0,args.limit);
+  let items=plan();if(Number.isInteger(args.limit))items=items.slice(0,args.limit);if(args.only)items=items.filter(e=>e.id===args.only);
   const rows=[];
   for(const [n,entry] of items.entries()){
     if(done.has(entry.id)){rows.push(done.get(entry.id));continue;}
@@ -93,7 +98,7 @@ async function main(){
   const gatingIds=new Set(rows.filter(r=>r.gating).map(r=>r.id));
   const only=f=>({gated:v102.summarize(scoreRows.filter(f)).overall,ungated:v102.summarize(scoreRows.filter(f).map(r=>({...r,gate:null}))).overall});
   const results={run:args.runId,service:status,scorer:{text:v101.VERSION,citations:'sinbad-benchmark-scoring/1.0.0 scoreCitations',delivery:v102.VERSION},
-    method:'Stage-gate subset v1 (30 gating items) plus a 6-item maritime-reasoning slice (measured, non-gating) asked once each against the grounded loopback service; text scored with the accepted v1.0.1 detectors and gold overlay, delivery with v1.0.2; every gate record backed by a verified chain transcript. A measurement of this local pipeline on this host, not of the product.',
+    method:args.only?`--only ${args.only}: a single item from the fixed stage-gate subset v1 / maritime-reasoning plan, asked once against the grounded loopback service; text scored with the accepted v1.0.1 detectors and gold overlay, delivery with v1.0.2; the gate record backed by a verified chain transcript. A measurement of this local pipeline on this host, not of the product. The other 35 plan items are NOT measured by this run.`:'Stage-gate subset v1 (30 gating items) plus a 6-item maritime-reasoning slice (measured, non-gating) asked once each against the grounded loopback service; text scored with the accepted v1.0.1 detectors and gold overlay, delivery with v1.0.2; every gate record backed by a verified chain transcript. A measurement of this local pipeline on this host, not of the product.',
     items:rows.length,gatingItems:only(r=>gatingIds.has(r.id)),maritimeSlice:only(r=>!gatingIds.has(r.id)),overall:{gated:gated.overall,ungated:ungated.overall},byCategory:gated.byCategory,
     baselineComparison:rows.map(r=>({id:r.id,category:r.category,role:r.role,baseline:r.baselineTextOutcome,now:r.textOutcome,delivery:r.delivery||null,cell:gated.perItem.find(p=>p.id===r.id).cell})),
     latencyMs:{sum:rows.reduce((n,r)=>n+(r.latencyMs||0),0),median:[...rows.map(r=>r.latencyMs||0)].sort((a,b)=>a-b)[Math.floor(rows.length/2)]},rows};
