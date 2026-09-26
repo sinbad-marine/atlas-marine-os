@@ -2039,15 +2039,32 @@ function normalizeEngineRoomSnapshot(probes,observedAt){
     ]
   };
 }
+const ENGINE_ROOM_PROBES=Object.freeze([['argos','/argos/status'],['status','/status'],['library','/library/status'],['studio','/studio/status'],['ai','/ai/status']]);
+async function collectEngineRoomProbes(probe,signal){
+  const probes={};
+  for(const [key,path] of ENGINE_ROOM_PROBES){
+    if(signal?.aborted)break;
+    try{probes[key]=await probe(path,signal);}catch{probes[key]={ok:false,http:0,body:null};}
+  }
+  return probes;
+}
 let engineRoomRequest=null;
-async function probeEngineRoom(path,signal){
+async function probeEngineRoom(path,parentSignal){
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),12000);
+  const onParent=()=>controller.abort();
+  if(parentSignal){
+    if(parentSignal.aborted)controller.abort();
+    else parentSignal.addEventListener('abort',onParent,{once:true});
+  }
   try{
-    const response=await fetch(`${SINBAD_BRIDGE_URL}${path}`,{cache:'no-store',signal});
+    const response=await fetch(`${SINBAD_BRIDGE_URL}${path}`,{cache:'no-store',signal:controller.signal});
     if(!response.ok)return {ok:false,http:response.status,body:null};
     const body=await response.json();
     if(!body||typeof body!=='object'||Array.isArray(body))return {ok:false,http:response.status,body:null};
     return {ok:true,http:response.status,body};
   }catch{return {ok:false,http:0,body:null};}
+  finally{clearTimeout(timer);if(parentSignal)parentSignal.removeEventListener('abort',onParent);}
 }
 function renderEngineRoom(snapshot){
   const grid=$('engineRoomGrid'),stamp=$('engineRoomObservedAt');
@@ -2060,15 +2077,8 @@ async function refreshEngineRoom(){
   if(stamp)stamp.textContent='Observing local Bridge…';
   engineRoomRequest?.abort();
   const controller=new AbortController();
-  const timer=setTimeout(()=>controller.abort(),5000);
   engineRoomRequest=controller;
-  const paths=['/argos/status','/status','/library/status','/studio/status','/ai/status'];
-  const probes={};
-  await Promise.all(paths.map(async path=>{
-    const key=path==='/argos/status'?'argos':path==='/status'?'status':path==='/library/status'?'library':path==='/studio/status'?'studio':'ai';
-    probes[key]=await probeEngineRoom(path,controller.signal);
-  }));
-  clearTimeout(timer);
+  const probes=await collectEngineRoomProbes((path,signal)=>probeEngineRoom(path,signal),controller.signal);
   if(engineRoomRequest!==controller)return;
   renderEngineRoom(normalizeEngineRoomSnapshot(probes,new Date().toISOString()));
   engineRoomRequest=null;
