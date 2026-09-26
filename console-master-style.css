@@ -521,3 +521,24 @@ body[data-console-art="da-vinci"]::before{background:linear-gradient(105deg,tran
 @media(max-width:620px){.voyage-page-header,.voyage-detail-header{grid-template-columns:1fr;padding:12px}.voyage-page-brand,.voyage-detail-brand{width:140px}.voyage-function-grid{grid-template-columns:1fr}.voyage-function-card:nth-child(1){grid-column:auto}.voyage-detail-art,.voyage-enc-art{display:block}.voyage-detail-art>img,.voyage-enc-art>img{height:auto}.voyage-detail-workspace{padding:13px}}
 
 @media(max-width:900px){body.workspace-window-mode[data-console-art="da-vinci"] .voyage-enc-detail-page .enc-chart-console{grid-template-columns:1fr}}
+
+.engine-room{border-color:rgba(130,184,211,.35);background:linear-gradient(180deg,rgba(5,18,28,.98),rgba(7,24,36,.96))}
+.engine-room-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.engine-room-doctrine{margin:0 0 14px;color:var(--console-muted);font-size:13px;letter-spacing:.01em}
+.engine-room-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.engine-room-card{display:grid;gap:8px;padding:16px;border:1px solid var(--console-line);border-radius:16px;background:rgba(4,16,26,.92)}
+.engine-room-card header{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.engine-room-card header span{font:600 18px/1.2 Georgia,serif;color:#f3f7fa}
+.engine-room-card header strong{padding:6px 10px;border:1px solid var(--console-line);border-radius:999px;color:var(--console-gold);font-size:11px;letter-spacing:.12em}
+.engine-room-card[data-engine-state="RUNNING"] header strong{color:var(--console-mint);border-color:rgba(83,225,196,.45)}
+.engine-room-card[data-engine-state="IDLE"] header strong{color:#e6bd67}
+.engine-room-card[data-engine-state="DEGRADED"] header strong{color:#e0b15a;border-color:rgba(224,177,90,.5)}
+.engine-room-card[data-engine-state="OFFLINE"] header strong,.engine-room-card[data-engine-state="FAULT"] header strong,.engine-room-card[data-engine-state="UNAVAILABLE"] header strong{color:#e08b84;border-color:rgba(224,139,132,.45)}
+.engine-room-card[data-engine-state="UNKNOWN"] header strong,.engine-room-card[data-engine-state="NOT CONNECTED"] header strong{color:var(--console-muted)}
+.engine-room-source,.engine-room-absent{margin:0;color:var(--console-muted);font-size:12px;line-height:1.45}
+.engine-room-card dl{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0}
+.engine-room-card dl div{padding:8px 10px;border:1px solid rgba(130,184,211,.18);border-radius:10px;background:rgba(8,28,42,.55)}
+.engine-room-card dt{color:var(--console-muted);font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+.engine-room-card dd{margin:3px 0 0;color:#eef5f8;font-size:13px;overflow-wrap:anywhere}
+.engine-room-card dd.is-unknown{color:var(--console-muted)}
+@media(max-width:800px){.engine-room-grid,.engine-room-card dl{grid-template-columns:1fr}}

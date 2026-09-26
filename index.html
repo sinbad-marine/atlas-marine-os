@@ -303,7 +303,23 @@
 <section id="technical-systems" class="workspace console-landing" data-master="picasso">
   <div class="workspace-head"><div><div class="eyebrow">TEKNİK SİSTEMLER · PICASSO DIRECTION / HOLD</div><h2>Sistemleri gözlemleyin ve yönetin</h2><p>Cloud kontrolü, yönetim, Studio, ARGOS ve ayrı güvenlik sınırındaki Owner Console.</p></div><button class="btn close">Kapat</button></div>
   <div class="console-landing-hero"><span>05 · SYSTEMS</span><h3>Disiplinli modüller ve teknik geometri</h3><p>Kontrollü Kübist görsel katman Home Owner kabulünden sonra uygulanacaktır; gerçek durumlar yalnız gözlemlenebildiğinde READY olur.</p></div>
-  <div class="console-landing-grid"><button data-owner-console><b>Owner Console</b><small>Ayrı güvenli Owner yüzeyini aç</small></button><button data-open="cloud-control"><b>Atlas Cloud Kontrolü</b><small>Bağlantı ve güvenlik</small></button><button data-open="admin-settings"><b>Ayarlar ve Yönetim</b><small>Hesap, erişim ve denetim</small></button><button data-open="studio-console"><b>Sinbad Studio</b><small>Onay kapılı üretim alanı</small></button><button data-open="sinbad" data-target-tab="argos"><b>ARGOS</b><small>Gözlemlenebilir sistem sekmesi</small></button></div>
+  <div class="console-landing-grid"><button data-owner-console><b>Owner Console</b><small>Ayrı güvenli Owner yüzeyini aç</small></button><button data-open="cloud-control"><b>Atlas Cloud Kontrolü</b><small>Bağlantı ve güvenlik</small></button><button data-open="admin-settings"><b>Ayarlar ve Yönetim</b><small>Hesap, erişim ve denetim</small></button><button data-open="studio-console"><b>Sinbad Studio</b><small>Onay kapılı üretim alanı</small></button><button data-open="sinbad" data-target-tab="argos"><b>ARGOS</b><small>Gözlemlenebilir sistem sekmesi</small></button><button data-open="engine-room"><b>Engine Room</b><small>Salt okunur gözlenen makine durumu</small></button></div>
+</section>
+
+<section id="engine-room" class="workspace engine-room" data-engine-room="v0">
+  <div class="workspace-head">
+    <div>
+      <div class="eyebrow">ENGINE ROOM · v0 · READ ONLY</div>
+      <h2>SINBAD Engine Room</h2>
+      <p>Observed state from the local Bridge. A field the probe does not return stays UNKNOWN or NOT CONNECTED. A failed probe stays UNAVAILABLE.</p>
+    </div>
+    <div class="engine-room-actions">
+      <button class="btn" id="refreshEngineRoom" type="button">Refresh observed state</button>
+      <button class="btn close" type="button">Kapat</button>
+    </div>
+  </div>
+  <p class="engine-room-doctrine" id="engineRoomObservedAt">No snapshot yet. Nothing on this page is inferred.</p>
+  <div id="engineRoomGrid" class="engine-room-grid" aria-live="polite"></div>
 </section>
 
 <section id="sinbad-ai" class="workspace console-landing" data-master="dali">
