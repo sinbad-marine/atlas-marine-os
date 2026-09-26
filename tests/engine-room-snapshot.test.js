@@ -45,6 +45,31 @@ test('Bridge truth table does not treat an HTTP answer as RUNNING',()=>{
   assert.equal(bridgeState({argos:fail,status:fail,library:fail,studio:fail,ai:fail}),'UNAVAILABLE');
 });
 
+test('one slow or failed probe does not discard the other probes',async()=>{
+  const calls=[];
+  const probes=await context.collectEngineRoomProbes(async path=>{
+    calls.push(path);
+    if(path==='/ai/status'){
+      await new Promise(resolve=>setTimeout(resolve,30));
+      return {ok:true,http:200,body:{online:false,model:'qwen3:14b',installed:false,models:[]}};
+    }
+    if(path==='/status')throw new Error('status down');
+    if(path==='/argos/status')return {ok:true,http:200,body:{bridge:{online:true,version:'0.5.0'},ai:{online:false},commandGate:{active:true},state:'ACTIVE',mode:'MONITOR_ONLY',ownerBoundary:{enforced:true,configured:true}}};
+    if(path==='/library/status')return {ok:true,http:200,body:{documents:1686,chunks:90552,builtAt:'2026-08-21T08:15:16.8480308Z',skipped:1434}};
+    if(path==='/studio/status')return {ok:true,http:200,body:{status:'STUDIO_RUNTIME_INCOMPLETE',studioVersion:'0.4.3',docker:{installed:true,processRunning:false},wsl:{installed:true},core:{installed:true}}};
+    throw new Error(path);
+  });
+  assert.deepEqual(calls,['/argos/status','/status','/library/status','/studio/status','/ai/status']);
+  assert.equal(probes.status.ok,false);
+  assert.equal(probes.library.ok,true);
+  const by=Object.fromEntries(normalize(probes).engines.map(engine=>[engine.id,engine.state]));
+  assert.equal(by.bridge,'RUNNING');
+  assert.equal(by['local-ai'],'OFFLINE');
+  assert.equal(by['command-gate'],'RUNNING');
+  assert.equal(by.library,'IDLE');
+  assert.equal(by.studio,'DEGRADED');
+});
+
 test('a zero returned by a probe stays zero and a missing count stays UNKNOWN',()=>{
   const row=normalize({
     argos:fail,
