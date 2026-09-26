@@ -1974,9 +1974,9 @@ function normalizeEngineRoomSnapshot(probes,observedAt){
   if(argos)bridgeSources.push('GET /argos/status bridge');
   if(status)bridgeSources.push('GET /status');
   let bridgeState='UNAVAILABLE';
-  if(argos&&typeof argos.bridge?.online==='boolean')bridgeState=argos.bridge.online?'RUNNING':'OFFLINE';
-  else if(status)bridgeState='RUNNING';
-  else if(argos)bridgeState='UNKNOWN';
+  const bridgeOnline=argos?.bridge?.online;
+  if(typeof bridgeOnline==='boolean')bridgeState=bridgeOnline?'RUNNING':'OFFLINE';
+  else if(argos||status)bridgeState='UNKNOWN';
   const bridgeFacts=[
     engineRoomFact('bridge version',argos?.bridge?.version||status?.version),
     engineRoomFact('bridge name',status?.name),
