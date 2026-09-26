@@ -45,7 +45,7 @@ test('design contract has one canonical definition for every protected surface',
   assert.equal(contract.schemaVersion,'sinbad-ui-design-contract/v1');
   assert.equal(contract.dashboardWorkspaces.length,26);
   assert.equal(new Set(contract.dashboardWorkspaces).size,contract.dashboardWorkspaces.length);
-  assert.deepEqual(Object.keys(contract.surfaces),['dashboard','captainSinbad','academy']);
+  assert.deepEqual(Object.keys(contract.surfaces),['dashboard','captainSinbad','academy','documentsCompliance']);
   for(const [name,surface] of Object.entries(contract.surfaces)){
     assert.match(surface.route,/^\//u,name);
     assert.ok(surface.required.length>0,name);

@@ -69,7 +69,7 @@ const CONSOLE_DESTINATIONS=Object.freeze({
 const CONSOLE_FAVORITES_KEY='sinbad_console_favorites_v1',CONSOLE_RECENT_KEY='sinbad_console_recent_v1';
 const consoleJson=(key,fallback)=>{try{const value=JSON.parse(localStorage.getItem(key)||'null');return Array.isArray(value)?value:fallback}catch{return fallback}};
 function consoleParentFor(id){if(['fleet','crew','captains-logbook','camera-archive'].includes(id))return'yacht-operations';if(['routes','navigation-plot','location-intelligence','pilot','publications','resources','enc-viewer','charts'].includes(id))return'voyage-navigation';if(['cloud-documents','knowledge','documents','document-submissions'].includes(id))return'documents-compliance';if(['cloud-control','admin-settings','studio-console'].includes(id))return'technical-systems';if(id==='sinbad')return'sinbad-ai';return id}
-function applyConsoleArt(id='home'){const parent=consoleParentFor(id),art=id==='home'?'monet':parent==='yacht-operations'?'rembrandt':parent==='voyage-navigation'?'da-vinci':'';if(art)document.body.dataset.consoleArt=art;else delete document.body.dataset.consoleArt;document.querySelectorAll('.console-primary-nav button').forEach(button=>button.classList.toggle('active',id==='home'?button.hasAttribute('data-console-home'):button.dataset.open===parent));}
+function applyConsoleArt(id='home'){const parent=consoleParentFor(id),art=id==='home'?'monet':parent==='yacht-operations'?'rembrandt':parent==='voyage-navigation'?'da-vinci':parent==='documents-compliance'?'vermeer':'';if(art)document.body.dataset.consoleArt=art;else delete document.body.dataset.consoleArt;document.querySelectorAll('.console-primary-nav button').forEach(button=>button.classList.toggle('active',id==='home'?button.hasAttribute('data-console-home'):button.dataset.open===parent));}
 function recordConsoleRecent(id){if(!CONSOLE_DESTINATIONS[id])return;const recent=consoleJson(CONSOLE_RECENT_KEY,[]).filter(item=>item!==id);recent.unshift(id);localStorage.setItem(CONSOLE_RECENT_KEY,JSON.stringify(recent.slice(0,6)));renderConsolePersonalization();}
 function renderConsoleLinks(target,ids,empty){if(!target)return;target.innerHTML=ids.length?ids.map(id=>`<button type="button" data-console-shortcut="${esc(id)}">${esc(CONSOLE_DESTINATIONS[id]?.label||id)}</button>`).join(''):`<small>${esc(empty)}</small>`;target.querySelectorAll('[data-console-shortcut]').forEach(button=>button.onclick=()=>openConsoleDestination(button.dataset.consoleShortcut));}
 function renderConsolePersonalization(){const defaults=['fleet','routes','cloud-documents','sinbad'],favorites=consoleJson(CONSOLE_FAVORITES_KEY,defaults).filter(id=>CONSOLE_DESTINATIONS[id]);renderConsoleLinks($('consoleFavoritesList'),favorites,'Favori eklenmedi.');renderConsoleLinks($('consoleRecentList'),consoleJson(CONSOLE_RECENT_KEY,[]).filter(id=>CONSOLE_DESTINATIONS[id]),'Henüz çalışma alanı açılmadı.');const options=$('consoleFavoritesOptions');if(options)options.innerHTML=Object.entries(CONSOLE_DESTINATIONS).filter(([id])=>['fleet','routes','cloud-documents','sinbad','captains-logbook','location-intelligence','studio-console','store'].includes(id)).map(([id,item])=>`<label><input type="checkbox" value="${esc(id)}" ${favorites.includes(id)?'checked':''}> ${esc(item.label)}</label>`).join('');}
@@ -186,10 +186,19 @@ function openWorkspace(id){
   const url=new URL(location.href);url.searchParams.set('workspace',id);history.pushState({workspace:id},'',url);
   document.querySelectorAll('.workspace').forEach(x=>x.classList.toggle('active',x.id===id));
   applyConsoleArt(id);recordConsoleRecent(id);
-  $(id)?.scrollIntoView({behavior:'smooth'});renderAll();initializeWorkspaceSurface(id);
+  scrollTo({top:0,behavior:'instant'});renderAll();initializeWorkspaceSurface(id);
 }
 function closeWorkspaces(){if(workspaceWindowId){window.close();return;}document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));applyConsoleArt('home');scrollTo({top:0,behavior:'smooth'})}
 installWorkspaceWindowShell();
+const documentsMobileNavToggle=document.querySelector('.dc-mobile-nav-toggle');
+function setDocumentsMobileNav(open){
+  document.body.classList.toggle('dc-mobile-nav-open',open);
+  documentsMobileNavToggle?.setAttribute('aria-expanded',String(open));
+  if(documentsMobileNavToggle)documentsMobileNavToggle.setAttribute('aria-label',open?'Close SINBAD navigation':'Open SINBAD navigation');
+}
+documentsMobileNavToggle?.addEventListener('click',()=>setDocumentsMobileNav(!document.body.classList.contains('dc-mobile-nav-open')));
+document.querySelectorAll('#consoleSidebar button,#consoleSidebar a').forEach(control=>control.addEventListener('click',()=>setDocumentsMobileNav(false)));
+document.addEventListener('keydown',event=>{if(event.key==='Escape')setDocumentsMobileNav(false)});
 document.querySelectorAll('[data-console-home]').forEach(button=>button.onclick=()=>workspaceWindowId?location.assign('./index.html'):closeWorkspaces());
 document.querySelectorAll('[data-owner-console]').forEach(button=>button.onclick=()=>window.open(CONSOLE_OWNER_URL,'sinbadOwnerConsole','noopener,noreferrer'));
 document.querySelectorAll('[data-console-favorites]').forEach(button=>button.onclick=()=>{renderConsolePersonalization();$('consoleFavoritesDialog')?.showModal()});

@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.29-argos-acceptance-v201';
+const CACHE='sinbad-marine-v8.20.29-argos-acceptance-v202';
 const ASSETS=[
   './',
   './index.html',

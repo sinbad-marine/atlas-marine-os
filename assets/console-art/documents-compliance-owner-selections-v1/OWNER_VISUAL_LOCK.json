@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "sinbad-owner-visual-lock/v1",
+  "surface": "Documents & Compliance",
+  "route": "/index.html?workspace=documents-compliance",
+  "ownerChoice": "C",
+  "approvedAt": "2026-09-26",
+  "artistLanguage": "johannes-vermeer",
+  "languageBaseline": "en",
+  "status": "OWNER_APPROVED_LOCKED",
+  "immutable": true,
+  "truthPolicy": "Verified runtime records or explicit empty state only. Never infer or fabricate compliance status.",
+  "functionalCards": [
+    "cloud-documents",
+    "documents",
+    "knowledge",
+    "document-submissions"
+  ],
+  "forbiddenDuplications": [
+    "charts",
+    "publications"
+  ],
+  "assets": {
+    "hero": {
+      "path": "selected/01-documents-compliance-C-hero.png",
+      "sha256": "81e9cff506bd394282d979898a7d14a802ebc605a01405d2e1b89775786e798d"
+    },
+    "documentVault": {
+      "path": "selected/02-document-vault-C.png",
+      "sha256": "aec740227af0ba3be62de3ca45e4a59c205ec543cc8bb2fffa9eb6d2bb4acb6c"
+    },
+    "localDocumentAccess": {
+      "path": "selected/03-local-document-access-C.png",
+      "sha256": "201745145737b24407036b2f7ba94f8f361360dbc9eae9da4047fdde2bbb8de5"
+    },
+    "approvedKnowledge": {
+      "path": "selected/04-approved-knowledge-C.png",
+      "sha256": "caf101386803f567ac9849833efba6ac43065ca30b759c6df69e47eb3c2ede1d"
+    },
+    "controlledSubmissions": {
+      "path": "selected/05-controlled-submissions-C.png",
+      "sha256": "6a80e23ef069abffa5f39a67305d5f16f50c2b40b99718b976afa3bc5229034c"
+    }
+  }
+}

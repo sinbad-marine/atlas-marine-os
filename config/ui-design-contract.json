@@ -3,13 +3,13 @@
   "owner": "Sinbad Marine design protection",
   "goldenUpdatePolicy": "Golden screenshots may change only in an explicitly reviewed design pull request.",
   "protectedFileSha256": {
-    "index.html": "4b18c3a537540b89a9b4d37488038850061fa0b75b635d91d1c33e4e871b0bac",
+    "index.html": "cd03eb1dd5b7f59b84fc8485213698f5eafe4033a6e3ee477dbd509efd6c9b8d",
     "styles.css": "a7b45fc9c86ad19afa18c7e99507cb30f25d83f0dd964d6d0364cb25a57684a4",
     "academy.html": "c59d8716666ab4499bbf7ffb3686616bec6a14913812985766dd4f8a455c549c",
     "academy.css": "1c3ab16440590617a09d8a5a594290c1973851bf11b27f718ce0563202f9e659",
     "academy-classroom-window.js": "2661c4ac5d9c8b2cd3ee1a734aedb50df07052c546759f26ffb1f65e284951e5",
-    "console-master-style.css": "641c46820b1284b1572bdb9545c6b543d427340a86c77b17184e4c17b694cd19",
-    "app.js": "a318f57c077f037b05804fea938aff0f5efa143c0af66ba5f3d8e3a40b08428a"
+    "console-master-style.css": "63bce1f0f84086d03a4dc5a920b6d0886d0bfef2ed66a590142f576e2f6d75c6",
+    "app.js": "036d089bdee5ab3261ebc1c92be3cd0f9b2b946ee00de4d8704ca0392cdeae9e"
   },
   "dashboardWorkspaces": [
     "admin-settings",
@@ -100,6 +100,23 @@
         "#academyTeachingText"
       ],
       "forbidden": []
+    },
+    "documentsCompliance": {
+      "route": "/index.html?workspace=documents-compliance",
+      "required": [
+        "#documents-compliance.documents-compliance-page",
+        "#documents-compliance .dc-page-brand[src=\"./assets/console-art/sinbad-brand-lockup-v13.png\"]",
+        "#documents-compliance .dc-register",
+        "#documents-compliance .dc-empty-row",
+        "#documents-compliance .dc-function-card[data-open=\"cloud-documents\"]",
+        "#documents-compliance .dc-function-card[data-open=\"documents\"]",
+        "#documents-compliance .dc-function-card[data-open=\"knowledge\"]",
+        "#documents-compliance .dc-function-card[data-open=\"document-submissions\"]"
+      ],
+      "forbidden": [
+        "#documents-compliance [data-open=\"charts\"]",
+        "#documents-compliance [data-open=\"publications\"]"
+      ]
     }
   },
   "approvedVisualBaselines": {
@@ -232,6 +249,19 @@
         "A",
         "C"
       ]
+    },
+    "documentsCompliance": {
+      "status": "OWNER_APPROVED_LOCKED",
+      "approvedAt": "2026-09-26",
+      "route": "/index.html?workspace=documents-compliance",
+      "asset": "assets/console-art/documents-compliance-owner-selections-v1/selected/01-documents-compliance-C-hero.png",
+      "sha256": "81e9cff506bd394282d979898a7d14a802ebc605a01405d2e1b89775786e798d",
+      "artDirection": "johannes-vermeer",
+      "layoutPolicy": "OWNER_SELECTED_COMPLIANCE_REGISTER_C",
+      "languageBaseline": "en",
+      "truthPolicy": "NO_INFERRED_COMPLIANCE_OR_SAMPLE_RECORDS",
+      "ownerChoice": "C",
+      "immutable": true
     }
   },
   "interactionContracts": {
@@ -352,6 +382,26 @@
         "/academy.html?section=goss-gasm#student-exam"
       ],
       "structuralRule": "GOC/ROC is an independent sibling qualification family inside GOSS/GASM, never a child of Electro-Technical.",
+      "immutable": true
+    },
+    "documentsComplianceLanding": {
+      "status": "OWNER_APPROVED_LOCKED",
+      "manifest": "assets/console-art/documents-compliance-owner-selections-v1/OWNER_VISUAL_LOCK.json",
+      "artistLanguage": "johannes-vermeer",
+      "languageBaseline": "en",
+      "ownerChoice": "C",
+      "route": "/index.html?workspace=documents-compliance",
+      "functionalCards": [
+        "cloud-documents",
+        "documents",
+        "knowledge",
+        "document-submissions"
+      ],
+      "forbiddenDuplications": [
+        "charts",
+        "publications"
+      ],
+      "truthPolicy": "Render verified runtime records or an explicit empty state; never fabricate compliance status.",
       "immutable": true
     }
   }
