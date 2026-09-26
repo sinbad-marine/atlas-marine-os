@@ -63,12 +63,12 @@ const CONSOLE_DESTINATIONS=Object.freeze({
   'yacht-operations':{label:'Yacht Management',art:'rembrandt'},fleet:{label:'Fleet & Yacht Management',art:'rembrandt'},crew:{label:'Crew',art:'rembrandt'},'captains-logbook':{label:"Captain's Logbook",art:'rembrandt'},'camera-archive':{label:'Camera & Media Archive',art:'monet'},
   'voyage-navigation':{label:'Voyage Planning',art:'da-vinci'},routes:{label:'Route Library',art:'da-vinci'},'navigation-plot':{label:'Navigation Plot',art:'da-vinci'},'location-intelligence':{label:'Location Intelligence',art:'da-vinci'},pilot:{label:'Coastal Pilotage Directory',art:'da-vinci'},resources:{label:'Blue Voyage Resources',art:'da-vinci'},'enc-viewer':{label:'ENC Viewer',art:'da-vinci'},charts:{label:'Local Charts',art:'da-vinci'},
   'documents-compliance':{label:'Documents & Compliance',art:'vermeer'},'cloud-documents':{label:'Cloud Document Center',art:'vermeer'},publications:{label:'Nautical Publications',art:'da-vinci'},knowledge:{label:'Knowledge Library',art:'vermeer'},documents:{label:'Local Documents',art:'vermeer'},'document-submissions':{label:'Controlled Submissions',art:'vermeer'},
-  'technical-systems':{label:'Technical Systems',art:'picasso'},'cloud-control':{label:'Atlas Cloud Control',art:'picasso'},'admin-settings':{label:'Settings & Administration',art:'picasso'},'studio-console':{label:'Sinbad Studio',art:'picasso'},
+  'technical-systems':{label:'Technical Systems',art:'picasso'},'engine-room':{label:'Engine Room',art:'picasso'},'cloud-control':{label:'Atlas Cloud Control',art:'picasso'},'admin-settings':{label:'Settings & Administration',art:'picasso'},'studio-console':{label:'Sinbad Studio',art:'picasso'},
   'sinbad-ai':{label:'SINBAD AI',art:'dali'},sinbad:{label:'Kaptan Sinbad',art:'dali'},store:{label:'Marine Store',art:'renoir'}
 });
 const CONSOLE_FAVORITES_KEY='sinbad_console_favorites_v1',CONSOLE_RECENT_KEY='sinbad_console_recent_v1';
 const consoleJson=(key,fallback)=>{try{const value=JSON.parse(localStorage.getItem(key)||'null');return Array.isArray(value)?value:fallback}catch{return fallback}};
-function consoleParentFor(id){if(['fleet','crew','captains-logbook','camera-archive'].includes(id))return'yacht-operations';if(['routes','navigation-plot','location-intelligence','pilot','publications','resources','enc-viewer','charts'].includes(id))return'voyage-navigation';if(['cloud-documents','knowledge','documents','document-submissions'].includes(id))return'documents-compliance';if(['cloud-control','admin-settings','studio-console'].includes(id))return'technical-systems';if(id==='sinbad')return'sinbad-ai';return id}
+function consoleParentFor(id){if(['fleet','crew','captains-logbook','camera-archive'].includes(id))return'yacht-operations';if(['routes','navigation-plot','location-intelligence','pilot','publications','resources','enc-viewer','charts'].includes(id))return'voyage-navigation';if(['cloud-documents','knowledge','documents','document-submissions'].includes(id))return'documents-compliance';if(['cloud-control','admin-settings','studio-console','engine-room'].includes(id))return'technical-systems';if(id==='sinbad')return'sinbad-ai';return id}
 function applyConsoleArt(id='home'){const parent=consoleParentFor(id),art=id==='home'?'monet':parent==='yacht-operations'?'rembrandt':parent==='voyage-navigation'?'da-vinci':'';if(art)document.body.dataset.consoleArt=art;else delete document.body.dataset.consoleArt;document.querySelectorAll('.console-primary-nav button').forEach(button=>button.classList.toggle('active',id==='home'?button.hasAttribute('data-console-home'):button.dataset.open===parent));}
 function recordConsoleRecent(id){if(!CONSOLE_DESTINATIONS[id])return;const recent=consoleJson(CONSOLE_RECENT_KEY,[]).filter(item=>item!==id);recent.unshift(id);localStorage.setItem(CONSOLE_RECENT_KEY,JSON.stringify(recent.slice(0,6)));renderConsolePersonalization();}
 function renderConsoleLinks(target,ids,empty){if(!target)return;target.innerHTML=ids.length?ids.map(id=>`<button type="button" data-console-shortcut="${esc(id)}">${esc(CONSOLE_DESTINATIONS[id]?.label||id)}</button>`).join(''):`<small>${esc(empty)}</small>`;target.querySelectorAll('[data-console-shortcut]').forEach(button=>button.onclick=()=>openConsoleDestination(button.dataset.consoleShortcut));}
@@ -128,6 +128,7 @@ function initializeWorkspaceSurface(id){
   if(id==='enc-viewer')initEncViewer();
   if(id==='navigation-plot')initNavigationPlot();
   if(id==='studio-console')refreshStudioCapability();
+  if(id==='engine-room')refreshEngineRoom();
 }
 function installWorkspaceWindowShell(){
   if(!workspaceWindowId)return;
@@ -1940,6 +1941,139 @@ async function copyPassagePlanDraft(){
   await navigator.clipboard.writeText(text);$('copyPassagePlan').textContent='Copied';setTimeout(()=>$('copyPassagePlan').textContent='Copy draft',1200);
 }
 const SINBAD_BRIDGE_URL='http://127.0.0.1:31983';
+const ENGINE_ROOM_STATES=Object.freeze(['RUNNING','IDLE','DEGRADED','OFFLINE','FAULT','UNKNOWN','UNAVAILABLE','NOT CONNECTED']);
+const ENGINE_ROOM_NOT_CONNECTED=Object.freeze(['workload','capacity','resource consumption','dependencies','incidents','agents','sync','SINBAD Core link','data flow','security posture']);
+function engineRoomShown(value){
+  if(typeof value==='boolean')return value?'true':'false';
+  if(typeof value==='number'&&Number.isFinite(value))return String(value);
+  if(typeof value==='string'&&value.trim())return value.trim();
+  return null;
+}
+function engineRoomFact(label,value){
+  const shown=engineRoomShown(value);
+  return shown===null?{label,value:'UNKNOWN',observed:false}:{label,value:shown,observed:true};
+}
+function engineRoomEngine(id,title,state,sources,facts){
+  if(!ENGINE_ROOM_STATES.includes(state))throw new Error(`ENGINE_ROOM_STATE_INVALID:${state}`);
+  return {id,title,state,sources,facts,notConnected:ENGINE_ROOM_NOT_CONNECTED};
+}
+function engineRoomLibraryBody(probes){
+  if(probes.library?.ok)return {body:probes.library.body,sources:['GET /library/status']};
+  const nested=probes.status?.ok?probes.status.body?.library:null;
+  if(nested&&typeof nested==='object'&&!Array.isArray(nested))return {body:nested,sources:['GET /status library']};
+  return null;
+}
+function normalizeEngineRoomSnapshot(probes,observedAt){
+  const argos=probes.argos?.ok?probes.argos.body:null;
+  const status=probes.status?.ok?probes.status.body:null;
+  const aiBody=probes.ai?.ok?probes.ai.body:(argos&&argos.ai&&typeof argos.ai==='object'?argos.ai:null);
+  const aiSources=probes.ai?.ok?['GET /ai/status']:(aiBody?['GET /argos/status ai']:[]);
+  const libraryHit=engineRoomLibraryBody(probes);
+  const studio=probes.studio?.ok?probes.studio.body:null;
+  const bridgeSources=[];
+  if(argos)bridgeSources.push('GET /argos/status bridge');
+  if(status)bridgeSources.push('GET /status');
+  let bridgeState='UNAVAILABLE';
+  const bridgeOnline=argos?.bridge?.online;
+  if(typeof bridgeOnline==='boolean')bridgeState=bridgeOnline?'RUNNING':'OFFLINE';
+  else if(argos||status)bridgeState='UNKNOWN';
+  const bridgeFacts=[
+    engineRoomFact('bridge version',argos?.bridge?.version||status?.version),
+    engineRoomFact('bridge name',status?.name),
+    engineRoomFact('GPX files',status?.routes),
+    engineRoomFact('Kiwix state',status?.worldKnowledge?.state),
+    engineRoomFact('Kiwix snapshot',status?.worldKnowledge?.snapshot)
+  ];
+  let aiState='UNAVAILABLE';
+  if(aiBody&&typeof aiBody.online==='boolean')aiState=aiBody.online?'RUNNING':'OFFLINE';
+  else if(aiBody)aiState='UNKNOWN';
+  const aiFacts=[
+    engineRoomFact('model',aiBody?.model),
+    engineRoomFact('installed',aiBody?.installed),
+    engineRoomFact('model count',Array.isArray(aiBody?.models)?aiBody.models.length:aiBody?.modelCount)
+  ];
+  let gateState='UNAVAILABLE';
+  if(argos){
+    const active=argos.commandGate?.active;
+    gateState=typeof active==='boolean'?(active?'RUNNING':'OFFLINE'):'UNKNOWN';
+  }
+  const gateFacts=[
+    engineRoomFact('ARGOS state',argos?.state),
+    engineRoomFact('mode',argos?.mode),
+    engineRoomFact('owner boundary enforced',argos?.ownerBoundary?.enforced),
+    engineRoomFact('owner boundary configured',argos?.ownerBoundary?.configured),
+    engineRoomFact('registered actions',argos?.commandGate?.registeredActions),
+    engineRoomFact('observed commands',argos?.commandGate?.observedCommands),
+    engineRoomFact('replay protection',argos?.commandGate?.replayProtection),
+    engineRoomFact('freshness window seconds',argos?.commandGate?.freshnessWindowSeconds),
+    engineRoomFact('probe observedAt',argos?.observedAt)
+  ];
+  const libraryBody=libraryHit?.body||null;
+  const documents=libraryBody?.documents,chunks=libraryBody?.chunks;
+  const libraryState=!libraryHit?'UNAVAILABLE':(typeof documents==='number'&&Number.isFinite(documents)&&typeof chunks==='number'&&Number.isFinite(chunks)?'IDLE':'UNKNOWN');
+  const libraryFacts=[engineRoomFact('documents',documents),engineRoomFact('chunks',chunks),engineRoomFact('built at',libraryBody?.builtAt),engineRoomFact('skipped',libraryBody?.skipped)];
+  let studioState='UNAVAILABLE';
+  if(studio){
+    if(studio.status==='READY_FOR_APPROVAL_GATED_TESTS')studioState='IDLE';
+    else if(studio.status==='STUDIO_RUNTIME_INCOMPLETE')studioState='DEGRADED';
+    else studioState='UNKNOWN';
+  }
+  const studioFacts=[
+    engineRoomFact('status',studio?.status),
+    engineRoomFact('studio version',studio?.studioVersion),
+    engineRoomFact('docker installed',studio?.docker?.installed),
+    engineRoomFact('docker process running',studio?.docker?.processRunning),
+    engineRoomFact('wsl installed',studio?.wsl?.installed),
+    engineRoomFact('studio core installed',studio?.core?.installed),
+    engineRoomFact('approval',studio?.approval)
+  ];
+  return {
+    schema:'sinbad-engine-room-snapshot/0',
+    observedAt,
+    engines:[
+      engineRoomEngine('bridge','Bridge',bridgeState,bridgeSources,bridgeFacts),
+      engineRoomEngine('local-ai','Local AI',aiState,aiSources,aiFacts),
+      engineRoomEngine('command-gate','ARGOS / Command Gate',gateState,argos?['GET /argos/status']:[],gateFacts),
+      engineRoomEngine('library','Library',libraryState,libraryHit?.sources||[],libraryFacts),
+      engineRoomEngine('studio','Studio',studioState,studio?['GET /studio/status']:[],studioFacts)
+    ]
+  };
+}
+let engineRoomRequest=null;
+async function probeEngineRoom(path,signal){
+  try{
+    const response=await fetch(`${SINBAD_BRIDGE_URL}${path}`,{cache:'no-store',signal});
+    if(!response.ok)return {ok:false,http:response.status,body:null};
+    const body=await response.json();
+    if(!body||typeof body!=='object'||Array.isArray(body))return {ok:false,http:response.status,body:null};
+    return {ok:true,http:response.status,body};
+  }catch{return {ok:false,http:0,body:null};}
+}
+function renderEngineRoom(snapshot){
+  const grid=$('engineRoomGrid'),stamp=$('engineRoomObservedAt');
+  if(!grid||!stamp)return;
+  stamp.textContent=`Snapshot ${snapshot.schema} · observed ${snapshot.observedAt} · read only · no inferred health`;
+  grid.innerHTML=snapshot.engines.map(engine=>`<article class="engine-room-card" data-engine-id="${esc(engine.id)}" data-engine-state="${esc(engine.state)}"><header><span>${esc(engine.title)}</span><strong>${esc(engine.state)}</strong></header><p class="engine-room-source">${engine.sources.length?esc(engine.sources.join(' · ')):'Probe unavailable'}</p><dl>${engine.facts.map(fact=>`<div><dt>${esc(fact.label)}</dt><dd${fact.observed?'':` class="is-unknown"`}>${esc(fact.value)}</dd></div>`).join('')}</dl><p class="engine-room-absent">NOT CONNECTED: ${esc(engine.notConnected.join(', '))}</p></article>`).join('');
+}
+async function refreshEngineRoom(){
+  const stamp=$('engineRoomObservedAt');
+  if(stamp)stamp.textContent='Observing local Bridge…';
+  engineRoomRequest?.abort();
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),5000);
+  engineRoomRequest=controller;
+  const paths=['/argos/status','/status','/library/status','/studio/status','/ai/status'];
+  const probes={};
+  await Promise.all(paths.map(async path=>{
+    const key=path==='/argos/status'?'argos':path==='/status'?'status':path==='/library/status'?'library':path==='/studio/status'?'studio':'ai';
+    probes[key]=await probeEngineRoom(path,controller.signal);
+  }));
+  clearTimeout(timer);
+  if(engineRoomRequest!==controller)return;
+  renderEngineRoom(normalizeEngineRoomSnapshot(probes,new Date().toISOString()));
+  engineRoomRequest=null;
+}
+$('refreshEngineRoom')?.addEventListener('click',refreshEngineRoom);
 async function refreshStudioCapability(){
  const dot=$('studioStatusDot'),title=$('studioStatusTitle'),detail=$('studioStatusDetail'),boundary=$('studioBoundaryText');
  if(!dot||!title||!detail)return;
