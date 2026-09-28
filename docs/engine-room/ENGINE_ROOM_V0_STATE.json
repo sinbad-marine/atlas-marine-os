@@ -1,0 +1,26 @@
+{
+  "record": "sinbad-engine-room-v0-owner-acceptance/1",
+  "decision": "OWNER ACCEPTED",
+  "ownerStatement": "OWNER DECISION — SINBAD ENGINE ROOM v0 — OWNER ACCEPTED",
+  "acceptedOn": "2026-09-26",
+  "acceptedCommit": "37097b360b7e4cb0a947edaa98385fcf8f9a866b",
+  "acceptedTree": "c301c9be827bbe0a88d94b6532d41f41476fe549",
+  "scope": "Engine Room v0 exactly as merged at that commit and tree. Included: the read-only architecture, the five existing Bridge probes, normalization then snapshot then UI, fail-closed state handling, and the per-probe isolation from PR #300. The final read-only audit found no acceptance blocker.",
+  "evidence": {
+    "pullRequests": [299, 300],
+    "mergeCommit": "37097b360b7e4cb0a947edaa98385fcf8f9a866b",
+    "parent": "f5849309927bad53fb4c288d7c912e9f3a2b09f7",
+    "postMergeReleaseQuality": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/36268477615",
+    "postMergePages": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/36268477593",
+    "argos": "ARGOS_INTEGRITY_VERIFIED, 105 protected files, inventory hash 7022f64ee8cb315b6585ba62b4aa8ae1d02cd34e15bdd211eda50ff3dfb7cc70"
+  },
+  "notIncluded": {
+    "d6": "NOT ACCEPTED",
+    "projectHarbor": "NOT STARTED",
+    "newProbes": false,
+    "threeDDigitalTwinXr": false,
+    "visualExpansionOrFurtherEngineRoomFunctionality": false
+  },
+  "implementationUnchangedByThisRecord": true,
+  "note": "This file records the Owner statement. It does not change app.js, index.html, console-master-style.css, the probes, or docs/project2/PROJECT2_STATE.json."
+}

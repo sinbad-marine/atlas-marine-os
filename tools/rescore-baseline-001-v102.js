@@ -6,6 +6,20 @@
 // "before" column a gated run will be compared with. Inputs are read only; output goes to
 // tests/benchmark/results/BASELINE-001-REV-2/ and the stage-gate subset to tests/benchmark/rev2/.
 // Run: node tools/rescore-baseline-001-v102.js [--out dir] [--check]
+//
+// --check and the frozen subset file (2026-09-21, D6 "GREEN-BUILD CLOSURE" GO): the frozen
+// tests/benchmark/rev2/stage-gate-subset-v1.json is NEVER written by --check or by main() re-deriving a
+// mismatch into a "fix" - it is compared, never touched. Its `derivedFrom.resultsSha256` is a HISTORICAL
+// PIN to the exact BASELINE-001-REV-1 snapshot the frozen 30-item selection was originally derived from,
+// not a live pointer obligated to track every later, authorized, fingerprint-only REV-1 refresh (a scorer
+// bugfix changes scoring-v101.js's own file bytes, and therefore REV-1's embedded scorerV101Sha256 and its
+// own file hash, with zero change to any item's v1.0.1 outcome). --check therefore verifies the frozen
+// subset in two parts: (1) every field EXCEPT derivedFrom.resultsSha256 must still be exactly reproducible
+// from the current REV-1 data - this is the real invariant, and it fails closed on any actual drift in the
+// selected items, roles, counts or outcomes; (2) the frozen file's own resultsSha256 pin must equal either
+// the CURRENT live REV-1 hash (the ordinary case, nothing has diverged) OR the `priorResultsSha256` of a
+// migration explicitly recorded in tests/benchmark/rev1/provenance-migrations.json (an authorized,
+// documented, fingerprint-only refresh) - any other value is unexplained drift and still fails closed.
 const fs=require('node:fs');
 const path=require('node:path');
 const crypto=require('node:crypto');
@@ -15,8 +29,21 @@ const ROOT=path.resolve(__dirname,'..');
 const REVISION='BASELINE-001-REV-2';
 const REV1_PATH=path.join(ROOT,'tests/benchmark/results/BASELINE-001-REV-1/results.json');
 const SUBSET_PATH=path.join(ROOT,'tests/benchmark/rev2/stage-gate-subset-v1.json');
+const PROVENANCE_PATH=path.join(ROOT,'tests/benchmark/rev1/provenance-migrations.json');
 const sha256File=file=>crypto.createHash('sha256').update(Buffer.from(fs.readFileSync(file,'utf8').replace(/\r\n/g,'\n'),'utf8')).digest('hex');
 const stable=value=>`${JSON.stringify(value,null,2)}\n`;
+// subsetDrift(committedText, freshSubset) -> [] | [reason, ...]. Compares parsed JSON, not bytes, and
+// excludes derivedFrom.resultsSha256 from the structural comparison so that field can be judged separately.
+function subsetDrift(committedText,freshSubset){
+  let committed;try{committed=JSON.parse(committedText);}catch{return ['frozen subset is not valid JSON'];}
+  const strip=s=>({...s,derivedFrom:{...s.derivedFrom,resultsSha256:undefined}});
+  if(JSON.stringify(strip(committed))!==JSON.stringify(strip(freshSubset)))return ['frozen subset content (items/roles/classes/count/rule/scorer/baselineRuntime) no longer matches a fresh selection from the current REV-1 data - this is real drift'];
+  const pin=committed.derivedFrom&&committed.derivedFrom.resultsSha256;
+  if(pin===freshSubset.derivedFrom.resultsSha256)return [];
+  let provenance;try{provenance=JSON.parse(fs.readFileSync(PROVENANCE_PATH,'utf8'));}catch{return [`frozen subset pin ${pin} does not match the current REV-1 hash ${freshSubset.derivedFrom.resultsSha256}, and no provenance-migrations.json explains why`];}
+  const explained=(provenance.migrations||[]).some(m=>m.priorResultsSha256===pin&&m.newResultsSha256===freshSubset.derivedFrom.resultsSha256);
+  return explained?[]:[`frozen subset pin ${pin} does not match the current REV-1 hash ${freshSubset.derivedFrom.resultsSha256}, and no recorded migration documents exactly this transition - unexplained drift`];
+}
 
 function latencies(){
   const base=JSON.parse(fs.readFileSync(path.join(ROOT,'tests/benchmark/results/BASELINE-001/results.json'),'utf8'));
@@ -67,12 +94,16 @@ function main(){
   const {results,subset}=build();
   const files=[[path.join(outDir,'results.json'),stable(results)],[path.join(outDir,'report.md'),report(results,subset)],[SUBSET_PATH,stable(subset)]];
   if(check){
-    const drift=files.filter(([file,text])=>!fs.existsSync(file)||fs.readFileSync(file,'utf8').replace(/\r\n/g,'\n')!==text).map(([file])=>path.relative(ROOT,file));
-    if(drift.length){process.stderr.write(`${REVISION} is not reproducible: ${drift.join(', ')}\n`);process.exit(1);}
+    // results.json/report.md: exact byte reproducibility, unchanged. The frozen subset file is compared
+    // structurally (subsetDrift), never by raw bytes, and is never written by --check either way.
+    const exact=files.slice(0,2).filter(([file,text])=>!fs.existsSync(file)||fs.readFileSync(file,'utf8').replace(/\r\n/g,'\n')!==text).map(([file])=>path.relative(ROOT,file));
+    const subsetIssues=fs.existsSync(SUBSET_PATH)?subsetDrift(fs.readFileSync(SUBSET_PATH,'utf8').replace(/\r\n/g,'\n'),subset):['frozen subset file is missing'];
+    const drift=[...exact,...subsetIssues.map(reason=>`${path.relative(ROOT,SUBSET_PATH)}: ${reason}`)];
+    if(drift.length){process.stderr.write(`${REVISION} is not reproducible: ${drift.join('; ')}\n`);process.exit(1);}
     process.stdout.write(`${REVISION} reproduces (${files.length} files)\n`);return;
   }
   fs.mkdirSync(outDir,{recursive:true});for(const [file,text] of files)fs.writeFileSync(file,text);
   process.stdout.write(`${REVISION}: text ${JSON.stringify(results.textTotals)} matchRev1=${results.textTotalsMatchRev1}; harm delivered ${results.overall.HARM_DELIVERED}/${results.overall.FAIL}; subset ${subset.count} items, ~${(subset.baselineRuntime.sumMs/3600000).toFixed(2)} h\n`);
 }
 if(require.main===module)main();
-module.exports={build,report};
+module.exports={build,report,subsetDrift,SUBSET_PATH,PROVENANCE_PATH};

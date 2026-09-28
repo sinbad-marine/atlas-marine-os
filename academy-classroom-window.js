@@ -8,7 +8,7 @@ const ACADEMY_SECTIONS=Object.freeze({
   'goss-gasm':Object.freeze({title:'GOSS / GASM Classroom',label:'GOSS / GASM',modules:Object.freeze(['gasm-seyir-sinav'])}),
   stcw:Object.freeze({title:'STCW Classroom',label:'STCW',modules:Object.freeze(['stcw-foundation','colregs-navigation-rules','electronic-navigation','marine-weather'])}),
   goc:Object.freeze({title:'GOC / ROC Radio Classroom',label:'GOC / ROC RADIO',modules:Object.freeze(['goc-foundation'])}),
-  'general-maritime-education':Object.freeze({title:'General Maritime Education',label:'GENERAL MARITIME EDUCATION',modules:Object.freeze(['general-maritime-education','chart-reading','tides-water-levels','currents-set-drift'])}),
+  'general-maritime-education':Object.freeze({title:'General Maritime Education',label:'GENERAL MARITIME EDUCATION',modules:Object.freeze(['general-maritime-education','chart-reading','tides-water-levels','currents-set-drift','colregs-navigation-rules','electronic-navigation','marine-weather'])}),
   'ism-isps-mlc':Object.freeze({title:'ISM / ISPS / MLC Classroom',label:'ISM / ISPS / MLC',modules:Object.freeze(['ism-code-foundations'])})
 });
 const GEOMETRY_KEY='atlas_sinbad_academy_native_window';
@@ -288,7 +288,7 @@ function renderGasmQualificationMenu(){
   const root=byId('gasmQualificationList');if(!root)return;root.replaceChildren();
   for(const branch of ['DECK','ENGINE','ELECTRO_TECHNICAL']){
     const qualifications=gasmCatalog.qualifications.filter(item=>item.branch===branch);if(!qualifications.length)continue;
-    const group=document.createElement('details');group.className='gasm-branch';group.open=branch==='DECK';
+    const group=document.createElement('details');group.className='gasm-branch';group.dataset.gasmBranch=branch;group.open=branch==='DECK';
     const summary=document.createElement('summary');summary.textContent=gasmBranchLabel(branch);group.append(summary);
     qualifications.forEach(qualification=>{
       const detail=document.createElement('details');detail.className='gasm-qualification';detail.dataset.qualificationCode=qualification.code;
@@ -368,6 +368,61 @@ function selectAcademySection(sectionId){
   academyModuleOptions.filter(option=>section.modules.includes(option.value)).forEach(option=>{const node=document.createElement('option');node.value=option.value;node.textContent=option.label;select.append(node);});
   stopBoardTeaching();resetAcademyLessonClock();setAcademyClassroomPhase('welcome');const output=byId('academyOutput');output.replaceChildren();output.hidden=true;byId('academyTeachingTitle').textContent="Professor Sinbad's board";byId('academyTeachingText').replaceChildren();byId('academyTeachingText').setAttribute('aria-hidden','true');
   saveAcademySelection();
+}
+function showStandaloneAcademyLayer(layerId){
+  const shell=document.querySelector('.academy-shell');if(!shell)return;
+  shell.dataset.academyActive=layerId;shell.dataset.academyView='layer';
+  document.querySelectorAll('[data-academy-art]').forEach(image=>image.classList.toggle('is-active',image.dataset.academyArt===layerId));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function setAcademyModule(moduleId){
+  if(!moduleId)return;
+  const select=byId('academyModule'),option=[...select.options].find(item=>item.value===moduleId);if(!option)return;
+  select.value=moduleId;saveAcademySelection();
+}
+function focusAcademyDestination(target){
+  if(!target)return;
+  if(!target.hasAttribute('tabindex'))target.setAttribute('tabindex','-1');
+  requestAnimationFrame(()=>target.focus({preventScroll:true}));
+}
+function openAcademyLayerTool(button){
+  const command=button.dataset.academyCommand,targetSection=button.dataset.academyTargetSection;
+  if(command==='home'){returnToAcademyHome();return;}
+  if(command==='back-academy'){const shell=document.querySelector('.academy-shell'),active=shell?.dataset.academyActive;if(shell)shell.dataset.academyView='landing';window.scrollTo({top:0,behavior:'smooth'});focusAcademyDestination(document.querySelector(`.academy-program-card[data-academy-open="${active}"]`)||byId('academyLandingTitle'));return;}
+  if(command==='section'&&targetSection){selectAcademySection(targetSection);window.scrollTo({top:0,behavior:'smooth'});focusAcademyDestination(document.querySelector(`[data-academy-scope="${targetSection}"][data-academy-command]`)||byId('academyLayerTitle'));return;}
+  const requestedSection=button.dataset.academyToolsSection||button.dataset.academyScope;
+  const sectionId=Object.prototype.hasOwnProperty.call(ACADEMY_SECTIONS,requestedSection)?requestedSection:'general-maritime-education';
+  selectAcademySection(sectionId);setAcademyModule(button.dataset.academyModule);
+  const shell=document.querySelector('.academy-shell');if(shell)shell.dataset.academyView='tools';
+  if(command==='family'){
+    const family=button.dataset.academyFamily,menu=byId('gasmQualificationMenu');
+    const branch={deck:'DECK',engine:'ENGINE','electro-technical':'ELECTRO_TECHNICAL'}[family];
+    document.querySelectorAll('[data-gasm-family]').forEach(node=>node.classList.toggle('active',node.dataset.gasmFamily===family));
+    document.querySelectorAll('.gasm-branch').forEach(node=>{node.open=node.dataset.gasmBranch===branch;});
+    if(menu)menu.hidden=false;
+    const destination=document.querySelector(`.gasm-branch[data-gasm-branch="${branch}"] > summary`);
+    requestAnimationFrame(()=>{menu?.scrollIntoView({behavior:'smooth',block:'start'});focusAcademyDestination(destination||menu);});
+    return;
+  }
+  if(command==='lesson'){renderLesson();focusAcademyDestination(byId('academyTeachingTitle'));}
+  else if(command==='practice'){renderQuiz();focusAcademyDestination(byId('academyOutput'));}
+  else if(command==='professor')requestAnimationFrame(()=>{byId('professor-sinbad')?.scrollIntoView({behavior:'smooth',block:'start'});byId('academyQuestionInput')?.focus({preventScroll:true});});
+  else if(command==='exam')openExamIntelligence();
+}
+function handleAcademyLayerPointerActivation(event){
+  if(event.detail===0)return;
+  const container=event.currentTarget,shell=document.querySelector('.academy-shell'),active=shell?.dataset.academyActive,rect=container.getBoundingClientRect();
+  if(!active||!rect.width||!rect.height)return;
+  const x=((event.clientX-rect.left)/rect.width)*100,y=((event.clientY-rect.top)/rect.height)*100;
+  const candidates=[...container.querySelectorAll(`[data-academy-scope="${active}"][data-academy-command]`)].filter(button=>{
+    const style=button.style,x0=parseFloat(style.getPropertyValue('--hotspot-x')),y0=parseFloat(style.getPropertyValue('--hotspot-y')),width=parseFloat(style.getPropertyValue('--hotspot-w')),height=parseFloat(style.getPropertyValue('--hotspot-h'));
+    return x>=x0&&x<=x0+width&&y>=y0&&y<=y0+height;
+  }).sort((left,right)=>{
+    const area=button=>parseFloat(button.style.getPropertyValue('--hotspot-w'))*parseFloat(button.style.getPropertyValue('--hotspot-h'));
+    return area(left)-area(right);
+  });
+  if(!candidates.length)return;
+  event.preventDefault();event.stopPropagation();openAcademyLayerTool(candidates[0]);
 }
 function handleAcademySectionClick(button){
   const sectionId=button.dataset.academySection,menu=byId('gasmQualificationMenu');
@@ -538,19 +593,12 @@ window.addEventListener('focus',refreshAcademyRuntimeStatus);window.addEventList
 document.querySelectorAll('[data-academy-section]').forEach(button=>button.addEventListener('click',()=>handleAcademySectionClick(button)));
 document.querySelectorAll('[data-academy-open]').forEach(button=>button.addEventListener('click',()=>{
   const target=button.dataset.academyOpen;
-  if(target==='professor-sinbad'){const shell=document.querySelector('.academy-shell');if(shell)shell.dataset.academyView='tools';requestAnimationFrame(()=>{byId('professor-sinbad')?.scrollIntoView({behavior:'smooth',block:'start'});byId('academyQuestionInput')?.focus({preventScroll:true});});return;}
+  if(target==='professor-sinbad'){showStandaloneAcademyLayer(target);return;}
   if(!Object.prototype.hasOwnProperty.call(ACADEMY_SECTIONS,target))return;
   selectAcademySection(target);byId('academyWorkspace')?.scrollIntoView({behavior:'smooth',block:'start'});
 }));
-document.querySelectorAll('[data-academy-action]').forEach(button=>button.addEventListener('click',()=>{
-  const action=button.dataset.academyAction,shell=document.querySelector('.academy-shell');if(shell)shell.dataset.academyView='tools';
-  if(action==='open-lesson')renderLesson();
-  else if(action==='practice')renderQuiz();
-  else if(action==='professor')requestAnimationFrame(()=>{byId('professor-sinbad')?.scrollIntoView({behavior:'smooth',block:'start'});byId('academyQuestionInput')?.focus({preventScroll:true});});
-  else if(action==='exam')openExamIntelligence();
-  else if(action==='back-academy'){if(shell)shell.dataset.academyView='landing';window.scrollTo({top:0,behavior:'smooth'});}
-  else if(action==='home')returnToAcademyHome();
-}));
+document.querySelectorAll('[data-academy-command]').forEach(button=>button.addEventListener('click',()=>openAcademyLayerTool(button)));
+document.querySelector('.academy-layer-hotspots')?.addEventListener('click',handleAcademyLayerPointerActivation,true);
 document.querySelectorAll('[data-gasm-family]').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('[data-gasm-family]').forEach(node=>node.classList.toggle('active',node===button));const menu=byId('gasmQualificationMenu');if(menu){menu.hidden=false;menu.scrollIntoView({behavior:'smooth',block:'nearest'});}}));
 byId('academyModule').addEventListener('change',saveAcademySelection);
 byId('startAcademyLesson').addEventListener('click',renderLesson);

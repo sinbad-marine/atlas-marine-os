@@ -39,7 +39,7 @@
     },
     {
       "path": "sw.js",
-      "sha256": "173585124c768f62bf34898d9e20b4c45f02ae5494bcdf8592db4b3fd9ec7025",
+      "sha256": "a8cf139be1253d4d4a99825940f4d0024f9f9d00763b0d6384c5d9f3da2768ae",
       "kind": "SOURCE"
     },
     {
@@ -219,7 +219,7 @@
     },
     {
       "path": "academy-classroom-window.js",
-      "sha256": "2661c4ac5d9c8b2cd3ee1a734aedb50df07052c546759f26ffb1f65e284951e5",
+      "sha256": "f4de8e2e1415d19f517e262992b61fd7af9ba8ea4e800cb7bf5ffabd4da11893",
       "kind": "SOURCE"
     },
     {
@@ -229,7 +229,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "a318f57c077f037b05804fea938aff0f5efa143c0af66ba5f3d8e3a40b08428a",
+      "sha256": "fb6ba0ddef4358d7451e01cc50e8e1ff789e3ebd63cc5d0e98619d8df719e8dc",
       "kind": "SOURCE"
     },
     {
@@ -239,7 +239,7 @@
     },
     {
       "path": "config/ui-design-contract.json",
-      "sha256": "80ac72d7be80a4aa23f21f21efa32108ad28df51446aef17a5f431d1f133feb3",
+      "sha256": "731a80d88baee3fc7b3eb3e8ab6680c8afd90d987247e67da7a3aab3374f2671",
       "kind": "CONFIG"
     },
     {
@@ -249,7 +249,7 @@
     },
     {
       "path": "index.html",
-      "sha256": "4b18c3a537540b89a9b4d37488038850061fa0b75b635d91d1c33e4e871b0bac",
+      "sha256": "b8a0add47767abb9f9ed5606225a1b509f2bbe5f32133a8a32bbcf54de36cdc1",
       "kind": "SOURCE"
     },
     {
@@ -389,7 +389,7 @@
     },
     {
       "path": "tests/ui-design-contract.test.js",
-      "sha256": "8b9e69f6fa1f42f83de626f02651fc2c49fa31546c3b36682a2eeb656b061ae1",
+      "sha256": "f448cd84032777388be39565abcf42994934c26d4ca822cb8553db763c436dfc",
       "kind": "TEST"
     },
     {
@@ -419,7 +419,7 @@
     },
     {
       "path": "tools/build-pages-artifact.js",
-      "sha256": "6ab9f656434ba2550e8ed1b23a333a9c9a28dfc6d0557464bcc1038a90c897bc",
+      "sha256": "7b31970a4799467aa25fc8586f5a2f4f3d7d8cf9d2b964772ebce6caaa171bd1",
       "kind": "SOURCE"
     },
     {
@@ -440,7 +440,7 @@
     {
       "path": "tests/sinbad-academy-window.test.js",
       "kind": "TEST",
-      "sha256": "498f93e099d64862b498079d7b62199c7490575aed0f1b7a2cf75d26695652f6"
+      "sha256": "14e706dced834c68d315aebb7a9fef0981dc5a9278c79d76aaec6c3b9c416a24"
     },
     {
       "path": "founder-owner-mfa.js",
@@ -470,7 +470,7 @@
     {
       "path": "tests/browser/surface-smoke.spec.js",
       "kind": "TEST",
-      "sha256": "c87add70e73dea272630bf902be393ad05168f726b40cfdcda4244a20f926d14"
+      "sha256": "9a7f70db9326f5dcd64a4f5a51e5053f70dc8eb0ef61f514a1b7514a513d8082"
     },
     {
       "path": "tools/argos-ci-retention.ps1",

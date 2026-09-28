@@ -36,15 +36,22 @@ const inside=(child,parent)=>{const rel=path.relative(path.resolve(parent),path.
 const maxThreads=()=>Math.max(1,Math.floor(os.cpus().length/2));
 const defaultThreads=()=>Math.min(8,maxThreads());
 function parseArgs(argv){
-  const args={outDir:null,library:process.env.SINBAD_LIBRARY_INDEX||DEFAULT_LIBRARY,ollama:'http://127.0.0.1:11434',limit:null,budgetSeconds:null,threads:defaultThreads(),verifySample:0};
+  const args={outDir:null,library:process.env.SINBAD_LIBRARY_INDEX||DEFAULT_LIBRARY,ollama:'http://127.0.0.1:11434',limit:null,budgetSeconds:null,threads:defaultThreads(),verifySample:0,corpus:null,fullBuildOwnerGo:false};
   for(let i=0;i<argv.length;i+=1){const a=argv[i],v=argv[i+1];
     if(a==='--out-dir'){args.outDir=v;i+=1;}else if(a==='--library'){args.library=v;i+=1;}else if(a==='--ollama'){args.ollama=v;i+=1;}else if(a==='--limit'){args.limit=Number(v);i+=1;}
-    else if(a==='--budget-seconds'){args.budgetSeconds=Number(v);i+=1;}else if(a==='--threads'){args.threads=Number(v);i+=1;}else if(a==='--verify-sample'){args.verifySample=Number(v);i+=1;}}
+    else if(a==='--budget-seconds'){args.budgetSeconds=Number(v);i+=1;}else if(a==='--threads'){args.threads=Number(v);i+=1;}else if(a==='--verify-sample'){args.verifySample=Number(v);i+=1;}else if(a==='--corpus'){args.corpus=v;i+=1;}else if(a==='--full-build-owner-go')args.fullBuildOwnerGo=true;}
   if(typeof args.outDir!=='string'||!path.isAbsolute(args.outDir))throw new Error('OUT_DIR_MUST_BE_ABSOLUTE');
   if(inside(args.outDir,ROOT))throw new Error('OUT_DIR_MUST_BE_OUTSIDE_THE_REPOSITORY');
   if(inside(args.outDir,path.dirname(args.library)))throw new Error('OUT_DIR_MUST_NOT_BE_INSIDE_THE_LIBRARY');
   if(!['127.0.0.1','localhost','[::1]'].includes(new URL(args.ollama).hostname))throw new Error('OLLAMA_MUST_BE_LOOPBACK');
   if(args.limit!==null&&(!Number.isInteger(args.limit)||args.limit<1))throw new Error('LIMIT_INVALID');
+  // The full library costs days of CPU on the Owner's machine and is ON HOLD (Owner directive of 2026-09-19, Phase 4.10 part 2).
+  // A run without --limit and without --corpus is the full build: it is refused unless --full-build-owner-go is given.
+  // THE FLAG IS A TECHNICAL INTERLOCK, NOT AN AUTHORISATION. It exists so that the full build cannot start by accident or by a
+  // convenient default. It grants nothing by itself: the full build may be started only when the Owner has separately and
+  // explicitly given a GO for it, and whoever types the flag without that GO acts without authority.
+  if(args.limit===null&&args.corpus===null&&!args.fullBuildOwnerGo)throw new Error('FULL_BUILD_IS_ON_HOLD');
+  if(args.corpus!==null&&args.limit!==null)throw new Error('CORPUS_AND_LIMIT_EXCLUDE_EACH_OTHER');
   if(args.budgetSeconds!==null&&(!Number.isFinite(args.budgetSeconds)||args.budgetSeconds<30))throw new Error('BUDGET_INVALID');
   if(!Number.isInteger(args.threads)||args.threads<1||args.threads>maxThreads())throw new Error('THREADS_MUST_LEAVE_HALF_THE_CORES_FREE');
   if(!Number.isInteger(args.verifySample)||args.verifySample<0||args.verifySample>64)throw new Error('VERIFY_SAMPLE_INVALID');
@@ -62,40 +69,74 @@ function shardComplete(dir,n,hashes){
   let meta;try{meta=JSON.parse(fs.readFileSync(j,'utf8'));}catch{return false;}
   return meta.shard===n&&meta.rows===hashes.length&&fs.statSync(f).size===hashes.length*DIMENSION*4&&Array.isArray(meta.contentHashes)&&meta.contentHashes.length===hashes.length&&meta.contentHashes.every((h,i)=>h===hashes[i]);
 }
+// Throughput is rows actually embedded over the time actually spent embedding them. (It was the number of finished shards
+// times the shard size over the whole run: a short final shard counted as a full one, and index loading and skipped shards
+// counted as embedding time.)
+// Waiting for somebody else's model is not embedding: the first corpus build reported 0.18 chunks/s because 75 minutes of
+// yielding were counted inside the shard timers; the net rate was 0.27.
+const embeddingSeconds=(elapsedSeconds,yieldedSecondsInside)=>Math.max(0,elapsedSeconds-yieldedSecondsInside);
+function throughput({rowsBuilt,tokens,embedSeconds}){
+  if(!(rowsBuilt>0)||!(embedSeconds>0))return {chunksPerSecond:null,tokensPerSecond:null};
+  return {chunksPerSecond:Number((rowsBuilt/embedSeconds).toFixed(3)),tokensPerSecond:Math.round(tokens/embedSeconds)};
+}
+// A bounded corpus is a list of WHOLE library documents named by title, each pinned by its chunk count and by the SHA-256 over
+// its chunk hashes. Nothing is copied: the text still comes from the library, and a library that changed is refused.
+function documentSha256(doc){return sha256((doc.chunks||[]).filter(c=>typeof c==='string'&&c.trim()).map(c=>sha256(c)).join('\n'));}
+function loadCorpus(file,documents,librarySha256){
+  const text=fs.readFileSync(path.resolve(ROOT,file),'utf8');const corpus=JSON.parse(text);
+  if(corpus.version!=='sinbad-retrieval-corpus/1'||!Array.isArray(corpus.documents)||!corpus.documents.length)throw new Error('CORPUS_INVALID');
+  if(corpus.librarySha256!==librarySha256)throw new Error('CORPUS_MISMATCH: the corpus was defined on another library index');
+  // The library holds some titles twice. A corpus entry is the FIRST document with that title whose content matches the pinned
+  // hash, so identity is title + content, never position alone.
+  const byTitle=new Map();for(const d of documents){if(!byTitle.has(d.title))byTitle.set(d.title,[]);byTitle.get(d.title).push(d);}
+  const picked=corpus.documents.map(entry=>{const d=(byTitle.get(entry.title)||[]).find(x=>documentSha256(x)===entry.documentSha256);
+    if(!d)throw new Error(`CORPUS_MISMATCH: ${entry.title} is missing or changed`);return d;});
+  if(new Set(picked).size!==picked.length)throw new Error('CORPUS_INVALID: a document is listed twice');
+  return {name:String(corpus.name),sha256:sha256(text.replace(/\r\n/g,'\n')).slice(0,16),documents:picked};
+}
 function cosine(a,b){let s=0,na=0,nb=0;for(let i=0;i<a.length;i+=1){s+=a[i]*b[i];na+=a[i]*a[i];nb+=b[i]*b[i];}return s/Math.sqrt(na*nb);}
 
 async function main(){
   const args=parseArgs(process.argv.slice(2));const freeGb=()=>os.freemem()/2**30;const began=Date.now();
   if(freeGb()<START_FLOOR_GB){process.stdout.write(`HOST_MEMORY_LOW: ${freeGb().toFixed(1)} GB free, ${START_FLOOR_GB} needed to start. Nothing was run.\n`);process.exit(2);}
   const tags=await request(args.ollama,'GET','/api/tags',null,30000);const tag=(tags.models||[]).find(m=>m.name===MODEL);if(!tag)throw new Error('AUTHORISED_MODEL_NOT_INSTALLED');
-  const text=fs.readFileSync(args.library,'utf8');const librarySha256=sha256(text);const raw=JSON.parse(text.replace(/^﻿/u,''));const index=retriever.build(raw.documents||[]);
+  const text=fs.readFileSync(args.library,'utf8');const librarySha256=sha256(text);const raw=JSON.parse(text.replace(/^﻿/u,''));
+  const corpus=args.corpus===null?null:loadCorpus(args.corpus,raw.documents||[],librarySha256);
+  const index=retriever.build(corpus?corpus.documents:raw.documents||[]);
   const total=args.limit===null?index.chunks.length:Math.min(args.limit,index.chunks.length);
   const manifest={version:VERSION,model:MODEL,modelDigest:tag.digest,dimension:DIMENSION,shardRows:SHARD_ROWS,inputRule:INPUT_RULE,numCtx:NUM_CTX,chunkOrder:retriever.VERSION,
-    library:{sha256:librarySha256,builtAt:raw.builtAt||null,chunks:index.chunks.length,documents:index.documentCount},scope:args.limit===null?'FULL':`PILOT first ${total} chunks`};
+    library:{sha256:librarySha256,builtAt:raw.builtAt||null,chunks:index.chunks.length,documents:index.documentCount},scope:corpus?`CORPUS ${corpus.name} ${corpus.sha256}`:args.limit===null?'FULL':`PILOT first ${total} chunks`};
   fs.mkdirSync(args.outDir,{recursive:true});const manifestPath=path.join(args.outDir,'manifest.json');
   if(fs.existsSync(manifestPath)){const prior=JSON.parse(fs.readFileSync(manifestPath,'utf8'));const same=k=>JSON.stringify(prior[k])===JSON.stringify(manifest[k]);
     if(!['version','model','modelDigest','dimension','shardRows','inputRule','numCtx','chunkOrder','library','scope'].every(same))throw new Error('MANIFEST_MISMATCH: this directory holds an index of another library, model or scope. Nothing was changed. Use a new --out-dir.');}
   else atomicWrite(manifestPath,`${JSON.stringify({...manifest,createdAt:new Date().toISOString()},null,2)}\n`);
-  const shards=Math.ceil(total/SHARD_ROWS);let built=0,skipped=0,tokens=0,stopped=null;let peakRssGb=0;let yieldedSeconds=0;
+  const shards=Math.ceil(total/SHARD_ROWS);let built=0,skipped=0,tokens=0,stopped=null,rowsBuilt=0,embedSeconds=0;let peakRssGb=0;let yieldedSeconds=0;
   for(let n=0;n<shards;n+=1){
     const first=n*SHARD_ROWS,rows=Math.min(SHARD_ROWS,total-first);const hashes=[];for(let r=0;r<rows;r+=1)hashes.push(sha256(index.chunks[first+r].text));
     if(shardComplete(args.outDir,n,hashes)){skipped+=1;continue;}
     if(args.budgetSeconds!==null&&(Date.now()-began)/1000>args.budgetSeconds){stopped='TIME_BUDGET';break;}
     if(freeGb()<RUN_FLOOR_GB){stopped='HOST_MEMORY_LOW';break;}
-    const vectors=[];const t0=Date.now();
+    const vectors=[];const t0=Date.now();const yieldedBefore=yieldedSeconds;
     for(let r=0;r<rows;r+=REQUEST_ROWS){
       // Yield: while any OTHER model is resident in Ollama (the bridge answering, a grounded run), this job waits. A build
       // of several days must not slow the Owner's own use of the machine or distort somebody else's latency measurement.
       for(;;){const ps=await request(args.ollama,'GET','/api/ps',null,30000).catch(()=>({models:[]}));const others=(ps.models||[]).filter(m=>m.name!==MODEL).map(m=>m.name);if(!others.length)break;
+        // While it waits it also gives back its own model's memory; Ollama loads it again on the next request.
+        if(yieldedSeconds%600===0)await request(args.ollama,'POST','/api/generate',{model:MODEL,keep_alive:0},60000).catch(()=>{});
         yieldedSeconds+=YIELD_SECONDS;process.stdout.write(`yielding to ${others.join(', ')}\n`);await new Promise(resolve=>setTimeout(resolve,YIELD_SECONDS*1000));}
+      // The memory floor is checked before EVERY request, not only between shards: on 2026-09-19 another process loaded a
+      // 14B model, free memory fell from 12 GB to under 1 GB within one shard, and the host's guard killed the job before
+      // the job could stop itself. A shard that is given up is not written; the finished ones stay.
+      if(freeGb()<RUN_FLOOR_GB){stopped='HOST_MEMORY_LOW';break;}
       const input=index.chunks.slice(first+r,first+Math.min(rows,r+REQUEST_ROWS)).map(c=>c.text);
       const j=await request(args.ollama,'POST','/api/embed',{model:MODEL,input,truncate:true,keep_alive:'10m',options:{num_ctx:NUM_CTX,num_thread:args.threads}},600000);
       if(!Array.isArray(j.embeddings)||j.embeddings.length!==input.length)throw new Error(`EMBED_FAILED ${JSON.stringify(j).slice(0,160)}`);
       vectors.push(...j.embeddings);tokens+=j.prompt_eval_count||0;
     }
+    if(stopped)break;
     const buffer=toBuffer(vectors);atomicWrite(path.join(args.outDir,`${shardName(n)}.f32`),buffer);
     atomicWrite(path.join(args.outDir,`${shardName(n)}.json`),`${JSON.stringify({shard:n,firstChunkId:first,rows,vectorsSha256:sha256(buffer),contentHashes:hashes})}\n`);
-    built+=1;peakRssGb=Math.max(peakRssGb,process.memoryUsage().rss/2**30);
+    built+=1;rowsBuilt+=rows;embedSeconds+=embeddingSeconds((Date.now()-t0)/1000,yieldedSeconds-yieldedBefore);peakRssGb=Math.max(peakRssGb,process.memoryUsage().rss/2**30);
     process.stdout.write(`${shardName(n)} rows ${rows} in ${((Date.now()-t0)/1000).toFixed(0)} s | done ${Math.min(total,first+rows)}/${total} | free ${freeGb().toFixed(1)} GB\n`);
   }
   // Rebuild check: embed a few stored chunks again and compare. A prefix-cache hit changes the last digits, so the test is a cosine.
@@ -105,11 +146,11 @@ async function main(){
       const j=await request(args.ollama,'POST','/api/embed',{model:MODEL,input:[index.chunks[id].text],truncate:true,keep_alive:'10m',options:{num_ctx:NUM_CTX,num_thread:args.threads}},600000);min=Math.min(min,cosine(stored,j.embeddings[0]));}
     verify={sampled:ids.length,minCosine:Number(min.toFixed(6)),ok:min>=0.999};}
   await request(args.ollama,'POST','/api/generate',{model:MODEL,keep_alive:0},60000).catch(()=>{});
-  const seconds=(Date.now()-began)/1000;const chunksBuilt=built*SHARD_ROWS;
-  const summary={outDir:args.outDir,scope:manifest.scope,shards,built,skipped,complete:built+skipped===shards&&!stopped,stopped,seconds:Math.round(seconds),tokens,tokensPerSecond:built?Math.round(tokens/seconds):null,chunksPerSecond:built?Number((Math.min(chunksBuilt,total)/seconds).toFixed(3)):null,
+  const seconds=(Date.now()-began)/1000;const rate=throughput({rowsBuilt,tokens,embedSeconds});
+  const summary={outDir:args.outDir,scope:manifest.scope,shards,built,skipped,complete:built+skipped===shards&&!stopped,stopped,seconds:Math.round(seconds),tokens,rowsBuilt,embedSeconds:Math.round(embedSeconds),tokensPerSecond:rate.tokensPerSecond,chunksPerSecond:rate.chunksPerSecond,
     bytesPerChunk:DIMENSION*4,projectedFullIndexMb:Math.round(index.chunks.length*DIMENSION*4/2**20),peakRssGb:Number(peakRssGb.toFixed(2)),yieldedSeconds,freeGbAtEnd:Number(freeGb().toFixed(1)),verify};
   process.stdout.write(`${JSON.stringify(summary,null,1)}\n`);
   process.exit(stopped==='TIME_BUDGET'?3:stopped?2:verify&&!verify.ok?4:0);
 }
 if(require.main===module)main().catch(e=>{process.stderr.write(`${e.message}\n`);process.exit(1);});
-module.exports={VERSION,MODEL,DIMENSION,SHARD_ROWS,INPUT_RULE,parseArgs,shardComplete,shardName,toBuffer,cosine};
+module.exports={VERSION,MODEL,DIMENSION,SHARD_ROWS,INPUT_RULE,parseArgs,shardComplete,shardName,toBuffer,cosine,throughput,embeddingSeconds,documentSha256,loadCorpus};

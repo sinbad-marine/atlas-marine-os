@@ -10,7 +10,7 @@ test('Academy GOSS/GASM launches the separate fail-closed Exam Intelligence surf
   await expect(page.locator('#academyTeachingStage')).toBeHidden();
   await expect(page.locator('#academyExamConnection')).toContainText('synthetic/local');
   const popupPromise=page.waitForEvent('popup');
-  await page.locator('[data-academy-action="exam"]').click({force:true});
+  await page.locator('.academy-layer-hotspots [data-academy-scope="goss-gasm"][data-academy-command="exam"]').last().click();
   const exam=await popupPromise;
   await expect.poll(()=>exam.url()).toBe('http://127.0.0.1:4192/');
   await exam.close();

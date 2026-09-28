@@ -306,7 +306,7 @@ test('Sinbad Academy opens outside the main app as a standalone classroom window
   await expect(page.locator('#sinbadAcademyWindow')).toHaveCount(0);
   await classroom.locator('.academy-landing-hotspots [data-academy-open="general-maritime-education"]').click({force:true});
   await expect(classroom.locator('[data-academy-art="general-maritime-education"].is-active')).toBeVisible();
-  await classroom.locator('[data-academy-action="open-lesson"]').click({force:true});
+  await classroom.locator('.academy-layer-hotspots [data-academy-scope="general-maritime-education"][data-academy-command="lesson"]').first().click();
   await expect(classroom.locator('#academyQuestionInput')).toBeVisible();
   await expect(classroom.locator('#startAcademyListening')).toBeVisible();
   await classroom.locator('#startAcademyLesson').click();
@@ -323,7 +323,7 @@ test('standalone Academy switches programmes inside the same classroom window',a
   await classroom.locator('.academy-landing-hotspots [data-academy-open="goss-gasm"]').click({force:true});
   await expect(classroom.locator('[data-academy-art="goss-gasm"].is-active')).toBeVisible();
   await expect(classroom.locator('#academyModule')).toHaveValue('gasm-seyir-sinav');
-  await classroom.locator('[data-academy-action="back-academy"]').click({force:true});
+  await classroom.locator('.academy-layer-hotspots [data-academy-scope="goss-gasm"][data-academy-command="back-academy"]').click();
   await expect(classroom.locator('.academy-landing')).toBeVisible();
   await classroom.locator('.academy-landing-hotspots [data-academy-open="stcw"]').click({force:true});
   await expect(classroom.locator('[data-academy-art="stcw"].is-active')).toBeVisible();

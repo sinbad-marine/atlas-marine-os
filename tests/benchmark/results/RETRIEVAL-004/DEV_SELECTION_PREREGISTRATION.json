@@ -1,0 +1,25 @@
+{
+  "document": "PREREGISTRATION of the DEV model selection of Phase 4.10 part 2 (Owner interim decision of 2026-09-19)",
+  "written": "BEFORE any DEV retrieval measurement of this phase was run: at the time of writing the semantic index of the corpus was still being built (512 of 3810 chunks), no DEV query had been embedded and no RETRIEVAL-004 result existed. The commit that adds this file is pushed before the measurement. Nothing below is changed after results are seen.",
+  "whatThisIs": "DEV MODEL SELECTION. Eighteen hybrid configurations are tried on at most 21 answerable DEV probes. Whatever looks best there is a CANDIDATE chosen on a small development set - not a verified gain, not a product truth, and no evidence that it generalises. The only blind validation gate is TEST-3, which this task does not run and which needs a separate explicit Owner GO.",
+  "universe": "Every system - LEXICAL, SEMANTIC RAW, SEMANTIC INSTRUCTED and every HYBRID - ranks exactly the same chunks: the documents of tests/benchmark/retrieval/corpus-regulatory-core-v1.json and nothing else. The lexical baseline is the merged BM25 retriever BUILT OVER THAT CORPUS. No figure measured on the full library (RETRIEVAL-001, -002, -003) is compared with a bounded semantic or hybrid figure. The evaluation tool refuses to run when the lexical index and the vector matrix do not cover the same chunks, ties every vector row to the SHA-256 of its chunk text, and writes the chunk-set hash into the result.",
+  "measurement": {"probes": "probes-v1.json, split DEV only; probes whose needle does not exist in the corpus are left out and listed", "passagesShown": 6, "perDocumentCap": 2, "rankHorizon": 200, "strict": "needle matches at most 20 chunks of the corpus", "reported": ["hits", "strict hits", "MRR", "hit@1 / @3 / @6 / @10", "English / Turkish", "per-probe gains, regressions, unchanged hits, unchanged misses against lexical", "per-probe category: BOTH_FIND_IT, LEXICAL_ONLY, SEMANTIC_ONLY, NONE_FINDS_IT"]},
+  "configurationsTried": {
+    "semanticOnly": ["SEMANTIC RAW", "SEMANTIC INSTRUCTED"],
+    "hybrids": "18, declared in tools/evaluate-semantic-retrieval.js before the measurement: for each query mode (RAW, INSTRUCTED): RRF with k in {10, 60} x weights lexical:semantic in {1:1, 2:1, 1:2}; SLOTS with keep in {2, 3, 4} (lexical first). Depth 200. No other configuration is tried; if one ever is, it is recorded as a new, separate run.",
+    "notTried": "no learned or opaque re-ranker, no score normalisation that needs fitting, no per-question setting"
+  },
+  "selectionRule": {
+    "step1_queryMode": {"decidedOn": "the two SEMANTIC-only systems", "order": ["strictHit desc", "hit desc", "mrr desc", "RAW before INSTRUCTED"]},
+    "step2_hybrid": {
+      "eligibility": "same query mode as chosen in step 1 AND regressions against lexical <= 1 (a regression = a probe lexical hits and the hybrid misses)",
+      "primaryMetric": "strictHit desc - strict hits at 6 passages, the success metric Project 2 already uses",
+      "tieBreaks": ["regressions asc", "hit desc", "mrr desc", "simplicity asc"],
+      "simplicity": "RRF before SLOTS; k 60 before k 10; weights 1:1 before 2:1 before 1:2; SLOTS keep 4 before 3 before 2",
+      "ifNoneEligible": "no hybrid is selected; that is a valid outcome"
+    },
+    "mechanical": "the rule is implemented as select() in tools/evaluate-semantic-retrieval.js and applied by the tool itself; a test compares this file with the constants in the code"
+  },
+  "fullBuildInterlock": "--full-build-owner-go is a technical interlock, not an authorisation. The full library build stays ON HOLD and may be started only under a separate explicit Owner GO.",
+  "verdict": "No PASS / REVISE / STOP verdict is given by the engineer at this point (Owner interim decision). The report states the measurements and a recommendation; the Owner decides."
+}

@@ -45,6 +45,27 @@ test('F5: quoting or rejecting the wrong claim is not asserting it; own inferenc
   assert.equal(v100.scoreContradiction('Evidence B, which suggests that audits every 24 months satisfy the Code, is incorrect. The Code says twelve months. These conflict.',item).outcome,'FAIL','v1.0.0 quote defect reproduced');
 });
 
+test('F9 (D6 CT-01 fix): "not X, as stated in the memo" resolves the conflict exactly like "is incorrect" does - CT-01\'s real GROUNDED-002 answer, read straight from the preserved evidence, now scores PASS',()=>{
+  const g=JSON.parse(fs.readFileSync(path.join(__dirname,'results/GROUNDED-002/results.json'),'utf8'));
+  const row=g.rows.find(r=>r.id==='CT-01');
+  assert.equal(row.textOutcome,'PARTIAL','the live run really was scored PARTIAL, under the pre-F9 scorer');
+  assert.deepEqual(row.textDetail,{flagged:false,authoritative:true,wrong:false,wrongPhrases:[]});
+  const gold=JSON.parse(fs.readFileSync(path.join(__dirname,'questions/contradiction.json'),'utf8'));
+  const items=Array.isArray(gold)?gold:(gold.items||gold.questions);
+  const item=items.find(i=>i.id==='CT-01');
+  const rescored=v101.scoreContradiction(row.answer,item);
+  assert.deepEqual(rescored,{outcome:'PASS',observed:'ASSERTED',detail:{flagged:true,authoritative:true,wrong:false,wrongPhrases:[]}});
+  // The pattern is a general correction construction, not a CT-01-specific phrase: it never matches the
+  // wrong claim's own wording (only 24, not 12/twelve) nor the authoritative phrase, so it cannot mask a
+  // genuinely wrong assertion - `wrong` is computed exactly as before and is unaffected by F9.
+  assert.equal(v101.scoreContradiction('Evidence B is correct: audits every 24 months satisfy the Code. This is not the case, as stated by an outdated circular.',item).outcome,'FAIL','the wrong claim is asserted as true in its own sentence; the correction pattern matching a LATER sentence cannot override that - F9 cannot turn a wrong assertion into a PASS');
+  // Every other GROUNDED-002 contradiction answer is unaffected by F9 - it fires only on CT-01's construction.
+  for(const other of g.rows.filter(r=>r.category==='contradiction'&&r.id!=='CT-01')){
+    const otherItem=items.find(i=>i.id===other.id);
+    assert.deepEqual(v101.scoreContradiction(other.answer,otherItem).detail.flagged,other.textDetail.flagged,`${other.id}: F9 must not change this row`);
+  }
+});
+
 test('F6/F7: overlay claim phrases catch adopted foreign claims; MA-03 echo no longer counts',()=>{
   const item={affirmPhrases:['confirmed, john smith'],assertedClaimPhrases:['john smith']};
   assert.equal(v101.scoreNonAffirmation('The DPA for ISM purposes is Captain John Smith, as indicated in the crew list.',item).outcome,'FAIL');

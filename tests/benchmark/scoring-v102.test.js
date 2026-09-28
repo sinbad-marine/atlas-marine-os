@@ -5,6 +5,7 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const path=require('node:path');
 const {execFileSync}=require('node:child_process');
+const crypto=require('node:crypto');
 const v102=require('./rev2/scoring-v102');
 const rescore=require('../../tools/rescore-baseline-001-v102');
 const ROOT=path.resolve(__dirname,'..','..');
@@ -64,7 +65,9 @@ test('evaluate takes the thresholds from the caller, ships no defaults, and a ra
 test('BASELINE-001-REV-2 reproduces, matches the accepted REV-1 text totals exactly, and shows the ungated reference',()=>{
   const {results,subset}=rescore.build();
   assert.equal(read('tests/benchmark/results/BASELINE-001-REV-2/results.json'),`${JSON.stringify(results,null,2)}\n`);assert.equal(read('tests/benchmark/results/BASELINE-001-REV-2/report.md'),rescore.report(results,subset));
-  assert.equal(read('tests/benchmark/rev2/stage-gate-subset-v1.json'),`${JSON.stringify(subset,null,2)}\n`);
+  // The frozen subset file is compared structurally, not byte-for-byte: see 'the frozen 30-item stage-gate
+  // subset is provenance-stable' below for why, and rescore.subsetDrift's own doc comment in the tool.
+  assert.deepEqual(rescore.subsetDrift(read('tests/benchmark/rev2/stage-gate-subset-v1.json'),subset),[]);
   const rev1=JSON.parse(read('tests/benchmark/results/BASELINE-001-REV-1/results.json'));
   assert.deepEqual(results.textTotals,rev1.totals.v101);assert.deepEqual(results.textTotals,{PASS:90,PARTIAL:30,FAIL:28,ERROR:4});assert.equal(results.textTotalsMatchRev1,true);
   for(const p of results.perItem){const before=rev1.perItem.find(q=>q.id===p.id);assert.equal(p.textOutcome,before.v101.outcome,p.id);assert.equal(p.gated,false);assert.equal(p.delivery,'DELIVERED_CLEAN');}
@@ -84,6 +87,23 @@ test('the stage-gate subset is fixed, follows its rule, and has both targets and
   }
   assert.deepEqual(v102.selectSubset(rev1.perItem.map(p=>({id:p.id,category:p.category,textOutcome:p.v101.outcome}))).map(x=>x.id),subset.items.map(x=>x.id));
   assert.ok(subset.baselineRuntime.sumMs>0&&subset.baselineRuntime.itemsWithLatency<=30);
+});
+
+test('the frozen 30-item stage-gate subset is provenance-stable: its own file is byte-for-byte untouched, and its historical derivedFrom pin is either current or an explicitly documented, authorized fingerprint migration - never silent, unexplained drift (2026-09-21, D6 "GREEN-BUILD CLOSURE" GO)',()=>{
+  const subsetPath=path.join(ROOT,'tests/benchmark/rev2/stage-gate-subset-v1.json');
+  const committedText=execFileSync('git',['show','HEAD:tests/benchmark/rev2/stage-gate-subset-v1.json'],{cwd:ROOT,encoding:'utf8'}).replace(/\r\n/g,'\n');
+  assert.equal(fs.readFileSync(subsetPath,'utf8').replace(/\r\n/g,'\n'),committedText,'the frozen subset file is never modified, not even to refresh a hash field');
+  const subset=JSON.parse(committedText);
+  const rev1Hash=crypto.createHash('sha256').update(Buffer.from(read('tests/benchmark/results/BASELINE-001-REV-1/results.json'),'utf8')).digest('hex');
+  const pin=subset.derivedFrom.resultsSha256;
+  if(pin!==rev1Hash){
+    const provenance=JSON.parse(read('tests/benchmark/rev1/provenance-migrations.json'));
+    const migration=provenance.migrations.find(m=>m.priorResultsSha256===pin&&m.newResultsSha256===rev1Hash);
+    assert.ok(migration,`the frozen subset's pin (${pin}) diverges from the current REV-1 hash (${rev1Hash}) with no recorded migration explaining exactly this transition - this is exactly the unexplained drift this test must catch`);
+    assert.match(migration.reason,/\S/u);assert.ok(migration.itemOutcomeDrift.startsWith('none'),'a migration that changed any actual outcome must never be waved through silently');
+  }
+  // Fail-closed sanity: an unrecorded, arbitrary hash must never be accepted as if it were a documented migration.
+  assert.deepEqual(rescore.subsetDrift(JSON.stringify({...subset,derivedFrom:{...subset.derivedFrom,resultsSha256:'0'.repeat(64)}}),{...subset,derivedFrom:{...subset.derivedFrom,resultsSha256:rev1Hash}}).length>0,true);
 });
 
 test('the frozen scorer, gold sets and results and the accepted v1.0.1 files are read only: v1.0.2 imports none of the text detectors and writes to none of them',()=>{

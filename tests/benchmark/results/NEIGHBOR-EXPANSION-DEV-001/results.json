@@ -1,0 +1,508 @@
+{
+ "run": "NEIGHBOR-EXPANSION-DEV-001",
+ "retriever": "sinbad-lexical-retriever/0-v1",
+ "library": {
+  "documents": 1686,
+  "chunks": 90539,
+  "builtAt": "2026-08-21T08:15:16.8480308Z"
+ },
+ "method": "RETRIEVAL ONLY, no model. All 32 maritime-reasoning items (no DEV/TEST split, no blind set exists for this category). Gold chunk(s) per item found by counting anchor-group matches over the whole library. Baseline = current live selection rule (top 6, cap 2/doc). Expanded = same-document +/-2 neighbours of the top pool-depth ranked chunks added as extra candidates at a decayed score, then the same selection rule reapplied. Not wired anywhere; a DEV measurement only.",
+ "passages": 6,
+ "neighbourRadius": 2,
+ "decay": 0.85,
+ "poolDepth": 30,
+ "items": 32,
+ "counts": {
+  "UNCHANGED_HIT": 24,
+  "UNCHANGED_MISS": 8
+ },
+ "contextGrowth": {
+  "averageNewCandidatesPerItem": 0.16
+ },
+ "wrongNeighbourRiskCount": 18,
+ "rows": [
+  {
+   "id": "MR-ISM-01",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_HIT",
+   "baselineHasGold": true,
+   "expandedHasGold": true,
+   "newCandidates": 0,
+   "goldChunkCount": 73,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-ISM-02",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_HIT",
+   "baselineHasGold": true,
+   "expandedHasGold": true,
+   "newCandidates": 0,
+   "goldChunkCount": 4,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-ISM-03",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_HIT",
+   "baselineHasGold": true,
+   "expandedHasGold": true,
+   "newCandidates": 1,
+   "goldChunkCount": 5,
+   "wrongNeighbourRisk": [
+    {
+     "chunkId": 35749,
+     "title": "02 - MN046 ISM Kod DOC SMC ve Denetim Gereklilikleri__f61b82c0fb",
+     "betterMatchFor": "MR-ISPS-02",
+     "otherHits": 3,
+     "ownHits": 0
+    },
+    {
+     "chunkId": 35749,
+     "title": "02 - MN046 ISM Kod DOC SMC ve Denetim Gereklilikleri__f61b82c0fb",
+     "betterMatchFor": "MR-MLC-06",
+     "otherHits": 1,
+     "ownHits": 0
+    }
+   ]
+  },
+  {
+   "id": "MR-ISM-04",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_HIT",
+   "baselineHasGold": true,
+   "expandedHasGold": true,
+   "newCandidates": 1,
+   "goldChunkCount": 10,
+   "wrongNeighbourRisk": [
+    {
+     "chunkId": 49865,
+     "title": "Kıbrıs Sirküler 13-2026 ISM Revize Rehber ve Şirket Talimatları__5db46fbd4e",
+     "betterMatchFor": "MR-ISM-01",
+     "otherHits": 2,
+     "ownHits": 0
+    },
+    {
+     "chunkId": 49865,
+     "title": "Kıbrıs Sirküler 13-2026 ISM Revize Rehber ve Şirket Talimatları__5db46fbd4e",
+     "betterMatchFor": "MR-ISM-15",
+     "otherHits": 1,
+     "ownHits": 0
+    }
+   ]
+  },
+  {
+   "id": "MR-ISM-05",
+   "bestPossibleHits": 3,
+   "groups": 3,
+   "category": "UNCHANGED_HIT",
+   "baselineHasGold": true,
+   "expandedHasGold": true,
+   "newCandidates": 1,
+   "goldChunkCount": 6,
+   "wrongNeighbourRisk": [
+    {
+     "chunkId": 47687,
+     "title": "German Flag - ISM Code English__0d2383acf1",
+     "betterMatchFor": "MR-ISM-02",
+     "otherHits": 2,
+     "ownHits": 0
+    },
+    {
+     "chunkId": 47687,
+     "title": "German Flag - ISM Code English__0d2383acf1",
+     "betterMatchFor": "MR-ISM-03",
+     "otherHits": 1,
+     "ownHits": 0
+    },
+    {
+     "chunkId": 47687,
+     "title": "German Flag - ISM Code English__0d2383acf1",
+     "betterMatchFor": "MR-ISM-10",
+     "otherHits": 1,
+     "ownHits": 0
+    },
+    {
+     "chunkId": 47687,
+     "title": "German Flag - ISM Code English__0d2383acf1",
+     "betterMatchFor": "MR-ISM-13",
+     "otherHits": 1,
+     "ownHits": 0
+    },
+    {
+     "chunkId": 47687,
+     "title": "German Flag - ISM Code English__0d2383acf1",
+     "betterMatchFor": "MR-ISM-15",
+     "otherHits": 1,
+     "ownHits": 0
+    },
+    {
+     "chunkId": 47687,
+     "title": "German Flag - ISM Code English__0d2383acf1",
+     "betterMatchFor": "MR-ISPS-06",
+     "otherHits": 1,
+     "ownHits": 0
+    }
+   ]
+  },
+  {
+   "id": "MR-ISM-06",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_MISS",
+   "baselineHasGold": false,
+   "expandedHasGold": false,
+   "newCandidates": 0,
+   "goldChunkCount": 6,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-ISM-07",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_HIT",
+   "baselineHasGold": true,
+   "expandedHasGold": true,
+   "newCandidates": 0,
+   "goldChunkCount": 9,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-ISM-08",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_MISS",
+   "baselineHasGold": false,
+   "expandedHasGold": false,
+   "newCandidates": 0,
+   "goldChunkCount": 6,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-ISM-09",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_HIT",
+   "baselineHasGold": true,
+   "expandedHasGold": true,
+   "newCandidates": 0,
+   "goldChunkCount": 4,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-ISM-10",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_HIT",
+   "baselineHasGold": true,
+   "expandedHasGold": true,
+   "newCandidates": 0,
+   "goldChunkCount": 8,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-ISM-11",
+   "bestPossibleHits": 3,
+   "groups": 3,
+   "category": "UNCHANGED_HIT",
+   "baselineHasGold": true,
+   "expandedHasGold": true,
+   "newCandidates": 0,
+   "goldChunkCount": 2,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-ISM-12",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_HIT",
+   "baselineHasGold": true,
+   "expandedHasGold": true,
+   "newCandidates": 1,
+   "goldChunkCount": 29,
+   "wrongNeighbourRisk": [
+    {
+     "chunkId": 51426,
+     "title": "UK_MCA_MSIS02_ISM_Code_Audit_Guidance_Rev10.24_HISTORICAL__b290d26f86",
+     "betterMatchFor": "MR-ISM-10",
+     "otherHits": 1,
+     "ownHits": 0
+    },
+    {
+     "chunkId": 51426,
+     "title": "UK_MCA_MSIS02_ISM_Code_Audit_Guidance_Rev10.24_HISTORICAL__b290d26f86",
+     "betterMatchFor": "MR-ISM-11",
+     "otherHits": 3,
+     "ownHits": 0
+    }
+   ]
+  },
+  {
+   "id": "MR-ISM-13",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_HIT",
+   "baselineHasGold": true,
+   "expandedHasGold": true,
+   "newCandidates": 0,
+   "goldChunkCount": 120,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-ISM-14",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_MISS",
+   "baselineHasGold": false,
+   "expandedHasGold": false,
+   "newCandidates": 0,
+   "goldChunkCount": 15,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-ISM-15",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_HIT",
+   "baselineHasGold": true,
+   "expandedHasGold": true,
+   "newCandidates": 0,
+   "goldChunkCount": 28,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-ISM-16",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_HIT",
+   "baselineHasGold": true,
+   "expandedHasGold": true,
+   "newCandidates": 1,
+   "goldChunkCount": 14,
+   "wrongNeighbourRisk": [
+    {
+     "chunkId": 45829,
+     "title": "ClassNK_Revised_ISM_Code_2015__d2b78294c3",
+     "betterMatchFor": "MR-ISM-03",
+     "otherHits": 1,
+     "ownHits": 0
+    },
+    {
+     "chunkId": 45829,
+     "title": "ClassNK_Revised_ISM_Code_2015__d2b78294c3",
+     "betterMatchFor": "MR-ISM-12",
+     "otherHits": 1,
+     "ownHits": 0
+    },
+    {
+     "chunkId": 45829,
+     "title": "ClassNK_Revised_ISM_Code_2015__d2b78294c3",
+     "betterMatchFor": "MR-ISM-13",
+     "otherHits": 2,
+     "ownHits": 0
+    },
+    {
+     "chunkId": 45829,
+     "title": "ClassNK_Revised_ISM_Code_2015__d2b78294c3",
+     "betterMatchFor": "MR-ISM-15",
+     "otherHits": 2,
+     "ownHits": 0
+    },
+    {
+     "chunkId": 45829,
+     "title": "ClassNK_Revised_ISM_Code_2015__d2b78294c3",
+     "betterMatchFor": "MR-ISPS-06",
+     "otherHits": 1,
+     "ownHits": 0
+    },
+    {
+     "chunkId": 45829,
+     "title": "ClassNK_Revised_ISM_Code_2015__d2b78294c3",
+     "betterMatchFor": "MR-MLC-02",
+     "otherHits": 1,
+     "ownHits": 0
+    }
+   ]
+  },
+  {
+   "id": "MR-ISPS-01",
+   "bestPossibleHits": 3,
+   "groups": 3,
+   "category": "UNCHANGED_MISS",
+   "baselineHasGold": false,
+   "expandedHasGold": false,
+   "newCandidates": 0,
+   "goldChunkCount": 8,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-ISPS-02",
+   "bestPossibleHits": 3,
+   "groups": 3,
+   "category": "UNCHANGED_HIT",
+   "baselineHasGold": true,
+   "expandedHasGold": true,
+   "newCandidates": 0,
+   "goldChunkCount": 22,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-ISPS-03",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_HIT",
+   "baselineHasGold": true,
+   "expandedHasGold": true,
+   "newCandidates": 0,
+   "goldChunkCount": 2,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-ISPS-04",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_MISS",
+   "baselineHasGold": false,
+   "expandedHasGold": false,
+   "newCandidates": 0,
+   "goldChunkCount": 9,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-ISPS-05",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_HIT",
+   "baselineHasGold": true,
+   "expandedHasGold": true,
+   "newCandidates": 0,
+   "goldChunkCount": 2,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-ISPS-06",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_HIT",
+   "baselineHasGold": true,
+   "expandedHasGold": true,
+   "newCandidates": 0,
+   "goldChunkCount": 6,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-ISPS-07",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_HIT",
+   "baselineHasGold": true,
+   "expandedHasGold": true,
+   "newCandidates": 0,
+   "goldChunkCount": 2,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-ISPS-08",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_MISS",
+   "baselineHasGold": false,
+   "expandedHasGold": false,
+   "newCandidates": 0,
+   "goldChunkCount": 8,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-MLC-01",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_HIT",
+   "baselineHasGold": true,
+   "expandedHasGold": true,
+   "newCandidates": 0,
+   "goldChunkCount": 24,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-MLC-02",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_HIT",
+   "baselineHasGold": true,
+   "expandedHasGold": true,
+   "newCandidates": 0,
+   "goldChunkCount": 20,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-MLC-03",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_HIT",
+   "baselineHasGold": true,
+   "expandedHasGold": true,
+   "newCandidates": 0,
+   "goldChunkCount": 4,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-MLC-04",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_HIT",
+   "baselineHasGold": true,
+   "expandedHasGold": true,
+   "newCandidates": 0,
+   "goldChunkCount": 19,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-MLC-05",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_HIT",
+   "baselineHasGold": true,
+   "expandedHasGold": true,
+   "newCandidates": 0,
+   "goldChunkCount": 11,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-MLC-06",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_MISS",
+   "baselineHasGold": false,
+   "expandedHasGold": false,
+   "newCandidates": 0,
+   "goldChunkCount": 112,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-MLC-07",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_HIT",
+   "baselineHasGold": true,
+   "expandedHasGold": true,
+   "newCandidates": 0,
+   "goldChunkCount": 23,
+   "wrongNeighbourRisk": []
+  },
+  {
+   "id": "MR-MLC-08",
+   "bestPossibleHits": 2,
+   "groups": 2,
+   "category": "UNCHANGED_MISS",
+   "baselineHasGold": false,
+   "expandedHasGold": false,
+   "newCandidates": 0,
+   "goldChunkCount": 6,
+   "wrongNeighbourRisk": []
+  }
+ ]
+}

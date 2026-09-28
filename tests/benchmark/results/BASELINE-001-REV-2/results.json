@@ -8,7 +8,7 @@
     "delivery": "sinbad-benchmark-scoring/1.0.2"
   },
   "inputs": {
-    "rev1ResultsSha256": "ecbaeb26a85d6c836b114b686c1ad84fda364680da248d3d365e7f6256163cdf"
+    "rev1ResultsSha256": "08275325e921bd76bdc5917738275d172b9c86eeb1af4aa8432650b4102cdf0c"
   },
   "textTotals": {
     "PASS": 90,

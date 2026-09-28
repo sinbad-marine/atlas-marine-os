@@ -2,7 +2,7 @@
 
 Offline re-score of the frozen BASELINE-001 + BASELINE-001R answers. No model or bridge call. Scoring v1.0.1 (tests/benchmark/rev1/scoring-v101.js) and gold overlay v1.0.1 (tests/benchmark/rev1/gold-overlay-v101.json) applied in memory; frozen gold sets, scorer and results untouched. Categories coding, provenance-citation, failure-handling, recovery and reliability are carried over unchanged (deterministic execution results, or scoring that needs runtime data not stored).
 
-Baseline accepted commit: aee0ad545c6517df707c5f969269900222f6f849. Inputs: results sha256 87205d3aed8a… / 538765d939c3…, overlay 91f77c08a197…, scorer 71816b3c853c….
+Baseline accepted commit: aee0ad545c6517df707c5f969269900222f6f849. Inputs: results sha256 87205d3aed8a… / 538765d939c3…, overlay 91f77c08a197…, scorer 3932a9dd931f….
 
 ## Totals (152 items)
 
