@@ -52,3 +52,10 @@ visualTest('approved Academy landing and General Maritime art layer',async({page
   await stabilize(page);
   await expect(page.locator('[data-academy-art="general-maritime-education"].is-active')).toHaveScreenshot('academy-general-maritime-layer.png');
 });
+
+visualTest('approved Documents and Compliance owner selection C',async({page})=>{
+  await page.goto('/index.html?workspace=documents-compliance');
+  await page.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');window.openWorkspace?.('documents-compliance');window.applyConsoleArt?.('documents-compliance');});
+  await stabilize(page);
+  await expect(page).toHaveScreenshot('documents-compliance-owner-selection-C.png',{fullPage:true});
+});

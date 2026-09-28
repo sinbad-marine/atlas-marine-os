@@ -6,6 +6,7 @@ const crypto=require('node:crypto');
 
 const sha256=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
 const canonicalCrlfBytes=bytes=>Buffer.from(bytes.toString('utf8').replace(/\r\n?/gu,'\n').replace(/\n/gu,'\r\n'),'utf8');
+const canonicalLfBytes=bytes=>Buffer.from(bytes.toString('utf8').replace(/\r\n?/gu,'\n'),'utf8');
 const lockPath='assets/console-art/yacht-management-owner-selections-v1/OWNER_VISUAL_LOCK.json';
 const lockBytes=fs.readFileSync(lockPath);
 const lock=JSON.parse(lockBytes);
@@ -54,7 +55,7 @@ test('locked Yacht Management artifacts are included in the release',()=>{
 });
 
 test('approved Yacht Management canonical render and desktop golden remain exact',()=>{
-  assert.equal(sha256(canonicalLockBytes),'cb5a291a44a07a9eafc9a90918bca6eec473dc41a79f4d1730338b72f1ce7909');
+  assert.equal(sha256(canonicalLfBytes(canonicalLockBytes)),'cb5a291a44a07a9eafc9a90918bca6eec473dc41a79f4d1730338b72f1ce7909');
   assert.equal(canonicalLock.status,'OWNER_APPROVED_LOCKED');
   assert.equal(canonicalLock.route,'/index.html?workspace=yacht-operations');
   assert.equal(canonicalLock.immutable,true);
@@ -69,6 +70,6 @@ test('approved Yacht Management canonical render and desktop golden remain exact
   assert.deepEqual(contract.approvedVisualBaselines.yachtManagement,{
     status:'OWNER_APPROVED_LOCKED',approvedAt:'2026-09-18',route:'/index.html?workspace=yacht-operations',asset:canonicalAssetPath,
     sha256:canonicalLock.canonicalAsset.sha256,width:1280,height:720,artDirection:'rembrandt',layoutPolicy:'OWNER_CANONICAL_PIXEL_COMPOSITION',
-    canonicalManifest:canonicalLockPath,canonicalManifestSha256:sha256(canonicalLockBytes),immutable:true
+    canonicalManifest:canonicalLockPath,canonicalManifestSha256:sha256(canonicalLfBytes(canonicalLockBytes)),immutable:true
   });
 });

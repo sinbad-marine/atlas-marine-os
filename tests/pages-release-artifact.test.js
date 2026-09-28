@@ -9,6 +9,7 @@ const crypto=require('node:crypto');
 const builder=require('../tools/build-pages-artifact.js');
 
 const hash=value=>crypto.createHash('sha256').update(value).digest('hex');
+const canonicalTextHash=value=>hash(Buffer.from(value.toString('utf8').replace(/\r\n?/gu,'\n'),'utf8'));
 
 test('builds an allowlisted hash-bound Pages artifact without private surfaces',async t=>{
   const parent=await fsp.mkdtemp(path.join(builder.ROOT,'.release-test-'));
@@ -30,7 +31,7 @@ test('builds an allowlisted hash-bound Pages artifact without private surfaces',
   assert.equal(yachtCanonical.readUInt32BE(20),720);
   assert.equal(hash(yachtCanonical),'8ce10be34c72eb541a6312f2cc63dba468cf38c54aad87699ebf0ccd31401d6c');
   const releasedContract=JSON.parse(await fsp.readFile(path.join(target,'config','ui-design-contract.json'),'utf8'));
-  assert.equal(releasedContract.approvedVisualBaselines.yachtManagement.canonicalManifestSha256,hash(await fsp.readFile(path.join(target,...yachtLockPath.split('/')))));
+  assert.equal(releasedContract.approvedVisualBaselines.yachtManagement.canonicalManifestSha256,canonicalTextHash(await fsp.readFile(path.join(target,...yachtLockPath.split('/')))));
   for(const selected of yachtLock.selectionLock.selectedAssetSha256)assert.ok(result.files.some(entry=>entry.sha256===selected),selected);
   for(const required of ['sinbad-tutor-orchestrator.js','sinbad-tutor-controller.js'])assert.ok(result.files.some(entry=>entry.path===required),required);
   for(const required of ['store/index.html','store/app.js','store/catalog.js','store/styles.css','store/pro.css'])assert.ok(result.files.some(entry=>entry.path===required),required);

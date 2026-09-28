@@ -56,6 +56,12 @@ const RELEASE_FILES=Object.freeze([
   'assets/console-art/academy-owner-selections-v1/selected/06-ism-isps-mlc-B.png',
   'assets/console-art/academy-owner-selections-v1/selected/07-professor-sinbad-classroom-A.png',
   'assets/console-art/academy-owner-selections-v1/selected/08-goss-gasm-student-exam-C.png',
+  'assets/console-art/documents-compliance-owner-selections-v1/OWNER_VISUAL_LOCK.json',
+  'assets/console-art/documents-compliance-owner-selections-v1/selected/01-documents-compliance-C-hero.png',
+  'assets/console-art/documents-compliance-owner-selections-v1/selected/02-document-vault-C.png',
+  'assets/console-art/documents-compliance-owner-selections-v1/selected/03-local-document-access-C.png',
+  'assets/console-art/documents-compliance-owner-selections-v1/selected/04-approved-knowledge-C.png',
+  'assets/console-art/documents-compliance-owner-selections-v1/selected/05-controlled-submissions-C.png',
   'config/ui-design-contract.json',
   'icon-512.png','vendor/ol-10.6.1.js','vendor/ol-10.6.1.css',
   'vendor/land-110m.json','supabase/functions/sinbad-answer/core-decision.js'

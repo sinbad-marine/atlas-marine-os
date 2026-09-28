@@ -8,7 +8,7 @@
 <link rel="manifest" href="./manifest.webmanifest?v=8161">
 <link rel="apple-touch-icon" href="./icon-192.png?v=8155">
 <link rel="stylesheet" href="./styles.css?v=82029">
-<link rel="stylesheet" href="./console-master-style.css?v=13">
+<link rel="stylesheet" href="./console-master-style.css?v=14">
 <link rel="stylesheet" href="./vendor/ol-10.6.1.css">
 </head>
 <body class="auth-pending" data-console-art="monet">
@@ -294,10 +294,63 @@
   </div>
 </section>
 
-<section id="documents-compliance" class="workspace console-landing" data-master="vermeer">
-  <div class="workspace-head"><div><div class="eyebrow">BELGELER VE UYUM · VERMEER DIRECTION / HOLD</div><h2>Kanıtı düzenli ve güvenli tutun</h2><p>Mevcut belge, yayın, harita ve gönderim araçları tek kontrollü girişten açılır.</p></div><button class="btn close">Kapat</button></div>
-  <div class="console-landing-hero"><span>04 · ASSURANCE</span><h3>Düzen, hassasiyet ve sakin ışık</h3><p>Vermeer görsel katmanı Home Owner kabulünden sonra uygulanacaktır. Bu alan var olmayan ISM, ISPS veya MLC durumlarını üretmez.</p></div>
-  <div class="console-landing-grid"><button data-open="cloud-documents"><b>Cloud Belge Merkezi</b><small>Yükle, aç, indir, paylaş ve yönet</small></button><button data-open="publications"><b>Yayınlar</b><small>Mevcut denizcilik yayınları</small></button><button data-open="charts"><b>Haritalar</b><small>Mevcut harita arşivi</small></button><button data-open="knowledge"><b>Bilgi Kütüphanesi</b><small>Onaylı içerik alanı</small></button><button data-open="documents"><b>Yerel Belgeler</b><small>Cihazdaki belge çalışma alanı</small></button><button data-open="document-submissions"><b>Kontrollü Gönderimler</b><small>Owner ve geliştirici onay kuyruğu</small></button></div>
+<section id="documents-compliance" class="workspace documents-compliance-page" data-master="vermeer">
+  <button class="dc-mobile-nav-toggle" type="button" aria-controls="consoleSidebar" aria-expanded="false" aria-label="Open SINBAD navigation">☰</button>
+  <header class="dc-page-hero">
+    <img class="dc-page-brand" src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE — A SAFER SEA A SMARTER TOMORROW">
+    <div class="dc-hero-copy">
+      <span>04 · ASSURANCE</span>
+      <h2>Documents &amp; Compliance</h2>
+      <p>Control evidence, approved knowledge and document submissions from one disciplined workspace.</p>
+    </div>
+    <button class="dc-close close" type="button">Close</button>
+  </header>
+
+  <div class="dc-register-layout">
+    <section class="dc-register" aria-labelledby="dcRegisterTitle">
+      <header class="dc-register-head">
+        <div><span>VERIFIED SOURCE VIEW</span><h3 id="dcRegisterTitle">Compliance Register</h3></div>
+        <div class="dc-register-filters" aria-label="Compliance register filters">
+          <input type="search" placeholder="Search verified records" aria-label="Search verified compliance records" disabled>
+          <select aria-label="Filter compliance category" disabled><option>All categories</option></select>
+        </div>
+      </header>
+      <div class="dc-table-wrap">
+        <table class="dc-table">
+          <thead><tr><th>Document name</th><th>Category</th><th>Type</th><th>Version</th><th>Status</th><th>Last updated</th><th>Actions</th></tr></thead>
+          <tbody><tr class="dc-empty-row"><td colspan="7"><strong>No verified records loaded</strong><span>Connect an authorized source in Document Vault. SINBAD will not infer compliance from missing evidence.</span><button type="button" data-open="cloud-documents">Open Document Vault</button></td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <aside class="dc-action-rail" aria-label="Document actions">
+      <span>DOCUMENT STATUS</span>
+      <strong><i></i> Not verified</strong>
+      <p>Status becomes available only from authorized, verified records.</p>
+      <button type="button" data-open="cloud-documents">Upload document</button>
+      <button type="button" data-open="document-submissions">New submission</button>
+      <button type="button" data-open="knowledge">Search knowledge</button>
+    </aside>
+  </div>
+
+  <div class="dc-function-grid" aria-label="Documents and compliance tools">
+    <button class="dc-function-card" type="button" data-open="cloud-documents">
+      <img src="./assets/console-art/documents-compliance-owner-selections-v1/selected/02-document-vault-C.png" alt="Sealed navy document folio on an orderly maritime office desk">
+      <span><small>PRIMARY REPOSITORY</small><b>Document Vault</b><em>Upload, organize, retrieve and manage authorized vessel records.</em><u>No verified record</u></span>
+    </button>
+    <button class="dc-function-card" type="button" data-open="documents">
+      <img src="./assets/console-art/documents-compliance-owner-selections-v1/selected/03-local-document-access-C.png" alt="Organized maritime document drawers and secure local cabinet">
+      <span><small>ON-DEVICE ACCESS</small><b>Local Document Access</b><em>Open the existing document workspace on this console.</em><u>No verified record</u></span>
+    </button>
+    <button class="dc-function-card" type="button" data-open="knowledge">
+      <img src="./assets/console-art/documents-compliance-owner-selections-v1/selected/04-approved-knowledge-C.png" alt="Maritime reference library with reading lamp, globe and open volume">
+      <span><small>APPROVED SOURCES</small><b>Approved Knowledge</b><em>Search verified guidance and available local reference material.</em><u>No verified record</u></span>
+    </button>
+    <button class="dc-function-card" type="button" data-open="document-submissions">
+      <img src="./assets/console-art/documents-compliance-owner-selections-v1/selected/05-controlled-submissions-C.png" alt="Controlled document submission desk with plans, envelope and approval stamp">
+      <span><small>REVIEW WORKFLOW</small><b>Controlled Submissions</b><em>Prepare and track documents through the existing approval workflow.</em><u>No verified record</u></span>
+    </button>
+  </div>
 </section>
 
 <section id="technical-systems" class="workspace console-landing" data-master="picasso">
