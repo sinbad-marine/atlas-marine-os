@@ -46,3 +46,10 @@ test('Documents and Compliance lock is represented in the UI contract',()=>{
   assert.deepEqual(lock.functionalCards,manifest.functionalCards);
   assert.deepEqual(lock.forbiddenDuplications,manifest.forbiddenDuplications);
 });
+
+test('Documents mobile navigation stays scoped and shared workspace scrolling is preserved',()=>{
+  assert.ok(app.includes("if(id==='documents-compliance')scrollTo({top:0,behavior:'instant'});else $(id)?.scrollIntoView({behavior:'smooth'});"));
+  assert.ok(app.includes("workspaceWindowId==='documents-compliance'&&document.getElementById('documents-compliance')?.classList.contains('active')"));
+  assert.ok(app.includes("if(document.body.classList.contains('dc-mobile-nav-open'))setDocumentsMobileNav(false)"));
+  assert.ok(app.includes("event.key==='Escape'&&document.body.classList.contains('dc-mobile-nav-open')"));
+});
