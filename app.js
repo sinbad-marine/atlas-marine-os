@@ -187,19 +187,21 @@ function openWorkspace(id){
   const url=new URL(location.href);url.searchParams.set('workspace',id);history.pushState({workspace:id},'',url);
   document.querySelectorAll('.workspace').forEach(x=>x.classList.toggle('active',x.id===id));
   applyConsoleArt(id);recordConsoleRecent(id);
-  scrollTo({top:0,behavior:'instant'});renderAll();initializeWorkspaceSurface(id);
+  if(id==='documents-compliance')scrollTo({top:0,behavior:'instant'});else $(id)?.scrollIntoView({behavior:'smooth'});renderAll();initializeWorkspaceSurface(id);
 }
 function closeWorkspaces(){if(workspaceWindowId){window.close();return;}document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));applyConsoleArt('home');scrollTo({top:0,behavior:'smooth'})}
 installWorkspaceWindowShell();
 const documentsMobileNavToggle=document.querySelector('.dc-mobile-nav-toggle');
+function documentsMobileNavIsRelevant(){return workspaceWindowId==='documents-compliance'&&document.getElementById('documents-compliance')?.classList.contains('active')}
 function setDocumentsMobileNav(open){
-  document.body.classList.toggle('dc-mobile-nav-open',open);
-  documentsMobileNavToggle?.setAttribute('aria-expanded',String(open));
-  if(documentsMobileNavToggle)documentsMobileNavToggle.setAttribute('aria-label',open?'Close SINBAD navigation':'Open SINBAD navigation');
+  const nextOpen=Boolean(open&&documentsMobileNavIsRelevant());
+  document.body.classList.toggle('dc-mobile-nav-open',nextOpen);
+  documentsMobileNavToggle?.setAttribute('aria-expanded',String(nextOpen));
+  if(documentsMobileNavToggle)documentsMobileNavToggle.setAttribute('aria-label',nextOpen?'Close SINBAD navigation':'Open SINBAD navigation');
 }
-documentsMobileNavToggle?.addEventListener('click',()=>setDocumentsMobileNav(!document.body.classList.contains('dc-mobile-nav-open')));
-document.querySelectorAll('#consoleSidebar button,#consoleSidebar a').forEach(control=>control.addEventListener('click',()=>setDocumentsMobileNav(false)));
-document.addEventListener('keydown',event=>{if(event.key==='Escape')setDocumentsMobileNav(false)});
+documentsMobileNavToggle?.addEventListener('click',()=>{if(documentsMobileNavIsRelevant())setDocumentsMobileNav(!document.body.classList.contains('dc-mobile-nav-open'))});
+document.querySelectorAll('#consoleSidebar button,#consoleSidebar a').forEach(control=>control.addEventListener('click',()=>{if(document.body.classList.contains('dc-mobile-nav-open'))setDocumentsMobileNav(false)}));
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&document.body.classList.contains('dc-mobile-nav-open'))setDocumentsMobileNav(false)});
 document.querySelectorAll('[data-console-home]').forEach(button=>button.onclick=()=>workspaceWindowId?location.assign('./index.html'):closeWorkspaces());
 document.querySelectorAll('[data-owner-console]').forEach(button=>button.onclick=()=>window.open(CONSOLE_OWNER_URL,'sinbadOwnerConsole','noopener,noreferrer'));
 document.querySelectorAll('[data-console-favorites]').forEach(button=>button.onclick=()=>{renderConsolePersonalization();$('consoleFavoritesDialog')?.showModal()});
