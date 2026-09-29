@@ -17,6 +17,8 @@ const gold=require('../tests/benchmark/lib/gold');
 const v100=require('../tests/benchmark/lib/scoring');
 const v101=require('../tests/benchmark/rev1/scoring-v101');
 const v102=require('../tests/benchmark/rev2/scoring-v102');
+const v103=require('../tests/benchmark/rev3/scoring-v103');
+const grounded103=require('./grounded-v103-scoring');
 const rescore=require('./rescore-baseline-001');
 const chain=require('../sinbad-ai-core/chain/chain-v0');
 
@@ -61,6 +63,31 @@ function scoreText(category,answer,item,titles){
     default:throw new Error(`CATEGORY_NOT_SUPPORTED:${category}`);
   }
 }
+// buildResults: the results.json object, exactly as main() has always built it (v1.0.2 keys unchanged), plus one
+// ADDITIVE key `v103` (scoring v1.0.3 re-evaluation of the same rows, from an explicitly built input).
+function buildV103Block(rows,gatingIds){
+  const all=grounded103.summarizeV103(rows);
+  const part=f=>grounded103.summarizeV103(rows.filter(f));
+  return {
+    note:'ADDITIVE: scoring v1.0.3 (contentSafety) applied to the same rows as the v1.0.2 keys above, from a separate input (id, category, textOutcome, detail=textDetail, gate). Live measurement first, v1.0.3 reading second; nothing above this key was changed.',
+    scorer:{contentSafety:v103.VERSION,input:'tools/grounded-v103-scoring.js buildRowsV103'},
+    gatingItems:part(r=>gatingIds.has(r.id)).overall,maritimeSlice:part(r=>!gatingIds.has(r.id)).overall,overall:all.overall,byCategory:all.byCategory,
+    perItem:all.perItem.map(p=>({id:p.id,category:p.category,textOutcome:p.textOutcome,contentSafety:p.contentSafety,rule:p.rule,delivery:p.delivery,cell:p.cell,unsafeDelivered:p.unsafeDelivered})),
+    unjudgeable:all.unjudgeable
+  };
+}
+function buildResults({runId,onlyId,status,rows}){
+  const scoreRows=rows.map(r=>({id:r.id,category:r.category,textOutcome:r.textOutcome,gate:r.gate}));
+  const gated=v102.summarize(scoreRows),ungated=v102.summarize(scoreRows.map(r=>({...r,gate:null})));
+  const gatingIds=new Set(rows.filter(r=>r.gating).map(r=>r.id));
+  const only=f=>({gated:v102.summarize(scoreRows.filter(f)).overall,ungated:v102.summarize(scoreRows.filter(f).map(r=>({...r,gate:null}))).overall});
+  const results={run:runId,service:status,scorer:{text:v101.VERSION,citations:'sinbad-benchmark-scoring/1.0.0 scoreCitations',delivery:v102.VERSION},
+    method:onlyId?`--only ${onlyId}: a single item from the fixed stage-gate subset v1 / maritime-reasoning plan, asked once against the grounded loopback service; text scored with the accepted v1.0.1 detectors and gold overlay, delivery with v1.0.2; the gate record backed by a verified chain transcript. A measurement of this local pipeline on this host, not of the product. The other 35 plan items are NOT measured by this run.`:'Stage-gate subset v1 (30 gating items) plus a 6-item maritime-reasoning slice (measured, non-gating) asked once each against the grounded loopback service; text scored with the accepted v1.0.1 detectors and gold overlay, delivery with v1.0.2; every gate record backed by a verified chain transcript. A measurement of this local pipeline on this host, not of the product.',
+    items:rows.length,gatingItems:only(r=>gatingIds.has(r.id)),maritimeSlice:only(r=>!gatingIds.has(r.id)),overall:{gated:gated.overall,ungated:ungated.overall},byCategory:gated.byCategory,
+    baselineComparison:rows.map(r=>({id:r.id,category:r.category,role:r.role,baseline:r.baselineTextOutcome,now:r.textOutcome,delivery:r.delivery||null,cell:gated.perItem.find(p=>p.id===r.id).cell})),
+    latencyMs:{sum:rows.reduce((n,r)=>n+(r.latencyMs||0),0),median:[...rows.map(r=>r.latencyMs||0)].sort((a,b)=>a-b)[Math.floor(rows.length/2)]},v103:buildV103Block(rows,gatingIds),rows};
+  return results;
+}
 async function main(){
   const args=parseArgs(process.argv.slice(2));const outDir=path.join(ROOT,'tests/benchmark/results',args.runId);fs.mkdirSync(outDir,{recursive:true});
   const partialPath=path.join(outDir,'results.partial.jsonl');
@@ -93,17 +120,9 @@ async function main(){
     fs.appendFileSync(partialPath,`${JSON.stringify(row)}\n`);rows.push(row);
     process.stdout.write(`[${n+1}/${items.length}] ${entry.id} ${row.textOutcome} ${row.delivery||row.error} ${Math.round((row.latencyMs||0)/1000)}s (baseline ${entry.baselineTextOutcome})\n`);
   }
-  const scoreRows=rows.map(r=>({id:r.id,category:r.category,textOutcome:r.textOutcome,gate:r.gate}));
-  const gated=v102.summarize(scoreRows),ungated=v102.summarize(scoreRows.map(r=>({...r,gate:null})));
-  const gatingIds=new Set(rows.filter(r=>r.gating).map(r=>r.id));
-  const only=f=>({gated:v102.summarize(scoreRows.filter(f)).overall,ungated:v102.summarize(scoreRows.filter(f).map(r=>({...r,gate:null}))).overall});
-  const results={run:args.runId,service:status,scorer:{text:v101.VERSION,citations:'sinbad-benchmark-scoring/1.0.0 scoreCitations',delivery:v102.VERSION},
-    method:args.only?`--only ${args.only}: a single item from the fixed stage-gate subset v1 / maritime-reasoning plan, asked once against the grounded loopback service; text scored with the accepted v1.0.1 detectors and gold overlay, delivery with v1.0.2; the gate record backed by a verified chain transcript. A measurement of this local pipeline on this host, not of the product. The other 35 plan items are NOT measured by this run.`:'Stage-gate subset v1 (30 gating items) plus a 6-item maritime-reasoning slice (measured, non-gating) asked once each against the grounded loopback service; text scored with the accepted v1.0.1 detectors and gold overlay, delivery with v1.0.2; every gate record backed by a verified chain transcript. A measurement of this local pipeline on this host, not of the product.',
-    items:rows.length,gatingItems:only(r=>gatingIds.has(r.id)),maritimeSlice:only(r=>!gatingIds.has(r.id)),overall:{gated:gated.overall,ungated:ungated.overall},byCategory:gated.byCategory,
-    baselineComparison:rows.map(r=>({id:r.id,category:r.category,role:r.role,baseline:r.baselineTextOutcome,now:r.textOutcome,delivery:r.delivery||null,cell:gated.perItem.find(p=>p.id===r.id).cell})),
-    latencyMs:{sum:rows.reduce((n,r)=>n+(r.latencyMs||0),0),median:[...rows.map(r=>r.latencyMs||0)].sort((a,b)=>a-b)[Math.floor(rows.length/2)]},rows};
+  const results=buildResults({runId:args.runId,onlyId:args.only,status,rows});
   fs.writeFileSync(path.join(outDir,'results.json'),`${JSON.stringify(results,null,2)}\n`);
   const o=results.gatingItems.gated;process.stdout.write(`${args.runId}: text PASS ${o.PASS} PARTIAL ${o.PARTIAL} FAIL ${o.FAIL} | harm delivered ${o.HARM_DELIVERED} flagged ${o.HARM_FLAGGED} caught ${o.HARM_CAUGHT} | false block ${o.FALSE_BLOCK}/${o.PASS}\n`);
 }
 if(require.main===module)main().catch(error=>{process.stderr.write(`${error.message}\n`);process.exit(1);});
-module.exports={plan,maritimeSlice,scoreText,parseArgs};
+module.exports={plan,maritimeSlice,scoreText,parseArgs,buildResults};
