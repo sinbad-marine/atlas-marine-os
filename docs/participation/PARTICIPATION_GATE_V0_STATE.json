@@ -1,0 +1,63 @@
+{
+  "record": "sinbad-participation-gate-v0-owner-acceptance/1",
+  "decision": "OWNER ACCEPTED",
+  "ownerStatement": "OWNER ACCEPTED — SINBAD ACTIVE PARTICIPATION GATE v0. Accepted implementation baseline: origin/main 3bd9df686ed6d4832dd7748205e58fed76f60b10, source PR #309.",
+  "acceptedOn": "2026-09-30",
+  "acceptedCommit": "3bd9df686ed6d4832dd7748205e58fed76f60b10",
+  "acceptedTree": "a22a05112f18cc6ff7f42e82b47af1e62364beec",
+  "scope": "SINBAD Active Participation Gate v0 exactly as merged at that commit and tree, accepted as the operational baseline for routing future development work through SINBAD. Files: sinbad-ai-core/participation/participation-v0.js, sinbad-ai-core/participation/index.js, tools/sinbad-participation.js, tests/sinbad-participation-v0.test.js, docs/participation/PARTICIPATION_GATE_V0.md. Command surface: open, preflight, delegate, ingest, summary.",
+  "acceptedCapabilities": [
+    "Owner-originated development task recording before delegation",
+    "Deterministic fail-closed preflight",
+    "Explicit agent, scope, base, branch and file ownership records",
+    "Persistent hash-linked engineering memory",
+    "Agent-result ingestion",
+    "VERIFIED / UNVERIFIED / CONTRADICTED provenance separation",
+    "Scope-breach detection",
+    "Deterministic evidence-linked Owner Work Summary",
+    "SINBAD capability-before / capability-after tracking",
+    "RETROACTIVE_BOOTSTRAP honesty for Bootstrap Task #0"
+  ],
+  "evidence": {
+    "pullRequest": 309,
+    "mergeCommit": "3bd9df686ed6d4832dd7748205e58fed76f60b10",
+    "parent": "e058d2cff12c0b4d86bf53cbaf921b542d22e908",
+    "reviewedHead": "0229db88829c14014f25182ec218be6718ccf924",
+    "changedFiles": 5,
+    "prVerifyRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/36754230246",
+    "postMergeReleaseQuality": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/36758736883",
+    "postMergePages": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/36758736956",
+    "argos": "ARGOS_INTEGRITY_VERIFIED, 105 protected files, inventory hash ef13f9a72f685330e8fcc34ae237a290cc04e10770bd72e341c53d8784157ae7"
+  },
+  "doesNotClaim": [
+    "SINBAD autonomously executes agents",
+    "SINBAD autonomously writes code",
+    "SINBAD independently reruns and verifies tests",
+    "SINBAD creates or merges pull requests",
+    "SINBAD schedules work",
+    "SINBAD cryptographically authenticates agent identity",
+    "agent reports are transported automatically",
+    "SINBAD observes unregistered remote work",
+    "SINBAD replaces Owner GO / REVISE / STOP authority"
+  ],
+  "bootstrap": {
+    "taskId": "BOOTSTRAP-0",
+    "classification": "RETROACTIVE_BOOTSTRAP",
+    "statement": "Claude implemented the mechanism before the mechanism existed; the task was recorded afterwards. It is NOT SINBAD autonomous dogfood and must not be rewritten as such. Permanently classified RETROACTIVE_BOOTSTRAP."
+  },
+  "standingOwnerDoctrine": {
+    "principle": "SINBAD FIRST. SINBAD ALWAYS IN THE LOOP.",
+    "rule": "From this acceptance forward, meaningful development work is routed through SINBAD wherever the accepted Participation Gate can represent that work. When SINBAD cannot yet perform a step itself, that limitation is recorded and the external agent's work returns through SINBAD for ingestion, provenance, engineering memory and Owner reporting.",
+    "everyPhaseRecords": [
+      "WHAT COULD SINBAD DO BEFORE?",
+      "WHAT CAN SINBAD DO AFTER?"
+    ]
+  },
+  "holds": {
+    "phase4_3a": "HOLD",
+    "engineRoomImplementation": "HOLD",
+    "sinbadTask1": "NOT STARTED - needs a separate explicit Owner GO and must be opened through the Participation Gate before Claude receives any implementation assignment"
+  },
+  "implementationUnchangedByThisRecord": true,
+  "note": "This file records the Owner statement. The v0 command surface has no command that records an acceptance, so this file is the record. It does not change any participation file, docs/project2/PROJECT2_STATE.json, docs/engine-room/ENGINE_ROOM_V0_STATE.json, app.js, the ARGOS policy, or the BOOTSTRAP-0 entries in the ledger."
+}
