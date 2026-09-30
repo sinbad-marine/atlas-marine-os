@@ -1,0 +1,49 @@
+{
+  "record": "sinbad-participation-lifecycle-v0-owner-acceptance/1",
+  "decision": "OWNER ACCEPTED",
+  "ownerStatement": "OWNER ACCEPTED diyorum, kaydet — SINBAD POST-MERGE LIFECYCLE v0, stated after the PR #312 merge report.",
+  "acceptedOn": "2026-09-30",
+  "acceptedCommit": "4b425bf05c47583fbcc9d5ad5b63893ad082b18c",
+  "acceptedTree": "8d9c2334b50bae97b12eb8a94a45d3194b31fc30",
+  "scope": "SINBAD Post-Merge Lifecycle v0 exactly as merged at that commit and tree. Files: sinbad-ai-core/participation/lifecycle-v0.js, tools/sinbad-participation-lifecycle.js, tools/sinbad-participation-github.js, tests/sinbad-participation-lifecycle.test.js, docs/participation/PARTICIPATION_LIFECYCLE_V0.md. Command surface: link-pr, verify-merge, verify-ci, summary. Built as SINBAD TASK-2 through the accepted Participation Gate v0; the accepted Gate v0 files are unchanged by it.",
+  "acceptedCapabilities": [
+    "Linking an ingested task to its pull request, with merge and CI statements recorded as UNVERIFIED claims",
+    "Independent observation of the PR and the merge: GitHub read-only plus local git (merge commit exists, contained in main, changed files and blobs equal the ingested result)",
+    "Post-merge CI verification on the exact merge SHA against the required workflows (Release quality, Controlled Pages release), with a drift check of the workflow set that fails closed",
+    "Fail-closed handling of unavailable observation, wrong PR head, missing or foreign merge commit, wrong-SHA CI and incomplete or failed CI",
+    "A terminal COMPLETED state only after all required evidence is independently verified in the same command",
+    "A separate participation-lifecycle shelf that leaves the accepted Gate v0 schema, reducer and summary untouched",
+    "An Owner summary that separates IMPLEMENTATION INGESTED, PR, MERGED, POST-MERGE CI VERIFIED and COMPLETED, with NOT RECORDED where nothing is recorded",
+    "Retroactive status derived from git ancestry, never from a flag"
+  ],
+  "evidence": {
+    "pullRequest": 312,
+    "mergeCommit": "4b425bf05c47583fbcc9d5ad5b63893ad082b18c",
+    "parent": "44fd1f34ba89551fb64dfff31013d18a97af8100",
+    "reviewedHead": "9848ad8bb1e12335d798ccb6d90bc1002aec1c97",
+    "changedFiles": 5,
+    "sinbadTask": "TASK-2",
+    "prVerifyRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/36773115878",
+    "postMergeReleaseQuality": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/36774998986",
+    "postMergePages": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/36774999306",
+    "argos": "ARGOS_INTEGRITY_VERIFIED, 105 protected files, inventory hash ef13f9a72f685330e8fcc34ae237a290cc04e10770bd72e341c53d8784157ae7"
+  },
+  "doesNotClaim": [
+    "any task has lifecycle evidence yet: no PR link, merge or CI observation is recorded for any task, including Task #1 / PR #311",
+    "retroactive ingestion of Task #1 / PR #311 is authorized: it needs a separate explicit Owner GO and must be labelled RETROACTIVE",
+    "BOOTSTRAP-0, PR #309 or PR #310 receive lifecycle records (Owner decision D4)",
+    "an ingested task keeps its file claim while its PR is open: known limitation D1, the accepted Gate v0 preflight is unchanged",
+    "GitHub Actions results are verified cryptographically: GitHub is evidence input, not authority",
+    "SINBAD fetches, writes to GitHub, creates or merges pull requests, executes agents or authenticates agent identity",
+    "the required workflow list is chosen by SINBAD: it is an Owner-approved constant; the drift check only makes a mismatch fail closed",
+    "the two shelves are consolidated"
+  ],
+  "standingOwnerDoctrine": "SINBAD FIRST. SINBAD ALWAYS IN THE LOOP. Recording this acceptance was itself routed through the Participation Gate as TASK-3.",
+  "holds": {
+    "retroactiveLifecycleIngestionOfTask1": "NOT AUTHORIZED - separate explicit Owner GO",
+    "phase4_3a_A2_to_A6": "HOLD",
+    "engineRoomImplementation": "HOLD"
+  },
+  "implementationUnchangedByThisRecord": true,
+  "note": "This file records the Owner statement. It does not change any lifecycle or participation file, PARTICIPATION_GATE_V0_STATE.json, docs/project2/PROJECT2_STATE.json, docs/engine-room/ENGINE_ROOM_V0_STATE.json, app.js, the ARGOS policy, or any ledger entry."
+}
