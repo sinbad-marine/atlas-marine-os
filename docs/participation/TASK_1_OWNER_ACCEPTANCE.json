@@ -1,0 +1,50 @@
+{
+  "record": "sinbad-task-1-owner-acceptance/1",
+  "decision": "OWNER ACCEPTED",
+  "ownerStatement": "Task #1 OWNER ACCEPTED",
+  "scopeAssumption": "The Owner statement does not name a scope. It was stated right after the report that recorded the retroactive lifecycle evidence of Task #1 as COMPLETED. The engineer took it to mean Task #1 as delivered: the implementation merged by PR #311 and the lifecycle evidence recorded for TASK-1. This record states that reading explicitly; the Owner may correct it.",
+  "acceptedOn": "2026-09-30",
+  "acceptedCommit": "44fd1f34ba89551fb64dfff31013d18a97af8100",
+  "acceptedTree": "3ffe825eaf6280db8db20d5f04f340017ab317d7",
+  "scope": "SINBAD Task #1 (Phase 4.3a A1, the offline response mapper) exactly as merged at that commit and tree: sinbad-ai-core/shadow/response-mapper.js, sinbad-ai-core/shadow/index.js, sinbad-ai-core/tests/shadow-mapper.test.js. It maps one captured response of the cloud answer function (answer, sources with [S#] ids, sourceAccess, mode) plus a caller-supplied capture time, workspace and TaskContext into the exact Draft Adapter v0 input, or refuses fail-closed with a reason code; identity-only content hashes, no titles carried, limits stated in every output. Also accepted: the lifecycle evidence recorded for TASK-1 after the lifecycle capability existed (PR linked, merge verified, post-merge CI verified, COMPLETED), which stays labelled RETROACTIVE.",
+  "evidence": {
+    "sinbadTask": "TASK-1",
+    "pullRequest": 311,
+    "mergeCommit": "44fd1f34ba89551fb64dfff31013d18a97af8100",
+    "parent": "b198f08c5c2fd48bed460b29c7cf5c011e2e1873",
+    "reviewedHead": "4a2b4bd1c4cde2f663424098318dc68a6e60b6f1",
+    "changedFiles": 3,
+    "prVerifyRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/36765122340",
+    "postMergeReleaseQuality": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/36766529949",
+    "postMergePages": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/36766529929",
+    "argos": "ARGOS_INTEGRITY_VERIFIED, 105 protected files, inventory hash ef13f9a72f685330e8fcc34ae237a290cc04e10770bd72e341c53d8784157ae7",
+    "ledger": {
+      "v0Shelf": {
+        "opened": "ed057aafaf18cdc93d81ba59f9652783544e9e1d00b606be5ae6bd18a6a7dc63",
+        "preflight": "1388b7d52ae88efb18c76f6146188af2a3fb94d6061a92f720e4f27b90dd09a4",
+        "delegated": "bb9bfd5c5acb1cb70165aab8072f8de791415ea6efe0d97c036695913386118a",
+        "reportIngested": "e943247cf5ddbb03a5a461f1a94758c1652b45babeb8c343b9b7e3513f79a830"
+      },
+      "lifecycleShelf": {
+        "prLinked": "3124c826a8700d6d8199178876f4ff2de81d8382c31ab2129e1ca665ce581359",
+        "mergeObservedFresh": "d54bda1c6b6e472af63b09772764e35d1c258a210ea73b478a7daf072282d5da",
+        "ciObserved": "2df5926732501bd93589b48b1669c68a11bf35fe39f1dc2fabd874604bf4a571",
+        "taskCompleted": "815f3dae7b17e483632527a62c7a5e3ddc2f31af72a0bc223025386c82042adc"
+      },
+      "lifecycleState": "COMPLETED (POST_MERGE_VERIFIED), RETROACTIVE",
+      "note": "The ledger lives outside the repository; these hashes identify the events so the record can be checked against it."
+    }
+  },
+  "notIncluded": {
+    "phase4_3a_A2_to_A6": "HOLD - not accepted, not started",
+    "cloudCapture": "not authorized, no cloud call was made",
+    "wiringOrProductionChange": "none; the mapper is inert and is not wired anywhere",
+    "statedMapperLimit": "identity-only content hashes: the gate cannot see content drift on this surface, and a citation proves existence, not support; accepted with these limits",
+    "lifecycleEvidenceForOtherTasks": "BOOTSTRAP-0, TASK-2, TASK-3 and PRs #309, #310, #312, #313 have no lifecycle records and are not covered",
+    "project2State": "docs/project2/PROJECT2_STATE.json is not changed; recording Phase 4.3a A1 in the Project 2 state is a separate decision",
+    "engineRoomImplementation": "HOLD"
+  },
+  "standingOwnerDoctrine": "SINBAD FIRST. SINBAD ALWAYS IN THE LOOP. Recording this acceptance was itself routed through the Participation Gate as TASK-4.",
+  "implementationUnchangedByThisRecord": true,
+  "note": "This file records the Owner statement. It does not change any mapper, participation or lifecycle file, any other acceptance record, docs/project2/PROJECT2_STATE.json, docs/engine-room/ENGINE_ROOM_V0_STATE.json, app.js, the ARGOS policy, or any ledger entry."
+}
