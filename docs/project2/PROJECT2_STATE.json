@@ -281,6 +281,59 @@
       "out_of_scope_for_this_closure_review": "retrieval/semantic work (phase_4_8_retrieval_evaluation, phase_4_9_query_expansion, phase_4_10_semantic_index, phase_4_10_part2_regulatory_core) is explicitly NOT a D6 blocker and stays outside this closure review, per explicit Owner decision 2026-09-28; none of it is wired to any live path and none of it is touched by this entry",
       "not_authorized_by_this_entry": "no OWNER ACCEPTED record for D6; no code, test, benchmark result, frozen subset, Engine Room, Documents & Compliance, or Project Harbor file is touched or implied changed by this entry - docs-only state-sync The 2026-09-29 synchronisation (PR B) changes this state file only and records no acceptance. (Pre-acceptance wording. \"no OWNER ACCEPTED record for D6\" described the state before the Owner statement of 2026-09-29; the acceptance is now recorded in owner_acceptance.d6_closure_review, and every other exclusion here stays.)"
     },
+    "phase_4_3a_replay_shadow": {
+      "status": "Phase 4.3a (client-side replay shadow, option A of the design) has three merged, tested, Owner-accepted OFFLINE steps, A1-A3; A4 is documentation and state only; A5 and A6 are NOT STARTED and on HOLD. NO cloud call, NO credential use and NO capture has ever been made: the capture client has only talked to a loopback mock written for its tests. This entry points at the acceptance records under docs/participation; it records no new acceptance and infers none.",
+      "design": "docs/project2/PHASE_4_3_SHADOW_DESIGN_PROPOSAL.md",
+      "consolidated_record": "docs/project2/PHASE_4_3A_REPLAY_SHADOW.md (state of A1-A3, the A5 readiness package with the Owner decisions, runbook and stop conditions, and the facts that are NOT VERIFIED)",
+      "steps": {
+        "A1_response_mapper": {
+          "sinbadTask": "TASK-1",
+          "pullRequest": 311,
+          "mergeCommit": "44fd1f34ba89551fb64dfff31013d18a97af8100",
+          "tree": "3ffe825eaf6280db8db20d5f04f340017ab317d7",
+          "what": "offline response mapper: one captured sinbad-answer response to Draft Adapter v0 input",
+          "status": "MERGED, TESTED, OWNER ACCEPTED (the acceptance is recorded in the file named below; this entry restates nothing)",
+          "acceptanceRecord": "docs/participation/TASK_1_OWNER_ACCEPTANCE.json",
+          "acceptanceRecordMergedAs": "4d20b3440217db51260e37ce50cb9ce6e2d557ab",
+          "lifecycle": "COMPLETED (POST_MERGE_VERIFIED), RETROACTIVE",
+          "lifecycleCompletionEvent": "815f3dae7b17e483632527a62c7a5e3ddc2f31af72a0bc223025386c82042adc"
+        },
+        "A2_capture_evaluator": {
+          "sinbadTask": "TASK-5",
+          "pullRequest": 315,
+          "mergeCommit": "3a2c55b7d095a42cef0215773bbca45f93e749c0",
+          "tree": "97a618b7e77fec747f3f3d3e66a602e9e1bf426f",
+          "what": "offline evaluator: a directory of captures to one privacy-safe aggregate report",
+          "status": "MERGED, TESTED, OWNER ACCEPTED (the acceptance is recorded in the file named below; this entry restates nothing)",
+          "acceptanceRecord": "docs/participation/PHASE_4_3A_A2_OWNER_ACCEPTANCE.json",
+          "acceptanceRecordMergedAs": "8f9148efd57b525121230fd5b1fde05957281c67",
+          "lifecycle": "COMPLETED (POST_MERGE_VERIFIED), FORWARD",
+          "lifecycleCompletionEvent": "22b5770162fdaf95bd896fec341ab08161d8204ebbae10b78adef6bd5ace9a3a"
+        },
+        "A3_capture_client": {
+          "sinbadTask": "TASK-7",
+          "pullRequest": 317,
+          "mergeCommit": "7119be1508bd40193ba10e667ccae47e16d5cfb6",
+          "tree": "392bdf2c81765bf61e5e378e9ada600d497abe04",
+          "what": "guarded capture client: one call per gold prompt, no retry, no stored credentials, tested against a loopback mock only",
+          "status": "MERGED, TESTED, OWNER ACCEPTED (the acceptance is recorded in the file named below; this entry restates nothing)",
+          "acceptanceRecord": "docs/participation/PHASE_4_3A_A3_OWNER_ACCEPTANCE.json",
+          "acceptanceRecordMergedAs": "699ae471ea25c9dcb61f81bc9849f24aa0e4b5b8",
+          "lifecycle": "COMPLETED (POST_MERGE_VERIFIED), FORWARD",
+          "lifecycleCompletionEvent": "e347db6412130cce0b48ecc9754edef76c982a011d6f1073dfedc620daf3b4c9"
+        },
+        "A4_docs_and_state": {
+          "sinbadTask": "TASK-9",
+          "status": "docs and state only: docs/project2/PHASE_4_3A_REPLAY_SHADOW.md and this entry; OWNER ACCEPTED NOT RECORDED"
+        }
+      },
+      "held": {
+        "A5_real_capture_run": "NOT STARTED, HOLD - needs its own explicit Owner decision: call ceiling (30, or 36 with the maritime slice), whose credentials, who runs it, and approval of a one-off cloud usage against the Project 2 cloud policy",
+        "A6_aggregate_report_into_repository": "NOT STARTED, HOLD - only after A5, only the aggregate report, only after the Owner has read it",
+        "engine_room": "HOLD"
+      },
+      "unmeasured": "how the real sinbad-answer answers the gold prompts, how often the model writes [S#] markers, real latency, cost and rate limits, whether the production library holds the sources the gold sets were built from, and whether the deployed function equals the repository copy: none of this has been measured or verified"
+    },
     "phase_3_remainder_and_later": "NOT STARTED. The Co-Pilot model pass (IMPLEMENTATION GO + model policy GO), a model-driven Pilot loop, key custody and requiring attestations in any component, and any wiring or live integration of Sentinel v0, Gatekeeper v0, Co-Pilot v0 or Pilot v0 each require a separate Owner GO; no production AI behaviour changed."
   },
   "zero_regression_classes": ["context isolation","stale-state detection","contradiction handling","provenance/citation integrity","hallucination resistance","Owner authority/security boundaries"],
@@ -342,5 +395,5 @@
     "enforcement": "tests/baseline-001-freeze.test.js (part of npm test / CI verify) fails if any frozen file changes or the combined totals drift",
     "revision_policy": "immutable; corrections only as separately identified revisions (BASELINE-001-REV-n) with their own provenance; original files recoverable from aee0ad5"
   },
-  "last_verified_timestamp": "2026-09-29T22:01:14Z"
+  "last_verified_timestamp": "2026-10-01T17:33:59Z"
 }
