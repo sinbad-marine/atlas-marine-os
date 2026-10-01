@@ -324,7 +324,13 @@
         },
         "A4_docs_and_state": {
           "sinbadTask": "TASK-9",
-          "status": "docs and state only: docs/project2/PHASE_4_3A_REPLAY_SHADOW.md and this entry; OWNER ACCEPTED NOT RECORDED"
+          "status": "MERGED (PR 319, 5681bfe4065ce9d6ed15ddd4f85af549a6b473db), docs and state only, OWNER ACCEPTED (recorded in the file named below; this entry restates nothing; accepting the A5 readiness package takes none of its six Owner decisions)",
+          "pullRequest": 319,
+          "mergeCommit": "5681bfe4065ce9d6ed15ddd4f85af549a6b473db",
+          "tree": "ad81f045dc30e62afbdb290d89ab344dae359a4f",
+          "acceptanceRecord": "docs/participation/PHASE_4_3A_A4_OWNER_ACCEPTANCE.json",
+          "lifecycle": "COMPLETED (POST_MERGE_VERIFIED), FORWARD",
+          "lifecycleCompletionEvent": "34170f30ec90a82f5e54bb62e385ef523edfd657b95badd2f8ee79049a630ce5"
         }
       },
       "held": {
@@ -395,5 +401,5 @@
     "enforcement": "tests/baseline-001-freeze.test.js (part of npm test / CI verify) fails if any frozen file changes or the combined totals drift",
     "revision_policy": "immutable; corrections only as separately identified revisions (BASELINE-001-REV-n) with their own provenance; original files recoverable from aee0ad5"
   },
-  "last_verified_timestamp": "2026-10-01T17:33:59Z"
+  "last_verified_timestamp": "2026-10-01T18:08:40Z"
 }

@@ -1,0 +1,53 @@
+{
+  "record": "sinbad-phase-4-3a-a4-owner-acceptance/1",
+  "decision": "OWNER ACCEPTED",
+  "ownerStatement": "Phase 4.3a A4 için OWNER ACCEPTED, kaydet",
+  "acceptedOn": "2026-10-01",
+  "acceptedCommit": "5681bfe4065ce9d6ed15ddd4f85af549a6b473db",
+  "acceptedTree": "ad81f045dc30e62afbdb290d89ab344dae359a4f",
+  "scope": "Phase 4.3a A4, documentation and state of the replay shadow, exactly as merged at that commit and tree: docs/project2/PHASE_4_3A_REPLAY_SHADOW.md (where A1-A3 stand, the flow, the offline dry-run evidence of 30 calls or 36 with the maritime slice and 0 invalid envelopes, the A5 readiness package with six Owner decisions each carrying a recommendation, the runbook, the built-in stop conditions, and the facts stated as NOT VERIFIED) and the phase_4_3a_replay_shadow entry of docs/project2/PROJECT2_STATE.json, which points at the existing A1-A3 acceptance records. Built as SINBAD TASK-9 through the accepted Participation Gate. Also accepted: the lifecycle evidence recorded for TASK-9 (PR linked, merge verified, post-merge CI verified, COMPLETED), recorded forward, not retroactively. The A5 readiness package is accepted as a package of recommendations and of stated unverified facts: accepting it takes none of its six Owner decisions (call ceiling, one-off cloud usage, whose credentials, who runs it, where captures live, what may enter the repository).",
+  "evidence": {
+    "sinbadTask": "TASK-9",
+    "pullRequest": 319,
+    "mergeCommit": "5681bfe4065ce9d6ed15ddd4f85af549a6b473db",
+    "parent": "699ae471ea25c9dcb61f81bc9849f24aa0e4b5b8",
+    "reviewedHead": "0c8d03c5907007abcea4c781574c3e7f9f3c49b1",
+    "changedFiles": 2,
+    "prVerifyRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/36900528838",
+    "postMergeReleaseQuality": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/36901809453 (push, attempt 1, success)",
+    "postMergePages": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/36901809529 (push, attempt 1, success)",
+    "localChecks": "node --test on the project2, participation, lifecycle, evaluator and capture-client test files: 135 of 135 passed; no code changed, so the full suite was left to CI",
+    "argos": "ARGOS_INTEGRITY_VERIFIED, 105 protected files, inventory hash ef13f9a72f685330e8fcc34ae237a290cc04e10770bd72e341c53d8784157ae7",
+    "stateComparison": "a structural comparison showed everything in PROJECT2_STATE.json outside the new entry and last_verified_timestamp identical to main; owner_acceptance stayed at 44 keys",
+    "ledger": {
+      "v0Shelf": {
+        "opened": "1fd33a98f0f0b029c7f0b2ffe1366aa3649bb8f98e5322cf1176a45842281099",
+        "preflight": "ea14f2543ca38814d5f49194815b35b491af51929465eaba878ffc98bd08c608",
+        "delegated": "f9f3b096addc54a4af7aba4428e36659cc790523ebfe103fe4118dd228d7eb2a",
+        "reportIngested": "519c0a20018352e2caa0756a8580c85079b90086d6f7c4318d782fbb9d7832d4"
+      },
+      "lifecycleShelf": {
+        "prLinked": "5d5137f3c26f1c07300fc48ea2c8e71669a1828611b7eb929197b549b4016b8a",
+        "prOpenObserved": "114fe153cd0e9656a02272f2154e52e2f699151f247fe85c9219736e139781ce",
+        "mergeObserved": "39c88a80dd1166bdacec3f5dfa33b2695980245f9466c27b39cb3022ec45a6e9",
+        "mergeObservedFresh": "0f29511d8340fde07a91ab4ad8387e4617b0e3806d163ca52f188a4ccce97b1a",
+        "ciObserved": "a7477eb28bc463ed04b4410d7b9475b54b793384a7003777e95c4d15963a067e",
+        "taskCompleted": "34170f30ec90a82f5e54bb62e385ef523edfd657b95badd2f8ee79049a630ce5"
+      },
+      "lifecycleState": "COMPLETED (POST_MERGE_VERIFIED), FORWARD",
+      "note": "The ledger lives outside the repository; these hashes were read from it by the script that wrote this record, so the record can be checked against it."
+    }
+  },
+  "notIncluded": {
+    "phase4_3a_A5_to_A6": "HOLD - not accepted, not started",
+    "a5Decisions": "none of the six A5 Owner decisions is taken by this acceptance; each still needs the Owner own explicit decision",
+    "realCapture": "no capture was ever taken; the capture client has only talked to a loopback mock written for the tests",
+    "cloudCallOrCredentials": "none was made or used",
+    "unmeasuredAgainstTheRealFunction": "how the real function answers, how often the model writes [S#] markers, real latency, cost and rate limits, whether the production library holds the gold sources, and whether the deployed function equals the repository copy remain unmeasured",
+    "engineRoomImplementation": "HOLD",
+    "ownerAcceptanceMap": "the owner_acceptance map of docs/project2/PROJECT2_STATE.json is not changed; the Phase 4.3a acceptances live in docs/participation and the state entry points at them"
+  },
+  "standingOwnerDoctrine": "SINBAD FIRST. SINBAD ALWAYS IN THE LOOP. Recording this acceptance was itself routed through the Participation Gate as TASK-10.",
+  "implementationUnchangedByThisRecord": true,
+  "note": "This file records the Owner statement. Besides the A4 step of the phase_4_3a_replay_shadow entry in docs/project2/PROJECT2_STATE.json it changes no code, no other acceptance record, no Engine Room file, app.js, package.json, ARGOS policy, workflow or ledger entry."
+}
