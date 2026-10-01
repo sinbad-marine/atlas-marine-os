@@ -1,0 +1,54 @@
+{
+  "record": "sinbad-phase-4-3a-a2-owner-acceptance/1",
+  "decision": "OWNER ACCEPTED",
+  "ownerStatement": "Phase 4.3a A2 — OWNER ACCEPTED. Record the Owner acceptance for A2 using the existing accepted governance/lifecycle mechanisms only.",
+  "acceptedOn": "2026-10-01",
+  "acceptedCommit": "3a2c55b7d095a42cef0215773bbca45f93e749c0",
+  "acceptedTree": "97a618b7e77fec747f3f3d3e66a602e9e1bf426f",
+  "scope": "Phase 4.3a A2, the offline shadow-capture evaluator, exactly as merged at that commit and tree: sinbad-ai-core/shadow/capture-evaluator.js, tools/evaluate-shadow-capture.js, tests/sinbad-shadow-evaluator.test.js, docs/project2/PHASE_4_3A_A2_SHADOW_EVALUATOR.md. It reads captured sinbad-answer responses from a local directory outside the repository, maps them (A1 mapper), adapts them (Draft Adapter v0), gates them (Offline Chain v0), scores them (v1.0.1 detectors, v1.0.2 delivery ungated versus gated, v1.0.3 content safety) and writes one privacy-safe aggregate report; the capture record format sinbad-shadow-capture-record/0-v1 that a later capture client must write. Built as SINBAD TASK-5 through the accepted Participation Gate. Also accepted: the lifecycle evidence recorded for TASK-5 (PR linked, merge verified, post-merge CI verified, COMPLETED), which was recorded forward, not retroactively.",
+  "evidence": {
+    "sinbadTask": "TASK-5",
+    "pullRequest": 315,
+    "mergeCommit": "3a2c55b7d095a42cef0215773bbca45f93e749c0",
+    "parent": "4d20b3440217db51260e37ce50cb9ce6e2d557ab",
+    "reviewedHead": "6fd2ee340c4e4088fc326b33f0f7843677df9dd2",
+    "changedFiles": 4,
+    "prVerifyRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/36855404802",
+    "postMergeReleaseQuality": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/36858973344",
+    "postMergePages": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/36858973303",
+    "testReconciliation": "local npm test 2497 tests = 2494 pass + 2 fail (known local-only CRLF hash tests) + 1 skipped (Docker unavailable); CI run 36855404802: 2497 tests, 2469 pass, 0 fail, 28 skipped",
+    "argos": "ARGOS_INTEGRITY_VERIFIED, 105 protected files, inventory hash ef13f9a72f685330e8fcc34ae237a290cc04e10770bd72e341c53d8784157ae7",
+    "ledger": {
+      "v0Shelf": {
+        "opened": "d11318515ebafe0d364ebec746c4a3da4ad5207dcf6667b39efa3e8b2cf5d97d",
+        "preflight": "8299b94fbfb4562f924d065751a8c42da06bdc991764a8b9a360fe62076a2b0b",
+        "delegated": "5a2aa9ce3b23d82f363f1967f6f3f854c29ebf82735cf1dc3f6d8e9de9c90fdb",
+        "reportIngested": "ec0bb258c418162fe4a26484d80293a0dfaa2857fab6746da711f34bbc552ea9"
+      },
+      "lifecycleShelf": {
+        "prLinked": "f41d2ca7a5425e51ea79dff149e2653480f235011af4126015b1f482f37bbf5e",
+        "prOpenObserved": "8bfe7f5f1f496b6962e1f5187b3eb42c937e1441d6804e8f97bd85b7fe25f6b9",
+        "mergeObserved": "aec05db8ef7f3fce28fcd4c30e175d47b90580beaced4b2e698f30435c289614",
+        "mergeObservedFresh": "0aa9b43ff15c3757b99ddd4e71708602b1e1ccd5c60ff71d57d0925064425a43",
+        "ciObserved": "2d50227e2fa264711804343b2167ce779d48a093ccc0301745f363dd581e7316",
+        "taskCompleted": "22b5770162fdaf95bd896fec341ab08161d8204ebbae10b78adef6bd5ace9a3a"
+      },
+      "lifecycleState": "COMPLETED (POST_MERGE_VERIFIED), FORWARD",
+      "note": "The ledger lives outside the repository; these hashes identify the events so the record can be checked against it. The pre-merge CI run is documented here, not in the ledger, because the lifecycle capability models post-merge CI only."
+    }
+  },
+  "notIncluded": {
+    "phase4_3a_A3_to_A6": "HOLD - not accepted, not started",
+    "captureClient": "A3 does not exist; no capture was taken",
+    "cloudCall": "none; A2 never calls sinbad-answer or any endpoint",
+    "realCaptures": "the evaluator has only been proven on synthetic captures; its behavior on real captures is unmeasured",
+    "thresholdsOrD6": "the report states what the gate does; it is not a threshold and not a decision",
+    "wiringOrProductionChange": "none; the evaluator is offline and wired nowhere",
+    "statedLimits": "identity-only content hashes, a citation proves existence not support, a gold-prompt replay is not real traffic, restricted responses are refused and never gated; accepted as stated limits",
+    "project2State": "docs/project2/PROJECT2_STATE.json is not changed; recording Phase 4.3a A2 in the Project 2 state is a separate decision",
+    "engineRoomImplementation": "HOLD"
+  },
+  "standingOwnerDoctrine": "SINBAD FIRST. SINBAD ALWAYS IN THE LOOP. Recording this acceptance was itself routed through the Participation Gate as TASK-6.",
+  "implementationUnchangedByThisRecord": true,
+  "note": "This file records the Owner statement. It does not change any evaluator, mapper, participation or lifecycle file, any other acceptance record, docs/project2/PROJECT2_STATE.json, docs/engine-room/ENGINE_ROOM_V0_STATE.json, app.js, the ARGOS policy, or any ledger entry."
+}
