@@ -1,0 +1,60 @@
+{
+  "record": "sinbad-phase-4-3a-a3-owner-acceptance/1",
+  "decision": "OWNER ACCEPTED",
+  "ownerStatement": "Phase 4.3a A3 için OWNER ACCEPTED, kaydet",
+  "acceptedOn": "2026-10-01",
+  "acceptedCommit": "7119be1508bd40193ba10e667ccae47e16d5cfb6",
+  "acceptedTree": "392bdf2c81765bf61e5e378e9ada600d497abe04",
+  "scope": "Phase 4.3a A3, the guarded capture client for sinbad-answer, exactly as merged at that commit and tree: sinbad-ai-core/shadow/capture-client.js, tools/capture-sinbad-answer.js, tests/sinbad-shadow-capture-client.test.js, docs/project2/PHASE_4_3A_A3_CAPTURE_CLIENT.md. A tool the Owner runs that sends the fixed gold prompt set once each to the cloud function and writes sinbad-shadow-capture-record/0-v1 records, the format the A2 evaluator reads, outside the repository. Guards accepted with it: dry run by default; --execute only with --confirm-cloud-calls equal to --max-calls; a ceiling below the prompt count refused, never truncated; hosts limited to https supabase.co (loopback http only for tests); one call per prompt, sequential, spaced, no retry, no web search or visual options; stops on 401/403, 429, a non-privileged caller or three consecutive errors; credentials only from the environment, never stored or printed, a response that echoes one withheld; output outside the repository, created exclusively. Built as SINBAD TASK-7 through the accepted Participation Gate. Also accepted: the lifecycle evidence recorded for TASK-7 (PR linked, merge verified, post-merge CI verified, COMPLETED), recorded forward, not retroactively.",
+  "evidence": {
+    "sinbadTask": "TASK-7",
+    "pullRequest": 317,
+    "mergeCommit": "7119be1508bd40193ba10e667ccae47e16d5cfb6",
+    "parent": "8f9148efd57b525121230fd5b1fde05957281c67",
+    "reviewedHead": "65c9ee93e592109fbc84e5eb108fbd9ac99210bf",
+    "changedFiles": 4,
+    "prVerifyRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/36868845650",
+    "postMergeReleaseQuality": {
+      "run": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/36883296781",
+      "attempt1": "cancelled: the 15 minute job timeout was reached during the browser tests (the Chromium install alone took about 7 minutes); every earlier step, including the full regression suite, succeeded",
+      "attempt2": "success, after an Owner-authorized re-run of that run (13 minutes 22 seconds)",
+      "observation": "the job timeout leaves little margin; this is a CI infrastructure observation, not evidence about PR 317, and the workflow file was not changed"
+    },
+    "postMergePages": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/36883296758",
+    "testReconciliation": "local npm test 2506 tests = 2503 pass + 2 fail (known local-only CRLF hash tests) + 1 skipped (Docker unavailable); the 9 tests added by PR 317 all pass",
+    "mutationEvidence": "ten deliberate mutants of the client each made a test fail; a test restructure ensures a failing assertion can no longer leave the mock server open",
+    "argos": "ARGOS_INTEGRITY_VERIFIED, 105 protected files, inventory hash ef13f9a72f685330e8fcc34ae237a290cc04e10770bd72e341c53d8784157ae7",
+    "ledger": {
+      "v0Shelf": {
+        "opened": "be3da377de1a68119ea1b95b80ef69841236107f947818bbfe1b46355b3c77fa",
+        "preflight": "f3914bdf619d96b9a954705465457494f97457be96d144fff0110b94d42228ee",
+        "delegated": "e9e61e5300c3b1d3dc8037b83e4cc20243be96fe0d705598f09d62bcbfaa4ccd",
+        "reportIngested": "53775ffdd6c96ac86f6cb830575517457f1a4a46dbd1d0a6b33e24d660c5680c"
+      },
+      "lifecycleShelf": {
+        "prLinked": "a6f443cf21765e786ff1b4c766b3da2e0604695de0203558601f32c7ff564807",
+        "prOpenObserved": "c0a80d4197b4494c54041488d4939509b83a96be4a2fbaecdfad2969163854a0",
+        "mergeObserved": "154da00c01d054b36c3e09c324a79d71f0ca047b7de12371cc9190ed6a1d9163",
+        "mergeObservedFresh": "9dac5c61618cedd808f881658a138f7af841a97dabcfedd063b0542c9dddabf1",
+        "ciObserved": "7a425ec388aacb3d330bb9fbab6a58a84ef5d4bfc84e16137dd9684003703cf7",
+        "taskCompleted": "e347db6412130cce0b48ecc9754edef76c982a011d6f1073dfedc620daf3b4c9"
+      },
+      "lifecycleState": "COMPLETED (POST_MERGE_VERIFIED), FORWARD",
+      "note": "The ledger lives outside the repository; these hashes identify the events so the record can be checked against it. The pre-merge CI run is documented here, not in the ledger, because the lifecycle capability models post-merge CI only."
+    }
+  },
+  "notIncluded": {
+    "phase4_3a_A4_to_A6": "HOLD - not accepted, not started",
+    "realCapture": "no capture was ever taken; the client has only talked to a loopback mock written for the tests",
+    "cloudCallOrCredentials": "none was made or used; running the client (A5) needs its own Owner decision: call ceiling, whose credentials, who runs it",
+    "unmeasuredAgainstTheRealFunction": "how the real function answers, how often the model writes [S#] markers, real latency, cost and rate limits are unmeasured",
+    "wiringOrProductionChange": "none; the client is run by hand and wired nowhere, and no npm script or workflow starts it",
+    "statedLimits": "it captures what a privileged caller sees; the prompt set is the gold prompts, not real traffic; accepted as stated limits",
+    "ciTimeoutMargin": "the Release quality job timeout is narrow; the workflow file is ARGOS-protected and unchanged, changing it is a separate decision",
+    "project2State": "docs/project2/PROJECT2_STATE.json is not changed; recording Phase 4.3a A3 in the Project 2 state is a separate decision",
+    "engineRoomImplementation": "HOLD"
+  },
+  "standingOwnerDoctrine": "SINBAD FIRST. SINBAD ALWAYS IN THE LOOP. Recording this acceptance was itself routed through the Participation Gate as TASK-8.",
+  "implementationUnchangedByThisRecord": true,
+  "note": "This file records the Owner statement. It does not change any client, evaluator, mapper, participation or lifecycle file, any other acceptance record, docs/project2/PROJECT2_STATE.json, docs/engine-room/ENGINE_ROOM_V0_STATE.json, app.js, the ARGOS policy, the workflows, or any ledger entry."
+}
