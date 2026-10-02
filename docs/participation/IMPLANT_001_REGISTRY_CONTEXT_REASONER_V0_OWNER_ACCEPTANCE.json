@@ -1,0 +1,82 @@
+{
+  "record": "sinbad-implant-001-registry-context-reasoner-v0-owner-acceptance/1",
+  "decision": "OWNER ACCEPTED",
+  "ownerAcceptanceStatus": "OWNER ACCEPTED = YES",
+  "ownerStatement": "I, OWNER VAROL ÇOLAK, hereby explicitly OWNER ACCEPT IMPLANT-001 — REGISTRY CONTEXT REASONER v0. This is the Owner acceptance decision. Accepted merge f579c6701c8cf99ca009a3f8c144717bf6c24fb7. Accepted PR #326. Accepted implementation head 172c01951bf55363c2422ba888a950b55b6d894c. Accepted blobs 6445a0ea4292c3746c44608396e4802416fcb497 and 4377c5ca0bcf7c9efc252b48b8735b6a1fcc055d. The accepted capability is the bounded, pure, deterministic, fail-closed Registry Context Reasoner v0 demonstrated and post-merge verified for PR #326.",
+  "acceptedOn": "2026-10-02",
+  "acceptedCommit": "f579c6701c8cf99ca009a3f8c144717bf6c24fb7",
+  "acceptedTree": "cda61595e35c79119e5cfe461c9ab674959365e7",
+  "acceptedImplementationHead": "172c01951bf55363c2422ba888a950b55b6d894c",
+  "repositoryAcceptanceRecord": "PENDING MERGE until this file is merged to main. The Owner decision is already ACCEPTED. This file does not become the canonical repository record before that merge.",
+  "scope": "IMPLANT-001, the Registry Context Reasoner v0, exactly as merged at that commit and tree and at implementation head 172c01951bf55363c2422ba888a950b55b6d894c: sinbad-ai-core/engine-room/registry-context-reasoner-v0.js blob 6445a0ea4292c3746c44608396e4802416fcb497 and sinbad-ai-core/tests/registry-context-reasoner-v0.test.js blob 4377c5ca0bcf7c9efc252b48b8735b6a1fcc055d. One pure deterministic fail-closed function. One registry subject in, one bounded chain out. It grants no authority, repair, mutation, or Owner acceptance of its own, and it is not wired into a runtime. Built as SINBAD TASK-15 through the accepted Participation Gate. Also accepted: the lifecycle evidence recorded for TASK-15 (PR linked, merge verified, post-merge CI verified, COMPLETED), recorded forward, not retroactively. SINBAD SCORE remains 40/100, DELTA 0. Owner acceptance is not a capability increase.",
+  "evidence": {
+    "sinbadTask": "TASK-15",
+    "recordingTask": "TASK-16",
+    "pullRequest": 326,
+    "mergeCommit": "f579c6701c8cf99ca009a3f8c144717bf6c24fb7",
+    "parent": "8262e21a62a21900f4390a5e8a2b4ed3c38f1513",
+    "reviewedHead": "172c01951bf55363c2422ba888a950b55b6d894c",
+    "acceptedTree": "cda61595e35c79119e5cfe461c9ab674959365e7",
+    "changedFiles": 2,
+    "blobs": {
+      "sinbad-ai-core/engine-room/registry-context-reasoner-v0.js": "6445a0ea4292c3746c44608396e4802416fcb497",
+      "sinbad-ai-core/tests/registry-context-reasoner-v0.test.js": "4377c5ca0bcf7c9efc252b48b8735b6a1fcc055d"
+    },
+    "prVerifyRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/37068357914 (pull_request, verify, success)",
+    "postMergeReleaseQuality": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/37070917661 (push, success, head f579c6701c8cf99ca009a3f8c144717bf6c24fb7)",
+    "postMergePages": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/37070917761 (push, success, head f579c6701c8cf99ca009a3f8c144717bf6c24fb7)",
+    "tests": "On the merge SHA, Release quality run 37070917661 step Run complete regression suite reported tests 2543, pass 2515, fail 0, skipped 28. All 12 Registry Context Reasoner tests completed as passing subtests in that step. The two known local hash mismatches were not re-run and were not repaired.",
+    "safety": {
+      "grantsAuthority": false,
+      "authorizesRepair": false,
+      "authorizesMutation": false,
+      "ownerAccepted": false,
+      "executes": false,
+      "callsModel": false,
+      "mayMutate": false,
+      "effects": []
+    },
+    "sinbadScore": {
+      "score": "40/100",
+      "previous": "40/100",
+      "delta": 0,
+      "statement": "Owner acceptance is not a capability increase."
+    },
+    "ledger": {
+      "v0Shelf": {
+        "opened": "8ee9c474719236ff54f3268acf2c8929d33cc869d68702426430e9744f78b874",
+        "preflight": "006fef8be397fa90681aa3c76633fedd8b6d8df053c26193f5be75b31df8a566",
+        "delegated": "47f8afd0cd03d0a0fb6a30c92c2efe3d89f60f46b44743c502e241a5f3ae403f",
+        "reportIngested": "38a87fe1a3bcf007d8f6f8d331741f99d7d40740b583816a0cd4f5199e84fef9"
+      },
+      "lifecycleShelf": {
+        "prLinked": "2f0a1a219b93e53cb2cc9d92bf99c239898e4094751f733ff14f10e8b88a913a",
+        "mergeObserved": "3612037a943ba262fe09f8a1a581dd4031e2f645eecb4da011c617e1d5236640",
+        "mergeObservedFresh": "034586e528f6fe2014fa61c8d8c9fa46b884477127a0eee175c2aefb56e29ff2",
+        "ciObserved": "d99baeed7378c2f92a8b436330007f0ca83a4a56343a5077242762903afed314",
+        "taskCompleted": "18cfe882c0ae211d98ea37b7559684adabb5cf215e34b7763def7e673d3e9790"
+      },
+      "lifecycleState": "COMPLETED (POST_MERGE_VERIFIED), FORWARD",
+      "note": "The ledger lives outside the repository. These hashes were read from it by the script that wrote this record, so the record can be checked against it."
+    }
+  },
+  "notIncluded": {
+    "productionWiring": "NOT accepted or authorized. There is no production caller.",
+    "autonomousInvocation": "NOT accepted or authorized.",
+    "engineRoomUiIntegration": "NOT accepted or authorized. visibleToEngineRoomV0Ui stays false. The v0 UI is not changed.",
+    "repairAuthority": "NOT accepted or authorized. authorizesRepair remains false.",
+    "mutationAuthority": "NOT accepted or authorized. authorizesMutation and mayMutate remain false.",
+    "ajanRepair": "NOT accepted or authorized. Ajan Diyaloğu remains DEGRADED. Live health was not re-observed.",
+    "argosRepair": "NOT accepted or authorized. ARGOS scheduled assurance remains UNRESOLVED and is not diagnosed or waived by this decision.",
+    "a5": "NOT STARTED / HOLD. Not accepted or authorized.",
+    "a6": "NOT STARTED / HOLD. Not accepted or authorized.",
+    "task11": "NOT continued. TASK-11 remains DELEGATED.",
+    "implant002": "NOT accepted or authorized. Not started.",
+    "additionalImplementation": "NOT accepted or authorized.",
+    "localHashMismatches": "NOT repaired. Preserved as unresolved local observations.",
+    "scoreIncrease": "NOT authorized. SINBAD SCORE remains 40/100, DELTA 0."
+  },
+  "standingOwnerDoctrine": "SINBAD FIRST. SINBAD ALWAYS IN THE LOOP. Recording this acceptance was itself routed through the Participation Gate as TASK-16.",
+  "implementationUnchangedByThisRecord": true,
+  "note": "This file records the Owner statement. It changes no reasoner file, no test, no other acceptance record, docs/project2/PROJECT2_STATE.json, any Engine Room file, app.js, package.json, ARGOS policy, workflow, or ledger entry. OWNER DECISION = ACCEPTED. REPOSITORY ACCEPTANCE RECORD = PENDING MERGE until this file reaches main."
+}
