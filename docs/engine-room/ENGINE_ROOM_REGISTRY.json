@@ -1,0 +1,1955 @@
+{
+  "schema": "sinbad-engine-room-registry/0",
+  "registryId": "sinbad-engine-room-registry-batch-1",
+  "recordedOn": "2026-10-02",
+  "recordingTask": "TASK-14",
+  "recordingDoesNotAcceptTheRegistry": true,
+  "registrationIsNotRepairAuthorization": true,
+  "registrationIsNotAnAuthorityGrant": true,
+  "discoveryBasis": {
+    "discovery1Identities": 46,
+    "discovery2NewUnique": 5,
+    "dedupedIdentitiesKnown": 51,
+    "discovery2AcceptedAsBoundedBasis": true,
+    "discoveryWasNotRepeated": true,
+    "batch": 1
+  },
+  "authoritySpine": [
+    {
+      "order": 1,
+      "id": "owner-varol-colak"
+    },
+    {
+      "order": 2,
+      "id": "captain-sinbad"
+    },
+    {
+      "order": 3,
+      "id": "argos"
+    },
+    {
+      "order": 4,
+      "id": "engine-room"
+    }
+  ],
+  "canonicalAuthority": "OWNER_POLICY > CAPTAIN_SINBAD > ARGOS > ENGINE_ROOM_OPERATIONAL_MANAGEMENT > SUBORDINATE_SYSTEMS",
+  "authorityInvariants": [
+    "Authority flows downward only.",
+    "All authority must be explicit, bounded, auditable, and revocable.",
+    "No system, agent, module, or component may create or expand its own authority.",
+    "Ambiguity or authority conflict: FAIL CLOSED, then escalate upward.",
+    "SINBAD FIRST is mandatory and remains subordinate to Owner Policy.",
+    "Intelligence does not create authority.",
+    "Engine Room is not an independent authority."
+  ],
+  "visibleToEngineRoomV0Ui": false,
+  "engineRoomV0HistoricalAcceptanceUnmodified": true,
+  "engineRoomV0StateBlob": "c03f995ae759e7fdc70d06c5c67ccf038116b740",
+  "entities": [
+    {
+      "id": "owner-varol-colak",
+      "name": "OWNER — Varol Çolak",
+      "type": "constitutional-authority",
+      "parentId": "NONE",
+      "childIds": [
+        "captain-sinbad"
+      ],
+      "source": "NAMED_CONSTITUTION",
+      "repository": "NONE",
+      "branch": "NONE",
+      "commit": "NONE",
+      "version": "NONE",
+      "runtime": {
+        "host": "NONE",
+        "address": "NONE",
+        "processNote": "NONE"
+      },
+      "dependencies": [],
+      "connections": [],
+      "dataFlow": "NONE",
+      "actors": [
+        "Varol Çolak"
+      ],
+      "status": "SEALED",
+      "health": "NOT_APPLICABLE",
+      "lastVerified": "2026-10-02",
+      "acceptance": "UNKNOWN",
+      "acceptanceDecision": "UNKNOWN",
+      "evidence": [
+        "This entry records the Owner instruction. It does not add a statutory office beyond that instruction."
+      ],
+      "drift": [],
+      "incidents": [],
+      "recovery": "NONE_PERFORMED",
+      "history": [
+        "Sealed 2026-10-02 as the top of the permanent authority hierarchy."
+      ],
+      "confidence": "HIGH",
+      "unknownFields": [
+        "acceptance",
+        "acceptanceDecision"
+      ],
+      "authorityParent": "NONE",
+      "operationalSupervisor": "NONE",
+      "accountableTo": "NONE",
+      "policySource": "OWNER_POLICY. Varol Çolak is the sole source of Owner Policy. Owner Policy applies to every component without exception. SINBAD FIRST is mandatory and remains subordinate to Owner Policy. Source of this spine: Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02.",
+      "delegatedAuthority": "SOLE. Does not receive delegation. Sole Final Decision Authority. Owner Policy and rule authority. Principal Architect and strategic direction. Authorization authority. Final acceptance authority.",
+      "authorizationRequired": false,
+      "escalationTarget": "NONE",
+      "failClosedBehavior": "FAIL_CLOSED_NO_UPWARD_AUTHORITY",
+      "governanceEvidence": "Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02. Recorded as the sealed authority model. Not inferred from code."
+    },
+    {
+      "id": "captain-sinbad",
+      "name": "Captain SINBAD",
+      "type": "constitutional-executive-layer",
+      "parentId": "owner-varol-colak",
+      "childIds": [
+        "argos",
+        "participation-gate-v0"
+      ],
+      "source": "NAMED_CONSTITUTION",
+      "repository": "NONE",
+      "branch": "NONE",
+      "commit": "NONE",
+      "version": "NONE",
+      "runtime": {
+        "host": "NONE",
+        "address": "NONE",
+        "processNote": "NONE"
+      },
+      "dependencies": [],
+      "connections": [
+        "Reports upward to Owner Varol Çolak.",
+        "ARGOS operates under Captain SINBAD."
+      ],
+      "dataFlow": "NONE",
+      "actors": [
+        "Captain SINBAD"
+      ],
+      "status": "SEALED",
+      "health": "NOT_APPLICABLE",
+      "lastVerified": "2026-10-02",
+      "acceptance": "UNKNOWN",
+      "acceptanceDecision": "UNKNOWN",
+      "evidence": [
+        "No self-authorization power is recorded."
+      ],
+      "drift": [],
+      "incidents": [],
+      "recovery": "NONE_PERFORMED",
+      "history": [],
+      "confidence": "HIGH",
+      "unknownFields": [
+        "acceptance",
+        "acceptanceDecision"
+      ],
+      "authorityParent": "owner-varol-colak",
+      "operationalSupervisor": "NONE",
+      "accountableTo": "owner-varol-colak",
+      "policySource": "OWNER_POLICY. Varol Çolak is the sole source of Owner Policy. Owner Policy applies to every component without exception. SINBAD FIRST is mandatory and remains subordinate to Owner Policy. Source of this spine: Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02.",
+      "delegatedAuthority": "Executive Intelligence and Engineering Layer under Owner Policy. Responsibilities named by the Owner: intelligence, planning, architecture, engineering, problem solving, project and capability development, specialist-agent coordination, verification, and preparation for Owner acceptance. Intelligence does not create authority. SINBAD cannot self-authorize.",
+      "authorizationRequired": true,
+      "escalationTarget": "owner-varol-colak",
+      "failClosedBehavior": "FAIL_CLOSED_ESCALATE_UPWARD",
+      "governanceEvidence": "Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02. SINBAD FIRST is mandatory and subordinate to Owner Policy."
+    },
+    {
+      "id": "argos",
+      "name": "ARGOS",
+      "type": "constitutional-assurance-authority",
+      "parentId": "captain-sinbad",
+      "childIds": [
+        "engine-room"
+      ],
+      "source": "NAMED_CONSTITUTION",
+      "repository": "NONE",
+      "branch": "NONE",
+      "commit": "NONE",
+      "version": "NONE",
+      "runtime": {
+        "host": "NONE",
+        "address": "NONE",
+        "processNote": "NONE"
+      },
+      "dependencies": [],
+      "connections": [],
+      "dataFlow": "NONE",
+      "actors": [
+        "ARGOS"
+      ],
+      "status": "SEALED",
+      "health": "NOT_APPLICABLE",
+      "lastVerified": "2026-10-02",
+      "acceptance": "UNKNOWN",
+      "acceptanceDecision": "UNKNOWN",
+      "evidence": [
+        "The constitutional role is the Owner instruction. The scheduled-assurance incident is a separate unresolved observation and is not a diagnosis of this role."
+      ],
+      "drift": [],
+      "incidents": [
+        "incident-argos-scheduled-assurance"
+      ],
+      "recovery": "NONE_PERFORMED",
+      "history": [],
+      "confidence": "HIGH",
+      "unknownFields": [
+        "acceptance",
+        "acceptanceDecision"
+      ],
+      "authorityParent": "captain-sinbad",
+      "operationalSupervisor": "captain-sinbad",
+      "accountableTo": "captain-sinbad",
+      "policySource": "OWNER_POLICY. Varol Çolak is the sole source of Owner Policy. Owner Policy applies to every component without exception. SINBAD FIRST is mandatory and remains subordinate to Owner Policy. Source of this spine: Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02.",
+      "delegatedAuthority": "Under Captain SINBAD: System Assurance Authority, Operations Supervisor, and Discipline and Order Guardian. Digital DPA, Second Captain, Chief Engineer, and Security and Assurance Chief are functional metaphors, not statutory appointments. ARGOS is not the primary creative or project-development intelligence. ARGOS cannot self-authorize.",
+      "authorizationRequired": true,
+      "escalationTarget": "captain-sinbad",
+      "failClosedBehavior": "FAIL_CLOSED_ESCALATE_UPWARD",
+      "governanceEvidence": "Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02. Continuous oversight is named down to every system, component, connection, cell, atom, and nerve path. Reports go to Captain SINBAD and the Owner.",
+      "reportingTo": [
+        "captain-sinbad",
+        "owner-varol-colak"
+      ],
+      "responsibilitiesNamedByOwner": [
+        "health",
+        "integrity",
+        "security",
+        "observability",
+        "drift",
+        "continuity",
+        "dependencies",
+        "incidents",
+        "evidence",
+        "diagnosis coordination",
+        "governed remediation and recovery",
+        "re-verification",
+        "escalation",
+        "reporting to Captain SINBAD and Owner"
+      ]
+    },
+    {
+      "id": "engine-room",
+      "name": "Engine Room",
+      "type": "constitutional-operational-plane",
+      "parentId": "argos",
+      "childIds": [
+        "atlas-marine-os",
+        "engine-room-v0",
+        "bridge-0-5-0",
+        "ajan-diyalogu",
+        "sinbad-polyglot-engine",
+        "sinbad-loadmaster-prototype"
+      ],
+      "source": "NAMED_CONSTITUTION",
+      "repository": "NONE",
+      "branch": "NONE",
+      "commit": "NONE",
+      "version": "NONE",
+      "runtime": {
+        "host": "NONE",
+        "address": "NONE",
+        "processNote": "NONE"
+      },
+      "dependencies": [],
+      "connections": [],
+      "dataFlow": "NONE",
+      "actors": [],
+      "status": "SEALED_DEFINITION",
+      "health": "NOT_APPLICABLE",
+      "lastVerified": "2026-10-02",
+      "acceptance": "UNKNOWN",
+      "acceptanceDecision": "UNKNOWN",
+      "evidence": [
+        "Accepted implementation is the separate entity engine-room-v0. This constitutional entry must not be read as expanding that acceptance."
+      ],
+      "drift": [],
+      "incidents": [],
+      "recovery": "NONE_PERFORMED",
+      "history": [],
+      "confidence": "HIGH",
+      "unknownFields": [
+        "acceptance",
+        "acceptanceDecision"
+      ],
+      "authorityParent": "argos",
+      "operationalSupervisor": "argos",
+      "accountableTo": "argos",
+      "policySource": "OWNER_POLICY. Varol Çolak is the sole source of Owner Policy. Owner Policy applies to every component without exception. SINBAD FIRST is mandatory and remains subordinate to Owner Policy. Source of this spine: Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02.",
+      "delegatedAuthority": "NONE as an independent authority. Engine Room is the live operational infrastructure and control plane managed operationally by ARGOS on behalf of Captain SINBAD. It may become more capable. It must never become less capable than the sealed minimum.",
+      "authorizationRequired": true,
+      "escalationTarget": "argos",
+      "failClosedBehavior": "FAIL_CLOSED_ESCALATE_UPWARD",
+      "governanceEvidence": "Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02. This entry is the sealed definition. It is not a claim that the accepted v0 page already implements that definition.",
+      "sealedMinimumCapability": [
+        "CONTROL",
+        "OBSERVE",
+        "DIAGNOSE",
+        "EXPERIMENT",
+        "TREAT_RECOVER",
+        "VERIFY",
+        "REMEMBER"
+      ],
+      "sealedSimultaneousMinimum": [
+        "live control center",
+        "machinery and control room",
+        "observability and telemetry center",
+        "data center",
+        "diagnostic system",
+        "laboratory",
+        "hospital and treatment and recovery center",
+        "system archive",
+        "institutional memory",
+        "system relationship graph"
+      ],
+      "implementationOfSealedCapability": {
+        "CONTROL": "NOT_IMPLEMENTED_BY_V0",
+        "OBSERVE": "PARTIAL_V0_FIVE_READ_ONLY_BRIDGE_PROBES",
+        "DIAGNOSE": "NOT_IMPLEMENTED_BY_V0",
+        "EXPERIMENT": "NOT_IMPLEMENTED_BY_V0",
+        "TREAT_RECOVER": "NOT_IMPLEMENTED_BY_V0",
+        "VERIFY": "NOT_IMPLEMENTED_BY_V0",
+        "REMEMBER": "THIS_REGISTRY_IS_THE_FIRST_RECORD_AND_THE_V0_UI_DOES_NOT_DISPLAY_IT"
+      }
+    },
+    {
+      "id": "atlas-marine-os",
+      "name": "atlas-marine-os",
+      "type": "repository",
+      "parentId": "engine-room",
+      "childIds": [
+        "project-2",
+        "secure-auth-handoff-p1"
+      ],
+      "source": "REPO",
+      "repository": "https://github.com/sinbad-marine/atlas-marine-os",
+      "branch": "main",
+      "commit": "406b917798965482ba8f2426e1189bb7ee0ffb9e",
+      "version": "NONE",
+      "runtime": {
+        "host": "NONE",
+        "address": "NONE",
+        "processNote": "NONE"
+      },
+      "dependencies": [],
+      "connections": [],
+      "dataFlow": "NONE",
+      "actors": [],
+      "status": "CANONICAL",
+      "health": "NOT_APPLICABLE",
+      "lastVerified": "2026-10-02",
+      "acceptance": "UNKNOWN",
+      "acceptanceDecision": "UNKNOWN",
+      "evidence": [
+        "Owner Batch-1 names this repository at 406b917798965482ba8f2426e1189bb7ee0ffb9e.",
+        "At registration, origin/main is 53b5989c3130072a9f3b72f063f53d5f29a151b4. Its parent is 406b917798965482ba8f2426e1189bb7ee0ffb9e. The only change is docs/participation/SECURE_AUTH_HANDOFF_P1_OWNER_ACCEPTANCE.json.",
+        "406b917 is the product commit named for this batch. It is not the current HEAD."
+      ],
+      "drift": [
+        "SHA movement from 406b917 to 53b5989 is one docs-only acceptance commit, not a second product tree."
+      ],
+      "incidents": [],
+      "recovery": "NONE_PERFORMED",
+      "history": [],
+      "confidence": "HIGH",
+      "unknownFields": [
+        "acceptance",
+        "acceptanceDecision"
+      ],
+      "authorityParent": "engine-room",
+      "operationalSupervisor": "argos",
+      "accountableTo": "argos",
+      "policySource": "OWNER_POLICY. Varol Çolak is the sole source of Owner Policy. Owner Policy applies to every component without exception. SINBAD FIRST is mandatory and remains subordinate to Owner Policy. Source of this spine: Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02.",
+      "delegatedAuthority": "NONE. No historical delegation instrument was found. This registration does not grant or expand authority.",
+      "authorizationRequired": true,
+      "escalationTarget": "engine-room",
+      "failClosedBehavior": "FAIL_CLOSED_ESCALATE_UPWARD",
+      "governanceEvidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward.",
+      "currentMainCommit": "53b5989c3130072a9f3b72f063f53d5f29a151b4"
+    },
+    {
+      "id": "engine-room-v0",
+      "name": "Engine Room v0",
+      "type": "accepted-implementation",
+      "parentId": "engine-room",
+      "childIds": [],
+      "source": "REPO",
+      "repository": "https://github.com/sinbad-marine/atlas-marine-os",
+      "branch": "main",
+      "commit": "37097b360b7e4cb0a947edaa98385fcf8f9a866b",
+      "version": "v0",
+      "runtime": {
+        "host": "NONE",
+        "address": "NONE",
+        "processNote": "NONE"
+      },
+      "dependencies": [],
+      "connections": [],
+      "dataFlow": "NONE",
+      "actors": [],
+      "status": "OWNER_ACCEPTED",
+      "health": "NOT_CHECKED",
+      "lastVerified": "2026-10-02",
+      "acceptance": "docs/engine-room/ENGINE_ROOM_V0_STATE.json",
+      "acceptanceDecision": "OWNER ACCEPTED",
+      "evidence": [
+        "record sinbad-engine-room-v0-owner-acceptance/1",
+        "acceptedOn 2026-09-26",
+        "acceptedCommit 37097b360b7e4cb0a947edaa98385fcf8f9a866b",
+        "acceptedTree c301c9be827bbe0a88d94b6532d41f41476fe549",
+        "blob c03f995ae759e7fdc70d06c5c67ccf038116b740",
+        "scope: Engine Room v0 exactly as merged at that commit and tree. Included: the read-only architecture, the five existing Bridge probes, normalization then snapshot then UI, fail-closed state handling, and the per-probe isolation from PR #300. The final read-only audit found no acceptance blocker.",
+        "UI marker on origin/main index.html: section#engine-room data-engine-room=v0.",
+        "Five existing Bridge probes only. This registry does not add a probe.",
+        "notIncluded is frozen historical text and is not rewritten: d6 NOT ACCEPTED, projectHarbor NOT STARTED, newProbes false, threeDDigitalTwinXr false, visualExpansionOrFurtherEngineRoomFunctionality false."
+      ],
+      "drift": [
+        "The frozen notIncluded.d6 value contradicts the later PROJECT2_STATE acceptance. See contradiction-d6-acceptance-vs-engine-room-v0-record. The v0 file stays unchanged."
+      ],
+      "incidents": [],
+      "recovery": "NONE_PERFORMED",
+      "history": [
+        "PRs 299 and 300. Acceptance recorded 2026-09-26. implementationUnchangedByThisRecord is true in the v0 file."
+      ],
+      "confidence": "HIGH",
+      "unknownFields": [],
+      "authorityParent": "engine-room",
+      "operationalSupervisor": "argos",
+      "accountableTo": "argos",
+      "policySource": "OWNER_POLICY. Varol Çolak is the sole source of Owner Policy. Owner Policy applies to every component without exception. SINBAD FIRST is mandatory and remains subordinate to Owner Policy. Source of this spine: Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02.",
+      "delegatedAuthority": "NONE. No historical delegation instrument was found. This registration does not grant or expand authority.",
+      "authorizationRequired": true,
+      "escalationTarget": "engine-room",
+      "failClosedBehavior": "FAIL_CLOSED_ESCALATE_UPWARD",
+      "governanceEvidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward."
+    },
+    {
+      "id": "participation-gate-v0",
+      "name": "Participation Gate v0",
+      "type": "sinbad-capability",
+      "parentId": "captain-sinbad",
+      "childIds": [
+        "participation-lifecycle-v0"
+      ],
+      "source": "REPO",
+      "repository": "https://github.com/sinbad-marine/atlas-marine-os",
+      "branch": "main",
+      "commit": "3bd9df686ed6d4832dd7748205e58fed76f60b10",
+      "version": "v0",
+      "runtime": {
+        "host": "NONE",
+        "address": "NONE",
+        "processNote": "NONE"
+      },
+      "dependencies": [],
+      "connections": [],
+      "dataFlow": "NONE",
+      "actors": [],
+      "status": "OWNER_ACCEPTED",
+      "health": "NOT_APPLICABLE",
+      "lastVerified": "2026-10-02",
+      "acceptance": "docs/participation/PARTICIPATION_GATE_V0_STATE.json",
+      "acceptanceDecision": "OWNER ACCEPTED",
+      "evidence": [
+        "record sinbad-participation-gate-v0-owner-acceptance/1, acceptedOn 2026-09-30, tree a22a05112f18cc6ff7f42e82b47af1e62364beec",
+        "Command surface recorded in the state file: open, preflight, delegate, ingest, summary.",
+        "TASK-14 is the one bounded ingest of Discovery-2 and this registry. The gate does not execute an agent and does not write GitHub."
+      ],
+      "drift": [],
+      "incidents": [],
+      "recovery": "NONE_PERFORMED",
+      "history": [],
+      "confidence": "HIGH",
+      "unknownFields": [],
+      "authorityParent": "captain-sinbad",
+      "operationalSupervisor": "argos",
+      "accountableTo": "captain-sinbad",
+      "policySource": "OWNER_POLICY. Varol Çolak is the sole source of Owner Policy. Owner Policy applies to every component without exception. SINBAD FIRST is mandatory and remains subordinate to Owner Policy. Source of this spine: Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02.",
+      "delegatedAuthority": "NONE. No historical delegation instrument was found. This registration does not grant or expand authority.",
+      "authorizationRequired": true,
+      "escalationTarget": "captain-sinbad",
+      "failClosedBehavior": "FAIL_CLOSED_ESCALATE_UPWARD",
+      "governanceEvidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward."
+    },
+    {
+      "id": "participation-lifecycle-v0",
+      "name": "Participation lifecycle v0",
+      "type": "sinbad-capability",
+      "parentId": "participation-gate-v0",
+      "childIds": [],
+      "source": "REPO",
+      "repository": "https://github.com/sinbad-marine/atlas-marine-os",
+      "branch": "main",
+      "commit": "4b425bf05c47583fbcc9d5ad5b63893ad082b18c",
+      "version": "v0",
+      "runtime": {
+        "host": "NONE",
+        "address": "NONE",
+        "processNote": "NONE"
+      },
+      "dependencies": [],
+      "connections": [],
+      "dataFlow": "NONE",
+      "actors": [],
+      "status": "OWNER_ACCEPTED",
+      "health": "NOT_APPLICABLE",
+      "lastVerified": "2026-10-02",
+      "acceptance": "docs/participation/PARTICIPATION_LIFECYCLE_V0_STATE.json",
+      "acceptanceDecision": "OWNER ACCEPTED",
+      "evidence": [
+        "record sinbad-participation-lifecycle-v0-owner-acceptance/1, acceptedOn 2026-09-30, tree 8d9c2334b50bae97b12eb8a94a45d3194b31fc30",
+        "Command surface recorded: link-pr, verify-merge, verify-ci, summary."
+      ],
+      "drift": [],
+      "incidents": [],
+      "recovery": "NONE_PERFORMED",
+      "history": [],
+      "confidence": "HIGH",
+      "unknownFields": [],
+      "authorityParent": "captain-sinbad",
+      "operationalSupervisor": "argos",
+      "accountableTo": "captain-sinbad",
+      "policySource": "OWNER_POLICY. Varol Çolak is the sole source of Owner Policy. Owner Policy applies to every component without exception. SINBAD FIRST is mandatory and remains subordinate to Owner Policy. Source of this spine: Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02.",
+      "delegatedAuthority": "NONE. No historical delegation instrument was found. This registration does not grant or expand authority.",
+      "authorizationRequired": true,
+      "escalationTarget": "captain-sinbad",
+      "failClosedBehavior": "FAIL_CLOSED_ESCALATE_UPWARD",
+      "governanceEvidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward."
+    },
+    {
+      "id": "project-2",
+      "name": "Project 2 state",
+      "type": "project-state",
+      "parentId": "atlas-marine-os",
+      "childIds": [
+        "phase-4-3a-a1",
+        "phase-4-3a-a2",
+        "phase-4-3a-a3",
+        "phase-4-3a-a4",
+        "d6-closure-review"
+      ],
+      "source": "REPO",
+      "repository": "https://github.com/sinbad-marine/atlas-marine-os",
+      "branch": "main",
+      "commit": "53b5989c3130072a9f3b72f063f53d5f29a151b4",
+      "version": "NONE",
+      "runtime": {
+        "host": "NONE",
+        "address": "NONE",
+        "processNote": "NONE"
+      },
+      "dependencies": [],
+      "connections": [],
+      "dataFlow": "NONE",
+      "actors": [],
+      "status": "RECORDED",
+      "health": "NOT_APPLICABLE",
+      "lastVerified": "2026-10-02",
+      "acceptance": "docs/project2/PROJECT2_STATE.json",
+      "acceptanceDecision": "MIXED — file records many decisions. This registry does not restate them as a new acceptance.",
+      "evidence": [
+        "blob 6810ffb46f52060be814b047b9d5fd016f09b13c on 53b5989",
+        "phase_4_3a_replay_shadow.status begins: Phase 4.3a (client-side replay shadow, option A of the design) has three merged, tested, Owner-accepted OFFLINE steps, A1-A3; A4 is documentation and state only; A5 and A6 are NOT STARTED and on HOLD. NO cloud call, NO credential use and NO capture has ever been made: the capture",
+        "A5 held text: NOT STARTED, HOLD - needs its own explicit Owner decision: call ceiling (30, or 36 with the maritime slice), whose credentials, who runs it, and approval of a one-off cloud usage against the Project 2 cloud policy",
+        "A6 held text: NOT STARTED, HOLD - only after A5, only the aggregate report, only after the Owner has read it",
+        "engine_room held text: HOLD",
+        "Authority-model pointer inside the state file remains docs/project2/ARCHITECTURE_AUTHORITY_MODEL.md (2026-09-15 truth classes). That document was not modified. It separates normative authority from observed fact. It does not state this 2026-10-02 spine."
+      ],
+      "drift": [
+        "TASK-11 is DELEGATED in the participation ledger with no ingested report, while this state file says A5 is NOT STARTED and HOLD. See contradiction-a5-hold-versus-task-11-delegated. This task does not continue A5 and does not close TASK-11."
+      ],
+      "incidents": [],
+      "recovery": "NONE_PERFORMED",
+      "history": [],
+      "confidence": "HIGH",
+      "unknownFields": [],
+      "authorityParent": "engine-room",
+      "operationalSupervisor": "argos",
+      "accountableTo": "argos",
+      "policySource": "OWNER_POLICY. Varol Çolak is the sole source of Owner Policy. Owner Policy applies to every component without exception. SINBAD FIRST is mandatory and remains subordinate to Owner Policy. Source of this spine: Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02.",
+      "delegatedAuthority": "NONE. No historical delegation instrument was found. This registration does not grant or expand authority.",
+      "authorizationRequired": true,
+      "escalationTarget": "engine-room",
+      "failClosedBehavior": "FAIL_CLOSED_ESCALATE_UPWARD",
+      "governanceEvidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward."
+    },
+    {
+      "id": "phase-4-3a-a1",
+      "name": "Phase 4.3a A1",
+      "type": "accepted-step",
+      "parentId": "project-2",
+      "childIds": [],
+      "source": "REPO",
+      "repository": "https://github.com/sinbad-marine/atlas-marine-os",
+      "branch": "main",
+      "commit": "44fd1f34ba89551fb64dfff31013d18a97af8100",
+      "version": "NONE",
+      "runtime": {
+        "host": "NONE",
+        "address": "NONE",
+        "processNote": "NONE"
+      },
+      "dependencies": [],
+      "connections": [],
+      "dataFlow": "NONE",
+      "actors": [],
+      "status": "OWNER_ACCEPTED",
+      "health": "NOT_APPLICABLE",
+      "lastVerified": "2026-10-02",
+      "acceptance": "docs/participation/TASK_1_OWNER_ACCEPTANCE.json",
+      "acceptanceDecision": "OWNER ACCEPTED",
+      "evidence": [
+        "acceptedOn 2026-09-30",
+        "acceptedTree 3ffe825eaf6280db8db20d5f04f340017ab317d7",
+        "scope starts: SINBAD Task #1 (Phase 4.3a A1, the offline response mapper) exactly as merged at that commit and tree: sinbad-ai-core/shadow/response-mapper.js, sinbad-ai-core/shadow/index.js, sinbad-ai-core/tests/shadow-mapper.test.js. It maps one capture",
+        "PROJECT2_STATE acceptanceRecordMergedAs 4d20b3440217db51260e37ce50cb9ce6e2d557ab"
+      ],
+      "drift": [],
+      "incidents": [],
+      "recovery": "NONE_PERFORMED",
+      "history": [],
+      "confidence": "HIGH",
+      "unknownFields": [],
+      "authorityParent": "engine-room",
+      "operationalSupervisor": "argos",
+      "accountableTo": "argos",
+      "policySource": "OWNER_POLICY. Varol Çolak is the sole source of Owner Policy. Owner Policy applies to every component without exception. SINBAD FIRST is mandatory and remains subordinate to Owner Policy. Source of this spine: Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02.",
+      "delegatedAuthority": "NONE. No historical delegation instrument was found. This registration does not grant or expand authority.",
+      "authorizationRequired": true,
+      "escalationTarget": "engine-room",
+      "failClosedBehavior": "FAIL_CLOSED_ESCALATE_UPWARD",
+      "governanceEvidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward."
+    },
+    {
+      "id": "phase-4-3a-a2",
+      "name": "Phase 4.3a A2",
+      "type": "accepted-step",
+      "parentId": "project-2",
+      "childIds": [],
+      "source": "REPO",
+      "repository": "https://github.com/sinbad-marine/atlas-marine-os",
+      "branch": "main",
+      "commit": "3a2c55b7d095a42cef0215773bbca45f93e749c0",
+      "version": "NONE",
+      "runtime": {
+        "host": "NONE",
+        "address": "NONE",
+        "processNote": "NONE"
+      },
+      "dependencies": [],
+      "connections": [],
+      "dataFlow": "NONE",
+      "actors": [],
+      "status": "OWNER_ACCEPTED",
+      "health": "NOT_APPLICABLE",
+      "lastVerified": "2026-10-02",
+      "acceptance": "docs/participation/PHASE_4_3A_A2_OWNER_ACCEPTANCE.json",
+      "acceptanceDecision": "OWNER ACCEPTED",
+      "evidence": [
+        "acceptedOn 2026-10-01",
+        "acceptedTree 97a618b7e77fec747f3f3d3e66a602e9e1bf426f",
+        "scope starts: Phase 4.3a A2, the offline shadow-capture evaluator, exactly as merged at that commit and tree: sinbad-ai-core/shadow/capture-evaluator.js, tools/evaluate-shadow-capture.js, tests/sinbad-shadow-evaluator.test.js, docs/project2/PHASE_4_3A_A2",
+        "acceptance record merge cited by PROJECT2_STATE: 8f9148efd57b525121230fd5b1fde05957281c67"
+      ],
+      "drift": [],
+      "incidents": [],
+      "recovery": "NONE_PERFORMED",
+      "history": [],
+      "confidence": "HIGH",
+      "unknownFields": [],
+      "authorityParent": "engine-room",
+      "operationalSupervisor": "argos",
+      "accountableTo": "argos",
+      "policySource": "OWNER_POLICY. Varol Çolak is the sole source of Owner Policy. Owner Policy applies to every component without exception. SINBAD FIRST is mandatory and remains subordinate to Owner Policy. Source of this spine: Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02.",
+      "delegatedAuthority": "NONE. No historical delegation instrument was found. This registration does not grant or expand authority.",
+      "authorizationRequired": true,
+      "escalationTarget": "engine-room",
+      "failClosedBehavior": "FAIL_CLOSED_ESCALATE_UPWARD",
+      "governanceEvidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward."
+    },
+    {
+      "id": "phase-4-3a-a3",
+      "name": "Phase 4.3a A3",
+      "type": "accepted-step",
+      "parentId": "project-2",
+      "childIds": [],
+      "source": "REPO",
+      "repository": "https://github.com/sinbad-marine/atlas-marine-os",
+      "branch": "main",
+      "commit": "7119be1508bd40193ba10e667ccae47e16d5cfb6",
+      "version": "NONE",
+      "runtime": {
+        "host": "NONE",
+        "address": "NONE",
+        "processNote": "NONE"
+      },
+      "dependencies": [],
+      "connections": [],
+      "dataFlow": "NONE",
+      "actors": [],
+      "status": "OWNER_ACCEPTED",
+      "health": "NOT_APPLICABLE",
+      "lastVerified": "2026-10-02",
+      "acceptance": "docs/participation/PHASE_4_3A_A3_OWNER_ACCEPTANCE.json",
+      "acceptanceDecision": "OWNER ACCEPTED",
+      "evidence": [
+        "acceptedOn 2026-10-01",
+        "acceptedTree 392bdf2c81765bf61e5e378e9ada600d497abe04",
+        "scope starts: Phase 4.3a A3, the guarded capture client for sinbad-answer, exactly as merged at that commit and tree: sinbad-ai-core/shadow/capture-client.js, tools/capture-sinbad-answer.js, tests/sinbad-shadow-capture-client.test.js, docs/project2/PHASE",
+        "No real capture is recorded by PROJECT2_STATE. The capture client evidence in that state file is a loopback mock."
+      ],
+      "drift": [],
+      "incidents": [],
+      "recovery": "NONE_PERFORMED",
+      "history": [],
+      "confidence": "HIGH",
+      "unknownFields": [],
+      "authorityParent": "engine-room",
+      "operationalSupervisor": "argos",
+      "accountableTo": "argos",
+      "policySource": "OWNER_POLICY. Varol Çolak is the sole source of Owner Policy. Owner Policy applies to every component without exception. SINBAD FIRST is mandatory and remains subordinate to Owner Policy. Source of this spine: Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02.",
+      "delegatedAuthority": "NONE. No historical delegation instrument was found. This registration does not grant or expand authority.",
+      "authorizationRequired": true,
+      "escalationTarget": "engine-room",
+      "failClosedBehavior": "FAIL_CLOSED_ESCALATE_UPWARD",
+      "governanceEvidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward."
+    },
+    {
+      "id": "phase-4-3a-a4",
+      "name": "Phase 4.3a A4",
+      "type": "accepted-step",
+      "parentId": "project-2",
+      "childIds": [],
+      "source": "REPO",
+      "repository": "https://github.com/sinbad-marine/atlas-marine-os",
+      "branch": "main",
+      "commit": "5681bfe4065ce9d6ed15ddd4f85af549a6b473db",
+      "version": "NONE",
+      "runtime": {
+        "host": "NONE",
+        "address": "NONE",
+        "processNote": "NONE"
+      },
+      "dependencies": [],
+      "connections": [],
+      "dataFlow": "NONE",
+      "actors": [],
+      "status": "OWNER_ACCEPTED",
+      "health": "NOT_APPLICABLE",
+      "lastVerified": "2026-10-02",
+      "acceptance": "docs/participation/PHASE_4_3A_A4_OWNER_ACCEPTANCE.json",
+      "acceptanceDecision": "OWNER ACCEPTED",
+      "evidence": [
+        "acceptedOn 2026-10-01",
+        "acceptedTree ad81f045dc30e62afbdb290d89ab344dae359a4f",
+        "scope starts: Phase 4.3a A4, documentation and state of the replay shadow, exactly as merged at that commit and tree: docs/project2/PHASE_4_3A_REPLAY_SHADOW.md (where A1-A3 stand, the flow, the offline dry-run evidence of 30 calls or 36 with the maritime slice and 0 invalid envelopes, the A5 r",
+        "PROJECT2_STATE says accepting the A5 readiness package takes none of its six Owner decisions.",
+        "A5 and A6 are not registered as started work."
+      ],
+      "drift": [],
+      "incidents": [],
+      "recovery": "NONE_PERFORMED",
+      "history": [],
+      "confidence": "HIGH",
+      "unknownFields": [],
+      "authorityParent": "engine-room",
+      "operationalSupervisor": "argos",
+      "accountableTo": "argos",
+      "policySource": "OWNER_POLICY. Varol Çolak is the sole source of Owner Policy. Owner Policy applies to every component without exception. SINBAD FIRST is mandatory and remains subordinate to Owner Policy. Source of this spine: Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02.",
+      "delegatedAuthority": "NONE. No historical delegation instrument was found. This registration does not grant or expand authority.",
+      "authorizationRequired": true,
+      "escalationTarget": "engine-room",
+      "failClosedBehavior": "FAIL_CLOSED_ESCALATE_UPWARD",
+      "governanceEvidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward."
+    },
+    {
+      "id": "d6-closure-review",
+      "name": "D6 closure review",
+      "type": "acceptance-review",
+      "parentId": "project-2",
+      "childIds": [],
+      "source": "REPO",
+      "repository": "https://github.com/sinbad-marine/atlas-marine-os",
+      "branch": "main",
+      "commit": "87408ea234e7ba5e22b64fbf6ce3a0bbbef8cd8b",
+      "version": "NONE",
+      "runtime": {
+        "host": "NONE",
+        "address": "NONE",
+        "processNote": "NONE"
+      },
+      "dependencies": [],
+      "connections": [],
+      "dataFlow": "NONE",
+      "actors": [],
+      "status": "OWNER_ACCEPTED_WITH_LIMIT",
+      "health": "NOT_APPLICABLE",
+      "lastVerified": "2026-10-02",
+      "acceptance": "docs/project2/PROJECT2_STATE.json#owner_acceptance.d6_closure_review",
+      "acceptanceDecision": "OWNER ACCEPTED",
+      "evidence": [
+        "owner_acceptance.d6_closure_review on blob 6810ffb46f52060be814b047b9d5fd016f09b13c",
+        "d6_accepted_commit 87408ea234e7ba5e22b64fbf6ce3a0bbbef8cd8b",
+        "d6_accepted_pull_request 306",
+        "Exact limitation: It is NOT an acceptance of measured product capability; NOT a GO for wiring, enforcement or live integration of the gate, the grounded pipeline or scoring v1.0.3; NOT a decision on whether maritime-reasoning joins the stage gate; NOT an acceptance of retrieval / query expansion / semantic index (4.8-4.10), TEST-3 or the full 90,539-chunk index; NOT an acceptance of Phases 4.3-4.10; NOT any cloud or model authorisation; and touches no Engine Room, Documents & Compliance, Project Harbor or Hermes work. Historical GROUNDED artifacts stay immutable (GROUNDED-002 sha256 ee3277d13d53015868decaa069aa656671d04d40e3fe72cd87f62bd09ee79ffa, GROUNDED-CT03 c94e26e08db2aa1abe7b5bf99241a1b7f2e6dfe2d55509c6bcb9f5c35b28d7c5)."
+      ],
+      "drift": [
+        "Engine Room v0 notIncluded.d6 remains the string NOT ACCEPTED. That historical file is not the D6 acceptance and is not edited."
+      ],
+      "incidents": [],
+      "recovery": "NONE_PERFORMED",
+      "history": [],
+      "confidence": "HIGH",
+      "unknownFields": [],
+      "authorityParent": "engine-room",
+      "operationalSupervisor": "argos",
+      "accountableTo": "argos",
+      "policySource": "OWNER_POLICY. Varol Çolak is the sole source of Owner Policy. Owner Policy applies to every component without exception. SINBAD FIRST is mandatory and remains subordinate to Owner Policy. Source of this spine: Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02.",
+      "delegatedAuthority": "NONE. No historical delegation instrument was found. This registration does not grant or expand authority.",
+      "authorizationRequired": true,
+      "escalationTarget": "engine-room",
+      "failClosedBehavior": "FAIL_CLOSED_ESCALATE_UPWARD",
+      "governanceEvidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward.",
+      "limitation": "It is NOT an acceptance of measured product capability; NOT a GO for wiring, enforcement or live integration of the gate, the grounded pipeline or scoring v1.0.3; NOT a decision on whether maritime-reasoning joins the stage gate; NOT an acceptance of retrieval / query expansion / semantic index (4.8-4.10), TEST-3 or the full 90,539-chunk index; NOT an acceptance of Phases 4.3-4.10; NOT any cloud or model authorisation; and touches no Engine Room, Documents & Compliance, Project Harbor or Hermes work. Historical GROUNDED artifacts stay immutable (GROUNDED-002 sha256 ee3277d13d53015868decaa069aa656671d04d40e3fe72cd87f62bd09ee79ffa, GROUNDED-CT03 c94e26e08db2aa1abe7b5bf99241a1b7f2e6dfe2d55509c6bcb9f5c35b28d7c5)."
+    },
+    {
+      "id": "secure-auth-handoff-p1",
+      "name": "Secure Auth Handoff P1",
+      "type": "accepted-security-core",
+      "parentId": "atlas-marine-os",
+      "childIds": [],
+      "source": "REPO",
+      "repository": "https://github.com/sinbad-marine/atlas-marine-os",
+      "branch": "main",
+      "commit": "406b917798965482ba8f2426e1189bb7ee0ffb9e",
+      "version": "P1",
+      "runtime": {
+        "host": "NONE",
+        "address": "NONE",
+        "processNote": "NONE"
+      },
+      "dependencies": [],
+      "connections": [],
+      "dataFlow": "NONE",
+      "actors": [],
+      "status": "OWNER_ACCEPTED_P1_ONLY",
+      "health": "NOT_APPLICABLE",
+      "lastVerified": "2026-10-02",
+      "acceptance": "docs/participation/SECURE_AUTH_HANDOFF_P1_OWNER_ACCEPTANCE.json",
+      "acceptanceDecision": "OWNER ACCEPTED - P1 ONLY",
+      "evidence": [
+        "record sinbad-secure-auth-handoff-p1-owner-acceptance/1",
+        "acceptedOn 2026-10-02",
+        "acceptedCommit 406b917798965482ba8f2426e1189bb7ee0ffb9e",
+        "acceptedTree 93ce5cc69dc671218a5571143cd735da06295cf7",
+        "current main 53b5989 records that acceptance and does not change the P1 implementation.",
+        "scope starts: The delivered and verified Secure Auth Handoff P1 deterministic security core, exactly as merged at that commit and tree: sinbad-ai-core/auth-handoff/handoff-v0.js, sinbad-ai-core/auth-handoff/index.js, tests/sinbad-auth-handoff-v0.test.js, docs/auth-handoff/AUTH_HANDOFF_P1.md. P",
+        "notIncluded: {\"p2\":\"NOT accepted or authorized: the local auth broker\",\"p3\":\"NOT accepted or authorized: the Owner Console ALLOW ONCE card\",\"p4\":\"NOT accepted or authorized: the server-side one-time capability grant\",\"transportOrWiring\":\"NOT accepted or authorized: nothing calls the module and no transport exists; a test pins that it is not wired\",\"realCredentialTransfer\":\"NOT accepted or authorized; no credential has ever been handled by this work\",\"task11A5RealCapture\":\"NOT accepted or authorized: TASK-11, Phase 4.3a A5, remains on hold; no capture, no cloud call, no credential use\",\"a6\":\"HOLD\",\"ownerConsoleChanges\":\"NOT accepted or authorized\",\"engineRoomImplementation\":\"HOLD\",\"cloudCredentialUse\":\"NOT authorized\"}"
+      ],
+      "drift": [
+        "P1 notIncluded.engineRoomImplementation is HOLD. This registry is not that implementation."
+      ],
+      "incidents": [],
+      "recovery": "NONE_PERFORMED",
+      "history": [
+        "TASK-12 built P1. TASK-13 recorded the acceptance. This registry does not extend P1."
+      ],
+      "confidence": "HIGH",
+      "unknownFields": [],
+      "authorityParent": "engine-room",
+      "operationalSupervisor": "argos",
+      "accountableTo": "argos",
+      "policySource": "OWNER_POLICY. Varol Çolak is the sole source of Owner Policy. Owner Policy applies to every component without exception. SINBAD FIRST is mandatory and remains subordinate to Owner Policy. Source of this spine: Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02.",
+      "delegatedAuthority": "NONE. No historical delegation instrument was found. This registration does not grant or expand authority.",
+      "authorizationRequired": true,
+      "escalationTarget": "engine-room",
+      "failClosedBehavior": "FAIL_CLOSED_ESCALATE_UPWARD",
+      "governanceEvidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward."
+    },
+    {
+      "id": "bridge-0-5-0",
+      "name": "Bridge 0.5.0",
+      "type": "runtime-service",
+      "parentId": "engine-room",
+      "childIds": [],
+      "source": "RUNTIME",
+      "repository": "NONE",
+      "branch": "NONE",
+      "commit": "UNKNOWN",
+      "version": "0.5.0",
+      "runtime": {
+        "host": "127.0.0.1",
+        "address": "http://127.0.0.1:31983/status",
+        "processNote": "Process image path was not re-measured. Source commit UNKNOWN. Release-hash equality to main was not measured."
+      },
+      "dependencies": [],
+      "connections": [],
+      "dataFlow": "NONE",
+      "actors": [],
+      "status": "VERSION_OBSERVED",
+      "health": "UNKNOWN",
+      "lastVerified": "2026-10-02T17:30:45.489Z",
+      "acceptance": "UNKNOWN",
+      "acceptanceDecision": "UNKNOWN",
+      "evidence": [
+        "TASK-14 GET /status at 2026-10-02T17:30:45.489Z: HTTP 200, name Sinbad Bridge, version 0.5.0.",
+        "bridge.online was not read from /argos/status in this task. HTTP 200 is not a RUNNING verdict.",
+        "No request error on this GET."
+      ],
+      "drift": [],
+      "incidents": [],
+      "recovery": "NONE_PERFORMED",
+      "history": [],
+      "confidence": "MEDIUM",
+      "unknownFields": [
+        "acceptance",
+        "acceptanceDecision",
+        "bridge.online",
+        "commit",
+        "health",
+        "processImagePath",
+        "releaseHashEqualityToMain",
+        "sourceCommit"
+      ],
+      "authorityParent": "engine-room",
+      "operationalSupervisor": "argos",
+      "accountableTo": "argos",
+      "policySource": "OWNER_POLICY. Varol Çolak is the sole source of Owner Policy. Owner Policy applies to every component without exception. SINBAD FIRST is mandatory and remains subordinate to Owner Policy. Source of this spine: Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02.",
+      "delegatedAuthority": "NONE. No historical delegation instrument was found. This registration does not grant or expand authority.",
+      "authorizationRequired": true,
+      "escalationTarget": "engine-room",
+      "failClosedBehavior": "FAIL_CLOSED_ESCALATE_UPWARD",
+      "governanceEvidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward."
+    },
+    {
+      "id": "ajan-diyalogu",
+      "name": "Ajan Diyaloğu",
+      "type": "runtime-surface",
+      "parentId": "engine-room",
+      "childIds": [
+        "connection-guardian",
+        "matrix-owner-channel"
+      ],
+      "source": "RUNTIME",
+      "repository": "NONE",
+      "branch": "NONE",
+      "commit": "UNKNOWN",
+      "version": "NONE",
+      "runtime": {
+        "host": "ASUS local plus external Owner Console URL",
+        "address": "https://sinbad-owner-console.onrender.com/",
+        "processNote": "Desktop button opens that URL. Local conversation runtime is connection-guardian runtime-20260917T103304Z-c2333412. Cloud page to Matrix link was not found in app.js."
+      },
+      "dependencies": [],
+      "connections": [
+        "origin/main app.js sets CONSOLE_OWNER_URL and window.opens it for [data-owner-console].",
+        "origin/main index.html button label is Owner Ajan Diyaloğu.",
+        "Not one of the five Engine Room v0 probes.",
+        "Local chain evidenced here: Connection Guardian local_provider.py to Ollama /api/generate. Matrix Owner Channel is a sibling runtime with its own log. The Render page to Matrix link is UNKNOWN."
+      ],
+      "dataFlow": "PARTIAL. Desktop to Render URL is evidenced. Render URL to Matrix is UNKNOWN. Local provider to /api/generate is evidenced.",
+      "actors": [],
+      "status": "DEGRADED",
+      "health": "DEGRADED",
+      "lastVerified": "2026-10-02T17:19:45.362Z",
+      "acceptance": "UNKNOWN",
+      "acceptanceDecision": "UNKNOWN",
+      "evidence": [
+        "Health is DEGRADED. This entry is not a repair authorization."
+      ],
+      "drift": [],
+      "incidents": [
+        "incident-ajan-diyalogu-degraded"
+      ],
+      "recovery": "NONE_PERFORMED. No repair patch. No runtime replacement.",
+      "history": [],
+      "confidence": "HIGH",
+      "unknownFields": [
+        "acceptance",
+        "acceptanceDecision",
+        "commit"
+      ],
+      "authorityParent": "engine-room",
+      "operationalSupervisor": "argos",
+      "accountableTo": "argos",
+      "policySource": "OWNER_POLICY. Varol Çolak is the sole source of Owner Policy. Owner Policy applies to every component without exception. SINBAD FIRST is mandatory and remains subordinate to Owner Policy. Source of this spine: Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02.",
+      "delegatedAuthority": "NONE. No historical delegation instrument was found. This registration does not grant or expand authority.",
+      "authorizationRequired": true,
+      "escalationTarget": "engine-room",
+      "failClosedBehavior": "FAIL_CLOSED_ESCALATE_UPWARD",
+      "governanceEvidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward."
+    },
+    {
+      "id": "connection-guardian",
+      "name": "Connection Guardian",
+      "type": "runtime-service",
+      "parentId": "ajan-diyalogu",
+      "childIds": [
+        "ollama-qwen3-14b"
+      ],
+      "source": "RUNTIME",
+      "repository": "NONE",
+      "branch": "NONE",
+      "commit": "UNKNOWN",
+      "version": "runtime-20260917T103304Z-c2333412",
+      "runtime": {
+        "host": "ASUS",
+        "address": "C:/Users/ASUS/AppData/Local/Sinbad/connection-guardian-v1/runtime-20260917T103304Z-c2333412",
+        "processNote": "Directory is the in-use runtime named by the local provider path. Process id was not rechecked. ACTIVE_RUNTIME_DIRECTORY is not a health verdict."
+      },
+      "dependencies": [],
+      "connections": [],
+      "dataFlow": "NONE",
+      "actors": [],
+      "status": "ACTIVE_RUNTIME_DIRECTORY",
+      "health": "UNKNOWN",
+      "lastVerified": "2026-10-02T17:30:45.489Z",
+      "acceptance": "UNKNOWN",
+      "acceptanceDecision": "UNKNOWN",
+      "evidence": [
+        "local_provider.py sha256 1c4b61df07d28950051536e87fe4d17686a203235eefc8570c835d59260b3f33",
+        "MODEL qwen3:14b",
+        "local_http allowlist is /api/tags, /api/ps, /api/generate.",
+        "respond path calls /api/generate with stream false and think false.",
+        "host line present: connection = http.client.HTTPConnection('127.0.0.1', 11434, timeout=TIMEOUT_SECONDS)"
+      ],
+      "drift": [],
+      "incidents": [],
+      "recovery": "NONE_PERFORMED",
+      "history": [],
+      "confidence": "MEDIUM",
+      "unknownFields": [
+        "acceptance",
+        "acceptanceDecision",
+        "commit",
+        "health"
+      ],
+      "authorityParent": "engine-room",
+      "operationalSupervisor": "argos",
+      "accountableTo": "argos",
+      "policySource": "OWNER_POLICY. Varol Çolak is the sole source of Owner Policy. Owner Policy applies to every component without exception. SINBAD FIRST is mandatory and remains subordinate to Owner Policy. Source of this spine: Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02.",
+      "delegatedAuthority": "NONE. No historical delegation instrument was found. This registration does not grant or expand authority.",
+      "authorizationRequired": true,
+      "escalationTarget": "engine-room",
+      "failClosedBehavior": "FAIL_CLOSED_ESCALATE_UPWARD",
+      "governanceEvidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward."
+    },
+    {
+      "id": "ollama-qwen3-14b",
+      "name": "Ollama / qwen3:14b",
+      "type": "runtime-dependency",
+      "parentId": "connection-guardian",
+      "childIds": [],
+      "source": "RUNTIME",
+      "repository": "NONE",
+      "branch": "NONE",
+      "commit": "UNKNOWN",
+      "version": "qwen3:14b",
+      "runtime": {
+        "host": "UNKNOWN",
+        "address": "127.0.0.1:11434",
+        "processNote": "Model list was not re-read. Process state was not rechecked. /api/generate and /api/chat were not called."
+      },
+      "dependencies": [],
+      "connections": [],
+      "dataFlow": "NONE",
+      "actors": [],
+      "status": "DEPENDENCY",
+      "health": "UNKNOWN",
+      "lastVerified": "2026-10-02T17:30:45.489Z",
+      "acceptance": "UNKNOWN",
+      "acceptanceDecision": "UNKNOWN",
+      "evidence": [
+        "Named dependency of the current local_provider.py MODEL constant.",
+        "Owner diagnostic about /api/generate exhaustion and a /api/chat think:false response is preserved on the Ajan incident and was not re-run."
+      ],
+      "drift": [],
+      "incidents": [],
+      "recovery": "NONE_PERFORMED",
+      "history": [],
+      "confidence": "MEDIUM",
+      "unknownFields": [
+        "acceptance",
+        "acceptanceDecision",
+        "commit",
+        "health",
+        "runtime.host"
+      ],
+      "authorityParent": "engine-room",
+      "operationalSupervisor": "argos",
+      "accountableTo": "argos",
+      "policySource": "OWNER_POLICY. Varol Çolak is the sole source of Owner Policy. Owner Policy applies to every component without exception. SINBAD FIRST is mandatory and remains subordinate to Owner Policy. Source of this spine: Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02.",
+      "delegatedAuthority": "NONE. No historical delegation instrument was found. This registration does not grant or expand authority.",
+      "authorizationRequired": true,
+      "escalationTarget": "engine-room",
+      "failClosedBehavior": "FAIL_CLOSED_ESCALATE_UPWARD",
+      "governanceEvidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward."
+    },
+    {
+      "id": "matrix-owner-channel",
+      "name": "Matrix Owner Channel",
+      "type": "runtime-service",
+      "parentId": "ajan-diyalogu",
+      "childIds": [],
+      "source": "RUNTIME",
+      "repository": "NONE",
+      "branch": "NONE",
+      "commit": "UNKNOWN",
+      "version": "UNKNOWN",
+      "runtime": {
+        "host": "UNKNOWN",
+        "address": "UNKNOWN",
+        "processNote": "Process id was not rechecked. Last parsed log status is not a live process check."
+      },
+      "dependencies": [],
+      "connections": [],
+      "dataFlow": "NONE",
+      "actors": [],
+      "status": "LOG_OBSERVED",
+      "health": "UNKNOWN",
+      "lastVerified": "2026-10-02T12:03:57.293Z",
+      "acceptance": "UNKNOWN",
+      "acceptanceDecision": "UNKNOWN",
+      "evidence": [
+        "matrix.jsonl lines 1863, mtime 2026-10-02T12:03:57.293Z",
+        "substring STOPPED 927, STARTING 932",
+        "last parsed status MATRIX_BRIDGE_STARTING at 2026-10-02T12:03:57.293486Z",
+        "No later line was present at the read. Do not treat STARTING as a current RUNNING process."
+      ],
+      "drift": [],
+      "incidents": [],
+      "recovery": "NONE_PERFORMED",
+      "history": [],
+      "confidence": "MEDIUM",
+      "unknownFields": [
+        "acceptance",
+        "acceptanceDecision",
+        "commit",
+        "health",
+        "runtime.address",
+        "runtime.host",
+        "version"
+      ],
+      "authorityParent": "engine-room",
+      "operationalSupervisor": "argos",
+      "accountableTo": "argos",
+      "policySource": "OWNER_POLICY. Varol Çolak is the sole source of Owner Policy. Owner Policy applies to every component without exception. SINBAD FIRST is mandatory and remains subordinate to Owner Policy. Source of this spine: Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02.",
+      "delegatedAuthority": "NONE. No historical delegation instrument was found. This registration does not grant or expand authority.",
+      "authorizationRequired": true,
+      "escalationTarget": "engine-room",
+      "failClosedBehavior": "FAIL_CLOSED_ESCALATE_UPWARD",
+      "governanceEvidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward."
+    },
+    {
+      "id": "sinbad-polyglot-engine",
+      "name": "sinbad-polyglot-engine",
+      "type": "research-package",
+      "parentId": "engine-room",
+      "childIds": [],
+      "source": "LOCAL_DIRECTORY",
+      "repository": "NONE",
+      "branch": "NONE",
+      "commit": "UNKNOWN",
+      "version": "0.2.0-research",
+      "runtime": {
+        "host": "ASUS",
+        "address": "C:/Users/ASUS/Documents/Codex/SINBAD-SHIPYARDS/sinbad-polyglot-engine",
+        "processNote": "No .git directory. Not a canonical atlas-marine-os module."
+      },
+      "dependencies": [],
+      "connections": [],
+      "dataFlow": "NONE",
+      "actors": [],
+      "status": "PARTIAL",
+      "health": "UNKNOWN",
+      "lastVerified": "2026-10-02",
+      "acceptance": "UNKNOWN",
+      "acceptanceDecision": "UNKNOWN",
+      "evidence": [
+        "package.json name sinbad-polyglot-engine, version 0.2.0-research.",
+        "source LOCAL_DIRECTORY is outside the Discovery-2 enum because this tree is untracked local research and is not reference material.",
+        "Not class-approval evidence was not claimed. Acceptance UNKNOWN."
+      ],
+      "drift": [],
+      "incidents": [],
+      "recovery": "NONE_PERFORMED",
+      "history": [],
+      "confidence": "MEDIUM",
+      "unknownFields": [
+        "acceptance",
+        "acceptanceDecision",
+        "commit",
+        "health"
+      ],
+      "authorityParent": "engine-room",
+      "operationalSupervisor": "argos",
+      "accountableTo": "argos",
+      "policySource": "OWNER_POLICY. Varol Çolak is the sole source of Owner Policy. Owner Policy applies to every component without exception. SINBAD FIRST is mandatory and remains subordinate to Owner Policy. Source of this spine: Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02.",
+      "delegatedAuthority": "NONE. No historical delegation instrument was found. This registration does not grant or expand authority.",
+      "authorizationRequired": true,
+      "escalationTarget": "engine-room",
+      "failClosedBehavior": "FAIL_CLOSED_ESCALATE_UPWARD",
+      "governanceEvidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward."
+    },
+    {
+      "id": "sinbad-loadmaster-prototype",
+      "name": "sinbad-loadmaster-prototype",
+      "type": "research-package",
+      "parentId": "engine-room",
+      "childIds": [],
+      "source": "LOCAL_DIRECTORY",
+      "repository": "NONE",
+      "branch": "NONE",
+      "commit": "UNKNOWN",
+      "version": "UNKNOWN",
+      "runtime": {
+        "host": "ASUS",
+        "address": "C:/Users/ASUS/Documents/Codex/2026-08-08/e/sinbad_loadmaster_prototype",
+        "processNote": "No .git directory. Research-only calculation core."
+      },
+      "dependencies": [],
+      "connections": [],
+      "dataFlow": "NONE",
+      "actors": [],
+      "status": "PARTIAL_NOT_CLASS_APPROVED",
+      "health": "UNKNOWN",
+      "lastVerified": "2026-10-02",
+      "acceptance": "UNKNOWN",
+      "acceptanceDecision": "UNKNOWN",
+      "evidence": [
+        "README states it is research-only and not class approved and must not be used for operational loading decisions.",
+        "AppData Local Sinbad LoadMasterData is a separate store and is not registered. Sameness is UNKNOWN.",
+        "source LOCAL_DIRECTORY is outside the Discovery-2 enum for the same reason as the polyglot package."
+      ],
+      "drift": [],
+      "incidents": [],
+      "recovery": "NONE_PERFORMED",
+      "history": [],
+      "confidence": "MEDIUM",
+      "unknownFields": [
+        "acceptance",
+        "acceptanceDecision",
+        "commit",
+        "health",
+        "version"
+      ],
+      "authorityParent": "engine-room",
+      "operationalSupervisor": "argos",
+      "accountableTo": "argos",
+      "policySource": "OWNER_POLICY. Varol Çolak is the sole source of Owner Policy. Owner Policy applies to every component without exception. SINBAD FIRST is mandatory and remains subordinate to Owner Policy. Source of this spine: Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02.",
+      "delegatedAuthority": "NONE. No historical delegation instrument was found. This registration does not grant or expand authority.",
+      "authorizationRequired": true,
+      "escalationTarget": "engine-room",
+      "failClosedBehavior": "FAIL_CLOSED_ESCALATE_UPWARD",
+      "governanceEvidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward.",
+      "classApproval": "NOT CLASS APPROVED"
+    }
+  ],
+  "edges": [
+    {
+      "id": "authority-captain-sinbad",
+      "type": "AUTHORITY_PARENT",
+      "from": "captain-sinbad",
+      "to": "owner-varol-colak",
+      "evidence": "Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02. SINBAD FIRST is mandatory and subordinate to Owner Policy.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "authority-argos",
+      "type": "AUTHORITY_PARENT",
+      "from": "argos",
+      "to": "captain-sinbad",
+      "evidence": "Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02. Continuous oversight is named down to every system, component, connection, cell, atom, and nerve path. Reports go to Captain SINBAD and the Owner.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "supervisor-argos",
+      "type": "OPERATIONAL_SUPERVISION",
+      "from": "captain-sinbad",
+      "to": "argos",
+      "evidence": "ARGOS is the named Operations Supervisor under the 2026-10-02 instruction.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "authority-engine-room",
+      "type": "AUTHORITY_PARENT",
+      "from": "engine-room",
+      "to": "argos",
+      "evidence": "Owner instruction ENGINE ROOM UNIVERSAL REGISTRY v0, 2026-10-02. This entry is the sealed definition. It is not a claim that the accepted v0 page already implements that definition.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "supervisor-engine-room",
+      "type": "OPERATIONAL_SUPERVISION",
+      "from": "argos",
+      "to": "engine-room",
+      "evidence": "ARGOS is the named Operations Supervisor under the 2026-10-02 instruction.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "authority-atlas-marine-os",
+      "type": "AUTHORITY_PARENT",
+      "from": "atlas-marine-os",
+      "to": "engine-room",
+      "evidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "supervisor-atlas-marine-os",
+      "type": "OPERATIONAL_SUPERVISION",
+      "from": "argos",
+      "to": "atlas-marine-os",
+      "evidence": "ARGOS is the named Operations Supervisor under the 2026-10-02 instruction.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "authority-engine-room-v0",
+      "type": "AUTHORITY_PARENT",
+      "from": "engine-room-v0",
+      "to": "engine-room",
+      "evidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "supervisor-engine-room-v0",
+      "type": "OPERATIONAL_SUPERVISION",
+      "from": "argos",
+      "to": "engine-room-v0",
+      "evidence": "ARGOS is the named Operations Supervisor under the 2026-10-02 instruction.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "authority-participation-gate-v0",
+      "type": "AUTHORITY_PARENT",
+      "from": "participation-gate-v0",
+      "to": "captain-sinbad",
+      "evidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "supervisor-participation-gate-v0",
+      "type": "OPERATIONAL_SUPERVISION",
+      "from": "argos",
+      "to": "participation-gate-v0",
+      "evidence": "ARGOS is the named Operations Supervisor under the 2026-10-02 instruction.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "authority-participation-lifecycle-v0",
+      "type": "AUTHORITY_PARENT",
+      "from": "participation-lifecycle-v0",
+      "to": "captain-sinbad",
+      "evidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "structural-participation-lifecycle-v0",
+      "type": "STRUCTURAL_PARENT",
+      "from": "participation-lifecycle-v0",
+      "to": "participation-gate-v0",
+      "evidence": "Containment used for Batch-1 placement. It is not an authority grant.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "supervisor-participation-lifecycle-v0",
+      "type": "OPERATIONAL_SUPERVISION",
+      "from": "argos",
+      "to": "participation-lifecycle-v0",
+      "evidence": "ARGOS is the named Operations Supervisor under the 2026-10-02 instruction.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "authority-project-2",
+      "type": "AUTHORITY_PARENT",
+      "from": "project-2",
+      "to": "engine-room",
+      "evidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "structural-project-2",
+      "type": "STRUCTURAL_PARENT",
+      "from": "project-2",
+      "to": "atlas-marine-os",
+      "evidence": "Containment used for Batch-1 placement. It is not an authority grant.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "supervisor-project-2",
+      "type": "OPERATIONAL_SUPERVISION",
+      "from": "argos",
+      "to": "project-2",
+      "evidence": "ARGOS is the named Operations Supervisor under the 2026-10-02 instruction.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "authority-phase-4-3a-a1",
+      "type": "AUTHORITY_PARENT",
+      "from": "phase-4-3a-a1",
+      "to": "engine-room",
+      "evidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "structural-phase-4-3a-a1",
+      "type": "STRUCTURAL_PARENT",
+      "from": "phase-4-3a-a1",
+      "to": "project-2",
+      "evidence": "Containment used for Batch-1 placement. It is not an authority grant.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "supervisor-phase-4-3a-a1",
+      "type": "OPERATIONAL_SUPERVISION",
+      "from": "argos",
+      "to": "phase-4-3a-a1",
+      "evidence": "ARGOS is the named Operations Supervisor under the 2026-10-02 instruction.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "authority-phase-4-3a-a2",
+      "type": "AUTHORITY_PARENT",
+      "from": "phase-4-3a-a2",
+      "to": "engine-room",
+      "evidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "structural-phase-4-3a-a2",
+      "type": "STRUCTURAL_PARENT",
+      "from": "phase-4-3a-a2",
+      "to": "project-2",
+      "evidence": "Containment used for Batch-1 placement. It is not an authority grant.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "supervisor-phase-4-3a-a2",
+      "type": "OPERATIONAL_SUPERVISION",
+      "from": "argos",
+      "to": "phase-4-3a-a2",
+      "evidence": "ARGOS is the named Operations Supervisor under the 2026-10-02 instruction.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "authority-phase-4-3a-a3",
+      "type": "AUTHORITY_PARENT",
+      "from": "phase-4-3a-a3",
+      "to": "engine-room",
+      "evidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "structural-phase-4-3a-a3",
+      "type": "STRUCTURAL_PARENT",
+      "from": "phase-4-3a-a3",
+      "to": "project-2",
+      "evidence": "Containment used for Batch-1 placement. It is not an authority grant.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "supervisor-phase-4-3a-a3",
+      "type": "OPERATIONAL_SUPERVISION",
+      "from": "argos",
+      "to": "phase-4-3a-a3",
+      "evidence": "ARGOS is the named Operations Supervisor under the 2026-10-02 instruction.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "authority-phase-4-3a-a4",
+      "type": "AUTHORITY_PARENT",
+      "from": "phase-4-3a-a4",
+      "to": "engine-room",
+      "evidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "structural-phase-4-3a-a4",
+      "type": "STRUCTURAL_PARENT",
+      "from": "phase-4-3a-a4",
+      "to": "project-2",
+      "evidence": "Containment used for Batch-1 placement. It is not an authority grant.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "supervisor-phase-4-3a-a4",
+      "type": "OPERATIONAL_SUPERVISION",
+      "from": "argos",
+      "to": "phase-4-3a-a4",
+      "evidence": "ARGOS is the named Operations Supervisor under the 2026-10-02 instruction.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "authority-d6-closure-review",
+      "type": "AUTHORITY_PARENT",
+      "from": "d6-closure-review",
+      "to": "engine-room",
+      "evidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "structural-d6-closure-review",
+      "type": "STRUCTURAL_PARENT",
+      "from": "d6-closure-review",
+      "to": "project-2",
+      "evidence": "Containment used for Batch-1 placement. It is not an authority grant.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "supervisor-d6-closure-review",
+      "type": "OPERATIONAL_SUPERVISION",
+      "from": "argos",
+      "to": "d6-closure-review",
+      "evidence": "ARGOS is the named Operations Supervisor under the 2026-10-02 instruction.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "authority-secure-auth-handoff-p1",
+      "type": "AUTHORITY_PARENT",
+      "from": "secure-auth-handoff-p1",
+      "to": "engine-room",
+      "evidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "structural-secure-auth-handoff-p1",
+      "type": "STRUCTURAL_PARENT",
+      "from": "secure-auth-handoff-p1",
+      "to": "atlas-marine-os",
+      "evidence": "Containment used for Batch-1 placement. It is not an authority grant.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "supervisor-secure-auth-handoff-p1",
+      "type": "OPERATIONAL_SUPERVISION",
+      "from": "argos",
+      "to": "secure-auth-handoff-p1",
+      "evidence": "ARGOS is the named Operations Supervisor under the 2026-10-02 instruction.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "authority-bridge-0-5-0",
+      "type": "AUTHORITY_PARENT",
+      "from": "bridge-0-5-0",
+      "to": "engine-room",
+      "evidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "supervisor-bridge-0-5-0",
+      "type": "OPERATIONAL_SUPERVISION",
+      "from": "argos",
+      "to": "bridge-0-5-0",
+      "evidence": "ARGOS is the named Operations Supervisor under the 2026-10-02 instruction.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "authority-ajan-diyalogu",
+      "type": "AUTHORITY_PARENT",
+      "from": "ajan-diyalogu",
+      "to": "engine-room",
+      "evidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "supervisor-ajan-diyalogu",
+      "type": "OPERATIONAL_SUPERVISION",
+      "from": "argos",
+      "to": "ajan-diyalogu",
+      "evidence": "ARGOS is the named Operations Supervisor under the 2026-10-02 instruction.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "authority-connection-guardian",
+      "type": "AUTHORITY_PARENT",
+      "from": "connection-guardian",
+      "to": "engine-room",
+      "evidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "structural-connection-guardian",
+      "type": "STRUCTURAL_PARENT",
+      "from": "connection-guardian",
+      "to": "ajan-diyalogu",
+      "evidence": "Containment used for Batch-1 placement. It is not an authority grant.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "supervisor-connection-guardian",
+      "type": "OPERATIONAL_SUPERVISION",
+      "from": "argos",
+      "to": "connection-guardian",
+      "evidence": "ARGOS is the named Operations Supervisor under the 2026-10-02 instruction.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "authority-ollama-qwen3-14b",
+      "type": "AUTHORITY_PARENT",
+      "from": "ollama-qwen3-14b",
+      "to": "engine-room",
+      "evidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "structural-ollama-qwen3-14b",
+      "type": "STRUCTURAL_PARENT",
+      "from": "ollama-qwen3-14b",
+      "to": "connection-guardian",
+      "evidence": "Containment used for Batch-1 placement. It is not an authority grant.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "supervisor-ollama-qwen3-14b",
+      "type": "OPERATIONAL_SUPERVISION",
+      "from": "argos",
+      "to": "ollama-qwen3-14b",
+      "evidence": "ARGOS is the named Operations Supervisor under the 2026-10-02 instruction.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "authority-matrix-owner-channel",
+      "type": "AUTHORITY_PARENT",
+      "from": "matrix-owner-channel",
+      "to": "engine-room",
+      "evidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "structural-matrix-owner-channel",
+      "type": "STRUCTURAL_PARENT",
+      "from": "matrix-owner-channel",
+      "to": "ajan-diyalogu",
+      "evidence": "Containment used for Batch-1 placement. It is not an authority grant.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "supervisor-matrix-owner-channel",
+      "type": "OPERATIONAL_SUPERVISION",
+      "from": "argos",
+      "to": "matrix-owner-channel",
+      "evidence": "ARGOS is the named Operations Supervisor under the 2026-10-02 instruction.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "authority-sinbad-polyglot-engine",
+      "type": "AUTHORITY_PARENT",
+      "from": "sinbad-polyglot-engine",
+      "to": "engine-room",
+      "evidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "supervisor-sinbad-polyglot-engine",
+      "type": "OPERATIONAL_SUPERVISION",
+      "from": "argos",
+      "to": "sinbad-polyglot-engine",
+      "evidence": "ARGOS is the named Operations Supervisor under the 2026-10-02 instruction.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "authority-sinbad-loadmaster-prototype",
+      "type": "AUTHORITY_PARENT",
+      "from": "sinbad-loadmaster-prototype",
+      "to": "engine-room",
+      "evidence": "Placed by the Owner instruction of 2026-10-02. No earlier authority assignment was found, so none is invented. Ambiguity fails closed and escalates upward.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "supervisor-sinbad-loadmaster-prototype",
+      "type": "OPERATIONAL_SUPERVISION",
+      "from": "argos",
+      "to": "sinbad-loadmaster-prototype",
+      "evidence": "ARGOS is the named Operations Supervisor under the 2026-10-02 instruction.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "module-atlas-engine-room-v0",
+      "type": "PROJECT_MODULE",
+      "from": "atlas-marine-os",
+      "to": "engine-room-v0",
+      "evidence": "index.html section#engine-room data-engine-room=v0 is in the repository. Acceptance file is docs/engine-room/ENGINE_ROOM_V0_STATE.json.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "module-atlas-gate",
+      "type": "PROJECT_MODULE",
+      "from": "atlas-marine-os",
+      "to": "participation-gate-v0",
+      "evidence": "Gate files live in this repository. Structural authority parent of the gate remains Captain SINBAD.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "module-atlas-p1",
+      "type": "PROJECT_MODULE",
+      "from": "atlas-marine-os",
+      "to": "secure-auth-handoff-p1",
+      "evidence": "P1 files named in the P1 acceptance record.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "runtime-v0-bridge",
+      "type": "MODULE_RUNTIME",
+      "from": "engine-room-v0",
+      "to": "bridge-0-5-0",
+      "evidence": "Accepted v0 reads five existing Bridge probes. The running process source commit remains UNKNOWN. This edge does not identify the binary.",
+      "confidence": "MEDIUM"
+    },
+    {
+      "id": "runtime-atlas-ajan-button",
+      "type": "MODULE_RUNTIME",
+      "from": "atlas-marine-os",
+      "to": "ajan-diyalogu",
+      "evidence": "app.js window.opens CONSOLE_OWNER_URL for the Owner Ajan Diyaloğu button. This is not a Matrix link and not an Engine Room probe.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "service-guardian-ollama",
+      "type": "RUNTIME_SERVICE",
+      "from": "connection-guardian",
+      "to": "ollama-qwen3-14b",
+      "evidence": "local_provider.py calls /api/generate for MODEL qwen3:14b. /api/chat is not the current call.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "incident-ajan-edge",
+      "type": "INCIDENT_COMPONENT",
+      "from": "incident-ajan-diyalogu-degraded",
+      "to": "ajan-diyalogu",
+      "evidence": "conversation.jsonl dominant CONVERSATION_RESOURCE_BLOCKED. Status DEGRADED.",
+      "confidence": "HIGH"
+    },
+    {
+      "id": "incident-argos-edge",
+      "type": "INCIDENT_COMPONENT",
+      "from": "incident-argos-scheduled-assurance",
+      "to": "argos",
+      "evidence": "Unresolved scheduled assurance observation. Not a root-cause finding.",
+      "confidence": "HIGH"
+    }
+  ],
+  "incidents": [
+    {
+      "id": "incident-ajan-diyalogu-degraded",
+      "componentId": "ajan-diyalogu",
+      "title": "Ajan Diyaloğu DEGRADED",
+      "state": "OPEN",
+      "health": "DEGRADED",
+      "repairPerformed": false,
+      "runtimeReplacementPerformed": false,
+      "registrationAuthorizesRepair": false,
+      "dominantEvidence": "CONVERSATION_RESOURCE_BLOCKED",
+      "ownerDiagnostic": {
+        "preserved": true,
+        "rerunInThisTask": false,
+        "statement": "Owner diagnostic: /api/generate showed hidden-thinking and output exhaustion. /api/chat with think false returned the visible text SINBAD SPEED TEST PASS and 7 evaluated tokens.",
+        "speedTestStringInWorkerLogs": false,
+        "logsSearched": [
+          "conversation.jsonl",
+          "matrix.jsonl",
+          "ping.jsonl"
+        ]
+      },
+      "measurements": {
+        "measuredAt": "2026-10-02T17:30:45.489Z",
+        "providerSha256": "1c4b61df07d28950051536e87fe4d17686a203235eefc8570c835d59260b3f33",
+        "providerCall": "/api/generate",
+        "providerThinkFlag": false,
+        "providerStream": false,
+        "model": "qwen3:14b",
+        "conversation": {
+          "file": "conversation.jsonl",
+          "bytes": 278038,
+          "mtime": "2026-10-02T17:19:45.362Z",
+          "lines": 3397,
+          "substringCounts": {
+            "CONVERSATION_RESOURCE_BLOCKED": 2405,
+            "CONVERSATION_WATCH_DEGRADED": 622,
+            "CONVERSATION_WATCH_READY": 251,
+            "CONVERSATION_LOGOUT_UNCONFIRMED": 43,
+            "OUTCOME_UNKNOWN": 40,
+            "COMPLETION_ACKNOWLEDGED": 36,
+            "WATCH_DEGRADED": 622,
+            "WATCH_READY": 251,
+            "LOGOUT_UNCONFIRMED": 43,
+            "RESOURCE_BLOCKED": 2405,
+            "STOPPED": 0,
+            "STARTING": 0,
+            "SINBAD SPEED TEST PASS": 0,
+            "SPEED TEST PASS": 0
+          },
+          "lastStatus": "CONVERSATION_WATCH_READY",
+          "lastAt": "2026-10-02T17:19:45.359957Z"
+        },
+        "matrix": {
+          "lines": 1863,
+          "mtime": "2026-10-02T12:03:57.293Z",
+          "lastStatus": "MATRIX_BRIDGE_STARTING",
+          "lastAt": "2026-10-02T12:03:57.293486Z",
+          "startingSubstring": 932,
+          "stoppedSubstring": 927
+        },
+        "ping": {
+          "lines": 945,
+          "mtime": "2026-10-02T17:19:12.943Z",
+          "lastStatus": "WATCH_READY",
+          "lastAt": "2026-10-02T17:19:12.936681Z",
+          "watchDegradedSubstring": 614,
+          "watchReadySubstring": 252,
+          "logoutUnconfirmedSubstring": 28
+        }
+      }
+    },
+    {
+      "id": "incident-argos-scheduled-assurance",
+      "componentId": "argos",
+      "title": "ARGOS scheduled assurance repeatedly failing",
+      "state": "UNRESOLVED",
+      "waived": false,
+      "acceptedByP1": false,
+      "diagnosisPerformed": false,
+      "repairPerformed": false,
+      "attributedToSecureAuthHandoffP1": false,
+      "predatesP1": true,
+      "laterCase": "Preserved for a later ARGOS to Engine Room health and assurance integration. Not started in TASK-14.",
+      "evidenceFromP1Acceptance": {
+        "name": "ARGOS scheduled assurance failing",
+        "state": "UNRESOLVED, NOT WAIVED, NOT ACCEPTED by this decision",
+        "workflow": "ARGOS scheduled assurance (non-required, schedule event)",
+        "failedStep": "Observe ARGOS application and service health, assessment ARGOS_RELEASE_HEALTH_BLOCKED",
+        "runOnMergeCommit": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/37015761391 (schedule, attempt 1, failure, created 2026-10-02T13:51:02Z)",
+        "history": "of the latest 50 scheduled runs read at the time of this record: {\"failure\":50}; earliest of them created 2026-09-18T21:40:40Z, latest 2026-10-02T13:51:02Z",
+        "relationToP1": "pre-existing: it failed on scheduled runs before P1 existed (base commits bb4e6837 and earlier); P1 did not cause it; the root cause has not been investigated",
+        "preserved": "kept as a separate health and assurance observation for later Engine Room registration and diagnosis"
+      },
+      "earlierDocuments": [
+        "docs/project2/PHASE_3_DISCOVERY.md: the scheduled assurance run has failed at the health step on every run since at least 2026-09-11 (pre-existing).",
+        "docs/project2/PHASE_4_READINESS_REPORT.md: the same 2026-09-11 statement, and that pass said it was NOT re-verified.",
+        "The P1 record history of the latest 50 scheduled runs is a failure count of 50, earliest created 2026-09-18T21:40:40Z. The 2026-09-11 sentence and the 50-run window are both preserved. They are not reconciled here."
+      ]
+    }
+  ],
+  "contradictions": [
+    {
+      "id": "contradiction-d6-acceptance-vs-engine-room-v0-record",
+      "state": "PRESERVED",
+      "left": "ENGINE_ROOM_V0_STATE.json notIncluded.d6 is NOT ACCEPTED. Blob c03f995ae759e7fdc70d06c5c67ccf038116b740. Not rewritten.",
+      "right": "PROJECT2_STATE owner_acceptance.d6_closure_review is OWNER ACCEPTED on 2026-09-29 at 87408ea234e7ba5e22b64fbf6ce3a0bbbef8cd8b, with this limitation: It is NOT an acceptance of measured product capability; NOT a GO for wiring, enforcement or live integration of the gate, the grounded pipeline or scoring v1.0.3; NOT a decision on whether maritime-reasoning joins the stage gate; NOT an acceptance of retrieval / query expansion / semantic index (4.8-4.10), TEST-3 or the full 90,539-chunk index; NOT an acceptance of Phases 4.3-4.10; NOT any cloud or model authorisation; and touches no Engine Room, Documents & Compliance, Project Harbor or Hermes work. Historical GROUNDED artifacts stay immutable (GROUNDED-002 sha256 ee3277d13d53015868decaa069aa656671d04d40e3fe72cd87f62bd09ee79ffa, GROUNDED-CT03 c94e26e08db2aa1abe7b5bf99241a1b7f2e6dfe2d55509c6bcb9f5c35b28d7c5).",
+      "resolution": "UNRESOLVED_BY_DESIGN"
+    },
+    {
+      "id": "contradiction-ajan-tail-versus-dominant-block",
+      "state": "PRESERVED",
+      "left": "conversation.jsonl substring CONVERSATION_RESOURCE_BLOCKED is 2405 of 3397 lines. mtime 2026-10-02T17:19:45.362Z. Provider still calls /api/generate.",
+      "right": "conversation.jsonl also contains CONVERSATION_WATCH_READY 251. ping.jsonl last parsed status is WATCH_READY at 2026-10-02T17:19:12.936681Z. A ready tail does not clear DEGRADED.",
+      "resolution": "STATUS_REMAINS_DEGRADED"
+    },
+    {
+      "id": "contradiction-argos-assurance-date-window",
+      "state": "PRESERVED",
+      "left": "PHASE_3_DISCOVERY.md says the scheduled assurance failed since at least 2026-09-11. PHASE_4_READINESS_REPORT.md says that statement was not re-verified in that pass.",
+      "right": "P1 acceptance history of the latest 50 scheduled runs: 50 failures, earliest created 2026-09-18T21:40:40Z, latest created 2026-10-02T13:51:02Z, run 37015761391.",
+      "resolution": "NOT_DIAGNOSED"
+    },
+    {
+      "id": "contradiction-a5-hold-versus-task-11-delegated",
+      "state": "PRESERVED",
+      "left": "NOT STARTED, HOLD - needs its own explicit Owner decision: call ceiling (30, or 36 with the maritime slice), whose credentials, who runs it, and approval of a one-off cloud usage against the Project 2 cloud policy",
+      "right": "Participation ledger TASK-11 remains DELEGATED with no ingested report. Expected file docs/participation/A5_PLACEHOLDER_NEVER_CREATED.txt. Base bb4e6837f8b4a2626784e757bedaff06397e4cd1. P1 acceptance does not accept TASK-11 or A5.",
+      "resolution": "NOT_CONTINUED_BY_TASK_14"
+    }
+  ],
+  "exclusions": [
+    {
+      "id": "sinbad-navigation-engine",
+      "classification": "EXCLUDED_FROM_BATCH",
+      "reason": "Discovered in Discovery-2. Lineage UNKNOWN. Dubious ownership was not overridden. Not registered."
+    },
+    {
+      "id": "external-maritime-reference-corpus",
+      "classification": "EXCLUDED_FROM_BATCH",
+      "reason": "Reference material. Not registered as implementation projects."
+    },
+    {
+      "id": "codex-session-scratches",
+      "classification": "EXCLUDED",
+      "reason": "Not projects."
+    },
+    {
+      "id": "loadmaster-data-store",
+      "classification": "UNKNOWN_STORE_NOT_REGISTERED",
+      "reason": "AppData Local Sinbad LoadMasterData is not proven to be the prototype."
+    },
+    {
+      "id": "vessel-dna",
+      "classification": "NOT_FOUND",
+      "registeredAsImplementation": false
+    },
+    {
+      "id": "decision-genome",
+      "classification": "NOT_FOUND",
+      "registeredAsImplementation": false
+    },
+    {
+      "id": "living-vessel-intelligence",
+      "classification": "NOT_FOUND",
+      "registeredAsImplementation": false
+    },
+    {
+      "id": "xr-ar-command-console",
+      "classification": "NOT_FOUND",
+      "registeredAsImplementation": false
+    },
+    {
+      "id": "project-harbor",
+      "classification": "BACKLOG_NOT_STARTED",
+      "registeredAsImplementation": false
+    },
+    {
+      "id": "hermes",
+      "classification": "CONCEPT",
+      "registeredAsImplementation": false
+    },
+    {
+      "id": "digital-twin",
+      "classification": "PARTIAL_ACTIVATION_BLOCKED_NOT_IN_BATCH",
+      "registeredAsImplementation": false
+    },
+    {
+      "id": "autonomous-developer-runtime",
+      "classification": "NOT_FOUND",
+      "registeredAsImplementation": false
+    },
+    {
+      "id": "multi-agent-runtime",
+      "classification": "NOT_A_RUNTIME",
+      "registeredAsImplementation": false
+    },
+    {
+      "id": "phase-4-3a-a5",
+      "classification": "HOLD_NOT_REGISTERED",
+      "registeredAsImplementation": false
+    },
+    {
+      "id": "phase-4-3a-a6",
+      "classification": "HOLD_NOT_REGISTERED",
+      "registeredAsImplementation": false
+    }
+  ],
+  "doesNotAuthorize": [
+    "A5",
+    "A6",
+    "Owner Console repair",
+    "Ajan Diyaloğu repair",
+    "ARGOS assurance repair",
+    "runtime patch",
+    "deletion",
+    "cleanup",
+    "historical acceptance rewrite",
+    "Project Harbor implementation",
+    "Vessel DNA implementation",
+    "Decision Genome implementation",
+    "XR implementation",
+    "self-authorization by SINBAD",
+    "self-authorization by ARGOS",
+    "independent Engine Room authority"
+  ]
+}
