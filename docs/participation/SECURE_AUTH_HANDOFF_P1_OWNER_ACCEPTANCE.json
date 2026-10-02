@@ -1,0 +1,76 @@
+{
+  "record": "sinbad-secure-auth-handoff-p1-owner-acceptance/1",
+  "decision": "OWNER ACCEPTED - P1 ONLY",
+  "ownerStatement": "OWNER ACCEPTED - P1 ONLY",
+  "acceptedOn": "2026-10-02",
+  "acceptedCommit": "406b917798965482ba8f2426e1189bb7ee0ffb9e",
+  "acceptedTree": "93ce5cc69dc671218a5571143cd735da06295cf7",
+  "scope": "The delivered and verified Secure Auth Handoff P1 deterministic security core, exactly as merged at that commit and tree: sinbad-ai-core/auth-handoff/handoff-v0.js, sinbad-ai-core/auth-handoff/index.js, tests/sinbad-auth-handoff-v0.test.js, docs/auth-handoff/AUTH_HANDOFF_P1.md. Pure logic: a grant bound to task, purpose, workspace, capability, call ceiling and time; a state machine; single-use and replay protection; expiry, stop and cleanup semantics; secret scanning, redaction and leak detection; a closed participation-safe event schema. Built as SINBAD TASK-12 through the accepted Participation Gate. Also accepted: the lifecycle evidence recorded for TASK-12 (PR linked, merge verified, post-merge CI verified, COMPLETED), recorded forward, not retroactively. Accepted on the reported test and CI evidence listed below.",
+  "evidence": {
+    "sinbadTask": "TASK-12",
+    "pullRequest": 323,
+    "mergeCommit": "406b917798965482ba8f2426e1189bb7ee0ffb9e",
+    "parent": "bb4e6837f8b4a2626784e757bedaff06397e4cd1",
+    "reviewedHead": "8addc512efb89c8cbdb6ce08d1dd018e32c1df86",
+    "changedFiles": 4,
+    "prVerifyRun": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/36933367659",
+    "postMergeReleaseQuality": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/37005181019 (push, attempt 1, success)",
+    "postMergePages": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/37005181083 (push, attempt 1, success)",
+    "tests": "tests/sinbad-auth-handoff-v0.test.js: 25 of 25 passed on the PR branch; related suites (auth handoff, participation, lifecycle, evaluator, capture client, project2) 160 of 160; full local npm test 2531 tests = 2528 pass + 2 fail + 1 skipped, the 2 failures and the skip matching the earlier local-only pattern (CRLF hash tests, Docker unavailable), CI being the authority",
+    "mutationEvidence": "38 deliberate mutants, each breaking one security rule, were all caught by a failing test and none survived; the mutation script was a temporary scratchpad script and is NOT in the repository, so this result is reported, not reproducible from the repository",
+    "argos": "ARGOS_INTEGRITY_VERIFIED, 105 protected files, inventory hash ef13f9a72f685330e8fcc34ae237a290cc04e10770bd72e341c53d8784157ae7",
+    "ledger": {
+      "v0Shelf": {
+        "opened": "2755f18c12bc43c7be492cd8886ced5a81a076d7ef3601c06a549aaa3434bbda",
+        "preflight": "02ff89ffdd5c873d4ea3f45a8bff22b089128a864d7520abcd684383b193eddb",
+        "delegated": "f06482d4d03f2336257028c459d7679081726e1d63378f165688c85a4c7ca1dd",
+        "reportIngested": "bfcf8f9bdab75a635f5f13667243a17567723dc66cee13735f9977eef27d9205"
+      },
+      "lifecycleShelf": {
+        "prLinked": "bf2402dd55f5587c3786c5c9db4b81d019122945b39fb241e2cc463d54558196",
+        "prOpenObserved": "08846ef35fe27fe47f2a460670719b5b14a20c1e4e2026ddba4af3e8aaec0d28",
+        "mergeObserved": "2140b051212a9d5f76a68a6917f050603b469c1c4ece1b56ff09ddd1e6c1acc9",
+        "mergeObservedFresh": "d150f39d6e3740f9cd9aa317a256111a7d1229d7fae1b404af102655b73fe323",
+        "ciObserved": "540b355d32722295b83e4c986faa88492a7fa8e7ec83e1016170ac6c2d7cecb0",
+        "taskCompleted": "46cbe1ec66562a3094007142d8c449be5cb1f03b9e44641ff46e16fed67b7ea4"
+      },
+      "lifecycleState": "COMPLETED (POST_MERGE_VERIFIED), FORWARD",
+      "note": "The ledger lives outside the repository; these hashes were read from it by the script that wrote this record, so the record can be checked against it."
+    }
+  },
+  "notIncluded": {
+    "p2": "NOT accepted or authorized: the local auth broker",
+    "p3": "NOT accepted or authorized: the Owner Console ALLOW ONCE card",
+    "p4": "NOT accepted or authorized: the server-side one-time capability grant",
+    "transportOrWiring": "NOT accepted or authorized: nothing calls the module and no transport exists; a test pins that it is not wired",
+    "realCredentialTransfer": "NOT accepted or authorized; no credential has ever been handled by this work",
+    "task11A5RealCapture": "NOT accepted or authorized: TASK-11, Phase 4.3a A5, remains on hold; no capture, no cloud call, no credential use",
+    "a6": "HOLD",
+    "ownerConsoleChanges": "NOT accepted or authorized",
+    "engineRoomImplementation": "HOLD",
+    "cloudCredentialUse": "NOT authorized"
+  },
+  "limitationsRemain": [
+    "P1 proves the rules, not the transport: no loopback broker, no browser side",
+    "the aal2 step-up is a caller-supplied flag that the pure logic cannot verify",
+    "the call ceiling is enforced on the client side only; sinbad-answer has no per-caller call budget",
+    "memory wiping is a cleanup directive, not a guarantee",
+    "nonces are not generated here; a later phase must generate them with a cryptographically secure source",
+    "replay protection across process restarts needs a later phase to persist used authorization ids",
+    "the credential fingerprint is a value derived from a token; it stays internal and is never recorded",
+    "constant-time comparison is used but cannot be proven by a behavioural test"
+  ],
+  "unresolvedObservation": {
+    "name": "ARGOS scheduled assurance failing",
+    "state": "UNRESOLVED, NOT WAIVED, NOT ACCEPTED by this decision",
+    "workflow": "ARGOS scheduled assurance (non-required, schedule event)",
+    "failedStep": "Observe ARGOS application and service health, assessment ARGOS_RELEASE_HEALTH_BLOCKED",
+    "runOnMergeCommit": "https://github.com/sinbad-marine/atlas-marine-os/actions/runs/37015761391 (schedule, attempt 1, failure, created 2026-10-02T13:51:02Z)",
+    "history": "of the latest 50 scheduled runs read at the time of this record: {\"failure\":50}; earliest of them created 2026-09-18T21:40:40Z, latest 2026-10-02T13:51:02Z",
+    "relationToP1": "pre-existing: it failed on scheduled runs before P1 existed (base commits bb4e6837 and earlier); P1 did not cause it; the root cause has not been investigated",
+    "preserved": "kept as a separate health and assurance observation for later Engine Room registration and diagnosis"
+  },
+  "standingOwnerDoctrine": "SINBAD FIRST. SINBAD ALWAYS IN THE LOOP. Recording this acceptance was itself routed through the Participation Gate as TASK-13.",
+  "implementationUnchangedByThisRecord": true,
+  "note": "This file records the Owner statement. It changes no code, no other acceptance record, docs/project2/PROJECT2_STATE.json, any Engine Room file, app.js, package.json, ARGOS policy, workflow or ledger entry."
+}
