@@ -1,0 +1,332 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; connect-src 'none'; form-action 'none'; base-uri 'none'"><title>SINBAD Marine — Actual interface demo</title><link rel="stylesheet" href="../styles.css"><link rel="stylesheet" href="../console-master-style.css"><link rel="stylesheet" href="demo.css"></head><body class="demo-shell"><div class="demo-banner"><span data-en="PUBLIC DEMO · EXISTING INTERFACE · NO LIVE DATA" data-tr="AÇIK DEMO · MEVCUT ARAYÜZ · CANLI VERİ YOK">PUBLIC DEMO · EXISTING INTERFACE · NO LIVE DATA</span><div><button data-lang="en" aria-pressed="true">EN</button><button data-lang="tr" aria-pressed="false">TR</button></div></div><header class="demo-nav"><a href="#home">⚓ SINBAD <small>MARINE</small></a><nav><a href="#home" data-en="Home" data-tr="Ana Sayfa">Home</a><a href="#film" data-en="Video" data-tr="Video">Video</a><a href="#about" data-en="About this demo" data-tr="Demo hakkında">About this demo</a></nav><a class="member" href="https://sinbad-marine.com/" target="_blank" rel="noopener" data-en="Existing member access ↗" data-tr="Mevcut üye girişi ↗">Existing member access ↗</a></header><div class="demo-trail"><button id="demoBack" data-en="← Back" data-tr="← Geri">← Back</button><span id="breadcrumb">Home</span><span class="demo-mode" data-en="Interface preview · In development" data-tr="Arayüz önizlemesi · Geliştiriliyor">Interface preview · In development</span></div><main id="demoMain"><section id="home" class="demo-screen"><div class="home-note"><h1 data-en="Explore the existing SINBAD interface" data-tr="Mevcut SINBAD arayüzünü keşfedin">Explore the existing SINBAD interface</h1><p data-en="Choose a section, then explore its existing layers. Only navigation works here; records, AI and operational services are disconnected." data-tr="Bir bölüm seçin, ardından mevcut alt katmanlarını keşfedin. Burada yalnızca gezinme çalışır; kayıtlar, yapay zekâ ve operasyon servisleri bağlı değildir.">Choose a section, then explore its existing layers. Only navigation works here; records, AI and operational services are disconnected.</p></div><div class="actual-home"><img src="../assets/console-art/home-owner-canonical-exec-1c46e9f6-4e4e-4e80-baa9-7328e22b2f05.png" alt="Existing SINBAD home visual reference"><div class="status-cover" data-en="INTERFACE DEMO — NO LIVE STATUS, CONNECTION OR ACTIONS" data-tr="ARAYÜZ DEMOSU — CANLI DURUM, BAĞLANTI VE İŞLEM YOK">INTERFACE DEMO — NO LIVE STATUS, CONNECTION OR ACTIONS</div><div class="actual-cards"><button class="actual-card" data-open="yacht-operations" style="--x:14.294%;--y:37.938%;--w:24.94%;--h:28.586%"><span data-en="Yacht Management" data-tr="Yat Yönetimi">Yacht Management</span><b>↗</b></button><button class="actual-card" data-open="voyage-navigation" style="--x:39.713%;--y:37.938%;--w:22.727%;--h:28.586%"><span data-en="Voyage Planning" data-tr="Seyir Planlama">Voyage Planning</span><b>↗</b></button><button class="actual-card" data-open="documents-compliance" style="--x:9.928%;--y:67.588%;--w:20.036%;--h:19.022%"><span data-en="Documents &amp; Compliance" data-tr="Belgeler ve Uyumluluk">Documents &amp; Compliance</span><b>↗</b></button></div><div class="bottom-cover" data-en="Select an available existing section above · Operational actions are unavailable in this demo" data-tr="Yukarıdaki mevcut bölümlerden birini seçin · Operasyon işlemleri bu demoda kullanılamaz">Select an available existing section above · Operational actions are unavailable in this demo</div></div></section><section id="yacht-operations" class="workspace yacht-operations-page" data-master="rembrandt" data-owner-visual-lock="yacht-management-owner-selections-v1">
+  <header class="yacht-page-header">
+    <a class="yacht-page-brand" href="#home" aria-label="SINBAD home"><img src="../assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE — A SAFER SEA A SMARTER TOMORROW"></a>
+    <div class="yacht-page-heading"><span>01 · OPERATIONS</span><h2>Yacht Management</h2><p>Fleet · Crew · Captain Logbook · Camera &amp; Media</p></div>
+    <nav class="yacht-page-nav" aria-label="Yat yönetimi araçları">
+      <button type="button" data-open="fleet">Fleet</button><button type="button" data-open="crew">Crew</button><button type="button" data-open="captains-logbook">Logbook</button><button type="button" data-open="camera-archive">Media</button>
+    </nav>
+  </header>
+  <div class="yacht-page-stage">
+    <article class="yacht-atmosphere-panel">
+      <img src="../assets/console-art/yacht-management-owner-selections-v1/selected/01-yacht-management-atmosphere-C.png" alt="Tersanede bakımdaki yat ve çalışan ekip">
+      <span class="yacht-art-label">01 · OPERATIONS</span>
+      <div class="yacht-atmosphere-copy"><h3>Yacht Management</h3><p>Yat, ekip, kayıt ve özel medya çalışma alanlarına tek yerden erişin.</p></div>
+    </article>
+    <div class="yacht-function-grid" aria-label="Yat yönetimi çalışma alanları">
+      <button class="yacht-function-card yacht-fleet-card" type="button" data-open="fleet">
+        <img src="../assets/console-art/yacht-management-owner-selections-v1/selected/02-fleet-and-yacht-management-B.png" alt="Limana giren üç motor yat">
+        <span><small>FLEET</small><b>Fleet &amp; Yacht Management</b><em>Tekne ayrıntıları ve makine kayıtları</em></span>
+      </button>
+      <button class="yacht-function-card yacht-crew-card" type="button" data-open="crew">
+        <img src="../assets/console-art/yacht-management-owner-selections-v1/selected/03-crew-B.png" alt="Güvertede çalışan yat mürettebatı">
+        <span><small>CREW</small><b>Crew</b><em>Kayıtlar ve süre sonu takibi</em></span>
+      </button>
+      <button class="yacht-function-card yacht-logbook-card" type="button" data-open="captains-logbook">
+        <img src="../assets/console-art/yacht-management-owner-selections-v1/selected/04-captain-logbook-B.png" alt="Kaptan günlüğü, harita ve seyir araçları">
+        <span><small>LOGBOOK</small><b>Captain Logbook</b><em>Sesli ve yazılı operasyon notları</em></span>
+      </button>
+      <button class="yacht-function-card yacht-media-card" type="button" data-open="camera-archive">
+        <img src="../assets/console-art/yacht-management-owner-selections-v1/selected/05-camera-media-archive-A.png" alt="Kamera ve özel yat medya arşivi">
+        <span><small>PRIVATE MEDIA</small><b>Camera &amp; Media Archive</b><em>Özel operasyon arşivi</em></span>
+      </button>
+    </div>
+  </div>
+</section><section id="voyage-navigation" class="workspace voyage-planning-page" data-master="da-vinci" data-owner-selections="A-C-C-B-C-C-A-B">
+  <header class="voyage-page-header">
+    <a class="voyage-page-brand" href="#home" aria-label="SINBAD Marine home"><img src="../assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a>
+    <div><span>02 · VOYAGE</span><h2>Voyage Planning</h2><p>Routes, position intelligence, official publications and chart workspaces in one navigational system.</p></div>
+    <button class="voyage-close-button close" type="button">Close</button>
+  </header>
+  <div class="voyage-page-stage">
+    <article class="voyage-atmosphere-panel">
+      <img src="../assets/console-art/voyage-planning-owner-selections-v1/selected/01-voyage-planning-A.jpg" alt="Renaissance navigator planning a voyage over a detailed chart">
+      <span class="voyage-art-label">02 · VOYAGE</span>
+      <div class="voyage-atmosphere-copy"><h3>Voyage Planning</h3><p>Build each voyage from verified position, route, publication and chart information.</p></div>
+    </article>
+    <div class="voyage-function-grid" aria-label="Voyage Planning workspaces">
+      <button class="voyage-function-card" type="button" data-open="routes"><img src="../assets/console-art/voyage-planning-owner-selections-v1/selected/02-route-library-C.jpg" alt="Organized archive of route charts"><span><small>ROUTES</small><b>Route Library</b><em>Stored routes and reusable passage sequences</em></span></button>
+      
+      <button class="voyage-function-card" type="button" data-open="location-intelligence"><img src="../assets/console-art/voyage-planning-owner-selections-v1/selected/04-location-intelligence-B.jpg" alt="Astronomical position observation at sea"><span><small>POSITION</small><b>Location Intelligence</b><em>Permission-based position and nearby marine context</em></span></button>
+      <button class="voyage-function-card" type="button" data-open="publications"><img src="../assets/console-art/voyage-planning-owner-selections-v1/selected/05-nautical-publications-C.jpg" alt="Notices to Mariners and publication correction desk"><span><small>PUBLICATIONS</small><b>Nautical Publications</b><em>Sailing directions, notices and controlled updates</em></span></button>
+      <button class="voyage-function-card" type="button" data-open="resources"><img src="../assets/console-art/voyage-planning-owner-selections-v1/selected/06-blue-voyage-resources-C.jpg" alt="Aegean coastal voyage resource map"><span><small>COASTAL GUIDE</small><b>Blue Voyage Resources</b><em>Islands, marinas, ports and coastal services</em></span></button>
+      
+      <button class="voyage-function-card" type="button" data-open="charts"><img src="../assets/console-art/voyage-planning-owner-selections-v1/selected/08-local-charts-B.jpg" alt="Organized local nautical chart cabinet"><span><small>CHART ARCHIVE</small><b>Local Charts</b><em>Chart number, region and edition-controlled files</em></span></button>
+    </div>
+  </div>
+</section><section id="documents-compliance" class="workspace documents-compliance-page" data-master="vermeer">
+  <button class="dc-mobile-nav-toggle" type="button" aria-controls="consoleSidebar" aria-expanded="false" aria-label="Open SINBAD navigation" disabled="">☰</button>
+  <header class="dc-page-hero">
+    <img class="dc-page-brand" src="../assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE — A SAFER SEA A SMARTER TOMORROW">
+    <div class="dc-hero-copy">
+      <span>04 · ASSURANCE</span>
+      <h2>Documents &amp; Compliance</h2>
+      <p>Control evidence, approved knowledge and document submissions from one disciplined workspace.</p>
+    </div>
+    <button class="dc-close close" type="button">Close</button>
+  </header>
+
+  <div class="dc-register-layout">
+    <section class="dc-register" aria-labelledby="dcRegisterTitle">
+      <header class="dc-register-head">
+        <div><span>VERIFIED SOURCE VIEW</span><h3 id="dcRegisterTitle">Compliance Register</h3></div>
+        <div class="dc-register-filters" aria-label="Compliance register filters">
+          <input type="search" placeholder="Search verified records" aria-label="Search verified compliance records" disabled="">
+          <select aria-label="Filter compliance category" disabled=""><option>All categories</option></select>
+        </div>
+      </header>
+      <div class="dc-table-wrap">
+        <table class="dc-table">
+          <thead><tr><th>Document name</th><th>Category</th><th>Type</th><th>Version</th><th>Status</th><th>Last updated</th><th>Actions</th></tr></thead>
+          <tbody><tr class="dc-empty-row"><td colspan="7"><strong>No verified records loaded</strong><span>Connect an authorized source in Document Vault. SINBAD will not infer compliance from missing evidence.</span><button type="button" data-open="cloud-documents">Open Document Vault</button></td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <aside class="dc-action-rail" aria-label="Document actions">
+      <span>DOCUMENT STATUS</span>
+      <strong><i></i> Not verified</strong>
+      <p>Status becomes available only from authorized, verified records.</p>
+      <button type="button" data-open="cloud-documents">Upload document</button>
+      
+      <button type="button" data-open="knowledge">Search knowledge</button>
+    </aside>
+  </div>
+
+  <div class="dc-function-grid" aria-label="Documents and compliance tools">
+    <button class="dc-function-card" type="button" data-open="cloud-documents">
+      <img src="../assets/console-art/documents-compliance-owner-selections-v1/selected/02-document-vault-C.png" alt="Sealed navy document folio on an orderly maritime office desk">
+      <span><small>PRIMARY REPOSITORY</small><b>Document Vault</b><em>Upload, organize, retrieve and manage authorized vessel records.</em><u>No verified record</u></span>
+    </button>
+    <button class="dc-function-card" type="button" data-open="documents">
+      <img src="../assets/console-art/documents-compliance-owner-selections-v1/selected/03-local-document-access-C.png" alt="Organized maritime document drawers and secure local cabinet">
+      <span><small>ON-DEVICE ACCESS</small><b>Local Document Access</b><em>Open the existing document workspace on this console.</em><u>No verified record</u></span>
+    </button>
+    <button class="dc-function-card" type="button" data-open="knowledge">
+      <img src="../assets/console-art/documents-compliance-owner-selections-v1/selected/04-approved-knowledge-C.png" alt="Maritime reference library with reading lamp, globe and open volume">
+      <span><small>APPROVED SOURCES</small><b>Approved Knowledge</b><em>Search verified guidance and available local reference material.</em><u>No verified record</u></span>
+    </button>
+    
+  </div>
+</section><section id="fleet" class="workspace yacht-detail-page fleet-detail-page" data-master="rembrandt" data-owner-selection="B">
+  <header class="yacht-detail-header">
+    <a class="yacht-detail-brand" href="#home" aria-label="SINBAD home"><img src="../assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a>
+    <div><span>01 · OPERATIONS / FLEET</span><h2>Fleet &amp; Yacht Management</h2><p>Tekne ayrıntıları, kapasite bilgileri ve makine kayıtları için yerel filo sicili.</p></div>
+    <button class="yacht-back-button" type="button" data-open="yacht-operations">Yacht Management</button>
+  </header>
+  <div class="yacht-detail-body">
+    <figure class="yacht-detail-art"><img src="../assets/console-art/yacht-management-owner-selections-v1/selected/02-fleet-and-yacht-management-B.png" alt="Limana giren üç motor yat"><figcaption><span>FLEET MANAGEMENT · B</span><strong>Every vessel, clearly accounted for</strong><small>Filo verisi yalnızca bu cihazdaki yetkili çalışma alanında tutulur.</small></figcaption></figure>
+    <div class="yacht-detail-workspace fleet-workspace">
+      <section class="detail-form-panel">
+        <div class="detail-section-heading"><span>VESSEL PARTICULARS</span><h3>Yeni tekne kaydı</h3><p>Temel kimlik, boyut ve operasyon kapasitesini tek bir düzenli kayıtta tutun.</p></div>
+        <div class="detail-form-groups">
+          <fieldset><legend>Identity</legend><div class="detail-fields"><label>Vessel name<input id="vName" autocomplete="off" disabled=""></label><label>Type<input id="vType" autocomplete="off" disabled=""></label><label>Flag<input id="vFlag" autocomplete="off" disabled=""></label></div></fieldset>
+          <fieldset><legend>Dimensions</legend><div class="detail-fields"><label>LOA (m)<input id="vLoa" type="number" step="0.1" disabled=""></label><label>Beam (m)<input id="vBeam" type="number" step="0.1" disabled=""></label><label>Draft (m)<input id="vDraft" type="number" step="0.1" disabled=""></label></div></fieldset>
+          <fieldset><legend>Operations</legend><div class="detail-fields"><label>Cruising speed (kn)<input id="vCruise" type="number" step="0.1" disabled=""></label><label>Fuel capacity (L)<input id="vFuel" type="number" disabled=""></label><label>Fresh water (L)<input id="vWater" type="number" disabled=""></label></div></fieldset>
+          <fieldset><legend>Machinery &amp; notes</legend><label class="detail-field-wide">Machinery / Notes<textarea id="vNotes" rows="4" disabled=""></textarea></label></fieldset>
+        </div>
+        <button class="btn primary detail-primary-action" id="saveVessel" disabled="">Save Vessel</button>
+      </section>
+      <section class="detail-registry-panel"><div class="detail-section-heading compact"><span>LOCAL REGISTRY</span><h3>Fleet records</h3><p>En yeni kayıt ilk sırada gösterilir.</p></div><div id="fleetList" class="detail-record-grid"></div></section>
+    </div>
+  </div>
+</section><section id="crew" class="workspace yacht-detail-page crew-detail-page" data-master="rembrandt" data-owner-selection="B">
+  <header class="yacht-detail-header">
+    <a class="yacht-detail-brand" href="#home" aria-label="SINBAD home"><img src="../assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a>
+    <div><span>01 · OPERATIONS / CREW</span><h2>Crew</h2><p>Mürettebat kimliği, iletişim bilgileri ve kritik belge süreleri için düzenli yerel sicil.</p></div>
+    <button class="yacht-back-button" type="button" data-open="yacht-operations">Yacht Management</button>
+  </header>
+  <div class="yacht-detail-body">
+    <figure class="yacht-detail-art"><img src="../assets/console-art/yacht-management-owner-selections-v1/selected/03-crew-B.png" alt="Güvertede çalışan yat mürettebatı"><figcaption><span>CREW OPERATIONS · B</span><strong>Readiness begins with the people aboard</strong><small>Belge süreleri ve iletişim kayıtları aynı operasyon görünümünde.</small></figcaption></figure>
+    <div class="yacht-detail-workspace crew-workspace">
+      <section class="detail-form-panel">
+        <div class="detail-section-heading"><span>PERSONNEL RECORD</span><h3>Yeni mürettebat kaydı</h3><p>Kimlik, görev, iletişim ve süre sonu bilgilerini eksiksiz kaydedin.</p></div>
+        <div class="detail-form-groups">
+          <fieldset><legend>Identity</legend><div class="detail-fields"><label>Full name<input id="crewName" autocomplete="off" disabled=""></label><label>Rank<input id="crewRank" autocomplete="off" disabled=""></label><label>Nationality<input id="crewNationality" autocomplete="off" disabled=""></label></div></fieldset>
+          <fieldset><legend>Documents &amp; expiry</legend><div class="detail-fields"><label>Passport expiry<input id="crewPassport" type="date" disabled=""></label><label>ENG1 / Medical<input id="crewMedical" type="date" disabled=""></label><label>STCW<input id="crewStcw" type="date" disabled=""></label><label>Visa expiry<input id="crewVisa" type="date" disabled=""></label><label>Contract end<input id="crewContract" type="date" disabled=""></label></div></fieldset>
+          <fieldset><legend>Contact &amp; notes</legend><div class="detail-fields"><label>Phone / Email<input id="crewContact" autocomplete="off" disabled=""></label><label class="detail-field-wide">Notes<textarea id="crewNotes" rows="4" disabled=""></textarea></label></div></fieldset>
+        </div>
+        <button class="btn primary detail-primary-action" id="saveCrew" disabled="">Save Crew Member</button>
+      </section>
+      <section class="detail-registry-panel"><div class="detail-section-heading compact"><span>CREW REGISTRY</span><h3>Personnel readiness</h3><p>Yaklaşan süre sonları kayıt kartlarında görünür.</p></div><div id="crewList" class="detail-record-grid crew-record-grid"></div></section>
+    </div>
+  </div>
+</section><section id="routes" class="workspace voyage-detail-page" data-master="da-vinci" data-owner-selection="C">
+  <header class="voyage-detail-header"><a class="voyage-detail-brand" href="#home" aria-label="SINBAD Marine home"><img src="../assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a><div><span>02 · VOYAGE / ROUTES</span><h2>Route Library</h2><p>Search stored routes and reusable passage sequences.</p></div><button class="voyage-back-button" type="button" data-open="voyage-navigation">Voyage Planning</button></header>
+  <div class="voyage-detail-body"><figure class="voyage-detail-art"><img src="../assets/console-art/voyage-planning-owner-selections-v1/selected/02-route-library-C.jpg" alt="Organized archive of route charts"><figcaption><span>ROUTE LIBRARY · C</span><strong>Every stored voyage, ready to retrieve</strong><small>Filter by route type and operational status.</small></figcaption></figure><div class="voyage-detail-workspace"><div class="voyage-section-heading"><span>ROUTE RECORDS</span><h3>Find a route</h3><p>Stored route data and existing filters remain authoritative.</p></div><div class="filter-grid"><input id="routeSearch" placeholder="Search routes" disabled=""><select id="routeType" disabled=""><option value="">All route types</option></select><select id="routeStatus" disabled=""><option value="">All statuses</option></select></div><div id="routeGrid" class="content-grid"></div></div></div>
+</section><section id="publications" class="workspace voyage-detail-page" data-master="da-vinci" data-owner-selection="C">
+  <header class="voyage-detail-header"><a class="voyage-detail-brand" href="#home" aria-label="SINBAD Marine home"><img src="../assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a><div><span>02 · VOYAGE / PUBLICATIONS</span><h2>Nautical Publications</h2><p>Sailing directions, Lists of Lights, Tide Tables, Radio Signals and Notices to Mariners.</p></div><button class="voyage-back-button" type="button" data-open="voyage-navigation">Voyage Planning</button></header>
+  <div class="voyage-detail-body"><figure class="voyage-detail-art"><img src="../assets/console-art/voyage-planning-owner-selections-v1/selected/05-nautical-publications-C.jpg" alt="Notices to Mariners and publication correction desk"><figcaption><span>NAUTICAL PUBLICATIONS · C</span><strong>Keep every publication controlled and current</strong><small>Verify edition and correction status against the official issuing authority.</small></figcaption></figure><div class="voyage-detail-workspace"><div class="voyage-section-heading"><span>CONTROLLED LIBRARY</span><h3>Publication archive</h3><p>Upload and manage the publications already held in the authorized local library.</p></div><div class="actions"><button class="btn primary" disabled="">Upload Publication</button></div><div id="publicationList"><div class="empty">No publications uploaded.</div></div></div></div>
+</section><section id="charts" class="workspace voyage-detail-page" data-master="da-vinci" data-owner-selection="B">
+  <header class="voyage-detail-header"><a class="voyage-detail-brand" href="#home" aria-label="SINBAD Marine home"><img src="../assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a><div><span>02 · VOYAGE / CHART ARCHIVE</span><h2>Local Charts</h2><p>A controlled local archive for chart number, region and edition-tagged files.</p></div><button class="voyage-back-button" type="button" data-open="voyage-navigation">Voyage Planning</button></header>
+  <div class="voyage-detail-body"><figure class="voyage-detail-art"><img src="../assets/console-art/voyage-planning-owner-selections-v1/selected/08-local-charts-B.jpg" alt="Organized local nautical chart cabinet"><figcaption><span>LOCAL CHARTS · B</span><strong>Retrieve the right chart and edition</strong><small>Local files remain reference material until their official status is verified.</small></figcaption></figure><div class="voyage-detail-workspace"><div class="voyage-section-heading"><span>LOCAL ARCHIVE</span><h3>Nautical chart files</h3><p>Use tags for chart number, region, edition and correction status.</p></div><div class="actions"><button class="btn primary" disabled="">Upload Chart</button></div><div id="chartList"><div class="empty">No charts uploaded.</div></div></div></div>
+</section><section id="documents" class="workspace">
+  <div class="workspace-head">
+<div><h2>Document Center</h2><p>Sinbad Marine uses Atlas Cloud as the primary document vault.</p></div>
+    <button class="btn close">Close</button>
+  </div>
+  <div class="cloud-first-message">
+    <div class="cloud-first-icon">☁️</div>
+    <h3>Your files belong in Atlas Cloud</h3>
+    <p>Local browser storage is no longer the primary vault. Upload once, then securely access the same files from your authorized iPad, iPhone, Mac or Windows device.</p>
+    <div class="action-row center-actions">
+      <button class="btn primary" data-open="cloud-documents">Open Cloud Document Center</button>
+      
+    </div>
+  </div>
+</section><section id="cloud-documents" class="workspace">
+  <div class="workspace-head">
+    <div><div class="eyebrow">PRIMARY DOCUMENT VAULT</div><h2>Cloud Document Center</h2><p>Upload once. Access securely from every authorized device.</p></div>
+    <button class="btn close">Close</button>
+  </div>
+
+
+  <div id="cloudDocumentGuard" class="cloud-guard">Connect and sign in to Atlas Cloud before uploading files.</div>
+
+
+  <div class="cloud-toolbar">
+    <select id="cloudBucketSelect" disabled="">
+      <option value="atlas-documents">Documents</option>
+      <option value="nautical-publications">Nautical Publications</option>
+      <option value="nautical-charts">Nautical Charts</option>
+      <option value="crew-confidential">Crew Confidential</option>
+      <option value="vessel-technical">Vessel Technical</option>
+      <option value="passage-media">Passage Media</option>
+      <option value="exports">Exports</option>
+    </select>
+    <input id="cloudFolderPath" placeholder="Folder path" disabled="">
+    <input id="cloudFileInput" type="file" multiple="" accept=".pdf,.docx,.txt,.md,.csv,.json,.xml,.jpg,.jpeg,.png,.webp,.tif,.tiff,application/pdf,image/*" disabled="">
+    <button class="btn primary upload-glow" id="uploadCloudFiles" disabled="">Upload to Atlas Cloud</button>
+    <button class="btn" id="refreshCloudFiles" disabled="">Refresh</button>
+    <button class="btn" id="openLocalDocuments" disabled="">Open Local Document Center</button>
+  </div>
+
+  <div class="cloud-toolbar">
+    <input id="cloudFileSearch" type="search" placeholder="Search cloud files by title" aria-label="Search cloud files by title" disabled="">
+    <button class="btn" id="searchCloudFiles" type="button" disabled="">Search cloud files</button>
+  </div>
+
+
+  <div class="notice">PDF, DOCX, text and image files are supported. Images are read with OCR. Files are uploaded under <code>workspace-uuid/folder/file</code>; the current cloud plan may limit each file to 50 MB.</div>
+  <div id="cloudUploadProgress" class="notice">Ready.</div>
+  <div id="cloudFileList" class="cloud-file-grid">No cloud files loaded.</div>
+</section><section id="camera-archive" class="workspace yacht-detail-page media-detail-page" data-master="rembrandt" data-owner-selection="A">
+  <header class="yacht-detail-header">
+    <a class="yacht-detail-brand" href="#home" aria-label="SINBAD home"><img src="../assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a>
+    <div><span>01 · OPERATIONS / PRIVATE MEDIA</span><h2>Camera &amp; Media Archive</h2><p>Yetkili çalışma alanı için görünür, kullanıcı kontrollü özel medya kaydı.</p></div>
+    <button class="yacht-back-button" type="button" data-open="yacht-operations">Yacht Management</button>
+  </header>
+  <div class="yacht-detail-body">
+    <figure class="yacht-detail-art"><img src="../assets/console-art/yacht-management-owner-selections-v1/selected/05-camera-media-archive-A.png" alt="Kamera ve özel yat medya arşivi"><figcaption><span>PRIVATE MEDIA · A</span><strong>Operational evidence, under your control</strong><small>Medya siz açıkça seçmeden veya yüklemeden cihazdan ayrılmaz.</small></figcaption></figure>
+    <div class="yacht-detail-workspace media-workspace">
+      <div class="detail-section-heading"><span>CAPTURE DESK</span><h3>Görünür kayıt ve kontrollü arşiv</h3><p>Media remains private to the authorized workspace unless it is separately submitted and approved for sharing.</p></div>
+      <div class="permission-banner" id="cameraPermissionBanner">Camera access has not been requested.</div>
+      <div class="camera-layout media-capture-layout">
+        <div class="camera-stage">
+          <video id="cameraPreview" playsinline="" muted="" autoplay=""></video>
+          <div class="camera-placeholder" id="cameraPlaceholder"><strong>Camera preview</strong><span>Kamera yalnız siz açtığınızda etkinleşir.</span></div>
+        </div>
+        <div class="media-capture-controls">
+          <div class="actions camera-actions">
+            <button class="btn primary" id="startCamera" type="button" disabled="">Open Camera</button>
+            <button class="btn" id="switchCamera" type="button" disabled="">Switch Camera</button>
+            <button class="btn" id="capturePhoto" type="button" disabled="">Take Photo</button>
+            <button class="btn" id="startVideoRecording" type="button" disabled="">Record Video</button>
+            <button class="btn danger" id="stopVideoRecording" type="button" disabled="">Stop Recording</button>
+            <button class="btn" id="closeCamera" type="button" disabled="">Close Camera</button>
+          </div>
+          <label class="mobile-capture-label">Phone camera / gallery
+            <input id="mobileMediaCapture" type="file" accept="image/*,video/*" capture="environment" multiple="" disabled="">
+          </label>
+          <label class="detail-field">Archive note<input id="mediaArchiveNote" type="text" placeholder="Port, approach, defect or note" disabled=""></label>
+          <button class="btn primary full" id="uploadCapturedMedia" type="button" disabled="">Upload to Private Media Archive</button>
+          <div id="mediaUploadStatus" class="notice">No media selected.</div>
+        </div>
+      </div>
+      <canvas id="photoCaptureCanvas" hidden=""></canvas>
+      <section class="media-review-panel"><div class="detail-section-heading compact"><span>REVIEW QUEUE</span><h3>Selected media</h3></div><div id="capturedMediaGallery" class="captured-media-grid"></div></section>
+    </div>
+  </div>
+</section><section id="captains-logbook" class="workspace yacht-detail-page logbook-detail-page" data-master="rembrandt" data-owner-selection="B">
+  <header class="yacht-detail-header">
+    <a class="yacht-detail-brand" href="#home" aria-label="SINBAD home"><img src="../assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a>
+    <div><span>01 · OPERATIONS / LOGBOOK</span><h2>Captain&#x27;s Logbook</h2><p>Yerel saat, UTC ve isteğe bağlı konum ile sesli ya da yazılı operasyon taslakları.</p></div>
+    <button class="yacht-back-button" type="button" data-open="yacht-operations">Yacht Management</button>
+  </header>
+  <div class="yacht-detail-body">
+    <figure class="yacht-detail-art"><img src="../assets/console-art/yacht-management-owner-selections-v1/selected/04-captain-logbook-B.png" alt="Kaptan günlüğü, harita ve seyir araçları"><figcaption><span>CAPTAIN LOGBOOK · B</span><strong>Every watch leaves a clear record</strong><small>Ses, zaman ve konum tek bir kontrollü taslak akışında.</small></figcaption></figure>
+    <div class="yacht-detail-workspace logbook-workspace">
+  <div class="log-safety-note"><strong>Draft archive — not the statutory logbook.</strong> Review and transfer approved entries to the vessel&#x27;s official logbook.</div>
+  <div class="voice-watch-panel log-command-bar">
+    <div class="voice-watch-state">
+      <span class="voice-pulse" id="voicePulse"></span>
+      <div><strong id="voiceWatchTitle">Sinbad Voice Watch is off</strong><small id="voiceWatchHelp">Press Start Voice Watch, then say “Sinbad Log” followed by your entry.</small></div>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="startVoiceWatch" type="button" disabled="">Start Voice Watch</button>
+      <button class="btn danger" id="stopVoiceWatch" type="button" disabled="">Stop Voice Watch</button>
+      <button class="btn" id="pushToTalkLog" type="button" disabled="">Push to Talk</button>
+    </div>
+    <div class="voice-transcript" id="voiceTranscript" aria-live="polite">Waiting for your command.</div>
+  </div>
+  <div class="log-compose-grid">
+    <div class="log-compose-card">
+      <div class="detail-section-heading compact"><span>NEW ENTRY</span><h3>Yeni günlük taslağı</h3></div>
+      <label>Draft log entry
+        <textarea id="logDraftText" rows="5" placeholder="Example: Anchored off Kumkapı, Istanbul. Anchor position checked and holding." disabled=""></textarea>
+      </label>
+      <div class="log-compose-options">
+        <label>Category
+          <select id="logCategory" disabled="">
+            <option>Navigation</option><option>Anchoring</option><option>Maneuvering</option>
+            <option>Weather</option><option>Safety</option><option>Engineering</option>
+            <option>Security</option><option>General</option>
+          </select>
+        </label>
+        <label class="log-check"><input id="attachLogPosition" type="checkbox" checked="" disabled=""> Attach current position</label>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="saveLogDraft" type="button" disabled="">Save Draft Entry</button>
+        <button class="btn" id="recordLogAudio" type="button" disabled="">Record Audio Note</button>
+        <button class="btn danger" id="stopLogAudio" type="button" disabled="">Stop Audio</button>
+      </div>
+      <div id="logComposeStatus" class="notice">No draft is being recorded.</div>
+    </div>
+    <div class="log-clock-card">
+      <small>BRIDGE DATA</small>
+      <span>Local time</span><strong id="logLocalClock">—</strong>
+      <span>UTC</span><strong id="logUtcClock">—</strong>
+      <span>Position</span><strong id="logPositionPreview">Not attached</strong>
+    </div>
+  </div>
+  <section class="log-archive-panel"><div class="log-archive-head">
+    <div><h3>Draft Log Archive</h3><p id="logArchiveSummary">0 entries</p></div>
+    <div class="actions">
+      <button class="btn" id="exportLogsJson" type="button" disabled="">Export JSON</button>
+      <button class="btn" id="exportLogsCsv" type="button" disabled="">Export CSV</button>
+      <button class="btn" id="clearReviewedLogs" type="button" disabled="">Remove Transferred</button>
+    </div>
+  </div>
+  <div id="logDraftList" class="log-draft-list"></div></section>
+  <div class="emergency-record-panel">
+    <div><div class="eyebrow">VISIBLE, USER-ACTIVATED CAPTURE</div><h3>Emergency Evidence Record</h3><p>Starts a visible audio/video recording with the rear camera where available. It does not contact emergency services or send anything automatically.</p></div>
+    <button class="btn danger" id="startEmergencyRecord" type="button" disabled="">Start Emergency Recording</button>
+  </div>
+    </div>
+  </div>
+</section><section id="location-intelligence" class="workspace voyage-detail-page" data-master="da-vinci" data-owner-selection="B">
+  <header class="voyage-detail-header"><a class="voyage-detail-brand" href="#home" aria-label="SINBAD Marine home"><img src="../assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a><div><span>02 · VOYAGE / POSITION</span><h2>Location Intelligence</h2><p>Your position is read only after you grant permission and is never published automatically.</p></div><button class="voyage-back-button" type="button" data-open="voyage-navigation">Voyage Planning</button></header>
+  <div class="voyage-detail-body"><figure class="voyage-detail-art"><img src="../assets/console-art/voyage-planning-owner-selections-v1/selected/04-location-intelligence-B.jpg" alt="Astronomical position observation at sea"><figcaption><span>LOCATION INTELLIGENCE · B</span><strong>Position with permission and context</strong><small>Location access remains explicit and user-controlled.</small></figcaption></figure><div class="voyage-detail-workspace"><div class="permission-banner" id="locationPermissionBanner">Location access has not been requested.</div><div class="location-grid"><article class="status-card"><span>Latitude</span><strong id="locationLatitude">—</strong></article><article class="status-card"><span>Longitude</span><strong id="locationLongitude">—</strong></article><article class="status-card"><span>Accuracy</span><strong id="locationAccuracy">—</strong></article><article class="status-card"><span>Last update</span><strong id="locationTimestamp">—</strong></article></div><div class="actions"><button class="btn primary" id="getCurrentLocation" type="button" disabled="">Use My Current Location</button><button class="btn" id="startLocationWatch" type="button" disabled="">Start Position Watch</button><button class="btn" id="stopLocationWatch" type="button" disabled="">Stop Watch</button><button class="btn" id="copyCurrentCoordinates" type="button" disabled="">Copy Coordinates</button></div><div class="nearby-panel"><h3>Nearby Marine Information</h3><p id="nearbyMarineInfo">Grant location permission to prepare nearby marinas, anchorages, coastal references, charts and publications.</p></div></div></div>
+</section><section id="resources" class="workspace voyage-detail-page" data-master="da-vinci" data-owner-selection="C">
+  <header class="voyage-detail-header"><a class="voyage-detail-brand" href="#home" aria-label="SINBAD Marine home"><img src="../assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE"></a><div><span>02 · VOYAGE / COASTAL GUIDE</span><h2>Blue Voyage Resources</h2><p>Coastal places, marinas and services along the Turkish Aegean and Mediterranean.</p></div><button class="voyage-back-button" type="button" data-open="voyage-navigation">Voyage Planning</button></header>
+  <div class="voyage-detail-body"><figure class="voyage-detail-art"><img src="../assets/console-art/voyage-planning-owner-selections-v1/selected/06-blue-voyage-resources-C.jpg" alt="Aegean coastal voyage resource map"><figcaption><span>BLUE VOYAGE RESOURCES · C</span><strong>Explore the coast with operational context</strong><small>Verify contact details, VHF channels and access rules before operational use.</small></figcaption></figure><div class="voyage-detail-workspace"><div class="voyage-section-heading"><span>AEGEAN &amp; MEDITERRANEAN</span><h3>Coastal resource guide</h3><p>Search islands, historical sites, marinas, fuel stations and harbour master offices.</p></div><div class="filter-grid"><input id="resourceSearch" placeholder="Search resources" disabled=""><select id="resourceCategory" disabled=""><option value="">All categories</option></select><select id="resourceRegion" disabled=""><option value="">All regions</option></select></div><div id="resourceGrid" class="content-grid"><div class="empty">No resources match the current filters.</div></div><button class="btn" type="button" data-open="pilot">Open Coastal Pilotage Directory</button></div></div>
+</section><section id="pilot" class="workspace">
+  <div class="workspace-head"><div><h2>Coastal Pilotage Directory</h2><p>Local operational references; always verify official sources.</p></div><button class="btn close">Close</button></div>
+  <div class="filter-grid"><input id="pilotSearch" placeholder="Search" disabled=""><select id="countryFilter" disabled=""><option value="">All countries</option></select><select id="typeFilter" disabled=""><option value="">All types</option></select></div>
+  <div id="pilotGrid" class="content-grid"></div>
+</section><section id="knowledge" class="workspace">
+  <div class="workspace-head"><div><h2>Atlas Knowledge Search</h2><p>Local search across stored metadata and text-note content.</p></div><button class="btn close">Close</button></div>
+  <div class="filter-grid single"><input id="knowledgeQuery" placeholder="Search: SOLAS Chapter V, Gouvia, engine manual..." disabled=""></div>
+  <button class="btn primary" id="knowledgeSearchBtn" disabled="">Search Knowledge</button>
+  <div class="notice">This v4.0 search reads filenames, folders, tags and text-based uploads. Full AI reading of scanned PDFs and charts requires the later cloud AI backend.</div>
+  <div id="knowledgeResults"></div>
+</section><section id="film" class="demo-screen info-screen"><p class="eyebrow" data-en="SAME SCREENS. A SHORT TOUR." data-tr="AYNI EKRANLAR. KISA BİR TUR.">SAME SCREENS. A SHORT TOUR.</p><h1 data-en="SINBAD Marine · Interface tour" data-tr="SINBAD Marine · Arayüz turu">SINBAD Marine · Interface tour</h1><p data-en="84 seconds · English titles · Silent · In development / Interface demo" data-tr="84 saniye · İngilizce başlıklar · Sessiz · Geliştiriliyor / Arayüz demosu">84 seconds · English titles · Silent · In development / Interface demo</p><video controls playsinline preload="metadata" poster="../assets/console-art/home-turner-maritime-v1.png"><source src="sinbad-concept.mp4" type="video/mp4"></video><p><a href="sinbad-concept.mp4" download data-en="Download MP4 ↓" data-tr="MP4 indir ↓">Download MP4 ↓</a></p></section><section id="about" class="demo-screen info-screen"><p class="eyebrow">SINBAD MARINE</p><h1 data-en="A demonstration of the existing interface." data-tr="Mevcut arayüzün bir demosu.">A demonstration of the existing interface.</h1><p data-en="This isolated demo follows the repository’s existing home, Yacht Management, Voyage Planning and Documents & Compliance screens, with empty subpages. It does not demonstrate operational readiness." data-tr="Bu bağımsız demo, depodaki mevcut ana sayfayı, Yat Yönetimi, Seyir Planlama ve Belgeler ve Uyumluluk ekranlarını ve boş alt sayfaları izler. Operasyonel hazır olma durumunu kanıtlamaz.">This isolated demo follows the repository’s existing home, Yacht Management, Voyage Planning and Documents & Compliance screens, with empty subpages. It does not demonstrate operational readiness.</p><p data-en="Academy content, Owner Console, administrative tools, private projects, crew records, uploads, sensors, live AI, purchases and service connections are omitted. Unavailable entries are omitted from navigation." data-tr="Akademi içeriği, Owner Console, yönetim araçları, özel projeler, mürettebat kayıtları, yüklemeler, sensörler, canlı yapay zekâ, alışveriş ve servis bağlantıları dahil değildir. Kullanılamayan girişler gezinmeden çıkarılmıştır.">Academy content, Owner Console, administrative tools, private projects, crew records, uploads, sensors, live AI, purchases and service connections are omitted. Unavailable entries are omitted from navigation.</p><p data-en="Founder: Captain Varol Çolak · 34 years at sea. SINBAD Marine is in development." data-tr="Kurucu: Kaptan Varol Çolak · Denizde 34 yıl. SINBAD Marine geliştirme aşamasındadır.">Founder: Captain Varol Çolak · 34 years at sea. SINBAD Marine is in development.</p><a href="mailto:varol@sinbad-marine.com">varol@sinbad-marine.com</a></section></main><dialog id="boundaryDialog"><button class="dismiss" aria-label="Close">×</button><p class="eyebrow" data-en="DEMO BOUNDARY" data-tr="DEMO SINIRI">DEMO BOUNDARY</p><h2 id="boundaryTitle"></h2><p data-en="This entry exists in the current interface. Its private content or connected operation is not included in this visitor demo." data-tr="Bu giriş mevcut arayüzde bulunur. Özel içeriği veya bağlı işlemi ziyaretçi demosuna dahil edilmemiştir.">This entry exists in the current interface. Its private content or connected operation is not included in this visitor demo.</p><p data-en="No account, connection or access change is made." data-tr="Hesap, bağlantı veya erişim değişikliği yapılmaz.">No account, connection or access change is made.</p></dialog><script src="demo.js"></script></body></html>
