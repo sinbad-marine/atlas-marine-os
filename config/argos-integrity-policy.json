@@ -254,7 +254,7 @@
     },
     {
       "path": "package.json",
-      "sha256": "8e700bd699d18669eda50bc77decd9f8a6157c0f859533c1ba5ce29be792dbec",
+      "sha256": "e821a150987b1cb00517e8f16dd60e773c191a120a49c4ebc98ce992eb519f81",
       "kind": "CONFIG"
     },
     {
@@ -480,7 +480,7 @@
     {
       "path": "package-lock.json",
       "kind": "CONFIG",
-      "sha256": "7aa1f4dd76326af8f428ee7e3226a498d869531319f15a2dc3da6012ef1638db"
+      "sha256": "effebfccd193db9035d2096d6ab882868fd94eb233347697c1ac1d10c84534c6"
     },
     {
       "path": "bridge/qwen-tier-router.ps1",
