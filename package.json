@@ -34,5 +34,10 @@
     "@supabase/supabase-js": "2.112.3",
     "mammoth": "1.12.1",
     "tesseract.js": "5.1.1"
+  },
+  "overrides": {
+    "mammoth@1.12.1": {
+      "argparse": "2.0.1"
+    }
   }
 }
