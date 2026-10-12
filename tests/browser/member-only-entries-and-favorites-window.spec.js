@@ -159,10 +159,13 @@ for(const v of VIEWS.filter(x=>x.width>=1100))test(`language and account box sta
   await page.setViewportSize({width:v.width,height:v.height});await member(page,0);
   const account=page.locator('.topbar-account-actions'),hamburger=page.locator('#homeCanonicalMenu'),summary=page.locator('.hero-action-menu>summary'),refresh=page.locator('#homeCanonicalRefresh');
   await expect(account).toBeVisible();await expect(page.locator('#appLanguage')).toBeVisible();await expect(page.locator('#openAccountPassword')).toBeVisible();
-  const a=await box(account);expect(a.y).toBeGreaterThanOrEqual(0);expect(a.right).toBeLessThanOrEqual(v.width);
+  let a=await box(account);expect(a.y).toBeGreaterThanOrEqual(0);expect(a.right).toBeLessThanOrEqual(v.width);
   // Only user-facing controls count: the <summary> is an invisible, pointer-events:none proxy in this layout.
   for(const loc of [hamburger,summary,refresh]){if(await loc.count()&&await loc.isVisible()&&await loc.evaluate(e=>{const cs=getComputedStyle(e);return cs.opacity!=='0'&&cs.pointerEvents!=='none';}))expect(intersects(a,await box(loc))).toBe(false);}
   await page.evaluate(()=>{document.body.classList.add('member-verified');for(const id of ['ownerConsoleEntry','communicationAppEntry']){const b=document.getElementById(id);if(b){b.hidden=false;b.removeAttribute('hidden');}}});
+  await expect.poll(async()=>{const current=await box(account);return intersects(current,await box(page.locator('.console-statusbar')));}).toBe(false);
+  a=await box(account);
+  console.log('HOME_CONTROL_GEOMETRY',JSON.stringify({viewport:page.viewportSize(),account:a,status:await box(page.locator('.console-statusbar'))}));
   for(const sel of ['.console-statusbar','#ownerConsoleEntry','#communicationAppEntry']){const loc=page.locator(sel);if(await loc.count()&&await loc.isVisible()){expect(intersects(a,await box(loc))).toBe(false);if(sel!=='.console-statusbar')expect(await loc.evaluate(e=>{const r=e.getBoundingClientRect();const hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return hit===e||e.contains(hit);})).toBe(true);}}
   expect(await page.locator('#appLanguage').evaluate(el=>{const r=el.getBoundingClientRect();return document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)===el;})).toBe(true);
   await hamburger.click();await expect(page.locator('.hero-action-menu')).toHaveAttribute('open','');
@@ -170,4 +173,29 @@ for(const v of VIEWS.filter(x=>x.width>=1100))test(`language and account box sta
   for(const option of await page.locator('.hero-action-menu .action-menu-panel button').all()){expect(intersects(a,await box(option))).toBe(false);expect(await option.evaluate(e=>{const r=e.getBoundingClientRect();const hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return hit===e||e.contains(hit);})).toBe(true);}
   await hamburger.click();await expect(page.locator('.hero-action-menu')).not.toHaveAttribute('open','');
   expect(await page.locator('#openAccountPassword').evaluate(el=>{const r=el.getBoundingClientRect();return document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)===el;})).toBe(true);
+});
+
+// Exercise the narrow desktop boundary and longer translations on both platforms.
+test('short Home controls remain separated across languages and return to their approved position',async({page})=>{
+  await member(page,0);
+  await page.evaluate(()=>{document.body.classList.add('member-verified');for(const id of ['ownerConsoleEntry','communicationAppEntry'])document.getElementById(id).hidden=false;});
+  const account=page.locator('.topbar-account-actions'),bar=page.locator('.console-statusbar');
+  for(const width of [1100,1180,1280])for(const height of [390,500]){
+    await page.setViewportSize({width,height});
+    for(const locale of ['en-US','tr-TR','ru-RU','de-DE','ar-SA','es-ES','fr-FR']){
+      await page.locator('#appLanguage').selectOption(locale);
+      await expect.poll(async()=>intersects(await box(account),await box(bar))).toBe(false);
+      const a=await box(account);expect(a.y).toBeGreaterThanOrEqual(0);expect(a.bottom).toBeLessThanOrEqual(height);
+      for(const id of ['appLanguage','openAccountPassword'])expect(await page.locator('#'+id).evaluate(el=>{const r=el.getBoundingClientRect();return document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)===el;})).toBe(true);
+      await page.locator('#homeCanonicalMenu').click();
+      const menu=page.locator('.hero-action-menu .action-menu-panel');await expect(menu).toBeVisible();
+      await expect.poll(async()=>intersects(await box(account),await box(menu))).toBe(false);
+      const m=await box(menu);expect(m.bottom).toBeLessThanOrEqual(height);expect(m.y).toBeGreaterThanOrEqual(a.bottom);
+      await menu.locator('button').last().scrollIntoViewIfNeeded();await expect(menu.locator('button').last()).toBeInViewport();
+      await page.locator('#homeCanonicalMenu').click();
+    }
+  }
+  await page.setViewportSize({width:1440,height:900});await page.locator('#appLanguage').selectOption('en-US');
+  await expect.poll(()=>account.evaluate(el=>el.getBoundingClientRect().top)).toBe(63);
+  await page.setViewportSize({width:390,height:844});await expect.poll(()=>account.evaluate(el=>el.style.top)).toBe('');
 });

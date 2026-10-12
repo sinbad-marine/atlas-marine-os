@@ -217,5 +217,51 @@
     return false;
   };
   const requestedTab=new URLSearchParams(location.search).get('tab');if(workspaceWindowId==='sinbad'&&['chat','academy','argos'].includes(requestedTab))setSinbadWorkspaceTab(requestedTab);
+  // Keep the approved desktop positions unless actual control bounds collide.
+  function installHomeControlLayout(){
+    const account=document.querySelector('.topbar-account-actions');
+    const bar=document.querySelector('.console-statusbar');
+    const menu=document.querySelector('.hero-action-menu');
+    const panel=menu?.querySelector('.action-menu-panel');
+    if(!account||!bar||!panel)return;
+    const controls=[bar,...document.querySelectorAll('#homeCanonicalMenu,#homeCanonicalRefresh')];
+    let pending=false;
+    const visibleRect=element=>{
+      const rect=element.getBoundingClientRect(),style=getComputedStyle(element);
+      return rect.width&&rect.height&&style.visibility!=='hidden'&&style.display!=='none'?rect:null;
+    };
+    function layout(){
+      pending=false;
+      account.style.removeProperty('top');
+      panel.style.removeProperty('top');panel.style.removeProperty('max-height');panel.style.removeProperty('overflow-y');
+      if(innerWidth<1100||!document.body.matches('[data-console-art="monet"]:not(.workspace-window-mode):not(:has(main>.workspace.active))'))return;
+      const initial=visibleRect(account);if(!initial)return;
+      let top=initial.top;
+      const obstacles=controls.map(visibleRect).filter(Boolean).sort((a,b)=>a.top-b.top);
+      for(const rect of obstacles){
+        if(initial.left<rect.right&&initial.right>rect.left&&top<rect.bottom&&top+initial.height>rect.top)top=Math.max(top,rect.bottom+8);
+      }
+      if(top>initial.top)account.style.top=`${Math.ceil(top)}px`;
+      // The menu already starts 8px below the normal 46px account box.
+      // Preserve that position when possible, including when the box wraps.
+      const menuTop=Math.max(innerHeight*.07+54,top+initial.height+8);
+      panel.style.top=`${Math.ceil(menuTop)}px`;
+      panel.style.maxHeight=`${Math.max(0,Math.floor(innerHeight-menuTop-8))}px`;
+      panel.style.overflowY='auto';
+    }
+    function schedule(){if(!pending){pending=true;requestAnimationFrame(layout);}}
+    const resize=new ResizeObserver(schedule);
+    [account,...controls].forEach(element=>resize.observe(element));
+    const changes=new MutationObserver(schedule);
+    changes.observe(document.body,{attributes:true,attributeFilter:['class','data-console-art']});
+    changes.observe(document.documentElement,{attributes:true,attributeFilter:['lang','dir']});
+    changes.observe(bar,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['hidden','class']});
+    document.querySelectorAll('main>.workspace').forEach(element=>changes.observe(element,{attributes:true,attributeFilter:['class']}));
+    window.addEventListener('resize',schedule,{passive:true});
+    menu.addEventListener('toggle',schedule);
+    document.fonts?.ready.then(schedule);
+    layout();
+  }
   translate();syncAccount();favorites.render();
+  installHomeControlLayout();
 })();
