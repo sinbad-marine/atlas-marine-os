@@ -176,12 +176,11 @@ for(const v of VIEWS.filter(x=>x.width>=1100))test(`language and account box sta
 });
 
 // Exercise the narrow desktop boundary and longer translations on both platforms.
-test('short Home controls remain separated across languages and return to their approved position',async({page})=>{
+for(const width of [1100,1180,1280])for(const height of [390,500])test(`short Home controls remain separated across languages and restore position at ${width}x${height}`,async({page})=>{
   await member(page,0);
   await page.evaluate(()=>{document.body.classList.add('member-verified');for(const id of ['ownerConsoleEntry','communicationAppEntry'])document.getElementById(id).hidden=false;});
   const account=page.locator('.topbar-account-actions'),bar=page.locator('.console-statusbar');
-  for(const width of [1100,1180,1280])for(const height of [390,500]){
-    await page.setViewportSize({width,height});
+  await page.setViewportSize({width,height});
     for(const locale of ['en-US','tr-TR','ru-RU','de-DE','ar-SA','es-ES','fr-FR']){
       await page.locator('#appLanguage').selectOption(locale);
       await expect.poll(async()=>intersects(await box(account),await box(bar))).toBe(false);
@@ -194,7 +193,6 @@ test('short Home controls remain separated across languages and return to their 
       await menu.locator('button').last().scrollIntoViewIfNeeded();await expect(menu.locator('button').last()).toBeInViewport();
       await page.locator('#homeCanonicalMenu').click();
     }
-  }
   await page.setViewportSize({width:1440,height:900});await page.locator('#appLanguage').selectOption('en-US');
   await expect.poll(()=>account.evaluate(el=>el.getBoundingClientRect().top)).toBe(63);
   await page.setViewportSize({width:390,height:844});await expect.poll(()=>account.evaluate(el=>el.style.top)).toBe('');
