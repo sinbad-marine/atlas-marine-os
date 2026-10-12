@@ -3,6 +3,7 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const crypto=require('node:crypto');
+const vm=require('node:vm');
 
 const sha256=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
 const manifestPath='assets/console-art/documents-compliance-owner-selections-v1/OWNER_VISUAL_LOCK.json';
@@ -47,9 +48,35 @@ test('Documents and Compliance lock is represented in the UI contract',()=>{
   assert.deepEqual(lock.forbiddenDuplications,manifest.forbiddenDuplications);
 });
 
-test('Documents mobile navigation stays scoped and shared workspace scrolling is preserved',()=>{
+test('Documents scrolling and sidebar/Escape closure stay scoped to the workspace',()=>{
   assert.ok(app.includes("if(id==='documents-compliance')scrollTo({top:0,behavior:'instant'});else $(id)?.scrollIntoView({behavior:'smooth'});"));
-  assert.ok(app.includes("workspaceWindowId==='documents-compliance'&&document.getElementById('documents-compliance')?.classList.contains('active')"));
   assert.ok(app.includes("if(document.body.classList.contains('dc-mobile-nav-open'))setDocumentsMobileNav(false)"));
   assert.ok(app.includes("event.key==='Escape'&&document.body.classList.contains('dc-mobile-nav-open')"));
+});
+
+test('Documents mobile navigation follows the active workspace, not the initial URL',()=>{
+  const source=app.match(/function documentsMobileNavIsRelevant\(\)\{[^\n]+/u)?.[0];
+  assert.ok(source,'mobile navigation relevance function exists');
+  for(const initialWorkspace of ['documents-compliance','cloud-documents','voyage-navigation']){
+    for(const active of [true,false]){
+      const context={workspaceWindowId:initialWorkspace,document:{getElementById:()=>({classList:{contains:()=>active}})}};
+      assert.equal(vm.runInNewContext(`${source};documentsMobileNavIsRelevant()`,context),active,`${initialWorkspace}, active=${active}`);
+    }
+  }
+});
+
+test('Documents mobile navigation closes outside its workspace and updates accessibility state',()=>{
+  const source=app.match(/function setDocumentsMobileNav\(open\)\{[\s\S]*?\n\}/u)?.[0];
+  assert.ok(source,'mobile navigation state function exists');
+  for(const relevant of [true,false]){
+    for(const requestedOpen of [true,false]){
+      let isOpen;
+      const attributes={};
+      const context={Boolean,String,documentsMobileNavIsRelevant:()=>relevant,document:{body:{classList:{toggle:(_,value)=>{isOpen=value;}}}},documentsMobileNavToggle:{setAttribute:(key,value)=>{attributes[key]=value;}}};
+      vm.runInNewContext(`${source};setDocumentsMobileNav(${requestedOpen})`,context);
+      assert.equal(isOpen,relevant&&requestedOpen);
+      assert.equal(attributes['aria-expanded'],String(isOpen));
+      assert.equal(attributes['aria-label'],isOpen?'Close SINBAD navigation':'Open SINBAD navigation');
+    }
+  }
 });

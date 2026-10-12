@@ -18,6 +18,9 @@ test('quality workflow runs regression artifact build and SBOM with read-only pe
   assert.match(quality,/npm run verify --prefix sinbad-ai-core\/engines\/navigation/u);
   assert.match(quality,/node --test sinbad-ai-core\/tests\/\*\.test\.js tests\/\*\.test\.js/u);
   assert.match(quality,/build-pages-artifact\.js \.release\/pages/u);
+  assert.match(quality,/name: Record protected release source\s*\n\s*run: git rev-parse HEAD/u);
+  assert.match(quality,/SINBAD_CHECKED_OUT_COMMIT: \$\{\{ steps\.release_source\.outputs\.sha \}\}/u);
+  assert.ok(quality.indexOf('run: git rev-parse HEAD')<quality.indexOf('SINBAD_CHECKED_OUT_COMMIT:'));
   assert.match(quality,/npm sbom --package-lock-only --sbom-format cyclonedx/u);
   assert.ok(quality.indexOf('run: npm ci')<quality.indexOf('Run complete regression suite'));
 });
@@ -28,6 +31,9 @@ test('Pages release runs for main pushes and manual recovery with least privileg
   assert.match(release,/release_ref:\s*\n\s*description: Exact known-good commit SHA or ref to rebuild and redeploy/u);
   assert.match(release,/ref: \$\{\{ inputs\.release_ref \|\| github\.sha \}\}/u);
   assert.match(release,/name: Record protected release source\s*\n\s*run: git rev-parse HEAD/u);
+  assert.match(release,/SINBAD_CHECKED_OUT_COMMIT: \$\{\{ steps\.release_source\.outputs\.sha \}\}/u);
+  assert.ok(release.indexOf('run: git rev-parse HEAD')<release.indexOf('id: release_source'));
+  assert.ok(release.indexOf('id: release_source')<release.indexOf('SINBAD_CHECKED_OUT_COMMIT:'));
   assert.match(release,/attestations: write/u);
   assert.match(release,/artifact-metadata: write/u);
   assert.match(release,/FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true/u);

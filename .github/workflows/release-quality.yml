@@ -46,7 +46,14 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Run desktop mobile and WCAG browser tests
         run: npm run test:web
+      - name: Record protected release source
+        run: git rev-parse HEAD
+      - name: Publish checked-out commit to the artifact build
+        id: release_source
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
       - name: Build allowlisted Pages artifact
+        env:
+          SINBAD_CHECKED_OUT_COMMIT: ${{ steps.release_source.outputs.sha }}
         run: node tools/build-pages-artifact.js .release/pages
       - name: Verify release manifest is present
         run: test -s .release/pages/release-manifest.json

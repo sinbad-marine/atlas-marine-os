@@ -57,7 +57,7 @@ test('Marine Store remains content-identical to the approved baseline',()=>{
     'store.html':'58e4ec0d7a60eda612d207b986ac8dda593f6eea2a2df1e74164317aa673e828',
     'store-window.js':'282c7486ba1202f8f6e73bea5c7f25250cca0c985336d5cbf9b540002be32e06',
     'store-data.js':'88b0ac6e57a9414ab3a63ae7e6360ede80400542ca213980afd4ecf5e92df2dd',
-    'styles.css':'a7b45fc9c86ad19afa18c7e99507cb30f25d83f0dd964d6d0364cb25a57684a4'
+    'styles.css':'1f98b18b579d6b3027d3d28a3f58a1a3879b453f0a206e9bc8571a0a56cbf89d'
   };
   for(const [file,digest] of Object.entries(expected))assert.equal(hash(file),digest,`${file} changed outside Owner scope`);
   const store=section('store');

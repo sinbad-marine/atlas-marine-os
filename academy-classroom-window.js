@@ -22,6 +22,7 @@ const academyOwnerReviewIntegration=window.SinbadOwnerReview?.create({appUrl:SIN
 const academyModuleOptions=[...byId('academyModule').options].map(option=>Object.freeze({value:option.value,label:option.textContent}));
 const gasmCatalog=window.SINBAD_GASM_CATALOG||Object.freeze({qualifications:[],questions:[]});
 let gasmSelection=Object.freeze({qualificationCode:null,subjectCode:null,topicCode:null,index:0,selectedOption:null});
+function clearGasmSelection(){gasmSelection=Object.freeze({qualificationCode:null,subjectCode:null,topicCode:null,index:0,selectedOption:null});}
 const academyCharacterEngine=window.SinbadCharacterEngine?.createCharacterEngine({initialState:'idle'})||null;
 const academyCharacterRig=window.SinbadCharacterRig||null;
 // Fail closed: the generated full-body layers remain offline until their
@@ -41,6 +42,11 @@ const ACADEMY_CHARACTER_ASSETS=Object.freeze({
   speakingFrames:Object.freeze({closed:'./assets/captain-sinbad/captain-sinbad-speaking.png',open:'./assets/captain-sinbad/captain-sinbad-speaking-mbp-v1.png',round:'./assets/captain-sinbad/captain-sinbad-speaking-o-v1.png'}),
   laughing:'./assets/captain-sinbad/captain-sinbad-laughing-v1.png'
 });
+const ACADEMY_HISTORY_KEY='sinbadAcademyNavigation';
+let academyFavoriteSelection=null;
+let academyHistoryReady=false,academyHistoryRestoring=false,academyHistoryBackPending=false;
+let academyNavigationGeneration=0;
+let academyBackPointerGuard=null;
 let academyBoardGeneration=0;
 let academyMotionGeneration=0;
 let academyLastPerformedGestureAction=null;
@@ -280,6 +286,27 @@ function restoreWindowGeometry(){
   }catch{}
 }
 const gasmBranchLabel=branch=>branch==='DECK'?'Güverte yeterlilikleri':branch==='ENGINE'?'Makine yeterlilikleri':'Elektro-teknik yeterlilikleri';
+const gasmBranchName=family=>({deck:'DECK',engine:'ENGINE','electro-technical':'ELECTRO_TECHNICAL'}[family]||null);
+const gasmFamilyName=branch=>({DECK:'deck',ENGINE:'engine',ELECTRO_TECHNICAL:'electro-technical'}[branch]||null);
+function showGasmFamily(family,{keepQualification=null}={}){
+  const branch=gasmBranchName(family);
+  document.querySelectorAll('[data-gasm-family]').forEach(node=>node.classList.toggle('active',family!=null&&node.dataset.gasmFamily===family));
+  const groups=[...document.querySelectorAll('.gasm-branch')];
+  const match=branch?groups.find(node=>node.dataset.gasmBranch===branch&&node.querySelector('.gasm-qualification')):null;
+  groups.forEach(node=>{
+    const open=node===match;
+    node.open=open;
+    node.querySelectorAll('.gasm-qualification').forEach(detail=>{detail.open=open&&keepQualification!=null&&detail.dataset.qualificationCode===keepQualification;});
+  });
+  const list=byId('gasmQualificationList');
+  let note=byId('gasmFamilyEmpty');
+  if(family!=null&&!match&&list){
+    if(!note){note=document.createElement('p');note.id='gasmFamilyEmpty';note.className='gasm-empty';list.append(note);}
+    note.textContent=`${branch?gasmBranchLabel(branch):'Seçilen aile'} için görüntülenecek yeterlilik yok.`;
+    note.hidden=false;
+  }else if(note)note.hidden=true;
+  return match||null;
+}
 const gasmTopicLabel=code=>String(code||'GENEL').split('_').map(word=>word.charAt(0)+word.slice(1).toLocaleLowerCase('tr-TR')).join(' ');
 function gasmQuestionsFor({qualificationCode,subjectCode,topicCode=null}){
   return gasmCatalog.questions.filter(item=>item.subjectCode===subjectCode&&item.qualificationCodes.includes(qualificationCode)&&(!topicCode||item.topicCode===topicCode));
@@ -303,13 +330,18 @@ function renderGasmQualificationMenu(){
     });root.append(group);
   }
 }
-function selectGasmSubject(qualification,subject,button){
+function selectGasmSubject(qualification,subject,button,{startTest=true}={}){
+  const family=gasmFamilyName(qualification.branch);if(family)showGasmFamily(family,{keepQualification:qualification.code});
   document.querySelectorAll('.gasm-subject-button').forEach(node=>node.classList.toggle('active',node===button));
   gasmSelection=Object.freeze({qualificationCode:qualification.code,subjectCode:subject.code,topicCode:null,index:0,selectedOption:null});
   const questions=gasmQuestionsFor(gasmSelection),topics=[...new Set(questions.map(item=>item.topicCode))].sort();
-  const detail=button.closest('.gasm-qualification'),old=detail.querySelector('.gasm-topic-list');old?.remove();
+  document.querySelectorAll('.gasm-topic-list').forEach(node=>node.remove());
+  const detail=button.closest('.gasm-qualification');if(detail)detail.open=true;
   if(topics.length){const list=document.createElement('div');list.className='gasm-topic-list';const all=document.createElement('button');all.type='button';all.className='gasm-topic-button';all.textContent=`Tüm konular (${questions.length})`;all.addEventListener('click',()=>openGasmTest(null));list.append(all);topics.forEach(topic=>{const topicQuestions=gasmQuestionsFor({...gasmSelection,topicCode:topic}),node=document.createElement('button');node.type='button';node.className='gasm-topic-button';node.textContent=`${gasmTopicLabel(topic)} (${topicQuestions.length})`;node.addEventListener('click',()=>openGasmTest(topic));list.append(node);});detail.append(list);}
-  openGasmTest(null);
+  const favoriteId=`academy:subject:${qualification.code}:${subject.code}`;
+  if(academyFavoriteSelection!==favoriteId)academyFavoriteSelection=null;
+  if(startTest)openGasmTest(null);
+  recordAcademyHistory();
 }
 function openGasmTest(topicCode){
   gasmSelection=Object.freeze({...gasmSelection,topicCode,index:0,selectedOption:null});renderGasmTest();
@@ -353,7 +385,13 @@ function renderQuiz(){
   }
   const choices=document.createElement('div');choices.className='academy-choices';item.choices.forEach((choice,index)=>{const button=document.createElement('button');button.type='button';button.className='btn';button.textContent=choice;button.addEventListener('click',()=>{[...choices.children].forEach(node=>node.disabled=true);button.classList.add(index===item.answer?'primary':'danger');const result=document.createElement('p');result.textContent=`${index===item.answer?'✓ Correct':'✗ Review'} — ${item.explanation} [${item.source}]`;output.append(result);});choices.append(button);});output.append(choices);const source=document.createElement('small');source.className='academy-source';source.textContent=`Official source: ${item.source}`;output.append(source);
 }
-function selectAcademySection(sectionId){
+function syncAcademyModuleReading(){
+  const select=byId('academyModule'),reading=byId('academyModuleReading');if(!select||!reading)return;
+  const option=select.selectedOptions?.[0];reading.textContent=option?option.textContent:'';
+}
+function selectAcademySection(sectionId,{recordHistory=true}={}){
+  academyFavoriteSelection=null;
+  stopAcademyNavigationActivity();
   const section=ACADEMY_SECTIONS[sectionId]||ACADEMY_SECTIONS['general-maritime-education'];
   const resolvedSectionId=Object.prototype.hasOwnProperty.call(ACADEMY_SECTIONS,sectionId)?sectionId:'general-maritime-education';
   const shell=document.querySelector('.academy-shell');if(shell){shell.dataset.academyActive=resolvedSectionId;shell.dataset.academyView='layer';}
@@ -366,19 +404,25 @@ function selectAcademySection(sectionId){
   const familyGrid=byId('gossFamilyGrid'),examPreview=byId('student-exam');if(familyGrid)familyGrid.hidden=sectionId!=='goss-gasm';if(examPreview)examPreview.hidden=sectionId!=='goss-gasm';
   const gasmMenu=byId('gasmQualificationMenu'),gasmButton=byId('gasmMenuButton');if(gasmMenu)gasmMenu.hidden=sectionId!=='goss-gasm';if(gasmButton)gasmButton.setAttribute('aria-expanded',String(sectionId==='goss-gasm'));
   academyModuleOptions.filter(option=>section.modules.includes(option.value)).forEach(option=>{const node=document.createElement('option');node.value=option.value;node.textContent=option.label;select.append(node);});
+  syncAcademyModuleReading();
   stopBoardTeaching();resetAcademyLessonClock();setAcademyClassroomPhase('welcome');const output=byId('academyOutput');output.replaceChildren();output.hidden=true;byId('academyTeachingTitle').textContent="Professor Sinbad's board";byId('academyTeachingText').replaceChildren();byId('academyTeachingText').setAttribute('aria-hidden','true');
   saveAcademySelection();
+  if(recordHistory)recordAcademyHistory();
 }
 function showStandaloneAcademyLayer(layerId){
+  academyFavoriteSelection=null;
   const shell=document.querySelector('.academy-shell');if(!shell)return;
+  stopAcademyNavigationActivity();
   shell.dataset.academyActive=layerId;shell.dataset.academyView='layer';
   document.querySelectorAll('[data-academy-art]').forEach(image=>image.classList.toggle('is-active',image.dataset.academyArt===layerId));
   window.scrollTo({top:0,behavior:'smooth'});
+  recordAcademyHistory();
 }
 function setAcademyModule(moduleId){
+  academyFavoriteSelection=null;
   if(!moduleId)return;
   const select=byId('academyModule'),option=[...select.options].find(item=>item.value===moduleId);if(!option)return;
-  select.value=moduleId;saveAcademySelection();
+  select.value=moduleId;syncAcademyModuleReading();saveAcademySelection();
 }
 function focusAcademyDestination(target){
   if(!target)return;
@@ -386,31 +430,41 @@ function focusAcademyDestination(target){
   requestAnimationFrame(()=>target.focus({preventScroll:true}));
 }
 function openAcademyLayerTool(button){
+  academyFavoriteSelection=null;
   const command=button.dataset.academyCommand,targetSection=button.dataset.academyTargetSection;
   if(command==='home'){returnToAcademyHome();return;}
-  if(command==='back-academy'){const shell=document.querySelector('.academy-shell'),active=shell?.dataset.academyActive;if(shell)shell.dataset.academyView='landing';window.scrollTo({top:0,behavior:'smooth'});focusAcademyDestination(document.querySelector(`.academy-program-card[data-academy-open="${active}"]`)||byId('academyLandingTitle'));return;}
+  if(command==='back-academy'){const shell=document.querySelector('.academy-shell'),active=shell?.dataset.academyActive;stopAcademyNavigationActivity();if(shell)shell.dataset.academyView='landing';recordAcademyHistory();window.scrollTo({top:0,behavior:'smooth'});focusAcademyDestination(document.querySelector(`.academy-program-card[data-academy-open="${active}"]`)||byId('academyLandingTitle'));return;}
   if(command==='section'&&targetSection){selectAcademySection(targetSection);window.scrollTo({top:0,behavior:'smooth'});focusAcademyDestination(document.querySelector(`[data-academy-scope="${targetSection}"][data-academy-command]`)||byId('academyLayerTitle'));return;}
   const requestedSection=button.dataset.academyToolsSection||button.dataset.academyScope;
   const sectionId=Object.prototype.hasOwnProperty.call(ACADEMY_SECTIONS,requestedSection)?requestedSection:'general-maritime-education';
-  selectAcademySection(sectionId);setAcademyModule(button.dataset.academyModule);
+  selectAcademySection(sectionId,{recordHistory:false});setAcademyModule(button.dataset.academyModule);
   const shell=document.querySelector('.academy-shell');if(shell)shell.dataset.academyView='tools';
   if(command==='family'){
-    const family=button.dataset.academyFamily,menu=byId('gasmQualificationMenu');
-    const branch={deck:'DECK',engine:'ENGINE','electro-technical':'ELECTRO_TECHNICAL'}[family];
-    document.querySelectorAll('[data-gasm-family]').forEach(node=>node.classList.toggle('active',node.dataset.gasmFamily===family));
-    document.querySelectorAll('.gasm-branch').forEach(node=>{node.open=node.dataset.gasmBranch===branch;});
+    clearGasmSelection();
+    document.querySelectorAll('.gasm-subject-button').forEach(node=>node.classList.remove('active'));
+    document.querySelectorAll('.gasm-topic-list').forEach(node=>node.remove());
+    const cleared=byId('academyOutput');if(cleared){cleared.replaceChildren();cleared.hidden=true;}
+    const family=button.dataset.academyFamily,menu=byId('gasmQualificationMenu'),branch=gasmBranchName(family);
+    const match=showGasmFamily(family);
     if(menu)menu.hidden=false;
-    const destination=document.querySelector(`.gasm-branch[data-gasm-branch="${branch}"] > summary`);
+    const destination=match?document.querySelector(`.gasm-branch[data-gasm-branch="${branch}"] > summary`):byId('gasmFamilyEmpty');
     requestAnimationFrame(()=>{menu?.scrollIntoView({behavior:'smooth',block:'start'});focusAcademyDestination(destination||menu);});
-    return;
+    recordAcademyHistory();return;
   }
   if(command==='lesson'){renderLesson();focusAcademyDestination(byId('academyTeachingTitle'));}
   else if(command==='practice'){renderQuiz();focusAcademyDestination(byId('academyOutput'));}
   else if(command==='professor')requestAnimationFrame(()=>{byId('professor-sinbad')?.scrollIntoView({behavior:'smooth',block:'start'});byId('academyQuestionInput')?.focus({preventScroll:true});});
   else if(command==='exam')openExamIntelligence();
+  recordAcademyHistory();
 }
 function handleAcademyLayerPointerActivation(event){
-  if(event.detail===0)return;
+  if(event.detail===0){academyBackPointerGuard=null;return;}
+  // A second tap must not hit the art revealed underneath the Back button.
+  const guard=academyBackPointerGuard;
+  if(guard&&performance.now()<guard.until&&Math.hypot(event.clientX-guard.x,event.clientY-guard.y)<=24){event.preventDefault();event.stopImmediatePropagation();return;}
+  academyBackPointerGuard=null;
+  // Portrait actions are ordinary full-width buttons, not coordinates on the desktop artwork.
+  if(getComputedStyle(event.currentTarget).position!=='absolute')return;
   const container=event.currentTarget,shell=document.querySelector('.academy-shell'),active=shell?.dataset.academyActive,rect=container.getBoundingClientRect();
   if(!active||!rect.width||!rect.height)return;
   const x=((event.clientX-rect.left)/rect.width)*100,y=((event.clientY-rect.top)/rect.height)*100;
@@ -445,19 +499,91 @@ function restoreAcademySelection(){
   const shell=document.querySelector('.academy-shell');if(shell)shell.dataset.academyView=requestedSection?'layer':'landing';
   saveAcademySelection();
 }
+// Navigation snapshots contain selection only. Restoring a step never resumes a lesson or microphone.
+function academyDialogueRoot(){return byId('academyConversation');}
+function markAcademyWelcome(){
+  const dialogue=academyDialogueRoot();
+  if(!dialogue||dialogue.querySelector('[data-academy-welcome]'))return;
+  const messages=dialogue.querySelectorAll(':scope > .academy-message'),first=messages[0];
+  // Mark only the original static welcome. A later lone student question must not inherit this mark.
+  if(!first||messages.length!==1||first.classList.contains('student'))return;
+  first.dataset.academyWelcome='true';
+}
+function resetAcademyDialogue(){
+  const dialogue=academyDialogueRoot();if(!dialogue)return;
+  const welcome=dialogue.querySelector('[data-academy-welcome]');
+  [...dialogue.querySelectorAll('.academy-message')].forEach(node=>{if(node!==welcome)node.remove();});
+}
+function trimAcademyDialogue(){
+  const dialogue=academyDialogueRoot();if(!dialogue)return;
+  const welcome=dialogue.querySelector('[data-academy-welcome]');
+  while(dialogue.children.length>20){
+    const extra=[...dialogue.children].find(node=>node!==welcome);
+    if(!extra)break;
+    extra.remove();
+  }
+}
+function stopAcademyNavigationActivity(){
+  academyNavigationGeneration++;academyMotionGeneration++;
+  stopBoardTeaching();resetAcademyLessonClock();setAcademyClassroomPhase('welcome');
+  resetAcademyDialogue();
+  academyHandsFreeEnabled=false;clearTimeout(academyHandsFreeRestartTimer);academyHandsFreeRestartTimer=null;
+  if(academyRecognition){const recognition=academyRecognition;academyRecognition=null;recognition.onstart=null;recognition.onresult=null;recognition.onerror=null;recognition.onend=null;recognition.abort();}
+  window.speechSynthesis?.cancel?.();stopAcademyLipSync();stopAcademyIdleBlink();academyVoiceBusy=false;
+  updateAcademyHandsFreeButton();byId('startAcademyListening').disabled=false;byId('stopAcademyListening').disabled=true;byId('academyVoiceStatus').textContent='Text ready';
+}
+function academyNavigationSubject(){
+  const button=document.querySelector('.gasm-subject-button.active'),qualification=button?.dataset.qualificationCode||'',subject=button?.dataset.subjectCode||'';
+  return button&&/^[A-Z0-9]{1,24}$/.test(qualification)&&/^[A-Z0-9]{1,24}$/.test(subject)?`${qualification}/${subject}`:null;
+}
+function academyNavigationSnapshot(){
+  const shell=document.querySelector('.academy-shell');
+  return {view:shell.dataset.academyView,layer:shell.dataset.academyActive,section:activeAcademySectionId(),module:byId('academyModule').value,family:document.querySelector('[data-gasm-family].active')?.dataset.gasmFamily||null,subject:academyNavigationSubject(),favorite:academyFavoriteSelection};
+}
+function validAcademyHistory(state){
+  return state?.version===1&&Number.isInteger(state.index)&&state.index>=0&&['landing','layer','tools'].includes(state.view)&&Object.prototype.hasOwnProperty.call(ACADEMY_SECTIONS,state.section)&&ACADEMY_SECTIONS[state.section].modules.includes(state.module)&&(state.layer==='professor-sinbad'||Object.prototype.hasOwnProperty.call(ACADEMY_SECTIONS,state.layer))&&[null,'deck','engine','electro-technical'].includes(state.family)&&(state.subject==null||(typeof state.subject==='string'&&/^[A-Z0-9]{1,24}\/[A-Z0-9]{1,24}$/.test(state.subject)));
+}
+function recordAcademyHistory({replace=false}={}){
+  if(!academyHistoryReady||academyHistoryRestoring)return;
+  const snapshot=academyNavigationSnapshot(),previous=history.state?.[ACADEMY_HISTORY_KEY];
+  if(!replace&&validAcademyHistory(previous)&&Object.entries(snapshot).every(([key,value])=>previous[key]===value))return;
+  const index=validAcademyHistory(previous)?previous.index+(replace?0:1):0;
+  const url=new URL(location.href);if(window.SinbadAcademyFavorites){if(snapshot.favorite)url.searchParams.set('favorite',snapshot.favorite);else url.searchParams.delete('favorite');}
+  history[replace?'replaceState':'pushState']({...history.state,[ACADEMY_HISTORY_KEY]:{version:1,index,...snapshot}},'',url.href);
+}
+function restoreAcademyHistory(state){
+  academyHistoryBackPending=false;if(!validAcademyHistory(state))return;
+  academyHistoryRestoring=true;
+  try{
+    selectAcademySection(state.section,{recordHistory:false});setAcademyModule(state.module);
+    if(state.layer==='professor-sinbad')showStandaloneAcademyLayer(state.layer);
+    const shell=document.querySelector('.academy-shell');shell.dataset.academyView=state.view;
+    showGasmFamily(state.family);
+    document.querySelectorAll('.gasm-subject-button').forEach(node=>node.classList.remove('active'));
+    document.querySelectorAll('.gasm-topic-list').forEach(node=>node.remove());
+    clearGasmSelection();
+    if(state.favorite)window.SinbadAcademyFavorites?.restore(state.favorite,{record:false});
+    else if(typeof state.subject==='string'){
+      const [qualificationCode,subjectCode]=state.subject.split('/'),qualification=gasmCatalog.qualifications.find(item=>item.code===qualificationCode),subject=qualification?.subjects.find(item=>item.code===subjectCode),button=[...document.querySelectorAll('.gasm-subject-button')].find(item=>item.dataset.qualificationCode===qualificationCode&&item.dataset.subjectCode===subjectCode);
+      if(qualification&&subject&&button)selectGasmSubject(qualification,subject,button,{startTest:false});
+    }
+    saveAcademySelection();window.scrollTo({top:0,behavior:'instant'});
+  }finally{academyHistoryRestoring=false;}
+}
 function appendAcademyMessage(role,text){
   const conversation=byId('academyConversation'),message=document.createElement('p');message.className=`academy-message ${role}`;message.textContent=text;conversation.append(message);
-  while(conversation.children.length>20)conversation.firstElementChild.remove();conversation.scrollTop=conversation.scrollHeight;
+  trimAcademyDialogue();conversation.scrollTop=conversation.scrollHeight;
 }
 function speakAcademyAnswer(text,{preserveMotion=false,onComplete=null}={}){
   if(!('speechSynthesis' in window)||typeof SpeechSynthesisUtterance==='undefined'){onComplete?.();return;}
+  const navigationGeneration=academyNavigationGeneration;
   speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text.slice(0,1800));utterance.lang=academyLanguage();
   const voiceLanguage=academyLanguage().split('-')[0].toLocaleLowerCase('en-US');
   const matchingVoice=speechSynthesis.getVoices().find(voice=>String(voice.lang||'').toLocaleLowerCase('en-US').startsWith(voiceLanguage));
   if(matchingVoice)utterance.voice=matchingVoice;
-  let completed=false;const finish=()=>{if(completed)return;completed=true;onComplete?.();};
+  let completed=false;const finish=()=>{if(completed||navigationGeneration!==academyNavigationGeneration)return;completed=true;onComplete?.();};
   if(!preserveMotion){
-    const generation=++academyMotionGeneration;utterance.onstart=()=>{academySpeechGestureDirector?.beginTurn?.();const semantic=window.SinbadPerformanceDirector?.responseCueForText?.(text,'conversational')?.cue||{gesture:'explain',gaze:'audience',emotion:'warm'};const selected=academySpeechGestureDirector?.select?.({...semantic,cadence:'opening',responseKind:semantic.responseKind||'conversation'});renderAcademyCharacterCue({state:'speaking',...(selected?.cue||semantic)},text);startAcademyLipSync(text);};utterance.onboundary=event=>{if(generation!==academyMotionGeneration)return;const charIndex=Number(event.charIndex)||0,wordIndex=Math.max(0,text.slice(0,charIndex).trim().split(/\s+/u).filter(Boolean).length),boundary=window.SinbadPerformanceDirector?.speechCueForBoundary?.({text,name:event.name||'word',charIndex,wordIndex,mode:'warm'}),selected=boundary?.accepted?academySpeechGestureDirector?.select?.(boundary.cue):null;if(selected?.change&&selected.cue?.gesture)renderAcademyCharacterCue({state:'speaking',...selected.cue},text);renderAcademyMouthFrame(academyMouthFrameForText(text,charIndex));};utterance.onend=()=>{stopAcademyLipSync();settleAcademyCharacter(generation,180);finish();};utterance.onerror=()=>{stopAcademyLipSync();settleAcademyCharacter(generation,180);finish();};
+    const generation=++academyMotionGeneration;utterance.onstart=()=>{if(navigationGeneration!==academyNavigationGeneration)return;academySpeechGestureDirector?.beginTurn?.();const semantic=window.SinbadPerformanceDirector?.responseCueForText?.(text,'conversational')?.cue||{gesture:'explain',gaze:'audience',emotion:'warm'};const selected=academySpeechGestureDirector?.select?.({...semantic,cadence:'opening',responseKind:semantic.responseKind||'conversation'});renderAcademyCharacterCue({state:'speaking',...(selected?.cue||semantic)},text);startAcademyLipSync(text);};utterance.onboundary=event=>{if(generation!==academyMotionGeneration)return;const charIndex=Number(event.charIndex)||0,wordIndex=Math.max(0,text.slice(0,charIndex).trim().split(/\s+/u).filter(Boolean).length),boundary=window.SinbadPerformanceDirector?.speechCueForBoundary?.({text,name:event.name||'word',charIndex,wordIndex,mode:'warm'}),selected=boundary?.accepted?academySpeechGestureDirector?.select?.(boundary.cue):null;if(selected?.change&&selected.cue?.gesture)renderAcademyCharacterCue({state:'speaking',...selected.cue},text);renderAcademyMouthFrame(academyMouthFrameForText(text,charIndex));};utterance.onend=()=>{if(navigationGeneration!==academyNavigationGeneration)return;stopAcademyLipSync();settleAcademyCharacter(generation,180);finish();};utterance.onerror=()=>{if(navigationGeneration!==academyNavigationGeneration)return;stopAcademyLipSync();settleAcademyCharacter(generation,180);finish();};
   }else{
     utterance.onend=finish;utterance.onerror=finish;
   }
@@ -482,7 +608,23 @@ function openOwnerQuestionReview(){
   try{academyOwnerReviewIntegration?.launch();}
   catch(error){console.warn('Owner question review launch unavailable',error);}
 }
+// Read the existing account session; visitor browsing never probes private local services.
+let academyAccessClient=null;
+async function academyHasSignedInAccount(){
+  try{
+    if(!window.supabase)return false;
+    if(!academyAccessClient){
+      const url=localStorage.getItem('atlas_supabase_url')||'https://kcvyftrvteqmabvxfebu.supabase.co';
+      const key=localStorage.getItem('atlas_supabase_publishable_key')||'sb_publishable_ZBHFlbhQAnhUAOyVg20Szw_nW0QDj_l';
+      academyAccessClient=window.supabase.createClient(url,key,{auth:{persistSession:true,autoRefreshToken:false,detectSessionInUrl:false}});
+    }
+    const {data,error}=await academyAccessClient.auth.getSession();
+    const user=data?.session?.user;
+    return Boolean(!error&&user&&sessionStorage.getItem('sinbad_pending_invite_setup')!=='1'&&(!user.invited_at||user.user_metadata?.sinbad_account_ready===true));
+  }catch{return false;}
+}
 async function refreshAcademyRuntimeStatus(){
+  if(!await academyHasSignedInAccount()){updateAcademyRuntimePill('academyAiConnection','Sign in for local AI','offline');updateAcademyRuntimePill('academyLibraryConnection','Private library closed','offline');return null;}
   let lastError=null;
   for(let attempt=0;attempt<2;attempt++){
     const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),5000);
@@ -499,14 +641,17 @@ async function refreshAcademyRuntimeStatus(){
   console.warn('Academy runtime status unavailable',lastError);updateAcademyRuntimePill('academyAiConnection','Local AI unavailable','offline');updateAcademyRuntimePill('academyLibraryConnection','Library unavailable','offline');return null;
 }
 async function academyLocalAiAnswer(question,academyEvidence='',useOwnerLibrary=false){
+  if(!await academyHasSignedInAccount()){byId('academyVoiceStatus').textContent='Sign in to use private AI services.';return null;}
+  const navigationGeneration=academyNavigationGeneration;
   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),120000);
   try{
     byId('academyVoiceStatus').textContent='Sinbad düşünüyor…';
     const groundedPrompt=academyEvidence?`Öğrencinin sorusu: ${String(question).slice(0,1200)}\n\nDoğrulanmış çevrimdışı Academy bağlamı (yalnız bu bağlama dayan, eksikse açıkça söyle):\n${String(academyEvidence).slice(0,3500)}`:String(question).slice(0,1200);
     const response=await fetch(`${SINBAD_BRIDGE_URL}/ai/chat`,{method:'POST',headers:{'Content-Type':'application/json',...argosBridgeHeaders('AI_INFERENCE','/ai/chat')},body:JSON.stringify({question:groundedPrompt,libraryQuery:String(question).slice(0,1200),language:academyLanguage(),history:useOwnerLibrary?[]:academyDialogueHistory(),useLibrary:useOwnerLibrary,context:{surface:'sinbad-academy',module:byId('academyModule').value,grounded:Boolean(academyEvidence),ownerLibrary:useOwnerLibrary}}),signal:controller.signal});
-    if(!response.ok){byId('academyVoiceStatus').textContent='Local AI response error';updateAcademyRuntimePill('academyAiConnection','Local AI online · last request failed','offline');refreshAcademyRuntimeStatus();return null;}const data=await response.json();const answer=typeof data?.answer==='string'?data.answer.trim().slice(0,6000):'';
+    if(navigationGeneration!==academyNavigationGeneration)return null;
+    if(!response.ok){byId('academyVoiceStatus').textContent='Local AI response error';updateAcademyRuntimePill('academyAiConnection','Local AI online · last request failed','offline');refreshAcademyRuntimeStatus();return null;}const data=await response.json();if(navigationGeneration!==academyNavigationGeneration)return null;const answer=typeof data?.answer==='string'?data.answer.trim().slice(0,6000):'';
     if(!answer)return null;const model=String(data.model||'Sinbad').slice(0,32);byId('academyVoiceStatus').textContent=`Local AI · ${model}`;updateAcademyRuntimePill('academyAiConnection',`Local AI connected · ${model}`);if(useOwnerLibrary)refreshAcademyRuntimeStatus();return answer;
-  }catch(error){console.warn('Academy local AI unavailable',error);byId('academyVoiceStatus').textContent=error?.name==='AbortError'?'Local AI timed out':'Local AI connection error';updateAcademyRuntimePill('academyAiConnection','Local AI online · last request incomplete','offline');refreshAcademyRuntimeStatus();return null;}finally{clearTimeout(timeout);}
+  }catch(error){if(navigationGeneration!==academyNavigationGeneration)return null;console.warn('Academy local AI unavailable',error);byId('academyVoiceStatus').textContent=error?.name==='AbortError'?'Local AI timed out':'Local AI connection error';updateAcademyRuntimePill('academyAiConnection','Local AI online · last request incomplete','offline');refreshAcademyRuntimeStatus();return null;}finally{clearTimeout(timeout);}
 }
 function answerAcademySocialTurn(question){
   const normalized=String(question||'').toLocaleLowerCase('tr-TR').normalize('NFC').replace(/[^a-zçğıöşü\s]/gu,' ').replace(/\s+/g,' ').trim();
@@ -537,13 +682,14 @@ function shouldUseAcademySources(question){
 }
 async function answerAcademyQuestion(){
   const input=byId('academyQuestionInput'),question=input.value.trim().slice(0,1200);if(!question)return;
-  academyVoiceBusy=true;
+  const navigationGeneration=academyNavigationGeneration;academyVoiceBusy=true;
   appendAcademyMessage('student',question);input.value='';
   const gestureRequest=window.SinbadPerformanceDirector?.gestureRequestForText?.(question,{lastAction:academyLastPerformedGestureAction});
   if(gestureRequest?.accepted){playAcademyGestureRequest(gestureRequest,completeAcademyVoiceTurn);return;}
   renderAcademyCharacterCue({state:'thinking',gesture:'hold',gaze:'thought'},question);
   const useOwnerLibrary=shouldUseAcademySources(question),capabilityAnswer=academyCharacterCapabilityAnswer(question),foundationAnswer=academyMaritimeFoundationAnswer(question),socialAnswer=answerAcademySocialTurn(question),result=capabilityAnswer||foundationAnswer||socialAnswer||!useOwnerLibrary?null:window.SinbadAcademy?.answer(question,window.SINBAD_TRAINING_DATA);
   const localAnswer=capabilityAnswer||foundationAnswer||socialAnswer?null:await academyLocalAiAnswer(question,result?.text||'',useOwnerLibrary);
+  if(navigationGeneration!==academyNavigationGeneration)return;
   const answer=capabilityAnswer||foundationAnswer||socialAnswer||localAnswer||result?.text||'Bu soru için doğrulanmış çevrimdışı Academy içeriğinde yeterli kaynak bulamadım ve yerel Sinbad AI bu isteğe yanıt veremedi. Tahmin üretmeyeceğim; lütfen soruyu daraltıp yeniden deneyin.';
   appendAcademyMessage('sinbad',answer);presentAcademyAnswerOnBoard(question,answer);speakAcademyAnswer(answer,{onComplete:completeAcademyVoiceTurn});
 }
@@ -577,16 +723,23 @@ function returnToAcademyHome(){
   window.location.assign(marineHome);
 }
 function goBackFromAcademy(){
-  const shell=document.querySelector('.academy-shell');if(shell&&shell.dataset.academyView!=='landing'){shell.dataset.academyView='landing';window.scrollTo({top:0,behavior:'smooth'});return;}
+  if(academyHistoryBackPending)return;
+  const state=history.state?.[ACADEMY_HISTORY_KEY];
+  if(validAcademyHistory(state)&&state.index>0){academyHistoryBackPending=true;history.back();return;}
+  const shell=document.querySelector('.academy-shell');if(shell&&shell.dataset.academyView!=='landing'){stopAcademyNavigationActivity();academyFavoriteSelection=null;shell.dataset.academyView='landing';recordAcademyHistory({replace:true});window.scrollTo({top:0,behavior:'smooth'});return;}
   try{const referrer=document.referrer?new URL(document.referrer):null;if(referrer?.origin===location.origin&&history.length>1){history.back();return;}}catch{}returnToAcademyHome();
 }
 document.title='Sinbad Academy — Professor Sinbad Classroom';
+markAcademyWelcome();
 renderGasmQualificationMenu();
 restoreAcademySelection();
+academyHistoryReady=true;recordAcademyHistory({replace:true});
+window.addEventListener('popstate',event=>restoreAcademyHistory(event.state?.[ACADEMY_HISTORY_KEY]));
 restoreWindowGeometry();
 preloadAcademyCharacterAssets();
 renderAcademyCharacterCue({state:'idle',gesture:'rest',gaze:'audience',emotion:'warm',energy:.12},'');
 refreshAcademyRuntimeStatus();
+document.addEventListener('DOMContentLoaded',refreshAcademyRuntimeStatus,{once:true});
 refreshAcademyExamStatus();
 const academyRuntimeStatusTimer=setInterval(refreshAcademyRuntimeStatus,15000);
 window.addEventListener('focus',refreshAcademyRuntimeStatus);window.addEventListener('online',refreshAcademyRuntimeStatus);document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAcademyIdleBlink();else{refreshAcademyRuntimeStatus();scheduleAcademyIdleBlink();}});
@@ -599,8 +752,10 @@ document.querySelectorAll('[data-academy-open]').forEach(button=>button.addEvent
 }));
 document.querySelectorAll('[data-academy-command]').forEach(button=>button.addEventListener('click',()=>openAcademyLayerTool(button)));
 document.querySelector('.academy-layer-hotspots')?.addEventListener('click',handleAcademyLayerPointerActivation,true);
-document.querySelectorAll('[data-gasm-family]').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('[data-gasm-family]').forEach(node=>node.classList.toggle('active',node===button));const menu=byId('gasmQualificationMenu');if(menu){menu.hidden=false;menu.scrollIntoView({behavior:'smooth',block:'nearest'});}}));
+document.querySelectorAll('[data-gasm-family]').forEach(button=>button.addEventListener('click',()=>{stopAcademyNavigationActivity();academyFavoriteSelection=null;clearGasmSelection();document.querySelectorAll('.gasm-subject-button').forEach(node=>node.classList.remove('active'));document.querySelectorAll('.gasm-topic-list').forEach(node=>node.remove());const output=byId('academyOutput');output.replaceChildren();output.hidden=true;showGasmFamily(button.dataset.gasmFamily);const menu=byId('gasmQualificationMenu');if(menu){menu.hidden=false;menu.scrollIntoView({behavior:'smooth',block:'nearest'});}recordAcademyHistory();}));
 byId('academyModule').addEventListener('change',saveAcademySelection);
+byId('academyModule').addEventListener('change',syncAcademyModuleReading);
+byId('academyModule').addEventListener('change',()=>{stopAcademyNavigationActivity();recordAcademyHistory();});
 byId('startAcademyLesson').addEventListener('click',renderLesson);
 byId('startAcademyQuiz').addEventListener('click',renderQuiz);
 byId('openExamIntelligence').addEventListener('click',openExamIntelligence);
@@ -612,6 +767,7 @@ byId('stopAcademyListening').addEventListener('click',()=>{if(academyHandsFreeEn
 byId('toggleAcademyHandsFree').addEventListener('click',()=>setAcademyHandsFree(!academyHandsFreeEnabled));
 byId('academyLanguage').value=['tr-TR','en-US','de-DE'].includes(localStorage.getItem(LANGUAGE_KEY))?localStorage.getItem(LANGUAGE_KEY):'en-US';
 byId('academyLanguage').addEventListener('change',()=>{localStorage.setItem(LANGUAGE_KEY,academyLanguage());academyRecognition?.abort();academyRecognition=null;byId('academyVoiceStatus').textContent=academyLanguage()==='tr-TR'?'Türkçe hazır':academyLanguage()==='de-DE'?'Deutsch bereit':'English ready';});
+byId('academyBackButton').addEventListener('click',event=>{academyBackPointerGuard=event.detail>0?{x:event.clientX,y:event.clientY,until:performance.now()+500}:null;});
 byId('academyBackButton').addEventListener('click',goBackFromAcademy);
 byId('academyHomeButton').addEventListener('click',returnToAcademyHome);
 byId('closeAcademyWindow').addEventListener('click',()=>{saveWindowGeometry();window.close();});

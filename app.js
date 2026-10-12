@@ -27,7 +27,7 @@ async function ownerBridgeFetch(path,action,body,checkReplay=false){
   if(replay.status!==403||rejection.error!=='ARGOS_COMMAND_BLOCKED'||rejection.reason!=='ARGOS_COMMAND_REPLAYED')throw new Error('BRIDGE_CHECK_REPLAY_NOT_REJECTED');
   return {status:'BRIDGE_OWNER_ACCEPTANCE_PASSED',filename:saved.filename,authorizationId:proof.authorizationId,commandId:command.commandId,checkedAt:new Date().toISOString(),writeStatus:201,replayStatus:403};
 }
-const APP_LANGUAGES=[['en-US','English'],['tr-TR','Türkçe'],['ru-RU','Русский'],['fr-FR','Français'],['de-DE','Deutsch'],['ar-SA','العربية'],['es-ES','Español'],['it-IT','Italiano']];
+const APP_LANGUAGES=[['en-US','English'],['tr-TR','Türkçe'],['ru-RU','Русский'],['de-DE','Deutsch'],['ar-SA','العربية'],['es-ES','Español'],['fr-FR','Français']];
 const APP_I18N={
  'tr-TR':{gatewayTitle:'Sinbad Marine şu anda geliştiriliyor.',gatewayText:'Güvenli denizcilik zekâsı ve yat operasyon platformumuz kullanıma hazırlanıyor.',signIn:'Üye Girişi',createAccount:'Hesap Oluştur',checkCloud:'Bulut Bağlantısını Kontrol Et',heroTitle:'Tek Köprü. Tüm Operasyonlar.'},
  'en-US':{gatewayTitle:'Sinbad Marine is currently under development.',gatewayText:'Our secure marine intelligence and yacht operations platform is being prepared for launch.',signIn:'Member Sign In',createAccount:'Create Account',checkCloud:'Check Cloud Connection',heroTitle:'One Bridge. Every Operation.'},
@@ -35,17 +35,31 @@ const APP_I18N={
  'fr-FR':{gatewayTitle:'Sinbad Marine est en cours de développement.',gatewayText:'Notre plateforme sécurisée de renseignement maritime et de gestion de yacht est en préparation.',signIn:'Connexion membre',createAccount:'Créer un compte',checkCloud:'Tester le cloud',heroTitle:'Une passerelle. Toutes les opérations.'},
  'de-DE':{gatewayTitle:'Sinbad Marine wird derzeit entwickelt.',gatewayText:'Unsere sichere Plattform für maritime Informationen und Yachtbetrieb wird vorbereitet.',signIn:'Mitglieder-Login',createAccount:'Konto erstellen',checkCloud:'Cloud prüfen',heroTitle:'Eine Brücke. Alle Abläufe.'},
  'ar-SA':{gatewayTitle:'يجري حاليًا تطوير Sinbad Marine.',gatewayText:'يتم إعداد منصتنا الآمنة للمعلومات البحرية وعمليات اليخوت للإطلاق.',signIn:'دخول الأعضاء',createAccount:'إنشاء حساب',checkCloud:'فحص الاتصال السحابي',heroTitle:'جسر واحد. كل العمليات.'},
- 'es-ES':{gatewayTitle:'Sinbad Marine está actualmente en desarrollo.',gatewayText:'Nuestra plataforma segura de inteligencia marítima y operaciones de yates se está preparando.',signIn:'Acceso de miembros',createAccount:'Crear cuenta',checkCloud:'Comprobar la nube',heroTitle:'Un puente. Todas las operaciones.'},
- 'it-IT':{gatewayTitle:'Sinbad Marine è attualmente in fase di sviluppo.',gatewayText:'La nostra piattaforma sicura per intelligence marittima e gestione yacht è in preparazione.',signIn:'Accesso membri',createAccount:'Crea account',checkCloud:'Controlla il cloud',heroTitle:'Un ponte. Tutte le operazioni.'}
+ 'es-ES':{gatewayTitle:'Sinbad Marine está actualmente en desarrollo.',gatewayText:'Nuestra plataforma segura de inteligencia marítima y operaciones de yates se está preparando.',signIn:'Acceso de miembros',createAccount:'Crear cuenta',checkCloud:'Comprobar la nube',heroTitle:'Un puente. Todas las operaciones.'}
 };
+const PAGE_COPY={
+ 'en-US':{footerLine:'Sinbad Marine • Secure maritime command platform',yachtTools:'Yacht management tools',yachtAreas:'Yacht management workspaces',yachtIntro:'Open the yacht, crew, records and private media workspaces from one place.',yachtFleetNote:'Vessel details and machinery records',yachtCrewNote:'Records and expiry tracking',yachtLogNote:'Spoken and written operation notes',yachtMediaNote:'Private operation archive',yachtAtmosphereAlt:'Yacht and crew during yard work',yachtFleetAlt:'Three motor yachts entering harbor',yachtCrewAlt:'Yacht crew working on deck',yachtLogAlt:'Captain log, chart and navigation tools',yachtMediaAlt:'Camera and private yacht media archive',askSinbad:'Ask Sinbad',privateAreaTitle:'This area is limited to authorized accounts',privateAreaText:'The Developer Project Center is open only to active Owner and Developer accounts.',closeWindow:'Close window'},
+ 'tr-TR':{footerLine:'Sinbad Marine • Güvenli Denizcilik Komuta Platformu',yachtTools:'Yat yönetimi araçları',yachtAreas:'Yat yönetimi çalışma alanları',yachtIntro:'Yat, ekip, kayıt ve özel medya çalışma alanlarına tek yerden erişin.',yachtFleetNote:'Tekne ayrıntıları ve makine kayıtları',yachtCrewNote:'Kayıtlar ve süre sonu takibi',yachtLogNote:'Sesli ve yazılı operasyon notları',yachtMediaNote:'Özel operasyon arşivi',yachtAtmosphereAlt:'Tersanede bakımdaki yat ve çalışan ekip',yachtFleetAlt:'Limana giren üç motor yat',yachtCrewAlt:'Güvertede çalışan yat mürettebatı',yachtLogAlt:'Kaptan günlüğü, harita ve seyir araçları',yachtMediaAlt:'Kamera ve özel yat medya arşivi',askSinbad:'Sinbad’a sor',privateAreaTitle:'Bu alan yetkili kullanıcılara özeldir',privateAreaText:'Developer Proje Merkezi yalnız aktif Owner ve Developer hesaplarına açıktır.',closeWindow:'Pencereyi kapat'},
+ 'ru-RU':{footerLine:'Sinbad Marine • Защищённая морская командная платформа',yachtTools:'Инструменты управления яхтой',yachtAreas:'Рабочие области управления яхтой',yachtIntro:'Откройте рабочие области яхты, экипажа, записей и частных медиа из одного места.',yachtFleetNote:'Данные судна и записи механизмов',yachtCrewNote:'Записи и контроль сроков',yachtLogNote:'Устные и письменные операционные заметки',yachtMediaNote:'Частный операционный архив',yachtAtmosphereAlt:'Яхта и экипаж во время работ на верфи',yachtFleetAlt:'Три моторные яхты входят в гавань',yachtCrewAlt:'Экипаж яхты работает на палубе',yachtLogAlt:'Судовой журнал, карта и навигационные инструменты',yachtMediaAlt:'Камера и частный медиаархив яхты',askSinbad:'Спросить Синбада',privateAreaTitle:'Этот раздел только для уполномоченных учётных записей',privateAreaText:'Центр проектов разработчика открыт только активным учётным записям Owner и Developer.',closeWindow:'Закрыть окно'},
+ 'de-DE':{footerLine:'Sinbad Marine • Sichere maritime Kommandoplattform',yachtTools:'Werkzeuge der Yachtverwaltung',yachtAreas:'Arbeitsbereiche der Yachtverwaltung',yachtIntro:'Öffnen Sie die Arbeitsbereiche für Yacht, Besatzung, Aufzeichnungen und private Medien an einem Ort.',yachtFleetNote:'Schiffsdaten und Maschinenaufzeichnungen',yachtCrewNote:'Aufzeichnungen und Fristen',yachtLogNote:'Gesprochene und geschriebene Betriebsnotizen',yachtMediaNote:'Privates Betriebsarchiv',yachtAtmosphereAlt:'Yacht und Besatzung bei der Werftarbeit',yachtFleetAlt:'Drei Motoryachten laufen in den Hafen ein',yachtCrewAlt:'Yachtbesatzung arbeitet an Deck',yachtLogAlt:'Kapitänstagebuch, Karte und Navigationswerkzeuge',yachtMediaAlt:'Kamera und privates Yachtmedienarchiv',askSinbad:'Sinbad fragen',privateAreaTitle:'Dieser Bereich ist berechtigten Konten vorbehalten',privateAreaText:'Das Developer Project Center ist nur für aktive Owner- und Developer-Konten offen.',closeWindow:'Fenster schließen'},
+ 'ar-SA':{footerLine:'Sinbad Marine • منصة قيادة بحرية آمنة',yachtTools:'أدوات إدارة اليخت',yachtAreas:'مساحات عمل إدارة اليخت',yachtIntro:'افتح مساحات اليخت والطاقم والسجلات والوسائط الخاصة من مكان واحد.',yachtFleetNote:'تفاصيل السفينة وسجلات الآلات',yachtCrewNote:'السجلات ومتابعة انتهاء الصلاحية',yachtLogNote:'ملاحظات تشغيل شفهية ومكتوبة',yachtMediaNote:'أرشيف تشغيل خاص',yachtAtmosphereAlt:'يخت وطاقم أثناء العمل في الحوض',yachtFleetAlt:'ثلاثة يخوت تدخل الميناء',yachtCrewAlt:'طاقم اليخت يعمل على سطح السفينة',yachtLogAlt:'سجل القبطان والخريطة وأدوات الملاحة',yachtMediaAlt:'كاميرا وأرشيف وسائط اليخت الخاص',askSinbad:'اسأل سندباد',privateAreaTitle:'هذا المجال مقصور على الحسابات المصرّح لها',privateAreaText:'مركز مشاريع المطوّر مفتوح فقط لحسابات المالك والمطوّر النشطة.',closeWindow:'إغلاق النافذة'},
+ 'es-ES':{footerLine:'Sinbad Marine • Plataforma segura de mando marítimo',yachtTools:'Herramientas de gestión del yate',yachtAreas:'Espacios de gestión del yate',yachtIntro:'Abra los espacios del yate, la tripulación, los registros y los medios privados desde un solo lugar.',yachtFleetNote:'Datos del buque y registros de maquinaria',yachtCrewNote:'Registros y seguimiento de vencimientos',yachtLogNote:'Notas de operación habladas y escritas',yachtMediaNote:'Archivo operativo privado',yachtAtmosphereAlt:'Yate y tripulación durante el trabajo en el astillero',yachtFleetAlt:'Tres yates a motor entran en el puerto',yachtCrewAlt:'Tripulación del yate trabajando en cubierta',yachtLogAlt:'Diario del capitán, carta y herramientas de navegación',yachtMediaAlt:'Cámara y archivo privado de medios del yate',askSinbad:'Preguntar a Sinbad',privateAreaTitle:'Esta zona está limitada a cuentas autorizadas',privateAreaText:'El centro de proyectos del desarrollador solo está abierto a cuentas activas de Owner y Developer.',closeWindow:'Cerrar ventana'},
+ 'fr-FR':{footerLine:'Sinbad Marine • Plateforme sécurisée de commandement maritime',yachtTools:'Outils de gestion du yacht',yachtAreas:'Espaces de gestion du yacht',yachtIntro:'Ouvrez les espaces du yacht, de l’équipage, des registres et des médias privés depuis un seul endroit.',yachtFleetNote:'Détails du navire et registres machines',yachtCrewNote:'Registres et suivi des échéances',yachtLogNote:'Notes d’exploitation orales et écrites',yachtMediaNote:'Archive d’exploitation privée',yachtAtmosphereAlt:'Yacht et équipage pendant le travail au chantier',yachtFleetAlt:'Trois yachts à moteur entrent au port',yachtCrewAlt:'Équipage du yacht au travail sur le pont',yachtLogAlt:'Journal du capitaine, carte et outils de navigation',yachtMediaAlt:'Caméra et archive média privée du yacht',askSinbad:'Demander à Sinbad',privateAreaTitle:'Cette zone est réservée aux comptes autorisés',privateAreaText:'Le centre de projet développeur n’est ouvert qu’aux comptes Owner et Developer actifs.',closeWindow:'Fermer la fenêtre'}
+};
+function localizedText(key){
+  return APP_I18N[appLanguage]?.[key]||PAGE_COPY[appLanguage]?.[key]||PAGE_COPY['en-US']?.[key]||'';
+}
 const APP_LANGUAGE_BASELINE_KEY='atlas_app_language_baseline_20260919';
 let appLanguage=localStorage.getItem('atlas_app_language')||'en-US';
 if(!localStorage.getItem(APP_LANGUAGE_BASELINE_KEY)){appLanguage='en-US';localStorage.setItem('atlas_app_language',appLanguage);localStorage.setItem(APP_LANGUAGE_BASELINE_KEY,'applied')}
 function applyAppLanguage(language){
-  appLanguage=APP_I18N[language]?language:'en-US';localStorage.setItem('atlas_app_language',appLanguage);
+  appLanguage=APP_LANGUAGES.some(([value])=>value===language)?language:'en-US';localStorage.setItem('atlas_app_language',appLanguage);
   document.documentElement.lang=appLanguage.split('-')[0];document.documentElement.dir=appLanguage.startsWith('ar')?'rtl':'ltr';
-  document.querySelectorAll('[data-i18n]').forEach(element=>{const value=APP_I18N[appLanguage][element.dataset.i18n];if(value)element.textContent=value;});
+  document.querySelectorAll('[data-i18n]').forEach(element=>{const value=localizedText(element.dataset.i18n);if(value)element.textContent=value;});
+  document.querySelectorAll('[data-i18n-aria]').forEach(element=>{const value=localizedText(element.dataset.i18nAria);if(value)element.setAttribute('aria-label',value);});
+  document.querySelectorAll('[data-i18n-alt]').forEach(element=>{const value=localizedText(element.dataset.i18nAlt);if(value)element.alt=value;});
   document.querySelectorAll('.app-language').forEach(select=>select.value=appLanguage);
+  window.SinbadHome?.translate();window.SinbadFavorites?.setLanguage(appLanguage);
 }
 function setupAppLanguages(){
   const options=APP_LANGUAGES.map(([value,label])=>`<option value="${value}">${label}</option>`).join('');
@@ -72,12 +86,14 @@ function consoleParentFor(id){if(['fleet','crew','captains-logbook','camera-arch
 function applyConsoleArt(id='home'){const parent=consoleParentFor(id),art=id==='home'?'monet':parent==='yacht-operations'?'rembrandt':parent==='voyage-navigation'?'da-vinci':parent==='documents-compliance'?'vermeer':'';if(art)document.body.dataset.consoleArt=art;else delete document.body.dataset.consoleArt;document.querySelectorAll('.console-primary-nav button').forEach(button=>button.classList.toggle('active',id==='home'?button.hasAttribute('data-console-home'):button.dataset.open===parent));}
 function recordConsoleRecent(id){if(!CONSOLE_DESTINATIONS[id])return;const recent=consoleJson(CONSOLE_RECENT_KEY,[]).filter(item=>item!==id);recent.unshift(id);localStorage.setItem(CONSOLE_RECENT_KEY,JSON.stringify(recent.slice(0,6)));renderConsolePersonalization();}
 function renderConsoleLinks(target,ids,empty){if(!target)return;target.innerHTML=ids.length?ids.map(id=>`<button type="button" data-console-shortcut="${esc(id)}">${esc(CONSOLE_DESTINATIONS[id]?.label||id)}</button>`).join(''):`<small>${esc(empty)}</small>`;target.querySelectorAll('[data-console-shortcut]').forEach(button=>button.onclick=()=>openConsoleDestination(button.dataset.consoleShortcut));}
-function renderConsolePersonalization(){const defaults=['fleet','routes','cloud-documents','sinbad'],favorites=consoleJson(CONSOLE_FAVORITES_KEY,defaults).filter(id=>CONSOLE_DESTINATIONS[id]);renderConsoleLinks($('consoleFavoritesList'),favorites,'Favori eklenmedi.');renderConsoleLinks($('consoleRecentList'),consoleJson(CONSOLE_RECENT_KEY,[]).filter(id=>CONSOLE_DESTINATIONS[id]),'Henüz çalışma alanı açılmadı.');const options=$('consoleFavoritesOptions');if(options)options.innerHTML=Object.entries(CONSOLE_DESTINATIONS).filter(([id])=>['fleet','routes','cloud-documents','sinbad','captains-logbook','location-intelligence','studio-console','store'].includes(id)).map(([id,item])=>`<label><input type="checkbox" value="${esc(id)}" ${favorites.includes(id)?'checked':''}> ${esc(item.label)}</label>`).join('');}
-function saveConsoleFavorites(){const ids=[...document.querySelectorAll('#consoleFavoritesOptions input:checked')].map(input=>input.value);localStorage.setItem(CONSOLE_FAVORITES_KEY,JSON.stringify(ids));renderConsolePersonalization();}
-function openConsoleDestination(id,params={}){recordConsoleRecent(id);applyConsoleArt(id);if(workspaceWindowId)return openWorkspace(id);return openDashboardWorkspaceWindow(id,params);}
+function renderConsolePersonalization(){window.SinbadFavorites?.render();}
+function openConsoleDestination(id,params={}){recordConsoleRecent(id);if(workspaceWindowId)return openWorkspace(id);return openDashboardWorkspaceWindow(id,params);}
 function setConsoleStatus(name,state,value){const item=document.querySelector(`[data-console-status="${name}"]`);if(!item)return;item.dataset.state=state;item.querySelector('small').textContent=value;}
-async function refreshConsoleObservedStatus(){setConsoleStatus('pc','ready','UI READY');const checked=$('consoleStatusChecked');if(checked)checked.textContent=`Kontrol ${new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}`;const cloudText=$('liveCloudTitle')?.textContent||'',cloudOffline=/not connected|bağlı değil|offline|çevrimdışı/i.test(cloudText),cloudReady=!cloudOffline&&/connected|bağlı|ready|hazır/i.test(cloudText);setConsoleStatus('cloud',cloudReady?'ready':cloudOffline?'offline':'unknown',cloudReady?'READY':cloudOffline?'OFFLINE':'NOT VERIFIED');setConsoleStatus('sync','unknown','NOT VERIFIED');setConsoleStatus('agents','unknown','NOT VERIFIED');const actionText=$('ownerDeveloperMessageCount')?.textContent||'';const count=actionText.match(/\d+/)?.[0]||(/Yeni talep yok/i.test(actionText)?'0':'NOT VERIFIED');setConsoleStatus('action',count==='0'?'neutral':'unknown',count);if($('consoleActionBadge'))$('consoleActionBadge').textContent=count;try{const response=await fetch('http://127.0.0.1:31983/argos/status',{cache:'no-store',signal:AbortSignal.timeout(2500)});if(!response.ok)throw new Error('HTTP');const status=await response.json();const ready=status?.bridge?.online===true&&status?.ai?.online===true;setConsoleStatus('local',ready?'ready':'unknown',ready?'READY':'DEGRADED')}catch{setConsoleStatus('local','unknown','NOT VERIFIED')}}
-
+async function refreshConsoleObservedStatus(){
+  if(window.SinbadHome){window.SinbadHome.renderObserved();return;}
+  setConsoleStatus('pc','ready','UI READY');
+  ['cloud','local','sync','agents','action'].forEach(name=>setConsoleStatus(name,'unknown','NOT VERIFIED'));
+}
 
 const workspaceWindowId=new URLSearchParams(location.search).get('workspace');
 const workspaceWindows=new Map();
@@ -86,10 +102,16 @@ function workspaceWindowFeatures(){
   const height=Math.max(700,Math.min(screen.availHeight-80,1080));
   return `popup=yes,left=40,top=40,width=${width},height=${height},resizable=yes,scrollbars=yes`;
 }
+function storeWindowUrl(){
+  const url=new URL('./store/index.html',location.href);
+  const code=String(appLanguage||'').toLowerCase().slice(0,2);
+  url.searchParams.set('lang',['en','tr','ru','de','ar','es','fr'].includes(code)?code:'en');
+  return url;
+}
 function openDashboardWorkspaceWindow(id,params={}){
   const existing=workspaceWindows.get(id);
-  if(existing&&!existing.closed){existing.focus();return existing;}
-  const url=id==='store'?new URL('./store/index.html',location.href):new URL(location.href);
+  if(existing&&!existing.closed)return focusExistingWorkspaceWindow(existing,id,params);
+  const url=id==='store'?storeWindowUrl():new URL(location.href);
   if(id!=='store'){url.search='';url.hash='';url.searchParams.set('workspace',id);Object.entries(params).forEach(([key,value])=>url.searchParams.set(key,value));}
   const child=window.open(url.href,id==='store'?'sinbadMarineStore':`sinbadWorkspace_${id.replace(/[^a-z0-9_-]/gi,'_')}`,workspaceWindowFeatures());
   if(child)workspaceWindows.set(id,child);else location.href=url.href;
@@ -99,20 +121,30 @@ const CONSOLE_CARD_OPEN_MOTION_MS=160;
 const CONSOLE_CARD_OPEN_FALLBACK_MS=200;
 function consoleReducedMotion(){return globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches===true;}
 function consoleWorkspaceTarget(id,params={}){
-  const url=id==='store'?new URL('./store/index.html',location.href):new URL(location.href);
+  const url=id==='store'?storeWindowUrl():new URL(location.href);
   if(id!=='store'){url.search='';url.hash='';url.searchParams.set('workspace',id);Object.entries(params).forEach(([key,value])=>url.searchParams.set(key,value));}
   return {url,name:id==='store'?'sinbadMarineStore':`sinbadWorkspace_${id.replace(/[^a-z0-9_-]/gi,'_')}`};
+}
+function focusExistingWorkspaceWindow(existing,id,params={}){
+  // A child can navigate its own logo to Home while keeping its named window.
+  // Restore only that Home case; an active workspace keeps its route and state.
+  try{
+    const current=new URL(existing.location.href),home=new URL('./index.html',location.href);
+    const isHome=current.origin===home.origin&&(current.pathname===home.pathname||current.pathname===new URL('.',home).pathname)&&!current.searchParams.has('workspace');
+    if(isHome)existing.location.assign(consoleWorkspaceTarget(id,params).url.href);
+  }catch{}
+  existing.focus();return existing;
 }
 function prepareConsoleCardDestination(id,params={}){
   if(workspaceWindowId)return()=>openConsoleDestination(id,params);
   const existing=workspaceWindows.get(id);
-  if(existing&&!existing.closed)return()=>{recordConsoleRecent(id);applyConsoleArt(id);existing.focus();};
+  if(existing&&!existing.closed)return()=>{recordConsoleRecent(id);focusExistingWorkspaceWindow(existing,id,params);};
   const {url,name}=consoleWorkspaceTarget(id,params);
   const child=window.open('about:blank',name,workspaceWindowFeatures());
   if(!child)return()=>openConsoleDestination(id,params);
   workspaceWindows.set(id,child);
   try{child.document.title='Preparing SINBAD workspace';child.blur();window.focus();}catch{}
-  return()=>{recordConsoleRecent(id);applyConsoleArt(id);try{child.location.replace(url.href);}catch{child.location.href=url.href;}child.focus();};
+  return()=>{recordConsoleRecent(id);try{child.location.replace(url.href);}catch{child.location.href=url.href;}child.focus();};
 }
 function runConsoleCardOpenMotion(card,commit){
   if(card.dataset.opening==='true')return false;
@@ -130,16 +162,29 @@ function initializeWorkspaceSurface(id){
   if(id==='studio-console')refreshStudioCapability();
   if(id==='engine-room')refreshEngineRoom();
 }
+function syncWorkspaceWindowShell(id){
+  const workspace=$(id);
+  document.querySelectorAll('.workspace').forEach(section=>document.body.classList.remove(`workspace-window-${section.id}`));
+  document.body.classList.add('workspace-window-mode',`workspace-window-${id}`);
+  document.title=`${workspace.querySelector('h2')?.textContent?.trim()||'Workspace'} — Sinbad Marine`;
+  const controls=document.querySelector('.workspace-window-controls');
+  if(controls)controls.style.display=id==='enc-viewer'?'':'none';
+  if(id!=='enc-viewer'){
+    document.body.classList.remove('workspace-window-minimized','workspace-window-fit');
+    const minimize=document.querySelector('[data-window-minimize]'),scale=document.querySelector('[data-window-scale]');
+    if(minimize){minimize.textContent='—';minimize.title='Simge durumuna küçült';minimize.setAttribute('aria-label',minimize.title);}
+    if(scale){scale.textContent='▣';scale.title='Pencereyi ölçeklendir';scale.setAttribute('aria-label',scale.title);}
+  }
+  workspace.querySelectorAll('.close').forEach(button=>button.remove());
+}
 function installWorkspaceWindowShell(){
   if(!workspaceWindowId)return;
   const workspace=$(workspaceWindowId);
-  if(!workspace){location.replace('./index.html');return;}
+  if(!workspace?.classList.contains('workspace')){location.replace('./index.html');return;}
   applyConsoleArt(workspaceWindowId);
-  document.body.classList.add('workspace-window-mode',`workspace-window-${workspaceWindowId}`);
-  document.title=`${workspace.querySelector('h2')?.textContent?.trim()||'Workspace'} — Sinbad Marine`;
   const toolbar=document.createElement('nav');
   toolbar.className='workspace-window-toolbar';toolbar.setAttribute('aria-label','Workspace navigation');
-  const windowControls=workspaceWindowId==='enc-viewer'?'<div class="workspace-window-controls" aria-label="Pencere görünüm kontrolleri"><button class="workspace-window-control" type="button" data-window-minimize title="Simge durumuna küçült" aria-label="Simge durumuna küçült">—</button><button class="workspace-window-control" type="button" data-window-scale title="Pencereyi ölçeklendir" aria-label="Pencereyi ölçeklendir">▣</button><button class="workspace-window-control" type="button" data-window-fullscreen title="Ekranı kapla" aria-label="Ekranı kapla">⛶</button></div>':'';
+  const windowControls='<div class="workspace-window-controls" aria-label="Pencere görünüm kontrolleri"><button class="workspace-window-control" type="button" data-window-minimize title="Simge durumuna küçült" aria-label="Simge durumuna küçült">—</button><button class="workspace-window-control" type="button" data-window-scale title="Pencereyi ölçeklendir" aria-label="Pencereyi ölçeklendir">▣</button><button class="workspace-window-control" type="button" data-window-fullscreen title="Ekranı kapla" aria-label="Ekranı kapla">⛶</button></div>';
   toolbar.innerHTML='<div class="workspace-window-brand"><strong>⚓ Sinbad Marine</strong><small>Independent workspace</small></div><div class="workspace-window-actions"><button class="btn" type="button" data-window-back>← Back</button><button class="btn primary" type="button" data-window-home>⌂ Home</button>'+windowControls+'</div>';
   document.querySelector('main')?.prepend(toolbar);
   toolbar.querySelector('[data-window-back]').onclick=()=>history.length>1?history.back():window.close();
@@ -171,9 +216,9 @@ function installWorkspaceWindowShell(){
     });
   }
   document.querySelectorAll('.workspace').forEach(section=>section.classList.toggle('active',section.id===workspaceWindowId));
+  syncWorkspaceWindowShell(workspaceWindowId);
   const requestedBucket=new URLSearchParams(location.search).get('bucket'),bucketSelect=$('cloudBucketSelect');
   if(requestedBucket&&bucketSelect)bucketSelect.value=requestedBucket;
-  workspace.querySelectorAll('.close').forEach(button=>button.remove());
   // A workspace opened directly from its own URL bypasses openWorkspace().
   // Defer until the full script has initialized its shared state, then attach
   // the workspace-specific controls and data exactly as an in-page open does.
@@ -182,9 +227,14 @@ function installWorkspaceWindowShell(){
 document.querySelectorAll('[data-open]').forEach(x=>x.onclick=()=>{const tab=x.dataset.targetTab,params=tab?{tab}:{};if(tab)try{sessionStorage.setItem('atlas_sinbad_workspace_tab',tab)}catch{};if(x.matches('.console-domain-card'))return runConsoleCardOpenMotion(x,prepareConsoleCardDestination(x.dataset.open,params));return openConsoleDestination(x.dataset.open,params)});
 document.querySelectorAll('.console-domain-card[role="button"]').forEach(card=>card.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();card.click()}}));
 document.querySelectorAll('.close').forEach(x=>x.onclick=closeWorkspaces);
-function openWorkspace(id){
+function openWorkspace(id){return navigateWorkspace(id)}
+function navigateWorkspace(id,{restoreHistory=false}={}){
+  if(!$(id)?.classList.contains('workspace'))return;
   if(!workspaceWindowId)return openDashboardWorkspaceWindow(id);
-  const url=new URL(location.href);url.searchParams.set('workspace',id);history.pushState({workspace:id},'',url);
+  const url=new URL(location.href);
+  if(!restoreHistory&&url.searchParams.get('workspace')!==id){url.searchParams.set('workspace',id);history.pushState({workspace:id},'',url);}
+  setDocumentsMobileNav(false);
+  syncWorkspaceWindowShell(id);
   document.querySelectorAll('.workspace').forEach(x=>x.classList.toggle('active',x.id===id));
   applyConsoleArt(id);recordConsoleRecent(id);
   if(id==='documents-compliance')scrollTo({top:0,behavior:'instant'});else $(id)?.scrollIntoView({behavior:'smooth'});renderAll();initializeWorkspaceSurface(id);
@@ -192,23 +242,98 @@ function openWorkspace(id){
 function closeWorkspaces(){if(workspaceWindowId){window.close();return;}document.querySelectorAll('.workspace').forEach(x=>x.classList.remove('active'));applyConsoleArt('home');scrollTo({top:0,behavior:'smooth'})}
 installWorkspaceWindowShell();
 const documentsMobileNavToggle=document.querySelector('.dc-mobile-nav-toggle');
-function documentsMobileNavIsRelevant(){return workspaceWindowId==='documents-compliance'&&document.getElementById('documents-compliance')?.classList.contains('active')}
+function documentsMobileNavIsRelevant(){return document.getElementById('documents-compliance')?.classList.contains('active')===true}
 function setDocumentsMobileNav(open){
   const nextOpen=Boolean(open&&documentsMobileNavIsRelevant());
   document.body.classList.toggle('dc-mobile-nav-open',nextOpen);
   documentsMobileNavToggle?.setAttribute('aria-expanded',String(nextOpen));
   if(documentsMobileNavToggle)documentsMobileNavToggle.setAttribute('aria-label',nextOpen?'Close SINBAD navigation':'Open SINBAD navigation');
 }
+window.addEventListener('popstate',()=>{
+  if(!workspaceWindowId)return;
+  const id=new URLSearchParams(location.search).get('workspace');
+  if(!$(id)?.classList.contains('workspace')){location.replace('./index.html');return;}
+  navigateWorkspace(id,{restoreHistory:true});
+  if(id==='sinbad'){const tab=new URLSearchParams(location.search).get('tab');if(['chat','academy','argos'].includes(tab))setSinbadWorkspaceTab(tab);}
+});
 documentsMobileNavToggle?.addEventListener('click',()=>{if(documentsMobileNavIsRelevant())setDocumentsMobileNav(!document.body.classList.contains('dc-mobile-nav-open'))});
 document.querySelectorAll('#consoleSidebar button,#consoleSidebar a').forEach(control=>control.addEventListener('click',()=>{if(document.body.classList.contains('dc-mobile-nav-open'))setDocumentsMobileNav(false)}));
 document.addEventListener('keydown',event=>{if(event.key==='Escape'&&document.body.classList.contains('dc-mobile-nav-open'))setDocumentsMobileNav(false)});
 document.querySelectorAll('[data-console-home]').forEach(button=>button.onclick=()=>workspaceWindowId?location.assign('./index.html'):closeWorkspaces());
-document.querySelectorAll('[data-owner-console]').forEach(button=>button.onclick=()=>window.open(CONSOLE_OWNER_URL,'sinbadOwnerConsole','noopener,noreferrer'));
+const OWNER_CONSOLE_GRANT_RECORD='owner_console_authorization';
+const OWNER_CONSOLE_SURFACES=['engine-room','owner-console','communication-app'];
+const ownerConsoleCandidate={grant:null,subject:null};
+function ownerConsoleGrantDecision(grant,subject,surface){
+  if(!grant||typeof grant!=='object')return {grantFound:false,observe:false,reason:'CONSOLE_GRANT_RECORD_ABSENT'};
+  if(grant.record!==OWNER_CONSOLE_GRANT_RECORD)return {grantFound:false,observe:false,reason:'GRANT_RECORD_MISMATCH'};
+  const found={grantFound:true,observe:false};
+  if(grant.execute!==false)return {...found,reason:'GRANT_EXECUTE_FORBIDDEN'};
+  if(grant.purpose!=='observation')return {...found,reason:'GRANT_PURPOSE_MISMATCH'};
+  if(!OWNER_CONSOLE_SURFACES.includes(surface)||grant.scope!==surface)return {...found,reason:'GRANT_SCOPE_MISMATCH'};
+  const subjectId=String(subject?.userId||'');
+  if(!subjectId||subjectId!==String(grant.subjectUserId||''))return {...found,reason:'GRANT_SUBJECT_MISMATCH'};
+  const workspace=String(subject?.workspaceId||'');
+  if(!workspace||workspace!==String(grant.workspaceId||''))return {...found,reason:'GRANT_WORKSPACE_MISMATCH'};
+  if(grant.state==='revoked')return {...found,reason:'GRANT_REVOKED'};
+  if(grant.state==='expired')return {...found,reason:'GRANT_EXPIRED'};
+  if(grant.state!=='active')return {...found,reason:'GRANT_STATE_INACTIVE'};
+  if(!grant.expiresAt)return {...found,reason:'GRANT_EXPIRY_ABSENT'};
+  const exp=Date.parse(grant.expiresAt),now=Date.parse(subject?.now||'');
+  if(!Number.isFinite(exp)||!Number.isFinite(now)||exp<=now)return {...found,reason:'GRANT_EXPIRED'};
+  if(!grant.grantedByUserId)return {...found,reason:'GRANT_GRANTOR_ABSENT'};
+  return {grantFound:true,observe:true,reason:'ACTIVE_PERSON_OBSERVATION'};
+}
+function ownerConsoleObservationDecision(role=currentWorkspaceRole,grant=ownerConsoleCandidate.grant,subject=ownerConsoleCandidate.subject,surface='owner-console'){
+  const name=String(role||'');
+  const requested=OWNER_CONSOLE_SURFACES.includes(surface)?surface:'owner-console';
+  const decision={observe:false,execute:false,navigationOnly:true,grantRecord:OWNER_CONSOLE_GRANT_RECORD,grantFound:false,reason:'CONSOLE_GRANT_RECORD_ABSENT',surface:requested};
+  if(grant==null){
+    if(name==='owner')return {...decision,observe:true,reason:'ACTIVE_OWNER_MEMBERSHIP'};
+    if(name)return {...decision,reason:'ROLE_NAME_IS_NOT_AUTHORITY'};
+    return decision;
+  }
+  return {...decision,...ownerConsoleGrantDecision(grant,subject,requested),execute:false,navigationOnly:true,surface:requested};
+}
+function verifiedWorkspaceRole(){
+  let url='';
+  try{url=typeof getCloudConfig==='function'?String(getCloudConfig().url||''):'';}catch{url='';}
+  const user=typeof cloudSession==='undefined'?'':String(cloudSession?.user?.id||'');
+  const workspace=typeof selectedWorkspaceId==='undefined'?'':String(selectedWorkspaceId||'');
+  const verified=typeof currentWorkspaceRoleVerifiedScope==='undefined'?'':String(currentWorkspaceRoleVerifiedScope||'');
+  const live=`${url}|${user}|${workspace}`;
+  if(!currentWorkspaceRole||!user||!workspace||!url||verified!==live)return '';
+  return currentWorkspaceRole;
+}
+function ownerConsoleEntryAllowed(){
+  const decision=ownerConsoleObservationDecision(verifiedWorkspaceRole(),ownerConsoleCandidate.grant,ownerConsoleCandidate.subject,'owner-console');
+  return decision.observe===true&&decision.execute===false&&decision.navigationOnly===true;
+}
+function ownerConsoleDirectRequest(kind,role,grant,subject){
+  const surface=kind==='api'||kind==='url-engine-room'?'engine-room':kind==='communication-app'?'communication-app':'owner-console';
+  const decision=ownerConsoleObservationDecision(role,grant,subject,surface);
+  const allowed=decision.observe===true&&decision.execute===false&&decision.navigationOnly===true;
+  return {allowed,probesStarted:false,opened:false,execute:false,decision};
+}
+function ownerConsoleCandidateInput(grant,subject){ownerConsoleCandidate.grant=grant??null;ownerConsoleCandidate.subject=subject??null;}
+function openOwnerConsole(event){
+  event?.preventDefault();
+  const decision=ownerConsoleObservationDecision(verifiedWorkspaceRole(),ownerConsoleCandidate.grant,ownerConsoleCandidate.subject,'owner-console');
+  if(!decision.observe||decision.execute||!decision.navigationOnly||!CONSOLE_OWNER_URL)return;
+  window.open(CONSOLE_OWNER_URL,'sinbadOwnerConsole','noopener,noreferrer');
+}
+function openCommunicationApp(event){
+  event?.preventDefault();
+  const decision=ownerConsoleObservationDecision(verifiedWorkspaceRole(),ownerConsoleCandidate.grant,ownerConsoleCandidate.subject,'communication-app');
+  if(!decision.observe||decision.execute||!decision.navigationOnly)return {opened:false,reason:decision.reason,target:'NOT_VERIFIED'};
+  return {opened:false,reason:'COMMUNICATION_TARGET_NOT_VERIFIED',target:'NOT_VERIFIED'};
+}
+document.querySelectorAll('[data-owner-console],#ownerConsoleEntry').forEach(button=>button.addEventListener('click',openOwnerConsole));
+$('communicationAppEntry')?.addEventListener('click',openCommunicationApp);
 document.querySelectorAll('[data-console-favorites]').forEach(button=>button.onclick=()=>{renderConsolePersonalization();$('consoleFavoritesDialog')?.showModal()});
 document.querySelectorAll('[data-console-recent]').forEach(button=>button.onclick=()=>{$('consoleRecentPanel')?.scrollIntoView({behavior:'smooth',block:'center'})});
-$('consoleFavoritesDialog')?.addEventListener('close',event=>{if(event.target.returnValue==='done')saveConsoleFavorites();else renderConsolePersonalization()});
-$('consoleStatusRefresh')?.addEventListener('click',refreshConsoleObservedStatus);
-$('homeCanonicalRefresh')?.addEventListener('click',refreshConsoleObservedStatus);
+$('consoleFavoritesDialog')?.addEventListener('close',event=>{renderConsolePersonalization()});
+$('consoleStatusRefresh')?.addEventListener('click',()=>window.SinbadHome?.refresh());
+$('homeCanonicalRefresh')?.addEventListener('click',()=>window.SinbadHome?.refresh());
 $('homeCanonicalMenu')?.addEventListener('click',()=>{const menu=document.querySelector('.hero-action-menu');if(menu)menu.open=!menu.open});
 renderConsolePersonalization();refreshConsoleObservedStatus();
 const consoleStatusObserver=new MutationObserver(refreshConsoleObservedStatus);[$('liveCloudTitle'),$('ownerDeveloperMessageCount')].filter(Boolean).forEach(node=>consoleStatusObserver.observe(node,{subtree:true,childList:true,characterData:true}));
@@ -782,7 +907,7 @@ if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWork
 const sinbadState = {
   messages: JSON.parse(localStorage.getItem('atlas_sinbad_messages') || '[]'),
   voiceEnabled: localStorage.getItem('atlas_sinbad_voice') !== 'off',
-  language: localStorage.getItem('atlas_sinbad_language') || 'tr-TR'
+  language: (stored=>{const value=stored||'tr-TR';const supported=APP_LANGUAGES.some(([code])=>code===value)?value:'en-US';if(supported!==stored)localStorage.setItem('atlas_sinbad_language',supported);return supported;})(localStorage.getItem('atlas_sinbad_language'))
 };
 let pendingSinbadWebQuestion='';
 const SINBAD_WEB_SEARCH_ENABLED=false;
@@ -1831,12 +1956,8 @@ function renderSinbadMessages(){
     });
     saveSinbadMessages();
   }
-  box.innerHTML=sinbadState.messages.map(m=>`
-    <div class="chat-bubble ${m.role==='user'?'user':'sinbad'}">
-      <span class="speaker">${m.role==='user'?'Captain':'Captain Sinbad'}</span>
-      ${esc(m.text)}
-      ${m.role==='sinbad'?sinbadVisualCards(m.visuals):''}
-    </div>`).join('');
+  // The bubble preserves message newlines, so template indentation must not become empty lines.
+  box.innerHTML=sinbadState.messages.map(m=>`<div class="chat-bubble ${m.role==='user'?'user':'sinbad'}"><span class="speaker">${m.role==='user'?'Captain':'Captain Sinbad'}</span>${esc(m.text)}${m.role==='sinbad'?sinbadVisualCards(m.visuals):''}</div>`).join('');
   box.scrollTop=box.scrollHeight;
 }
 function addSinbadMessage(role,text,visuals=[]){
@@ -1964,9 +2085,14 @@ function engineRoomFact(label,value){
   const shown=engineRoomShown(value);
   return shown===null?{label,value:'UNKNOWN',observed:false}:{label,value:shown,observed:true};
 }
-function engineRoomEngine(id,title,state,sources,facts){
+function engineRoomSourceTime(value){
+  if(typeof value!=='string')return null;
+  const text=value.trim();
+  return text||null;
+}
+function engineRoomEngine(id,title,state,sources,facts,task,evidenceTime){
   if(!ENGINE_ROOM_STATES.includes(state))throw new Error(`ENGINE_ROOM_STATE_INVALID:${state}`);
-  return {id,title,state,sources,facts,notConnected:ENGINE_ROOM_NOT_CONNECTED};
+  return {id,title,state,sources,facts,notConnected:ENGINE_ROOM_NOT_CONNECTED,task:task||null,taskSource:task?'candidate-declaration':null,evidenceTime:engineRoomSourceTime(evidenceTime)};
 }
 function engineRoomLibraryBody(probes){
   if(probes.library?.ok)return {body:probes.library.body,sources:['GET /library/status']};
@@ -1977,8 +2103,11 @@ function engineRoomLibraryBody(probes){
 function normalizeEngineRoomSnapshot(probes,observedAt){
   const argos=probes.argos?.ok?probes.argos.body:null;
   const status=probes.status?.ok?probes.status.body:null;
-  const aiBody=probes.ai?.ok?probes.ai.body:(argos&&argos.ai&&typeof argos.ai==='object'?argos.ai:null);
-  const aiSources=probes.ai?.ok?['GET /ai/status']:(aiBody?['GET /argos/status ai']:[]);
+  const independentAiOk=probes.ai?.ok===true;
+  const aiFromProbe=independentAiOk?probes.ai.body:null;
+  const aiFromArgos=!independentAiOk&&argos&&argos.ai&&typeof argos.ai==='object'?argos.ai:null;
+  const aiBody=aiFromProbe||aiFromArgos;
+  const aiSources=independentAiOk?['GET /ai/status']:(aiBody?['GET /argos/status ai']:[]);
   const libraryHit=engineRoomLibraryBody(probes);
   const studio=probes.studio?.ok?probes.studio.body:null;
   const bridgeSources=[];
@@ -2038,15 +2167,24 @@ function normalizeEngineRoomSnapshot(probes,observedAt){
     engineRoomFact('studio core installed',studio?.core?.installed),
     engineRoomFact('approval',studio?.approval)
   ];
+  const argosTime=engineRoomSourceTime(argos?.observedAt);
+  const statusTime=engineRoomSourceTime(status?.observedAt);
+  const ownAiTime=engineRoomSourceTime(aiBody?.observedAt);
+  const aiTime=independentAiOk?ownAiTime:(aiFromArgos?(ownAiTime||argosTime):null);
+  const bridgeTime=argos?argosTime:(status?statusTime:null);
+  const libraryTime=engineRoomSourceTime(libraryBody?.observedAt);
+  const studioTime=engineRoomSourceTime(studio?.observedAt);
   return {
     schema:'sinbad-engine-room-snapshot/0',
     observedAt,
+    compiledAt:observedAt,
+    receivedAt:observedAt,
     engines:[
-      engineRoomEngine('bridge','Bridge',bridgeState,bridgeSources,bridgeFacts),
-      engineRoomEngine('local-ai','Local AI',aiState,aiSources,aiFacts),
-      engineRoomEngine('command-gate','ARGOS / Command Gate',gateState,argos?['GET /argos/status']:[],gateFacts),
-      engineRoomEngine('library','Library',libraryState,libraryHit?.sources||[],libraryFacts),
-      engineRoomEngine('studio','Studio',studioState,studio?['GET /studio/status']:[],studioFacts)
+      engineRoomEngine('bridge','Bridge',bridgeState,bridgeSources,bridgeFacts,'Read the local Bridge status record. Observation only.',bridgeTime),
+      engineRoomEngine('local-ai','Local AI',aiState,aiSources,aiFacts,'Read the local model status record. Observation only.',aiTime),
+      engineRoomEngine('command-gate','ARGOS / Command Gate',gateState,argos?['GET /argos/status']:[],gateFacts,'Read the ARGOS command-gate record. Observation only.',argos?argosTime:null),
+      engineRoomEngine('library','Library',libraryState,libraryHit?.sources||[],libraryFacts,'Read the library count record. Observation only.',libraryTime),
+      engineRoomEngine('studio','Studio',studioState,studio?['GET /studio/status']:[],studioFacts,'Read the Studio capability record. Observation only.',studioTime)
     ]
   };
 }
@@ -2077,27 +2215,97 @@ async function probeEngineRoom(path,parentSignal){
   }catch{return {ok:false,http:0,body:null};}
   finally{clearTimeout(timer);if(parentSignal)parentSignal.removeEventListener('abort',onParent);}
 }
+function loadEngineRoomGroqRecord(){
+  if(window.SinbadGroqRecord?.engine)return Promise.resolve(window.SinbadGroqRecord);
+  return new Promise(resolve=>{
+    const script=document.createElement('script');
+    script.src='./engine-room-groq-record.js';
+    script.onload=()=>resolve(window.SinbadGroqRecord||null);
+    script.onerror=()=>resolve(null);
+    document.head.appendChild(script);
+  });
+}
 function renderEngineRoom(snapshot){
   const grid=$('engineRoomGrid'),stamp=$('engineRoomObservedAt');
   if(!grid||!stamp)return;
-  stamp.textContent=`Snapshot ${snapshot.schema} · observed ${snapshot.observedAt} · read only · no inferred health`;
-  grid.innerHTML=snapshot.engines.map(engine=>`<article class="engine-room-card" data-engine-id="${esc(engine.id)}" data-engine-state="${esc(engine.state)}"><header><span>${esc(engine.title)}</span><strong>${esc(engine.state)}</strong></header><p class="engine-room-source">${engine.sources.length?esc(engine.sources.join(' · ')):'Probe unavailable'}</p><dl>${engine.facts.map(fact=>`<div><dt>${esc(fact.label)}</dt><dd${fact.observed?'':` class="is-unknown"`}>${esc(fact.value)}</dd></div>`).join('')}</dl><p class="engine-room-absent">NOT CONNECTED: ${esc(engine.notConnected.join(', '))}</p></article>`).join('');
+  const compiled=snapshot.compiledAt||snapshot.receivedAt||'UNKNOWN';
+  const sourceTimes=[...new Set((snapshot.engines||[]).map(engine=>engine.evidenceTime).filter(Boolean))];
+  stamp.textContent=`Snapshot ${snapshot.schema} · compiled ${compiled} · source ${sourceTimes.length?sourceTimes.join(', '):'SOURCE_MEASUREMENT_TIME_ABSENT'} · read only · no inferred health`;
+  const components=Array.isArray(snapshot.components)?snapshot.components:[];
+  grid.innerHTML=snapshot.engines.map((engine,index)=>{
+    const component=components.find(item=>item?.identity?.id===engine.id)||null;
+    const recordClass=component?.recordClass||'unverified';
+    const health=component?.health||'NOT_A_HEALTH_MEASUREMENT';
+    const limit=component?.freshnessLimit?` · ${component.freshnessLimit}`:'';
+    return `<article class="engine-room-card" data-engine-id="${esc(engine.id)}" data-engine-state="${esc(engine.state)}" data-record-class="${esc(recordClass)}" data-health="${esc(health)}"><header><span>${esc(engine.title)}</span><strong>${esc(engine.state)}</strong></header><p class="engine-room-record">Record ${esc(recordClass)}${esc(limit)}</p><p class="engine-room-health">${esc(health)}</p><p class="engine-room-source">${engine.sources.length?esc(engine.sources.join(' · ')):'Probe unavailable'}</p><dl>${engine.facts.map(fact=>`<div><dt>${esc(fact.label)}</dt><dd${fact.observed?'':` class="is-unknown"`}>${esc(fact.value)}</dd></div>`).join('')}</dl><p class="engine-room-absent">NOT CONNECTED: ${esc(engine.notConnected.join(', '))}</p></article>`;
+  }).join('');
+}
+function engineRoomPaintClosed(){
+  if(typeof clearEngineRoomPrivateView==='function')clearEngineRoomPrivateView();
+  else{
+    const stamp=$('engineRoomObservedAt');
+    const grid=$('engineRoomGrid');
+    if(stamp)stamp.textContent='Observation was not requested. Private system data stays closed for this session.';
+    if(grid)grid.replaceChildren();
+  }
 }
 async function refreshEngineRoom(){
   const stamp=$('engineRoomObservedAt');
+  const scopeAtStart=`${getCloudConfig().url}|${cloudSession?.user?.id||''}|${selectedWorkspaceId||''}`;
+  const authorityAtStart=typeof observationAuthorityEpoch==='number'?observationAuthorityEpoch:0;
+  const decision=ownerConsoleObservationDecision(verifiedWorkspaceRole(),ownerConsoleCandidate.grant,ownerConsoleCandidate.subject,'engine-room');
+  if(!decision.observe||decision.execute){
+    if(stamp)stamp.textContent='Observation was not requested. Private system data stays closed for this session.';
+    engineRoomPaintClosed();
+    return;
+  }
+  if(typeof probePaintAllowed!=='function'||!decision.navigationOnly){
+    if(stamp)stamp.textContent='Observation was not requested. Private system data stays closed for this session.';
+    engineRoomPaintClosed();
+    return;
+  }
   if(stamp)stamp.textContent='Observing local Bridge…';
   engineRoomRequest?.abort();
   const controller=new AbortController();
   engineRoomRequest=controller;
-  const probes=await collectEngineRoomProbes((path,signal)=>probeEngineRoom(path,signal),controller.signal);
-  if(engineRoomRequest!==controller)return;
-  renderEngineRoom(normalizeEngineRoomSnapshot(probes,new Date().toISOString()));
-  engineRoomRequest=null;
+  try{
+    const probes=await collectEngineRoomProbes((path,signal)=>probeEngineRoom(path,signal),controller.signal);
+    if(engineRoomRequest!==controller)return;
+    const record=await loadEngineRoomGroqRecord();
+    if(engineRoomRequest!==controller)return;
+    const liveScope=`${getCloudConfig().url}|${cloudSession?.user?.id||''}|${selectedWorkspaceId||''}`;
+    const liveDecision=ownerConsoleObservationDecision(verifiedWorkspaceRole(),ownerConsoleCandidate.grant,ownerConsoleCandidate.subject,'engine-room');
+    if(typeof probePaintAllowed!=='function'||!probePaintAllowed({scopeAtStart,liveScope,verifiedScope:currentWorkspaceRoleVerifiedScope,authorityAtStart,authorityNow:observationAuthorityEpoch,surface:'engine-room',decision:liveDecision})){
+      engineRoomPaintClosed();
+      return;
+    }
+    const compiledAt=new Date().toISOString();
+    const snapshot=normalizeEngineRoomSnapshot(probes,compiledAt);
+    snapshot.probeTransport='attempted';
+    if(Object.values(probes).every(item=>item&&item.ok===false&&item.http===0))snapshot.probeAborted=true;
+    const groq=record?.engine(typeof appLanguage==='string'?appLanguage:'en-US');
+    const extras=groq&&groq.state==='UNKNOWN'?[groq]:[];
+    const nowMs=Date.now();
+    if(window.SinbadEngineRoomRecord?.compose)window.SinbadEngineRoomRecord.compose(snapshot,extras,{nowMs});
+    else{extras.forEach(engine=>snapshot.engines.push(engine));window.SinbadEngineRoomRecord?.annotate?.(snapshot,{nowMs});}
+    if(engineRoomRequest!==controller)return;
+    const paintDecision=ownerConsoleObservationDecision(verifiedWorkspaceRole(),ownerConsoleCandidate.grant,ownerConsoleCandidate.subject,'engine-room');
+    if(typeof probePaintAllowed!=='function'||!probePaintAllowed({scopeAtStart,liveScope:`${getCloudConfig().url}|${cloudSession?.user?.id||''}|${selectedWorkspaceId||''}`,verifiedScope:currentWorkspaceRoleVerifiedScope,authorityAtStart,authorityNow:observationAuthorityEpoch,surface:'engine-room',decision:paintDecision})){
+      engineRoomPaintClosed();
+      return;
+    }
+    renderEngineRoom(snapshot);
+  }catch{
+    if(engineRoomRequest===controller&&stamp)stamp.textContent='Observation did not finish. No health result was recorded.';
+  }finally{
+    if(engineRoomRequest===controller)engineRoomRequest=null;
+  }
 }
 $('refreshEngineRoom')?.addEventListener('click',refreshEngineRoom);
 async function refreshStudioCapability(){
  const dot=$('studioStatusDot'),title=$('studioStatusTitle'),detail=$('studioStatusDetail'),boundary=$('studioBoundaryText');
  if(!dot||!title||!detail)return;
+ if(!cloudSession?.user||needsInviteSetup(cloudSession.user)){dot.classList.remove('online');title.textContent='Sign in to observe local Studio';detail.textContent='Private local services remain closed for visitors.';return;}
  dot.classList.remove('online');title.textContent='Checking local Studio runtime…';detail.textContent='Reading capability status from Sinbad Bridge.';
  try{
   const response=await fetch(`${SINBAD_BRIDGE_URL}/studio/status`,{cache:'no-store'});if(!response.ok)throw new Error(`Bridge returned ${response.status}`);const status=await response.json(),ready=status.status==='READY_FOR_APPROVAL_GATED_TESTS';
@@ -2146,10 +2354,12 @@ async function sendBridgeGpx(){
 }
 async function checkBridgeStatus(){
   const badge=$('bridgeStatus');if(!badge)return;
+  if(!cloudSession?.user||needsInviteSetup(cloudSession.user)){badge.textContent='Private Bridge requires sign-in';badge.className='bridge-status offline';return;}
   try{const response=await fetch(`${SINBAD_BRIDGE_URL}/status`,{cache:'no-store'});if(!response.ok)throw new Error();const status=await response.json();const indexed=status.library?.chunks??status.library?.count??0;badge.textContent=`Bridge online · ${status.routes} route(s) · ${indexed} memory chunk(s)`;badge.className='bridge-status online';}
   catch(error){badge.textContent='Bridge offline';badge.className='bridge-status offline';}
 }
 async function sinbadBridgeJson(path,options={}){
+  if(!cloudSession?.user||needsInviteSetup(cloudSession.user))throw new Error('SIGN_IN_REQUIRED');
   const actionByPath={'/library/ingest':'LIBRARY_WRITE','/library/reindex':'LIBRARY_INDEX_WRITE'};const action=actionByPath[path];
   const response=action&&String(options.method).toUpperCase()==='POST'?await ownerBridgeFetch(path,action,options.body||''):await fetch(`${SINBAD_BRIDGE_URL}${path}`,{cache:'no-store',...options,headers:{'Content-Type':'application/json',...(options.headers||{})}});
   if(!response.ok)throw new Error(`Bridge returned ${response.status}`);
@@ -2374,6 +2584,7 @@ async function sinbadLocalAnswer(query){
   return noMatch[language]||noMatch['en-US'];
 }
 async function sinbadOfflineAiAnswer(question){
+  if(!cloudSession?.user||needsInviteSetup(cloudSession.user))return null;
   const status=$('sinbadKnowledgeStatus');
   try{
     setSinbadThinkingStage('retrieving');
@@ -2481,6 +2692,7 @@ function setArgosCardState(component,state){
 }
 async function refreshArgosStatus(){
   const overall=$('argosOverallStatus'),evidence=$('argosEvidenceText');if(!overall||!evidence)return;
+  if(!cloudSession?.user||needsInviteSetup(cloudSession.user)){overall.textContent='SIGN IN REQUIRED';overall.className='argos-overall';evidence.textContent='Private local services remain closed for visitors.';return;}
   argosStatusRequest?.abort();const controller=new AbortController();argosStatusRequest=controller;
   const timer=setTimeout(()=>controller.abort(),5000);
   overall.textContent='Kontrol ediliyor…';overall.className='argos-overall checking';
@@ -2505,6 +2717,34 @@ async function refreshArgosStatus(){
     ['bridge','ai','gate'].forEach(component=>setArgosCardState(component,'degraded'));evidence.textContent='Yerel Bridge sağlık özeti alınamadı. Komutlar güvenli biçimde kapalı kabul edilmelidir.';
   }finally{clearTimeout(timer);if(argosStatusRequest===controller)argosStatusRequest=null;}
 }
+let sinbadChatLayoutFrame=0,sinbadChatRevealPending=false,sinbadChatFocusPending=false;
+function scheduleSinbadChatLayout({reveal=false,focus=false}={}){
+  sinbadChatFocusPending=sinbadChatFocusPending||focus;
+  sinbadChatRevealPending=sinbadChatRevealPending||reveal;
+  if(sinbadChatLayoutFrame)return;
+  sinbadChatLayoutFrame=requestAnimationFrame(()=>{
+    sinbadChatLayoutFrame=0;
+    const shouldReveal=sinbadChatRevealPending,shouldFocus=sinbadChatFocusPending;sinbadChatRevealPending=false;sinbadChatFocusPending=false;
+    const panel=$('sinbad-panel-chat'),workspace=$('sinbad');
+    const visible=workspace?.classList.contains('active')&&!panel?.hidden&&Boolean(panel?.getBoundingClientRect().width);
+    const viewport=window.visualViewport,bottom=(viewport?.offsetTop||0)+(viewport?.height||innerHeight);
+    const wasCompact=document.body.classList.contains('sinbad-compact-chat');
+    const compact=Boolean(visible&&(viewport?.width||innerWidth)<=1024&&(viewport?.height||innerHeight)<=600);
+    if(compact!==wasCompact)document.body.classList.toggle('sinbad-compact-chat',compact);
+    if(!visible)return;
+    const headerHeight=document.querySelector('.topbar')?.getBoundingClientRect().height||0;
+    const toolbarHeight=document.querySelector('.workspace-window-toolbar')?.getBoundingClientRect().height||0;
+    document.body.style.setProperty('--sinbad-global-header-height',`${headerHeight}px`);
+    document.body.style.setProperty('--sinbad-window-toolbar-height',`${toolbarHeight}px`);
+    const obstruction=Math.max(0,...[document.querySelector('.topbar'),document.querySelector('.workspace-window-toolbar'),document.querySelector('.sinbad-workspace-tabs')].filter(Boolean).map(el=>{const style=getComputedStyle(el);return style.position==='sticky'?el.getBoundingClientRect().height+(parseFloat(style.top)||0):0;}));
+    let top=panel.getBoundingClientRect().top;
+    if(shouldFocus||(compact&&!wasCompact)||(!compact&&wasCompact&&panel.contains(document.activeElement))||(shouldReveal&&(bottom-top<320||top<obstruction))){
+      window.scrollBy({top:top-obstruction-8,behavior:'instant'});top=panel.getBoundingClientRect().top;
+    }
+    const height=Math.max(160,Math.round(bottom-Math.max(top,obstruction+8)-12));
+    if(panel.style.getPropertyValue('--sinbad-chat-height')!==`${height}px`)panel.style.setProperty('--sinbad-chat-height',`${height}px`);
+  });
+}
 function setSinbadWorkspaceTab(requested,{focus=false}={}){
   const tab=SINBAD_WORKSPACE_TABS.includes(requested)?requested:'chat';
   document.querySelectorAll('[data-sinbad-tab]').forEach(button=>{
@@ -2517,6 +2757,7 @@ function setSinbadWorkspaceTab(requested,{focus=false}={}){
   document.querySelectorAll('[data-sinbad-panel]').forEach(panel=>{panel.hidden=panel.dataset.sinbadPanel!==tab;});
   if(tab==='argos')refreshArgosStatus();
   try{sessionStorage.setItem('atlas_sinbad_workspace_tab',tab);}catch{}
+  scheduleSinbadChatLayout({reveal:tab==='chat'});
 }
 document.querySelectorAll('[data-sinbad-tab]').forEach(button=>{
   button.addEventListener('click',()=>setSinbadWorkspaceTab(button.dataset.sinbadTab));
@@ -2534,6 +2775,24 @@ document.querySelectorAll('[data-sinbad-tab]').forEach(button=>{
 let initialSinbadWorkspaceTab='chat';
 try{initialSinbadWorkspaceTab=sessionStorage.getItem('atlas_sinbad_workspace_tab')||'chat';}catch{}
 setSinbadWorkspaceTab(initialSinbadWorkspaceTab);
+// Install once. Navigation and authentication only reveal an entering Chat surface;
+// resize/message updates recalculate its bounds without forcing a page scroll.
+let sinbadChatWasVisible=false;
+const observeSinbadChatVisibility=()=>{
+  const visible=$('sinbad')?.classList.contains('active')&&!$('sinbad-panel-chat')?.hidden&&Boolean($('sinbad-panel-chat')?.getBoundingClientRect().width);
+  scheduleSinbadChatLayout({reveal:visible&&!sinbadChatWasVisible});sinbadChatWasVisible=visible;
+};
+const sinbadChatVisibilityObserver=new MutationObserver(observeSinbadChatVisibility);
+sinbadChatVisibilityObserver.observe(document.body,{attributes:true,attributeFilter:['class']});
+sinbadChatVisibilityObserver.observe($('sinbad'),{attributes:true,attributeFilter:['class']});
+sinbadChatVisibilityObserver.observe($('sinbad-panel-chat'),{attributes:true,attributeFilter:['hidden']});
+$('sinbadInput')?.addEventListener('focus',()=>scheduleSinbadChatLayout({reveal:true,focus:true}));
+window.addEventListener('scroll',()=>scheduleSinbadChatLayout(),{passive:true});
+window.addEventListener('resize',()=>scheduleSinbadChatLayout());
+window.visualViewport?.addEventListener('resize',()=>scheduleSinbadChatLayout());
+window.visualViewport?.addEventListener('scroll',()=>scheduleSinbadChatLayout());
+if(window.ResizeObserver){const observer=new ResizeObserver(()=>scheduleSinbadChatLayout());document.querySelectorAll('.topbar,.workspace-window-toolbar,.sinbad-composer').forEach(el=>observer.observe(el));}
+observeSinbadChatVisibility();
 $('refreshArgosStatus')?.addEventListener('click',refreshArgosStatus);
 
 $('sinbadFloat').addEventListener('click',()=>openWorkspace('sinbad'));
@@ -2607,25 +2866,22 @@ function setSetupProgress(){
     guard.classList.toggle('ready',ready);
   }
 }
-async function refreshCloudSummary(){
-  if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId){
-    ['sumFiles','sumPubs','sumCharts','sumStorage'].forEach(id=>{if($(id))$(id).textContent='—'});
-    return;
-  }
-  if(!roleCanAccessPrivateSources()){
-    ['sumFiles','sumPubs','sumCharts','sumStorage'].forEach(id=>{if($(id))$(id).textContent='—'});
-    return;
-  }
-  const {data,error}=await cloudClient.from('documents')
-    .select('bucket_id,file_size_bytes')
-    .eq('workspace_id',selectedWorkspaceId)
-    .is('deleted_at',null);
-  if(error)return;
-  const files=data||[];
-  $('sumFiles').textContent=files.length;
-  $('sumPubs').textContent=files.filter(f=>f.bucket_id==='nautical-publications').length;
-  $('sumCharts').textContent=files.filter(f=>f.bucket_id==='nautical-charts').length;
-  $('sumStorage').textContent=formatBytes(files.reduce((n,f)=>n+(Number(f.file_size_bytes)||0),0));
+async function refreshCloudSummary({signal,requireVerifiedScope=false}={}){
+  const scope={client:cloudClient,user:cloudSession?.user?.id,workspace:selectedWorkspaceId};
+  const clear=()=>['sumFiles','sumPubs','sumCharts','sumStorage'].forEach(id=>{if($(id))$(id).textContent='—'});
+  if(!scope.client||!scope.user||!scope.workspace){clear();return {state:'unavailable'};}
+  if(requireVerifiedScope&&currentWorkspaceRoleVerifiedScope!==`${getCloudConfig().url}|${scope.user}|${scope.workspace}`)return {state:'unavailable'};
+  if(!roleCanAccessPrivateSources()){clear();return {state:'restricted'};}
+  try{
+    let query=scope.client.from('documents').select('bucket_id,file_size_bytes').eq('workspace_id',scope.workspace).is('deleted_at',null);
+    if(signal&&typeof query.abortSignal==='function')query=query.abortSignal(signal);
+    const {data,error}=await query;
+    if(scope.client!==cloudClient||scope.user!==cloudSession?.user?.id||scope.workspace!==selectedWorkspaceId)return {state:'stale'};
+    if(error)return {state:'error'};
+    const files=data||[],counts={files:files.length,publications:files.filter(f=>f.bucket_id==='nautical-publications').length,charts:files.filter(f=>f.bucket_id==='nautical-charts').length,storage:formatBytes(files.reduce((n,f)=>n+(Number(f.file_size_bytes)||0),0))};
+    $('sumFiles').textContent=counts.files;$('sumPubs').textContent=counts.publications;$('sumCharts').textContent=counts.charts;$('sumStorage').textContent=counts.storage;
+    return {state:'ready',counts};
+  }catch{return {state:'error'};}
 }
 function openCloudBucket(bucket){
   if(!workspaceWindowId){openDashboardWorkspaceWindow('cloud-documents',{bucket});return;}
@@ -2647,6 +2903,10 @@ let cloudClient = null;
 let cloudSession = null;
 let selectedWorkspaceId = localStorage.getItem('atlas_selected_workspace') || localStorage.getItem('atlas-v81-workspace') || '';
 let currentWorkspaceRole = '';
+let currentWorkspaceRoleVerifiedScope='';
+let membershipEpoch=0;
+let observationAuthorityEpoch=0;
+let membershipSessionKey='';
 if(selectedWorkspaceId)localStorage.setItem('atlas_selected_workspace',selectedWorkspaceId);
 let authSubscription = null;
 let pendingInviteSetup =
@@ -2736,11 +2996,15 @@ function setupPasswordControls(){
   updatePasswordRules('invitePassword');
   updatePasswordRules('recoveryNewPassword');
 }
+let appAccessSignedIn=false;
 function setAppAccess(){
   const signedIn=Boolean(cloudSession?.user) && !needsInviteSetup(cloudSession.user);
+  const wasSignedIn=appAccessSignedIn;appAccessSignedIn=signedIn;
   document.body.classList.remove('auth-pending','signed-out','authenticated');
   document.body.classList.add(signedIn?'authenticated':'signed-out');
+  if(!signedIn){const favorites=$('consoleFavoritesDialog');if(favorites?.open)favorites.close();if(wasSignedIn&&$('admin-settings')?.classList.contains('active'))closeWorkspaces();}
   if(signedIn && $('authDialog')?.open)$('authDialog').close();
+  window.SinbadHome?.syncAccount();
 }
 function needsInviteSetup(user=cloudSession?.user){
   return Boolean(
@@ -2805,32 +3069,64 @@ function getCloudConfig(){
     key
   };
 }
+let boundCloudIdentity='';
+function detachCloudClient(){
+  try{if(authSubscription)authSubscription.unsubscribe();}catch{}
+  authSubscription=null;
+  cloudClient=null;
+}
+function retireReplacedCloudAuthority(clearWorkspace){
+  invalidateMembershipAuthority();
+  membershipSessionKey='';
+  cloudSession=null;
+  if(clearWorkspace){
+    selectedWorkspaceId='';
+    try{localStorage.removeItem('atlas_selected_workspace');}catch{}
+    const select=typeof $==='function'?$('workspaceSelect'):null;
+    if(select)select.innerHTML='<option value="">Select workspace</option>';
+  }
+  updateCloudStatus();
+  setAppAccess();
+}
+function dropReplacedCloudBinding(clearWorkspace){
+  const previous=boundCloudIdentity;
+  boundCloudIdentity='';
+  detachCloudClient();
+  retireReplacedCloudAuthority(clearWorkspace||previous!=='');
+}
+function clearCloudConfig(){
+  try{localStorage.removeItem('atlas_supabase_url');}catch{}
+  try{localStorage.removeItem('atlas_supabase_publishable_key');}catch{}
+  dropReplacedCloudBinding(true);
+}
 function initCloudClient(){
   const {url,key}=getCloudConfig();
+  const nextIdentity=url&&key?`${url}|${key}`:'';
+  if(boundCloudIdentity||cloudClient||authSubscription){
+    const previous=boundCloudIdentity;
+    boundCloudIdentity='';
+    detachCloudClient();
+    retireReplacedCloudAuthority(previous!==nextIdentity);
+  }
   if(!url || !key || !window.supabase){
-    cloudClient=null; updateCloudStatus(); return null;
+    detachCloudClient();
+    boundCloudIdentity='';
+    updateCloudStatus();
+    return null;
   }
   try{
     cloudClient=window.supabase.createClient(url,key,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
     if(authSubscription)authSubscription.unsubscribe();
     const {data}=cloudClient.auth.onAuthStateChange(async(event,session)=>{
-      cloudSession=session;
-      updateCloudStatus();
-      setAppAccess();
-      if(session?.user){
-        if(needsInviteSetup(session.user)){
-          pendingInviteSetup=true;
-          sessionStorage.setItem('sinbad_pending_invite_setup','1');
-          setTimeout(()=>openAuthDialog('invite'),0);
-        }else{
-          await loadWorkspaces();
-        }
-      }
+      await handleCloudAuthState(event,session);
     });
     authSubscription=data.subscription;
+    boundCloudIdentity=nextIdentity;
     updateCloudStatus(); return cloudClient;
   }catch(error){
-    cloudClient=null; updateCloudStatus(error.message); return null;
+    detachCloudClient();
+    boundCloudIdentity='';
+    updateCloudStatus(error.message); return null;
   }
 }
 async function diagnosePublicCloudConnection(){
@@ -2876,16 +3172,31 @@ function updateCloudStatus(error=''){
   $('supabaseKeyInput').value=cfg.key;
   $('cloudUserInfo').textContent=cloudSession?.user ? `Signed in as ${cloudSession.user.email} • User ID: ${cloudSession.user.id}` : 'No active cloud session.';
   setSetupProgress();
+  window.SinbadHome?.syncAccount();
 }
 async function restoreCloudSession(){
   if(!cloudClient){setAppAccess();return;}
   const {data,error}=await cloudClient.auth.getSession();
   if(error)setAuthMessage(error.message,'error');
-  cloudSession=data.session; updateCloudStatus(); setAppAccess();
-  if(cloudSession?.user){
-    if(needsInviteSetup(cloudSession.user))openAuthDialog('invite');
-    else await loadWorkspaces();
+  const next=data?.session||null;
+  const nextKey=next?.user?.id?String(next.user.id):'';
+  if(!nextKey){
+    cloudSession=null;
+    if(membershipSessionKey||currentWorkspaceRole||currentWorkspaceRoleVerifiedScope){
+      invalidateMembershipAuthority();
+      membershipSessionKey='';
+    }
+    updateCloudStatus();
+    setAppAccess();
+    return;
   }
+  if(membershipSessionKey&&membershipSessionKey!==nextKey)invalidateMembershipAuthority();
+  membershipSessionKey=nextKey;
+  cloudSession=next;
+  updateCloudStatus();
+  setAppAccess();
+  if(needsInviteSetup(next.user))openAuthDialog('invite');
+  else await loadWorkspaces();
 }
 async function saveCloudConfig(){
   const url=$('supabaseUrlInput').value.trim().replace(/\/$/,'');
@@ -2916,8 +3227,7 @@ async function cloudSignIn(){
 }
 async function cloudSignOut(){
   if(cloudClient)await cloudClient.auth.signOut({scope:'local'});
-  cloudSession=null; selectedWorkspaceId=''; localStorage.removeItem('atlas_selected_workspace');
-  updateCloudStatus(); setAppAccess(); $('workspaceSelect').innerHTML='<option value="">Select workspace</option>';
+  endSignedOutSession();
 }
 
 async function gatewaySignIn(){
@@ -3089,12 +3399,123 @@ async function loadWorkspaces(){
   await loadCurrentWorkspaceRole();
 }
 
-async function loadCurrentWorkspaceRole(){
+function clearEngineRoomPrivateView(){
+  try{if(typeof engineRoomRequest!=='undefined'&&engineRoomRequest){engineRoomRequest.abort();engineRoomRequest=null;}}catch{engineRoomRequest=null;}
+  const grid=typeof $==='function'?$('engineRoomGrid'):null;
+  const stamp=typeof $==='function'?$('engineRoomObservedAt'):null;
+  if(grid){
+    if(typeof grid.replaceChildren==='function')grid.replaceChildren();
+    else grid.innerHTML='';
+  }
+  if(stamp)stamp.textContent='Observation was not requested. Private system data stays closed for this session.';
+}
+function invalidateMembershipAuthority(){
+  membershipEpoch++;
   currentWorkspaceRole='';
-  if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId){applyRoleAccess();return;}
+  currentWorkspaceRoleVerifiedScope='';
+  if(typeof observationAuthorityEpoch!=='number')observationAuthorityEpoch=0;
+  observationAuthorityEpoch++;
+  clearEngineRoomPrivateView();
+  applyRoleAccess();
+}
+function endSignedOutSession(){
+  invalidateMembershipAuthority();
+  membershipSessionKey='';
+  cloudSession=null;
+  selectedWorkspaceId='';
+  try{localStorage.removeItem('atlas_selected_workspace');}catch{}
+  const select=typeof $==='function'?$('workspaceSelect'):null;
+  if(select)select.innerHTML='<option value="">Select workspace</option>';
+  updateCloudStatus();
+  setAppAccess();
+}
+function handleCloudAuthState(event,session){
+  const nextKey=session?.user?.id?String(session.user.id):'';
+  if(event==='TOKEN_REFRESHED'){
+    if(nextKey&&(!membershipSessionKey||membershipSessionKey===nextKey)){
+      membershipSessionKey=nextKey;
+      cloudSession=session;
+      updateCloudStatus();
+      setAppAccess();
+      return;
+    }
+  }
+  if((event==='USER_UPDATED'||event==='PASSWORD_RECOVERY')&&nextKey&&(!membershipSessionKey||membershipSessionKey===nextKey)){
+    if(!membershipSessionKey)membershipSessionKey=nextKey;
+    cloudSession=session;
+    updateCloudStatus();
+    setAppAccess();
+    return;
+  }
+  if(event==='SIGNED_OUT'||(!nextKey&&event!=='INITIAL_SESSION')){
+    endSignedOutSession();
+    return;
+  }
+  if(!nextKey){
+    cloudSession=null;
+    if(membershipSessionKey||currentWorkspaceRole||currentWorkspaceRoleVerifiedScope){
+      invalidateMembershipAuthority();
+      membershipSessionKey='';
+    }
+    updateCloudStatus();
+    setAppAccess();
+    return;
+  }
+  const userChanged=Boolean(membershipSessionKey)&&membershipSessionKey!==nextKey;
+  if(userChanged||event==='SIGNED_IN'){
+    invalidateMembershipAuthority();
+    if(userChanged){
+      selectedWorkspaceId='';
+      try{localStorage.removeItem('atlas_selected_workspace');}catch{}
+      const select=typeof $==='function'?$('workspaceSelect'):null;
+      if(select)select.innerHTML='<option value="">Select workspace</option>';
+    }
+  }
+  membershipSessionKey=nextKey;
+  cloudSession=session;
+  updateCloudStatus();
+  setAppAccess();
+  if(needsInviteSetup(session.user)){
+    pendingInviteSetup=true;
+    try{sessionStorage.setItem('sinbad_pending_invite_setup','1');}catch{}
+    setTimeout(()=>openAuthDialog('invite'),0);
+    return;
+  }
+  return loadWorkspaces();
+}
+async function loadCurrentWorkspaceRole(){
+  const epoch=++membershipEpoch;
+  const requestedScope=`${getCloudConfig().url}|${cloudSession?.user?.id||''}|${selectedWorkspaceId||''}`;
+  currentWorkspaceRole='';
+  currentWorkspaceRoleVerifiedScope='';
+  if(typeof observationAuthorityEpoch!=='number')observationAuthorityEpoch=0;
+  observationAuthorityEpoch++;
+  if(typeof clearEngineRoomPrivateView==='function')clearEngineRoomPrivateView();
+  applyRoleAccess();
+  if(!cloudClient||!cloudSession?.user||!selectedWorkspaceId)return;
+  const requestedUser=cloudSession.user.id;
+  const requestedWorkspace=selectedWorkspaceId;
   const {data,error}=await cloudClient.from('workspace_members').select('role,is_active')
-    .eq('workspace_id',selectedWorkspaceId).eq('user_id',cloudSession.user.id).maybeSingle();
-  if(!error&&data?.is_active)currentWorkspaceRole=data.role;
+    .eq('workspace_id',requestedWorkspace).eq('user_id',requestedUser).maybeSingle();
+  const verdict=acceptMembershipAnswer({
+    epoch,
+    liveEpoch:membershipEpoch,
+    requestedScope,
+    liveScope:`${getCloudConfig().url}|${cloudSession?.user?.id||''}|${selectedWorkspaceId||''}`,
+    error:Boolean(error),
+    active:data?.is_active===true,
+    role:data?.role||''
+  });
+  if(!verdict.accept){
+    if(epoch===membershipEpoch&&requestedScope===`${getCloudConfig().url}|${cloudSession?.user?.id||''}|${selectedWorkspaceId||''}`){
+      currentWorkspaceRole='';
+      currentWorkspaceRoleVerifiedScope='';
+      applyRoleAccess();
+    }
+    return;
+  }
+  currentWorkspaceRole=verdict.role;
+  currentWorkspaceRoleVerifiedScope=verdict.verifiedScope;
   applyRoleAccess();
   await loadSubmissions();
   await loadDesignPlans();
@@ -3105,6 +3526,7 @@ function roleCanManageLibrary(){
 }
 
 function roleCanAccessPrivateSources(){
+  if(!verifiedWorkspaceRole())return false;
   return ['owner','developer'].includes(currentWorkspaceRole);
 }
 
@@ -3149,7 +3571,7 @@ function applyRoleAccess(){
   if(developerProjectCard)developerProjectCard.dataset.roleHidden=String(!roleCanSubmit());
   if(workspaceWindowId==='document-submissions'&&!roleCanSubmit()){
     const workspace=$('document-submissions');
-    if(workspace)workspace.innerHTML='<div class="workspace-access-denied"><h2>Bu alan yetkili kullanıcılara özeldir</h2><p>Developer Proje Merkezi yalnız aktif Owner ve Developer hesaplarına açıktır.</p><button class="btn primary" type="button" onclick="window.close()">Pencereyi kapat</button></div>';
+    if(workspace)workspace.innerHTML=`<div class="workspace-access-denied"><h2>${esc(localizedText('privateAreaTitle'))}</h2><p>${esc(localizedText('privateAreaText'))}</p><button class="btn primary" type="button" onclick="window.close()">${esc(localizedText('closeWindow'))}</button></div>`;
   }
   ['uploadCloudFiles','cloudFileInput'].forEach(id=>{
     const el=$(id);if(el)el.disabled=!roleCanManageLibrary();
@@ -3166,7 +3588,27 @@ function applyRoleAccess(){
     adminBanner.classList.toggle('denied',!roleCanManageMembers());
   }
   document.querySelectorAll('.owner-only-setting').forEach(el=>el.dataset.roleHidden=String(!roleCanManageMembers()));
+  const humanReviewEntry=$('humanReviewEntry');
+  if(humanReviewEntry){
+    const reviewRole=verifiedWorkspaceRole();
+    const reviewMember={role:reviewRole,isActive:Boolean(reviewRole),userId:cloudSession?.user?.id||'',workspaceId:selectedWorkspaceId||'',now:new Date().toISOString()};
+    const reviewDecision=typeof humanReviewAccessDecision==='function'?humanReviewAccessDecision(reviewMember,null):{allow:false,execute:true};
+    humanReviewEntry.dataset.roleHidden=String(!reviewDecision.allow||reviewDecision.execute===true);
+  }
+  const ownerConsoleEntry=$('ownerConsoleEntry');
+  const consoleAllowed=ownerConsoleEntryAllowed();
+  if(ownerConsoleEntry){ownerConsoleEntry.hidden=!consoleAllowed;ownerConsoleEntry.disabled=!consoleAllowed;ownerConsoleEntry.dataset.entryState=consoleAllowed?'source-defined':'held';}
+  const communicationEntry=$('communicationAppEntry');
+  const communicationDecision=ownerConsoleObservationDecision(verifiedWorkspaceRole(),ownerConsoleCandidate.grant,ownerConsoleCandidate.subject,'communication-app');
+  const communicationAllowed=communicationDecision.observe===true&&communicationDecision.execute===false&&communicationDecision.navigationOnly===true;
+  if(communicationEntry){communicationEntry.hidden=!communicationAllowed;communicationEntry.dataset.entryState='target-not-verified';communicationEntry.dataset.target='NOT_VERIFIED';communicationEntry.setAttribute('aria-disabled','true');}
+  document.querySelectorAll('[data-owner-console]').forEach(button=>{button.dataset.roleHidden=String(!consoleAllowed);});
   refreshAccountSettingsSummary();
+  syncMembershipBar();
+}
+function syncMembershipBar(){
+  if(typeof document==='undefined'||!document.body)return;
+  document.body.classList.toggle('member-verified',Boolean(verifiedWorkspaceRole()));
 }
 const SETTINGS_ROLES=['owner','administrator','captain','chief_officer','chief_engineer','dpa','developer','visitor','crew','viewer','auditor'];
 let settingsMembers=[];
@@ -3197,7 +3639,8 @@ async function settingsSignOut(scope='local'){
   if(scope==='global'&&!confirm('Sign out every Sinbad Marine session on all devices?'))return;
   const {error}=await cloudClient.auth.signOut({scope});
   if(error){$('accountSettingsStatus').textContent=error.message;return;}
-  cloudSession=null;currentWorkspaceRole='';selectedWorkspaceId='';localStorage.removeItem('atlas_selected_workspace');updateCloudStatus();setAppAccess();openAuthDialog('signin');
+  endSignedOutSession();
+  openAuthDialog('signin');
 }
 async function invokeMemberAdmin(action,payload={}){
   if(!roleCanManageMembers())throw new Error('Only the workspace Owner can manage members.');
@@ -4154,7 +4597,7 @@ async function startEmergencyRecord(){
 
 
 $('saveCloudConfig').addEventListener('click',saveCloudConfig);
-$('clearCloudConfig').addEventListener('click',()=>{localStorage.removeItem('atlas_supabase_url');localStorage.removeItem('atlas_supabase_publishable_key');cloudClient=null;cloudSession=null;updateCloudStatus();});
+$('clearCloudConfig').addEventListener('click',clearCloudConfig);
 $('testCloudConnection').addEventListener('click',testCloudConnection);
 $('cloudSignIn').addEventListener('click',cloudSignIn);
 $('cloudSignOut').addEventListener('click',cloudSignOut);

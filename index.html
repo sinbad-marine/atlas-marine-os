@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="./styles.css?v=82029">
 <link rel="stylesheet" href="./console-master-style.css?v=14">
 <link rel="stylesheet" href="./vendor/ol-10.6.1.css">
+<link rel="stylesheet" href="./sinbad-favorites.css">
 </head>
 <body class="auth-pending" data-console-art="monet">
 <svg class="console-icon-sprite" aria-hidden="true">
@@ -134,35 +135,41 @@
     <button type="button" data-open="store"><svg class="console-icon"><use href="#ci-store"/></svg><span>Marine Store</span></button>
   </nav>
   <nav class="console-secondary-nav" aria-label="Personal tools">
-    <button type="button" data-owner-console><svg class="console-icon"><use href="#ci-message"/></svg><span>Secure Dialogue</span><b id="consoleActionBadge">0</b></button>
+    <button type="button" data-owner-console data-role-hidden="true"><svg class="console-icon"><use href="#ci-message"/></svg><span>Secure Dialogue</span><b id="consoleActionBadge">0</b></button>
     <button type="button" data-console-favorites><svg class="console-icon"><use href="#ci-star"/></svg><span>Favorites</span></button>
-    <button type="button" data-console-recent><svg class="console-icon"><use href="#ci-clock"/></svg><span>Recent</span></button>
+    
     <button type="button" data-open="admin-settings"><svg class="console-icon"><use href="#ci-technical"/></svg><span>Settings</span></button>
   </nav>
   <p class="console-sidebar-motto">PRIVATE.<br>SECURE.<br>YOURS.</p>
 </aside>
 
 <nav class="home-canonical-hotspots" aria-label="SINBAD Home controls">
-  <a class="home-hotspot home-hotspot-home" href="./index.html" aria-label="Home"></a>
-  <button class="home-hotspot home-hotspot-recent" type="button" data-console-recent aria-label="Recent"></button>
+  
+  
   <button class="home-hotspot home-hotspot-favorites" type="button" data-console-favorites aria-label="Favorites"></button>
   <button class="home-hotspot home-hotspot-settings" type="button" data-open="admin-settings" aria-label="Settings"></button>
   <button class="home-hotspot home-hotspot-refresh" id="homeCanonicalRefresh" type="button" aria-label="Refresh observed status"></button>
   <button class="home-hotspot home-hotspot-menu" id="homeCanonicalMenu" type="button" aria-label="Quick actions"></button>
   <button class="home-hotspot home-hotspot-ask" type="button" data-open="sinbad" aria-label="Ask SINBAD"></button>
-  <button class="home-hotspot home-hotspot-route" type="button" data-open="routes" aria-label="Plan Route"></button>
-  <button class="home-hotspot home-hotspot-upload" type="button" data-open="cloud-documents" aria-label="Upload Document"></button>
+  
+  
 </nav>
 
 <main>
 <section class="console-statusbar" aria-label="Gözlemlenen sistem durumu">
+  <div class="console-status-metrics">
   <span data-console-status="local"><i></i><b>LOCAL</b><small>NOT VERIFIED</small></span>
   <span data-console-status="pc"><i></i><b>CONSOLE</b><small>UI READY</small></span>
   <span data-console-status="cloud"><i></i><b>CLOUD</b><small>NOT VERIFIED</small></span>
   <span data-console-status="sync"><i></i><b>SYNC</b><small>NOT VERIFIED</small></span>
   <span data-console-status="agents"><i></i><b>AGENTS</b><small>NOT VERIFIED</small></span>
   <span data-console-status="action"><i></i><b>ACTIONS</b><small>0</small></span>
-  <button class="console-status-refresh" id="consoleStatusRefresh" type="button">↻ Refresh <small id="consoleStatusChecked">Not checked</small></button>
+  </div>
+  <span class="console-status-entries">
+    <button class="console-status-entry" id="ownerConsoleEntry" type="button" hidden disabled data-entry-state="held" aria-disabled="true">Owner Console</button>
+    <button class="console-status-entry" id="communicationAppEntry" type="button" hidden data-entry-state="held" data-target="NOT_VERIFIED" aria-disabled="true" title="Groq communication application. Target NOT VERIFIED. Not the GroqCloud provider card.">Groq</button>
+  </span>
+  <button class="console-status-refresh" id="consoleStatusRefresh" type="button">↻ Refresh</button>
 </section>
 <section class="hero">
   <div class="home-brand-stage">
@@ -173,7 +180,6 @@
   <details class="action-menu hero-action-menu">
     <summary><span aria-hidden="true">☰</span> Hızlı işlemler</summary>
     <div class="action-menu-panel hero-actions">
-      <button class="btn primary" data-open="cloud-documents">Atlas Cloud’a yükle</button>
       <button class="btn" data-open="cloud-control">Cloud kurulumu ve güvenlik</button>
       <button class="btn" data-open="sinbad">Kaptan Sinbad’a sor</button>
       <button class="btn" data-open="location-intelligence">Konumu kullan</button>
@@ -218,8 +224,8 @@
 </section>
 
 <section class="console-home-panels" aria-label="Kişisel erişim alanları">
-  <article id="consoleRecentPanel"><header><div><span>RECENT ACTIVITY</span><h3>Recent Activity</h3></div></header><div id="consoleRecentList" class="console-link-list"></div></article>
-  <article id="consoleFavoritesPanel" class="console-captain-dock"><header><div><span>CAPTAIN DOCK</span><h3>Captain Dock</h3></div><button class="btn compact" type="button" data-console-favorites>Favorites</button></header><div class="console-dock-actions"><button type="button" data-open="sinbad">Ask SINBAD</button><button type="button" data-open="routes">Plan Route</button><button type="button" data-open="cloud-documents">Upload Document</button></div><div id="consoleFavoritesList" class="console-link-list"></div></article>
+  
+  <article id="consoleFavoritesPanel" class="console-captain-dock"><header><div><span>CAPTAIN DOCK</span><h3>Captain Dock</h3></div><button class="btn compact" type="button" data-console-favorites>Favorites</button></header><div class="console-dock-actions"><button type="button" data-open="sinbad">Ask SINBAD</button></div><div id="consoleFavoritesList" class="console-link-list" data-favorites-list></div></article>
 </section>
 
 <details class="console-all-tools">
@@ -232,39 +238,39 @@
   </div>
 </details>
 
-<dialog id="consoleFavoritesDialog" class="console-favorites-dialog"><form method="dialog"><header><div><span>KİŞİSEL KISAYOLLAR</span><h2>Favorileri Yönet</h2></div><button value="cancel" aria-label="Kapat">×</button></header><div id="consoleFavoritesOptions"></div><button class="btn primary" value="done">Kaydet ve kapat</button></form></dialog>
+<dialog id="consoleFavoritesDialog" class="console-favorites-dialog"><form method="dialog"><header><div><span>YOUR SHORTCUTS</span><h2>Favorites</h2></div><button value="cancel" aria-label="Kapat">×</button></header><div id="consoleFavoritesOptions" data-favorites-list></div><button class="btn primary" value="done">Close</button></form></dialog>
 
 
 <section id="yacht-operations" class="workspace yacht-operations-page" data-master="rembrandt" data-owner-visual-lock="yacht-management-owner-selections-v1">
   <header class="yacht-page-header">
     <a class="yacht-page-brand" href="./index.html" aria-label="SINBAD home"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE — A SAFER SEA A SMARTER TOMORROW"></a>
     <div class="yacht-page-heading"><span>01 · OPERATIONS</span><h2>Yacht Management</h2><p>Fleet · Crew · Captain Logbook · Camera &amp; Media</p></div>
-    <nav class="yacht-page-nav" aria-label="Yat yönetimi araçları">
+    <nav class="yacht-page-nav" aria-label="Yat yönetimi araçları" data-i18n-aria="yachtTools">
       <button type="button" data-open="fleet">Fleet</button><button type="button" data-open="crew">Crew</button><button type="button" data-open="captains-logbook">Logbook</button><button type="button" data-open="camera-archive">Media</button>
     </nav>
   </header>
   <div class="yacht-page-stage">
     <article class="yacht-atmosphere-panel">
-      <img src="./assets/console-art/yacht-management-owner-selections-v1/selected/01-yacht-management-atmosphere-C.png" alt="Tersanede bakımdaki yat ve çalışan ekip">
+      <img src="./assets/console-art/yacht-management-owner-selections-v1/selected/01-yacht-management-atmosphere-C.png" alt="Tersanede bakımdaki yat ve çalışan ekip" data-i18n-alt="yachtAtmosphereAlt">
       <span class="yacht-art-label">01 · OPERATIONS</span>
-      <div class="yacht-atmosphere-copy"><h3>Yacht Management</h3><p>Yat, ekip, kayıt ve özel medya çalışma alanlarına tek yerden erişin.</p></div>
+      <div class="yacht-atmosphere-copy"><h3>Yacht Management</h3><p data-i18n="yachtIntro">Yat, ekip, kayıt ve özel medya çalışma alanlarına tek yerden erişin.</p></div>
     </article>
-    <div class="yacht-function-grid" aria-label="Yat yönetimi çalışma alanları">
+    <div class="yacht-function-grid" aria-label="Yat yönetimi çalışma alanları" data-i18n-aria="yachtAreas">
       <button class="yacht-function-card yacht-fleet-card" type="button" data-open="fleet">
-        <img src="./assets/console-art/yacht-management-owner-selections-v1/selected/02-fleet-and-yacht-management-B.png" alt="Limana giren üç motor yat">
-        <span><small>FLEET</small><b>Fleet &amp; Yacht Management</b><em>Tekne ayrıntıları ve makine kayıtları</em></span>
+        <img src="./assets/console-art/yacht-management-owner-selections-v1/selected/02-fleet-and-yacht-management-B.png" alt="Limana giren üç motor yat" data-i18n-alt="yachtFleetAlt">
+        <span><small>FLEET</small><b>Fleet &amp; Yacht Management</b><em data-i18n="yachtFleetNote">Tekne ayrıntıları ve makine kayıtları</em></span>
       </button>
       <button class="yacht-function-card yacht-crew-card" type="button" data-open="crew">
-        <img src="./assets/console-art/yacht-management-owner-selections-v1/selected/03-crew-B.png" alt="Güvertede çalışan yat mürettebatı">
-        <span><small>CREW</small><b>Crew</b><em>Kayıtlar ve süre sonu takibi</em></span>
+        <img src="./assets/console-art/yacht-management-owner-selections-v1/selected/03-crew-B.png" alt="Güvertede çalışan yat mürettebatı" data-i18n-alt="yachtCrewAlt">
+        <span><small>CREW</small><b>Crew</b><em data-i18n="yachtCrewNote">Kayıtlar ve süre sonu takibi</em></span>
       </button>
       <button class="yacht-function-card yacht-logbook-card" type="button" data-open="captains-logbook">
-        <img src="./assets/console-art/yacht-management-owner-selections-v1/selected/04-captain-logbook-B.png" alt="Kaptan günlüğü, harita ve seyir araçları">
-        <span><small>LOGBOOK</small><b>Captain Logbook</b><em>Sesli ve yazılı operasyon notları</em></span>
+        <img src="./assets/console-art/yacht-management-owner-selections-v1/selected/04-captain-logbook-B.png" alt="Kaptan günlüğü, harita ve seyir araçları" data-i18n-alt="yachtLogAlt">
+        <span><small>LOGBOOK</small><b>Captain Logbook</b><em data-i18n="yachtLogNote">Sesli ve yazılı operasyon notları</em></span>
       </button>
       <button class="yacht-function-card yacht-media-card" type="button" data-open="camera-archive">
-        <img src="./assets/console-art/yacht-management-owner-selections-v1/selected/05-camera-media-archive-A.png" alt="Kamera ve özel yat medya arşivi">
-        <span><small>PRIVATE MEDIA</small><b>Camera &amp; Media Archive</b><em>Özel operasyon arşivi</em></span>
+        <img src="./assets/console-art/yacht-management-owner-selections-v1/selected/05-camera-media-archive-A.png" alt="Kamera ve özel yat medya arşivi" data-i18n-alt="yachtMediaAlt">
+        <span><small>PRIVATE MEDIA</small><b>Camera &amp; Media Archive</b><em data-i18n="yachtMediaNote">Özel operasyon arşivi</em></span>
       </button>
     </div>
   </div>
@@ -356,7 +362,7 @@
 <section id="technical-systems" class="workspace console-landing" data-master="picasso">
   <div class="workspace-head"><div><div class="eyebrow">TEKNİK SİSTEMLER · PICASSO DIRECTION / HOLD</div><h2>Sistemleri gözlemleyin ve yönetin</h2><p>Cloud kontrolü, yönetim, Studio, ARGOS ve ayrı güvenlik sınırındaki Owner Console.</p></div><button class="btn close">Kapat</button></div>
   <div class="console-landing-hero"><span>05 · SYSTEMS</span><h3>Disiplinli modüller ve teknik geometri</h3><p>Kontrollü Kübist görsel katman Home Owner kabulünden sonra uygulanacaktır; gerçek durumlar yalnız gözlemlenebildiğinde READY olur.</p></div>
-  <div class="console-landing-grid"><button data-owner-console><b>Owner Console</b><small>Ayrı güvenli Owner yüzeyini aç</small></button><button data-open="cloud-control"><b>Atlas Cloud Kontrolü</b><small>Bağlantı ve güvenlik</small></button><button data-open="admin-settings"><b>Ayarlar ve Yönetim</b><small>Hesap, erişim ve denetim</small></button><button data-open="studio-console"><b>Sinbad Studio</b><small>Onay kapılı üretim alanı</small></button><button data-open="sinbad" data-target-tab="argos"><b>ARGOS</b><small>Gözlemlenebilir sistem sekmesi</small></button><button data-open="engine-room"><b>Engine Room</b><small>Salt okunur gözlenen makine durumu</small></button></div>
+  <div class="console-landing-grid"><button data-owner-console data-role-hidden="true"><b>Owner Console</b><small>Ayrı güvenli Owner yüzeyini aç</small></button><button data-open="cloud-control"><b>Atlas Cloud Kontrolü</b><small>Bağlantı ve güvenlik</small></button><button data-open="admin-settings"><b>Ayarlar ve Yönetim</b><small>Hesap, erişim ve denetim</small></button><button data-open="studio-console"><b>Sinbad Studio</b><small>Onay kapılı üretim alanı</small></button><button data-open="sinbad" data-target-tab="argos"><b>ARGOS</b><small>Gözlemlenebilir sistem sekmesi</small></button><button data-open="engine-room"><b>Engine Room</b><small>Salt okunur gözlenen makine durumu</small></button></div>
 </section>
 
 <section id="engine-room" class="workspace engine-room" data-engine-room="v0">
@@ -378,7 +384,7 @@
 <section id="sinbad-ai" class="workspace console-landing" data-master="dali">
   <div class="workspace-head"><div><div class="eyebrow">SINBAD AI · SALVADOR DALÍ DIRECTION / HOLD</div><h2>İnsan, ajan ve kanıt aynı çerçevede</h2><p>Kaptan Sinbad erkek persona kimliğiyle; kaynak, sınır ve gözlemlenebilirlik ilkeleri korunarak çalışır.</p></div><button class="btn close">Kapat</button></div>
   <div class="console-landing-hero"><span>06 · INTELLIGENCE</span><h3>Olasılık, kavram ve kontrollü hayal gücü</h3><p>Ölçülü Dalí görsel katmanı Home Owner kabulünden sonra uygulanacaktır; yanıt, kaynak ve sistem durumu birbirine karıştırılmaz.</p></div>
-  <div class="console-landing-grid"><button data-open="sinbad"><b>Kaptan Sinbad</b><small>Kaynak kontrollü AI çalışma alanı</small></button><button data-owner-console><b>Owner Ajan Diyaloğu</b><small>Ayrı güvenli konsolu aç</small></button><button data-open="sinbad" data-target-tab="argos"><b>ARGOS</b><small>Sistem gözlemi ve kontrollü eylem</small></button><button data-open-sinbad-academy><b>SINBAD Akademi</b><small>Kaptan Sinbad ile eğitim</small></button></div>
+  <div class="console-landing-grid"><button data-open="sinbad"><b>Kaptan Sinbad</b><small>Kaynak kontrollü AI çalışma alanı</small></button><button data-owner-console data-role-hidden="true"><b>Owner Ajan Diyaloğu</b><small>Ayrı güvenli konsolu aç</small></button><button data-open="sinbad" data-target-tab="argos"><b>ARGOS</b><small>Sistem gözlemi ve kontrollü eylem</small></button><button data-open-sinbad-academy><b>SINBAD Akademi</b><small>Kaptan Sinbad ile eğitim</small></button></div>
 </section>
 
 <section id="location-intelligence" class="workspace voyage-detail-page" data-master="da-vinci" data-owner-selection="B">
@@ -781,6 +787,7 @@
       </div>
 
       <section class="chat-panel sinbad-workspace-panel" id="sinbad-panel-chat" role="tabpanel" aria-labelledby="sinbad-tab-chat" data-sinbad-panel="chat">
+      <div class="sinbad-chat-scroll">
         <div class="sinbad-panel-heading"><div><span class="eyebrow">CAPTAIN'S DESK</span><h3>Ask Sinbad</h3></div><span class="badge" id="sinbadKnowledgeStatus">Approved library only • Web search off</span></div>
       <div id="sinbadMessages" class="chat-messages" aria-live="polite"></div>
       <div id="sinbadThinking" class="thinking-bubble hidden" aria-live="polite">
@@ -793,7 +800,7 @@
             <option value="tr-TR">Türkçe</option><option value="en-US">English</option>
             <option value="ru-RU">Русский</option><option value="fr-FR">Français</option>
             <option value="de-DE">Deutsch</option><option value="ar-SA">العربية</option>
-            <option value="es-ES">Español</option><option value="it-IT">Italiano</option>
+            <option value="es-ES">Español</option>
           </select>
         </label>
         <button type="button" class="btn" id="toggleSinbadVoice" aria-pressed="true">🔊 Voice: On</button>
@@ -809,6 +816,7 @@
           <button type="button" class="btn primary" id="allowSinbadWebSearch">Allow web search</button>
           <button type="button" class="btn" id="denySinbadWebSearch">Do not search</button>
         </div>
+      </div>
       </div>
       <div class="sinbad-composer">
         <div class="chat-input-row">
@@ -954,7 +962,7 @@
     <button class="btn close">Close</button>
   </div>
   <div id="adminAccessBanner" class="role-access-banner">Sign in and select a workspace to load administration settings.</div>
-  <article class="control-panel settings-card">
+  <article class="control-panel settings-card" id="humanReviewEntry" data-role-hidden="true">
     <h3>Human Review</h3>
     <p class="muted">Open the authenticated question-card review queue. Reviewer decisions remain separate from technical checks and Owner acceptance.</p>
     <a class="btn primary full" id="openHumanReview" href="./exam-review.html" target="_blank" rel="noopener">Open Human Review</a>
@@ -1159,11 +1167,11 @@
     <img class="sinbad-avatar-img" src="./assets/captain-sinbad/captain-sinbad-idle-master.png" alt="">
     <span class="sinbad-status-light" aria-hidden="true"></span>
   </div>
-  <span>Sinbad’a sor</span>
+  <span data-i18n="askSinbad">Sinbad’a sor</span>
 </button>
 
 
-<footer>Sinbad Marine • Güvenli Denizcilik Komuta Platformu</footer>
+<footer data-i18n="footerLine">Sinbad Marine • Güvenli Denizcilik Komuta Platformu</footer>
 
 
 <script src="./pilot-data.js?v=8161"></script>
@@ -1188,6 +1196,12 @@
   <script src="./sinbad-character-rig.js?v=82029"></script>
   <script src="./sinbad-performance-director.js?v=82029"></script>
   <script src="./sinbad-viseme-planner.js?v=82029"></script>
-  <script src="./app.js?v=82029"></script>
+  <script src="./sinbad-favorites-catalog.js"></script>
+<script src="./sinbad-favorites.js"></script>
+<script src="./human-review-access.js"></script>
+<script src="./engine-room-component-record.js"></script>
+<script src="./membership-scope.js"></script>
+<script src="./app.js?v=82029"></script>
+<script src="./sinbad-home.js"></script>
 </body>
 </html>

@@ -20,14 +20,14 @@ const STORE_RELEASE_FILES=Object.freeze(fs.readdirSync(storeSourceRoot,{recursiv
   .sort());
 const RELEASE_FILES=Object.freeze([
   'demo/index.html','demo/demo.css','demo/demo.js','demo/sinbad-concept.mp4',
-  'index.html','styles.css','console-master-style.css','app.js','founder-owner-mfa.js','founder-owner-ui.js','academy.html','academy.css','academy-window.js','academy-classroom-window.js','academy-owner-training.js','academy-gasm-catalog.js','exam-intelligence-local-required.html','owner-review-local-required.html','exam-review.html','exam-review.css','exam-review.js',
+  'sinbad-favorites-catalog.js','sinbad-favorites.js','sinbad-favorites.css','sinbad-home.js','sinbad-favorites-pages.js','human-review-access.js','engine-room-component-record.js','engine-room-groq-record.js','membership-scope.js','index.html','styles.css','console-master-style.css','app.js','founder-owner-mfa.js','founder-owner-ui.js','academy.html','academy.css','academy-window.js','academy-classroom-window.js','academy-owner-training.js','academy-gasm-catalog.js','exam-intelligence-local-required.html','owner-review-local-required.html','exam-review.html','exam-review.css','exam-review.js',
   'academy-professor.html','academy-professor.css','academy-professor-guidance.css','academy-professor.js','sinbad-professor.js','academy-professor-v3.html','academy-professor-handsfree.css','academy-professor-handsfree.js','academy-professor-native.html','academy-professor-native.css','academy-professor-native.js','sinbad-speaker-identity.js','sinbad-tutor-orchestrator.js','sinbad-tutor-controller.js','pilot-data.js','route-data.js',
   'resource-data.js','store-data.js',
   'official-publications.js','sinbad-core.js','sinbad-passage-planner.js','sinbad-visuals.js','sinbad-training-data.js',
   'sinbad-academy.js','sinbad-exam-intelligence-config.js','sinbad-exam-intelligence.js','sinbad-owner-review.js','sinbad-navigation.js','sinbad-navigation-assistant.js',
   'sinbad-route-visualizer.js','sinbad-character-engine.js','sinbad-character-rig.js','sinbad-viseme-planner.js',
   'sinbad-performance-director.js','sw.js','manifest.webmanifest','icon-192.png',
-  'assets/console-art/home-turner-maritime-v1.png','assets/console-art/home-owner-canonical-exec-1c46e9f6-4e4e-4e80-baa9-7328e22b2f05.png',
+  'assets/console-art/home-turner-maritime-v1.png','assets/console-art/home-owner-canonical-exec-1c46e9f6-4e4e-4e80-baa9-7328e22b2f05.png','assets/console-art/home-canonical-without-painted-status-r7.png',
   'assets/console-art/home-turner-background-v13.png','assets/console-art/sinbad-brand-lockup-v13.png',
   'assets/console-art/home-monet-concept-v1.png','assets/console-art/home-monet-background-v1.png',
   'assets/console-art/home-da-vinci-concept-v1.png',
@@ -94,6 +94,14 @@ const SOURCE_OVERRIDES=Object.freeze({
 });
 
 const sha256=buffer=>crypto.createHash('sha256').update(buffer).digest('hex');
+const COMMIT_SHA=/^[0-9a-f]{40}$/i;
+function releaseSourceIdentity(env=process.env){
+  const checkout=String(env.SINBAD_CHECKED_OUT_COMMIT||'');
+  if(!COMMIT_SHA.test(checkout))return {sourceCommit:'LOCAL_UNATTESTED'};
+  const sourceCommit=checkout.toLowerCase();
+  const trigger=String(env.GITHUB_SHA||'');
+  return COMMIT_SHA.test(trigger)&&trigger.toLowerCase()!==sourceCommit?{sourceCommit,triggerSha:trigger.toLowerCase()}:{sourceCommit};
+}
 
 async function buildPagesArtifact(destination){
   const target=path.resolve(destination);
@@ -112,7 +120,7 @@ async function buildPagesArtifact(destination){
     entries.push(Object.freeze({path:name,bytes:bytes.length,sha256:sha256(bytes)}));
   }
   entries.sort((a,b)=>a.path.localeCompare(b.path));
-  const manifest={schemaVersion:'sinbad-pages-release/v1',sourceCommit:process.env.GITHUB_SHA||'LOCAL_UNATTESTED',files:entries};
+  const manifest={schemaVersion:'sinbad-pages-release/v1',...releaseSourceIdentity(),files:entries};
   const encoded=Buffer.from(`${JSON.stringify(manifest,null,2)}\n`,'utf8');
   await fsp.writeFile(path.join(target,'release-manifest.json'),encoded,{flag:'wx'});
   return Object.freeze({...manifest,manifestSha256:sha256(encoded)});
@@ -124,4 +132,4 @@ if(require.main===module){
     .catch(error=>{process.stderr.write(`${error.message}\n`);process.exitCode=1;});
 }
 
-module.exports=Object.freeze({ROOT,RELEASE_FILES,STORE_RELEASE_FILES,buildPagesArtifact});
+module.exports=Object.freeze({ROOT,RELEASE_FILES,STORE_RELEASE_FILES,buildPagesArtifact,releaseSourceIdentity});

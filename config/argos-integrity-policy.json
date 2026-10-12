@@ -194,7 +194,7 @@
     },
     {
       "path": ".github/workflows/pages-release.yml",
-      "sha256": "7d6d90cc2005384b3268d99d549170e15156d48f5f153edc5ee5286b7933fff8",
+      "sha256": "0704869727c8bf3517d6f6013cffd83482673b3c302b4e01a541cb198dcfa8a4",
       "kind": "WORKFLOW"
     },
     {
@@ -204,7 +204,7 @@
     },
     {
       "path": ".github/workflows/release-quality.yml",
-      "sha256": "4cd7af2071ee73f1fdba60de3d683008abeb7d437de03130964502d7da14070e",
+      "sha256": "54758985398155031b9af3882244a73704f0bf324191776f3c2c19f847ddc6cb",
       "kind": "WORKFLOW"
     },
     {
@@ -219,17 +219,17 @@
     },
     {
       "path": "academy-classroom-window.js",
-      "sha256": "f4de8e2e1415d19f517e262992b61fd7af9ba8ea4e800cb7bf5ffabd4da11893",
+      "sha256": "a73a3bcdc2d99ac64a1eb8d80bba402ff288cf785754001342af20f29c545e95",
       "kind": "SOURCE"
     },
     {
       "path": "academy-window.js",
-      "sha256": "8bfec7aa68439775ebb558f10ba24165dc8ce8a1ecc90521d9b8368468a15c72",
+      "sha256": "2ccc9975aeeae0e83f50254beabd2ae8e7fa053345202481749ed4d99621d00f",
       "kind": "SOURCE"
     },
     {
       "path": "app.js",
-      "sha256": "a3e40723b1d702de7cba0f3f4330312ef96bcb62a4d85c27486bd9a2e77885c7",
+      "sha256": "68ec6475b17c611d5cb1dac5ca98992b3a94b28a4bd2c5b24626c93635e35636",
       "kind": "SOURCE"
     },
     {
@@ -239,7 +239,7 @@
     },
     {
       "path": "config/ui-design-contract.json",
-      "sha256": "fa4c75cd02f85de4cbe09995de4bd177e946a7e2280b0bc54e0337eba86e2450",
+      "sha256": "ae5605f1f576470a065f03f4244caf5b638d53abe96bd05d664ba277dd5958a7",
       "kind": "CONFIG"
     },
     {
@@ -249,7 +249,7 @@
     },
     {
       "path": "index.html",
-      "sha256": "b8a0add47767abb9f9ed5606225a1b509f2bbe5f32133a8a32bbcf54de36cdc1",
+      "sha256": "06ad03e2ab65a991f7625286963223eb3f58d5e8a7042df24f56ff5f298a3671",
       "kind": "SOURCE"
     },
     {
@@ -354,7 +354,7 @@
     },
     {
       "path": "styles.css",
-      "sha256": "a7b45fc9c86ad19afa18c7e99507cb30f25d83f0dd964d6d0364cb25a57684a4",
+      "sha256": "1f98b18b579d6b3027d3d28a3f58a1a3879b453f0a206e9bc8571a0a56cbf89d",
       "kind": "SOURCE"
     },
     {
@@ -384,7 +384,7 @@
     },
     {
       "path": "tests/sinbad-assistant-animation.test.js",
-      "sha256": "6b6ff9b87929181cde0dc923b552a5e07b0367574728a2e54d88203bdc981094",
+      "sha256": "ba8a5f3a202a9ddc0b52ff86881e12c5f85d59a6aa92a4a0c10acb364af9535b",
       "kind": "TEST"
     },
     {
@@ -419,7 +419,7 @@
     },
     {
       "path": "tools/build-pages-artifact.js",
-      "sha256": "c44c4a98e256afd4f7de5e2add6cec2aa8ee76157778bd382cb655cf45c525cd",
+      "sha256": "ba47fc8adba8db42fe6a551d034f6bf5f0c2a6bca55df5d4e75ba9c7d6653465",
       "kind": "SOURCE"
     },
     {
@@ -470,7 +470,7 @@
     {
       "path": "tests/browser/surface-smoke.spec.js",
       "kind": "TEST",
-      "sha256": "9a7f70db9326f5dcd64a4f5a51e5053f70dc8eb0ef61f514a1b7514a513d8082"
+      "sha256": "8bb2fefe662447d7200b2cd5ba259cdceb75c64ad585c84c4b0db70d42ac6373"
     },
     {
       "path": "tools/argos-ci-retention.ps1",

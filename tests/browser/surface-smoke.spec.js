@@ -20,7 +20,15 @@ test('every dashboard card opens its canonical independent resizable window',asy
     await launcher.evaluate(element=>element.click());
     const popup=await popupPromise;await popup.waitForLoadState('domcontentloaded');
     await popup.evaluate(()=>{document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');});
-    if(id==='store')await expect(popup).toHaveURL(/\/store\/index\.html$/u);
+    if(id==='store'){
+      const expectedLanguage=(await page.locator('#appLanguage').inputValue()).slice(0,2).toLowerCase();
+      expect(['en','tr','ru','de','ar','es','fr']).toContain(expectedLanguage);
+      const actual=new URL(popup.url());
+      expect(actual.origin).toBe(new URL(page.url()).origin);
+      expect(actual.pathname).toBe('/store/index.html');
+      expect([...actual.searchParams.entries()]).toEqual([['lang',expectedLanguage]]);
+      expect(actual.hash).toBe('');
+    }
     else{
       await expect(popup).toHaveURL(new RegExp(`workspace=${id}`,'u'));
       await expect(popup.locator(`#${id}`)).toHaveClass(/\bactive\b/u);
@@ -43,6 +51,8 @@ test('Captain Sinbad exposes only working Chat and Academy tabs',async({page,con
   await expect(popup.locator('[data-sinbad-tab="academy"]')).toHaveAttribute('aria-selected','true');
   await expect(popup.locator('#sinbad-panel-academy')).toBeVisible();
   await popup.route('http://127.0.0.1:31983/argos/status',route=>route.fulfill({contentType:'application/json',body:JSON.stringify({version:'sinbad-argos-live-status/1-v1',state:'ACTIVE',mode:'MONITOR_ONLY',observedAt:'2026-09-01T12:00:00.000Z',bridge:{online:true,version:'0.5.0'},ai:{online:true,model:'test-local',modelCount:1},commandGate:{active:true,registeredActions:7,observedCommands:0,replayProtection:true,freshnessWindowSeconds:300,ledgerCapacity:4096}})}));
+  // Isolated member fixture for the existing authenticated ARGOS rendering checks; not a real account.
+  await popup.evaluate(()=>{cloudSession={user:{id:'isolated-argos-member'}};});
   await popup.locator('[data-sinbad-tab="argos"]').click();
   await expect(popup.locator('[data-sinbad-tab="argos"]')).toHaveAttribute('aria-selected','true');
   await expect(popup.locator('#sinbad-panel-argos')).toBeVisible();
