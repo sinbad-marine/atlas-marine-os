@@ -25,12 +25,17 @@ test('PC Home is locked to the exact Owner canonical reference',()=>{
   assert.equal(contract.approvedVisualBaselines.pcHome.canonicalReference.height,941);
 });
 
-test('Home status defaults fail closed and provides an explicit refresh',()=>{
+test('Home status defaults fail closed and provides an explicit refresh',async()=>{
   assert.match(html,/data-console-status="local"[\s\S]*?NOT VERIFIED/u);
   assert.match(html,/data-console-status="cloud"[\s\S]*?NOT VERIFIED/u);
   assert.match(html,/id="consoleStatusRefresh"/u);
-  assert.match(app,/setConsoleStatus\('local','unknown','NOT VERIFIED'\)/u);
-  assert.match(app,/cloudOffline=.*not connected/u);
+  // Page1 observes no backend readiness from stale DOM text, and performs no startup probe.
+  const vm=require('node:vm'),observed=[],context={window:{},setConsoleStatus:(...args)=>observed.push(args)};
+  vm.createContext(context);
+  vm.runInContext(app.slice(app.indexOf('async function refreshConsoleObservedStatus(){'),app.indexOf('const workspaceWindowId=')),context);
+  await context.refreshConsoleObservedStatus();
+  for(const name of ['local','cloud','sync','agents','action'])assert.deepEqual(observed.find(([id])=>id===name),[name,'unknown','NOT VERIFIED']);
+  let renders=0;context.window.SinbadHome={renderObserved:()=>renders++};await context.refreshConsoleObservedStatus();assert.equal(renders,1);
   assert.doesNotMatch(app,/setConsoleStatus\('agents','ready'/u);
 });
 
@@ -55,6 +60,80 @@ test('Home cards preview with restrained motion before opening once',()=>{
 test('release includes only the locked canonical Home visual authority',()=>{
   assert.match(release,/'console-master-style\.css'/u);
   assert.match(release,/'assets\/console-art\/home-owner-canonical-exec-1c46e9f6-4e4e-4e80-baa9-7328e22b2f05\.png'/u);
+  assert.match(release,/'assets\/console-art\/home-canonical-without-painted-status-r7\.png'/u);
   assert.doesNotMatch(release,/'assets\/console-art\/home-turner-current-layout-brand-lockup-v12\.png'/u);
   assert.doesNotMatch(release,/'assets\/console-art\/home-domain-art-atlas-v13\.png'/u);
+});
+
+test('the visitor viewport paint does not keep the baked operational strip',()=>{
+  const crypto=require('node:crypto');
+  const zlib=require('node:zlib');
+  const derivedName='home-canonical-without-painted-status-r7.png';
+  assert.match(css,/not\(:has\(main>\.workspace\.active\)\)::after\{[\s\S]{0,500}home-canonical-without-painted-status-r7\.png/u);
+  assert.doesNotMatch(css,/\.home-canonical-hotspots::after\{[^}]*#071d2c/u);
+  const original=fs.readFileSync(`assets/console-art/${canonical}`);
+  const derived=fs.readFileSync(`assets/console-art/${derivedName}`);
+  assert.equal(crypto.createHash('sha256').update(original).digest('hex'),'6e25eaa32b9726fb1a03053c6837802b3b71e53553fe5c4bdd4c76f7d958a3ce');
+  assert.notEqual(crypto.createHash('sha256').update(derived).digest('hex'),crypto.createHash('sha256').update(original).digest('hex'));
+  function rowsOf(png){
+    let pos=8,width=0,height=0,idat=Buffer.alloc(0);
+    while(pos<png.length){
+      const length=png.readUInt32BE(pos);
+      const kind=png.subarray(pos+4,pos+8).toString('ascii');
+      const chunk=png.subarray(pos+8,pos+8+length);
+      pos+=12+length;
+      if(kind==='IHDR'){width=chunk.readUInt32BE(0);height=chunk.readUInt32BE(4);}
+      else if(kind==='IDAT')idat=Buffer.concat([idat,chunk]);
+      else if(kind==='IEND')break;
+    }
+    const raw=zlib.inflateSync(idat);
+    const stride=width*3;
+    const rows=[];
+    let offset=0;
+    let prev=Buffer.alloc(stride);
+    const paeth=(a,b,c)=>{const p=a+b-c,pa=Math.abs(p-a),pb=Math.abs(p-b),pc=Math.abs(p-c);return pa<=pb&&pa<=pc?a:pb<=pc?b:c;};
+    for(let y=0;y<height;y++){
+      const filter=raw[offset];
+      offset+=1;
+      const row=Buffer.from(raw.subarray(offset,offset+stride));
+      offset+=stride;
+      if(filter===1){for(let x=0;x<stride;x++)row[x]=(row[x]+(x>=3?row[x-3]:0))&255;}
+      else if(filter===2){for(let x=0;x<stride;x++)row[x]=(row[x]+prev[x])&255;}
+      else if(filter===3){for(let x=0;x<stride;x++)row[x]=(row[x]+(((x>=3?row[x-3]:0)+prev[x])>>1))&255;}
+      else if(filter===4){for(let x=0;x<stride;x++)row[x]=(row[x]+paeth(x>=3?row[x-3]:0,prev[x],x>=3?prev[x-3]:0))&255;}
+      else if(filter!==0)throw new Error(`PNG_FILTER_${filter}`);
+      rows.push(row);
+      prev=row;
+    }
+    return {width,height,rows};
+  }
+  function band(image){
+    const x0=Math.round(image.width*0.25),x1=Math.round(image.width*0.75);
+    let sum=0,dark=0,n=0;
+    for(let y=10;y<46;y++){
+      const row=image.rows[y];
+      for(let x=x0;x<x1;x++){
+        const i=x*3;
+        const lum=0.2126*row[i]+0.7152*row[i+1]+0.0722*row[i+2];
+        sum+=lum;n+=1;if(lum<110)dark+=1;
+      }
+    }
+    return {mean:sum/n,darkRatio:dark/n};
+  }
+  const locked=rowsOf(original);
+  const open=rowsOf(derived);
+  assert.equal(locked.width,1672);
+  assert.equal(locked.height,941);
+  assert.equal(open.width,1672);
+  assert.equal(open.height,941);
+  const baked=band(locked);
+  const cleared=band(open);
+  assert.ok(baked.darkRatio>0.5,JSON.stringify(baked));
+  assert.ok(cleared.darkRatio<0.2,JSON.stringify(cleared));
+  assert.ok(cleared.mean>140,JSON.stringify(cleared));
+  for(let y=0;y<58;y++){
+    assert.equal(open.rows[y].subarray(0,168*3).equals(locked.rows[y].subarray(0,168*3)),true,`logo y ${y}`);
+    assert.equal(open.rows[y].subarray(1612*3).equals(locked.rows[y].subarray(1612*3)),true,`menu y ${y}`);
+  }
+  for(let y=58;y<locked.height;y++)assert.equal(open.rows[y].equals(locked.rows[y]),true,`row ${y}`);
 });

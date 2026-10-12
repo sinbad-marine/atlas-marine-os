@@ -646,7 +646,8 @@ test('round-table fix: the unused hero-portrait asset is no longer force-downloa
 });
 
 test('round-table: TTS text normalization verified - the same message text rendered into the chat DOM is HTML-escaped via esc(), and SpeechSynthesisUtterance.text is not an HTML/markup sink, so no concrete injection path exists and no new escaping was added',()=>{
-  assert.match(app,/\$\{m\.role==='user'\?'Captain':'Captain Sinbad'\}<\/span>\s*\n\s*\$\{esc\(m\.text\)\}/);
+  // Escaping is required; template formatting must not add blank lines to pre-wrapped messages.
+  assert.match(app,/\$\{m\.role==='user'\?'Captain':'Captain Sinbad'\}<\/span>\s*\$\{esc\(m\.text\)\}/);
 });
 
 test('Sinbad workspace keeps chat, Academy and the read-only ARGOS watch as visible tabs without duplicating functional controls',()=>{

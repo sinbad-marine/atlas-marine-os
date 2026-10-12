@@ -58,12 +58,18 @@ test('legacy local library bytes and indexed text are also denied outside owner 
   assert.match(app,/\['uploadDocs','docFiles','docFolder','docTags','knowledgeQuery','knowledgeSearchBtn'\][\s\S]*?el\.disabled=!roleCanAccessPrivateSources\(\)/);
 });
 
-test('dashboard counts and local Sinbad fallback cannot disclose private library inventory',()=>{
+test('dashboard counts and local Sinbad fallback cannot disclose private library inventory',async()=>{
   assert.match(app,/async function renderSummary\(\)\{[\s\S]*?if\(!roleCanAccessPrivateSources\(\)\)\{[\s\S]*?\['sumFiles','sumPubs','sumCharts','sumStorage'\]/);
   assert.match(app,/const canAccessPrivateLibrary=roleCanAccessPrivateSources\(\);\s*const files=canAccessPrivateLibrary\?await dbAll\(\):\[\]/);
   assert.match(app,/if\(q\.includes\('chart'\)\)\{\s*if\(!canAccessPrivateLibrary\)return 'Private chart archive identities/);
   assert.match(app,/if\(q\.includes\('publication'\) \|\| q\.includes\('solas'\) \|\| q\.includes\('marpol'\)\)\{\s*if\(!canAccessPrivateLibrary\)return 'Private publication identities/);
-  assert.match(app,/async function refreshCloudSummary\(\)\{[\s\S]*?if\(!roleCanAccessPrivateSources\(\)\)\{[\s\S]*?\['sumFiles','sumPubs','sumCharts','sumStorage'\]/);
+  // Execute the real summary guard: a signed-in restricted user must clear all counts
+  // without issuing any private inventory query, regardless of implementation shape.
+  const nodes=Object.fromEntries(['sumFiles','sumPubs','sumCharts','sumStorage'].map(id=>[id,{textContent:'private old count'}]));
+  let queries=0;const context={cloudClient:{from:()=>{queries++;throw Error('private query forbidden')}},cloudSession:{user:{id:'isolated-unit-user'}},selectedWorkspaceId:'isolated-unit-workspace',roleCanAccessPrivateSources:()=>false,$:id=>nodes[id]};
+  const vm=require('node:vm');vm.createContext(context);vm.runInContext(app.slice(app.indexOf('async function refreshCloudSummary('),app.indexOf('function openCloudBucket')),context);
+  assert.equal((await context.refreshCloudSummary()).state,'restricted');assert.equal(queries,0);
+  for(const node of Object.values(nodes))assert.equal(node.textContent,'—');
 });
 
 test('private cloud library mutations enforce the same role gate as their hidden controls',()=>{

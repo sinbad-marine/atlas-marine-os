@@ -53,6 +53,36 @@ test('Pages release contains every live character runtime and referenced animati
   assert.equal(builder.RELEASE_FILES.some(file=>file.endsWith('captain-sinbad-hero-portrait.png')),false,'unused portrait must not inflate the release');
 });
 
+test('manifest sourceCommit is the checked-out commit, with triggerSha only when it differs',async t=>{
+  const parent=await fsp.mkdtemp(path.join(builder.ROOT,'.release-test-'));
+  t.after(()=>fsp.rm(parent,{recursive:true,force:true}));
+  const previous={GITHUB_SHA:process.env.GITHUB_SHA,SINBAD_CHECKED_OUT_COMMIT:process.env.SINBAD_CHECKED_OUT_COMMIT};
+  const checkout='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',trigger='bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
+  try{
+    delete process.env.SINBAD_CHECKED_OUT_COMMIT;
+    process.env.GITHUB_SHA=trigger;
+    assert.deepEqual(builder.releaseSourceIdentity(),{sourceCommit:'LOCAL_UNATTESTED'});
+    process.env.SINBAD_CHECKED_OUT_COMMIT='not-a-commit';
+    assert.deepEqual(builder.releaseSourceIdentity(),{sourceCommit:'LOCAL_UNATTESTED'});
+    process.env.SINBAD_CHECKED_OUT_COMMIT=checkout;
+    process.env.GITHUB_SHA=checkout.toUpperCase();
+    assert.deepEqual(builder.releaseSourceIdentity(),{sourceCommit:checkout});
+    process.env.GITHUB_SHA=trigger;
+    const target=path.join(parent,'pages');
+    const result=await builder.buildPagesArtifact(target);
+    assert.equal(result.sourceCommit,checkout);
+    assert.equal(result.triggerSha,trigger);
+    const manifest=JSON.parse(await fsp.readFile(path.join(target,'release-manifest.json'),'utf8'));
+    assert.equal(manifest.sourceCommit,checkout);
+    assert.equal(manifest.triggerSha,trigger);
+    assert.equal(Object.hasOwn(manifest,'files'),true);
+  }finally{
+    for(const [key,value] of Object.entries(previous)){
+      if(value===undefined)delete process.env[key];else process.env[key]=value;
+    }
+  }
+});
+
 test('refuses overwrite and targets outside the repository',async t=>{
   const parent=await fsp.mkdtemp(path.join(builder.ROOT,'.release-test-'));
   t.after(()=>fsp.rm(parent,{recursive:true,force:true}));
