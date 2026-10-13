@@ -8,8 +8,8 @@ module.exports=defineConfig({
   fullyParallel:false,
   forbidOnly:!!process.env.CI,
   retries:process.env.CI?1:0,
-  // Keep every check within the existing CI time limit using isolated browser workers.
-  workers:process.env.CI?2:1,
+  // One browser worker per runner; CI projects run on separate machines.
+  workers:1,
   reporter:process.env.CI?[['github'],['./tools/browser-evidence-reporter.js']]:'list',
   snapshotPathTemplate:'{testDir}/__screenshots__/{testFilePath}/{projectName}/{arg}{ext}',
   expect:{toHaveScreenshot:{animations:'disabled',caret:'hide',scale:'css',threshold:.2,maxDiffPixelRatio:.02}},
