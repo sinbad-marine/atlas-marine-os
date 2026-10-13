@@ -113,6 +113,7 @@
     <div id="authMessage" class="auth-message" role="status"></div>
   </form>
 </dialog>
+<a id="homeEngineRoomEntry" href="./index.html?workspace=engine-room">Engine Room</a>
 <header class="topbar">
 <a class="brand console-page-context" href="./index.html" aria-label="SINBAD Marine home"><img src="./assets/console-art/sinbad-brand-lockup-v13.png" alt="SINBAD MARINE — A SAFER SEA A SMARTER TOMORROW"></a>
   <div class="topbar-account-actions">
@@ -368,16 +369,17 @@
 <section id="engine-room" class="workspace engine-room" data-engine-room="v0">
   <div class="workspace-head">
     <div>
-      <div class="eyebrow">ENGINE ROOM · v0 · READ ONLY</div>
+      <div class="eyebrow" id="engineRoomReadOnly">ENGINE ROOM · v0 · READ ONLY</div>
       <h2>SINBAD Engine Room</h2>
-      <p>Observed state from the local Bridge. A field the probe does not return stays UNKNOWN or NOT CONNECTED. A failed probe stays UNAVAILABLE.</p>
+      <p id="engineRoomDescription">Source records are shown separately from health measurements. Missing data does not mean a fault.</p>
     </div>
     <div class="engine-room-actions">
-      <button class="btn" id="refreshEngineRoom" type="button">Refresh observed state</button>
+      <button class="btn" id="refreshEngineRoom" type="button" disabled aria-describedby="engineRoomObservedAt">Refresh observed state</button>
       <button class="btn close" type="button">Kapat</button>
     </div>
   </div>
-  <p class="engine-room-doctrine" id="engineRoomObservedAt">No snapshot yet. Nothing on this page is inferred.</p>
+  <p class="engine-room-access-note"><span id="engineRoomAccessNote">Private system data requires sign-in with an authorized account.</span> <button class="btn" id="engineRoomSignIn" type="button">Member Sign In</button></p>
+  <p class="engine-room-doctrine" id="engineRoomObservedAt">Authorized sign-in required</p>
   <div id="engineRoomGrid" class="engine-room-grid" aria-live="polite"></div>
 </section>
 

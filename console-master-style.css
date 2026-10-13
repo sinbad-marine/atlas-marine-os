@@ -737,3 +737,38 @@ body.workspace-window-engine-room .engine-room-card header{scroll-margin-top:16p
  /* Owner 2026-10-11: the language/account box sits just below the hamburger row (clear of the member status strip, Refresh and the hamburger); the quick-actions panel opens below the box. */
  body:is(.authenticated,.signed-out)[data-console-art="monet"]:not(.workspace-window-mode):not(:has(main>.workspace.active)) .hero-action-menu[open] .action-menu-panel{top:calc(7vh + 54px)}
 }
+
+/* Owner 2026-10-13: a named entrance to the existing protected Engine Room. */
+#homeEngineRoomEntry{display:none}
+body:is(.authenticated,.signed-out)[data-console-art="monet"]:not(.workspace-window-mode):not(:has(main>.workspace.active))>#homeEngineRoomEntry{
+  display:flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:44px;width:fit-content;max-width:calc(100% - 26px);margin:8px 13px;padding:8px 14px;border:1px solid #8d774e;border-radius:8px;background:#071d2c;color:#f3dab0;font-size:14px;line-height:1.3;text-align:center;text-decoration:none;font-weight:600;
+}
+#homeEngineRoomEntry:focus-visible{outline:3px solid #fff1ba;outline-offset:2px}
+.engine-room-access-note{padding:12px;border:1px solid rgba(230,189,103,.35);border-radius:10px;color:#dbe7ed}
+#engineRoomSignIn{margin:8px 0 0}
+body:not(.signed-out) #engineRoomSignIn{display:none}
+@media(min-width:1100px){
+  body:is(.authenticated,.signed-out)[data-console-art="monet"]:not(.workspace-window-mode):not(:has(main>.workspace.active))>#homeEngineRoomEntry{
+    position:fixed;z-index:85;left:.6vw;top:25vh;width:5.8vw;max-width:none;margin:0;padding:8px 3px;font-size:clamp(10px,.85vw,14px);overflow-wrap:anywhere;
+  }
+}
+
+/* Engine Room: evidence labels are not health verdicts; keep short cards compact. */
+.engine-room-grid{align-items:start}
+.engine-room-card{min-width:0;align-content:start;gap:8px}
+.engine-room-card header{flex-wrap:wrap;gap:8px;align-items:start}
+.engine-room-card header strong{white-space:normal;max-width:100%}
+.engine-room-card[data-status-tone="neutral"] header strong{color:var(--console-muted);border-color:var(--console-line);background:rgba(148,163,184,.12)}
+.engine-room-card[data-status-tone="caution"] header strong{color:#d6b569;border-color:rgba(214,181,105,.4);background:rgba(214,181,105,.12)}
+.engine-room-card[data-status-tone="fault"] header strong{color:#ff9a9a;background:rgba(255,90,90,.12)}
+.engine-room-card p,.engine-room-card dd,.engine-room-card dt,.engine-room-card header{overflow-wrap:anywhere;min-width:0}
+.engine-room-card p{margin:0}
+.engine-room-time{font-size:12px;color:var(--console-muted);line-height:1.5}
+.engine-room-card details{min-width:0}
+.engine-room-card summary{cursor:pointer;color:#d6b569;font-size:12px;padding:6px 0}
+.engine-room-card details[open]{display:grid;gap:8px}
+.engine-room-actions{flex-wrap:wrap}
+#refreshEngineRoom:disabled{opacity:.5;cursor:not-allowed}
+#engine-room .engine-room-access-note[hidden]{display:none}
+
+@media(max-width:650px){#engine-room .workspace-head{flex-direction:column;align-items:stretch;gap:12px}#engine-room .engine-room-actions{justify-content:flex-start}#engine-room .workspace-head>div{min-width:0}}
