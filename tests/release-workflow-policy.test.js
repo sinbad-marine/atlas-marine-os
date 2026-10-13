@@ -6,6 +6,21 @@ const fs=require('node:fs');
 const quality=fs.readFileSync('.github/workflows/release-quality.yml','utf8');
 const release=fs.readFileSync('.github/workflows/pages-release.yml','utf8');
 
+test('both browser projects must pass before artifact verification or Pages build',()=>{
+  for(const workflow of [quality,release]){
+    assert.match(workflow,/project: \[desktop-chromium, mobile-chromium\]/u);
+    assert.match(workflow,/fail-fast: false/u);
+    assert.match(workflow,/npm run test:web -- --project=\$\{\{ matrix\.project \}\} --workers=1 --fail-on-flaky-tests/u);
+    assert.doesNotMatch(workflow,/continue-on-error: true/u);
+  }
+  // A skipped dependency must never look like a successful required verify check.
+  assert.match(quality,/verify:\s*\n\s*needs: browser-checks\s*\n\s*if: \$\{\{ always\(\) \}\}/u);
+  assert.match(quality,/BROWSER_RESULT: \$\{\{ needs\.browser-checks\.result \}\}/u);
+  assert.match(quality,/run: test "\$BROWSER_RESULT" = success/u);
+  assert.match(release,/build:\s*\n\s*needs: browser-checks/u);
+  assert.match(release,/deploy:\s*\n\s*needs: build/u);
+});
+
 test('quality workflow runs regression artifact build and SBOM with read-only permission',()=>{
   assert.match(quality,/permissions:\s*\n\s*contents: read/u);
   assert.match(quality,/FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true/u);

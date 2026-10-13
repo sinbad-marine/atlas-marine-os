@@ -194,7 +194,7 @@
     },
     {
       "path": ".github/workflows/pages-release.yml",
-      "sha256": "7ca50d98596b7ef77fb661e851d19e1570030216d43d19d487d80b65bc44504d",
+      "sha256": "420ad4da25ef89dce70ecd76edf4448710df6ff941b891a64f9bd25b27b2c8e9",
       "kind": "WORKFLOW"
     },
     {
@@ -204,7 +204,7 @@
     },
     {
       "path": ".github/workflows/release-quality.yml",
-      "sha256": "69f02e8b05fcd2e03cd0d7fdb1a7f37575e0a368ee67ea96d2c9a0294f009a71",
+      "sha256": "2a8cf5a29fd2ab11761daf1fb260dc5056cc985d525394459ca879247aa6cd6a",
       "kind": "WORKFLOW"
     },
     {
