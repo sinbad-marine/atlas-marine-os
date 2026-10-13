@@ -262,7 +262,10 @@ test('idle Sinbad performs a sparse real micro-motion and yields immediately to 
 
 test('a short speech pause joins one user turn instead of submitting mid-sentence',async({page})=>{
   await stubBridge(page);
+  // Drive the speech gap in browser time; assertion/driver latency is not user silence.
+  await page.clock.install({time:new Date('2026-10-13T00:00:00Z')});
   await page.goto('/');
+  await page.clock.pauseAt(new Date('2026-10-13T01:00:00Z'));
   await page.evaluate(()=>{
     document.body.classList.remove('auth-pending','signed-out');document.body.classList.add('authenticated');
     window.__sinbadRecognitionStubs=[];
@@ -278,16 +281,21 @@ test('a short speech pause joins one user turn instead of submitting mid-sentenc
     const first=window.__sinbadRecognitionStubs[0],results=[[{transcript:'Hey Sinbad rotayı'}]];results[0].isFinal=true;
     first.onspeechstart?.();first.onresult?.({resultIndex:0,results});first.onend?.();
   });
-  await page.waitForTimeout(50);
+  await page.clock.runFor(100);
   await expect(page.locator('#sinbadMessages .chat-bubble.user')).toHaveCount(0);
   await expect(page.locator('.sinbad-avatar.large')).toHaveAttribute('data-listening-activity','continuation');
   await expect(page.locator('.sinbad-avatar.large')).toHaveAttribute('data-listening-pace','fast');
-  await page.waitForFunction(()=>window.__sinbadRecognitionStubs?.length>=2&&typeof window.__sinbadRecognitionStubs[1].onresult==='function',null,{polling:10});
+  expect(await page.evaluate(()=>window.__sinbadRecognitionStubs.length)).toBe(2);
+  expect(await page.evaluate(()=>sinbadRecognition===window.__sinbadRecognitionStubs[1])).toBe(true);
   await page.evaluate(()=>{
     const second=window.__sinbadRecognitionStubs[1],results=[[{transcript:'göster'}]];results[0].isFinal=true;
     second.onspeechstart?.();second.onresult?.({resultIndex:0,results});second.onend?.();
   });
-  await page.waitForTimeout(1300);
+  expect(await page.evaluate(()=>sinbadPendingSpeechTurn)).toBe('Hey Sinbad rotayı göster');
+  await page.clock.runFor(849);
+  await expect(page.locator('#sinbadMessages .chat-bubble.user')).toHaveCount(0);
+  await page.clock.runFor(251);
+  await expect(page.locator('#sinbadMessages .chat-bubble.user')).toHaveCount(1);
   await expect(page.locator('#sinbadMessages .chat-bubble.user').last()).toContainText('rotayı göster');
 });
 

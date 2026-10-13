@@ -63,6 +63,14 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Run desktop mobile and WCAG browser tests
         run: npm run test:web
+      - name: Preserve browser failure evidence
+        if: ${{ failure() || cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2, shared repository pin
+        with:
+          name: browser-evidence-${{ github.workflow }}-${{ github.run_attempt }}
+          path: test-results/
+          retention-days: 14
+          if-no-files-found: ignore
       - name: Build allowlisted Pages artifact
         env:
           SINBAD_CHECKED_OUT_COMMIT: ${{ steps.release_source.outputs.sha }}
