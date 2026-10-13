@@ -229,7 +229,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "68ec6475b17c611d5cb1dac5ca98992b3a94b28a4bd2c5b24626c93635e35636",
+      "sha256": "eb27c6e045050c50f3c618d641a03149e7ac738ae88f153215cea1122a61ab97",
       "kind": "SOURCE"
     },
     {
@@ -239,7 +239,7 @@
     },
     {
       "path": "config/ui-design-contract.json",
-      "sha256": "ae5605f1f576470a065f03f4244caf5b638d53abe96bd05d664ba277dd5958a7",
+      "sha256": "f59f7c15c4d1455a9f43e1f37b4ab7031553ac13e45d6a722402f35c280fc99f",
       "kind": "CONFIG"
     },
     {
@@ -249,7 +249,7 @@
     },
     {
       "path": "index.html",
-      "sha256": "06ad03e2ab65a991f7625286963223eb3f58d5e8a7042df24f56ff5f298a3671",
+      "sha256": "0e949268f31c8a4b2e0dbc5065cb6c2cc2523ac656e74cd7e0c442ed5e5b2fe4",
       "kind": "SOURCE"
     },
     {

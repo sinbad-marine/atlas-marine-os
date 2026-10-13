@@ -160,7 +160,7 @@ function initializeWorkspaceSurface(id){
   if(id==='enc-viewer')initEncViewer();
   if(id==='navigation-plot')initNavigationPlot();
   if(id==='studio-console')refreshStudioCapability();
-  if(id==='engine-room')refreshEngineRoom();
+  if(id==='engine-room')syncEngineRoomView();
 }
 function syncWorkspaceWindowShell(id){
   const workspace=$(id);
@@ -2198,6 +2198,8 @@ async function collectEngineRoomProbes(probe,signal){
   return probes;
 }
 let engineRoomRequest=null;
+let engineRoomView=null;
+let engineRoomReadFailed=false;
 async function probeEngineRoom(path,parentSignal){
   const controller=new AbortController();
   const timer=setTimeout(()=>controller.abort(),12000);
@@ -2225,49 +2227,65 @@ function loadEngineRoomGroqRecord(){
     document.head.appendChild(script);
   });
 }
+function engineRoomAuthority(){
+  const scope=`${getCloudConfig().url}|${cloudSession?.user?.id||''}|${selectedWorkspaceId||''}`;
+  const decision=ownerConsoleObservationDecision(verifiedWorkspaceRole(),ownerConsoleCandidate.grant,ownerConsoleCandidate.subject,'engine-room');
+  const allowed=Boolean(cloudSession?.user&&!needsInviteSetup(cloudSession.user)&&selectedWorkspaceId&&getCloudConfig().url&&
+    typeof probePaintAllowed==='function'&&probePaintAllowed({scopeAtStart:scope,liveScope:scope,verifiedScope:currentWorkspaceRoleVerifiedScope,authorityAtStart:observationAuthorityEpoch,authorityNow:observationAuthorityEpoch,surface:'engine-room',decision}));
+  return {scope,epoch:observationAuthorityEpoch,allowed};
+}
+function syncEngineRoomView(){
+  const words=window.SinbadEngineRoomRecord?.copy(appLanguage);
+  if(!words)return;
+  const authority=engineRoomAuthority();
+  const validView=authority.allowed&&engineRoomView?.scope===authority.scope&&engineRoomView?.epoch===authority.epoch;
+  if(!validView){engineRoomView=null;$('engineRoomGrid')?.replaceChildren();}
+  const reason=!cloudSession?.user?words.signin:!authority.allowed?words.restricted:engineRoomRequest?words.checking:engineRoomReadFailed?words.unavailable:words.idle;
+  const button=$('refreshEngineRoom');
+  if(button){button.disabled=!authority.allowed||Boolean(engineRoomRequest);button.textContent=words.refresh;button.title=reason;button.setAttribute('aria-describedby','engineRoomObservedAt');}
+  const description=$('engineRoomDescription');if(description)description.textContent=words.description;
+  const eyebrow=$('engineRoomReadOnly');if(eyebrow)eyebrow.textContent=`ENGINE ROOM · v0 · ${words.readOnly}`;
+  const close=document.querySelector('#engine-room .close');if(close)close.textContent=words.close;
+  const accessNote=document.querySelector('#engine-room .engine-room-access-note');if(accessNote)accessNote.hidden=Boolean(cloudSession?.user);
+  const stamp=$('engineRoomObservedAt');if(stamp){stamp.textContent=validView?words.health:reason;stamp.dataset.observationState=validView?'record':!cloudSession?.user?'signin':!authority.allowed?'restricted':engineRoomRequest?'checking':engineRoomReadFailed?'unavailable':'not-requested';}
+  if(validView)renderEngineRoom(engineRoomView.snapshot);
+}
 function renderEngineRoom(snapshot){
   const grid=$('engineRoomGrid'),stamp=$('engineRoomObservedAt');
   if(!grid||!stamp)return;
-  const compiled=snapshot.compiledAt||snapshot.receivedAt||'UNKNOWN';
-  const sourceTimes=[...new Set((snapshot.engines||[]).map(engine=>engine.evidenceTime).filter(Boolean))];
-  stamp.textContent=`Snapshot ${snapshot.schema} · compiled ${compiled} · source ${sourceTimes.length?sourceTimes.join(', '):'SOURCE_MEASUREMENT_TIME_ABSENT'} · read only · no inferred health`;
-  const components=Array.isArray(snapshot.components)?snapshot.components:[];
-  grid.innerHTML=snapshot.engines.map((engine,index)=>{
-    const component=components.find(item=>item?.identity?.id===engine.id)||null;
-    const recordClass=component?.recordClass||'unverified';
-    const health=component?.health||'NOT_A_HEALTH_MEASUREMENT';
-    const limit=component?.freshnessLimit?` · ${component.freshnessLimit}`:'';
-    return `<article class="engine-room-card" data-engine-id="${esc(engine.id)}" data-engine-state="${esc(engine.state)}" data-record-class="${esc(recordClass)}" data-health="${esc(health)}"><header><span>${esc(engine.title)}</span><strong>${esc(engine.state)}</strong></header><p class="engine-room-record">Record ${esc(recordClass)}${esc(limit)}</p><p class="engine-room-health">${esc(health)}</p><p class="engine-room-source">${engine.sources.length?esc(engine.sources.join(' · ')):'Probe unavailable'}</p><dl>${engine.facts.map(fact=>`<div><dt>${esc(fact.label)}</dt><dd${fact.observed?'':` class="is-unknown"`}>${esc(fact.value)}</dd></div>`).join('')}</dl><p class="engine-room-absent">NOT CONNECTED: ${esc(engine.notConnected.join(', '))}</p></article>`;
+  const authority=engineRoomAuthority();
+  if(!authority.allowed){clearEngineRoomPrivateView();return;}
+  engineRoomView={snapshot,scope:authority.scope,epoch:authority.epoch};
+  const words=window.SinbadEngineRoomRecord.copy(appLanguage);
+  stamp.textContent=words.health;stamp.dataset.observationState='record';
+  grid.innerHTML=snapshot.engines.map(engine=>{
+    const view=window.SinbadEngineRoomRecord.present(engine,snapshot,appLanguage,{nowMs:Date.now()});
+    const record=view.record;
+    return `<article class="engine-room-card" data-engine-id="${esc(engine.id)}" data-engine-state="${esc(engine.state)}" data-status-tone="${view.tone}" data-status-kind="${view.kind}" data-record-class="${esc(record.recordClass)}" data-health="${esc(record.health)}"><header><span>${esc(engine.title)}</span><strong>${esc(view.label)}</strong></header><p class="engine-room-time">${esc(view.time)}</p><p class="engine-room-source">${engine.taskSource==='source-record'?esc(words.sourceFiles)+': '+engine.sources.length:esc(words.source)+': '+(engine.sources.length?esc(engine.sources.join(' · ')):esc(words.noSource))}</p><details><summary>${esc(words.details)}</summary><p class="engine-room-source">${esc(engine.sources.join(' · '))}</p><p class="engine-room-record">${esc(record.recordClass)} · ${esc(engine.state)}${record.freshnessLimit?' · '+esc(record.freshnessLimit):''}</p><p class="engine-room-health">${esc(record.health)}</p><dl>${engine.facts.map(fact=>`<div><dt>${esc(fact.label)}</dt><dd${fact.observed?'':` class="is-unknown"`}>${esc(fact.value)}</dd></div>`).join('')}</dl><p class="engine-room-absent">NOT CONNECTED: ${esc(engine.notConnected.join(', '))}</p></details></article>`;
   }).join('');
 }
-function engineRoomPaintClosed(){
-  if(typeof clearEngineRoomPrivateView==='function')clearEngineRoomPrivateView();
-  else{
-    const stamp=$('engineRoomObservedAt');
-    const grid=$('engineRoomGrid');
-    if(stamp)stamp.textContent='Observation was not requested. Private system data stays closed for this session.';
-    if(grid)grid.replaceChildren();
-  }
-}
+function engineRoomPaintClosed(){clearEngineRoomPrivateView();}
+window.addEventListener('pageshow',()=>syncEngineRoomView());
+// Do not retain private cards in the browser history cache. Reopening requires a new explicit observation.
+window.addEventListener('pagehide',()=>clearEngineRoomPrivateView());
 async function refreshEngineRoom(){
-  const stamp=$('engineRoomObservedAt');
   const scopeAtStart=`${getCloudConfig().url}|${cloudSession?.user?.id||''}|${selectedWorkspaceId||''}`;
   const authorityAtStart=typeof observationAuthorityEpoch==='number'?observationAuthorityEpoch:0;
   const decision=ownerConsoleObservationDecision(verifiedWorkspaceRole(),ownerConsoleCandidate.grant,ownerConsoleCandidate.subject,'engine-room');
-  if(!decision.observe||decision.execute){
-    if(stamp)stamp.textContent='Observation was not requested. Private system data stays closed for this session.';
+  if(!engineRoomAuthority().allowed||!decision.observe||decision.execute){
     engineRoomPaintClosed();
     return;
   }
   if(typeof probePaintAllowed!=='function'||!decision.navigationOnly){
-    if(stamp)stamp.textContent='Observation was not requested. Private system data stays closed for this session.';
     engineRoomPaintClosed();
     return;
   }
-  if(stamp)stamp.textContent='Observing local Bridge…';
+  engineRoomReadFailed=false;
+  engineRoomView=null;
   engineRoomRequest?.abort();
   const controller=new AbortController();
   engineRoomRequest=controller;
+  syncEngineRoomView();
   try{
     const probes=await collectEngineRoomProbes((path,signal)=>probeEngineRoom(path,signal),controller.signal);
     if(engineRoomRequest!==controller)return;
@@ -2296,9 +2314,9 @@ async function refreshEngineRoom(){
     }
     renderEngineRoom(snapshot);
   }catch{
-    if(engineRoomRequest===controller&&stamp)stamp.textContent='Observation did not finish. No health result was recorded.';
+    if(engineRoomRequest===controller)engineRoomReadFailed=true;
   }finally{
-    if(engineRoomRequest===controller)engineRoomRequest=null;
+    if(engineRoomRequest===controller){engineRoomRequest=null;syncEngineRoomView();}
   }
 }
 $('refreshEngineRoom')?.addEventListener('click',refreshEngineRoom);
@@ -3005,6 +3023,7 @@ function setAppAccess(){
   if(!signedIn){const favorites=$('consoleFavoritesDialog');if(favorites?.open)favorites.close();if(wasSignedIn&&$('admin-settings')?.classList.contains('active'))closeWorkspaces();}
   if(signedIn && $('authDialog')?.open)$('authDialog').close();
   window.SinbadHome?.syncAccount();
+  syncEngineRoomView();
 }
 function needsInviteSetup(user=cloudSession?.user){
   return Boolean(
@@ -3402,12 +3421,12 @@ async function loadWorkspaces(){
 function clearEngineRoomPrivateView(){
   try{if(typeof engineRoomRequest!=='undefined'&&engineRoomRequest){engineRoomRequest.abort();engineRoomRequest=null;}}catch{engineRoomRequest=null;}
   const grid=typeof $==='function'?$('engineRoomGrid'):null;
-  const stamp=typeof $==='function'?$('engineRoomObservedAt'):null;
   if(grid){
     if(typeof grid.replaceChildren==='function')grid.replaceChildren();
     else grid.innerHTML='';
   }
-  if(stamp)stamp.textContent='Observation was not requested. Private system data stays closed for this session.';
+  engineRoomView=null;engineRoomReadFailed=false;
+  syncEngineRoomView();
 }
 function invalidateMembershipAuthority(){
   membershipEpoch++;
@@ -3605,6 +3624,7 @@ function applyRoleAccess(){
   document.querySelectorAll('[data-owner-console]').forEach(button=>{button.dataset.roleHidden=String(!consoleAllowed);});
   refreshAccountSettingsSummary();
   syncMembershipBar();
+  syncEngineRoomView();
 }
 function syncMembershipBar(){
   if(typeof document==='undefined'||!document.body)return;

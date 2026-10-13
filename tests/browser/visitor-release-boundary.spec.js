@@ -36,7 +36,7 @@ test('visitor refresh and visible private actions generate zero Bridge or model 
   if(workspace==='sinbad'){
    await page.locator('[data-sinbad-tab="argos"]').click();await page.locator('#refreshArgosStatus').click();await expect(page.locator('#argosOverallStatus')).toHaveText('SIGN IN REQUIRED');
    await page.locator('[data-sinbad-tab="chat"]').click();const replies=page.locator('#sinbadMessages .chat-bubble.sinbad'),before=await replies.count();await page.locator('#sinbadInput').fill('Tell me about galaxies');await page.locator('#sendSinbad').click();await expect(replies).toHaveCount(before+1);
-  }else for(const id of ['refreshEngineRoom','refreshStudioStatus']){const button=page.locator(`#${id}:visible`);if(await button.count())await button.click();}
+  }else for(const id of ['refreshEngineRoom','refreshStudioStatus']){const button=page.locator(`#${id}:visible`);if(await button.count()){if(id==='refreshEngineRoom'){await expect(button).toBeDisabled();await page.evaluate(()=>refreshEngineRoom());}else await button.click();}}
  }
  expect(requests).toEqual([]);
 });

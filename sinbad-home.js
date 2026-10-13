@@ -13,6 +13,15 @@
     es:{favorites:'Favoritos',personal:'SUS ACCESOS',manage:'Sus favoritos',close:'Cerrar',refresh:'Actualizar',checking:'Actualizando…',never:'Actualice los datos disponibles',ready:'Resumen de la nube actualizado',error:'La actualización falló. Los valores anteriores pueden estar desactualizados.',unavailable:'Inicie sesión y elija un espacio conectado para actualizar los datos de la nube.',restricted:'Esta cuenta no puede leer el resumen privado de documentos.',stale:'La cuenta o el espacio cambiaron. Actualice de nuevo.',ask:'Preguntar a SINBAD',quick:'Acciones rápidas',tools:'Todas las herramientas disponibles',settings:'Ajustes',account:'Cuenta y contraseña',explore:'Explorar',local:'Local',pc:'Consola',cloud:'Nube',sync:'Sincronización',agents:'Agentes',action:'Acción',refreshed:'ACTUALIZADO',unknown:'NO VERIFICADO',files:'Archivos',publications:'Publicaciones',charts:'Cartas',storage:'Almacenamiento',ui:'INTERFAZ LISTA',home:'Inicio',consoleEntry:'Consola del Owner',communicationEntry:'Groq',communicationEntryLabel:'Aplicación de comunicación Groq nombrada por el Owner. Destino NOT VERIFIED. No es la ficha del proveedor GroqCloud.'},
     fr:{favorites:'Favoris',personal:'VOS RACCOURCIS',manage:'Vos favoris',close:'Fermer',refresh:'Actualiser',checking:'Actualisation…',never:'Actualisez les données disponibles',ready:'Résumé cloud actualisé',error:'L’actualisation a échoué. Les valeurs précédentes peuvent être périmées.',unavailable:'Connectez-vous et choisissez un espace relié pour actualiser les données cloud.',restricted:'Ce compte ne peut pas lire le résumé privé des documents.',stale:'Le compte ou l’espace a changé. Actualisez de nouveau.',ask:'Demander à SINBAD',quick:'Actions rapides',tools:'Tous les outils disponibles',settings:'Réglages',account:'Compte et mot de passe',explore:'Explorer',local:'Local',pc:'Console',cloud:'Cloud',sync:'Synchronisation',agents:'Agents',action:'Action',refreshed:'ACTUALISÉ',unknown:'NON VÉRIFIÉ',files:'Fichiers',publications:'Publications',charts:'Cartes',storage:'Stockage',ui:'INTERFACE PRÊTE',home:'Accueil',consoleEntry:'Console Owner',communicationEntry:'Groq',communicationEntryLabel:'Application de communication Groq nommée par l’Owner. Cible NOT VERIFIED. Ce n’est pas la fiche du fournisseur GroqCloud.'}
   };
+  const engineEntryCopy={
+    en:['Engine Room','Private system data requires sign-in with an authorized account.','Member Sign In'],
+    tr:['Makine Dairesi','Özel sistem verilerini görmek için yetkili bir hesapla giriş yapın.','Üye Girişi'],
+    ru:['Машинное отделение','Для просмотра закрытых данных системы войдите в авторизованную учётную запись.','Войти'],
+    de:['Maschinenraum','Melden Sie sich mit einem berechtigten Konto an, um private Systemdaten zu sehen.','Anmelden'],
+    ar:['غرفة المحركات','لعرض بيانات النظام الخاصة، سجّل الدخول بحساب مخوّل.','تسجيل الدخول'],
+    es:['Sala de máquinas','Inicie sesión con una cuenta autorizada para ver los datos privados del sistema.','Iniciar sesión'],
+    fr:['Salle des machines','Connectez-vous avec un compte autorisé pour consulter les données privées du système.','Se connecter']
+  };
   const copies={
     'yacht-operations':{
       en:['01 · OPERATIONS','Fleet · Crew · Logbook · Media'],
@@ -102,8 +111,13 @@
     const summary=document.getElementById('homeCloudSummary');if(summary)summary.textContent=state==='ready'&&counts?`${t('files')}: ${counts.files} · ${t('publications')}: ${counts.publications} · ${t('charts')}: ${counts.charts} · ${t('storage')}: ${counts.storage}`:'';
   }
   function translate(){
+    if(typeof syncEngineRoomView==='function')syncEngineRoomView();
     favorites.setLanguage(appLanguage);
     const lang=code();
+    const engineCopy=engineEntryCopy[lang];
+    text('#homeEngineRoomEntry',engineCopy[0]);
+    text('#engineRoomAccessNote',engineCopy[1]);
+    text('#engineRoomSignIn',engineCopy[2]);
     document.querySelectorAll('.console-domain-card').forEach(card=>{
       const id=card.dataset.open||'page:academy.html';
       const item=catalog[id.startsWith('page:')?id:`workspace:${id}`];
@@ -262,6 +276,7 @@
     document.fonts?.ready.then(schedule);
     layout();
   }
+  document.getElementById('engineRoomSignIn')?.addEventListener('click',()=>document.getElementById('openCaptainSignIn')?.click());
   translate();syncAccount();favorites.render();
   installHomeControlLayout();
 })();
