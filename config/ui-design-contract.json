@@ -3,13 +3,13 @@
   "owner": "Sinbad Marine design protection",
   "goldenUpdatePolicy": "Golden screenshots may change only in an explicitly reviewed design pull request.",
   "protectedFileSha256": {
-    "index.html": "0e949268f31c8a4b2e0dbc5065cb6c2cc2523ac656e74cd7e0c442ed5e5b2fe4",
+    "index.html": "59c05a18e475c4d6677836c0f42275b75e800f18f84918af26ce1faabf3f0593",
     "styles.css": "1f98b18b579d6b3027d3d28a3f58a1a3879b453f0a206e9bc8571a0a56cbf89d",
     "academy.html": "a05aa2f358f8447d3be88435035eca06cd6498a7cdc35441bdb94a034ba24456",
     "academy.css": "cbaa2fdb23d3006cea1e720738611590fe59a9b944ab4a1000c54a6a078054bc",
     "academy-classroom-window.js": "a73a3bcdc2d99ac64a1eb8d80bba402ff288cf785754001342af20f29c545e95",
     "console-master-style.css": "0d499e8bf43ecc7c0f9eedf60f90156c3d136621cc7ec84c3aee0f9f4e7c3be9",
-    "app.js": "eb27c6e045050c50f3c618d641a03149e7ac738ae88f153215cea1122a61ab97"
+    "app.js": "1b1ea8c17093f9710bb0873b5dc88a7138d1381caf9e132b2910d2080215910a"
   },
   "dashboardWorkspaces": [
     "admin-settings",

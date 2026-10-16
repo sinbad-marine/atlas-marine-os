@@ -39,7 +39,7 @@
     },
     {
       "path": "sw.js",
-      "sha256": "a8cf139be1253d4d4a99825940f4d0024f9f9d00763b0d6384c5d9f3da2768ae",
+      "sha256": "2c4a1dbc245edb90fbbf7d34a366529bff43c3c9d4e25dad10a3970588584336",
       "kind": "SOURCE"
     },
     {
@@ -229,7 +229,7 @@
     },
     {
       "path": "app.js",
-      "sha256": "eb27c6e045050c50f3c618d641a03149e7ac738ae88f153215cea1122a61ab97",
+      "sha256": "1b1ea8c17093f9710bb0873b5dc88a7138d1381caf9e132b2910d2080215910a",
       "kind": "SOURCE"
     },
     {
@@ -239,7 +239,7 @@
     },
     {
       "path": "config/ui-design-contract.json",
-      "sha256": "f59f7c15c4d1455a9f43e1f37b4ab7031553ac13e45d6a722402f35c280fc99f",
+      "sha256": "16643969d00be47dc7cb8418b94b165272581f00543821d65963a34ac47a93e8",
       "kind": "CONFIG"
     },
     {
@@ -249,7 +249,7 @@
     },
     {
       "path": "index.html",
-      "sha256": "0e949268f31c8a4b2e0dbc5065cb6c2cc2523ac656e74cd7e0c442ed5e5b2fe4",
+      "sha256": "59c05a18e475c4d6677836c0f42275b75e800f18f84918af26ce1faabf3f0593",
       "kind": "SOURCE"
     },
     {
@@ -419,7 +419,7 @@
     },
     {
       "path": "tools/build-pages-artifact.js",
-      "sha256": "ba47fc8adba8db42fe6a551d034f6bf5f0c2a6bca55df5d4e75ba9c7d6653465",
+      "sha256": "aa8f4253ded2a7ea50f92689f4612a912ad8b097a87063f94b0ef13ee2ce42ac",
       "kind": "SOURCE"
     },
     {

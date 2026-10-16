@@ -5,7 +5,7 @@ async function start(page,context,baseURL){
  page.on('pageerror',error=>errors.push(error.message));
  context.on('request',request=>{if(new URL(request.url()).origin!==new URL(baseURL).origin)requests.push(request.url());});
  await context.route('**/*',route=>new URL(route.request().url()).origin===new URL(baseURL).origin?route.continue():route.abort());
- await page.goto('/index.html?workspace=engine-room');await expect(page.locator('body')).toHaveClass(/signed-out/);
+ await page.goto('/index.html?workspace=engine-room');await page.locator('#denge-details-toggle').click();await expect(page.locator('body')).toHaveClass(/signed-out/);
  await page.evaluate(()=>{appLanguage='tr-TR';window.SinbadHome.translate();});
  return {requests,errors};
 }
