@@ -248,6 +248,8 @@ function updateCamera() {
 
 function resize() {
   const w=canvas.clientWidth,h=canvas.clientHeight;
+  // Details hides the iframe: keep its last valid camera and render targets.
+  if(w<=0||h<=0)return;
   // Limit both DPR and total raster area. This is a resource budget, not an FPS promise.
   const ratio=Math.min(devicePixelRatio||1,1.5,Math.sqrt(rasterBudget/(w*h)));
   renderer.setPixelRatio(ratio);renderer.setSize(w,h,false);
