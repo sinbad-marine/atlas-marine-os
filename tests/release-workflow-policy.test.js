@@ -10,6 +10,11 @@ test('both browser projects must pass before artifact verification or Pages buil
   for(const workflow of [quality,release]){
     assert.match(workflow,/project: \[desktop-chromium, mobile-chromium\]/u);
     assert.match(workflow,/fail-fast: false/u);
+    assert.match(workflow,/shard: \[1, 2\]/u);
+    assert.match(workflow,/--fail-on-flaky-tests --shard=\$\{\{ matrix\.shard \}\}\/2/u);
+    assert.match(workflow,/shard-\$\{\{ matrix\.shard \}\}-of-2/u);
+    assert.match(workflow,/timeout-minutes: 15/u);
+    assert.doesNotMatch(workflow,/--(?:grep|max-failures|last-failed|pass-with-no-tests|update-snapshots)\b/u);
     assert.match(workflow,/npm run test:web -- --project=\$\{\{ matrix\.project \}\} --workers=1 --fail-on-flaky-tests/u);
     assert.doesNotMatch(workflow,/continue-on-error: true/u);
   }
