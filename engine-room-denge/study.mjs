@@ -16,6 +16,7 @@ const reduced = window.__SINBAD_REDUCED_QUERY = matchMedia('(prefers-reduced-mot
 // Production embed never enables prototype benchmark/diagnostic URL flags.
 const params = new URLSearchParams();
 let embeddedActive=false;
+let softwareWebGL=false, rasterBudget=1800000;
 const errors = [];
 addEventListener('error', e => errors.push(String(e.message)));
 addEventListener('unhandledrejection', e => errors.push(String(e.reason)));
@@ -248,7 +249,7 @@ function updateCamera() {
 function resize() {
   const w=canvas.clientWidth,h=canvas.clientHeight;
   // Limit both DPR and total raster area. This is a resource budget, not an FPS promise.
-  const ratio=Math.min(devicePixelRatio||1,1.5,Math.sqrt(1800000/(w*h)));
+  const ratio=Math.min(devicePixelRatio||1,1.5,Math.sqrt(rasterBudget/(w*h)));
   renderer.setPixelRatio(ratio);renderer.setSize(w,h,false);
   composer.setPixelRatio(ratio);composer.setSize(w,h);
   camera.aspect=w/h;camera.updateProjectionMatrix();
@@ -304,7 +305,7 @@ function describeResources() {
   return {sceneMeshes:visibleMeshes,uniqueGeometries:geo.size,uniqueMaterials:mat.size,sceneTriangles:Math.round(triangles),geometryAttributeBytes:bytes,
     renderCalls:renderer.info.render.calls,renderedTriangles:renderer.info.render.triangles,textures:renderer.info.memory.textures,
     rendererGeometries:renderer.info.memory.geometries,shaderPrograms:renderer.info.programs?.length,
-    canvas:[canvas.width,canvas.height],pixelRatio:renderer.getPixelRatio(),bloomMipLevels:bloom.nMips,
+    softwareWebGL,rasterBudget,renderTargetSamples:composer.renderTarget1.samples,canvas:[canvas.width,canvas.height],pixelRatio:renderer.getPixelRatio(),bloomMipLevels:bloom.nMips,
     note:'Geometry bytes exclude GPU alignment, environment and composer render targets. This is not total VRAM.'};
 }
 
@@ -635,6 +636,15 @@ function syncMotion() {
 try {
   const gl=params.has('fallback')?null:canvas.getContext('webgl2',{alpha:false,antialias:true,powerPreference:'low-power'});
   if(!gl)throw new Error('WebGL2 desteği doğrulanamadı. Donanım hızlandırması kapalı olabilir veya tarayıcı bu bağlamı sağlayamıyor.');
+  // Software rasterizers pay for transmission, bloom and MSAA on the CPU.
+  // Bound their raster workload without changing geometry, labels or interaction semantics.
+  // Hardware keeps the original r24 pixel and sample budgets. No UA or test-only switch.
+  try {
+    const info=gl.getExtension('WEBGL_debug_renderer_info');
+    const name=String(gl.getParameter(info?info.UNMASKED_RENDERER_WEBGL:gl.RENDERER));
+    softwareWebGL=/swiftshader|llvmpipe|softpipe|software rasterizer/i.test(name);
+  } catch { /* Keep the hardware budget if renderer identity is unavailable. */ }
+  if(softwareWebGL)rasterBudget=120000;
   renderer=new THREE.WebGLRenderer({canvas,context:gl,antialias:true,alpha:false,powerPreference:'low-power'});
   renderer.setClearColor('#010204',1);renderer.outputColorSpace=THREE.SRGBColorSpace;
   renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.0;
@@ -647,7 +657,7 @@ try {
   balanceScene=new BalanceScene({scene,camera,mainRig:objectRig,canvas,clock:()=>motionSeconds,canAnimate:()=>fastMotionAllowed(),reducedMotion:()=>reduced.matches,captureCamera:()=>({yaw,pitch,distance}),restoreCamera:s=>{({yaw,pitch,distance}=s);updateCamera();},onChange:()=>{syncBalanceUI();logEvent('balance-phase',{phase:balanceScene?.phase});invalidate();}});
   makeSphere(currentProfile());
   engineRoom=new EngineRoom({scene,camera,canvas,mainRig:objectRig,sphere,clock:()=>motionSeconds,canAnimate:()=>fastMotionAllowed(),mainMode:()=>sizeState.mode,onChange:()=>{syncBalanceUI();invalidate();}});
-  const target=new THREE.WebGLRenderTarget(1,1,{type:THREE.HalfFloatType});target.samples=2;
+  const target=new THREE.WebGLRenderTarget(1,1,{type:THREE.HalfFloatType});target.samples=softwareWebGL?0:2;
   composer=new EffectComposer(renderer,target);
   composer.addPass(new RenderPass(scene,camera));
   bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),...currentProfile().bloom);composer.addPass(bloom);
