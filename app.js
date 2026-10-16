@@ -2234,7 +2234,7 @@ function engineRoomAuthority(){
     typeof probePaintAllowed==='function'&&probePaintAllowed({scopeAtStart:scope,liveScope:scope,verifiedScope:currentWorkspaceRoleVerifiedScope,authorityAtStart:observationAuthorityEpoch,authorityNow:observationAuthorityEpoch,surface:'engine-room',decision}));
   return {scope,epoch:observationAuthorityEpoch,allowed};
 }
-function syncEngineRoomView(){
+function syncEngineRoomView(preserveDetails=false){
   const words=window.SinbadEngineRoomRecord?.copy(appLanguage);
   if(!words)return;
   const authority=engineRoomAuthority();
@@ -2248,7 +2248,8 @@ function syncEngineRoomView(){
   const close=document.querySelector('#engine-room .close');if(close)close.textContent=words.close;
   const accessNote=document.querySelector('#engine-room .engine-room-access-note');if(accessNote)accessNote.hidden=Boolean(cloudSession?.user);
   const stamp=$('engineRoomObservedAt');if(stamp){stamp.textContent=validView?words.health:reason;stamp.dataset.observationState=validView?'record':!cloudSession?.user?'signin':!authority.allowed?'restricted':engineRoomRequest?'checking':engineRoomReadFailed?'unavailable':'not-requested';}
-  if(validView)renderEngineRoom(engineRoomView.snapshot);
+  if(validView&&!preserveDetails)renderEngineRoom(engineRoomView.snapshot);
+  window.SinbadDengeHost?.sync({snapshot:validView?engineRoomView.snapshot:null,access:validView?'record':!cloudSession?.user?'signin':!authority.allowed?'restricted':engineRoomRequest?'checking':engineRoomReadFailed?'unavailable':'not-requested',reason,language:appLanguage,allowed:authority.allowed,busy:Boolean(engineRoomRequest)});
 }
 function renderEngineRoom(snapshot){
   const grid=$('engineRoomGrid'),stamp=$('engineRoomObservedAt');
@@ -2261,10 +2262,13 @@ function renderEngineRoom(snapshot){
   grid.innerHTML=snapshot.engines.map(engine=>{
     const view=window.SinbadEngineRoomRecord.present(engine,snapshot,appLanguage,{nowMs:Date.now()});
     const record=view.record;
-    return `<article class="engine-room-card" data-engine-id="${esc(engine.id)}" data-engine-state="${esc(engine.state)}" data-status-tone="${view.tone}" data-status-kind="${view.kind}" data-record-class="${esc(record.recordClass)}" data-health="${esc(record.health)}"><header><span>${esc(engine.title)}</span><strong>${esc(view.label)}</strong></header><p class="engine-room-time">${esc(view.time)}</p><p class="engine-room-source">${engine.taskSource==='source-record'?esc(words.sourceFiles)+': '+engine.sources.length:esc(words.source)+': '+(engine.sources.length?esc(engine.sources.join(' · ')):esc(words.noSource))}</p><details><summary>${esc(words.details)}</summary><p class="engine-room-source">${esc(engine.sources.join(' · '))}</p><p class="engine-room-record">${esc(record.recordClass)} · ${esc(engine.state)}${record.freshnessLimit?' · '+esc(record.freshnessLimit):''}</p><p class="engine-room-health">${esc(record.health)}</p><dl>${engine.facts.map(fact=>`<div><dt>${esc(fact.label)}</dt><dd${fact.observed?'':` class="is-unknown"`}>${esc(fact.value)}</dd></div>`).join('')}</dl><p class="engine-room-absent">NOT CONNECTED: ${esc(engine.notConnected.join(', '))}</p></details></article>`;
+    return `<article class="engine-room-card" data-engine-id="${esc(engine.id)}" data-engine-state="${esc(engine.state)}" data-status-tone="${view.tone}" data-status-kind="${view.kind}" data-record-class="${esc(record.recordClass)}" data-health="${esc(record.health)}"><header><span>${esc(engine.id==='command-gate'?'ARGOS':engine.title)}</span><strong>${esc(view.label)}</strong></header><p class="engine-room-time">${esc(view.time)}</p><p class="engine-room-source">${engine.taskSource==='source-record'?esc(words.sourceFiles)+': '+engine.sources.length:esc(words.source)+': '+(engine.sources.length?esc(engine.sources.join(' · ')):esc(words.noSource))}</p><details><summary>${esc(words.details)}</summary><p class="engine-room-source">${esc(engine.sources.join(' · '))}</p><p class="engine-room-record">${esc(record.recordClass)} · ${esc(engine.state)}${record.freshnessLimit?' · '+esc(record.freshnessLimit):''}</p><p class="engine-room-health">${esc(record.health)}</p><dl>${engine.facts.map(fact=>`<div><dt>${esc(fact.label)}</dt><dd${fact.observed?'':` class="is-unknown"`}>${esc(fact.value)}</dd></div>`).join('')}</dl><p class="engine-room-absent">NOT CONNECTED: ${esc(engine.notConnected.join(', '))}</p></details></article>`;
   }).join('');
+  window.SinbadDengeHost?.sync({snapshot,access:'record',reason:words.health,language:appLanguage,allowed:authority.allowed,busy:Boolean(engineRoomRequest)});
 }
 function engineRoomPaintClosed(){clearEngineRoomPrivateView();}
+window.addEventListener('sinbad-denge-ready',()=>syncEngineRoomView(true));
+window.addEventListener('sinbad-denge-language',event=>{if(['tr-TR','en-US'].includes(event.detail)){applyAppLanguage(event.detail);syncEngineRoomView();}});
 window.addEventListener('pageshow',()=>syncEngineRoomView());
 // Do not retain private cards in the browser history cache. Reopening requires a new explicit observation.
 window.addEventListener('pagehide',()=>clearEngineRoomPrivateView());
@@ -2299,6 +2303,7 @@ async function refreshEngineRoom(){
     }
     const compiledAt=new Date().toISOString();
     const snapshot=normalizeEngineRoomSnapshot(probes,compiledAt);
+    snapshot.probeAccess=Object.fromEntries(ENGINE_ROOM_PROBES.map(([key,path])=>[key,{path,ok:probes[key]?.ok===true,http:Number(probes[key]?.http)||0}]));
     snapshot.probeTransport='attempted';
     if(Object.values(probes).every(item=>item&&item.ok===false&&item.http===0))snapshot.probeAborted=true;
     const groq=record?.engine(typeof appLanguage==='string'?appLanguage:'en-US');

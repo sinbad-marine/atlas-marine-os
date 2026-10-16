@@ -1,4 +1,4 @@
-const CACHE='sinbad-marine-v8.20.29-argos-acceptance-v202';
+const CACHE='sinbad-marine-v8.20.29-argos-acceptance-v202-denge-r25';
 const ASSETS=[
   './',
   './index.html',
@@ -107,6 +107,7 @@ self.addEventListener('fetch',event=>{
 
   if(request.mode==='navigate'){
     let pageKey=url.pathname.endsWith('/academy.html')?'./academy.html':'./index.html';
+    if(url.pathname.endsWith('/engine-room-denge/index.html'))pageKey='./engine-room-denge/index.html';
     if(url.pathname.endsWith('/academy-professor.html'))pageKey='./academy-professor.html';
     if(url.pathname.endsWith('/academy-professor-v3.html'))pageKey='./academy-professor-v3.html';
     if(url.pathname.endsWith('/academy-professor-native.html'))pageKey='./academy-professor-native.html';

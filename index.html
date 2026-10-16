@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="./console-master-style.css?v=14">
 <link rel="stylesheet" href="./vendor/ol-10.6.1.css">
 <link rel="stylesheet" href="./sinbad-favorites.css">
+<link rel="stylesheet" href="./engine-room-denge-host.css">
 </head>
 <body class="auth-pending" data-console-art="monet">
 <svg class="console-icon-sprite" aria-hidden="true">
@@ -367,6 +368,10 @@
 </section>
 
 <section id="engine-room" class="workspace engine-room" data-engine-room="v0">
+  <div class="denge-surface-bar"><h2>SINBAD · Denge</h2><div><button type="button" id="denge-refresh" class="btn" disabled>Refresh observed state</button><button type="button" id="denge-details-toggle" class="btn" aria-expanded="false" aria-controls="engineRoomLegacy">Details</button><button type="button" class="btn close" id="denge-close">Close</button></div></div>
+  <p id="denge-access-status" role="status"></p>
+  <div id="engineRoomDenge"><iframe id="engineRoomDengeFrame" title="SINBAD Denge 3D" src="./engine-room-denge/index.html" loading="lazy" referrerpolicy="same-origin"></iframe></div>
+  <div id="engineRoomLegacy" hidden tabindex="-1">
   <div class="workspace-head">
     <div>
       <div class="eyebrow" id="engineRoomReadOnly">ENGINE ROOM · v0 · READ ONLY</div>
@@ -381,6 +386,7 @@
   <p class="engine-room-access-note"><span id="engineRoomAccessNote">Private system data requires sign-in with an authorized account.</span> <button class="btn" id="engineRoomSignIn" type="button">Member Sign In</button></p>
   <p class="engine-room-doctrine" id="engineRoomObservedAt">Authorized sign-in required</p>
   <div id="engineRoomGrid" class="engine-room-grid" aria-live="polite"></div>
+  </div>
 </section>
 
 <section id="sinbad-ai" class="workspace console-landing" data-master="dali">
@@ -1203,6 +1209,7 @@
 <script src="./human-review-access.js"></script>
 <script src="./engine-room-component-record.js"></script>
 <script src="./membership-scope.js"></script>
+<script src="./engine-room-denge-host.js"></script>
 <script src="./app.js?v=82029"></script>
 <script src="./sinbad-home.js"></script>
 </body>

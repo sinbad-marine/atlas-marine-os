@@ -1,0 +1,3 @@
+Three.js 0.170.0 / r170. Reused from the existing local r24 Denge prototype; no runtime CDN.
+Original npm archive SHA-256: 4a608a355dcaba72e0e5383cdc814303f5b6060b43c238cdf6932dceb699238d
+MIT license retained in THREE-LICENSE.txt.

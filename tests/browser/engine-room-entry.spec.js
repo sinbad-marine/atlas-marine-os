@@ -28,6 +28,7 @@ for(const viewport of [{width:1440,height:900},{width:1280,height:500},{width:11
     await expect(page.locator('#refreshEngineRoom')).toBeDisabled();
     await page.evaluate(()=>refreshEngineRoom());
     await expect(page.locator('#engineRoomGrid')).toBeEmpty();
+    await page.locator('#denge-details-toggle').click();
     await page.locator('#engineRoomSignIn').click();
     await expect(page.locator('#authDialog')).toBeVisible();
     await page.locator('#closeAuthDialog').click();

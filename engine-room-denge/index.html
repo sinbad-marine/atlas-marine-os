@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'none'">
+<title>SINBAD · Makine Dairesi · r25</title><link rel="icon" href="data:,"><link rel="stylesheet" href="study.css">
+<script type="importmap">{"imports":{"three":"./vendor/three.module.js","three/addons/":"./vendor/jsm/"}}</script>
+</head>
+<body data-integration="live">
+<header><p class="edition"><span class="index">B.01—05</span><span data-i18n="edition">MAKİNE DAİRESİ</span></p><div class="top-right"><p class="status">READ ONLY <span>·</span> SOURCE RECORDS <span title="r25">r25</span></p><div class="languages" aria-label="Language / Dil"><button id="lang-tr" aria-pressed="true">TR</button><button id="lang-en" aria-pressed="false">EN</button></div></div></header>
+<main id="view" aria-label="Etkileşimli SINBAD kristal küresi">
+<canvas id="scene" tabindex="0" aria-label="SINBAD: sürükle döndür; tekerlek yakınlaştır; 2 tık büyüt, 3 tık nokta, 4 tık geri al."></canvas><div id="point" aria-hidden="true" hidden><span></span></div>
+<div id="failure" hidden role="alert"><p data-i18n="webglTitle">Bu görünüm WebGL2 gerektiriyor.</p><p id="failure-detail"></p></div><p id="loading" role="status">Işık ve katmanlar hazırlanıyor…</p>
+<p id="live-status" role="status"></p><p id="room-sample" hidden role="status"></p><div id="engine-labels" aria-label="Motor etiketleri"></div><aside id="engine-detail" hidden aria-live="polite"></aside>
+<aside id="shortcut-help" hidden role="region" aria-labelledby="help-title" tabindex="-1"><div class="help-heading"><h2 id="help-title" data-i18n="help">Kısayollar</h2><button id="help-close" type="button" data-i18n="helpClose">Kapat</button></div><div class="help-scroll" tabindex="0" role="group" aria-labelledby="help-title"><ul><li data-i18n="helpEnlarge"></li><li data-i18n="helpDot"></li><li data-i18n="helpRestore"></li></ul><p class="help-note" data-i18n="helpTiming"></p><ul><li data-i18n="helpOrbit"></li><li data-i18n="helpZoom"></li><li data-i18n="helpViews"></li><li data-i18n="helpHome"></li><li data-i18n="helpReset"></li><li data-i18n="helpMove"></li><li data-i18n="helpFocus"></li><li data-i18n="helpShell"></li><li data-i18n="helpEmpty"></li><li data-i18n="helpFree"></li><li data-i18n="helpEscape"></li><li data-i18n="helpModifiers"></li><li data-i18n="helpHit"></li><li data-i18n="helpRotation"></li><li data-i18n="helpStop"></li></ul><p class="help-note" data-i18n="helpTelemetry"></p></div></aside>
+</main>
+<footer>
+<div class="identity"><h1>SINBAD</h1><p id="variant-description"></p></div>
+<nav id="engine-list" class="engine-list" aria-label="Motorlar / Engines"></nav><button id="engine-close" hidden>Genel görünüm</button>
+<nav class="variants" aria-label="Varyant / Variant"><button data-variant="1" aria-pressed="true"><b>01</b><span>Katman</span></button><button data-variant="2" aria-pressed="false"><b>02</b><span>Prizma</span></button><button data-variant="3" aria-pressed="false"><b>03</b><span>Derinlik</span></button><button data-variant="4" aria-pressed="false"><b>04</b><span>Işık</span></button><button data-variant="5" aria-pressed="false"><b>05</b><span>Denge</span></button></nav>
+<div class="commands"><div class="views"><button id="front" aria-pressed="true" data-i18n="front">Ön</button><button id="diagonal" aria-pressed="false">45°</button><button id="back" aria-pressed="false" data-i18n="back">Arka</button><button id="top" aria-pressed="false" data-i18n="top">Üst</button><button id="bottom" aria-pressed="false" data-i18n="bottom">Alt</button></div><div class="sizes"><button id="inspect" data-i18n="inspect">Büyüt</button><button id="point-size" data-i18n="point">Nokta</button><button id="restore" data-i18n="restore">Geri al</button></div><button id="reset" data-i18n="reset">Kamera ↺</button><button id="shell-control" type="button" aria-keyshortcuts="V" aria-pressed="false"><span data-i18n="shellControl">Dış katman kontrolü · V</span> <span id="shell-state">Otomatik</span></button><button id="animate" aria-pressed="false"><span data-i18n="animation">Yavaş hareket</span><span id="motion-state">Kapalı</span></button><button id="stop-motion" aria-pressed="false" data-i18n="stopMotion">Hareketi durdur</button><button id="arc-preview" hidden data-i18n="arcPreview">Ark örneği</button><button id="balance-return" hidden data-i18n="balanceReturn">Yerine koy</button><button id="help-toggle" aria-expanded="false" aria-controls="shortcut-help" data-i18n="help">Kısayollar</button></div>
+<p class="hint sr-only" id="hint" role="status">Sürükle · döndür — Tekerlek · yaklaş</p>
+
+</footer>
+<script type="module" src="study.mjs"></script>
+</body></html>
